@@ -1,0 +1,26 @@
+{
+  "@@locale": "ar",
+
+  "login_welcomeBack": "مرحباً بعودتك",
+  "login_subtitle": "سجل دخولك للوصول إلى حسابك",
+  "login_email": "البريد الإلكتروني",
+  "login_emailHint": "example@email.com",
+  "login_password": "كلمة المرور",
+  "login_passwordHint": "أدخل كلمة المرور",
+  "login_forgotPassword": "نسيت كلمة المرور؟",
+  "login_button": "تسجيل الدخول",
+  "common_or": "أو",
+  "login_continueWithGoogle": "متابعة باستخدام Google",
+  "login_continueWithApple": "متابعة باستخدام Apple",
+  "login_noAccount": "ليس لديك حساب؟",
+  "login_createAccount": "إنشاء حساب جديد",
+
+  "validation_emailRequired": "البريد الإلكتروني مطلوب",
+  "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
+  "validation_passwordRequired": "كلمة المرور مطلوبة",
+  "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+
+  "connection_reconnecting": "جارٍ الاتصال...",
+  "connection_offline": "لا يوجد اتصال بالإنترنت",
+  "connection_issue": "مشكلة في الاتصال"
+}

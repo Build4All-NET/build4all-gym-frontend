@@ -1,0 +1,26 @@
+{
+  "@@locale": "en",
+
+  "login_welcomeBack": "Welcome back",
+  "login_subtitle": "Sign in to access your account",
+  "login_email": "Email",
+  "login_emailHint": "example@email.com",
+  "login_password": "Password",
+  "login_passwordHint": "Enter your password",
+  "login_forgotPassword": "Forgot password?",
+  "login_button": "Sign In",
+  "common_or": "Or",
+  "login_continueWithGoogle": "Continue with Google",
+  "login_continueWithApple": "Continue with Apple",
+  "login_noAccount": "Don't have an account?",
+  "login_createAccount": "Create new account",
+
+  "validation_emailRequired": "Email is required",
+  "validation_invalidEmail": "Please enter a valid email",
+  "validation_passwordRequired": "Password is required",
+  "validation_invalidCredentials": "Invalid email or password",
+
+  "connection_reconnecting": "Connecting...",
+  "connection_offline": "No internet connection",
+  "connection_issue": "Connection issue"
+}

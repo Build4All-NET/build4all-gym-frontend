@@ -424,7 +424,7 @@ class AuthApiService {
 
   // ========================= ADMIN LOGIN =========================
 
-  Future<AdminLoginResponse> adminLogin({
+  Future<Adminloginresponse> adminLogin({
     required String usernameOrEmail,
     required String password,
     int? ownerProjectId,
@@ -446,7 +446,7 @@ class AuthApiService {
     final decoded = _safeJson(resp.body);
     if (resp.statusCode >= 400) _throwAdminFromLogin(resp, decoded);
 
-    return AdminLoginResponse.fromJson(decoded);
+    return Adminloginresponse.fromjson(decoded);
   }
 
   // ============================= TOKEN HELPERS ==========================
