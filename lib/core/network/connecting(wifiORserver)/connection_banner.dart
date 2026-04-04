@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'connection_cubit.dart';
 import 'connection_status.dart';
-import 'package:build4front/l10n/app_localizations.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 
 class ConnectionBanner extends StatelessWidget {
   const ConnectionBanner({super.key});
