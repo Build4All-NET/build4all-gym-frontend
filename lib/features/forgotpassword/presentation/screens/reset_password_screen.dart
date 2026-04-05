@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/forgot_password_bloc.dart';
-import '../bloc/forgot_password_event.dart';
-import '../bloc/forgot_password_state.dart';
-import '../widgets/auth_card_shell.dart';
+import 'package:build4allgym/app/app_router.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_bloc.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_event.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_state.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/widgets/auth_card_shell.dart';
 
-// Screen 3 — User types and confirms their new password
+// SCREEN 3 — New Password
+// Purpose: user types and confirms their new password
+// Sends resetToken (from Screen 2) + new password to backend
+// On success → navigates to LOGIN using AppRouter
 class ResetPasswordScreen extends StatefulWidget {
-  final String resetToken; // UUID from step 2, sent to backend in step 3
+  final String resetToken; // UUID from Step 2
 
   const ResetPasswordScreen({super.key, required this.resetToken});
 
@@ -31,11 +35,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
+  // Called when user taps "Save Password"
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    // Send resetToken (from step 2) + new password to backend
+
+    // Send the UUID (from Step 2) + new password to backend
     context.read<ForgotPasswordBloc>().add(ForgotResetPasswordPressed(
-      resetToken: widget.resetToken,
+      resetToken: widget.resetToken, // UUID stored from Step 2
       newPassword: _passCtrl.text,
     ));
   }
@@ -44,7 +50,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     return AuthCardShell(
       title: 'New Password',
-      subtitle: 'Set a strong password\nwith at least 8 characters.',
+      subtitle: 'Set a strong password with at\nleast 8 characters.',
       icon: Icons.password_outlined,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (ctx, state) {
@@ -55,14 +61,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ));
           }
 
-          // When step becomes 3 → password reset → go all the way back to login!
+          // Step became 3 → password reset → go back to login!
+          // use AppRouter
           if (state.step == 3) {
             ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-              content: Text('✅ Password reset successfully! Please login.'),
+              content: Text('✅ Password reset! Please login with new password.'),
               backgroundColor: Color(0xFF1D9E75),
             ));
-            // popUntil(first) = removes all screens and goes back to login
-            Navigator.of(ctx).popUntil((route) => route.isFirst);
+
+            // pushNamedAndRemoveUntil = go to login AND remove ALL screens behind
+            // So pressing back from login doesn't go back to forget pass screens
+            Navigator.of(ctx).pushNamedAndRemoveUntil(
+              AppRouter.login,
+                  (route) => false, // remove everything
+            );
+
             ctx.read<ForgotPasswordBloc>().add(const ForgotClearState());
           }
         },
@@ -72,18 +85,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             child: Column(
               children: [
 
-                // New password field
+                // New password field with show/hide toggle
                 TextFormField(
                   controller: _passCtrl,
                   obscureText: !_showPass,
                   decoration: InputDecoration(
                     labelText: 'New Password',
-                    prefixIcon: const Icon(Icons.lock_outline, color: _primary),
+                    prefixIcon:
+                    const Icon(Icons.lock_outline, color: _primary),
                     suffixIcon: IconButton(
-                      icon: Icon(_showPass ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () => setState(() => _showPass = !_showPass),
+                      icon: Icon(_showPass
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () =>
+                          setState(() => _showPass = !_showPass),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: _primary, width: 2),
@@ -92,10 +110,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   validator: (v) {
                     final val = v ?? '';
                     if (val.isEmpty) return 'Password is required';
-                    // Must be 8+ chars with letter + number (matches your backend @Pattern)
+                    // rules match the backend @Size and @Pattern
                     if (val.length < 8) return 'Minimum 8 characters';
-                    if (!val.contains(RegExp(r'[A-Za-z]'))) return 'Must contain at least one letter';
-                    if (!val.contains(RegExp(r'[0-9]'))) return 'Must contain at least one number';
+                    if (!val.contains(RegExp(r'[A-Za-z]')))
+                      return 'Must contain at least one letter';
+                    if (!val.contains(RegExp(r'[0-9]')))
+                      return 'Must contain at least one number';
                     return null;
                   },
                 ),
@@ -107,12 +127,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   obscureText: !_showConfirm,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    prefixIcon: const Icon(Icons.lock_outline, color: _primary),
+                    prefixIcon:
+                    const Icon(Icons.lock_outline, color: _primary),
                     suffixIcon: IconButton(
-                      icon: Icon(_showConfirm ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () => setState(() => _showConfirm = !_showConfirm),
+                      icon: Icon(_showConfirm
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () =>
+                          setState(() => _showConfirm = !_showConfirm),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: _primary, width: 2),
@@ -134,11 +159,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     onPressed: state.isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _primary,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                     child: state.isLoading
-                        ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                        : const Text('Save Password', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                        ? const CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2)
+                        : const Text('Save Password',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],

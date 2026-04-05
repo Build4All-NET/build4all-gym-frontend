@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:build4front/core/config/env.dart';
+import 'package:build4allgym/core/config/env.dart';
 
 import 'connection_status.dart';
 

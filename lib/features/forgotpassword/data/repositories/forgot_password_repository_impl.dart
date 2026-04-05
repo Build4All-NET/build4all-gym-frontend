@@ -1,9 +1,7 @@
-import '../../domain/entities/forgot_password_entity.dart';
-import '../../domain/repositories/forgot_password_repository.dart';
+import 'package:build4allgym/features/forgotpassword/domain/entities/forgot_password_entity.dart';
+import 'package:build4allgym/features/forgotpassword/domain/repositories/forgot_password_repository.dart';
 import '../services/forgot_password_api_service.dart';
 
-// The REAL implementation of the repository.
-// Calls the API service and converts API models → domain entities.
 class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
   final ForgotPasswordApiService api;
 
@@ -11,7 +9,7 @@ class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
 
   @override
   Future<InitiateResult> initiateForgotPassword(String identifier) async {
-    // Call API → get ForgotPasswordData → convert to InitiateResult
+    //Calls api.initiateForgotPassword() → gets ForgotPasswordData → converts to InitiateResult entity.
     final data = await api.initiateForgotPassword(identifier);
     return InitiateResult(
       maskedContact: data.maskedContact,
@@ -21,7 +19,7 @@ class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
 
   @override
   Future<VerifyOtpResult> verifyOtp(String identifier, String otpCode) async {
-    // Call API → get VerifyOtpData → convert to VerifyOtpResult
+    //Calls api.verifyOtp() → gets VerifyOtpData → converts to VerifyOtpResult entity.
     final data = await api.verifyOtp(identifier, otpCode);
     return VerifyOtpResult(resetToken: data.resetToken);
   }
@@ -29,7 +27,7 @@ class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
   @override
   Future<ForgotPasswordResult> resetPassword(
       String resetToken, String newPassword) async {
-    // Call API → get success message string → convert to ForgotPasswordResult
+    //Calls api.resetPassword() → gets message string → wraps in ForgotPasswordResult entity.
     final message = await api.resetPassword(resetToken, newPassword);
     return ForgotPasswordResult(message: message);
   }

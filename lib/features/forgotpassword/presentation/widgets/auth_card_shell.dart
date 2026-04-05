@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-// The card wrapper used by ALL 3 screens.
-// Shows: icon → title → subtitle → card with the form inside.
+// The OUTER SHELL used by all 3 screens.
+// the frame (icon, title, subtitle, white card) is always the same.
 class AuthCardShell extends StatelessWidget {
-  final Widget child;
-  final String title;
-  final String subtitle;
-  final IconData icon;
+  final Widget child;    // the form that goes inside the card
+  final String title;    // big title like "Forgot Password?"
+  final String subtitle; // small text under the title
+  final IconData icon;   // the circle icon at the top
 
   const AuthCardShell({
     super.key,
@@ -16,13 +16,13 @@ class AuthCardShell extends StatelessWidget {
     this.icon = Icons.lock_reset,
   });
 
-  // Your backend's teal color — same as the API docs
+  // Your backend's teal color
   static const Color _primary = Color(0xFF1D9E75);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1EFE8),
+      backgroundColor: const Color(0xFFF1EFE8), // light gray background
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -30,7 +30,7 @@ class AuthCardShell extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Circle icon at the top
+                // Circle icon at top (lock, email, password icon)
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: _primary.withOpacity(0.12),
@@ -38,7 +38,7 @@ class AuthCardShell extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
 
-                // Title
+                // Title — "Forgot Password?" / "Enter OTP" / "New Password"
                 Text(
                   title,
                   style: const TextStyle(
@@ -49,7 +49,7 @@ class AuthCardShell extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
 
-                // Subtitle
+                // Subtitle — description under the title
                 Text(
                   subtitle,
                   textAlign: TextAlign.center,
@@ -60,7 +60,7 @@ class AuthCardShell extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // The white card that wraps the form
+                // White card that wraps the form
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -75,7 +75,7 @@ class AuthCardShell extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: child,
+                  child: child, // ← the form goes here
                 ),
               ],
             ),

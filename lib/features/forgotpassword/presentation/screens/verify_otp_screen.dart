@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/forgot_password_bloc.dart';
-import '../bloc/forgot_password_event.dart';
-import '../bloc/forgot_password_state.dart';
-import '../widgets/auth_card_shell.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_bloc.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_event.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_state.dart';
+import 'package:build4allgym/features/forgotpassword/presentation/widgets/auth_card_shell.dart';
 import 'reset_password_screen.dart';
 
-// Screen 2 — User enters the 6-digit OTP + can resend
+// SCREEN 2 — Enter OTP
+// Purpose: user types the 6-digit code from email/SMS
+// Has timer (15 min) + resend button
+// On success → navigates to Screen 3
 class VerifyOtpScreen extends StatefulWidget {
   final String identifier; // email or phone passed from Screen 1
 
@@ -18,8 +21,10 @@ class VerifyOtpScreen extends StatefulWidget {
 }
 
 class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
+  // 6 controllers — one for each OTP box
   final List<TextEditingController> _otpCtrl =
   List.generate(6, (_) => TextEditingController());
+  // 6 focus nodes — control which box is active
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   static const Color _primary = Color(0xFF1D9E75);
@@ -31,9 +36,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   @override
   void initState() {
     super.initState();
-    _startTimer();
+    _startTimer(); // start countdown when screen opens
   }
 
+  // Starts (or restarts) the 15-minute countdown
   void _startTimer() {
     _timer?.cancel();
     setState(() => _secondsLeft = 900);
@@ -41,7 +47,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       if (_secondsLeft > 0) {
         setState(() => _secondsLeft--);
       } else {
-        _timer?.cancel();
+        _timer?.cancel(); // stop when reaches 0
       }
     });
   }
@@ -54,16 +60,17 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     super.dispose();
   }
 
-  // Returns the full 6-digit OTP string
+  // Combines all 6 boxes into one string e.g. "292738"
   String get _otpCode => _otpCtrl.map((c) => c.text).join();
 
-  // Formats 900 seconds as "15:00"
+  // Formats seconds as "MM:SS" e.g. "14:35"
   String get _timerText {
     final m = _secondsLeft ~/ 60;
     final s = _secondsLeft % 60;
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
+  // Called when user taps "Verify Code"
   void _verify() {
     if (_otpCode.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -78,12 +85,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     ));
   }
 
-  // Resend = just call forgot-password again with same identifier
-  // Your backend already handles this — invalidates old OTP, sends new one
+  // Called when user taps "Resend"
+  // BACKEND HANDLES EVERYTHING — we just call /auth/forgot-password again!
+  // The backend: kills old OTP, makes new one, sends it, resets 15 min expiry
   void _resend() {
-    for (final c in _otpCtrl) c.clear();
-    _focusNodes[0].requestFocus();
-    _startTimer();
+    for (final c in _otpCtrl) c.clear(); // clear OTP boxes
+    _focusNodes[0].requestFocus();        // focus first box
+    _startTimer();                         // restart countdown
     context.read<ForgotPasswordBloc>().add(
       ForgotSendCodePressed(identifier: widget.identifier),
     );
@@ -93,7 +101,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   Widget build(BuildContext context) {
     return AuthCardShell(
       title: 'Enter OTP',
-      subtitle: 'We sent a 6-digit code to\n${widget.identifier}',
+      subtitle: 'We sent a 6-digit code.\nEnter it below.',
       icon: Icons.mark_email_read_outlined,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (ctx, state) {
@@ -104,13 +112,14 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             ));
           }
 
-          // When step becomes 2 → OTP verified → go to Screen 3
+          // Step became 2 → OTP verified → navigate to Screen 3
+          // Pass the resetToken (UUID) to Screen 3
           if (state.step == 2 && state.resetToken != null) {
             Navigator.of(ctx).push(MaterialPageRoute(
               builder: (_) => BlocProvider.value(
                 value: ctx.read<ForgotPasswordBloc>(),
                 child: ResetPasswordScreen(
-                  resetToken: state.resetToken!, // pass UUID to Screen 3
+                  resetToken: state.resetToken!,
                 ),
               ),
             ));
@@ -121,18 +130,22 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           return Column(
             children: [
 
-              // Show masked contact from state if available
+              // Show where the code was sent (from state.maskedContact)
               if (state.maskedContact != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Text(
-                    'Check ${state.deliveryMethod == "EMAIL" ? "your email" : "your SMS"}: ${state.maskedContact}',
+                    'Check ${state.deliveryMethod == "PHONE" ? "your SMS" : "your email"}: ${state.maskedContact}',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: _primary, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      color: _primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
 
-              // 6 OTP boxes
+              // 6 OTP boxes in a row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(6, (i) => SizedBox(
@@ -145,14 +158,16 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     maxLength: 1,
                     decoration: InputDecoration(
                       counterText: '',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: _primary, width: 2),
+                        borderSide:
+                        const BorderSide(color: _primary, width: 2),
                       ),
                     ),
                     onChanged: (val) {
-                      // Auto-jump to next box when a digit is typed
+                      // Auto-jump to next box when digit is typed
                       if (val.isNotEmpty && i < 5) {
                         _focusNodes[i + 1].requestFocus();
                       }
@@ -166,11 +181,15 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Timer
+              // Countdown timer
               Text(
-                _secondsLeft > 0 ? 'Code expires in $_timerText' : 'Code expired',
+                _secondsLeft > 0
+                    ? 'Code expires in $_timerText'
+                    : 'Code expired — please resend',
                 style: TextStyle(
-                  color: _secondsLeft > 0 ? const Color(0xFF5F5E5A) : Colors.red,
+                  color: _secondsLeft > 0
+                      ? const Color(0xFF5F5E5A)
+                      : Colors.red,
                   fontSize: 13,
                 ),
               ),
@@ -184,11 +203,17 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                   onPressed: state.isLoading ? null : _verify,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                   child: state.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                      : const Text('Verify Code', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                      ? const CircularProgressIndicator(
+                      color: Colors.white, strokeWidth: 2)
+                      : const Text('Verify Code',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600)),
                 ),
               ),
               const SizedBox(height: 14),
@@ -197,7 +222,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
               TextButton(
                 onPressed: state.isLoading ? null : _resend,
                 child: const Text(
-                  'Didn\'t receive a code? Resend',
+                  "Didn't receive a code? Resend",
                   style: TextStyle(color: _primary),
                 ),
               ),

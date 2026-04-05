@@ -1,29 +1,27 @@
 import 'package:equatable/equatable.dart';
 
-// The STATE = what the app remembers at any moment.
-// We need to store maskedContact + resetToken between screens!
 class ForgotPasswordState extends Equatable {
-  final bool isLoading;
+  final bool isLoading; // show spinner on the button
 
-  // step 0 = start
-  // step 1 = OTP sent     → navigate to Screen 2
-  // step 2 = OTP verified → navigate to Screen 3
-  // step 3 = password reset → go back to login
+  // step 0 = just opened Screen 1
+  // step 1 = OTP sent      → Screen 1 navigates to Screen 2
+  // step 2 = OTP verified  → Screen 2 navigates to Screen 3
+  // step 3 = password reset → Screen 3 goes back to login
+  //when it changes they navigate to the next screen.
   final int step;
 
-  // From Step 1 — needed to show "Check jo***@gmail.com" on Screen 2
-  final String? maskedContact;
+  // Stored after Step 1 — Screen 2 shows these
+  final String? maskedContact;  // "jo***@gmail.com"
   final String? deliveryMethod; // "EMAIL" or "PHONE"
 
-  // From Step 2 — MUST be sent in Step 3!
-  // Stored here so Screen 3 can access it
-  final String? resetToken;
+  // Stored after Step 2 — Screen 3 MUST send this to backend
+  final String? resetToken; // "69fe576e-0b23-4e7e-..."
 
-  final String? successMessage;
-  final String? errorMessage;
+  final String? successMessage; // shown as success toast
+  final String? errorMessage;   // shown as error toast
 
   const ForgotPasswordState({
-    this.isLoading = false,
+    this.isLoading = false,//True while waiting for the backend. False when done.
     this.step = 0,
     this.maskedContact,
     this.deliveryMethod,
@@ -32,10 +30,10 @@ class ForgotPasswordState extends Equatable {
     this.errorMessage,
   });
 
-  // Initial state when screen first opens
+  // Initial state — blank slate when screen first opens
   factory ForgotPasswordState.initial() => const ForgotPasswordState();
 
-  // copyWith = update only certain fields, keep the rest the same
+  // copyWith = change only specific fields, keep everything else the same
   ForgotPasswordState copyWith({
     bool? isLoading,
     int? step,
@@ -53,7 +51,8 @@ class ForgotPasswordState extends Equatable {
       maskedContact: maskedContact ?? this.maskedContact,
       deliveryMethod: deliveryMethod ?? this.deliveryMethod,
       resetToken: resetToken ?? this.resetToken,
-      successMessage: clearSuccess ? null : (successMessage ?? this.successMessage),
+      successMessage:
+      clearSuccess ? null : (successMessage ?? this.successMessage),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
