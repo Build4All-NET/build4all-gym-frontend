@@ -9,7 +9,7 @@ class MyAppView extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Gym App',
-      initialRoute: AppRouter.login,
+      initialRoute: AppRouter.otp,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
