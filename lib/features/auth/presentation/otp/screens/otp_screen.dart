@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/models/signup_response.dart';
 import '../../../data/models/verify_signup_request.dart';
 import '../../../data/services/auth_service.dart';
-
+import '../../../../../app/app_router.dart';
+import '../../../../../theme/theme_cubit.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -18,7 +20,6 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _codeController = TextEditingController();
-
   final AuthService _authService = AuthService();
 
   bool _isLoading = false;
@@ -29,12 +30,16 @@ class _OtpScreenState extends State<OtpScreen> {
     super.dispose();
   }
 
+  String? _validateCode(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Code is required';
+    if (value.trim().length < 4) return 'Enter a valid code';
+    return null;
+  }
+
   Future<void> _verifyOtp() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final request = VerifySignupRequest(
@@ -61,43 +66,33 @@ class _OtpScreenState extends State<OtpScreen> {
         ),
       );
 
-
-      Navigator.popUntil(context, (route) => route.isFirst);
-
-
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRouter.login,
+        (route) => false,
+      );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            e.toString().replaceFirst('Exception: ', ''),
-          ),
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
         ),
       );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  String? _validateCode(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Code is required';
-    }
-
-    if (value.trim().length < 4) {
-      return 'Enter a valid code';
-    }
-
-    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeCubit>().state;
+    final tokens = themeState.tokens;
+    final c = tokens.colors;
+    final s = tokens.spacing;
+    final t = tokens.typography;
+    final b = tokens.button;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('OTP Verification'),
@@ -105,7 +100,7 @@ class _OtpScreenState extends State<OtpScreen> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: s.xl, vertical: s.lg),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: Form(
@@ -113,40 +108,35 @@ class _OtpScreenState extends State<OtpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
-                    Icons.lock_outline,
-                    size: 70,
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
+                  Icon(Icons.lock_outline, size: 70, color: c.primary),
+                  SizedBox(height: s.lg),
+                  Text(
                     'Verify Your Account',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: t.headlineSmall,
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: s.sm),
                   Text(
                     'Enter the verification code sent to:\n${widget.email}',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 15),
+                    style: t.bodyMedium,
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: s.xl),
+
                   TextFormField(
                     controller: _codeController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: 'Verification Code',
                       hintText: 'Enter OTP code',
-                      border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.verified_user_outlined),
                     ),
                     validator: _validateCode,
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: s.xl),
+
                   SizedBox(
-                    height: 52,
+                    height: b.height,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _verifyOtp,
                       child: _isLoading
@@ -155,20 +145,20 @@ class _OtpScreenState extends State<OtpScreen> {
                               width: 22,
                               child: CircularProgressIndicator(strokeWidth: 2.5),
                             )
-                          : const Text(
+                          : Text(
                               'Verify',
-                              style: TextStyle(fontSize: 16),
+                              style: t.titleMedium.copyWith(color: c.onPrimary),
                             ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: s.sm),
+
                   TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            Navigator.pop(context);
-                          },
-                    child: const Text('Back'),
+                    onPressed: _isLoading ? null : () => Navigator.pop(context),
+                    child: Text(
+                      'Back',
+                      style: t.bodyMedium.copyWith(color: c.primary),
+                    ),
                   ),
                 ],
               ),

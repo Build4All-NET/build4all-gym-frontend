@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../data/models/signup_request.dart';
+import '../../../data/models/signup_response.dart';
 import '../../../data/services/auth_service.dart';
-import '../../otp/screens/otp_screen.dart';
+import '../../../../../app/app_router.dart';
+import '../../../../../theme/theme_cubit.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -13,17 +17,18 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final fullNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
-  final AuthService authService = AuthService();
+  final AuthService _authService = AuthService();
 
-  bool isLoading = false;
-  bool obscurePassword = true;
-  bool obscureConfirmPassword = true;
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -35,79 +40,41 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  String? validateRequired(String? value, String field) {
-    if (value == null || value.trim().isEmpty) {
-      return '$field is required';
-    }
+  String? _validateFullName(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Full name is required';
+    if (value.trim().length < 3) return 'Enter a valid full name';
     return null;
   }
 
-  String? validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Email is required';
-    }
-
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    if (!emailRegex.hasMatch(value.trim())) {
-      return 'Enter a valid email';
-    }
-
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Email is required';
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+    if (!emailRegex.hasMatch(value.trim())) return 'Enter a valid email';
     return null;
   }
 
-  String? validatePhone(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Phone number is required';
-    }
-
-    if (value.trim().length < 7) {
-      return 'Enter a valid phone number';
-    }
-
+  String? _validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Phone number is required';
+    if (value.trim().length < 7) return 'Enter a valid phone number';
     return null;
   }
 
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Password is required';
+    if (value.length < 6) return 'Password must be at least 6 characters';
     return null;
   }
 
-  String? validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Confirm password is required';
-    }
-
-    if (value != passwordController.text) {
-      return 'Passwords do not match';
-    }
-
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) return 'Confirm your password';
+    if (value != passwordController.text) return 'Passwords do not match';
     return null;
   }
 
-  InputDecoration buildInputDecoration({
-    required String label,
-    Widget? suffixIcon,
-  }) {
-    return InputDecoration(
-      labelText: label,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      suffixIcon: suffixIcon,
-    );
-  }
-
-  Future<void> handleSignup() async {
+  Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     try {
       final request = SignupRequest(
@@ -117,135 +84,183 @@ class _SignupScreenState extends State<SignupScreen> {
         password: passwordController.text,
       );
 
-      final response = await authService.signup(request);
+      final SignupResponse response = await _authService.signup(request);
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.message)),
+        SnackBar(
+          content: Text(
+            response.message.isNotEmpty
+                ? response.message
+                : 'Signup successful. Please verify your account.',
+          ),
+        ),
       );
 
-      Navigator.push(
+      Navigator.pushNamed(
         context,
-        MaterialPageRoute(
-          builder: (_) => OtpScreen(email: emailController.text.trim()),
-        ),
+        AppRouter.otp,
+        arguments: emailController.text.trim(),
       );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+        ),
       );
     } finally {
       if (mounted) {
-        setState(() => isLoading = false);
+        setState(() => _isLoading = false);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeCubit>().state;
+    final tokens = themeState.tokens;
+    final c = tokens.colors;
+    final s = tokens.spacing;
+    final t = tokens.typography;
+    final b = tokens.button;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                const SizedBox(height: 12),
-                const Text(
-                  'Create your account',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: s.xl, vertical: s.lg),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Icon(Icons.person_add_alt_1, size: 70, color: c.primary),
+                  SizedBox(height: s.lg),
+                  Text(
+                    'Create Account',
+                    textAlign: TextAlign.center,
+                    style: t.headlineSmall,
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Fill in your details to continue',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: fullNameController,
-                  decoration: buildInputDecoration(label: 'Full Name'),
-                  validator: (value) => validateRequired(value, 'Full name'),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: buildInputDecoration(label: 'Email'),
-                  validator: validateEmail,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: buildInputDecoration(label: 'Phone Number'),
-                  validator: validatePhone,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: obscurePassword,
-                  decoration: buildInputDecoration(
-                    label: 'Password',
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscurePassword = !obscurePassword;
-                        });
-                      },
-                      icon: Icon(
-                        obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  SizedBox(height: s.xl),
+
+                  TextFormField(
+                    controller: fullNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Full Name',
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    validator: _validateFullName,
+                  ),
+                  SizedBox(height: s.md),
+
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined),
+                    ),
+                    validator: _validateEmail,
+                  ),
+                  SizedBox(height: s.md),
+
+                  TextFormField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'Phone Number',
+                      prefixIcon: Icon(Icons.phone_outlined),
+                    ),
+                    validator: _validatePhone,
+                  ),
+                  SizedBox(height: s.md),
+
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() => _obscurePassword = !_obscurePassword);
+                        },
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
                       ),
                     ),
+                    validator: _validatePassword,
                   ),
-                  validator: validatePassword,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: confirmPasswordController,
-                  obscureText: obscureConfirmPassword,
-                  decoration: buildInputDecoration(
-                    label: 'Confirm Password',
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscureConfirmPassword = !obscureConfirmPassword;
-                        });
-                      },
-                      icon: Icon(
-                        obscureConfirmPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                  SizedBox(height: s.md),
+
+                  TextFormField(
+                    controller: confirmPasswordController,
+                    obscureText: _obscureConfirmPassword,
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureConfirmPassword = !_obscureConfirmPassword;
+                          });
+                        },
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
                       ),
                     ),
+                    validator: _validateConfirmPassword,
                   ),
-                  validator: validateConfirmPassword,
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: isLoading ? null : handleSignup,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 22,
-                            width: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Create Account'),
+                  SizedBox(height: s.xl),
+
+                  SizedBox(
+                    height: b.height,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _signup,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2.5),
+                            )
+                          : Text(
+                              'Sign Up',
+                              style: t.titleMedium?.copyWith(color: c.onPrimary),
+                            ),
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: s.sm),
+
+                  TextButton(
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRouter.login,
+                            );
+                          },
+                    child: Text(
+                      'Already have an account? Login',
+                      style: t.bodyMedium.copyWith(color: c.primary),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
