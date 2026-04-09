@@ -21,11 +21,9 @@ class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
 
-    // Login screen — Mounir's existing route, unchanged
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
 
-    // Forgot password — YOUR new route
     // Creates the BLoC with all its dependencies wired together
       case forgotPassword:
         return MaterialPageRoute(

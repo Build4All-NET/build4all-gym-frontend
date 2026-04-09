@@ -1,26 +1,139 @@
 {
   "@@locale": "ar",
 
+  // ─── LOGIN SCREEN ────────────────────────────────────────────────────────────
+
   "login_welcomeBack": "مرحباً بعودتك",
+  // "Welcome back" in Arabic.
+
   "login_subtitle": "سجل دخولك للوصول إلى حسابك",
+  // "Sign in to access your account"
+
   "login_email": "البريد الإلكتروني",
+  // "Email"
+
   "login_emailHint": "example@email.com",
+  // Email format is universal — kept in Latin characters.
+
   "login_password": "كلمة المرور",
+  // "Password"
+
   "login_passwordHint": "أدخل كلمة المرور",
+  // "Enter your password"
+
   "login_forgotPassword": "نسيت كلمة المرور؟",
+  // "Forgot password?"
+
   "login_button": "تسجيل الدخول",
+  // "Sign In"
+
   "common_or": "أو",
+  // "Or"
+
   "login_continueWithGoogle": "متابعة باستخدام Google",
+  // "Continue with Google" — brand name stays in English.
+
   "login_continueWithApple": "متابعة باستخدام Apple",
+  // "Continue with Apple" — brand name stays in English.
+
   "login_noAccount": "ليس لديك حساب؟",
+  // "Don't have an account?"
+
   "login_createAccount": "إنشاء حساب جديد",
+  // "Create new account"
+
+  // ─── VALIDATION MESSAGES ─────────────────────────────────────────────────────
 
   "validation_emailRequired": "البريد الإلكتروني مطلوب",
+  // "Email is required"
+
   "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
+  // "Please enter a valid email"
+
   "validation_passwordRequired": "كلمة المرور مطلوبة",
+  // "Password is required"
+
   "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+  // "Invalid email or password"
+
+  "validation_passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+  // "Password must be at least 8 characters"
+
+  "validation_passwordsMismatch": "كلمتا المرور غير متطابقتين",
+  // "Passwords do not match"
+
+  "validation_codeRequired": "رمز التحقق مطلوب",
+  // "Verification code is required"
+
+  "validation_invalidCode": "الرمز غير صحيح أو منتهي الصلاحية",
+  // "Invalid or expired code"
+
+  // ─── CONNECTION BANNER ────────────────────────────────────────────────────────
 
   "connection_reconnecting": "جارٍ الاتصال...",
+  // "Connecting..."
+
   "connection_offline": "لا يوجد اتصال بالإنترنت",
-  "connection_issue": "مشكلة في الاتصال"
+  // "No internet connection"
+
+  "connection_issue": "مشكلة في الاتصال",
+  // "Connection issue"
+
+  // ─── FORGOT PASSWORD — SCREEN 1: REQUEST RESET ───────────────────────────────
+
+  "forgotPassword_title": "إعادة تعيين كلمة المرور",
+  // "Reset your password"
+
+  "forgotPassword_subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رمزاً.",
+  // "Enter your email and we'll send you a code."
+
+  "forgotPassword_sendCode": "إرسال الرمز",
+  // "Send code"
+
+  "forgotPassword_spamTip": "تلميح: تحقق من مجلد البريد غير الهام أيضاً 👀",
+  // "Tip: check spam/junk folder too 👀"
+
+  // ─── FORGOT PASSWORD — SCREEN 2: VERIFY CODE ─────────────────────────────────
+
+  "forgotPassword_verifyTitle": "أدخل رمز التحقق",
+  // "Enter verification code"
+
+  "forgotPassword_codeSentTo": "أرسلنا رمزاً إلى {email}",
+  // "We sent a code to {email}" — placeholder works the same in Arabic.
+
+  "@forgotPassword_codeSentTo": {
+    "description": "Subtitle on verify screen showing which email was used.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
+  },
+
+  "forgotPassword_codeLabel": "الرمز",
+  // "Code"
+
+  "forgotPassword_verify": "تحقق",
+  // "Verify"
+
+  "forgotPassword_resendCode": "إعادة إرسال الرمز",
+  // "Resend code"
+
+  // ─── FORGOT PASSWORD — SCREEN 3: SET NEW PASSWORD ────────────────────────────
+
+  "forgotPassword_newPasswordTitle": "تعيين كلمة مرور جديدة",
+  // "Set a new password"
+
+  "forgotPassword_newPasswordSubtitle": "اجعلها قوية — نسختك المستقبلية ستشكرك.",
+  // "Make it strong — future you will thank you."
+
+  "forgotPassword_newPassword": "كلمة المرور الجديدة",
+  // "New password"
+
+  "forgotPassword_confirmPassword": "تأكيد كلمة المرور",
+  // "Confirm password"
+
+  "forgotPassword_savePassword": "حفظ كلمة المرور"
+  // "Save password"
 }

@@ -4,6 +4,7 @@ import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_pa
 import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_event.dart';
 import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_state.dart';
 import 'package:build4allgym/features/forgotpassword/presentation/widgets/auth_card_shell.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 import 'verify_otp_screen.dart';
 
 // SCREEN 1 — Forgot Password
@@ -19,7 +20,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _identifierCtrl = TextEditingController();
-  static const Color _primary = Color(0xFF1D9E75);
 
   @override
   void dispose() {
@@ -40,9 +40,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // LOCALIZATION: resolves the correct language class at runtime.
+    // If device is Arabic → AppLocalizationsAr, English → AppLocalizationsEn.
+    // Every string from here on comes from here — ZERO hardcoded text.
+    final l10n = AppLocalizations.of(context)!;
+
+    // THEME: pulls the primary brand color that was set by ThemeCubit.
+    // If the remote theme JSON has "primary": "#E91E8C" → this becomes pink.
+    final primary = Theme.of(context).colorScheme.primary;
+
+    // THEME: muted color for hint/tip text — uses bodySmall from our
+    // TextTheme which is configured in AppThemeBuilder. Falls back to a
+    // neutral grey if the token has no value.
+    final mutedColor = Theme.of(context).textTheme.bodySmall?.color
+        ?? const Color(0xFF5F5E5A);
+
     return AuthCardShell(
-      title: 'Forgot Password?',
-      subtitle: 'Enter your email or phone number\nand we\'ll send you a code.',
+      // LOCALIZED: reads from ARB file → "Reset your password" (EN) / "إعادة تعيين كلمة المرور" (AR)
+      title: l10n.forgotPassword_title,
+
+      //  LOCALIZED: English subtitle
+      subtitle: l10n.forgotPassword_subtitle,
+
       icon: Icons.lock_reset,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         // listener: reacts to STATE CHANGES (navigation, toasts)
@@ -77,25 +96,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 // Email or phone input
                 TextFormField(
                   controller: _identifierCtrl,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    labelText: 'Email or Phone',
-                    hintText: 'john@gmail.com or +96170123456',
-                    prefixIcon: const Icon(Icons.person_outline, color: _primary),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    // LOCALIZED: 'Email or Phone'
+                    labelText: l10n.forgotPassword_emailOrPhone,
+                    // LOCALIZED: 'john@gmail.com or +96170123456'
+                    hintText: l10n.forgotPassword_emailOrPhoneHint,
+                    //THEMED: icon color
+                    prefixIcon: Icon(Icons.person_outline, color: primary),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: _primary, width: 2),
+                      //THEMED: focused border color
+                      borderSide: BorderSide(color: primary, width: 2),
                     ),
                   ),
                   validator: (v) {
                     final val = v?.trim() ?? '';
-                    if (val.isEmpty) return 'This field is required';
+                    // LOCALIZED:  'This field is required'
+                    if (val.isEmpty) return l10n.forgotPassword_fieldRequired;
                     if (!val.contains('@') && val.length < 8) {
-                      return 'Enter a valid email or phone number';
+                      // LOCALIZED:  'Enter a valid email or phone number'
+                      return l10n.forgotPassword_invalidEmailOrPhone;
                     }
                     return null;
                   },
@@ -109,24 +136,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   child: ElevatedButton(
                     onPressed: state.isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _primary,
+                      //  THEMED
+                      backgroundColor: primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
                     child: state.isLoading
                         ? const CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2)
-                        : const Text('Send OTP',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600)),
+                        : Text(
+                      // LOCALIZED: 'Send OTP'
+                      l10n.forgotPassword_sendOtp,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Check your email or SMS for the verification code.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF5F5E5A)),
+
+                Text(
+                  // LOCALIZED: 'Check your email or SMS for the verification code.'
+                  l10n.forgotPassword_checkEmailOrSms,
+                  style: TextStyle(fontSize: 12, color: mutedColor),
                 ),
               ],
             ),

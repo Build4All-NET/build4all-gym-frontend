@@ -5,6 +5,7 @@ import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_pa
 import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_event.dart';
 import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_state.dart';
 import 'package:build4allgym/features/forgotpassword/presentation/widgets/auth_card_shell.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 import 'reset_password_screen.dart';
 
 // SCREEN 2 — Enter OTP
@@ -26,8 +27,6 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   List.generate(6, (_) => TextEditingController());
   // 6 focus nodes — control which box is active
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-
-  static const Color _primary = Color(0xFF1D9E75);
 
   // Countdown timer — 15 minutes = 900 seconds
   int _secondsLeft = 900;
@@ -71,10 +70,11 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   }
 
   // Called when user taps "Verify Code"
-  void _verify() {
+  void _verify(AppLocalizations l10n) {
     if (_otpCode.length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please enter all 6 digits'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        // LOCALIZED:  'Please enter all 6 digits'
+        content: Text(l10n.forgotPassword_enterAllDigits),
         backgroundColor: Colors.orange,
       ));
       return;
@@ -99,9 +99,22 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // LOCALIZATION: resolves the correct language class at runtime.
+    // Passed into _verify() so the snackbar message is also localized.
+    final l10n = AppLocalizations.of(context)!;
+
+    // THEME: brand primary color from ThemeCubit
+    final primary = Theme.of(context).colorScheme.primary;
+
+    // THEME: muted/body text color from textTheme for the timer text.
+    final mutedColor = Theme.of(context).textTheme.bodySmall?.color
+        ?? const Color(0xFF5F5E5A);
+
     return AuthCardShell(
-      title: 'Enter OTP',
-      subtitle: 'We sent a 6-digit code.\nEnter it below.',
+      // LOCALIZED:  'Enter OTP'
+      title: l10n.forgotPassword_otpScreenTitle,
+      // LOCALIZED:  'We sent a 6-digit code.\nEnter it below.'
+      subtitle: l10n.forgotPassword_otpScreenSubtitle,
       icon: Icons.mark_email_read_outlined,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (ctx, state) {
@@ -131,14 +144,23 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             children: [
 
               // Show where the code was sent (from state.maskedContact)
+              //  LOCALIZED + THEMED
+              // We now pick the right localized string based on deliveryMethod.
+              // forgotPassword_checkSms / forgotPassword_checkEmail are parametrized
+              // methods that inject the maskedContact at runtime.
               if (state.maskedContact != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Text(
-                    'Check ${state.deliveryMethod == "PHONE" ? "your SMS" : "your email"}: ${state.maskedContact}',
+                    state.deliveryMethod == 'PHONE'
+                    // LOCALIZED: "Check your SMS: jo***@..." (AR: "تحقق من SMS لديك: ...")
+                        ? l10n.forgotPassword_checkSms(state.maskedContact!)
+                    // LOCALIZED: "Check your email: jo***@..." (AR: "تحقق من بريدك: ...")
+                        : l10n.forgotPassword_checkEmail(state.maskedContact!),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: _primary,
+                    style: TextStyle(
+                      // THEMED
+                      color: primary,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -162,8 +184,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                           borderRadius: BorderRadius.circular(8)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                        const BorderSide(color: _primary, width: 2),
+                        // THEMED
+                        borderSide: BorderSide(color: primary, width: 2),
                       ),
                     ),
                     onChanged: (val) {
@@ -182,14 +204,16 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
               const SizedBox(height: 16),
 
               // Countdown timer
+              // LOCALIZED: both states (active + expired) come from ARB files.
+              // forgotPassword_codeExpiresIn is a method that injects _timerText at runtime.
               Text(
                 _secondsLeft > 0
-                    ? 'Code expires in $_timerText'
-                    : 'Code expired — please resend',
+                //LOCALIZED:  'Code expires in $_timerText'
+                    ? l10n.forgotPassword_codeExpiresIn(_timerText)
+                // LOCALIZED:  'Code expired — please resend'
+                    : l10n.forgotPassword_codeExpired,
                 style: TextStyle(
-                  color: _secondsLeft > 0
-                      ? const Color(0xFF5F5E5A)
-                      : Colors.red,
+                  color: _secondsLeft > 0 ? mutedColor : Colors.red,
                   fontSize: 13,
                 ),
               ),
@@ -200,20 +224,24 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: state.isLoading ? null : _verify,
+                  onPressed: state.isLoading ? null : () => _verify(l10n),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _primary,
+                    // THEMED
+                    backgroundColor: primary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
                   child: state.isLoading
                       ? const CircularProgressIndicator(
                       color: Colors.white, strokeWidth: 2)
-                      : const Text('Verify Code',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)),
+                      : Text(
+                    // LOCALIZED:  'Verify Code'
+                    l10n.forgotPassword_verifyCode,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -221,9 +249,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
               // Resend button — calls /auth/forgot-password again!
               TextButton(
                 onPressed: state.isLoading ? null : _resend,
-                child: const Text(
-                  "Didn't receive a code? Resend",
-                  style: TextStyle(color: _primary),
+                child: Text(
+                  // LOCALIZED: "Didn't receive a code? Resend"
+                  //THEMED: color comes from textButtonTheme in AppThemeBuilder
+                  l10n.forgotPassword_didntReceiveCode,
                 ),
               ),
             ],

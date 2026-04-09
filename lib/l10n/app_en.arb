@@ -1,26 +1,146 @@
 {
   "@@locale": "en",
 
+  // ─── LOGIN SCREEN ────────────────────────────────────────────────────────────
+
   "login_welcomeBack": "Welcome back",
+  // The big headline the user sees when they open the login screen.
+
   "login_subtitle": "Sign in to access your account",
+  // Supporting subtitle under the headline.
+
   "login_email": "Email",
+  // Label above the email text field.
+
   "login_emailHint": "example@email.com",
+  // Placeholder inside the email field when it is empty.
+
   "login_password": "Password",
+  // Label above the password text field.
+
   "login_passwordHint": "Enter your password",
+  // Placeholder inside the password field when it is empty.
+
   "login_forgotPassword": "Forgot password?",
+  // Tappable link that navigates to Screen 1 of the forgot-password flow.
+
   "login_button": "Sign In",
+  // Primary CTA button on the login screen.
+
   "common_or": "Or",
+  // Divider text between primary login and social login options.
+
   "login_continueWithGoogle": "Continue with Google",
+  // Google OAuth button label.
+
   "login_continueWithApple": "Continue with Apple",
+  // Apple Sign-In button label.
+
   "login_noAccount": "Don't have an account?",
+  // Text before the registration link.
+
   "login_createAccount": "Create new account",
+  // Tappable link to the registration screen.
+
+  // ─── VALIDATION MESSAGES ─────────────────────────────────────────────────────
+  // These are shown as inline field errors when the user submits a form
+  // with invalid or missing data.
 
   "validation_emailRequired": "Email is required",
+  // Shown when the email field is empty on submit.
+
   "validation_invalidEmail": "Please enter a valid email",
+  // Shown when the email doesn't match the expected format.
+
   "validation_passwordRequired": "Password is required",
+  // Shown when the password field is empty on submit.
+
   "validation_invalidCredentials": "Invalid email or password",
+  // Shown as a global error after a failed login API call.
+
+  "validation_passwordTooShort": "Password must be at least 8 characters",
+  // Shown on Screen 3 if the user types a password shorter than 8 chars.
+
+  "validation_passwordsMismatch": "Passwords do not match",
+  // Shown on Screen 3 if "New password" and "Confirm password" differ.
+
+  "validation_codeRequired": "Verification code is required",
+  // Shown on Screen 2 if the user taps Verify with an empty code field.
+
+  "validation_invalidCode": "Invalid or expired code",
+  // Shown on Screen 2 after the backend rejects the code.
+
+  // ─── CONNECTION BANNER ────────────────────────────────────────────────────────
+  // These drive the orange connection banner
 
   "connection_reconnecting": "Connecting...",
+  // Shown while the app is trying to re-establish a connection.
+
   "connection_offline": "No internet connection",
-  "connection_issue": "Connection issue"
+  // Shown when the device has no internet.
+
+  "connection_issue": "Connection issue",
+  // Generic fallback for other connection errors.
+
+  // ─── FORGOT PASSWORD — SCREEN 1: REQUEST RESET ───────────────────────────────
+  // The user enters their email and taps "Send code".
+
+  "forgotPassword_title": "Reset your password",
+  // Big headline
+
+  "forgotPassword_subtitle": "Enter your email and we'll send you a code.",
+  // Supporting text under the headline.
+
+  "forgotPassword_sendCode": "Send code",
+  // Primary CTA button that triggers the API call to send the OTP email.
+
+  "forgotPassword_spamTip": "Tip: check spam/junk folder too 👀",
+  // Helper text below the button — reduces support tickets about missing emails.
+
+  // ─── FORGOT PASSWORD — SCREEN 2: VERIFY CODE ─────────────────────────────────
+  // The user enters the 6-digit (or however long) OTP they received by email.
+
+  "forgotPassword_verifyTitle": "Enter verification code",
+  // Big headline
+
+  "forgotPassword_codeSentTo": "We sent a code to {email}",
+  // Dynamic subtitle — the email address is injected at runtime.
+  // Example result: "We sent a code to user@gmail.com"
+
+  "@forgotPassword_codeSentTo": {
+    "description": "Subtitle on verify screen showing which email was used.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
+  },
+
+  "forgotPassword_codeLabel": "Code",
+  // Label above the OTP input field.
+
+  "forgotPassword_verify": "Verify",
+  // Primary CTA button — calls the API to validate the OTP.
+
+  "forgotPassword_resendCode": "Resend code",
+  // TextButton below Verify — triggers the API to resend the OTP email.
+
+  // ─── FORGOT PASSWORD — SCREEN 3: SET NEW PASSWORD ────────────────────────────
+  // The user enters and confirms their new password.
+
+  "forgotPassword_newPasswordTitle": "Set a new password",
+  // Big headline
+
+  "forgotPassword_newPasswordSubtitle": "Make it strong — future you will thank you.",
+  // Light-hearted subtitle that encourages strong passwords.
+
+  "forgotPassword_newPassword": "New password",
+  // Label above the first password field.
+
+  "forgotPassword_confirmPassword": "Confirm password",
+  // Label above the confirmation password field.
+
+  "forgotPassword_savePassword": "Save password"
+  // Primary CTA button — calls the API to update the password.
 }

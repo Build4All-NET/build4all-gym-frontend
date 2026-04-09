@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/theme/theme_cubit.dart';
 
-// The OUTER SHELL used by all 3 screens.
-// the frame (icon, title, subtitle, white card) is always the same.
+// The card wrapper used by ALL 3 screens.
+// Uses ThemeCubit — so the colors automatically match
 class AuthCardShell extends StatelessWidget {
   final Widget child;    // the form that goes inside the card
-  final String title;    // big title like "Forgot Password?"
+  final String title;    // big title like "Reset your password"
   final String subtitle; // small text under the title
   final IconData icon;   // the circle icon at the top
 
@@ -16,13 +18,20 @@ class AuthCardShell extends StatelessWidget {
     this.icon = Icons.lock_reset,
   });
 
-  // Your backend's teal color
-  static const Color _primary = Color(0xFF1D9E75);
-
   @override
   Widget build(BuildContext context) {
+    // Get the theme tokens from ThemeCubit
+    // tokens.colors.primary = the app's primary colorS
+    // tokens.card.radius = the card corner radius
+    // tokens.card.padding = padding inside the card
+    final tokens = context.watch<ThemeCubit>().state.tokens;
+    final colors = tokens.colors;
+    final card = tokens.card;
+    final t = Theme.of(context).textTheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF1EFE8), // light gray background
+      // Use the background color from the theme tokens
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -30,52 +39,58 @@ class AuthCardShell extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Circle icon at top (lock, email, password icon)
+
+                // Circle icon at top
+                // Color comes from theme — automatically pink/green/etc
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: _primary.withOpacity(0.12),
-                  child: Icon(icon, color: _primary, size: 30),
+                  backgroundColor: colors.primary.withOpacity(0.12),
+                  child: Icon(icon, color: colors.primary, size: 30),
                 ),
                 const SizedBox(height: 14),
 
-                // Title — "Forgot Password?" / "Enter OTP" / "New Password"
+                // Title — uses textTheme from ThemeData
+                // (set in AppThemeBuilder → text.headlineSmall)
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style: t.titleLarge?.copyWith(
+                    color: colors.label,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF085041),
                   ),
                 ),
                 const SizedBox(height: 6),
 
-                // Subtitle — description under the title
+                // Subtitle — uses bodyMedium from textTheme
                 Text(
                   subtitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF5F5E5A),
-                  ),
+                  style: t.bodyMedium?.copyWith(color: colors.body),
                 ),
                 const SizedBox(height: 24),
 
                 // White card that wraps the form
+                // Uses card.radius and card.padding from tokens
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(card.padding + 8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(card.radius),
+                    border: card.showBorder
+                        ? Border.all(
+                        color: colors.border.withOpacity(0.15))
+                        : null,
+                    boxShadow: card.showShadow
+                        ? [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: card.elevation * 2,
+                        offset: Offset(0, card.elevation * 0.6),
                       ),
-                    ],
+                    ]
+                        : null,
                   ),
-                  child: child, // ← the form goes here
+                  child: child,
                 ),
               ],
             ),

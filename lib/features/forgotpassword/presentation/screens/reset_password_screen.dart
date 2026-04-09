@@ -5,6 +5,7 @@ import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_pa
 import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_event.dart';
 import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_state.dart';
 import 'package:build4allgym/features/forgotpassword/presentation/widgets/auth_card_shell.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 
 // SCREEN 3 — New Password
 // Purpose: user types and confirms their new password
@@ -26,8 +27,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _showPass = false;
   bool _showConfirm = false;
 
-  static const Color _primary = Color(0xFF1D9E75);
-
   @override
   void dispose() {
     _passCtrl.dispose();
@@ -48,9 +47,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // LOCALIZATION: every user-visible string comes from here.
+    // Switching device language to Arabic automatically uses AppLocalizationsAr.
+    final l10n = AppLocalizations.of(context)!;
+
+    // THEME: brand primary color
+    final primary = Theme.of(context).colorScheme.primary;
+
     return AuthCardShell(
-      title: 'New Password',
-      subtitle: 'Set a strong password with at\nleast 8 characters.',
+      // LOCALIZED:  'New Password'
+      title: l10n.forgotPassword_newPasswordScreenTitle,
+      // LOCALIZED:  'Set a strong password with at\nleast 8 characters.'
+      subtitle: l10n.forgotPassword_newPasswordScreenSubtitle,
       icon: Icons.password_outlined,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (ctx, state) {
@@ -64,13 +72,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           // Step became 3 → password reset → go back to login!
           // use AppRouter
           if (state.step == 3) {
-            ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-              content: Text('✅ Password reset! Please login with new password.'),
-              backgroundColor: Color(0xFF1D9E75),
+            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+              // LOCALIZED:  hardcoded ' Password reset! Please login with new password.'
+              content: Text(l10n.forgotPassword_passwordResetSuccess),
+              // THEMED:  hardcoded Color(0xFF1D9E75)
+              backgroundColor: primary,
             ));
 
             // pushNamedAndRemoveUntil = go to login AND remove ALL screens behind
-            // So pressing back from login doesn't go back to forget pass screens
+            // So pressing back from login doesn't go back to forgot-pass screens
             Navigator.of(ctx).pushNamedAndRemoveUntil(
               AppRouter.login,
                   (route) => false, // remove everything
@@ -90,13 +100,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   controller: _passCtrl,
                   obscureText: !_showPass,
                   decoration: InputDecoration(
-                    labelText: 'New Password',
-                    prefixIcon:
-                    const Icon(Icons.lock_outline, color: _primary),
+                    // LOCALIZED:  'New Password'
+                    labelText: l10n.forgotPassword_newPassword,
+                    // THEMED
+                    prefixIcon: Icon(Icons.lock_outline, color: primary),
                     suffixIcon: IconButton(
-                      icon: Icon(_showPass
-                          ? Icons.visibility_off
-                          : Icons.visibility),
+                      icon: Icon(
+                          _showPass ? Icons.visibility_off : Icons.visibility),
                       onPressed: () =>
                           setState(() => _showPass = !_showPass),
                     ),
@@ -104,18 +114,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         borderRadius: BorderRadius.circular(10)),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: _primary, width: 2),
+                      // THEMED
+                      borderSide: BorderSide(color: primary, width: 2),
                     ),
                   ),
                   validator: (v) {
                     final val = v ?? '';
-                    if (val.isEmpty) return 'Password is required';
+                    // LOCALIZED: 'Password is required'
+                    if (val.isEmpty) return l10n.validation_passwordRequired;
                     // rules match the backend @Size and @Pattern
-                    if (val.length < 8) return 'Minimum 8 characters';
+                    // LOCALIZED:  'Minimum 8 characters'
+                    if (val.length < 8) return l10n.validation_passwordTooShort;
+                    // LOCALIZED:  'Must contain at least one letter'
                     if (!val.contains(RegExp(r'[A-Za-z]')))
-                      return 'Must contain at least one letter';
+                      return l10n.validation_passwordNoLetter;
+                    //  LOCALIZED:  'Must contain at least one number'
                     if (!val.contains(RegExp(r'[0-9]')))
-                      return 'Must contain at least one number';
+                      return l10n.validation_passwordNoNumber;
                     return null;
                   },
                 ),
@@ -126,9 +141,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   controller: _confirmCtrl,
                   obscureText: !_showConfirm,
                   decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    prefixIcon:
-                    const Icon(Icons.lock_outline, color: _primary),
+                    //  LOCALIZED: 'Confirm Password'
+                    labelText: l10n.forgotPassword_confirmPassword,
+                    // THEMED
+                    prefixIcon: Icon(Icons.lock_outline, color: primary),
                     suffixIcon: IconButton(
                       icon: Icon(_showConfirm
                           ? Icons.visibility_off
@@ -140,12 +156,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         borderRadius: BorderRadius.circular(10)),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: _primary, width: 2),
+                      //THEMED
+                      borderSide: BorderSide(color: primary, width: 2),
                     ),
                   ),
                   validator: (v) {
-                    if ((v ?? '').isEmpty) return 'Please confirm your password';
-                    if (v != _passCtrl.text) return 'Passwords do not match';
+                    // LOCALIZED: 'Please confirm your password'
+                    if ((v ?? '').isEmpty)
+                      return l10n.validation_confirmPasswordRequired;
+                    // LOCALIZED:  'Passwords do not match'
+                    if (v != _passCtrl.text)
+                      return l10n.validation_passwordsMismatch;
                     return null;
                   },
                 ),
@@ -158,18 +179,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: ElevatedButton(
                     onPressed: state.isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _primary,
+                      // THEMED
+                      backgroundColor: primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
                     child: state.isLoading
                         ? const CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2)
-                        : const Text('Save Password',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600)),
+                        : Text(
+                      // LOCALIZED: 'Save Password'
+                      l10n.forgotPassword_savePassword,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
               ],
