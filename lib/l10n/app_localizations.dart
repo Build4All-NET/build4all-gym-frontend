@@ -95,6 +95,210 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
+  /// Welcome message on login screen
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get auth_welcomeBack;
+
+  /// Subtitle text on login screen
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to access your account'**
+  String get auth_loginSubtitle;
+
+  /// Label for email input field
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get auth_emailLabel;
+
+  /// Label for phone number input field
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get auth_phoneLabel;
+
+  /// Hint text for email input field
+  ///
+  /// In en, this message translates to:
+  /// **'example@email.com'**
+  String get auth_emailHint;
+
+  /// Hint text for phone input field
+  ///
+  /// In en, this message translates to:
+  /// **'+961 12 345 678'**
+  String get auth_phoneHint;
+
+  /// Label for password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get auth_passwordLabel;
+
+  /// Hint text for password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get auth_passwordHint;
+
+  /// Forgot password link text
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get auth_forgotPassword;
+
+  /// Login button text
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get auth_loginButton;
+
+  /// Google login button text
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get auth_continueWithGoogle;
+
+  /// Apple login button text
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get auth_continueWithApple;
+
+  /// Text asking if user has no account
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get auth_noAccount;
+
+  /// Create new account link text
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get auth_createAccount;
+
+  /// Title for inactive account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Account Inactive'**
+  String get auth_accountInactiveTitle;
+
+  /// Message for inactive account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is inactive. Would you like to reactivate it?'**
+  String get auth_accountInactiveMessage;
+
+  /// Reactivate account button text
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get auth_reactivate;
+
+  /// Error message for inactive account
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is inactive.'**
+  String get auth_accountInactive;
+
+  /// Message when account is deleted but can be restored
+  ///
+  /// In en, this message translates to:
+  /// **'Your account was deleted. Contact support to restore it.'**
+  String get auth_accountDeletedRestorableMessage;
+
+  /// Message when account is permanently deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been permanently deleted.'**
+  String get auth_accountDeletedPermanentMessage;
+
+  /// Error message when user account is not found
+  ///
+  /// In en, this message translates to:
+  /// **'No account found with these credentials.'**
+  String get auth_userNotFound;
+
+  /// Error message when login is locked due to too many attempts
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Please try again later.'**
+  String get auth_loginLocked;
+
+  /// Validation message when email field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get validation_emailRequired;
+
+  /// Validation message when phone field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get validation_phoneRequired;
+
+  /// Validation message when email format is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get validation_emailInvalid;
+
+  /// Validation message when password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get validation_passwordRequired;
+
+  /// Error message for invalid login credentials
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get validation_invalidCredentials;
+
+  /// Cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get general_cancel;
+
+  /// Or text for divider
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get general_or;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get error_somethingWentWrong;
+
+  /// Error message when device is offline
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get connection_offline;
+
+  /// Title for role selection bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as'**
+  String get authGateContinueAs;
+
+  /// Admin role option in role selection
+  ///
+  /// In en, this message translates to:
+  /// **'Admin / Owner'**
+  String get authGateRoleAdminOwner;
+
+  /// User role option in role selection
+  ///
+  /// In en, this message translates to:
+  /// **'Regular User'**
+  String get authGateRoleUser;
+
   /// No description provided for @login_welcomeBack.
   ///
   /// In en, this message translates to:
@@ -149,18 +353,6 @@ abstract class AppLocalizations {
   /// **'Or'**
   String get common_or;
 
-  /// No description provided for @login_continueWithGoogle.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue with Google'**
-  String get login_continueWithGoogle;
-
-  /// No description provided for @login_continueWithApple.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue with Apple'**
-  String get login_continueWithApple;
-
   /// No description provided for @login_noAccount.
   ///
   /// In en, this message translates to:
@@ -173,29 +365,11 @@ abstract class AppLocalizations {
   /// **'Create new account'**
   String get login_createAccount;
 
-  /// No description provided for @validation_emailRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Email is required'**
-  String get validation_emailRequired;
-
   /// No description provided for @validation_invalidEmail.
   ///
   /// In en, this message translates to:
   /// **'Please enter a valid email'**
   String get validation_invalidEmail;
-
-  /// No description provided for @validation_passwordRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Password is required'**
-  String get validation_passwordRequired;
-
-  /// No description provided for @validation_invalidCredentials.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid email or password'**
-  String get validation_invalidCredentials;
 
   /// No description provided for @connection_reconnecting.
   ///
@@ -203,17 +377,53 @@ abstract class AppLocalizations {
   /// **'Connecting...'**
   String get connection_reconnecting;
 
-  /// No description provided for @connection_offline.
-  ///
-  /// In en, this message translates to:
-  /// **'No internet connection'**
-  String get connection_offline;
-
   /// No description provided for @connection_issue.
   ///
   /// In en, this message translates to:
   /// **'Connection issue'**
   String get connection_issue;
+
+  /// No description provided for @appAccessTitleDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'App Deleted'**
+  String get appAccessTitleDeleted;
+
+  /// No description provided for @appAccessTitleExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Expired'**
+  String get appAccessTitleExpired;
+
+  /// No description provided for @appAccessTitleUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'App Unavailable'**
+  String get appAccessTitleUnavailable;
+
+  /// No description provided for @appAccessMessageDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'This application has been deleted and is no longer available.'**
+  String get appAccessMessageDeleted;
+
+  /// No description provided for @appAccessMessageExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The subscription for this app has expired. Please contact support.'**
+  String get appAccessMessageExpired;
+
+  /// No description provided for @appAccessMessageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This application is currently unavailable. Please try again later.'**
+  String get appAccessMessageUnavailable;
+
+  /// No description provided for @appAccessRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get appAccessRetry;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
