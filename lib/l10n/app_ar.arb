@@ -1,6 +1,176 @@
 {
   "@@locale": "ar",
 
+  "auth_welcomeBack": "مرحباً بعودتك",
+  "@auth_welcomeBack": {
+    "description": "Welcome message on login screen"
+  },
+
+  "auth_loginSubtitle": "سجل دخولك للوصول إلى حسابك",
+  "@auth_loginSubtitle": {
+    "description": "Subtitle text on login screen"
+  },
+
+  "auth_emailLabel": "البريد الإلكتروني",
+  "@auth_emailLabel": {
+    "description": "Label for email input field"
+  },
+
+  "auth_phoneLabel": "رقم الهاتف",
+  "@auth_phoneLabel": {
+    "description": "Label for phone number input field"
+  },
+
+  "auth_emailHint": "example@email.com",
+  "@auth_emailHint": {
+    "description": "Hint text for email input field"
+  },
+
+  "auth_phoneHint": "+961 12 345 678",
+  "@auth_phoneHint": {
+    "description": "Hint text for phone input field"
+  },
+
+  "auth_passwordLabel": "كلمة المرور",
+  "@auth_passwordLabel": {
+    "description": "Label for password input field"
+  },
+
+  "auth_passwordHint": "أدخل كلمة المرور",
+  "@auth_passwordHint": {
+    "description": "Hint text for password input field"
+  },
+
+  "auth_forgotPassword": "نسيت كلمة المرور؟",
+  "@auth_forgotPassword": {
+    "description": "Forgot password link text"
+  },
+
+  "auth_loginButton": "تسجيل الدخول",
+  "@auth_loginButton": {
+    "description": "Login button text"
+  },
+
+  "auth_continueWithGoogle": "متابعة باستخدام Google",
+  "@auth_continueWithGoogle": {
+    "description": "Google login button text"
+  },
+
+  "auth_continueWithApple": "متابعة باستخدام Apple",
+  "@auth_continueWithApple": {
+    "description": "Apple login button text"
+  },
+
+  "auth_noAccount": "ليس لديك حساب؟",
+  "@auth_noAccount": {
+    "description": "Text asking if user has no account"
+  },
+
+  "auth_createAccount": "إنشاء حساب جديد",
+  "@auth_createAccount": {
+    "description": "Create new account link text"
+  },
+
+  "auth_accountInactiveTitle": "الحساب غير نشط",
+  "@auth_accountInactiveTitle": {
+    "description": "Title for inactive account dialog"
+  },
+
+  "auth_accountInactiveMessage": "حسابك غير نشط. هل تريد إعادة تنشيطه؟",
+  "@auth_accountInactiveMessage": {
+    "description": "Message for inactive account dialog"
+  },
+
+  "auth_reactivate": "إعادة التنشيط",
+  "@auth_reactivate": {
+    "description": "Reactivate account button text"
+  },
+
+  "auth_accountInactive": "حسابك غير نشط.",
+  "@auth_accountInactive": {
+    "description": "Error message for inactive account"
+  },
+
+  "auth_accountDeletedRestorableMessage": "تم حذف حسابك. اتصل بالدعم لاستعادته.",
+  "@auth_accountDeletedRestorableMessage": {
+    "description": "Message when account is deleted but can be restored"
+  },
+
+  "auth_accountDeletedPermanentMessage": "تم حذف حسابك بشكل دائم.",
+  "@auth_accountDeletedPermanentMessage": {
+    "description": "Message when account is permanently deleted"
+  },
+
+  "auth_userNotFound": "لم يتم العثور على حساب بهذه البيانات.",
+  "@auth_userNotFound": {
+    "description": "Error message when user account is not found"
+  },
+
+  "auth_loginLocked": "محاولات فاشلة كثيرة. يرجى المحاولة لاحقاً.",
+  "@auth_loginLocked": {
+    "description": "Error message when login is locked due to too many attempts"
+  },
+
+  "validation_emailRequired": "البريد الإلكتروني مطلوب",
+  "@validation_emailRequired": {
+    "description": "Validation message when email field is empty"
+  },
+
+  "validation_phoneRequired": "رقم الهاتف مطلوب",
+  "@validation_phoneRequired": {
+    "description": "Validation message when phone field is empty"
+  },
+
+  "validation_emailInvalid": "البريد الإلكتروني غير صالح",
+  "@validation_emailInvalid": {
+    "description": "Validation message when email format is invalid"
+  },
+
+  "validation_passwordRequired": "كلمة المرور مطلوبة",
+  "@validation_passwordRequired": {
+    "description": "Validation message when password field is empty"
+  },
+
+  "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+  "@validation_invalidCredentials": {
+    "description": "Error message for invalid login credentials"
+  },
+
+  "general_cancel": "إلغاء",
+  "@general_cancel": {
+    "description": "Cancel button text"
+  },
+
+  "general_or": "أو",
+  "@general_or": {
+    "description": "Or text for divider"
+  },
+
+  "error_somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "@error_somethingWentWrong": {
+    "description": "Generic error message"
+  },
+
+  "connection_offline": "لا يوجد اتصال بالإنترنت. يرجى التحقق من شبكتك.",
+  "@connection_offline": {
+    "description": "Error message when device is offline"
+  },
+
+  "authGateContinueAs": "المتابعة كـ",
+  "@authGateContinueAs": {
+    "description": "Title for role selection bottom sheet"
+  },
+
+  "authGateRoleAdminOwner": "مدير / مالك",
+  "@authGateRoleAdminOwner": {
+    "description": "Admin role option in role selection"
+  },
+
+  "authGateRoleUser": "مستخدم",
+  "@authGateRoleUser": {
+    "description": "User role option in role selection"
+  },
+
   "login_welcomeBack": "مرحباً بعودتك",
   "login_subtitle": "سجل دخولك للوصول إلى حسابك",
   "login_email": "البريد الإلكتروني",
@@ -10,17 +180,23 @@
   "login_forgotPassword": "نسيت كلمة المرور؟",
   "login_button": "تسجيل الدخول",
   "common_or": "أو",
-  "login_continueWithGoogle": "متابعة باستخدام Google",
-  "login_continueWithApple": "متابعة باستخدام Apple",
   "login_noAccount": "ليس لديك حساب؟",
   "login_createAccount": "إنشاء حساب جديد",
-
   "validation_emailRequired": "البريد الإلكتروني مطلوب",
   "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
   "validation_passwordRequired": "كلمة المرور مطلوبة",
   "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-
   "connection_reconnecting": "جارٍ الاتصال...",
   "connection_offline": "لا يوجد اتصال بالإنترنت",
-  "connection_issue": "مشكلة في الاتصال"
+  "connection_issue": "مشكلة في الاتصال",
+  "authGateContinueAs": "تابع كـ",
+  "authGateRoleAdminOwner": "مدير / مالك",
+  "authGateRoleUser": "مستخدم عادي",
+  "appAccessTitleDeleted": "التطبيق محذوف",
+  "appAccessTitleExpired": "انتهى الاشتراك",
+  "appAccessTitleUnavailable": "التطبيق غير متاح",
+  "appAccessMessageDeleted": "هذا التطبيق تم حذفه ولم يعد متاحاً.",
+  "appAccessMessageExpired": "انتهى اشتراك هذا التطبيق. يرجى التواصل مع الدعم.",
+  "appAccessMessageUnavailable": "هذا التطبيق غير متاح حالياً. يرجى المحاولة لاحقاً.",
+  "appAccessRetry": "حاول مجدداً"
 }

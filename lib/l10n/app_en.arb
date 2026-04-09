@@ -1,6 +1,176 @@
 {
   "@@locale": "en",
 
+  "auth_welcomeBack": "Welcome Back",
+  "@auth_welcomeBack": {
+    "description": "Welcome message on login screen"
+  },
+
+  "auth_loginSubtitle": "Sign in to access your account",
+  "@auth_loginSubtitle": {
+    "description": "Subtitle text on login screen"
+  },
+
+  "auth_emailLabel": "Email Address",
+  "@auth_emailLabel": {
+    "description": "Label for email input field"
+  },
+
+  "auth_phoneLabel": "Phone Number",
+  "@auth_phoneLabel": {
+    "description": "Label for phone number input field"
+  },
+
+  "auth_emailHint": "example@email.com",
+  "@auth_emailHint": {
+    "description": "Hint text for email input field"
+  },
+
+  "auth_phoneHint": "+961 12 345 678",
+  "@auth_phoneHint": {
+    "description": "Hint text for phone input field"
+  },
+
+  "auth_passwordLabel": "Password",
+  "@auth_passwordLabel": {
+    "description": "Label for password input field"
+  },
+
+  "auth_passwordHint": "Enter your password",
+  "@auth_passwordHint": {
+    "description": "Hint text for password input field"
+  },
+
+  "auth_forgotPassword": "Forgot Password?",
+  "@auth_forgotPassword": {
+    "description": "Forgot password link text"
+  },
+
+  "auth_loginButton": "Sign In",
+  "@auth_loginButton": {
+    "description": "Login button text"
+  },
+
+  "auth_continueWithGoogle": "Continue with Google",
+  "@auth_continueWithGoogle": {
+    "description": "Google login button text"
+  },
+
+  "auth_continueWithApple": "Continue with Apple",
+  "@auth_continueWithApple": {
+    "description": "Apple login button text"
+  },
+
+  "auth_noAccount": "Don't have an account?",
+  "@auth_noAccount": {
+    "description": "Text asking if user has no account"
+  },
+
+  "auth_createAccount": "Create Account",
+  "@auth_createAccount": {
+    "description": "Create new account link text"
+  },
+
+  "auth_accountInactiveTitle": "Account Inactive",
+  "@auth_accountInactiveTitle": {
+    "description": "Title for inactive account dialog"
+  },
+
+  "auth_accountInactiveMessage": "Your account is inactive. Would you like to reactivate it?",
+  "@auth_accountInactiveMessage": {
+    "description": "Message for inactive account dialog"
+  },
+
+  "auth_reactivate": "Reactivate",
+  "@auth_reactivate": {
+    "description": "Reactivate account button text"
+  },
+
+  "auth_accountInactive": "Your account is inactive.",
+  "@auth_accountInactive": {
+    "description": "Error message for inactive account"
+  },
+
+  "auth_accountDeletedRestorableMessage": "Your account was deleted. Contact support to restore it.",
+  "@auth_accountDeletedRestorableMessage": {
+    "description": "Message when account is deleted but can be restored"
+  },
+
+  "auth_accountDeletedPermanentMessage": "Your account has been permanently deleted.",
+  "@auth_accountDeletedPermanentMessage": {
+    "description": "Message when account is permanently deleted"
+  },
+
+  "auth_userNotFound": "No account found with these credentials.",
+  "@auth_userNotFound": {
+    "description": "Error message when user account is not found"
+  },
+
+  "auth_loginLocked": "Too many failed attempts. Please try again later.",
+  "@auth_loginLocked": {
+    "description": "Error message when login is locked due to too many attempts"
+  },
+
+  "validation_emailRequired": "Email is required",
+  "@validation_emailRequired": {
+    "description": "Validation message when email field is empty"
+  },
+
+  "validation_phoneRequired": "Phone number is required",
+  "@validation_phoneRequired": {
+    "description": "Validation message when phone field is empty"
+  },
+
+  "validation_emailInvalid": "Invalid email address",
+  "@validation_emailInvalid": {
+    "description": "Validation message when email format is invalid"
+  },
+
+  "validation_passwordRequired": "Password is required",
+  "@validation_passwordRequired": {
+    "description": "Validation message when password field is empty"
+  },
+
+  "validation_invalidCredentials": "Invalid email or password",
+  "@validation_invalidCredentials": {
+    "description": "Error message for invalid login credentials"
+  },
+
+  "general_cancel": "Cancel",
+  "@general_cancel": {
+    "description": "Cancel button text"
+  },
+
+  "general_or": "or",
+  "@general_or": {
+    "description": "Or text for divider"
+  },
+
+  "error_somethingWentWrong": "Something went wrong. Please try again.",
+  "@error_somethingWentWrong": {
+    "description": "Generic error message"
+  },
+
+  "connection_offline": "No internet connection. Please check your network.",
+  "@connection_offline": {
+    "description": "Error message when device is offline"
+  },
+
+  "authGateContinueAs": "Continue as",
+  "@authGateContinueAs": {
+    "description": "Title for role selection bottom sheet"
+  },
+
+  "authGateRoleAdminOwner": "Admin / Owner",
+  "@authGateRoleAdminOwner": {
+    "description": "Admin role option in role selection"
+  },
+
+  "authGateRoleUser": "User",
+  "@authGateRoleUser": {
+    "description": "User role option in role selection"
+  },
+
   "login_welcomeBack": "Welcome back",
   "login_subtitle": "Sign in to access your account",
   "login_email": "Email",
@@ -10,17 +180,23 @@
   "login_forgotPassword": "Forgot password?",
   "login_button": "Sign In",
   "common_or": "Or",
-  "login_continueWithGoogle": "Continue with Google",
-  "login_continueWithApple": "Continue with Apple",
   "login_noAccount": "Don't have an account?",
   "login_createAccount": "Create new account",
-
   "validation_emailRequired": "Email is required",
   "validation_invalidEmail": "Please enter a valid email",
   "validation_passwordRequired": "Password is required",
   "validation_invalidCredentials": "Invalid email or password",
-
   "connection_reconnecting": "Connecting...",
   "connection_offline": "No internet connection",
-  "connection_issue": "Connection issue"
+  "connection_issue": "Connection issue",
+  "authGateContinueAs": "Continue as",
+  "authGateRoleAdminOwner": "Admin / Owner",
+  "authGateRoleUser": "Regular User",
+  "appAccessTitleDeleted": "App Deleted",
+  "appAccessTitleExpired": "Subscription Expired",
+  "appAccessTitleUnavailable": "App Unavailable",
+  "appAccessMessageDeleted": "This application has been deleted and is no longer available.",
+  "appAccessMessageExpired": "The subscription for this app has expired. Please contact support.",
+  "appAccessMessageUnavailable": "This application is currently unavailable. Please try again later.",
+  "appAccessRetry": "Try Again"
 }

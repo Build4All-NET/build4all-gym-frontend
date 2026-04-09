@@ -2,13 +2,17 @@ class Adminloginresponse {
   final String token;
   final String tokenType;
   final String role;
-  final int? ProjectOwnerId;
+  final int? projectOwnerId;
+  final String? refreshToken;
+  final Map<String, dynamic>? admin; // full admin object from backend
 
   Adminloginresponse({
     required this.token,
     required this.role,
-    required this.ProjectOwnerId,
+    required this.projectOwnerId,
     required this.tokenType,
+    this.refreshToken,
+    this.admin,
   });
 
   factory Adminloginresponse.fromjson(Map<String, dynamic> j) {
@@ -18,40 +22,45 @@ class Adminloginresponse {
       return int.tryParse(v.toString());
     }
 
-    // ✅ Support wrapped payload: { message, data: {...} }
+    // Support wrapped payload: { message, data: {...} }
     Map<String, dynamic> data = j;
     final d1 = j['data'];
     if (d1 is Map) {
       data = Map<String, dynamic>.from(d1);
-
-      // Sometimes nested again: { message, data: { data: {...} } }
       final d2 = data['data'];
-      if (d2 is Map) {
-        data = Map<String, dynamic>.from(d2 as Map);
-      }
-    }
-    String pickToken(Map<String, dynamic> d) {
-      return (d['token'] ?? d['accessToken'] ?? '').toString();
+      if (d2 is Map) data = Map<String, dynamic>.from(d2 as Map);
     }
 
-    String pickTokenType(Map<String,dynamic> d){
-      return (d['tokentype'] ?? d['tokenType'] ?? '').toString();
+    String pickToken(Map<String, dynamic> d) =>
+        (d['token'] ?? d['accessToken'] ?? '').toString();
+
+    String pickTokenType(Map<String, dynamic> d) =>
+        (d['tokentype'] ?? d['tokenType'] ?? 'Bearer').toString();
+
+    String pickRole(Map<String, dynamic> d) =>
+        (d['role'] ?? d['Role'] ?? d['roles'] ?? '').toString();
+
+    int? pickOwnerProjectId(Map<String, dynamic> d) =>
+        toInt(d['tenantId'] ?? d['ownerProjectId'] ?? d['OwnerProjectId']);
+
+    String? pickRefreshToken(Map<String, dynamic> d) {
+      final v = (d['refreshToken'] ?? d['refresh_token'] ?? '').toString();
+      return v.trim().isEmpty ? null : v.trim();
     }
 
-    String pickRole(Map<String,dynamic> d){
-      return (d['Role'] ?? d['roles'] ?? '').toString();
-    }
-
-    int? pickOwnerProjectId(Map<String,dynamic> d){
-      return toInt((d['tenantId'] ?? d['OwnerProjectId']));
+    Map<String, dynamic>? pickAdmin(Map<String, dynamic> d) {
+      final a = d['admin'];
+      if (a is Map) return Map<String, dynamic>.from(a);
+      return null;
     }
 
     return Adminloginresponse(
-        token: pickToken(data),
-        role: pickRole(data),
-        ProjectOwnerId: pickOwnerProjectId(data),
-        tokenType: pickTokenType(data)
+      token: pickToken(data),
+      role: pickRole(data),
+      projectOwnerId: pickOwnerProjectId(data),
+      tokenType: pickTokenType(data),
+      refreshToken: pickRefreshToken(data),
+      admin: pickAdmin(data),
     );
-
   }
 }
