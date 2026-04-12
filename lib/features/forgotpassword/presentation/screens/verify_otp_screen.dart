@@ -154,9 +154,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                   child: Text(
                     state.deliveryMethod == 'PHONE'
                     // LOCALIZED: "Check your SMS: jo***@..." (AR: "تحقق من SMS لديك: ...")
-                        ? l10n.forgotPassword_checkSms(state.maskedContact!)
+                        ? l10n.forgotPassword_checkSms
                     // LOCALIZED: "Check your email: jo***@..." (AR: "تحقق من بريدك: ...")
-                        : l10n.forgotPassword_checkEmail(state.maskedContact!),
+                        : l10n.forgotPassword_checkEmail,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       // THEMED
@@ -209,7 +209,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
               Text(
                 _secondsLeft > 0
                 //LOCALIZED:  'Code expires in $_timerText'
-                    ? l10n.forgotPassword_codeExpiresIn(_timerText)
+                    ? l10n.forgotPassword_codeExpiresIn(_timerText as int)
                 // LOCALIZED:  'Code expired — please resend'
                     : l10n.forgotPassword_codeExpired,
                 style: TextStyle(

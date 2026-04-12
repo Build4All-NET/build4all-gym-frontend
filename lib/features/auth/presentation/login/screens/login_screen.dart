@@ -11,6 +11,7 @@ import 'package:build4allgym/features/shell/presentation/screens/main_shell.dart
 import 'package:build4allgym/l10n/app_localizations.dart';
 
 import '../../signup/screens/signup_screen.dart';
+import '../../../../forgotpassword/presentation/screens/forgot_password_screen.dart';
 
 class UserLoginScreen extends StatefulWidget {
   final AppConfig appConfig;
@@ -382,7 +383,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                       alignment: Alignment.centerRight,
                                       child: TextButton(
                                         onPressed: () {
-                                          // TODO: navigate to forgot password
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const ForgotPasswordScreen(),
+                                            ),
+                                          );
                                         },
                                         style: TextButton.styleFrom(
                                           padding: EdgeInsets.zero,
