@@ -172,4 +172,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appAccessRetry => 'Try Again';
+
+  @override
+  String get general_optional => 'Optional';
+
+  @override
+  String get validation_emailAlreadyExists => 'Email already exists';
+
+  @override
+  String get validation_phoneAlreadyExists => 'Phone number already exists';
+
+  @override
+  String get connection_timeout => 'Request timed out. Please try again.';
+
+  @override
+  String get error_serverError => 'Server error. Please try again later.';
 }

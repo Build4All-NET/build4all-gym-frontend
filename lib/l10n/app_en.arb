@@ -198,5 +198,10 @@
   "appAccessMessageDeleted": "This application has been deleted and is no longer available.",
   "appAccessMessageExpired": "The subscription for this app has expired. Please contact support.",
   "appAccessMessageUnavailable": "This application is currently unavailable. Please try again later.",
-  "appAccessRetry": "Try Again"
+  "appAccessRetry": "Try Again",
+  "general_optional": "Optional",
+  "validation_emailAlreadyExists": "Email already exists",
+  "validation_phoneAlreadyExists": "Phone number already exists",
+  "connection_timeout": "Request timed out. Please try again.",
+  "error_serverError": "Server error. Please try again later."
 }

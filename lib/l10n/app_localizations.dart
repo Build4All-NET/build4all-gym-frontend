@@ -424,6 +424,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try Again'**
   String get appAccessRetry;
+
+  /// No description provided for @general_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get general_optional;
+
+  /// No description provided for @validation_emailAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Email already exists'**
+  String get validation_emailAlreadyExists;
+
+  /// No description provided for @validation_phoneAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number already exists'**
+  String get validation_phoneAlreadyExists;
+
+  /// No description provided for @connection_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Request timed out. Please try again.'**
+  String get connection_timeout;
+
+  /// No description provided for @error_serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error. Please try again later.'**
+  String get error_serverError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
