@@ -14,7 +14,6 @@ class ThemeState {
   final AppThemeTokens tokens;
   final bool isLoaded;
 
-  // 🔹 NEW:
   final String menuType; // "bottom", "drawer", etc.
 
   const ThemeState({

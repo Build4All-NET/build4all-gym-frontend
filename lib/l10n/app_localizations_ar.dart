@@ -75,42 +75,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get auth_loginLocked => 'محاولات فاشلة كثيرة. يرجى المحاولة لاحقاً.';
 
   @override
-  String get validation_emailRequired => 'البريد الإلكتروني مطلوب';
-
-  @override
-  String get validation_phoneRequired => 'رقم الهاتف مطلوب';
-
-  @override
-  String get validation_emailInvalid => 'البريد الإلكتروني غير صالح';
-
-  @override
-  String get validation_passwordRequired => 'كلمة المرور مطلوبة';
-
-  @override
-  String get validation_invalidCredentials => 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-
-  @override
-  String get general_cancel => 'إلغاء';
-
-  @override
-  String get general_or => 'أو';
-
-  @override
-  String get error_somethingWentWrong => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
-
-  @override
-  String get connection_offline => 'لا يوجد اتصال بالإنترنت';
-
-  @override
-  String get authGateContinueAs => 'تابع كـ';
-
-  @override
-  String get authGateRoleAdminOwner => 'مدير / مالك';
-
-  @override
-  String get authGateRoleUser => 'مستخدم عادي';
-
-  @override
   String get login_welcomeBack => 'مرحباً بعودتك';
 
   @override
@@ -135,7 +99,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get login_button => 'تسجيل الدخول';
 
   @override
-  String get common_or => 'أو';
+  String get login_continueWithGoogle => 'متابعة باستخدام Google';
+
+  @override
+  String get login_continueWithApple => 'متابعة باستخدام Apple';
 
   @override
   String get login_noAccount => 'ليس لديك حساب؟';
@@ -144,13 +111,76 @@ class AppLocalizationsAr extends AppLocalizations {
   String get login_createAccount => 'إنشاء حساب جديد';
 
   @override
+  String get validation_emailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get validation_phoneRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get validation_emailInvalid => 'البريد الإلكتروني غير صالح';
+
+  @override
   String get validation_invalidEmail => 'الرجاء إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get validation_passwordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get validation_invalidCredentials => 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+
+  @override
+  String get validation_passwordTooShort => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
+
+  @override
+  String get validation_passwordsMismatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get validation_codeRequired => 'رمز التحقق مطلوب';
+
+  @override
+  String get validation_invalidCode => 'الرمز غير صحيح أو منتهي الصلاحية';
+
+  @override
+  String get validation_emailAlreadyExists => 'Email already exists';
+
+  @override
+  String get validation_phoneAlreadyExists => 'Phone number already exists';
+
+  @override
+  String get general_cancel => 'إلغاء';
+
+  @override
+  String get general_or => 'أو';
+
+  @override
+  String get general_optional => 'Optional';
+
+  @override
+  String get error_somethingWentWrong => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get error_serverError => 'Server error. Please try again later.';
 
   @override
   String get connection_reconnecting => 'جارٍ الاتصال...';
 
   @override
+  String get connection_offline => 'لا يوجد اتصال بالإنترنت';
+
+  @override
   String get connection_issue => 'مشكلة في الاتصال';
+
+  @override
+  String get connection_timeout => 'Request timed out. Please try again.';
+
+  @override
+  String get authGateContinueAs => 'تابع كـ';
+
+  @override
+  String get authGateRoleAdminOwner => 'مدير / مالك';
+
+  @override
+  String get authGateRoleUser => 'مستخدم عادي';
 
   @override
   String get appAccessTitleDeleted => 'التطبيق محذوف';
@@ -174,17 +204,114 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appAccessRetry => 'حاول مجدداً';
 
   @override
-  String get general_optional => 'Optional';
+  String get common_or => 'أو';
 
   @override
-  String get validation_emailAlreadyExists => 'Email already exists';
+  String get forgotPassword_title => 'إعادة تعيين كلمة المرور';
 
   @override
-  String get validation_phoneAlreadyExists => 'Phone number already exists';
+  String get forgotPassword_subtitle => 'أدخل بريدك الإلكتروني وسنرسل لك رمزاً.';
 
   @override
-  String get connection_timeout => 'Request timed out. Please try again.';
+  String get forgotPassword_sendCode => 'إرسال الرمز';
 
   @override
-  String get error_serverError => 'Server error. Please try again later.';
+  String get forgotPassword_spamTip => 'تلميح: تحقق من مجلد البريد غير الهام أيضاً 👀';
+
+  @override
+  String get forgotPassword_verifyTitle => 'أدخل رمز التحقق';
+
+  @override
+  String forgotPassword_codeSentTo(String email) {
+    return 'أرسلنا رمزاً إلى $email';
+  }
+
+  @override
+  String get forgotPassword_codeLabel => 'الرمز';
+
+  @override
+  String get forgotPassword_verify => 'تحقق';
+
+  @override
+  String get forgotPassword_resendCode => 'إعادة إرسال الرمز';
+
+  @override
+  String get forgotPassword_newPasswordTitle => 'تعيين كلمة مرور جديدة';
+
+  @override
+  String get forgotPassword_newPasswordSubtitle => 'اجعلها قوية — نسختك المستقبلية ستشكرك.';
+
+  @override
+  String get forgotPassword_newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get forgotPassword_confirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get forgotPassword_savePassword => 'حفظ كلمة المرور';
+
+  @override
+  String get forgotPassword_enterAllDigits => 'يرجى إدخال جميع الأرقام';
+
+  @override
+  String get forgotPassword_otpScreenTitle => 'أدخل رمز التحقق';
+
+  @override
+  String get forgotPassword_otpScreenSubtitle => 'أدخل الرمز المرسل إلى بريدك الإلكتروني أو هاتفك';
+
+  @override
+  String get forgotPassword_checkSms => 'تحقق من الرسائل النصية';
+
+  @override
+  String get forgotPassword_checkEmail => 'تحقق من بريدك الإلكتروني';
+
+  @override
+  String get forgotPassword_checkEmailOrSms => 'تحقق من بريدك الإلكتروني أو الرسائل';
+
+  @override
+  String forgotPassword_codeExpiresIn(int seconds) {
+    return 'ينتهي الرمز خلال $seconds ثانية';
+  }
+
+  @override
+  String get forgotPassword_codeExpired => 'انتهت صلاحية الرمز';
+
+  @override
+  String get forgotPassword_verifyCode => 'تحقق من الرمز';
+
+  @override
+  String get forgotPassword_didntReceiveCode => 'لم تستلم الرمز؟';
+
+  @override
+  String get forgotPassword_emailOrPhone => 'البريد الإلكتروني أو رقم الهاتف';
+
+  @override
+  String get forgotPassword_emailOrPhoneHint => 'أدخل بريدك الإلكتروني أو رقم هاتفك';
+
+  @override
+  String get forgotPassword_fieldRequired => 'هذا الحقل مطلوب';
+
+  @override
+  String get forgotPassword_invalidEmailOrPhone => 'البريد الإلكتروني أو رقم الهاتف غير صالح';
+
+  @override
+  String get forgotPassword_sendOtp => 'إرسال رمز التحقق';
+
+  @override
+  String get forgotPassword_newPasswordScreenTitle => 'تعيين كلمة مرور جديدة';
+
+  @override
+  String get forgotPassword_newPasswordScreenSubtitle => 'أدخل كلمة المرور الجديدة أدناه';
+
+  @override
+  String get forgotPassword_passwordResetSuccess => 'تم إعادة تعيين كلمة المرور بنجاح';
+
+  @override
+  String get validation_passwordNoLetter => 'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
+
+  @override
+  String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
 }

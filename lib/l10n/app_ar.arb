@@ -111,6 +111,19 @@
     "description": "Error message when login is locked due to too many attempts"
   },
 
+  "login_welcomeBack": "مرحباً بعودتك",
+  "login_subtitle": "سجل دخولك للوصول إلى حسابك",
+  "login_email": "البريد الإلكتروني",
+  "login_emailHint": "example@email.com",
+  "login_password": "كلمة المرور",
+  "login_passwordHint": "أدخل كلمة المرور",
+  "login_forgotPassword": "نسيت كلمة المرور؟",
+  "login_button": "تسجيل الدخول",
+  "login_continueWithGoogle": "متابعة باستخدام Google",
+  "login_continueWithApple": "متابعة باستخدام Apple",
+  "login_noAccount": "ليس لديك حساب؟",
+  "login_createAccount": "إنشاء حساب جديد",
+
   "validation_emailRequired": "البريد الإلكتروني مطلوب",
   "@validation_emailRequired": {
     "description": "Validation message when email field is empty"
@@ -126,6 +139,7 @@
     "description": "Validation message when email format is invalid"
   },
 
+  "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
   "validation_passwordRequired": "كلمة المرور مطلوبة",
   "@validation_passwordRequired": {
     "description": "Validation message when password field is empty"
@@ -135,6 +149,11 @@
   "@validation_invalidCredentials": {
     "description": "Error message for invalid login credentials"
   },
+
+  "validation_passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+  "validation_passwordsMismatch": "كلمتا المرور غير متطابقتين",
+  "validation_codeRequired": "رمز التحقق مطلوب",
+  "validation_invalidCode": "الرمز غير صحيح أو منتهي الصلاحية",
 
   "general_cancel": "إلغاء",
   "@general_cancel": {
@@ -151,12 +170,15 @@
     "description": "Generic error message"
   },
 
-  "connection_offline": "لا يوجد اتصال بالإنترنت. يرجى التحقق من شبكتك.",
+  "connection_reconnecting": "جارٍ الاتصال...",
+  "connection_offline": "لا يوجد اتصال بالإنترنت",
   "@connection_offline": {
     "description": "Error message when device is offline"
   },
 
-  "authGateContinueAs": "المتابعة كـ",
+  "connection_issue": "مشكلة في الاتصال",
+
+  "authGateContinueAs": "تابع كـ",
   "@authGateContinueAs": {
     "description": "Title for role selection bottom sheet"
   },
@@ -166,37 +188,80 @@
     "description": "Admin role option in role selection"
   },
 
-  "authGateRoleUser": "مستخدم",
+  "authGateRoleUser": "مستخدم عادي",
   "@authGateRoleUser": {
     "description": "User role option in role selection"
   },
 
-  "login_welcomeBack": "مرحباً بعودتك",
-  "login_subtitle": "سجل دخولك للوصول إلى حسابك",
-  "login_email": "البريد الإلكتروني",
-  "login_emailHint": "example@email.com",
-  "login_password": "كلمة المرور",
-  "login_passwordHint": "أدخل كلمة المرور",
-  "login_forgotPassword": "نسيت كلمة المرور؟",
-  "login_button": "تسجيل الدخول",
-  "common_or": "أو",
-  "login_noAccount": "ليس لديك حساب؟",
-  "login_createAccount": "إنشاء حساب جديد",
-  "validation_emailRequired": "البريد الإلكتروني مطلوب",
-  "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
-  "validation_passwordRequired": "كلمة المرور مطلوبة",
-  "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-  "connection_reconnecting": "جارٍ الاتصال...",
-  "connection_offline": "لا يوجد اتصال بالإنترنت",
-  "connection_issue": "مشكلة في الاتصال",
-  "authGateContinueAs": "تابع كـ",
-  "authGateRoleAdminOwner": "مدير / مالك",
-  "authGateRoleUser": "مستخدم عادي",
   "appAccessTitleDeleted": "التطبيق محذوف",
   "appAccessTitleExpired": "انتهى الاشتراك",
   "appAccessTitleUnavailable": "التطبيق غير متاح",
   "appAccessMessageDeleted": "هذا التطبيق تم حذفه ولم يعد متاحاً.",
   "appAccessMessageExpired": "انتهى اشتراك هذا التطبيق. يرجى التواصل مع الدعم.",
   "appAccessMessageUnavailable": "هذا التطبيق غير متاح حالياً. يرجى المحاولة لاحقاً.",
-  "appAccessRetry": "حاول مجدداً"
+  "appAccessRetry": "حاول مجدداً",
+
+  "common_or": "أو",
+
+  "forgotPassword_title": "إعادة تعيين كلمة المرور",
+  "forgotPassword_subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رمزاً.",
+  "forgotPassword_sendCode": "إرسال الرمز",
+  "forgotPassword_spamTip": "تلميح: تحقق من مجلد البريد غير الهام أيضاً 👀",
+  "forgotPassword_verifyTitle": "أدخل رمز التحقق",
+  "forgotPassword_codeSentTo": "أرسلنا رمزاً إلى {email}",
+  "@forgotPassword_codeSentTo": {
+    "description": "Subtitle on verify screen showing which email was used.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
+  },
+
+  "forgotPassword_codeLabel": "الرمز",
+  "forgotPassword_verify": "تحقق",
+  "forgotPassword_resendCode": "إعادة إرسال الرمز",
+  "forgotPassword_newPasswordTitle": "تعيين كلمة مرور جديدة",
+  "forgotPassword_newPasswordSubtitle": "اجعلها قوية — نسختك المستقبلية ستشكرك.",
+  "forgotPassword_newPassword": "كلمة المرور الجديدة",
+  "forgotPassword_confirmPassword": "تأكيد كلمة المرور",
+  "forgotPassword_savePassword": "حفظ كلمة المرور",
+
+  "forgotPassword_enterAllDigits": "يرجى إدخال جميع الأرقام",
+  "forgotPassword_otpScreenTitle": "أدخل رمز التحقق",
+  "forgotPassword_otpScreenSubtitle": "أدخل الرمز المرسل إلى بريدك الإلكتروني أو هاتفك",
+
+  "forgotPassword_checkSms": "تحقق من الرسائل النصية",
+  "forgotPassword_checkEmail": "تحقق من بريدك الإلكتروني",
+  "forgotPassword_checkEmailOrSms": "تحقق من بريدك الإلكتروني أو الرسائل",
+
+  "forgotPassword_codeExpiresIn": "ينتهي الرمز خلال {seconds} ثانية",
+  "@forgotPassword_codeExpiresIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+
+  "forgotPassword_codeExpired": "انتهت صلاحية الرمز",
+  "forgotPassword_verifyCode": "تحقق من الرمز",
+  "forgotPassword_didntReceiveCode": "لم تستلم الرمز؟",
+
+  "forgotPassword_emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
+  "forgotPassword_emailOrPhoneHint": "أدخل بريدك الإلكتروني أو رقم هاتفك",
+
+  "forgotPassword_fieldRequired": "هذا الحقل مطلوب",
+  "forgotPassword_invalidEmailOrPhone": "البريد الإلكتروني أو رقم الهاتف غير صالح",
+  "forgotPassword_sendOtp": "إرسال رمز التحقق",
+
+  "forgotPassword_newPasswordScreenTitle": "تعيين كلمة مرور جديدة",
+  "forgotPassword_newPasswordScreenSubtitle": "أدخل كلمة المرور الجديدة أدناه",
+
+  "forgotPassword_passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+
+  "validation_passwordNoLetter": "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
+  "validation_passwordNoNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+  "validation_confirmPasswordRequired": "يرجى تأكيد كلمة المرور"
 }

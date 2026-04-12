@@ -98,7 +98,7 @@ abstract class AppLocalizations {
   /// Welcome message on login screen
   ///
   /// In en, this message translates to:
-  /// **'Welcome Back'**
+  /// **'Welcome back'**
   String get auth_welcomeBack;
 
   /// Subtitle text on login screen
@@ -227,78 +227,6 @@ abstract class AppLocalizations {
   /// **'Too many failed attempts. Please try again later.'**
   String get auth_loginLocked;
 
-  /// Validation message when email field is empty
-  ///
-  /// In en, this message translates to:
-  /// **'Email is required'**
-  String get validation_emailRequired;
-
-  /// Validation message when phone field is empty
-  ///
-  /// In en, this message translates to:
-  /// **'Phone number is required'**
-  String get validation_phoneRequired;
-
-  /// Validation message when email format is invalid
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid email address'**
-  String get validation_emailInvalid;
-
-  /// Validation message when password field is empty
-  ///
-  /// In en, this message translates to:
-  /// **'Password is required'**
-  String get validation_passwordRequired;
-
-  /// Error message for invalid login credentials
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid email or password'**
-  String get validation_invalidCredentials;
-
-  /// Cancel button text
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get general_cancel;
-
-  /// Or text for divider
-  ///
-  /// In en, this message translates to:
-  /// **'or'**
-  String get general_or;
-
-  /// Generic error message
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong. Please try again.'**
-  String get error_somethingWentWrong;
-
-  /// Error message when device is offline
-  ///
-  /// In en, this message translates to:
-  /// **'No internet connection'**
-  String get connection_offline;
-
-  /// Title for role selection bottom sheet
-  ///
-  /// In en, this message translates to:
-  /// **'Continue as'**
-  String get authGateContinueAs;
-
-  /// Admin role option in role selection
-  ///
-  /// In en, this message translates to:
-  /// **'Admin / Owner'**
-  String get authGateRoleAdminOwner;
-
-  /// User role option in role selection
-  ///
-  /// In en, this message translates to:
-  /// **'Regular User'**
-  String get authGateRoleUser;
-
   /// No description provided for @login_welcomeBack.
   ///
   /// In en, this message translates to:
@@ -347,11 +275,17 @@ abstract class AppLocalizations {
   /// **'Sign In'**
   String get login_button;
 
-  /// No description provided for @common_or.
+  /// No description provided for @login_continueWithGoogle.
   ///
   /// In en, this message translates to:
-  /// **'Or'**
-  String get common_or;
+  /// **'Continue with Google'**
+  String get login_continueWithGoogle;
+
+  /// No description provided for @login_continueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get login_continueWithApple;
 
   /// No description provided for @login_noAccount.
   ///
@@ -365,11 +299,107 @@ abstract class AppLocalizations {
   /// **'Create new account'**
   String get login_createAccount;
 
+  /// Validation message when email field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get validation_emailRequired;
+
+  /// Validation message when phone field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get validation_phoneRequired;
+
+  /// Validation message when email format is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get validation_emailInvalid;
+
   /// No description provided for @validation_invalidEmail.
   ///
   /// In en, this message translates to:
   /// **'Please enter a valid email'**
   String get validation_invalidEmail;
+
+  /// Validation message when password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get validation_passwordRequired;
+
+  /// Error message for invalid login credentials
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get validation_invalidCredentials;
+
+  /// No description provided for @validation_passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get validation_passwordTooShort;
+
+  /// No description provided for @validation_passwordsMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get validation_passwordsMismatch;
+
+  /// No description provided for @validation_codeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code is required'**
+  String get validation_codeRequired;
+
+  /// No description provided for @validation_invalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code'**
+  String get validation_invalidCode;
+
+  /// No description provided for @validation_emailAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Email already exists'**
+  String get validation_emailAlreadyExists;
+
+  /// No description provided for @validation_phoneAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number already exists'**
+  String get validation_phoneAlreadyExists;
+
+  /// Cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get general_cancel;
+
+  /// Or text for divider
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get general_or;
+
+  /// No description provided for @general_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get general_optional;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get error_somethingWentWrong;
+
+  /// No description provided for @error_serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server error. Please try again later.'**
+  String get error_serverError;
 
   /// No description provided for @connection_reconnecting.
   ///
@@ -377,11 +407,41 @@ abstract class AppLocalizations {
   /// **'Connecting...'**
   String get connection_reconnecting;
 
+  /// Error message when device is offline
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get connection_offline;
+
   /// No description provided for @connection_issue.
   ///
   /// In en, this message translates to:
   /// **'Connection issue'**
   String get connection_issue;
+
+  /// No description provided for @connection_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Request timed out. Please try again.'**
+  String get connection_timeout;
+
+  /// Title for role selection bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as'**
+  String get authGateContinueAs;
+
+  /// Admin role option in role selection
+  ///
+  /// In en, this message translates to:
+  /// **'Admin / Owner'**
+  String get authGateRoleAdminOwner;
+
+  /// User role option in role selection
+  ///
+  /// In en, this message translates to:
+  /// **'Regular User'**
+  String get authGateRoleUser;
 
   /// No description provided for @appAccessTitleDeleted.
   ///
@@ -425,35 +485,221 @@ abstract class AppLocalizations {
   /// **'Try Again'**
   String get appAccessRetry;
 
-  /// No description provided for @general_optional.
+  /// No description provided for @common_or.
   ///
   /// In en, this message translates to:
-  /// **'Optional'**
-  String get general_optional;
+  /// **'Or'**
+  String get common_or;
 
-  /// No description provided for @validation_emailAlreadyExists.
+  /// No description provided for @forgotPassword_title.
   ///
   /// In en, this message translates to:
-  /// **'Email already exists'**
-  String get validation_emailAlreadyExists;
+  /// **'Reset your password'**
+  String get forgotPassword_title;
 
-  /// No description provided for @validation_phoneAlreadyExists.
+  /// No description provided for @forgotPassword_subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Phone number already exists'**
-  String get validation_phoneAlreadyExists;
+  /// **'Enter your email and we\'ll send you a code.'**
+  String get forgotPassword_subtitle;
 
-  /// No description provided for @connection_timeout.
+  /// No description provided for @forgotPassword_sendCode.
   ///
   /// In en, this message translates to:
-  /// **'Request timed out. Please try again.'**
-  String get connection_timeout;
+  /// **'Send code'**
+  String get forgotPassword_sendCode;
 
-  /// No description provided for @error_serverError.
+  /// No description provided for @forgotPassword_spamTip.
   ///
   /// In en, this message translates to:
-  /// **'Server error. Please try again later.'**
-  String get error_serverError;
+  /// **'Tip: check spam/junk folder too 👀'**
+  String get forgotPassword_spamTip;
+
+  /// No description provided for @forgotPassword_verifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter verification code'**
+  String get forgotPassword_verifyTitle;
+
+  /// Subtitle on verify screen showing which email was used.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a code to {email}'**
+  String forgotPassword_codeSentTo(String email);
+
+  /// No description provided for @forgotPassword_codeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get forgotPassword_codeLabel;
+
+  /// No description provided for @forgotPassword_verify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get forgotPassword_verify;
+
+  /// No description provided for @forgotPassword_resendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get forgotPassword_resendCode;
+
+  /// No description provided for @forgotPassword_newPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new password'**
+  String get forgotPassword_newPasswordTitle;
+
+  /// No description provided for @forgotPassword_newPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make it strong — future you will thank you.'**
+  String get forgotPassword_newPasswordSubtitle;
+
+  /// No description provided for @forgotPassword_newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get forgotPassword_newPassword;
+
+  /// No description provided for @forgotPassword_confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get forgotPassword_confirmPassword;
+
+  /// No description provided for @forgotPassword_savePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Save password'**
+  String get forgotPassword_savePassword;
+
+  /// No description provided for @forgotPassword_enterAllDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter all digits'**
+  String get forgotPassword_enterAllDigits;
+
+  /// No description provided for @forgotPassword_otpScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Verification Code'**
+  String get forgotPassword_otpScreenTitle;
+
+  /// No description provided for @forgotPassword_otpScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code sent to your email or phone'**
+  String get forgotPassword_otpScreenSubtitle;
+
+  /// No description provided for @forgotPassword_checkSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your SMS'**
+  String get forgotPassword_checkSms;
+
+  /// No description provided for @forgotPassword_checkEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get forgotPassword_checkEmail;
+
+  /// No description provided for @forgotPassword_checkEmailOrSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email or SMS'**
+  String get forgotPassword_checkEmailOrSms;
+
+  /// No description provided for @forgotPassword_codeExpiresIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Code expires in {seconds}s'**
+  String forgotPassword_codeExpiresIn(int seconds);
+
+  /// No description provided for @forgotPassword_codeExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Code has expired'**
+  String get forgotPassword_codeExpired;
+
+  /// No description provided for @forgotPassword_verifyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify code'**
+  String get forgotPassword_verifyCode;
+
+  /// No description provided for @forgotPassword_didntReceiveCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code?'**
+  String get forgotPassword_didntReceiveCode;
+
+  /// No description provided for @forgotPassword_emailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or phone'**
+  String get forgotPassword_emailOrPhone;
+
+  /// No description provided for @forgotPassword_emailOrPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email or phone number'**
+  String get forgotPassword_emailOrPhoneHint;
+
+  /// No description provided for @forgotPassword_fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get forgotPassword_fieldRequired;
+
+  /// No description provided for @forgotPassword_invalidEmailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or phone number'**
+  String get forgotPassword_invalidEmailOrPhone;
+
+  /// No description provided for @forgotPassword_sendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get forgotPassword_sendOtp;
+
+  /// No description provided for @forgotPassword_newPasswordScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New Password'**
+  String get forgotPassword_newPasswordScreenTitle;
+
+  /// No description provided for @forgotPassword_newPasswordScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password below'**
+  String get forgotPassword_newPasswordScreenSubtitle;
+
+  /// No description provided for @forgotPassword_passwordResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully'**
+  String get forgotPassword_passwordResetSuccess;
+
+  /// No description provided for @validation_passwordNoLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one letter'**
+  String get validation_passwordNoLetter;
+
+  /// No description provided for @validation_passwordNoNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one number'**
+  String get validation_passwordNoNumber;
+
+  /// No description provided for @validation_confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get validation_confirmPasswordRequired;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
