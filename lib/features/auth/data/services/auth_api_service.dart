@@ -85,7 +85,7 @@ class AuthApiService {
   Future<void> sendVerificationCode({
     required String password,
     required int ownerProjectLinkId,
-    String? identifier,
+    String? email,
   }) async {
     final uri = _uri('/api/auth/send-verification');
 
@@ -95,7 +95,7 @@ class AuthApiService {
     final body = <String, dynamic>{
       'password': password,
       'ownerProjectLinkId': ownerProjectLinkId,
-      'identifier':identifier
+      'email':email
     };
 
     try {

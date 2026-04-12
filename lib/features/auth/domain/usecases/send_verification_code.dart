@@ -12,7 +12,7 @@ class SendVerificationCode {
     required int ownerProjectLinkId,
   }) {
     return repo.sendVerificationCode(
-      identifier: email!.isNotEmpty ? email : phoneNumber,
+      email: email!.isNotEmpty ? email : phoneNumber,
       password: password,
       ownerProjectLinkId: ownerProjectLinkId,
     );
