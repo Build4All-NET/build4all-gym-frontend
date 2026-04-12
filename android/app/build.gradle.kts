@@ -6,6 +6,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.build4allgym"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

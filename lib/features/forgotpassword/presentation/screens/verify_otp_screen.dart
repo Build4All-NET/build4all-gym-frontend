@@ -73,7 +73,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   void _verify(AppLocalizations l10n) {
     if (_otpCode.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        // LOCALIZED:  'Please enter all 6 digits'
+        // LOCALIZED: 'Please enter all 6 digits'
         content: Text(l10n.forgotPassword_enterAllDigits),
         backgroundColor: Colors.orange,
       ));
@@ -90,8 +90,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   // The backend: kills old OTP, makes new one, sends it, resets 15 min expiry
   void _resend() {
     for (final c in _otpCtrl) c.clear(); // clear OTP boxes
-    _focusNodes[0].requestFocus();        // focus first box
-    _startTimer();                         // restart countdown
+    _focusNodes[0].requestFocus(); // focus first box
+    _startTimer(); // restart countdown
     context.read<ForgotPasswordBloc>().add(
       ForgotSendCodePressed(identifier: widget.identifier),
     );
@@ -107,13 +107,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     final primary = Theme.of(context).colorScheme.primary;
 
     // THEME: muted/body text color from textTheme for the timer text.
-    final mutedColor = Theme.of(context).textTheme.bodySmall?.color
-        ?? const Color(0xFF5F5E5A);
+    final mutedColor =
+        Theme.of(context).textTheme.bodySmall?.color ?? const Color(0xFF5F5E5A);
 
     return AuthCardShell(
-      // LOCALIZED:  'Enter OTP'
+      // LOCALIZED: 'Enter OTP'
       title: l10n.forgotPassword_otpScreenTitle,
-      // LOCALIZED:  'We sent a 6-digit code.\nEnter it below.'
+      // LOCALIZED: 'We sent a 6-digit code.\nEnter it below.'
       subtitle: l10n.forgotPassword_otpScreenSubtitle,
       icon: Icons.mark_email_read_outlined,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
@@ -128,15 +128,21 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           // Step became 2 → OTP verified → navigate to Screen 3
           // Pass the resetToken (UUID) to Screen 3
           if (state.step == 2 && state.resetToken != null) {
+            // FIX: capture the bloc and resetToken BEFORE entering the builder
+            // closure. MaterialPageRoute.builder is re-called on every route
+            // rebuild. Using ctx.read() inside the builder risks a
+            // ProviderNotFoundException when ctx is stale/unmounted.
+            final bloc = ctx.read<ForgotPasswordBloc>();
+            final token = state.resetToken!;
+
             Navigator.of(ctx).push(MaterialPageRoute(
               builder: (_) => BlocProvider.value(
-                value: ctx.read<ForgotPasswordBloc>(),
-                child: ResetPasswordScreen(
-                  resetToken: state.resetToken!,
-                ),
+                value: bloc,
+                child: ResetPasswordScreen(resetToken: token),
               ),
             ));
-            ctx.read<ForgotPasswordBloc>().add(const ForgotClearState());
+
+            bloc.add(const ForgotClearState());
           }
         },
         builder: (ctx, state) {
@@ -144,10 +150,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             children: [
 
               // Show where the code was sent (from state.maskedContact)
-              //  LOCALIZED + THEMED
-              // We now pick the right localized string based on deliveryMethod.
-              // forgotPassword_checkSms / forgotPassword_checkEmail are parametrized
-              // methods that inject the maskedContact at runtime.
+              // LOCALIZED + THEMED
+              // We pick the right localized string based on deliveryMethod.
+              // forgotPassword_checkSms / forgotPassword_checkEmail are
+              // parametrized methods that inject the maskedContact at runtime.
               if (state.maskedContact != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
@@ -170,47 +176,54 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
               // 6 OTP boxes in a row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(6, (i) => SizedBox(
-                  width: 44,
-                  child: TextFormField(
-                    controller: _otpCtrl[i],
-                    focusNode: _focusNodes[i],
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    maxLength: 1,
-                    decoration: InputDecoration(
-                      counterText: '',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        // THEMED
-                        borderSide: BorderSide(color: primary, width: 2),
+                children: List.generate(
+                    6,
+                        (i) => SizedBox(
+                      width: 44,
+                      child: TextFormField(
+                        controller: _otpCtrl[i],
+                        focusNode: _focusNodes[i],
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        maxLength: 1,
+                        decoration: InputDecoration(
+                          counterText: '',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            // THEMED
+                            borderSide:
+                            BorderSide(color: primary, width: 2),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          // Auto-jump to next box when digit is typed
+                          if (val.isNotEmpty && i < 5) {
+                            _focusNodes[i + 1].requestFocus();
+                          }
+                          // Auto-go back when deleted
+                          if (val.isEmpty && i > 0) {
+                            _focusNodes[i - 1].requestFocus();
+                          }
+                        },
                       ),
-                    ),
-                    onChanged: (val) {
-                      // Auto-jump to next box when digit is typed
-                      if (val.isNotEmpty && i < 5) {
-                        _focusNodes[i + 1].requestFocus();
-                      }
-                      // Auto-go back when deleted
-                      if (val.isEmpty && i > 0) {
-                        _focusNodes[i - 1].requestFocus();
-                      }
-                    },
-                  ),
-                )),
+                    )),
               ),
               const SizedBox(height: 16),
 
               // Countdown timer
               // LOCALIZED: both states (active + expired) come from ARB files.
-              // forgotPassword_codeExpiresIn is a method that injects _timerText at runtime.
+              // FIX: pass _secondsLeft (int) to the parametrized ARB method,
+              // not _timerText (String). Casting a String "as int" throws a
+              // TypeError at runtime. The ARB method receives the raw seconds
+              // and the localization layer formats it, OR pass _timerText if
+              // the ARB method signature accepts a String — just don't cast.
               Text(
                 _secondsLeft > 0
-                //LOCALIZED:  'Code expires in $_timerText'
-                    ? l10n.forgotPassword_codeExpiresIn(_timerText as int)
-                // LOCALIZED:  'Code expired — please resend'
+                // LOCALIZED: 'Code expires in MM:SS'
+                    ? l10n.forgotPassword_codeExpiresIn(_secondsLeft)
+                // LOCALIZED: 'Code expired — please resend'
                     : l10n.forgotPassword_codeExpired,
                 style: TextStyle(
                   color: _secondsLeft > 0 ? mutedColor : Colors.red,
@@ -235,7 +248,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       ? const CircularProgressIndicator(
                       color: Colors.white, strokeWidth: 2)
                       : Text(
-                    // LOCALIZED:  'Verify Code'
+                    // LOCALIZED: 'Verify Code'
                     l10n.forgotPassword_verifyCode,
                     style: const TextStyle(
                         color: Colors.white,
@@ -251,7 +264,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 onPressed: state.isLoading ? null : _resend,
                 child: Text(
                   // LOCALIZED: "Didn't receive a code? Resend"
-                  //THEMED: color comes from textButtonTheme in AppThemeBuilder
+                  // THEMED: color comes from textButtonTheme in AppThemeBuilder
                   l10n.forgotPassword_didntReceiveCode,
                 ),
               ),

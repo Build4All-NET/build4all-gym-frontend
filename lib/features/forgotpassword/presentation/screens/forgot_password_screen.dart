@@ -52,14 +52,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     // THEME: muted color for hint/tip text — uses bodySmall from our
     // TextTheme which is configured in AppThemeBuilder. Falls back to a
     // neutral grey if the token has no value.
-    final mutedColor = Theme.of(context).textTheme.bodySmall?.color
-        ?? const Color(0xFF5F5E5A);
+    final mutedColor =
+        Theme.of(context).textTheme.bodySmall?.color ?? const Color(0xFF5F5E5A);
 
     return AuthCardShell(
       // LOCALIZED: reads from ARB file → "Reset your password" (EN) / "إعادة تعيين كلمة المرور" (AR)
       title: l10n.forgotPassword_title,
 
-      //  LOCALIZED: English subtitle
+      // LOCALIZED: English subtitle
       subtitle: l10n.forgotPassword_subtitle,
 
       icon: Icons.lock_reset,
@@ -76,17 +76,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           // Step became 1 → OTP was sent → navigate to Screen 2
           if (state.step == 1) {
+            // FIX: capture the bloc BEFORE entering the builder closure.
+            // MaterialPageRoute.builder is re-called on every route rebuild
+            // (theme change, keyboard, orientation, etc.). If we called
+            // ctx.read() inside the builder, ctx would be stale/unmounted
+            // on subsequent calls → ProviderNotFoundException.
+            final bloc = ctx.read<ForgotPasswordBloc>();
+            final identifier = _identifierCtrl.text.trim();
+
             Navigator.of(ctx).push(MaterialPageRoute(
               builder: (_) => BlocProvider.value(
                 // Pass the SAME BLoC to Screen 2 — it carries the state!
-                value: ctx.read<ForgotPasswordBloc>(),
-                child: VerifyOtpScreen(
-                  identifier: _identifierCtrl.text.trim(),
-                ),
+                value: bloc,
+                child: VerifyOtpScreen(identifier: identifier),
               ),
             ));
+
             // Reset state so this listener doesn't fire again when going back
-            ctx.read<ForgotPasswordBloc>().add(const ForgotClearState());
+            bloc.add(const ForgotClearState());
           }
         },
         // builder: rebuilds the UI when state changes (loading spinner etc.)
@@ -106,22 +113,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     labelText: l10n.forgotPassword_emailOrPhone,
                     // LOCALIZED: 'john@gmail.com or +96170123456'
                     hintText: l10n.forgotPassword_emailOrPhoneHint,
-                    //THEMED: icon color
+                    // THEMED: icon color
                     prefixIcon: Icon(Icons.person_outline, color: primary),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      //THEMED: focused border color
+                      // THEMED: focused border color
                       borderSide: BorderSide(color: primary, width: 2),
                     ),
                   ),
                   validator: (v) {
                     final val = v?.trim() ?? '';
-                    // LOCALIZED:  'This field is required'
+                    // LOCALIZED: 'This field is required'
                     if (val.isEmpty) return l10n.forgotPassword_fieldRequired;
                     if (!val.contains('@') && val.length < 8) {
-                      // LOCALIZED:  'Enter a valid email or phone number'
+                      // LOCALIZED: 'Enter a valid email or phone number'
                       return l10n.forgotPassword_invalidEmailOrPhone;
                     }
                     return null;
@@ -136,7 +143,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   child: ElevatedButton(
                     onPressed: state.isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
-                      //  THEMED
+                      // THEMED
                       backgroundColor: primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),

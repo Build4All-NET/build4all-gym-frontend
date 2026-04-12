@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:build4allgym/app/app_router.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/core/network/connecting(wifiORserver)/connection_banner.dart';
@@ -382,14 +383,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => const ForgotPasswordScreen(),
-                                            ),
-                                          );
-                                        },
+                                        // FIX: use named route so AppRouter builds the BlocProvider.
+                                        // Pushing ForgotPasswordScreen directly skips the router entirely,
+                                        // meaning no ForgotPasswordBloc is ever provided above the screen.
+                                        onPressed: () => Navigator.pushNamed(context, AppRouter.forgotPassword),
                                         style: TextButton.styleFrom(
                                           padding: EdgeInsets.zero,
                                           minimumSize: const Size(0, 0),
