@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "auth_welcomeBack": "Welcome Back",
+  "auth_welcomeBack": "Welcome back",
   "@auth_welcomeBack": {
     "description": "Welcome message on login screen"
   },
@@ -111,6 +111,19 @@
     "description": "Error message when login is locked due to too many attempts"
   },
 
+  "login_welcomeBack": "Welcome back",
+  "login_subtitle": "Sign in to access your account",
+  "login_email": "Email",
+  "login_emailHint": "example@email.com",
+  "login_password": "Password",
+  "login_passwordHint": "Enter your password",
+  "login_forgotPassword": "Forgot password?",
+  "login_button": "Sign In",
+  "login_continueWithGoogle": "Continue with Google",
+  "login_continueWithApple": "Continue with Apple",
+  "login_noAccount": "Don't have an account?",
+  "login_createAccount": "Create new account",
+
   "validation_emailRequired": "Email is required",
   "@validation_emailRequired": {
     "description": "Validation message when email field is empty"
@@ -126,7 +139,9 @@
     "description": "Validation message when email format is invalid"
   },
 
+  "validation_invalidEmail": "Please enter a valid email",
   "validation_passwordRequired": "Password is required",
+
   "@validation_passwordRequired": {
     "description": "Validation message when password field is empty"
   },
@@ -135,6 +150,13 @@
   "@validation_invalidCredentials": {
     "description": "Error message for invalid login credentials"
   },
+
+  "validation_passwordTooShort": "Password must be at least 8 characters",
+  "validation_passwordsMismatch": "Passwords do not match",
+  "validation_codeRequired": "Verification code is required",
+  "validation_invalidCode": "Invalid or expired code",
+  "validation_emailAlreadyExists": "Email already exists",
+  "validation_phoneAlreadyExists": "Phone number already exists",
 
   "general_cancel": "Cancel",
   "@general_cancel": {
@@ -146,15 +168,23 @@
     "description": "Or text for divider"
   },
 
+  "general_optional": "Optional",
+
   "error_somethingWentWrong": "Something went wrong. Please try again.",
   "@error_somethingWentWrong": {
     "description": "Generic error message"
   },
 
-  "connection_offline": "No internet connection. Please check your network.",
+  "error_serverError": "Server error. Please try again later.",
+
+  "connection_reconnecting": "Connecting...",
+  "connection_offline": "No internet connection",
   "@connection_offline": {
     "description": "Error message when device is offline"
   },
+
+  "connection_issue": "Connection issue",
+  "connection_timeout": "Request timed out. Please try again.",
 
   "authGateContinueAs": "Continue as",
   "@authGateContinueAs": {
@@ -166,32 +196,11 @@
     "description": "Admin role option in role selection"
   },
 
-  "authGateRoleUser": "User",
+  "authGateRoleUser": "Regular User",
   "@authGateRoleUser": {
     "description": "User role option in role selection"
   },
 
-  "login_welcomeBack": "Welcome back",
-  "login_subtitle": "Sign in to access your account",
-  "login_email": "Email",
-  "login_emailHint": "example@email.com",
-  "login_password": "Password",
-  "login_passwordHint": "Enter your password",
-  "login_forgotPassword": "Forgot password?",
-  "login_button": "Sign In",
-  "common_or": "Or",
-  "login_noAccount": "Don't have an account?",
-  "login_createAccount": "Create new account",
-  "validation_emailRequired": "Email is required",
-  "validation_invalidEmail": "Please enter a valid email",
-  "validation_passwordRequired": "Password is required",
-  "validation_invalidCredentials": "Invalid email or password",
-  "connection_reconnecting": "Connecting...",
-  "connection_offline": "No internet connection",
-  "connection_issue": "Connection issue",
-  "authGateContinueAs": "Continue as",
-  "authGateRoleAdminOwner": "Admin / Owner",
-  "authGateRoleUser": "Regular User",
   "appAccessTitleDeleted": "App Deleted",
   "appAccessTitleExpired": "Subscription Expired",
   "appAccessTitleUnavailable": "App Unavailable",
@@ -199,9 +208,59 @@
   "appAccessMessageExpired": "The subscription for this app has expired. Please contact support.",
   "appAccessMessageUnavailable": "This application is currently unavailable. Please try again later.",
   "appAccessRetry": "Try Again",
-  "general_optional": "Optional",
-  "validation_emailAlreadyExists": "Email already exists",
-  "validation_phoneAlreadyExists": "Phone number already exists",
-  "connection_timeout": "Request timed out. Please try again.",
-  "error_serverError": "Server error. Please try again later."
+
+  "common_or": "Or",
+
+  "forgotPassword_title": "Reset your password",
+  "forgotPassword_subtitle": "Enter your email and we'll send you a code.",
+  "forgotPassword_sendCode": "Send code",
+  "forgotPassword_spamTip": "Tip: check spam/junk folder too 👀",
+  "forgotPassword_verifyTitle": "Enter verification code",
+  "forgotPassword_codeSentTo": "We sent a code to {email}",
+  "@forgotPassword_codeSentTo": {
+    "description": "Subtitle on verify screen showing which email was used.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
+  },
+
+  "forgotPassword_codeLabel": "Code",
+  "forgotPassword_verify": "Verify",
+  "forgotPassword_resendCode": "Resend code",
+  "forgotPassword_newPasswordTitle": "Set a new password",
+  "forgotPassword_newPasswordSubtitle": "Make it strong — future you will thank you.",
+  "forgotPassword_newPassword": "New password",
+  "forgotPassword_confirmPassword": "Confirm password",
+  "forgotPassword_savePassword": "Save password",
+  "forgotPassword_enterAllDigits": "Please enter all digits",
+  "forgotPassword_otpScreenTitle": "Enter Verification Code",
+  "forgotPassword_otpScreenSubtitle": "Enter the code sent to your email or phone",
+  "forgotPassword_checkSms": "Check your SMS",
+  "forgotPassword_checkEmail": "Check your email",
+  "forgotPassword_checkEmailOrSms": "Check your email or SMS",
+  "forgotPassword_codeExpiresIn": "Code expires in {seconds}s",
+  "@forgotPassword_codeExpiresIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "forgotPassword_codeExpired": "Code has expired",
+  "forgotPassword_verifyCode": "Verify code",
+  "forgotPassword_didntReceiveCode": "Didn't receive the code?",
+  "forgotPassword_emailOrPhone": "Email or phone",
+  "forgotPassword_emailOrPhoneHint": "Enter your email or phone number",
+  "forgotPassword_fieldRequired": "This field is required",
+  "forgotPassword_invalidEmailOrPhone": "Invalid email or phone number",
+  "forgotPassword_sendOtp": "Send OTP",
+  "forgotPassword_newPasswordScreenTitle": "Set New Password",
+  "forgotPassword_newPasswordScreenSubtitle": "Enter your new password below",
+  "forgotPassword_passwordResetSuccess": "Password reset successfully",
+  "validation_passwordNoLetter": "Password must contain at least one letter",
+  "validation_passwordNoNumber": "Password must contain at least one number",
+  "validation_confirmPasswordRequired": "Please confirm your password"
 }
