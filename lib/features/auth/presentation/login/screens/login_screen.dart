@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/core/config/app_config.dart';
@@ -11,7 +10,7 @@ import 'package:build4allgym/features/auth/presentation/login/bloc/auth_state.da
 import 'package:build4allgym/features/shell/presentation/screens/main_shell.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
-import '../../../domain/facade/dual_login_orchestrator.dart';
+import '../../signup/screens/signup_screen.dart';
 
 class UserLoginScreen extends StatefulWidget {
   final AppConfig appConfig;
@@ -23,11 +22,11 @@ class UserLoginScreen extends StatefulWidget {
 }
 
 class _UserLoginScreenState extends State<UserLoginScreen> {
-  final _formKey      = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _identifierCtrl = TextEditingController();
-  final _passwordCtrl   = TextEditingController();
+  final _passwordCtrl = TextEditingController();
 
-  bool _usePhone    = false;
+  bool _usePhone = false;
   bool _obscurePass = true;
 
   @override
@@ -44,17 +43,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     FocusScope.of(context).unfocus();
 
     final value = _identifierCtrl.text.trim();
-    final pass  = _passwordCtrl.text;
+    final pass = _passwordCtrl.text;
 
-    if (_usePhone) {
-      context.read<AuthBloc>().add(
-        AuthPhoneLoginSubmitted(phone: value, password: pass),
-      );
-    } else {
-      context.read<AuthBloc>().add(
-        AuthLoginSubmitted(email: value, password: pass),
-      );
-    }
+    // ✅ Unified login (no more phone/email distinction)
+    context.read<AuthBloc>().add(
+      AuthLoginSubmitted(email: value, password: pass),
+    );
   }
 
   // ─── navigation helpers ─────────────────────────────────────────────────────
@@ -72,126 +66,38 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     Navigator.of(context).pushNamedAndRemoveUntil('/admin', (_) => false);
   }
 
-  // ─── role choice bottom sheet ────────────────────────────────────────────────
-
-  Future<void> _showRoleSheet(DualLoginResult result) async {
-    final l = AppLocalizations.of(context)!;
-
-    final choice = await showModalBottomSheet<String>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40, height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l.authGateContinueAs,
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 12),
-            ListTile(
-              leading: const Icon(Icons.verified_user_outlined),
-              title: Text(l.authGateRoleAdminOwner),
-              onTap: () => Navigator.pop(ctx, 'admin'),
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: Text(l.authGateRoleUser),
-              onTap: () => Navigator.pop(ctx, 'user'),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (!mounted) return;
-    if (choice != null) {
-      context.read<AuthBloc>().add(AuthRoleChosen(choice));
-    }
-  }
-
-  // ─── reactivation dialog ─────────────────────────────────────────────────────
-
-  Future<void> _showInactiveDialog() async {
-    final l = AppLocalizations.of(context)!;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.auth_accountInactiveTitle),
-        content: Text(l.auth_accountInactiveMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l.general_cancel),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l.auth_reactivate),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      // TODO: call reactivation API then hydrate
-    }
-  }
-
   // ─── build ──────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
-    final c      = tokens.colors;
-    final l      = AppLocalizations.of(context)!;
+    final c = tokens.colors;
+    final btn = tokens.button;
+    final card = tokens.card;
+    final sp = tokens.spacing;
+    final l = AppLocalizations.of(context)!;
+
+    // ✅ Derived colors from existing theme
+    final gradientStart = c.primary;
+    final gradientEnd = Color.lerp(c.primary, c.success, 0.3) ?? c.primary;
+    final inputFillColor = c.surface;
+    final inputBorderColor = c.border.withOpacity(0.3);
+    final hintColor = c.muted;
+    final labelColor = c.label.withOpacity(0.7);
+    final dividerColor = c.border.withOpacity(0.2);
+    final shadowColor = Colors.black;
+    final inverseSurface = c.label; // Use label as dark color
+    final onInverseSurface = c.onPrimary;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (ctx, state) async {
         switch (state.status) {
-
           case AuthStatus.authenticated:
             if (state.role == 'admin') {
               _goAdmin();
             } else {
               _goHome();
             }
-            break;
-
-          case AuthStatus.roleChoice:
-            if (state.dualResult != null) {
-              await _showRoleSheet(state.dualResult!);
-            }
-            break;
-
-          case AuthStatus.inactive:
-            await _showInactiveDialog();
-            break;
-
-          case AuthStatus.deleted:
-            ScaffoldMessenger.of(ctx).showSnackBar(
-              SnackBar(
-                content: Text(
-                  state.canRestoreDeleted
-                      ? l.auth_accountDeletedRestorableMessage
-                      : l.auth_accountDeletedPermanentMessage,
-                ),
-                backgroundColor: c.error,
-                duration: const Duration(seconds: 5),
-              ),
-            );
             break;
 
           case AuthStatus.failure:
@@ -209,14 +115,11 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       },
       child: Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF1FCC79), // Green
-                Color(0xFF2DBAB8), // Teal/Blue
-              ],
+              colors: [gradientStart, gradientEnd],
             ),
           ),
           child: Column(
@@ -230,7 +133,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     children: [
                       // ── Top section with logo and title ──
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        padding: EdgeInsets.symmetric(vertical: sp.xl),
                         child: Column(
                           children: [
                             // Logo
@@ -238,38 +141,38 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                               width: 72,
                               height: 72,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: c.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: shadowColor.withOpacity(0.1),
                                     blurRadius: 20,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.fitness_center_rounded,
                                 size: 36,
-                                color: Color(0xFF1FCC79),
+                                color: c.primary,
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: sp.md),
                             // Welcome text
                             Text(
                               l.auth_welcomeBack,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: c.onPrimary,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: sp.xs),
                             Text(
                               l.auth_loginSubtitle,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.white.withOpacity(0.9),
+                                color: c.onPrimary.withOpacity(0.9),
                               ),
                             ),
                           ],
@@ -280,34 +183,34 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       Expanded(
                         child: Container(
                           width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            color: c.surface,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(32),
                               topRight: Radius.circular(32),
                             ),
                           ),
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(24),
+                            padding: EdgeInsets.all(sp.lg),
                             child: Form(
                               key: _formKey,
                               child: BlocBuilder<AuthBloc, AuthState>(
                                 builder: (ctx, state) => Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
-                                    const SizedBox(height: 8),
+                                    SizedBox(height: sp.xs),
 
                                     // ── Email / Phone toggle ──
                                     Text(
                                       _usePhone ? l.auth_phoneLabel : l.auth_emailLabel,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey[600],
+                                        color: labelColor,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       textAlign: TextAlign.right,
                                     ),
-                                    const SizedBox(height: 8),
+                                    SizedBox(height: sp.xs),
 
                                     // ── Identifier field ──
                                     TextFormField(
@@ -318,7 +221,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                       textDirection: TextDirection.ltr,
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        color: Colors.grey[800],
+                                        color: c.label,
                                         fontSize: 15,
                                       ),
                                       decoration: InputDecoration(
@@ -326,36 +229,36 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                             ? l.auth_phoneHint
                                             : l.auth_emailHint,
                                         hintStyle: TextStyle(
-                                          color: Colors.grey[400],
+                                          color: hintColor,
                                           fontSize: 14,
                                         ),
                                         filled: true,
-                                        fillColor: Colors.grey[50],
+                                        fillColor: inputFillColor,
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(btn.radius),
                                           borderSide: BorderSide(
-                                            color: Colors.grey[200]!,
+                                            color: inputBorderColor,
                                             width: 1,
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(btn.radius),
                                           borderSide: BorderSide(
-                                            color: Colors.grey[200]!,
+                                            color: inputBorderColor,
                                             width: 1,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                            color: Color(0xFF1FCC79),
+                                          borderRadius: BorderRadius.circular(btn.radius),
+                                          borderSide: BorderSide(
+                                            color: c.primary,
                                             width: 1.5,
                                           ),
                                         ),
                                         errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                            color: Colors.red,
+                                          borderRadius: BorderRadius.circular(btn.radius),
+                                          borderSide: BorderSide(
+                                            color: c.error,
                                             width: 1,
                                           ),
                                         ),
@@ -363,7 +266,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           _usePhone
                                               ? Icons.phone_outlined
                                               : Icons.email_outlined,
-                                          color: Colors.grey[400],
+                                          color: hintColor,
                                           size: 20,
                                         ),
                                         contentPadding: const EdgeInsets.symmetric(
@@ -383,19 +286,19 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: sp.md),
 
                                     // ── Password label ──
                                     Text(
                                       l.auth_passwordLabel,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey[600],
+                                        color: labelColor,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       textAlign: TextAlign.right,
                                     ),
-                                    const SizedBox(height: 8),
+                                    SizedBox(height: sp.xs),
 
                                     // ── Password field ──
                                     TextFormField(
@@ -404,42 +307,42 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                       textAlign: TextAlign.left,
                                       textDirection: TextDirection.ltr,
                                       style: TextStyle(
-                                        color: Colors.grey[800],
+                                        color: c.label,
                                         fontSize: 15,
                                       ),
                                       decoration: InputDecoration(
                                         hintText: l.auth_passwordHint,
                                         hintStyle: TextStyle(
-                                          color: Colors.grey[400],
+                                          color: hintColor,
                                           fontSize: 14,
                                         ),
                                         filled: true,
-                                        fillColor: Colors.grey[50],
+                                        fillColor: inputFillColor,
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(btn.radius),
                                           borderSide: BorderSide(
-                                            color: Colors.grey[200]!,
+                                            color: inputBorderColor,
                                             width: 1,
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(btn.radius),
                                           borderSide: BorderSide(
-                                            color: Colors.grey[200]!,
+                                            color: inputBorderColor,
                                             width: 1,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                            color: Color(0xFF1FCC79),
+                                          borderRadius: BorderRadius.circular(btn.radius),
+                                          borderSide: BorderSide(
+                                            color: c.primary,
                                             width: 1.5,
                                           ),
                                         ),
                                         errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                            color: Colors.red,
+                                          borderRadius: BorderRadius.circular(btn.radius),
+                                          borderSide: BorderSide(
+                                            color: c.error,
                                             width: 1,
                                           ),
                                         ),
@@ -448,7 +351,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                             _obscurePass
                                                 ? Icons.visibility_off_outlined
                                                 : Icons.visibility_outlined,
-                                            color: Colors.grey[400],
+                                            color: hintColor,
                                             size: 20,
                                           ),
                                           onPressed: () => setState(
@@ -457,7 +360,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         ),
                                         suffixIcon: Icon(
                                           Icons.lock_outline_rounded,
-                                          color: Colors.grey[400],
+                                          color: hintColor,
                                           size: 20,
                                         ),
                                         contentPadding: const EdgeInsets.symmetric(
@@ -472,7 +375,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: sp.sm),
 
                                     // ── Forgot password ──
                                     Align(
@@ -488,95 +391,95 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         ),
                                         child: Text(
                                           l.auth_forgotPassword,
-                                          style: const TextStyle(
-                                            color: Color(0xFF1FCC79),
+                                          style: TextStyle(
+                                            color: c.primary,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: sp.lg),
 
                                     // ── Login button ──
                                     SizedBox(
-                                      height: 52,
+                                      height: btn.height,
                                       child: ElevatedButton(
                                         onPressed: state.isLoading ? null : _submit,
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFF1FCC79),
-                                          foregroundColor: Colors.white,
+                                          backgroundColor: c.primary,
+                                          foregroundColor: c.onPrimary,
                                           elevation: 0,
                                           shadowColor: Colors.transparent,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(btn.radius),
                                           ),
-                                          disabledBackgroundColor: Colors.grey[300],
+                                          disabledBackgroundColor: c.muted.withOpacity(0.3),
                                         ),
                                         child: state.isLoading
-                                            ? const SizedBox(
+                                            ? SizedBox(
                                           width: 22,
                                           height: 22,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            color: Colors.white,
+                                            color: c.onPrimary,
                                           ),
                                         )
                                             : Text(
                                           l.auth_loginButton,
-                                          style: const TextStyle(
-                                            fontSize: 16,
+                                          style: TextStyle(
+                                            fontSize: btn.textSize,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: sp.lg),
 
                                     // ── Divider "or" ──
                                     Row(
                                       children: [
                                         Expanded(
                                           child: Divider(
-                                            color: Colors.grey[300],
+                                            color: dividerColor,
                                             thickness: 1,
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                                          padding: EdgeInsets.symmetric(horizontal: sp.md),
                                           child: Text(
                                             l.general_or,
                                             style: TextStyle(
-                                              color: Colors.grey[500],
+                                              color: c.muted,
                                               fontSize: 14,
                                             ),
                                           ),
                                         ),
                                         Expanded(
                                           child: Divider(
-                                            color: Colors.grey[300],
+                                            color: dividerColor,
                                             thickness: 1,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: sp.lg),
 
                                     // ── Google login button ──
                                     SizedBox(
-                                      height: 52,
+                                      height: btn.height,
                                       child: OutlinedButton.icon(
                                         onPressed: () {
                                           // TODO: Google login
                                         },
                                         style: OutlinedButton.styleFrom(
-                                          foregroundColor: Colors.grey[800],
+                                          foregroundColor: c.label,
                                           side: BorderSide(
-                                            color: Colors.grey[300]!,
+                                            color: inputBorderColor,
                                             width: 1,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(btn.radius),
                                           ),
                                         ),
                                         icon: Image.network(
@@ -593,24 +496,24 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: sp.sm),
 
                                     // ── Apple login button ──
                                     SizedBox(
-                                      height: 52,
+                                      height: btn.height,
                                       child: OutlinedButton.icon(
                                         onPressed: () {
                                           // TODO: Apple login
                                         },
                                         style: OutlinedButton.styleFrom(
-                                          backgroundColor: Colors.black,
-                                          foregroundColor: Colors.white,
-                                          side: const BorderSide(
-                                            color: Colors.black,
+                                          backgroundColor: inverseSurface,
+                                          foregroundColor: onInverseSurface,
+                                          side: BorderSide(
+                                            color: inverseSurface,
                                             width: 1,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(btn.radius),
                                           ),
                                         ),
                                         icon: const Icon(
@@ -626,7 +529,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: sp.lg),
 
                                     // ── Register link ──
                                     Row(
@@ -634,7 +537,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                       children: [
                                         TextButton(
                                           onPressed: () {
-                                            // TODO: navigate to register
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => const SignupScreen(),
+                                              ),
+                                            );
                                           },
                                           style: TextButton.styleFrom(
                                             padding: EdgeInsets.zero,
@@ -643,18 +551,18 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           ),
                                           child: Text(
                                             l.auth_createAccount,
-                                            style: const TextStyle(
-                                              color: Color(0xFF1FCC79),
+                                            style: TextStyle(
+                                              color: c.primary,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
+                                        SizedBox(width: sp.xs),
                                         Text(
                                           l.auth_noAccount,
                                           style: TextStyle(
-                                            color: Colors.grey[600],
+                                            color: c.body,
                                             fontSize: 14,
                                           ),
                                         ),
