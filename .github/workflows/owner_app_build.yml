@@ -82,6 +82,15 @@ jobs:
           EOF
           cat lib/env/ci_env.json
 
+      - name: Add Stripe ProGuard rules
+        run: |
+          cat >> android/app/proguard-rules.pro <<'PROGUARD'
+          # Stripe SDK keep rules
+          -keep class com.stripe.android.pushProvisioning.** { *; }
+          -keep class com.reactnativestripesdk.** { *; }
+          -dontwarn com.stripe.android.pushProvisioning.**
+          PROGUARD
+
       - name: Flutter pub get
         run: flutter pub get
 
