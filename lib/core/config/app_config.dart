@@ -10,7 +10,7 @@ class AppConfig {
 
   const AppConfig({
     this.ownerProjectId,
-    this.appName = '',
+    this.appName = 'B-PRO',
     this.appLogoUrl = '',
     this.menuType = 'bottom',
     this.appType = 'ACTIVITIES',

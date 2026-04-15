@@ -4,6 +4,13 @@ class Env {
     defaultValue: 'http://192.168.1.12:8080',
   );
 
+
+  static const apiProjectBaseUrl = String.fromEnvironment(
+    'PROJECT_API_BASE_URL',
+    defaultValue: 'http://192.168.1.12:8080',
+  );
+  
+
   static const wsPath = String.fromEnvironment(
     'WS_PATH',
     defaultValue: '/api/ws',
