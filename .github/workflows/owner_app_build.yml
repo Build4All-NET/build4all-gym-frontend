@@ -34,6 +34,8 @@ jobs:
           ).strip()
           api_base = str(cfg.get("API_BASE_URL") or payload.get("API_BASE_URL") or "").strip().rstrip("/")
 
+          app_name = str(cfg.get("APP_NAME") or payload.get("APP_NAME") or "Gym App").strip()
+          
           if not link_id:
               raise SystemExit("Missing OWNER_PROJECT_LINK_ID")
           if not api_base:
@@ -43,6 +45,7 @@ jobs:
               "BUILD_ID": build_id,
               "LINK_ID": link_id,
               "API_BASE": api_base,
+              "APP_NAME": app_name,
           }
 
           with open(os.environ["GITHUB_ENV"], "a") as f:
@@ -95,7 +98,9 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --dart-define-from-file=lib/env/ci_env.json
+        run: flutter build apk --release \
+            -Penv=ci_env \
+            --dart-define-from-file=lib/env/ci_env.json
 
       - name: Save APK URL
         if: success()
