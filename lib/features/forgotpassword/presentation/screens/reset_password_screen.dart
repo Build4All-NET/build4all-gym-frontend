@@ -1,31 +1,63 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/forgotpassword/presentation/screens/reset_password_screen.dart
+//
+// PURPOSE:
+//   SCREEN 3 of the forgot-password flow.
+//   The user types their new password and confirms it.
+//   On success → pops the entire flow back to the login screen.
+//
+// DATA FLOW:
+//   - [email] received from Screen 2 constructor
+//   - [code]  received from Screen 2 constructor (the verified OTP)
+//   - Both are forwarded to the BLoC event and ultimately to the backend
+//
+// RELATIONSHIPS:
+//   ▶ Fires:      ForgotUpdatePasswordPressed, ForgotClearMessage
+//   ▶ Listens to: ForgotPasswordState
+//   ▶ Navigates to: Login (via popUntil first route)
+//   ▶ Uses:       AuthCardShell, AppTextField, PrimaryButton, AppToast
+// ─────────────────────────────────────────────────────────────────────────────
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:build4allgym/app/app_router.dart';
-import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_bloc.dart';
-import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_event.dart';
-import 'package:build4allgym/features/forgotpassword/presentation/bloc/forgot_password_state.dart';
-import 'package:build4allgym/features/forgotpassword/presentation/widgets/auth_card_shell.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
+import 'package:build4allgym/common/widgets/app_text_field.dart';
+import 'package:build4allgym/common/widgets/primary_button.dart';
+import 'package:build4allgym/common/widgets/app_toast.dart';
+import 'package:build4allgym/core/config/env.dart';
+import 'package:build4allgym/core/exceptions/exception_mapper.dart';
 
-// SCREEN 3 — New Password
-// Purpose: user types and confirms their new password
-// Sends resetToken (from Screen 2) + new password to backend
-// On success → navigates to LOGIN using AppRouter
-class ResetPasswordScreen extends StatefulWidget {
-  final String resetToken; // UUID from Step 2
+import '../bloc/forgot_password_bloc.dart';
+import '../bloc/forgot_password_event.dart';
+import '../bloc/forgot_password_state.dart';
+import '../widgets/auth_card_shell.dart';
 
-  const ResetPasswordScreen({super.key, required this.resetToken});
+
+class ForgotPasswordNewPasswordScreen extends StatefulWidget {
+  // Received from Screen 2 — backend needs email + code to authorise the update
+  final String email;
+  final String code;
+
+  const ForgotPasswordNewPasswordScreen({
+    super.key,
+    required this.email,
+    required this.code,
+  });
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  State<ForgotPasswordNewPasswordScreen> createState() =>
+      _ForgotPasswordNewPasswordScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+class _ForgotPasswordNewPasswordScreenState
+    extends State<ForgotPasswordNewPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  // The new password the user wants
   final _passCtrl = TextEditingController();
+
+  // Confirmation field — must match _passCtrl
   final _confirmCtrl = TextEditingController();
-  bool _showPass = false;
-  bool _showConfirm = false;
 
   @override
   void dispose() {
@@ -38,164 +70,86 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
-    // Send the UUID (from Step 2) + new password to backend
-    context.read<ForgotPasswordBloc>().add(ForgotResetPasswordPressed(
-      resetToken: widget.resetToken, // UUID stored from Step 2
-      newPassword: _passCtrl.text,
-    ));
+    // Fire Step 3 event → BLoC._onUpdate() → UpdatePassword use case → API
+    context.read<ForgotPasswordBloc>().add(
+      ForgotUpdatePasswordPressed(
+        email: widget.email,
+        code: widget.code,     // The OTP code verified in Screen 2
+        newPassword: _passCtrl.text,
+        ownerProjectLinkId: int.tryParse(Env.ownerProjectLinkId) ?? 0,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // LOCALIZATION: every user-visible string comes from here.
-    // Switching device language to Arabic automatically uses AppLocalizationsAr.
     final l10n = AppLocalizations.of(context)!;
 
-    // THEME: brand primary color
-    final primary = Theme.of(context).colorScheme.primary;
-
     return AuthCardShell(
-      // LOCALIZED:  'New Password'
-      title: l10n.forgotPassword_newPasswordScreenTitle,
-      // LOCALIZED:  'Set a strong password with at\nleast 8 characters.'
-      subtitle: l10n.forgotPassword_newPasswordScreenSubtitle,
+      title: l10n.forgotPassword_newPasswordTitle,       // ✅ "Set a new password"
+      subtitle: l10n.forgotPassword_newPasswordSubtitle, // ✅ "Make it strong..."
       icon: Icons.password_outlined,
       child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (ctx, state) {
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.red.shade700,
-            ));
+          // API failed → show error toast
+          if (state.error != null) {
+            AppToast.error(ctx, ExceptionMapper.toMessage(state.error!));
           }
 
-          // Step became 3 → password reset → go back to login!
-          // use AppRouter
-          if (state.step == 3) {
-            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-              // LOCALIZED:  hardcoded ' Password reset! Please login with new password.'
-              content: Text(l10n.forgotPassword_passwordResetSuccess),
-              // THEMED:  hardcoded Color(0xFF1D9E75)
-              backgroundColor: primary,
-            ));
+          // API succeeded → show success toast → pop ALL screens back to login
+          if (state.successMessage != null) {
+            AppToast.success(ctx, state.successMessage!);
 
-            // pushNamedAndRemoveUntil = go to login AND remove ALL screens behind
-            // So pressing back from login doesn't go back to forgot-pass screens
-            Navigator.of(ctx).pushNamedAndRemoveUntil(
-              AppRouter.login,
-                  (route) => false, // remove everything
-            );
+            // popUntil(first route) removes Screen 3, Screen 2, Screen 1
+            // and lands the user back at the login screen
+            Navigator.of(ctx).popUntil((r) => r.isFirst);
 
-            ctx.read<ForgotPasswordBloc>().add(const ForgotClearState());
+            // Clean up state (flow is complete but keeps BLoC tidy for reuse)
+            ctx.read<ForgotPasswordBloc>().add(const ForgotClearMessage());
           }
         },
+
         builder: (ctx, state) {
           return Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.disabled,
             child: Column(
               children: [
-
-                // New password field with show/hide toggle
-                TextFormField(
+                // New password — hidden by default, toggle with eye icon
+                AppTextField(
+                  label: l10n.forgotPassword_newPassword, // ✅ "New password"
                   controller: _passCtrl,
-                  obscureText: !_showPass,
-                  decoration: InputDecoration(
-                    // LOCALIZED:  'New Password'
-                    labelText: l10n.forgotPassword_newPassword,
-                    // THEMED
-                    prefixIcon: Icon(Icons.lock_outline, color: primary),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          _showPass ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () =>
-                          setState(() => _showPass = !_showPass),
-                    ),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      // THEMED
-                      borderSide: BorderSide(color: primary, width: 2),
-                    ),
-                  ),
+                  obscureText: true,
+                  textInputAction: TextInputAction.next, // moves focus to confirm field
                   validator: (v) {
                     final val = v ?? '';
-                    // LOCALIZED: 'Password is required'
-                    if (val.isEmpty) return l10n.validation_passwordRequired;
-                    // rules match the backend @Size and @Pattern
-                    // LOCALIZED:  'Minimum 8 characters'
-                    if (val.length < 8) return l10n.validation_passwordTooShort;
-                    // LOCALIZED:  'Must contain at least one letter'
-                    if (!val.contains(RegExp(r'[A-Za-z]')))
-                      return l10n.validation_passwordNoLetter;
-                    //  LOCALIZED:  'Must contain at least one number'
-                    if (!val.contains(RegExp(r'[0-9]')))
-                      return l10n.validation_passwordNoNumber;
+                    if (val.isEmpty) return l10n.forgotPassword_fieldRequired;  // ✅
+                    if (val.length < 6) return l10n.validation_passwordTooShort; // ✅
                     return null;
                   },
                 ),
                 const SizedBox(height: 14),
 
-                // Confirm password field
-                TextFormField(
+                // Confirm password — cross-field validation against _passCtrl
+                AppTextField(
+                  label: l10n.forgotPassword_confirmPassword, // ✅ "Confirm password"
                   controller: _confirmCtrl,
-                  obscureText: !_showConfirm,
-                  decoration: InputDecoration(
-                    //  LOCALIZED: 'Confirm Password'
-                    labelText: l10n.forgotPassword_confirmPassword,
-                    // THEMED
-                    prefixIcon: Icon(Icons.lock_outline, color: primary),
-                    suffixIcon: IconButton(
-                      icon: Icon(_showConfirm
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: () =>
-                          setState(() => _showConfirm = !_showConfirm),
-                    ),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      //THEMED
-                      borderSide: BorderSide(color: primary, width: 2),
-                    ),
-                  ),
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _submit(),
                   validator: (v) {
-                    // LOCALIZED: 'Please confirm your password'
-                    if ((v ?? '').isEmpty)
-                      return l10n.validation_confirmPasswordRequired;
-                    // LOCALIZED:  'Passwords do not match'
-                    if (v != _passCtrl.text)
-                      return l10n.validation_passwordsMismatch;
+                    if ((v ?? '').isEmpty) return l10n.forgotPassword_fieldRequired;   // ✅
+                    if (v != _passCtrl.text) return l10n.validation_passwordsMismatch; // ✅
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                // Save button
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: state.isLoading ? null : _submit,
-                    style: ElevatedButton.styleFrom(
-                      // THEMED
-                      backgroundColor: primary,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: state.isLoading
-                        ? const CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2)
-                        : Text(
-                      // LOCALIZED: 'Save Password'
-                      l10n.forgotPassword_savePassword,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
+                // Save button — spinner while API call is in flight
+                PrimaryButton(
+                  label: l10n.forgotPassword_savePassword, // ✅ "Save password"
+                  isLoading: state.isLoading,
+                  onPressed: _submit,
                 ),
               ],
             ),

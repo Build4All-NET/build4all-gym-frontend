@@ -2,114 +2,70 @@
   "@@locale": "ar",
 
   "auth_welcomeBack": "مرحباً بعودتك",
-  "@auth_welcomeBack": {
-    "description": "Welcome message on login screen"
-  },
+  "@auth_welcomeBack": { "description": "Welcome message on login screen" },
 
   "auth_loginSubtitle": "سجل دخولك للوصول إلى حسابك",
-  "@auth_loginSubtitle": {
-    "description": "Subtitle text on login screen"
-  },
+  "@auth_loginSubtitle": { "description": "Subtitle text on login screen" },
 
   "auth_emailLabel": "البريد الإلكتروني",
-  "@auth_emailLabel": {
-    "description": "Label for email input field"
-  },
+  "@auth_emailLabel": { "description": "Label for email input field" },
 
   "auth_phoneLabel": "رقم الهاتف",
-  "@auth_phoneLabel": {
-    "description": "Label for phone number input field"
-  },
+  "@auth_phoneLabel": { "description": "Label for phone number input field" },
 
   "auth_emailHint": "example@email.com",
-  "@auth_emailHint": {
-    "description": "Hint text for email input field"
-  },
+  "@auth_emailHint": { "description": "Hint text for email input field" },
 
   "auth_phoneHint": "+961 12 345 678",
-  "@auth_phoneHint": {
-    "description": "Hint text for phone input field"
-  },
+  "@auth_phoneHint": { "description": "Hint text for phone input field" },
 
   "auth_passwordLabel": "كلمة المرور",
-  "@auth_passwordLabel": {
-    "description": "Label for password input field"
-  },
+  "@auth_passwordLabel": { "description": "Label for password input field" },
 
   "auth_passwordHint": "أدخل كلمة المرور",
-  "@auth_passwordHint": {
-    "description": "Hint text for password input field"
-  },
+  "@auth_passwordHint": { "description": "Hint text for password input field" },
 
   "auth_forgotPassword": "نسيت كلمة المرور؟",
-  "@auth_forgotPassword": {
-    "description": "Forgot password link text"
-  },
+  "@auth_forgotPassword": { "description": "Forgot password link text" },
 
   "auth_loginButton": "تسجيل الدخول",
-  "@auth_loginButton": {
-    "description": "Login button text"
-  },
+  "@auth_loginButton": { "description": "Login button text" },
 
   "auth_continueWithGoogle": "متابعة باستخدام Google",
-  "@auth_continueWithGoogle": {
-    "description": "Google login button text"
-  },
+  "@auth_continueWithGoogle": { "description": "Google login button text" },
 
   "auth_continueWithApple": "متابعة باستخدام Apple",
-  "@auth_continueWithApple": {
-    "description": "Apple login button text"
-  },
+  "@auth_continueWithApple": { "description": "Apple login button text" },
 
   "auth_noAccount": "ليس لديك حساب؟",
-  "@auth_noAccount": {
-    "description": "Text asking if user has no account"
-  },
+  "@auth_noAccount": { "description": "Text asking if user has no account" },
 
   "auth_createAccount": "إنشاء حساب جديد",
-  "@auth_createAccount": {
-    "description": "Create new account link text"
-  },
+  "@auth_createAccount": { "description": "Create new account link text" },
 
   "auth_accountInactiveTitle": "الحساب غير نشط",
-  "@auth_accountInactiveTitle": {
-    "description": "Title for inactive account dialog"
-  },
+  "@auth_accountInactiveTitle": { "description": "Title for inactive account dialog" },
 
   "auth_accountInactiveMessage": "حسابك غير نشط. هل تريد إعادة تنشيطه؟",
-  "@auth_accountInactiveMessage": {
-    "description": "Message for inactive account dialog"
-  },
+  "@auth_accountInactiveMessage": { "description": "Message for inactive account dialog" },
 
   "auth_reactivate": "إعادة التنشيط",
-  "@auth_reactivate": {
-    "description": "Reactivate account button text"
-  },
+  "@auth_reactivate": { "description": "Reactivate account button text" },
 
   "auth_accountInactive": "حسابك غير نشط.",
-  "@auth_accountInactive": {
-    "description": "Error message for inactive account"
-  },
+  "@auth_accountInactive": { "description": "Error message for inactive account" },
 
   "auth_accountDeletedRestorableMessage": "تم حذف حسابك. اتصل بالدعم لاستعادته.",
-  "@auth_accountDeletedRestorableMessage": {
-    "description": "Message when account is deleted but can be restored"
-  },
+  "@auth_accountDeletedRestorableMessage": { "description": "Message when account is deleted but can be restored" },
 
   "auth_accountDeletedPermanentMessage": "تم حذف حسابك بشكل دائم.",
-  "@auth_accountDeletedPermanentMessage": {
-    "description": "Message when account is permanently deleted"
-  },
+  "@auth_accountDeletedPermanentMessage": { "description": "Message when account is permanently deleted" },
 
   "auth_userNotFound": "لم يتم العثور على حساب بهذه البيانات.",
-  "@auth_userNotFound": {
-    "description": "Error message when user account is not found"
-  },
+  "@auth_userNotFound": { "description": "Error message when user account is not found" },
 
   "auth_loginLocked": "محاولات فاشلة كثيرة. يرجى المحاولة لاحقاً.",
-  "@auth_loginLocked": {
-    "description": "Error message when login is locked due to too many attempts"
-  },
+  "@auth_loginLocked": { "description": "Error message when login is locked" },
 
   "login_welcomeBack": "مرحباً بعودتك",
   "login_subtitle": "سجل دخولك للوصول إلى حسابك",
@@ -125,73 +81,58 @@
   "login_createAccount": "إنشاء حساب جديد",
 
   "validation_emailRequired": "البريد الإلكتروني مطلوب",
-  "@validation_emailRequired": {
-    "description": "Validation message when email field is empty"
-  },
+  "@validation_emailRequired": { "description": "Validation message when email field is empty" },
 
   "validation_phoneRequired": "رقم الهاتف مطلوب",
-  "@validation_phoneRequired": {
-    "description": "Validation message when phone field is empty"
-  },
+  "@validation_phoneRequired": { "description": "Validation message when phone field is empty" },
 
   "validation_emailInvalid": "البريد الإلكتروني غير صالح",
-  "@validation_emailInvalid": {
-    "description": "Validation message when email format is invalid"
-  },
+  "@validation_emailInvalid": { "description": "Validation message when email format is invalid" },
 
   "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
+
   "validation_passwordRequired": "كلمة المرور مطلوبة",
-  "@validation_passwordRequired": {
-    "description": "Validation message when password field is empty"
-  },
+  "@validation_passwordRequired": { "description": "Validation message when password field is empty" },
 
   "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-  "@validation_invalidCredentials": {
-    "description": "Error message for invalid login credentials"
-  },
+  "@validation_invalidCredentials": { "description": "Error message for invalid login credentials" },
 
   "validation_passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
   "validation_passwordsMismatch": "كلمتا المرور غير متطابقتين",
   "validation_codeRequired": "رمز التحقق مطلوب",
   "validation_invalidCode": "الرمز غير صحيح أو منتهي الصلاحية",
 
+  "validation_emailAlreadyExists": "البريد الإلكتروني مسجل مسبقاً",
+  "validation_phoneAlreadyExists": "رقم الهاتف مسجل مسبقاً",
+
   "general_cancel": "إلغاء",
-  "@general_cancel": {
-    "description": "Cancel button text"
-  },
+  "@general_cancel": { "description": "Cancel button text" },
 
   "general_or": "أو",
-  "@general_or": {
-    "description": "Or text for divider"
-  },
+  "@general_or": { "description": "Or text for divider" },
+
+  "general_optional": "اختياري",
 
   "error_somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-  "@error_somethingWentWrong": {
-    "description": "Generic error message"
-  },
+  "@error_somethingWentWrong": { "description": "Generic error message" },
+
+  "error_serverError": "خطأ في الخادم. يرجى المحاولة لاحقاً.",
 
   "connection_reconnecting": "جارٍ الاتصال...",
   "connection_offline": "لا يوجد اتصال بالإنترنت",
-  "@connection_offline": {
-    "description": "Error message when device is offline"
-  },
+  "@connection_offline": { "description": "Error message when device is offline" },
 
   "connection_issue": "مشكلة في الاتصال",
+  "connection_timeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
 
   "authGateContinueAs": "تابع كـ",
-  "@authGateContinueAs": {
-    "description": "Title for role selection bottom sheet"
-  },
+  "@authGateContinueAs": { "description": "Title for role selection bottom sheet" },
 
   "authGateRoleAdminOwner": "مدير / مالك",
-  "@authGateRoleAdminOwner": {
-    "description": "Admin role option in role selection"
-  },
+  "@authGateRoleAdminOwner": { "description": "Admin role option in role selection" },
 
   "authGateRoleUser": "مستخدم عادي",
-  "@authGateRoleUser": {
-    "description": "User role option in role selection"
-  },
+  "@authGateRoleUser": { "description": "User role option in role selection" },
 
   "appAccessTitleDeleted": "التطبيق محذوف",
   "appAccessTitleExpired": "انتهى الاشتراك",
@@ -212,10 +153,7 @@
   "@forgotPassword_codeSentTo": {
     "description": "Subtitle on verify screen showing which email was used.",
     "placeholders": {
-      "email": {
-        "type": "String",
-        "example": "user@example.com"
-      }
+      "email": { "type": "String", "example": "user@example.com" }
     }
   },
 
@@ -238,11 +176,7 @@
 
   "forgotPassword_codeExpiresIn": "ينتهي الرمز خلال {seconds} ثانية",
   "@forgotPassword_codeExpiresIn": {
-    "placeholders": {
-      "seconds": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "seconds": { "type": "int" } }
   },
 
   "forgotPassword_codeExpired": "انتهت صلاحية الرمز",

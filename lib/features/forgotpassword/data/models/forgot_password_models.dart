@@ -1,55 +1,40 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/forgotpassword/data/models/forgot_password_models.dart
+//
+// PURPOSE:
+//   Data Transfer Object (DTO) that mirrors the raw JSON shape the backend
+//   returns for ALL three forgot-password endpoints:
+//     POST /api/users/reset-password
+//     POST /api/users/verify-reset-code
+//     POST /api/users/update-password
+//
+//   The backend ALWAYS returns: { "success": true, "message": "...", "data": {...} }
+//   We only care about "message" here — the rest is ignored at this layer.
+//
+// SCOPE:
+//   Used ONLY inside ForgotPasswordApiService. The repository converts this
+//   model into domain entities (ForgotPasswordResult) so nothing above the
+//   data layer ever imports this file.
+//
+// RELATIONSHIPS:
+//   ▶ Parsed by:   ForgotPasswordApiService (all 3 methods)
+//   ▶ Converted to: ForgotPasswordResult in ForgotPasswordRepositoryImpl
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Backend always replies: { "success": true, "message": "...", "data": {...} }
+/// Wraps the backend's standard response envelope.
+/// Only the `message` field is extracted — `success` and `data` are ignored
+/// because the repository uses HTTP status codes for success/failure logic.
+class ForgotMessageResponse {
+  /// The human-readable message from the backend (e.g. "OTP sent successfully").
+  final String message;
 
-// ── Wraps EVERY backend response ─────────────────────────────────────────────
-// Used for all 3 steps — the outer shell is always the same
+  ForgotMessageResponse({required this.message});
 
-//Only used inside forgot_password_api_service.dart.
-//The repository converts these models into entities so the rest of the app never touches them.
-
-class ApiResponse {
-  final bool success;       // true = OK, false = error
-  final String message;     // "OTP sent successfully" etc.
-  final Map<String, dynamic>? data; // the actual payload — different each step
-
-  ApiResponse({required this.success, required this.message, this.data});
-
-  factory ApiResponse.fromJson(Map<String, dynamic> json) {
-    return ApiResponse(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      data: json['data'] as Map<String, dynamic>?,
-    );
-  }
-}
-
-// ── Step 1 response: what's inside "data" ────────────────────────────────────
-// Backend: { "maskedContact": "jo***@gmail.com", "deliveryMethod": "EMAIL" }
-class ForgotPasswordData {
-  final String maskedContact;  // shown on Screen 2: "Check jo***@gmail.com"
-  final String deliveryMethod; // "EMAIL" or "PHONE"
-
-  ForgotPasswordData({
-    required this.maskedContact,
-    required this.deliveryMethod,
-  });
-
-  factory ForgotPasswordData.fromJson(Map<String, dynamic> json) {
-    return ForgotPasswordData(
-      maskedContact: json['maskedContact'] ?? '',
-      deliveryMethod: json['deliveryMethod'] ?? 'EMAIL',
-    );
-  }
-}
-
-// ── Step 2 response: what's inside "data" ────────────────────────────────────
-// Backend: { "resetToken": "69fe576e-0b23-4e7e-8421-b0baf01439a" }
-class VerifyOtpData {
-  final String resetToken; // UUID — Flutter MUST store this and send in step 3
-
-  VerifyOtpData({required this.resetToken});
-
-  factory VerifyOtpData.fromJson(Map<String, dynamic> json) {
-    return VerifyOtpData(resetToken: json['resetToken'] ?? '');
+  /// Parses a raw JSON map from the backend.
+  /// Falls back gracefully if both `message` and `error` are absent.
+  factory ForgotMessageResponse.fromJson(Map<String, dynamic> json) {
+    // Try 'message' first; fall back to 'error' field; default to 'OK'
+    final msg = (json['message'] ?? json['error'] ?? '').toString();
+    return ForgotMessageResponse(message: msg.isEmpty ? 'OK' : msg);
   }
 }

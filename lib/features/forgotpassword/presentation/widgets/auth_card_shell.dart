@@ -1,14 +1,39 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/forgotpassword/presentation/widgets/auth_card_shell.dart
+//
+// PURPOSE:
+//   Shared layout shell used by all three forgot-password screens (and
+//   potentially the login/register screens too). Provides:
+//     - A centred, scrollable single-column layout
+//     - A themed circular icon at the top
+//     - A title + subtitle
+//     - A themed card container that wraps the screen's form content
+//
+//   Screens pass their form as [child] — the shell handles everything else.
+//   This keeps the actual screen files focused on form logic only.
+//
+// RELATIONSHIPS:
+//   ◀ Used by:    ForgotPasswordEmailScreen, ForgotPasswordVerifyScreen,
+//                 ForgotPasswordNewPasswordScreen
+//   ▶ Reads from: ThemeCubit (colors, card tokens for radius/padding/shadow)
+// ─────────────────────────────────────────────────────────────────────────────
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 
-// The card wrapper used by ALL 3 screens.
-// Uses ThemeCubit — so the colors automatically match
 class AuthCardShell extends StatelessWidget {
-  final Widget child;    // the form that goes inside the card
-  final String title;    // big title like "Reset your password"
-  final String subtitle; // small text under the title
-  final IconData icon;   // the circle icon at the top
+  /// The form content rendered inside the themed card.
+  final Widget child;
+
+  /// Bold heading shown below the icon (e.g. "Reset your password").
+  final String title;
+
+  /// Descriptive sub-text below the title (e.g. "Enter your email to continue").
+  final String subtitle;
+
+  /// Icon displayed in the circular badge at the top. Defaults to lock-reset.
+  final IconData icon;
 
   const AuthCardShell({
     super.key,
@@ -20,37 +45,31 @@ class AuthCardShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the theme tokens from ThemeCubit
-    // tokens.colors.primary = the app's primary colorS
-    // tokens.card.radius = the card corner radius
-    // tokens.card.padding = padding inside the card
+    // Pull design tokens from the active remote/fallback theme
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final colors = tokens.colors;
     final card = tokens.card;
     final t = Theme.of(context).textTheme;
 
     return Scaffold(
-      // Use the background color from the theme tokens
-      backgroundColor: colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
+            // Horizontal padding keeps content from touching screen edges
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
-                // Circle icon at top
-                // Color comes from theme — automatically pink/green/etc
+                // ── Icon badge ────────────────────────────────────────────
                 CircleAvatar(
-                  radius: 30,
-                  backgroundColor: colors.primary.withOpacity(0.12),
-                  child: Icon(icon, color: colors.primary, size: 30),
+                  radius: 28,
+                  // Light-tinted version of the primary colour as background
+                  backgroundColor: colors.primary.withOpacity(0.1),
+                  child: Icon(icon, color: colors.primary, size: 28),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
 
-                // Title — uses textTheme from ThemeData
-                // (set in AppThemeBuilder → text.headlineSmall)
+                // ── Title ────────────────────────────────────────────────
                 Text(
                   title,
                   style: t.titleLarge?.copyWith(
@@ -60,26 +79,28 @@ class AuthCardShell extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
 
-                // Subtitle — uses bodyMedium from textTheme
+                // ── Subtitle ─────────────────────────────────────────────
                 Text(
                   subtitle,
                   textAlign: TextAlign.center,
                   style: t.bodyMedium?.copyWith(color: colors.body),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
 
-                // White card that wraps the form
-                // Uses card.radius and card.padding from tokens
+                // ── Card container ────────────────────────────────────────
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(card.padding + 8),
+                  padding: EdgeInsets.all(card.padding),
                   decoration: BoxDecoration(
                     color: colors.surface,
                     borderRadius: BorderRadius.circular(card.radius),
+                    // Border is optional — controlled by the theme token
                     border: card.showBorder
                         ? Border.all(
-                        color: colors.border.withOpacity(0.15))
+                      color: colors.border.withOpacity(0.15),
+                    )
                         : null,
+                    // Shadow is optional — controlled by the theme token
                     boxShadow: card.showShadow
                         ? [
                       BoxShadow(
@@ -90,6 +111,7 @@ class AuthCardShell extends StatelessWidget {
                     ]
                         : null,
                   ),
+                  // The screen passes its form as child — shell is layout-only
                   child: child,
                 ),
               ],

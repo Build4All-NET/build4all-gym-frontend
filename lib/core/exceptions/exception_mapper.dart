@@ -1,69 +1,94 @@
+// ─────────────────────────────────────────────────────────────────────────────
 // lib/core/exceptions/exception_mapper.dart
+//
+// PURPOSE:
+//   Single static utility that converts ANY exception type into a clean,
+//   user-readable string. The UI (AppToast, screen error text) always calls
+//   ExceptionMapper.toMessage(error) — it never inspects the error itself.
+//
+// HOW IT WORKS:
+//   1. String  → sanitize and return directly.
+//   2. AppException → check code switch → if no match, fall through to original.
+//   3. DioException → map by type (timeout, no internet) then by HTTP status.
+//   4. Other Dart errors (FormatException, TypeError) → generic messages.
+//   5. Fallback → toString() sanitized.
+//
+// RELATIONSHIPS:
+//   ◀ Called by:  AppToast._show(), ForgotPasswordEmailScreen,
+//                 ForgotPasswordVerifyScreen, ForgotPasswordNewPasswordScreen
+//   ▶ Reads:      AppException.code, DioException.type / .response
+// ─────────────────────────────────────────────────────────────────────────────
+
 import 'dart:convert';
 import 'package:dio/dio.dart';
-
 import 'app_exception.dart';
 
 class ExceptionMapper {
+  // ── PUBLIC ENTRY POINT ────────────────────────────────────────────────────
+
+  /// Converts any error object to a clean, displayable string.
+  /// Safe to call with null-checked errors — never throws.
   static String toMessage(Object error) {
     try {
-      // ✅ If someone passes a String directly
+      // Plain string passed directly → sanitize and return
       if (error is String) return _sanitize(error);
 
-      // ✅ Your app-level exceptions
+      // App-level exceptions → try code-based mapping first
       if (error is AppException) {
-        // If it wraps a DioException or any original error -> map it first
+        // If it wraps a lower-level error, try mapping that first
         final orig = error.original;
         if (orig != null && orig is! AppException) {
           final msgFromOrig = toMessage(orig);
           if (msgFromOrig.trim().isNotEmpty) return msgFromOrig;
         }
 
-        // Keep your code-based mapping (existing behavior)
+        // Code-based mapping — covers business logic error codes from the backend
         switch (error.code) {
           case 'INVALID_CREDENTIALS':
             return 'Invalid email or password';
-
           case 'WRONG_PASSWORD':
             return 'Invalid email or password';
-
           case 'USER_NOT_FOUND':
             return 'User not found';
-
           case 'INVALID_EMAIL_FORMAT':
             return 'Invalid email format';
-
           case 'LOGIN_LOCKED':
+          // Message already contains context (e.g. lock duration) → use as-is
             return _sanitize(error.message);
-
           case 'INACTIVE':
             return 'Your account is inactive. Reactivate to continue.';
-
           case 'NETWORK_ERROR':
             return 'No internet connection';
-
           case 'SERVER_ERROR':
             return 'Server error. Please try later.';
         }
+
+        // No known code — fall back to the message stored on the exception
+        return _sanitize(error.message);
       }
 
-      // ✅ Raw Dio exceptions (this is the big missing part in your project)
+      // Raw Dio exceptions (used in other features that use Dio directly)
       if (error is DioException) return _dioToMessage(error);
 
-      // ✅ Other common stuff
+      // Standard Dart errors
       if (error is FormatException) return 'Invalid server response.';
       if (error is ArgumentError) return 'Invalid input.';
       if (error is TypeError) return 'Something went wrong. Please try again.';
 
-      // ✅ Fallback
+      // Absolute fallback
       return _sanitize(error.toString());
     } catch (_) {
+      // Safety net — mapper must never crash the UI
       return 'Something went wrong. Please try again.';
     }
   }
 
+  // ── PRIVATE HELPERS ───────────────────────────────────────────────────────
+
+  /// Maps DioException types to user messages.
+  /// Handles timeouts, connection errors, and HTTP status codes.
   static String _dioToMessage(DioException e) {
-    // 1) Network & timeouts
+    // Transport-level failures (no HTTP response at all)
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
@@ -77,25 +102,22 @@ class ExceptionMapper {
         return 'Secure connection failed.';
       case DioExceptionType.unknown:
         return 'Network error. Check your connection.';
-
       case DioExceptionType.badResponse:
-        break; // handled below
+        break; // HTTP error with a response body — handled below
     }
 
-    // 2) HTTP response errors (400/401/403/500…)
-    final status = e.response?.statusCode;
+    // HTTP errors: try to extract a message from the backend JSON body first
     final data = e.response?.data;
-
-    // Try extract backend message (error/message/detail…)
     final extracted = _extractBackendMessage(data);
     if (extracted != null && extracted.trim().isNotEmpty) {
       return _sanitize(extracted);
     }
 
-    // Fallback by status code
-    return _statusFallback(status);
+    // No usable message in body → generic status-code fallback
+    return _statusFallback(e.response?.statusCode);
   }
 
+  /// Returns a generic message based on HTTP status code.
   static String _statusFallback(int? status) {
     if (status == null) return 'Request failed.';
     switch (status) {
@@ -105,45 +127,48 @@ class ExceptionMapper {
       case 401:
         return 'Session expired. Please log in again.';
       case 403:
-        return 'You don’t have permission to do this.';
+        return 'You don\'t have permission to do this.';
       case 404:
         return 'Not found.';
       case 409:
-        return 'Conflict. This already exists or can’t be done now.';
+        return 'Conflict. This already exists or can\'t be done now.';
       default:
         if (status >= 500) return 'Server error. Please try later.';
         return 'Request failed.';
     }
   }
 
+  /// Recursively extracts a human-readable message from a backend response body.
+  /// Handles plain strings, JSON objects, and nested validation error maps.
   static String? _extractBackendMessage(dynamic data) {
     if (data == null) return null;
 
-    // Sometimes backend returns plain string (or JSON string)
+    // Backend returned a plain string (sometimes JSON-encoded)
     if (data is String) {
       final s = data.trim();
+      // Try to parse it as JSON first
       if ((s.startsWith('{') && s.endsWith('}')) ||
           (s.startsWith('[') && s.endsWith(']'))) {
         try {
-          final decoded = json.decode(s);
-          return _extractBackendMessage(decoded);
+          return _extractBackendMessage(json.decode(s));
         } catch (_) {
-          return s;
+          return s; // Not parseable — return the raw string
         }
       }
       return s;
     }
 
-    // JSON object
+    // Backend returned a JSON object
     if (data is Map) {
       final map = Map<String, dynamic>.from(data);
 
+      // Check common message fields in order of priority
       for (final k in ['error', 'message', 'detail', 'msg', 'title']) {
         final v = map[k];
         if (v is String && v.trim().isNotEmpty) return v;
       }
 
-      // Validation errors format: errors: { field: ["msg1"] }
+      // Laravel/Spring-style validation errors: { errors: { field: ["msg"] } }
       final errs = map['errors'];
       if (errs is Map) {
         final parts = <String>[];
@@ -163,21 +188,21 @@ class ExceptionMapper {
     return null;
   }
 
+  /// Strips junk prefixes and truncates overly long error strings.
   static String _sanitize(String raw) {
     var msg = raw.trim();
 
-    // Remove common junk prefixes
+    // Strip Dart/Dio exception prefixes that leak into toString()
     msg = msg.replaceAll(RegExp(r'^(Exception:)\s*'), '');
     msg = msg.replaceAll(RegExp(r'^(DioException:)\s*'), '');
     msg = msg.replaceAll(RegExp(r'^(Bad state:)\s*'), '');
 
-    // If someone passed the full Dio dump as string, cut it hard
+    // If the full Dio dump was somehow stringified, keep only the first line
     if (msg.contains('requestOptions') || msg.contains('Response:')) {
-      // keep first line only
       msg = msg.split('\n').first.trim();
     }
 
-    // Cut mega walls
+    // Cap at 160 chars to prevent overflow in toast/UI
     const maxLen = 160;
     if (msg.length > maxLen) msg = '${msg.substring(0, maxLen)}…';
 

@@ -1,11 +1,36 @@
-import 'package:build4allgym/features/forgotpassword/domain/entities/forgot_password_entity.dart';
-import 'package:build4allgym/features/forgotpassword/domain/repositories/forgot_password_repository.dart';
+// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/forgotpassword/domain/usecases/verify_otp_usecase.dart
+//
+// PURPOSE:
+//   Use case for Step 2 of the forgot-password flow.
+//   One job: verify the OTP code the user entered.
+//
+// RELATIONSHIPS:
+//   ▶ Depends on:  ForgotPasswordRepository (injected, abstract)
+//   ◀ Called by:   ForgotPasswordBloc._onVerify()
+// ─────────────────────────────────────────────────────────────────────────────
 
-// One job: verify OTP and get the resetToken back.BLoC calls verifyOtpUseCase(identifier, otpCode).
-class VerifyOtpUseCase {
+import '../entities/forgot_password_entity.dart';
+import '../repositories/forgot_password_repository.dart';
+
+class VerifyResetCode {
+  /// Abstract repository — injected so this use case is testable without HTTP.
   final ForgotPasswordRepository repo;
-  VerifyOtpUseCase(this.repo);
 
-  Future<VerifyOtpResult> call(String identifier, String otpCode) =>
-      repo.verifyOtp(identifier, otpCode);
+  VerifyResetCode(this.repo);
+
+  /// Executes the use case.
+  /// Passes [email], [code], and [ownerProjectLinkId] to the repository.
+  /// Returns [ForgotPasswordResult] on success; throws on failure.
+  Future<ForgotPasswordResult> call({
+    required String email,
+    required String code,
+    required int ownerProjectLinkId,
+  }) {
+    return repo.verifyResetCode(
+      email: email,
+      code: code,
+      ownerProjectLinkId: ownerProjectLinkId,
+    );
+  }
 }
