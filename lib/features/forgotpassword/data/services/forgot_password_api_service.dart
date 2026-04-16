@@ -54,11 +54,6 @@ class ForgotPasswordApiService {
   }
 
   // ── STEP 1 ────────────────────────────────────────────────────────────────
-  // Called when user taps "Send OTP" on Screen 1
-  // Sends: POST /auth/forgot-password  { "identifier": "john@gmail.com" }
-  // Returns: ForgotPasswordData (maskedContact + deliveryMethod)
-  Future<ForgotPasswordData> initiateForgotPassword(String identifier) async {
-    final uri = _uri('/api/auth/send-verification');
 
   /// Sends an OTP reset code to the user's email.
   /// Called by [ForgotPasswordRepositoryImpl.sendResetCode].
@@ -93,11 +88,6 @@ class ForgotPasswordApiService {
   }
 
   // ── STEP 2 ────────────────────────────────────────────────────────────────
-  // Called when user taps "Verify" on Screen 2
-  // Sends: POST /auth/verify-otp  { "identifier": "...", "otpCode": "292738" }
-  // Returns: VerifyOtpData (the UUID resetToken)
-  Future<VerifyOtpData> verifyOtp(String identifier, String otpCode) async {
-    final uri = _uri('/auth/users/reset-password');
 
   /// Verifies the OTP code the user received.
   /// Called by [ForgotPasswordRepositoryImpl.verifyResetCode].
