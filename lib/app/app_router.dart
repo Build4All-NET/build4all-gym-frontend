@@ -4,6 +4,7 @@ import 'package:build4allgym/features/auth/presentation/login/screens/login_scre
 import '../features/auth/presentation/signup/screens/signup_screen.dart';
 import '../features/auth/presentation/signup/screens/otp_screen.dart';
 
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../features/auth/presentation/login/screens/login_screen.dart';
 import '../features/forgotpassword/data/repositories/forgot_password_repository_impl.dart';
@@ -58,20 +59,16 @@ class AppRouter {
       case forgotPassword:
         return MaterialPageRoute(
           builder: (_) {
-            // Create the API service (talks to backend)
-            final api = ForgotPasswordApiService();
-
-            // Create the repository (bridges API ↔ domain)
+            final api  = ForgotPasswordApiService();
             final repo = ForgotPasswordRepositoryImpl(api: api);
 
-            // Wire everything into the BLoC and provide it to Screen 1
             return BlocProvider(
               create: (_) => ForgotPasswordBloc(
-                initiateForgotPassword: InitiateForgotPassword(repo),
-                verifyOtpUseCase: VerifyOtpUseCase(repo),
-                resetPasswordUseCase: ResetPasswordUseCase(repo),
+                sendResetCode:  SendResetCode(repo),   // ✅ correct
+                verifyResetCode: VerifyResetCode(repo), // ✅ correct
+                updatePassword:  UpdatePassword(repo),  // ✅ correct
               ),
-              child: const ForgotPasswordScreen(),
+              child: const ForgotPasswordEmailScreen(),
             );
           },
         );
