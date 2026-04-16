@@ -262,5 +262,161 @@
   "forgotPassword_passwordResetSuccess": "Password reset successfully",
   "validation_passwordNoLetter": "Password must contain at least one letter",
   "validation_passwordNoNumber": "Password must contain at least one number",
-  "validation_confirmPasswordRequired": "Please confirm your password"
+  "validation_confirmPasswordRequired": "Please confirm your password",
+  "signup_title": "Create New Account",
+  "signup_subtitle": "Start your fitness journey with us",
+  "signup_step1Label": "Account Information",
+  "signup_registrationMethod": "Registration Method",
+  "signup_confirmPasswordLabel": "Confirm Password",
+  "signup_confirmPasswordHint": "Re-enter your password",
+  "signup_continueButton": "Continue",
+  "signup_alreadyHaveAccount": "Already have an account?",
+  "signup_signIn": "Sign In",
+  "signup_termsAgreement": "By continuing, you agree to our Terms of Service and Privacy Policy",
+  "signup_alreadyVerifiedResume": "Account already verified. Completing your profile.",
+  "otp_title": "Confirm Account",
+  "otp_subtitle": "Enter the verification code sent",
+  "otp_step2Label": "Identity Verification",
+  "otp_sentTo": "Sent to",
+  "otp_enterDigits": "Enter the {count}-digit verification code",
+  "@otp_enterDigits": { "placeholders": { "count": { "type": "int" } } },
+  "otp_didntReceive": "Didn't receive the code?",
+  "otp_resendNow": "Resend now",
+  "otp_verifyButton": "Verify",
+  "otp_verifiedSuccess": "Account verified successfully!",
+  "otp_codeSentAgain": "Verification code sent again",
+  "otp_enterAllDigits": "Please enter all digits",
+  "otp_backToSignup": "Back to registration",
+  "otp_debugTip": "For testing use code 1234",
+
+  "completeProfile_title": "Complete Your Profile",
+  "@completeProfile_title": {
+    "description": "Header title on sub-step 1 (name fields)"
+  },
+
+  "completeProfile_subtitle": "Tell us more about you",
+  "@completeProfile_subtitle": {
+    "description": "Header subtitle on sub-step 1"
+  },
+
+  "completeProfile_lastStepTitle": "Last Step!",
+  "@completeProfile_lastStepTitle": {
+    "description": "Header title on sub-step 2 (username + profile type)"
+  },
+
+  "completeProfile_lastStepSubtitle": "Choose a unique username",
+  "@completeProfile_lastStepSubtitle": {
+    "description": "Header subtitle on sub-step 2"
+  },
+
+  "completeProfile_stepLabel": "Personal Information",
+  "@completeProfile_stepLabel": {
+    "description": "Label shown in the step indicator — appended with (1/2) or (2/2)"
+  },
+
+  "completeProfile_nameInstruction": "We need your name to personalize your experience",
+  "@completeProfile_nameInstruction": {
+    "description": "Helper text shown above the name fields"
+  },
+
+  "completeProfile_firstName": "First Name",
+  "@completeProfile_firstName": {
+    "description": "Label for the first name input field"
+  },
+
+  "completeProfile_firstNameHint": "Enter your first name",
+  "@completeProfile_firstNameHint": {
+    "description": "Hint text inside the first name input"
+  },
+
+  "completeProfile_firstNameRequired": "First name is required",
+  "@completeProfile_firstNameRequired": {
+    "description": "Validation error when first name is empty"
+  },
+
+  "completeProfile_lastName": "Last Name",
+  "@completeProfile_lastName": {
+    "description": "Label for the last name input field"
+  },
+
+  "completeProfile_lastNameHint": "Enter your last name",
+  "@completeProfile_lastNameHint": {
+    "description": "Hint text inside the last name input"
+  },
+
+  "completeProfile_continueButton": "Continue",
+  "@completeProfile_continueButton": {
+    "description": "Button label on sub-step 1 to advance to sub-step 2"
+  },
+
+  "completeProfile_usernameInstruction": "Your username will appear in your profile",
+  "@completeProfile_usernameInstruction": {
+    "description": "Helper text shown above the username field"
+  },
+
+  "completeProfile_username": "Username",
+  "@completeProfile_username": {
+    "description": "Label for the username input field"
+  },
+
+  "completeProfile_usernameRequired": "Username is required",
+  "@completeProfile_usernameRequired": {
+    "description": "Validation error when username is empty"
+  },
+
+  "completeProfile_usernameTooShort": "At least 3 characters required",
+  "@completeProfile_usernameTooShort": {
+    "description": "Validation error when username is shorter than 3 characters"
+  },
+
+  "completeProfile_usernameInvalid": "Only letters, numbers, _ and . allowed",
+  "@completeProfile_usernameInvalid": {
+    "description": "Validation error when username contains invalid characters"
+  },
+
+  "completeProfile_usernameTaken": "This username is already taken",
+  "@completeProfile_usernameTaken": {
+    "description": "Error shown when the API returns a username conflict"
+  },
+
+  "completeProfile_profileType": "Profile Type",
+  "@completeProfile_profileType": {
+    "description": "Label above the public/private profile selection"
+  },
+
+  "completeProfile_publicTitle": "Public Account",
+  "@completeProfile_publicTitle": {
+    "description": "Title of the public profile option card"
+  },
+
+  "completeProfile_publicDescription": "Anyone can view your profile and activity",
+  "@completeProfile_publicDescription": {
+    "description": "Description under the public profile option"
+  },
+
+  "completeProfile_privateTitle": "Private Account",
+  "@completeProfile_privateTitle": {
+    "description": "Title of the private profile option card"
+  },
+
+  "completeProfile_privateDescription": "Only you can see your information and activity",
+  "@completeProfile_privateDescription": {
+    "description": "Description under the private profile option"
+  },
+
+  "completeProfile_settingsNote": "You can change these settings later from your profile",
+  "@completeProfile_settingsNote": {
+    "description": "Info box text below the profile type selector"
+  },
+
+  "completeProfile_finishButton": "Finish & Start",
+  "@completeProfile_finishButton": {
+    "description": "Final submit button label on sub-step 2"
+  },
+
+  "completeProfile_backButton": "Back",
+  "@completeProfile_backButton": {
+    "description": "Back navigation link shown below the form"
+  }
+
 }

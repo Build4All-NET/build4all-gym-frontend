@@ -700,6 +700,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please confirm your password'**
   String get validation_confirmPasswordRequired;
+
+  /// No description provided for @signup_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Account'**
+  String get signup_title;
+
+  /// No description provided for @signup_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your fitness journey with us'**
+  String get signup_subtitle;
+
+  /// No description provided for @signup_step1Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Information'**
+  String get signup_step1Label;
+
+  /// No description provided for @signup_registrationMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration Method'**
+  String get signup_registrationMethod;
+
+  /// No description provided for @signup_confirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get signup_confirmPasswordLabel;
+
+  /// No description provided for @signup_confirmPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your password'**
+  String get signup_confirmPasswordHint;
+
+  /// No description provided for @signup_continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get signup_continueButton;
+
+  /// No description provided for @signup_alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get signup_alreadyHaveAccount;
+
+  /// No description provided for @signup_signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signup_signIn;
+
+  /// No description provided for @signup_termsAgreement.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to our Terms of Service and Privacy Policy'**
+  String get signup_termsAgreement;
+
+  /// No description provided for @signup_alreadyVerifiedResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Account already verified. Completing your profile.'**
+  String get signup_alreadyVerifiedResume;
+
+  /// No description provided for @otp_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Account'**
+  String get otp_title;
+
+  /// No description provided for @otp_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the verification code sent'**
+  String get otp_subtitle;
+
+  /// No description provided for @otp_step2Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity Verification'**
+  String get otp_step2Label;
+
+  /// No description provided for @otp_sentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to'**
+  String get otp_sentTo;
+
+  /// No description provided for @otp_enterDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the {count}-digit verification code'**
+  String otp_enterDigits(int count);
+
+  /// No description provided for @otp_didntReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code?'**
+  String get otp_didntReceive;
+
+  /// No description provided for @otp_resendNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend now'**
+  String get otp_resendNow;
+
+  /// No description provided for @otp_verifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get otp_verifyButton;
+
+  /// No description provided for @otp_verifiedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account verified successfully!'**
+  String get otp_verifiedSuccess;
+
+  /// No description provided for @otp_codeSentAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent again'**
+  String get otp_codeSentAgain;
+
+  /// No description provided for @otp_enterAllDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter all digits'**
+  String get otp_enterAllDigits;
+
+  /// No description provided for @otp_backToSignup.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to registration'**
+  String get otp_backToSignup;
+
+  /// No description provided for @otp_debugTip.
+  ///
+  /// In en, this message translates to:
+  /// **'For testing use code 1234'**
+  String get otp_debugTip;
+
+  /// Header title on sub-step 1 (name fields)
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Your Profile'**
+  String get completeProfile_title;
+
+  /// Header subtitle on sub-step 1
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us more about you'**
+  String get completeProfile_subtitle;
+
+  /// Header title on sub-step 2 (username + profile type)
+  ///
+  /// In en, this message translates to:
+  /// **'Last Step!'**
+  String get completeProfile_lastStepTitle;
+
+  /// Header subtitle on sub-step 2
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a unique username'**
+  String get completeProfile_lastStepSubtitle;
+
+  /// Label shown in the step indicator — appended with (1/2) or (2/2)
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get completeProfile_stepLabel;
+
+  /// Helper text shown above the name fields
+  ///
+  /// In en, this message translates to:
+  /// **'We need your name to personalize your experience'**
+  String get completeProfile_nameInstruction;
+
+  /// Label for the first name input field
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get completeProfile_firstName;
+
+  /// Hint text inside the first name input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your first name'**
+  String get completeProfile_firstNameHint;
+
+  /// Validation error when first name is empty
+  ///
+  /// In en, this message translates to:
+  /// **'First name is required'**
+  String get completeProfile_firstNameRequired;
+
+  /// Label for the last name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get completeProfile_lastName;
+
+  /// Hint text inside the last name input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your last name'**
+  String get completeProfile_lastNameHint;
+
+  /// Button label on sub-step 1 to advance to sub-step 2
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get completeProfile_continueButton;
+
+  /// Helper text shown above the username field
+  ///
+  /// In en, this message translates to:
+  /// **'Your username will appear in your profile'**
+  String get completeProfile_usernameInstruction;
+
+  /// Label for the username input field
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get completeProfile_username;
+
+  /// Validation error when username is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required'**
+  String get completeProfile_usernameRequired;
+
+  /// Validation error when username is shorter than 3 characters
+  ///
+  /// In en, this message translates to:
+  /// **'At least 3 characters required'**
+  String get completeProfile_usernameTooShort;
+
+  /// Validation error when username contains invalid characters
+  ///
+  /// In en, this message translates to:
+  /// **'Only letters, numbers, _ and . allowed'**
+  String get completeProfile_usernameInvalid;
+
+  /// Error shown when the API returns a username conflict
+  ///
+  /// In en, this message translates to:
+  /// **'This username is already taken'**
+  String get completeProfile_usernameTaken;
+
+  /// Label above the public/private profile selection
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Type'**
+  String get completeProfile_profileType;
+
+  /// Title of the public profile option card
+  ///
+  /// In en, this message translates to:
+  /// **'Public Account'**
+  String get completeProfile_publicTitle;
+
+  /// Description under the public profile option
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can view your profile and activity'**
+  String get completeProfile_publicDescription;
+
+  /// Title of the private profile option card
+  ///
+  /// In en, this message translates to:
+  /// **'Private Account'**
+  String get completeProfile_privateTitle;
+
+  /// Description under the private profile option
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see your information and activity'**
+  String get completeProfile_privateDescription;
+
+  /// Info box text below the profile type selector
+  ///
+  /// In en, this message translates to:
+  /// **'You can change these settings later from your profile'**
+  String get completeProfile_settingsNote;
+
+  /// Final submit button label on sub-step 2
+  ///
+  /// In en, this message translates to:
+  /// **'Finish & Start'**
+  String get completeProfile_finishButton;
+
+  /// Back navigation link shown below the form
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get completeProfile_backButton;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
