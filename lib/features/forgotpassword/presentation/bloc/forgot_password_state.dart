@@ -1,65 +1,73 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/forgotpassword/presentation/bloc/forgot_password_state.dart
+//
+// PURPOSE:
+//   Represents the current UI state of the entire forgot-password flow.
+//   All three screens share ONE BLoC instance and therefore ONE state object.
+//   In BLoC pattern, state is the OUTPUT — the UI rebuilds whenever it changes.
+//
+// FIELDS:
+//   isLoading      → true while an API call is in flight (shows spinner)
+//   successMessage → set when an API call succeeds (triggers navigation/toast)
+//   error          → set when an API call fails (triggers error toast)
+//
+// PATTERN — copyWith + clearSuccess/clearError flags:
+//   Rather than setting fields to null directly, the BLoC passes
+//   clearSuccess: true or clearError: true so the intent is explicit and
+//   readable in the BLoC code.
+//
+// RELATIONSHIPS:
+//   ◀ Emitted by:  ForgotPasswordBloc
+//   ◀ Consumed by: ForgotPasswordEmailScreen, ForgotPasswordVerifyScreen,
+//                  ForgotPasswordNewPasswordScreen (via BlocConsumer)
+// ─────────────────────────────────────────────────────────────────────────────
+
 import 'package:equatable/equatable.dart';
 
 class ForgotPasswordState extends Equatable {
-  final bool isLoading; // show spinner on the button
+  /// Whether an API call is currently in progress.
+  /// Used to disable the button and show a loading spinner.
+  final bool isLoading;
 
-  // step 0 = just opened Screen 1
-  // step 1 = OTP sent      → Screen 1 navigates to Screen 2
-  // step 2 = OTP verified  → Screen 2 navigates to Screen 3
-  // step 3 = password reset → Screen 3 goes back to login
-  //when it changes they navigate to the next screen.
-  final int step;
+  /// The success message returned by the backend on a successful step.
+  /// When non-null, the screen's listener navigates forward and shows a toast.
+  /// Cleared immediately after via ForgotClearMessage to avoid re-triggering.
+  final String? successMessage;
 
-  // Stored after Step 1 — Screen 2 shows these
-  final String? maskedContact;  // "jo***@gmail.com"
-  final String? deliveryMethod; // "EMAIL" or "PHONE"
-
-  // Stored after Step 2 — Screen 3 MUST send this to backend
-  final String? resetToken; // "69fe576e-0b23-4e7e-..."
-
-  final String? successMessage; // shown as success toast
-  final String? errorMessage;   // shown as error toast
+  /// The exception thrown on a failed API call.
+  /// Passed to ExceptionMapper.toMessage() to produce a user-readable string.
+  final Object? error;
 
   const ForgotPasswordState({
-    this.isLoading = false,//True while waiting for the backend. False when done.
-    this.step = 0,
-    this.maskedContact,
-    this.deliveryMethod,
-    this.resetToken,
+    required this.isLoading,
     this.successMessage,
-    this.errorMessage,
+    this.error,
   });
 
-  // Initial state — blank slate when screen first opens
-  factory ForgotPasswordState.initial() => const ForgotPasswordState();
+  /// Starting state: not loading, no message, no error.
+  factory ForgotPasswordState.initial() =>
+      const ForgotPasswordState(isLoading: false);
 
-  // copyWith = change only specific fields, keep everything else the same
+  /// Returns a new state with only the specified fields changed.
+  /// [clearSuccess] and [clearError] set the corresponding fields to null
+  /// rather than needing to pass null explicitly, which improves readability.
   ForgotPasswordState copyWith({
     bool? isLoading,
-    int? step,
-    String? maskedContact,
-    String? deliveryMethod,
-    String? resetToken,
     String? successMessage,
-    String? errorMessage,
-    bool clearError = false,
+    Object? error,
     bool clearSuccess = false,
+    bool clearError = false,
   }) {
     return ForgotPasswordState(
       isLoading: isLoading ?? this.isLoading,
-      step: step ?? this.step,
-      maskedContact: maskedContact ?? this.maskedContact,
-      deliveryMethod: deliveryMethod ?? this.deliveryMethod,
-      resetToken: resetToken ?? this.resetToken,
+      // If clearSuccess is true → null; otherwise use new value or keep old
       successMessage:
       clearSuccess ? null : (successMessage ?? this.successMessage),
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      // If clearError is true → null; otherwise use new value or keep old
+      error: clearError ? null : (error ?? this.error),
     );
   }
 
   @override
-  List<Object?> get props => [
-    isLoading, step, maskedContact, deliveryMethod,
-    resetToken, successMessage, errorMessage,
-  ];
+  List<Object?> get props => [isLoading, successMessage, error];
 }

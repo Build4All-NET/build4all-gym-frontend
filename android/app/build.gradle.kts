@@ -18,6 +18,7 @@ val envVars: Map<String, String> = if (envFile.exists()) {
 } else emptyMap()
 
 android {
+
     namespace = "com.example.build4allgym"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
