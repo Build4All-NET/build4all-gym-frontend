@@ -765,21 +765,6 @@ class _DebugTipBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(tokens.card.radius),
         border: Border.all(color: c.success.withOpacity(0.3)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('🧪 ', style: TextStyle(fontSize: 14)),
-          Text(
-            l.otp_debugTip,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize:   13,
-              fontWeight: FontWeight.w500,
-              color:      c.success,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
