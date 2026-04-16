@@ -314,4 +314,156 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validation_confirmPasswordRequired => 'Please confirm your password';
+
+  @override
+  String get signup_title => 'Create New Account';
+
+  @override
+  String get signup_subtitle => 'Start your fitness journey with us';
+
+  @override
+  String get signup_step1Label => 'Account Information';
+
+  @override
+  String get signup_registrationMethod => 'Registration Method';
+
+  @override
+  String get signup_confirmPasswordLabel => 'Confirm Password';
+
+  @override
+  String get signup_confirmPasswordHint => 'Re-enter your password';
+
+  @override
+  String get signup_continueButton => 'Continue';
+
+  @override
+  String get signup_alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get signup_signIn => 'Sign In';
+
+  @override
+  String get signup_termsAgreement => 'By continuing, you agree to our Terms of Service and Privacy Policy';
+
+  @override
+  String get signup_alreadyVerifiedResume => 'Account already verified. Completing your profile.';
+
+  @override
+  String get otp_title => 'Confirm Account';
+
+  @override
+  String get otp_subtitle => 'Enter the verification code sent';
+
+  @override
+  String get otp_step2Label => 'Identity Verification';
+
+  @override
+  String get otp_sentTo => 'Sent to';
+
+  @override
+  String otp_enterDigits(int count) {
+    return 'Enter the $count-digit verification code';
+  }
+
+  @override
+  String get otp_didntReceive => 'Didn\'t receive the code?';
+
+  @override
+  String get otp_resendNow => 'Resend now';
+
+  @override
+  String get otp_verifyButton => 'Verify';
+
+  @override
+  String get otp_verifiedSuccess => 'Account verified successfully!';
+
+  @override
+  String get otp_codeSentAgain => 'Verification code sent again';
+
+  @override
+  String get otp_enterAllDigits => 'Please enter all digits';
+
+  @override
+  String get otp_backToSignup => 'Back to registration';
+
+  @override
+  String get otp_debugTip => 'For testing use code 1234';
+
+  @override
+  String get completeProfile_title => 'Complete Your Profile';
+
+  @override
+  String get completeProfile_subtitle => 'Tell us more about you';
+
+  @override
+  String get completeProfile_lastStepTitle => 'Last Step!';
+
+  @override
+  String get completeProfile_lastStepSubtitle => 'Choose a unique username';
+
+  @override
+  String get completeProfile_stepLabel => 'Personal Information';
+
+  @override
+  String get completeProfile_nameInstruction => 'We need your name to personalize your experience';
+
+  @override
+  String get completeProfile_firstName => 'First Name';
+
+  @override
+  String get completeProfile_firstNameHint => 'Enter your first name';
+
+  @override
+  String get completeProfile_firstNameRequired => 'First name is required';
+
+  @override
+  String get completeProfile_lastName => 'Last Name';
+
+  @override
+  String get completeProfile_lastNameHint => 'Enter your last name';
+
+  @override
+  String get completeProfile_continueButton => 'Continue';
+
+  @override
+  String get completeProfile_usernameInstruction => 'Your username will appear in your profile';
+
+  @override
+  String get completeProfile_username => 'Username';
+
+  @override
+  String get completeProfile_usernameRequired => 'Username is required';
+
+  @override
+  String get completeProfile_usernameTooShort => 'At least 3 characters required';
+
+  @override
+  String get completeProfile_usernameInvalid => 'Only letters, numbers, _ and . allowed';
+
+  @override
+  String get completeProfile_usernameTaken => 'This username is already taken';
+
+  @override
+  String get completeProfile_profileType => 'Profile Type';
+
+  @override
+  String get completeProfile_publicTitle => 'Public Account';
+
+  @override
+  String get completeProfile_publicDescription => 'Anyone can view your profile and activity';
+
+  @override
+  String get completeProfile_privateTitle => 'Private Account';
+
+  @override
+  String get completeProfile_privateDescription => 'Only you can see your information and activity';
+
+  @override
+  String get completeProfile_settingsNote => 'You can change these settings later from your profile';
+
+  @override
+  String get completeProfile_finishButton => 'Finish & Start';
+
+  @override
+  String get completeProfile_backButton => 'Back';
 }

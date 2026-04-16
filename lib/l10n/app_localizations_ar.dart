@@ -136,3 +136,197 @@ class AppLocalizationsAr extends AppLocalizations {
   @override String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
   @override String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
 }
+  @override
+  String get forgotPassword_codeExpired => 'انتهت صلاحية الرمز';
+
+  @override
+  String get forgotPassword_verifyCode => 'تحقق من الرمز';
+
+  @override
+  String get forgotPassword_didntReceiveCode => 'لم تستلم الرمز؟';
+
+  @override
+  String get forgotPassword_emailOrPhone => 'البريد الإلكتروني أو رقم الهاتف';
+
+  @override
+  String get forgotPassword_emailOrPhoneHint => 'أدخل بريدك الإلكتروني أو رقم هاتفك';
+
+  @override
+  String get forgotPassword_fieldRequired => 'هذا الحقل مطلوب';
+
+  @override
+  String get forgotPassword_invalidEmailOrPhone => 'البريد الإلكتروني أو رقم الهاتف غير صالح';
+
+  @override
+  String get forgotPassword_sendOtp => 'إرسال رمز التحقق';
+
+  @override
+  String get forgotPassword_newPasswordScreenTitle => 'تعيين كلمة مرور جديدة';
+
+  @override
+  String get forgotPassword_newPasswordScreenSubtitle => 'أدخل كلمة المرور الجديدة أدناه';
+
+  @override
+  String get forgotPassword_passwordResetSuccess => 'تم إعادة تعيين كلمة المرور بنجاح';
+
+  @override
+  String get validation_passwordNoLetter => 'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
+
+  @override
+  String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
+
+  @override
+  String get signup_title => 'إنشاء حساب جديد';
+
+  @override
+  String get signup_subtitle => 'ابدأ رحلتك الرياضية معنا';
+
+  @override
+  String get signup_step1Label => 'معلومات الحساب';
+
+  @override
+  String get signup_registrationMethod => 'طريقة التسجيل';
+
+  @override
+  String get signup_confirmPasswordLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get signup_confirmPasswordHint => 'أعد إدخال كلمة المرور';
+
+  @override
+  String get signup_continueButton => 'متابعة';
+
+  @override
+  String get signup_alreadyHaveAccount => 'لديك حساب بالفعل؟';
+
+  @override
+  String get signup_signIn => 'تسجيل الدخول';
+
+  @override
+  String get signup_termsAgreement => 'بالمتابعة، أنت توافق على شروط الخدمة وسياسة الخصوصية';
+
+  @override
+  String get signup_alreadyVerifiedResume => 'تم التحقق من الحساب مسبقاً. جارٍ استكمال ملفك الشخصي.';
+
+  @override
+  String get otp_title => 'تأكيد الحساب';
+
+  @override
+  String get otp_subtitle => 'أدخل رمز التحقق المُرسل';
+
+  @override
+  String get otp_step2Label => 'التحقق من الهوية';
+
+  @override
+  String get otp_sentTo => 'تم الإرسال إلى';
+
+  @override
+  String otp_enterDigits(int count) {
+    return 'أدخل رمز التحقق المكون من $count أرقام';
+  }
+
+  @override
+  String get otp_didntReceive => 'لم تستلم الرمز؟';
+
+  @override
+  String get otp_resendNow => 'إعادة الإرسال الآن';
+
+  @override
+  String get otp_verifyButton => 'تحقق';
+
+  @override
+  String get otp_verifiedSuccess => 'تم التحقق من الحساب بنجاح!';
+
+  @override
+  String get otp_codeSentAgain => 'تم إرسال رمز التحقق مجدداً';
+
+  @override
+  String get otp_enterAllDigits => 'يرجى إدخال جميع الأرقام';
+
+  @override
+  String get otp_backToSignup => 'العودة للتسجيل';
+
+  @override
+  String get otp_debugTip => 'للتجربة استخدم الرمز 1234';
+
+  @override
+  String get completeProfile_title => 'أكمل ملفك الشخصي';
+
+  @override
+  String get completeProfile_subtitle => 'أخبرنا المزيد عنك';
+
+  @override
+  String get completeProfile_lastStepTitle => 'آخر خطوة!';
+
+  @override
+  String get completeProfile_lastStepSubtitle => 'اختر اسم مستخدم فريد';
+
+  @override
+  String get completeProfile_stepLabel => 'المعلومات الشخصية';
+
+  @override
+  String get completeProfile_nameInstruction => 'نحتاج إلى معرفة اسمك لتخصيص تجربتك';
+
+  @override
+  String get completeProfile_firstName => 'الاسم الأول';
+
+  @override
+  String get completeProfile_firstNameHint => 'أدخل اسمك الأول';
+
+  @override
+  String get completeProfile_firstNameRequired => 'الاسم الأول مطلوب';
+
+  @override
+  String get completeProfile_lastName => 'اسم العائلة';
+
+  @override
+  String get completeProfile_lastNameHint => 'أدخل اسم العائلة';
+
+  @override
+  String get completeProfile_continueButton => 'متابعة';
+
+  @override
+  String get completeProfile_usernameInstruction => 'اسمك المستخدم سيظهر في ملفك الشخصي';
+
+  @override
+  String get completeProfile_username => 'اسم المستخدم';
+
+  @override
+  String get completeProfile_usernameRequired => 'اسم المستخدم مطلوب';
+
+  @override
+  String get completeProfile_usernameTooShort => 'يجب أن يكون 3 أحرف على الأقل';
+
+  @override
+  String get completeProfile_usernameInvalid => 'أحرف وأرقام و _ و . فقط';
+
+  @override
+  String get completeProfile_usernameTaken => 'اسم المستخدم هذا محجوز بالفعل';
+
+  @override
+  String get completeProfile_profileType => 'نوع الملف الشخصي';
+
+  @override
+  String get completeProfile_publicTitle => 'حساب عام';
+
+  @override
+  String get completeProfile_publicDescription => 'يمكن لأي شخص رؤية ملفك الشخصي ونشاطك';
+
+  @override
+  String get completeProfile_privateTitle => 'حساب خاص';
+
+  @override
+  String get completeProfile_privateDescription => 'فقط أنت يمكنك رؤية معلوماتك ونشاطك';
+
+  @override
+  String get completeProfile_settingsNote => 'يمكنك تغيير هذه الإعدادات لاحقاً من الملف الشخصي';
+
+  @override
+  String get completeProfile_finishButton => 'إنهاء وبدء الاستخدام';
+
+  @override
+  String get completeProfile_backButton => 'العودة';
+}

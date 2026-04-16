@@ -197,5 +197,161 @@
 
   "validation_passwordNoLetter": "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
   "validation_passwordNoNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
-  "validation_confirmPasswordRequired": "يرجى تأكيد كلمة المرور"
+  "validation_confirmPasswordRequired": "يرجى تأكيد كلمة المرور",
+  "signup_title": "إنشاء حساب جديد",
+  "signup_subtitle": "ابدأ رحلتك الرياضية معنا",
+  "signup_step1Label": "معلومات الحساب",
+  "signup_registrationMethod": "طريقة التسجيل",
+  "signup_confirmPasswordLabel": "تأكيد كلمة المرور",
+  "signup_confirmPasswordHint": "أعد إدخال كلمة المرور",
+  "signup_continueButton": "متابعة",
+  "signup_alreadyHaveAccount": "لديك حساب بالفعل؟",
+  "signup_signIn": "تسجيل الدخول",
+  "signup_termsAgreement": "بالمتابعة، أنت توافق على شروط الخدمة وسياسة الخصوصية",
+  "signup_alreadyVerifiedResume": "تم التحقق من الحساب مسبقاً. جارٍ استكمال ملفك الشخصي.",
+  "otp_title": "تأكيد الحساب",
+  "otp_subtitle": "أدخل رمز التحقق المُرسل",
+  "otp_step2Label": "التحقق من الهوية",
+  "otp_sentTo": "تم الإرسال إلى",
+  "otp_enterDigits": "أدخل رمز التحقق المكون من {count} أرقام",
+  "@otp_enterDigits": { "placeholders": { "count": { "type": "int" } } },
+  "otp_didntReceive": "لم تستلم الرمز؟",
+  "otp_resendNow": "إعادة الإرسال الآن",
+  "otp_verifyButton": "تحقق",
+  "otp_verifiedSuccess": "تم التحقق من الحساب بنجاح!",
+  "otp_codeSentAgain": "تم إرسال رمز التحقق مجدداً",
+  "otp_enterAllDigits": "يرجى إدخال جميع الأرقام",
+  "otp_backToSignup": "العودة للتسجيل",
+  "otp_debugTip": "للتجربة استخدم الرمز 1234",
+
+  "completeProfile_title": "أكمل ملفك الشخصي",
+  "@completeProfile_title": {
+    "description": "Header title on sub-step 1 (name fields)"
+  },
+
+  "completeProfile_subtitle": "أخبرنا المزيد عنك",
+  "@completeProfile_subtitle": {
+    "description": "Header subtitle on sub-step 1"
+  },
+
+  "completeProfile_lastStepTitle": "آخر خطوة!",
+  "@completeProfile_lastStepTitle": {
+    "description": "Header title on sub-step 2 (username + profile type)"
+  },
+
+  "completeProfile_lastStepSubtitle": "اختر اسم مستخدم فريد",
+  "@completeProfile_lastStepSubtitle": {
+    "description": "Header subtitle on sub-step 2"
+  },
+
+  "completeProfile_stepLabel": "المعلومات الشخصية",
+  "@completeProfile_stepLabel": {
+    "description": "Label shown in the step indicator — appended with (1/2) or (2/2)"
+  },
+
+  "completeProfile_nameInstruction": "نحتاج إلى معرفة اسمك لتخصيص تجربتك",
+  "@completeProfile_nameInstruction": {
+    "description": "Helper text shown above the name fields"
+  },
+
+  "completeProfile_firstName": "الاسم الأول",
+  "@completeProfile_firstName": {
+    "description": "Label for the first name input field"
+  },
+
+  "completeProfile_firstNameHint": "أدخل اسمك الأول",
+  "@completeProfile_firstNameHint": {
+    "description": "Hint text inside the first name input"
+  },
+
+  "completeProfile_firstNameRequired": "الاسم الأول مطلوب",
+  "@completeProfile_firstNameRequired": {
+    "description": "Validation error when first name is empty"
+  },
+
+  "completeProfile_lastName": "اسم العائلة",
+  "@completeProfile_lastName": {
+    "description": "Label for the last name input field"
+  },
+
+  "completeProfile_lastNameHint": "أدخل اسم العائلة",
+  "@completeProfile_lastNameHint": {
+    "description": "Hint text inside the last name input"
+  },
+
+  "completeProfile_continueButton": "متابعة",
+  "@completeProfile_continueButton": {
+    "description": "Button label on sub-step 1 to advance to sub-step 2"
+  },
+
+  "completeProfile_usernameInstruction": "اسمك المستخدم سيظهر في ملفك الشخصي",
+  "@completeProfile_usernameInstruction": {
+    "description": "Helper text shown above the username field"
+  },
+
+  "completeProfile_username": "اسم المستخدم",
+  "@completeProfile_username": {
+    "description": "Label for the username input field"
+  },
+
+  "completeProfile_usernameRequired": "اسم المستخدم مطلوب",
+  "@completeProfile_usernameRequired": {
+    "description": "Validation error when username is empty"
+  },
+
+  "completeProfile_usernameTooShort": "يجب أن يكون 3 أحرف على الأقل",
+  "@completeProfile_usernameTooShort": {
+    "description": "Validation error when username is shorter than 3 characters"
+  },
+
+  "completeProfile_usernameInvalid": "أحرف وأرقام و _ و . فقط",
+  "@completeProfile_usernameInvalid": {
+    "description": "Validation error when username contains invalid characters"
+  },
+
+  "completeProfile_usernameTaken": "اسم المستخدم هذا محجوز بالفعل",
+  "@completeProfile_usernameTaken": {
+    "description": "Error shown when the API returns a username conflict"
+  },
+
+  "completeProfile_profileType": "نوع الملف الشخصي",
+  "@completeProfile_profileType": {
+    "description": "Label above the public/private profile selection"
+  },
+
+  "completeProfile_publicTitle": "حساب عام",
+  "@completeProfile_publicTitle": {
+    "description": "Title of the public profile option card"
+  },
+
+  "completeProfile_publicDescription": "يمكن لأي شخص رؤية ملفك الشخصي ونشاطك",
+  "@completeProfile_publicDescription": {
+    "description": "Description under the public profile option"
+  },
+
+  "completeProfile_privateTitle": "حساب خاص",
+  "@completeProfile_privateTitle": {
+    "description": "Title of the private profile option card"
+  },
+
+  "completeProfile_privateDescription": "فقط أنت يمكنك رؤية معلوماتك ونشاطك",
+  "@completeProfile_privateDescription": {
+    "description": "Description under the private profile option"
+  },
+
+  "completeProfile_settingsNote": "يمكنك تغيير هذه الإعدادات لاحقاً من الملف الشخصي",
+  "@completeProfile_settingsNote": {
+    "description": "Info box text below the profile type selector"
+  },
+
+  "completeProfile_finishButton": "إنهاء وبدء الاستخدام",
+  "@completeProfile_finishButton": {
+    "description": "Final submit button label on sub-step 2"
+  },
+
+  "completeProfile_backButton": "العودة",
+  "@completeProfile_backButton": {
+    "description": "Back navigation link shown below the form"
+  }
+
 }
