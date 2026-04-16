@@ -29,7 +29,7 @@ class ForgotPasswordApiService {
   // Sends: POST /auth/forgot-password  { "identifier": "john@gmail.com" }
   // Returns: ForgotPasswordData (maskedContact + deliveryMethod)
   Future<ForgotPasswordData> initiateForgotPassword(String identifier) async {
-    final uri = _uri('/auth/forgot-password');
+    final uri = _uri('/api/auth/send-verification');
 
     try {
       final resp = await _safePost(
@@ -63,7 +63,7 @@ class ForgotPasswordApiService {
   // Sends: POST /auth/verify-otp  { "identifier": "...", "otpCode": "292738" }
   // Returns: VerifyOtpData (the UUID resetToken)
   Future<VerifyOtpData> verifyOtp(String identifier, String otpCode) async {
-    final uri = _uri('/auth/verify-otp');
+    final uri = _uri('/auth/users/reset-password');
 
     try {
       final resp = await _safePost(

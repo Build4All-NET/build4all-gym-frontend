@@ -1,9 +1,21 @@
+// android/app/build.gradle.kts
+
+import groovy.json.JsonSlurper
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// ✅ Read JSON file directly — no Base64 headache
+val envName = project.findProperty("env")?.toString() ?: "gym_dev"
+val envFile = file("../../lib/env/$envName.json")
+
+@Suppress("UNCHECKED_CAST")
+val envVars: Map<String, String> = if (envFile.exists()) {
+    JsonSlurper().parse(envFile) as Map<String, String>
+} else emptyMap()
 
 android {
     namespace = "com.example.build4allgym"
@@ -20,20 +32,18 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.build4allgym"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // ✅ Reads APP_NAME directly from your JSON file
+        manifestPlaceholders["APP_NAME"] = envVars.getOrDefault("APP_NAME", "B-PRO")
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
