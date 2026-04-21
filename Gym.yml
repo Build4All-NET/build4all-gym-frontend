@@ -1,0 +1,288 @@
+name: Gym App Build Basic (iOS)
+
+on:
+  repository_dispatch:
+    types: [owner_app_build_ios]
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+
+    env:
+      CI_CALLBACK_TOKEN: ${{ secrets.CI_CALLBACK_TOKEN }}
+      IOS_P12_B64: ${{ secrets.IOS_P12_B64 }}
+      IOS_P12_PASSWORD: ${{ secrets.IOS_P12_PASSWORD }}
+      IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_B64: ${{ secrets.ASC_KEY_P8_B64 }}
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract payload
+        run: |
+          python3 - <<'PY'
+          import json, os
+          payload = json.loads(r'''${{ toJson(github.event.client_payload) }}''') or {}
+          cfg = payload.get("CONFIG") or {}
+
+          build_id = str(payload.get("BUILD_ID") or payload.get("buildId") or "").strip()
+          link_id = str(
+              cfg.get("OWNER_PROJECT_LINK_ID")
+              or payload.get("OWNER_PROJECT_LINK_ID")
+              or payload.get("ownerProjectLinkId")
+              or ""
+          ).strip()
+          api_base = str(cfg.get("API_BASE_URL") or payload.get("API_BASE_URL") or "").strip().rstrip("/")
+          app_name = str(cfg.get("APP_NAME") or payload.get("APP_NAME") or "Gym App").strip()
+          bundle_id = str(
+              cfg.get("IOS_BUNDLE_ID") or cfg.get("iosBundleId")
+              or payload.get("IOS_BUNDLE_ID") or payload.get("iosBundleId")
+              or f"com.build4all.app{link_id}"
+          ).strip().lower()
+
+          if not link_id:
+              raise SystemExit("Missing OWNER_PROJECT_LINK_ID")
+          if not api_base:
+              raise SystemExit("Missing API_BASE_URL")
+
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write(f"BUILD_ID={build_id}\n")
+              f.write(f"LINK_ID={link_id}\n")
+              f.write(f"API_BASE={api_base}\n")
+              f.write(f"APP_NAME={app_name}\n")
+              f.write(f"IOS_BUNDLE_ID={bundle_id}\n")
+          PY
+
+      - name: Mark build RUNNING
+        if: always()
+        run: |
+          curl -sS -X PUT "${API_BASE}/api/ci/build-jobs/running" \
+            -H "Content-Type: application/json" \
+            -H "X-Auth-Token: ${CI_CALLBACK_TOKEN}" \
+            -d "{\"buildId\":\"${BUILD_ID}\",\"linkId\":\"${LINK_ID}\",\"platform\":\"IOS\"}" || true
+
+      - name: Select Xcode
+        run: |
+          XCODE_APP="$(ls -1 /Applications | grep -E '^Xcode.*\.app$' | sort -V | tail -n 1)"
+          sudo xcode-select -s "/Applications/$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.0"
+          channel: stable
+
+      - name: Create ci_env.json
+        run: |
+          mkdir -p lib/env
+          cat > lib/env/ci_env.json <<EOF
+          {
+            "API_BASE_URL": "${API_BASE}",
+            "OWNER_PROJECT_LINK_ID": "${LINK_ID}",
+            "APP_TYPE": "GYM",
+            "IOS_BUNDLE_ID": "${IOS_BUNDLE_ID}"
+          }
+          EOF
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Ensure iOS Podfile exists
+        run: |
+          if [ ! -f "ios/Podfile" ]; then
+            flutter create .
+          fi
+
+      - name: Setup iOS signing certificate
+        run: |
+          KEYCHAIN_PATH="${GITHUB_WORKSPACE}/build.keychain"
+          KEYCHAIN_PWD="ci_keychain_pwd_123"
+          security create-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          security default-keychain -s "$KEYCHAIN_PATH"
+          echo "$IOS_P12_B64" | tr -d '\n\r ' | base64 --decode > ios_cert.p12
+          security import ios_cert.p12 -k "$KEYCHAIN_PATH" -P "$IOS_P12_PASSWORD" -A \
+            -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/xcodebuild
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+
+      - name: Install fastlane + CocoaPods
+        run: |
+          gem install fastlane -N --force
+          gem install cocoapods -N
+          gem install xcodeproj -N
+          rm -rf ios/Pods ios/Podfile.lock
+          cd ios && pod install || { pod repo update; pod install; }
+
+      - name: Create App Store Connect api_key.json
+        run: |
+          mkdir -p .private
+          echo "${ASC_KEY_P8_B64}" | base64 --decode > .private/AuthKey_${ASC_KEY_ID}.p8
+          python3 - <<'PY'
+          import json, pathlib, os
+          key_path = pathlib.Path(f".private/AuthKey_{os.environ['ASC_KEY_ID']}.p8")
+          pathlib.Path(".private/api_key.json").write_text(json.dumps({
+              "key_id":    os.environ["ASC_KEY_ID"].strip(),
+              "issuer_id": os.environ["ASC_ISSUER_ID"].strip(),
+              "key":       key_path.read_text(encoding="utf-8"),
+              "in_house":  False
+          }, indent=2))
+          PY
+
+      - name: Ensure App ID exists
+        run: |
+          fastlane run produce \
+            app_identifier:"${IOS_BUNDLE_ID}" \
+            team_id:"${IOS_TEAM_ID}" \
+            api_key_path:"$GITHUB_WORKSPACE/.private/api_key.json" \
+            app_name:"${APP_NAME}" \
+            sku:"${IOS_BUNDLE_ID}" \
+            skip_itc:false || true
+
+      - name: Get provisioning profile
+        run: |
+          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILE_DIR"
+          fastlane run sigh \
+            app_identifier:"${IOS_BUNDLE_ID}" \
+            team_id:"${IOS_TEAM_ID}" \
+            api_key_path:"$GITHUB_WORKSPACE/.private/api_key.json" \
+            provisioning_name:"B4A_${IOS_BUNDLE_ID}_APPSTORE" \
+            readonly:false \
+            output_path:"$PROFILE_DIR"
+
+      - name: Detect provisioning profile name
+        run: |
+          PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          FOUND_NAME=""
+          for f in "$PROFILES_DIR"/*.mobileprovision; do
+            [ -f "$f" ] || continue
+            TMP_PLIST="$(mktemp /tmp/profile.XXXXXX.plist)"
+            /usr/bin/security cms -D -i "$f" > "$TMP_PLIST" 2>/dev/null || { rm -f "$TMP_PLIST"; continue; }
+            P_NAME=$(/usr/libexec/PlistBuddy -c "Print :Name" "$TMP_PLIST" 2>/dev/null || echo "")
+            P_APPID=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" "$TMP_PLIST" 2>/dev/null || echo "")
+            if echo "$P_APPID" | grep -q "$IOS_BUNDLE_ID"; then
+              FOUND_NAME="$P_NAME"
+              echo "PROFILE_NAME=$FOUND_NAME" >> "$GITHUB_ENV"
+              rm -f "$TMP_PLIST"
+              break
+            fi
+            rm -f "$TMP_PLIST"
+          done
+          [ -n "$FOUND_NAME" ] || { echo "❌ No matching profile found"; exit 1; }
+
+      - name: Create ExportOptions.plist
+        run: |
+          cat > ios/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>${IOS_TEAM_ID}</string>
+            <key>signingCertificate</key>
+            <string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>${IOS_BUNDLE_ID}</key>
+              <string>${PROFILE_NAME}</string>
+            </dict>
+            <key>destination</key>
+            <string>export</string>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Build iOS
+        run: |
+          flutter build ios --release --no-codesign \
+            --dart-define-from-file=lib/env/ci_env.json
+
+      - name: Force Pods = no signing
+        run: |
+          PODS_PBX="ios/Pods/Pods.xcodeproj/project.pbxproj"
+          perl -pi -e 's/DEVELOPMENT_TEAM = [A-Z0-9]+;/DEVELOPMENT_TEAM = "";/g' "$PODS_PBX"
+          perl -pi -e 's/CODE_SIGNING_ALLOWED = YES;/CODE_SIGNING_ALLOWED = NO;/g' "$PODS_PBX"
+          perl -pi -e 's/CODE_SIGNING_REQUIRED = YES;/CODE_SIGNING_REQUIRED = NO;/g' "$PODS_PBX"
+
+      - name: Archive
+        run: |
+          KEYCHAIN_PATH="${GITHUB_WORKSPACE}/build.keychain"
+          security unlock-keychain -p "ci_keychain_pwd_123" "$KEYCHAIN_PATH" || true
+          mkdir -p build/ios/archive
+          cd ios && xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath ../build/ios/archive/Runner.xcarchive \
+            OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}" \
+            archive
+
+      - name: Export IPA
+        run: |
+          KEYCHAIN_PATH="${GITHUB_WORKSPACE}/build.keychain"
+          security unlock-keychain -p "ci_keychain_pwd_123" "$KEYCHAIN_PATH" || true
+          mkdir -p build/ios/ipa
+          cd ios && xcodebuild -exportArchive \
+            -archivePath ../build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath ../build/ios/ipa \
+            OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}"
+
+      - name: Upload to TestFlight + save IPA URL
+        if: success()
+        run: |
+          IPA_PATH="$(find "$GITHUB_WORKSPACE/build/ios/ipa" -name "*.ipa" | head -n 1)"
+
+          fastlane pilot upload \
+            --ipa "$IPA_PATH" \
+            --api_key_path "$GITHUB_WORKSPACE/.private/api_key.json" \
+            --app_identifier "${IOS_BUNDLE_ID}" \
+            --skip_waiting_for_build_processing false \
+            --distribute_external false \
+            --skip_submission true \
+            --changelog "Gym CI build"
+
+          IPA_URL="https://testflight.apple.com/join/${IOS_BUNDLE_ID}"
+
+          curl -sS -X PUT "${API_BASE}/api/ci/owner-project-links/${LINK_ID}/ipa-url" \
+            -H "Content-Type: application/json" \
+            -H "X-Auth-Token: ${CI_CALLBACK_TOKEN}" \
+            -d "{\"ipaUrl\":\"${IPA_URL}\",\"buildId\":\"${BUILD_ID}\"}" || true
+
+      - name: Report final status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            curl -sS -X PUT "${API_BASE}/api/ci/build-jobs/succeeded" \
+              -H "Content-Type: application/json" \
+              -H "X-Auth-Token: ${CI_CALLBACK_TOKEN}" \
+              -d "{\"buildId\":\"${BUILD_ID}\",\"linkId\":\"${LINK_ID}\",\"platform\":\"IOS\"}" || true
+          else
+            curl -sS -X PUT "${API_BASE}/api/ci/build-jobs/failed" \
+              -H "Content-Type: application/json" \
+              -H "X-Auth-Token:${CI_CALLBACK_TOKEN}" \
+              -d "{\"buildId\":\"${BUILD_ID}\",\"linkId\":\"${LINK_ID}\",\"platform\":\"IOS\",\"error\":\"Gym iOS build failed\"}" || true
+          fi
