@@ -92,61 +92,7 @@ jobs:
           }
           EOF
           cat lib/env/ci_env.json
-
-      - name: Fix 1 — Apply APP_NAME to Android strings.xml
-        run: |
-          STRINGS_FILE="android/app/src/main/res/values/strings.xml"
-          if [ -f "$STRINGS_FILE" ]; then
-            sed -i "s|<string name=\"app_name\">.*</string>|<string name=\"app_name\">${APP_NAME}</string>|" "$STRINGS_FILE"
-          else
-            mkdir -p android/app/src/main/res/values
-            cat > "$STRINGS_FILE" <<EOF
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <string name="app_name">${APP_NAME}</string>
-          </resources>
-          EOF
-          fi
-          echo "✅ App name set to: ${APP_NAME}"
-          cat "$STRINGS_FILE"
-
-      - name: Fix 2 — Apply unique PACKAGE_ID to build.gradle + Manifest
-        run: |
-          BUILD_GRADLE="android/app/build.gradle"
-
-          echo "=== Current applicationId line ==="
-          grep "applicationId" "$BUILD_GRADLE" || echo "⚠️ No applicationId found"
-
-          if grep -q "flutter.applicationId" "$BUILD_GRADLE"; then
-            sed -i "s|applicationId flutter.applicationId|applicationId \"${PACKAGE_ID}\"|" "$BUILD_GRADLE"
-          elif grep -q 'applicationId "' "$BUILD_GRADLE"; then
-            sed -i "s|applicationId \".*\"|applicationId \"${PACKAGE_ID}\"|" "$BUILD_GRADLE"
-          elif grep -q "applicationId '" "$BUILD_GRADLE"; then
-            sed -i "s|applicationId '.*'|applicationId '${PACKAGE_ID}'|" "$BUILD_GRADLE"
-          else
-            echo "❌ Could not find applicationId — printing full build.gradle:"
-            cat "$BUILD_GRADLE"
-            exit 1
-          fi
-
-          echo "✅ applicationId set to: ${PACKAGE_ID}"
-          grep "applicationId" "$BUILD_GRADLE"
-
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-          if [ -f "$MANIFEST" ]; then
-            sed -i "s|package=\"[^\"]*\"|package=\"${PACKAGE_ID}\"|" "$MANIFEST"
-            echo "✅ Manifest package set to: ${PACKAGE_ID}"
-          fi
-
-      - name: Add Stripe ProGuard rules
-        run: |
-          cat >> android/app/proguard-rules.pro <<'PROGUARD'
-          # Stripe SDK keep rules
-          -keep class com.stripe.android.pushProvisioning.** { *; }
-          -keep class com.reactnativestripesdk.** { *; }
-          -dontwarn com.stripe.android.pushProvisioning.**
-          PROGUARD
-
+      
       - name: Flutter pub get
         run: flutter pub get
 
