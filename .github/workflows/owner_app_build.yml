@@ -98,9 +98,7 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release \
-            -Penv=ci_env \
-            --dart-define-from-file=lib/env/ci_env.json
+        run: flutter build apk --release --dart-define-from-file=lib/env/ci_env.json
 
       - name: Save APK URL
         if: success()
