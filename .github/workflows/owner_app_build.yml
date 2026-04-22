@@ -83,6 +83,7 @@ jobs:
           mkdir -p lib/env
           python3 - <<'PY'
           import json, os
+          import json, re, os, urllib.request, urllib.error, socket
 
           payload = json.loads(r'''${{ toJson(github.event.client_payload) }}''') or {}
           cfg = payload.get("CONFIG") or {}
