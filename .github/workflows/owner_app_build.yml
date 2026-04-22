@@ -146,9 +146,14 @@ jobs:
           
           logo_url = (pick("LOGO_URL") or pick("LOGO_PATH") or "").strip()
           if not logo_url:
-              logo_url = (runtime.get("logoUrl") or cfg.get("logoUrl") or payload.get("logoUrl") or "").strip()
+          logo_url = (runtime.get("logoUrl") or cfg.get("logoUrl") or payload.get("logoUrl") or "").strip()
+
           if logo_url:
-              env["LOGO_URL"] = logo_url
+          if logo_url.startswith("/"):
+          logo_url = f"{api_base}{logo_url}"
+          elif not logo_url.startswith("http://") and not logo_url.startswith("https://"):
+          logo_url = f"{api_base}/{logo_url.lstrip('/')}"
+          env["LOGO_URL"] = logo_url
               
           with open("lib/env/ci_env.json", "w") as f:
               json.dump(env, f, indent=2)
@@ -156,6 +161,26 @@ jobs:
           print("✅ ci_env.json written:")
           print(json.dumps(env, indent=2))
           PY
+
+
+      - name: Download app icon
+        run: |
+           mkdir -p assets
+           python3 - <<'PY'
+           import json, os, urllib.request
+
+           with open("lib/env/ci_env.json", "r") as f:
+               env = json.load(f)
+
+           logo_url = (env.get("LOGO_URL") or "").strip()
+           if not logo_url:
+               raise SystemExit("Missing LOGO_URL")
+
+           print("Downloading icon from:", logo_url)
+           urllib.request.urlretrieve(logo_url, "assets/app_icon.png")
+           print("✅ app icon downloaded to assets/app_icon.png")
+           PY
+
 
       - name: Apply APP_NAME to strings.xml + Manifest
         run: |
@@ -244,7 +269,10 @@ jobs:
 
       - name: Flutter pub get
         run: flutter pub get
-
+        
+      - name: Generate launcher icons
+        run: flutter pub run flutter_launcher_icons
+        
       - name: Build APK
         run: flutter build apk --release --dart-define-from-file=lib/env/ci_env.json
 
