@@ -99,8 +99,9 @@ jobs:
           print(json.dumps(env, indent=2))
           PY
 
-      - name: Apply APP_NAME to strings.xml
+      - name: Apply APP_NAME to strings.xml + Manifest
         run: |
+          # Fix 1 — strings.xml
           STRINGS_FILE="android/app/src/main/res/values/strings.xml"
           if [ -f "$STRINGS_FILE" ]; then
             sed -i "s|<string name=\"app_name\">.*</string>|<string name=\"app_name\">${APP_NAME}</string>|" "$STRINGS_FILE"
@@ -113,8 +114,17 @@ jobs:
           </resources>
           EOF
           fi
-          echo "✅ App name set to: ${APP_NAME}"
+          echo "✅ strings.xml:"
           cat "$STRINGS_FILE"
+
+          # Fix 2 — AndroidManifest.xml android:label (this is what actually shows on phone)
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            # Replace hardcoded label if present
+            sed -i "s|android:label=\"[^\"]*\"|android:label=\"${APP_NAME}\"|g" "$MANIFEST"
+            echo "✅ Manifest label set to: ${APP_NAME}"
+            grep "android:label" "$MANIFEST"
+          fi
 
       - name: Apply PACKAGE_ID to build.gradle + Manifest
         run: |
