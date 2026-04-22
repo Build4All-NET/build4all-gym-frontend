@@ -118,19 +118,27 @@ jobs:
 
       - name: Apply PACKAGE_ID to build.gradle + Manifest
         run: |
-          BUILD_GRADLE="android/app/build.gradle"
+          # Support both Groovy and Kotlin DSL
+          if [ -f "android/app/build.gradle.kts" ]; then
+            BUILD_GRADLE="android/app/build.gradle.kts"
+          elif [ -f "android/app/build.gradle" ]; then
+            BUILD_GRADLE="android/app/build.gradle"
+          else
+            echo "❌ No build.gradle or build.gradle.kts found"
+            exit 1
+          fi
 
-          echo "=== Current applicationId line ==="
+          echo "=== Using: $BUILD_GRADLE ==="
           grep "applicationId" "$BUILD_GRADLE" || echo "⚠️ No applicationId found"
 
           if grep -q "flutter.applicationId" "$BUILD_GRADLE"; then
             sed -i "s|applicationId flutter.applicationId|applicationId \"${PACKAGE_ID}\"|" "$BUILD_GRADLE"
+          elif grep -q 'applicationId = "' "$BUILD_GRADLE"; then
+            sed -i "s|applicationId = \".*\"|applicationId = \"${PACKAGE_ID}\"|" "$BUILD_GRADLE"
           elif grep -q 'applicationId "' "$BUILD_GRADLE"; then
             sed -i "s|applicationId \".*\"|applicationId \"${PACKAGE_ID}\"|" "$BUILD_GRADLE"
-          elif grep -q "applicationId '" "$BUILD_GRADLE"; then
-            sed -i "s|applicationId '.*'|applicationId '${PACKAGE_ID}'|" "$BUILD_GRADLE"
           else
-            echo "❌ Could not find applicationId — printing full build.gradle:"
+            echo "❌ Could not find applicationId — printing full file:"
             cat "$BUILD_GRADLE"
             exit 1
           fi
