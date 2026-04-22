@@ -83,7 +83,7 @@ jobs:
           mkdir -p lib/env
           python3 - <<'PY'
           import json, os
-
+     
           env = {
               "API_BASE_URL": os.environ["API_BASE"],
               "OWNER_PROJECT_LINK_ID": os.environ["LINK_ID"],
@@ -91,10 +91,16 @@ jobs:
               "APP_NAME": os.environ["APP_NAME"],
               "PACKAGE_NAME": os.environ["PACKAGE_ID"],
           }
-
+          
+          logo_url = (pick("LOGO_URL") or pick("LOGO_PATH") or "").strip()
+          if not logo_url:
+              logo_url = (runtime.get("logoUrl") or cfg.get("logoUrl") or payload.get("logoUrl") or "").strip()
+          if logo_url:
+              env["LOGO_URL"] = logo_url
+              
           with open("lib/env/ci_env.json", "w") as f:
               json.dump(env, f, indent=2)
-
+  
           print("✅ ci_env.json written:")
           print(json.dumps(env, indent=2))
           PY
