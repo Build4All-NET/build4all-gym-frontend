@@ -83,6 +83,18 @@ jobs:
           mkdir -p lib/env
           python3 - <<'PY'
           import json, os
+
+          def pick(key, default=None):
+              v = runtime.get(key)
+              if v not in (None, "", []):
+                  return v
+              v = cfg.get(key)
+              if v not in (None, "", []):
+                  return v
+              v = payload.get(key)
+              if v not in (None, "", []):
+                  return v
+              return default
      
           env = {
               "API_BASE_URL": os.environ["API_BASE"],
