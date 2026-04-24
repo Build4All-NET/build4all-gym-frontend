@@ -1,5 +1,7 @@
 class UserEntity {
   final int id;
+  final String? firstName;
+  final String? lastName;
   final String? username;
   final String? fullname;
   final String? email;
@@ -16,6 +18,8 @@ class UserEntity {
     required this.ownerProjectLinkId,
     this.username,
     this.fullname,
+    this.firstName,
+    this.lastName,
     this.email,
     this.phoneNumber,
     this.profilePictureUrl,
@@ -43,14 +47,18 @@ class UserEntity {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
       status: status ?? this.status,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
     );
   }
 
+
   /// Optional helper: nice display name for UI
   String get displayName {
-    final name = this.fullname.toString();
+    final fullFromParts = '${firstName ?? ''} ${lastName ?? ''}'.trim();
 
-    if (name.isNotEmpty) return name;
+    if (fullFromParts.isNotEmpty) return fullFromParts;
+    if ((fullname ?? '').trim().isNotEmpty) return fullname!.trim();
     if ((username ?? '').trim().isNotEmpty) return username!.trim();
     if ((email ?? '').trim().isNotEmpty) return email!.trim();
     if ((phoneNumber ?? '').trim().isNotEmpty) return phoneNumber!.trim();

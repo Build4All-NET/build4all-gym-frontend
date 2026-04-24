@@ -5,6 +5,8 @@ class UserModel extends UserEntity {
     required int id,
     required int ownerProjectLinkId,
     String? username,
+    String? firstName,
+    String? lastName,
     String? fullname,
     String? email,
     String? phoneNumber,
@@ -13,6 +15,8 @@ class UserModel extends UserEntity {
     id: id,
     ownerProjectLinkId: ownerProjectLinkId,
     username: username,
+    firstName: firstName,
+    lastName: lastName,
     fullname: fullname,
     email: email,
     phoneNumber: phoneNumber,
@@ -20,12 +24,14 @@ class UserModel extends UserEntity {
   );
 
   factory UserModel.fromLoginJson(Map<String, dynamic> json) {
-
     final user = json['user'] as Map<String, dynamic>? ?? {};
+
     return UserModel(
       id: (user['id'] as num).toInt(),
       ownerProjectLinkId: (user['ownerProjectLinkId'] as num).toInt(),
       username: user['username'] as String?,
+      firstName: user['firstName'] as String?,
+      lastName: user['lastName'] as String?,
       fullname: user['fullname'] as String?,
       email: user['email'] as String?,
       phoneNumber: user['phoneNumber'] as String?,

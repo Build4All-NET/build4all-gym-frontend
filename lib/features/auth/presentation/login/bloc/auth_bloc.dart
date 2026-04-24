@@ -19,9 +19,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final DualLoginOrchestrator _orchestrator;
   final AuthApiService _authApi;
   final SessionRoleStore _roleStore;
+  final AuthTokenStore _tokenStore;
 
   AuthBloc()
-      : _authApi = AuthApiService(tokenStore: const AuthTokenStore()),
+      : _tokenStore = const AuthTokenStore(),
+        _authApi = AuthApiService(tokenStore: const AuthTokenStore()),
+
         _orchestrator = DualLoginOrchestrator(
           authApi: AuthApiService(tokenStore: const AuthTokenStore()),
           adminStore: const AdminTokenStore(),
@@ -138,8 +141,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       // User only
+      // User only
       if (result.userOk) {
         await _roleStore.saveRole('user');
+
+        await _tokenStore.saveUserProfileInfo(
+          firstName: result.userEntity?.firstName,
+          lastName: result.userEntity?.lastName,
+          email: result.userEntity?.email,
+        );
+
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           role: 'user',
