@@ -132,6 +132,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (result.adminOk) {
         await _roleStore.saveRole('admin');
         g.setAuthToken(result.adminToken!);
+        await _tokenStore.saveToken(token: result.adminToken!);
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           role: 'admin',
@@ -192,6 +193,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (event.role == 'admin') {
       g.setAuthToken(result.adminToken!);
+      await _tokenStore.saveToken(token: result.adminToken!);
       emit(state.copyWith(
         status: AuthStatus.authenticated,
         role: 'admin',
@@ -211,14 +213,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   // ─── Hydrate (from AuthGate token restore) ──────────────────────────────────
 
+
   void _onHydrated(AuthLoginHydrated event, Emitter<AuthState> emit) {
+
+    print('DEBUG hydrated with role: ${event.role}');
+    print('DEBUG hydrated token null: ${event.token.isEmpty}');
+
     g.setAuthToken(event.token);
     emit(state.copyWith(
       status: AuthStatus.authenticated,
       user: event.user,
       token: event.token,
       wasInactive: event.wasInactive,
-      role: 'user',
+      role: event.role,
     ));
   }
 

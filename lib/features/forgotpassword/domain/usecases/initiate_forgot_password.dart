@@ -6,9 +6,9 @@
 //   This one says "send a reset OTP to this email".
 //
 // WHY HAVE A USE CASE AT ALL:
-//   The BLoC could call the repository directly, but use cases let you add
+//   The BLoC could call the repositories directly, but use cases let you add
 //   business logic (e.g. email validation, rate limiting) in one place without
-//   touching the BLoC or the repository.
+//   touching the BLoC or the repositories.
 //
 // RELATIONSHIPS:
 //   ▶ Depends on:  ForgotPasswordRepository (injected, abstract)
@@ -19,13 +19,13 @@ import '../entities/forgot_password_entity.dart';
 import '../repositories/forgot_password_repository.dart';
 
 class SendResetCode {
-  /// Abstract repository — injected so this use case is testable without HTTP.
+  /// Abstract repositories — injected so this use case is testable without HTTP.
   final ForgotPasswordRepository repo;
 
   SendResetCode(this.repo);
 
   /// Executes the use case.
-  /// Passes [email] and [ownerProjectLinkId] to the repository.
+  /// Passes [email] and [ownerProjectLinkId] to the repositories.
   /// Returns [ForgotPasswordResult] on success; throws on failure.
   Future<ForgotPasswordResult> call({
     required String email,

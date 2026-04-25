@@ -119,6 +119,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 user:        state.completedUser,
                 token:       '',
                 wasInactive: false,
+                role: ''
               ),
             );
             Navigator.of(ctx).pushAndRemoveUntil(

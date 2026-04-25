@@ -14,7 +14,7 @@
 // Step 1: Parse JSON into model
 // final model = MembershipCardModel.fromJson(json);
 //
-// Step 2: Convert model into entity (usually inside repository)
+// Step 2: Convert model into entity (usually inside repositories)
 // final entity = MembershipCard(
 //   planName: model.planName,
 //   planType: model.planType,

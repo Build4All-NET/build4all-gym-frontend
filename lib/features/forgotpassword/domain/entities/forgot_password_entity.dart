@@ -2,7 +2,7 @@
 // lib/features/forgotpassword/domain/entities/forgot_password_entity.dart
 //
 // PURPOSE:
-//   Pure domain entity — the single result type that flows from the repository
+//   Pure domain entity — the single result type that flows from the repositories
 //   up through use cases to the BLoC. Contains ONLY what the app logic needs;
 //   no JSON, no HTTP, no Flutter imports.
 //
