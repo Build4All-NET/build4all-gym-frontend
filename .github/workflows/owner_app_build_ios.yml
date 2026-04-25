@@ -101,15 +101,19 @@ jobs:
 
       - name: Create ci_env.json
         run: |
-          mkdir -p lib/env
-          cat > lib/env/ci_env.json <<EOF
-          {
-            "API_BASE_URL": "${API_BASE}",
-            "OWNER_PROJECT_LINK_ID": "${LINK_ID}",
-            "APP_TYPE": "GYM",
-            "IOS_BUNDLE_ID": "${IOS_BUNDLE_ID}"
+          python3 - <<'PY'
+          import json, os
+          os.makedirs("lib/env", exist_ok=True)
+          data = {
+              "API_BASE_URL": os.environ["API_BASE"],
+              "OWNER_PROJECT_LINK_ID": os.environ["LINK_ID"],
+              "APP_TYPE": "GYM",
+              "IOS_BUNDLE_ID": os.environ["IOS_BUNDLE_ID"]
           }
-          EOF
+          with open("lib/env/ci_env.json", "w") as f:
+              json.dump(data, f, indent=2)
+          print("✅ ci_env.json created")
+          PY
 
       - name: Flutter pub get
         run: flutter pub get
@@ -133,7 +137,6 @@ jobs:
           security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
           security default-keychain -s "$KEYCHAIN_PATH"
 
-          # FIX 1: macOS base64 uses -D not --decode
           echo "$IOS_P12_B64" | tr -d '\n\r ' | base64 -D > ios_cert.p12
 
           security import ios_cert.p12 \
@@ -169,63 +172,32 @@ jobs:
       - name: Create App Store Connect API key
         run: |
           set -e
-      
+
           mkdir -p "$GITHUB_WORKSPACE/.private"
-      
+
           test -n "$ASC_KEY_ID"     || { echo "❌ Missing ASC_KEY_ID";     exit 1; }
           test -n "$ASC_ISSUER_ID"  || { echo "❌ Missing ASC_ISSUER_ID";  exit 1; }
           test -n "$ASC_KEY_P8_B64" || { echo "❌ Missing ASC_KEY_P8_B64"; exit 1; }
-      
+
           P8_PATH="$GITHUB_WORKSPACE/.private/AuthKey_${ASC_KEY_ID}.p8"
           echo "$ASC_KEY_P8_B64" | base64 -D > "$P8_PATH"
-      
+
           [ -s "$P8_PATH" ] || { echo "❌ .p8 file is empty or missing"; exit 1; }
-      
-          # Verify it looks like a real PEM key
+
           head -1 "$P8_PATH" | grep -q "BEGIN PRIVATE KEY" || {
             echo "❌ .p8 file does not look like a valid PEM key"
-            head -3 "$P8_PATH"
             exit 1
           }
-      
-          echo "✅ .p8 file created and validated ($(wc -c < "$P8_PATH") bytes)"
-      
-          # Write path to GITHUB_ENV so all steps can use it
-          echo "P8_PATH=$P8_PATH" >> "$GITHUB_ENV"
-      
-          # Fastlane reads these env vars natively — no JSON file needed at all
-          echo "APP_STORE_CONNECT_API_KEY_KEY_ID=${ASC_KEY_ID}"           >> "$GITHUB_ENV"
-          echo "APP_STORE_CONNECT_API_KEY_ISSUER_ID=${ASC_ISSUER_ID}"     >> "$GITHUB_ENV"
-          echo "APP_STORE_CONNECT_API_KEY_KEY_FILEPATH=${P8_PATH}"        >> "$GITHUB_ENV"
-          echo "APP_STORE_CONNECT_API_KEY_DURATION=1200"                  >> "$GITHUB_ENV"
-          echo "APP_STORE_CONNECT_API_KEY_IN_HOUSE=false"                 >> "$GITHUB_ENV"
 
-      # REMOVED: "Test App Store Connect authentication" step
-      # fastlane run app_store_connect_api_key only parses the key in memory,
-      # it does NOT test connectivity to Apple — just a useless failure point.
+          echo "✅ .p8 file created and validated ($(wc -c < "$P8_PATH") bytes)"
+
+          # Expose P8_PATH so Fastfile lanes can read it
+          echo "P8_PATH=$P8_PATH" >> "$GITHUB_ENV"
 
       - name: Ensure App ID exists
         run: |
           cd ios
           fastlane ensure_app || true
-          
-      - name: Diagnose API key
-        run: |
-          echo "=== Key ID ==="
-          echo "$ASC_KEY_ID" | wc -c   # should be 11 chars (10 + newline)
-      
-          echo "=== Issuer ID ==="
-          echo "$ASC_ISSUER_ID" | wc -c  # should be 37 chars (UUID + newline)
-      
-          echo "=== P8 file header/footer ==="
-          head -1 "$P8_PATH"   # must be: -----BEGIN PRIVATE KEY-----
-          tail -1 "$P8_PATH"   # must be: -----END PRIVATE KEY-----
-      
-          echo "=== P8 line count ==="
-          wc -l "$P8_PATH"     # typically 28-30 lines
-      
-          echo "=== P8 byte count ==="
-          wc -c "$P8_PATH"     # typically ~300 bytes
 
       - name: Get provisioning profile
         run: |
@@ -270,37 +242,41 @@ jobs:
 
       - name: Create ExportOptions.plist
         run: |
-          cat > ios/ExportOptions.plist <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
+          python3 - <<'PY'
+          import os
+
+          team_id      = os.environ["IOS_TEAM_ID"]
+          bundle_id    = os.environ["IOS_BUNDLE_ID"]
+          profile_name = os.environ["PROFILE_NAME"]
+
+          content = f"""<?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
             <key>method</key>
             <string>app-store</string>
-
             <key>signingStyle</key>
             <string>manual</string>
-
             <key>teamID</key>
-            <string>${IOS_TEAM_ID}</string>
-
+            <string>{team_id}</string>
             <key>signingCertificate</key>
             <string>Apple Distribution</string>
-
             <key>provisioningProfiles</key>
             <dict>
-              <key>${IOS_BUNDLE_ID}</key>
-              <string>${PROFILE_NAME}</string>
+              <key>{bundle_id}</key>
+              <string>{profile_name}</string>
             </dict>
-
             <key>destination</key>
             <string>export</string>
-
             <key>compileBitcode</key>
             <false/>
           </dict>
-          </plist>
-          EOF
+          </plist>"""
+
+          with open("ios/ExportOptions.plist", "w") as f:
+              f.write(content)
+          print("✅ ExportOptions.plist created")
+          PY
 
       - name: Build iOS
         run: |
@@ -320,7 +296,6 @@ jobs:
       - name: Archive
         run: |
           KEYCHAIN_PATH="${GITHUB_WORKSPACE}/build.keychain"
-
           security unlock-keychain -p "ci_keychain_pwd_123" "$KEYCHAIN_PATH" || true
 
           mkdir -p build/ios/archive
@@ -345,7 +320,6 @@ jobs:
       - name: Export IPA
         run: |
           KEYCHAIN_PATH="${GITHUB_WORKSPACE}/build.keychain"
-
           security unlock-keychain -p "ci_keychain_pwd_123" "$KEYCHAIN_PATH" || true
 
           mkdir -p build/ios/ipa
@@ -362,30 +336,15 @@ jobs:
         if: success()
         run: |
           IPA_PATH="$(find "$GITHUB_WORKSPACE/build/ios/ipa" -name "*.ipa" | head -n 1)"
-
-          if [ -z "$IPA_PATH" ]; then
-            echo "❌ IPA not found"
-            exit 1
-          fi
-
-          fastlane pilot upload \
-            --ipa "$IPA_PATH" \
-            --api_key_path "$GITHUB_WORKSPACE/.private/api_key.json" \
-            --app_identifier "${IOS_BUNDLE_ID}" \
-            --skip_waiting_for_build_processing true \
-            --distribute_external false \
-            --skip_submission true \
-            --changelog "Gym CI build"
-
-          # FIX 4: TestFlight join URLs are NOT based on bundle ID.
-          # The real URL is only available after Apple processes the build (minutes to hours).
-          # We store the App Store Connect link instead, which is always valid.
-          IPA_URL="https://appstoreconnect.apple.com/apps"
+          [ -n "$IPA_PATH" ] || { echo "❌ IPA not found"; exit 1; }
+          export IPA_PATH
+          cd ios
+          fastlane upload_testflight
 
           curl -sS -X PUT "${API_BASE}/api/ci/owner-project-links/${LINK_ID}/ipa-url" \
             -H "Content-Type: application/json" \
             -H "X-Auth-Token: ${CI_CALLBACK_TOKEN}" \
-            -d "{\"ipaUrl\":\"${IPA_URL}\",\"buildId\":\"${BUILD_ID}\"}" || true
+            -d "{\"ipaUrl\":\"https://appstoreconnect.apple.com/apps\",\"buildId\":\"${BUILD_ID}\"}" || true
 
       - name: Report final status
         if: always()
