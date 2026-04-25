@@ -7,7 +7,7 @@ import '../repositories/member_home_repository.dart';
 /// Use case for loading the member home screen data.
 ///
 /// Why this exists:
-/// - The BLoC should call a use case, not the repository directly.
+/// - The BLoC should call a use case, not the repositories directly.
 /// - This keeps business actions clear and reusable.
 /// - Later, if we add validation, caching rules, or analytics, they go here.
 class GetMemberHomeUseCase {

@@ -35,11 +35,13 @@ class AuthLoginHydrated extends AuthEvent {
   final UserEntity? user;
   final String token;
   final bool wasInactive;
+  final String role;
 
   const AuthLoginHydrated({
     required this.user,
     required this.token,
     required this.wasInactive,
+    required this.role
   });
 
   @override

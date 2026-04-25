@@ -19,7 +19,7 @@ import '../models/member_home_model.dart';
 // inside the data layer instead of spreading them across the UI, BLoC, or domain.
 //
 // Example flow:
-// 1. BLoC asks repository for member home data.
+// 1. BLoC asks repositories for member home data.
 // 2. Repository calls MemberHomeRemoteDatasource.getMemberHome().
 // 3. Datasource calls GET /api/member/home.
 // 4. Backend returns JSON.
@@ -69,7 +69,7 @@ class MemberHomeRemoteDatasource {
 
   // Base URL is read from environment config.
   // This avoids hardcoding backend URLs inside the datasource.
-  String get _base => Env.apiBaseUrl;
+  String get _base => Env.apiProjectBaseUrl;
 
   // Builds a full URI from a relative backend path.
   Uri _uri(String path) => Uri.parse('$_base$path');

@@ -7,7 +7,7 @@
 // - Keeps JSON parsing inside the data layer
 // - Gives the app type-safe fields
 // - Prevents crashes when backend values are null
-// - Makes repository and domain mapping cleaner
+// - Makes repositories and domain mapping cleaner
 //
 // Example backend JSON:
 // {

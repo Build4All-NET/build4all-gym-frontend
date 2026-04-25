@@ -19,7 +19,7 @@ import '../models/today_schedule_model.dart';
 /// Why this file exists:
 /// - Models belong to the data layer and know about backend JSON.
 /// - Entities belong to the domain layer and should stay clean.
-/// - The repository uses these mappers before returning data to use cases/BLoC.
+/// - The repositories uses these mappers before returning data to use cases/BLoC.
 ///
 /// Example:
 /// Backend JSON -> MemberHomeModel -> MemberHome entity

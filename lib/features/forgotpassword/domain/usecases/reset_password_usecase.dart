@@ -13,14 +13,14 @@ import '../entities/forgot_password_entity.dart';
 import '../repositories/forgot_password_repository.dart';
 
 class UpdatePassword {
-  /// Abstract repository — injected so this use case is testable without HTTP.
+  /// Abstract repositories — injected so this use case is testable without HTTP.
   final ForgotPasswordRepository repo;
 
   UpdatePassword(this.repo);
 
   /// Executes the use case.
   /// Passes [email], [code], [newPassword], and [ownerProjectLinkId] to
-  /// the repository. Returns [ForgotPasswordResult] on success; throws on failure.
+  /// the repositories. Returns [ForgotPasswordResult] on success; throws on failure.
   Future<ForgotPasswordResult> call({
     required String email,
     required String code,
