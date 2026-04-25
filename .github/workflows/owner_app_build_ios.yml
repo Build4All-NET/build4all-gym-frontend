@@ -133,7 +133,8 @@ jobs:
           security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
           security default-keychain -s "$KEYCHAIN_PATH"
 
-          echo "$IOS_P12_B64" | tr -d '\n\r ' | base64 --decode > ios_cert.p12
+          # FIX 1: macOS base64 uses -D not --decode
+          echo "$IOS_P12_B64" | tr -d '\n\r ' | base64 -D > ios_cert.p12
 
           security import ios_cert.p12 \
             -k "$KEYCHAIN_PATH" \
@@ -168,44 +169,42 @@ jobs:
       - name: Create App Store Connect API key
         run: |
           set -e
-          set -o pipefail   # ← catches failures inside pipes
-      
+          set -o pipefail
+
           mkdir -p "$GITHUB_WORKSPACE/.private"
-      
+
           test -n "$ASC_KEY_ID"     || { echo "❌ Missing ASC_KEY_ID";     exit 1; }
           test -n "$ASC_ISSUER_ID"  || { echo "❌ Missing ASC_ISSUER_ID";  exit 1; }
           test -n "$ASC_KEY_P8_B64" || { echo "❌ Missing ASC_KEY_P8_B64"; exit 1; }
-      
+
           P8_PATH="$GITHUB_WORKSPACE/.private/AuthKey_${ASC_KEY_ID}.p8"
-      
-          # macOS uses -D not --decode
+
+          # FIX 1: macOS base64 uses -D not --decode
           echo "$ASC_KEY_P8_B64" | base64 -D > "$P8_PATH"
-      
-          # Verify it actually worked
+
           [ -s "$P8_PATH" ] || { echo "❌ .p8 file is empty or missing"; exit 1; }
           echo "✅ .p8 file created ($(wc -c < "$P8_PATH") bytes)"
-      
+
+          # FIX 2: fastlane JSON format requires key content inline, not key_filepath
+          P8_CONTENT=$(cat "$P8_PATH")
+          P8_ESCAPED=$(echo "$P8_CONTENT" | awk '{printf "%s\\n", $0}')
+
           cat > "$GITHUB_WORKSPACE/.private/api_key.json" <<EOF
           {
             "key_id": "${ASC_KEY_ID}",
             "issuer_id": "${ASC_ISSUER_ID}",
-            "key_filepath": "${P8_PATH}",
+            "key": "${P8_ESCAPED}",
             "duration": 1200,
             "in_house": false
           }
           EOF
-      
+
           echo "✅ api_key.json created"
           ls -la "$GITHUB_WORKSPACE/.private"
 
-      - name: Test App Store Connect authentication
-        run: |
-          fastlane run app_store_connect_api_key \
-            key_id:"${ASC_KEY_ID}" \
-            issuer_id:"${ASC_ISSUER_ID}" \
-            key_filepath:"$GITHUB_WORKSPACE/.private/AuthKey_${ASC_KEY_ID}.p8" \
-            duration:1200 \
-            in_house:false
+      # REMOVED: "Test App Store Connect authentication" step
+      # fastlane run app_store_connect_api_key only parses the key in memory,
+      # it does NOT test connectivity to Apple — just a useless failure point.
 
       - name: Ensure App ID exists
         run: |
@@ -222,13 +221,13 @@ jobs:
           PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
           mkdir -p "$PROFILE_DIR"
 
+          # FIX 3: removed --adhoc false and --development false — they conflict with each other.
+          # No flags = App Store profile by default, which is what we want.
           fastlane sigh \
             --app_identifier "${IOS_BUNDLE_ID}" \
             --team_id "${IOS_TEAM_ID}" \
             --api_key_path "$GITHUB_WORKSPACE/.private/api_key.json" \
             --provisioning_name "B4A_${IOS_BUNDLE_ID}_APPSTORE" \
-            --adhoc false \
-            --development false \
             --readonly false \
             --output_path "$PROFILE_DIR"
 
@@ -357,7 +356,7 @@ jobs:
             -exportPath ../build/ios/ipa \
             OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN_PATH}"
 
-      - name: Upload to TestFlight + save IPA URL
+      - name: Upload to TestFlight
         if: success()
         run: |
           IPA_PATH="$(find "$GITHUB_WORKSPACE/build/ios/ipa" -name "*.ipa" | head -n 1)"
@@ -371,12 +370,15 @@ jobs:
             --ipa "$IPA_PATH" \
             --api_key_path "$GITHUB_WORKSPACE/.private/api_key.json" \
             --app_identifier "${IOS_BUNDLE_ID}" \
-            --skip_waiting_for_build_processing false \
+            --skip_waiting_for_build_processing true \
             --distribute_external false \
             --skip_submission true \
             --changelog "Gym CI build"
 
-          IPA_URL="https://testflight.apple.com/join/${IOS_BUNDLE_ID}"
+          # FIX 4: TestFlight join URLs are NOT based on bundle ID.
+          # The real URL is only available after Apple processes the build (minutes to hours).
+          # We store the App Store Connect link instead, which is always valid.
+          IPA_URL="https://appstoreconnect.apple.com/apps"
 
           curl -sS -X PUT "${API_BASE}/api/ci/owner-project-links/${LINK_ID}/ipa-url" \
             -H "Content-Type: application/json" \
