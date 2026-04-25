@@ -169,38 +169,56 @@ jobs:
       - name: Create App Store Connect API key
         run: |
           set -e
-          set -o pipefail
-
+      
           mkdir -p "$GITHUB_WORKSPACE/.private"
-
+      
           test -n "$ASC_KEY_ID"     || { echo "❌ Missing ASC_KEY_ID";     exit 1; }
           test -n "$ASC_ISSUER_ID"  || { echo "❌ Missing ASC_ISSUER_ID";  exit 1; }
           test -n "$ASC_KEY_P8_B64" || { echo "❌ Missing ASC_KEY_P8_B64"; exit 1; }
-
+      
           P8_PATH="$GITHUB_WORKSPACE/.private/AuthKey_${ASC_KEY_ID}.p8"
-
-          # FIX 1: macOS base64 uses -D not --decode
           echo "$ASC_KEY_P8_B64" | base64 -D > "$P8_PATH"
-
+      
           [ -s "$P8_PATH" ] || { echo "❌ .p8 file is empty or missing"; exit 1; }
           echo "✅ .p8 file created ($(wc -c < "$P8_PATH") bytes)"
-
-          # FIX 2: fastlane JSON format requires key content inline, not key_filepath
-          P8_CONTENT=$(cat "$P8_PATH")
-          P8_ESCAPED=$(echo "$P8_CONTENT" | awk '{printf "%s\\n", $0}')
-
-          cat > "$GITHUB_WORKSPACE/.private/api_key.json" <<EOF
-          {
-            "key_id": "${ASC_KEY_ID}",
-            "issuer_id": "${ASC_ISSUER_ID}",
-            "key": "${P8_ESCAPED}",
-            "duration": 1200,
-            "in_house": false
+      
+          # Use Python to write JSON — handles PEM newlines and indentation correctly
+          python3 - <<'PY'
+          import json, os
+          
+          workspace = os.environ["GITHUB_WORKSPACE"]
+          key_id    = os.environ["ASC_KEY_ID"]
+          issuer_id = os.environ["ASC_ISSUER_ID"]
+          
+          p8_path = f"{workspace}/.private/AuthKey_{key_id}.p8"
+          with open(p8_path) as f:
+              key_content = f.read()
+          
+          api_key = {
+              "key_id":    key_id,
+              "issuer_id": issuer_id,
+              "key":       key_content,
+              "duration":  1200,
+              "in_house":  False
           }
-          EOF
-
-          echo "✅ api_key.json created"
-          ls -la "$GITHUB_WORKSPACE/.private"
+          
+          out_path = f"{workspace}/.private/api_key.json"
+          with open(out_path, "w") as f:
+              json.dump(api_key, f, indent=2)
+          
+          print("✅ api_key.json created")
+          PY
+          
+              # Sanity check — confirm key field is present in output
+              python3 -c "
+          import json
+          with open('$GITHUB_WORKSPACE/.private/api_key.json') as f:
+              d = json.load(f)
+          assert d.get('key'), 'key field missing or empty'
+          assert d.get('key_id'), 'key_id missing'
+          assert d.get('issuer_id'), 'issuer_id missing'
+          print('✅ api_key.json validated successfully')
+          "
 
       # REMOVED: "Test App Store Connect authentication" step
       # fastlane run app_store_connect_api_key only parses the key in memory,
