@@ -193,6 +193,68 @@ jobs:
 
           # Expose P8_PATH so Fastfile lanes can read it
           echo "P8_PATH=$P8_PATH" >> "$GITHUB_ENV"
+          
+      - name: Manually test Apple API auth
+        run: |
+          python3 - <<'PY'
+          import os, time, base64, json, urllib.request, urllib.error
+      
+          key_id    = os.environ["ASC_KEY_ID"]
+          issuer_id = os.environ["ASC_ISSUER_ID"]
+          p8_path   = os.environ["P8_PATH"]
+      
+          # Build JWT manually
+          try:
+              from cryptography.hazmat.primitives.serialization import load_pem_private_key
+              from cryptography.hazmat.primitives.asymmetric.ec import ECDSA
+              from cryptography.hazmat.primitives.hashes import SHA256
+              import struct
+      
+              with open(p8_path, "rb") as f:
+                  key = load_pem_private_key(f.read(), password=None)
+      
+              header  = base64.urlsafe_b64encode(json.dumps({"alg":"ES256","kid":key_id,"typ":"JWT"}).encode()).rstrip(b"=")
+              payload = base64.urlsafe_b64encode(json.dumps({"iss":issuer_id,"iat":int(time.time()),"exp":int(time.time())+600,"aud":"appstoreconnect-v1"}).encode()).rstrip(b"=")
+              msg     = header + b"." + payload
+              sig     = key.sign(msg, ECDSA(SHA256()))
+      
+              # DER -> raw R||S
+              # parse DER signature
+              def der_to_raw(der):
+                  assert der[0] == 0x30
+                  i = 2
+                  assert der[i] == 0x02; i+=1
+                  rlen = der[i]; i+=1
+                  r = der[i:i+rlen]; i+=rlen
+                  assert der[i] == 0x02; i+=1
+                  slen = der[i]; i+=1
+                  s = der[i:i+slen]
+                  r = r.lstrip(b'\x00').rjust(32, b'\x00')
+                  s = s.lstrip(b'\x00').rjust(32, b'\x00')
+                  return r + s
+      
+              raw_sig = der_to_raw(sig)
+              token = (msg + b"." + base64.urlsafe_b64encode(raw_sig).rstrip(b"=")).decode()
+      
+          except ImportError:
+              print("❌ cryptography library not available — install with: pip install cryptography")
+              raise SystemExit(1)
+      
+          print(f"✅ JWT generated, testing against Apple API...")
+      
+          req = urllib.request.Request(
+              "https://api.appstoreconnect.apple.com/v1/apps?limit=1",
+              headers={"Authorization": f"Bearer {token}"}
+          )
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  print(f"✅ Apple API responded: HTTP {resp.status} — credentials are VALID")
+          except urllib.error.HTTPError as e:
+              body = e.read().decode()
+              print(f"❌ Apple API responded: HTTP {e.code}")
+              print(body)
+              raise SystemExit(1)
+          PY
 
       - name: Ensure App ID exists
         run: |
