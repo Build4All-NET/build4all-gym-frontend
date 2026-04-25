@@ -208,6 +208,24 @@ jobs:
         run: |
           cd ios
           fastlane ensure_app || true
+          
+      - name: Diagnose API key
+        run: |
+          echo "=== Key ID ==="
+          echo "$ASC_KEY_ID" | wc -c   # should be 11 chars (10 + newline)
+      
+          echo "=== Issuer ID ==="
+          echo "$ASC_ISSUER_ID" | wc -c  # should be 37 chars (UUID + newline)
+      
+          echo "=== P8 file header/footer ==="
+          head -1 "$P8_PATH"   # must be: -----BEGIN PRIVATE KEY-----
+          tail -1 "$P8_PATH"   # must be: -----END PRIVATE KEY-----
+      
+          echo "=== P8 line count ==="
+          wc -l "$P8_PATH"     # typically 28-30 lines
+      
+          echo "=== P8 byte count ==="
+          wc -c "$P8_PATH"     # typically ~300 bytes
 
       - name: Get provisioning profile
         run: |
