@@ -206,24 +206,14 @@ jobs:
 
       - name: Ensure App ID exists
         run: |
-          fastlane run produce \
-            app_identifier:"${IOS_BUNDLE_ID}" \
-            team_id:"${IOS_TEAM_ID}" \
-            app_name:"${APP_NAME}" \
-            sku:"${IOS_BUNDLE_ID}" \
-            skip_itc:false || true
+          cd ios
+          fastlane ensure_app || true
 
       - name: Get provisioning profile
         run: |
-          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-          mkdir -p "$PROFILE_DIR"
-      
-          fastlane sigh \
-            --app_identifier "${IOS_BUNDLE_ID}" \
-            --team_id "${IOS_TEAM_ID}" \
-            --provisioning_name "B4A_${IOS_BUNDLE_ID}_APPSTORE" \
-            --readonly false \
-            --output_path "$PROFILE_DIR"
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cd ios
+          fastlane fetch_profile
 
       - name: Detect provisioning profile name
         run: |
