@@ -168,27 +168,29 @@ jobs:
       - name: Create App Store Connect API key
         run: |
           set -e
-
           mkdir -p "$GITHUB_WORKSPACE/.private"
-
-          test -n "$ASC_KEY_ID" || { echo "❌ Missing ASC_KEY_ID"; exit 1; }
-          test -n "$ASC_ISSUER_ID" || { echo "❌ Missing ASC_ISSUER_ID"; exit 1; }
+      
+          test -n "$ASC_KEY_ID"     || { echo "❌ Missing ASC_KEY_ID";     exit 1; }
+          test -n "$ASC_ISSUER_ID"  || { echo "❌ Missing ASC_ISSUER_ID";  exit 1; }
           test -n "$ASC_KEY_P8_B64" || { echo "❌ Missing ASC_KEY_P8_B64"; exit 1; }
-
-          echo "$ASC_KEY_P8_B64" | tr -d '\n\r ' | base64 --decode > "$GITHUB_WORKSPACE/.private/AuthKey_${ASC_KEY_ID}.p8"
-
+      
+          # Decode the .p8 key content
+          P8_CONTENT=$(echo "$ASC_KEY_P8_B64" | tr -d '\n\r ' | base64 --decode)
+      
+          # Write JSON with the key content inline (escape newlines for valid JSON)
+          P8_ESCAPED=$(echo "$P8_CONTENT" | awk '{printf "%s\\n", $0}')
+      
           cat > "$GITHUB_WORKSPACE/.private/api_key.json" <<EOF
           {
             "key_id": "${ASC_KEY_ID}",
             "issuer_id": "${ASC_ISSUER_ID}",
-            "key_filepath": "$GITHUB_WORKSPACE/.private/AuthKey_${ASC_KEY_ID}.p8",
+            "key": "${P8_ESCAPED}",
             "duration": 1200,
             "in_house": false
           }
           EOF
-
+      
           echo "✅ App Store Connect API key created"
-          ls -l "$GITHUB_WORKSPACE/.private"
 
       - name: Test App Store Connect authentication
         run: |
