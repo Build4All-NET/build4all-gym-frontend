@@ -12,6 +12,11 @@ class AdminTokenStore {
   static const _keyRefreshToken = 'admin_refresh_token';
   static const _keyTenantId = 'admin_tenant_id';
 
+  //
+  static const _keyUserFirstName = 'user_first_name';
+  static const _keyUserLastName = 'user_last_name';
+  static const _keyUserEmail = 'user_email';
+
   // ===========================
   // DEBUG / BUG SWITCH
   // ===========================
@@ -133,10 +138,14 @@ class AdminTokenStore {
     await _storage.delete(key: _keyRole);
     await _storage.delete(key: _keyRefreshToken);
     await _storage.delete(key: _keyTenantId);
+    await _storage.delete(key: _keyUserFirstName);
+    await _storage.delete(key: _keyUserLastName);
+    await _storage.delete(key: _keyUserEmail);
 
     // verify cleared
     final after = await getToken();
     _log('after clear -> token is ${after == null ? "null ✅" : "NOT NULL ❌"}');
+
   }
 
   // ===========================
@@ -155,5 +164,23 @@ class AdminTokenStore {
     _log('refresh: ${ref == null ? "null" : "len=${ref.length}"}');
     _log('tenant: ${ten ?? "null"}');
     _log('------------------');
+  }
+  //
+  Future<void> saveUserProfileInfo({
+    String? firstName,
+    String? lastName,
+    String? email,
+  }) async {
+    if (firstName != null && firstName.trim().isNotEmpty) {
+      await _storage.write(key: _keyUserFirstName, value: firstName.trim());
+    }
+
+    if (lastName != null && lastName.trim().isNotEmpty) {
+      await _storage.write(key: _keyUserLastName, value: lastName.trim());
+    }
+
+    if (email != null && email.trim().isNotEmpty) {
+      await _storage.write(key: _keyUserEmail, value: email.trim());
+    }
   }
 }

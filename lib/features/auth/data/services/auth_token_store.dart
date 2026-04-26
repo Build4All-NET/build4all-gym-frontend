@@ -86,5 +86,25 @@ class AuthTokenStore {
     await _storage.delete(key: _keyUserId);
     await _storage.delete(key: _keyRefreshToken);
     await _storage.delete(key: _keyTenantId);
+    await _storage.delete(key: 'user_first_name');
+    await _storage.delete(key: 'user_last_name');
+    await _storage.delete(key: 'user_email');
+  }
+  Future<void> saveUserProfileInfo({
+    String? firstName,
+    String? lastName,
+    String? email,
+  }) async {
+    if (firstName != null && firstName.trim().isNotEmpty) {
+      await _storage.write(key: 'user_first_name', value: firstName.trim());
+    }
+
+    if (lastName != null && lastName.trim().isNotEmpty) {
+      await _storage.write(key: 'user_last_name', value: lastName.trim());
+    }
+
+    if (email != null && email.trim().isNotEmpty) {
+      await _storage.write(key: 'user_email', value: email.trim());
+    }
   }
 }

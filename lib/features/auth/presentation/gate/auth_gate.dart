@@ -345,18 +345,20 @@ class _AuthGateState extends State<AuthGate> {
   }
 
   /// Hydrate the AuthBloc with the saved user token and navigate to MainShell.
-  void _hydrateUserAndGo(String rawJwt) {
+  Future<void> _hydrateUserAndGo(String rawJwt) async {
     if (!mounted) return;
 
     g.setAuthToken(rawJwt);
 
     // Tell the BLoC the user is already logged in
     // MainShell will start realtime on its own initState
+    final role  = await _roleStore.getRole();
     context.read<AuthBloc>().add(
       AuthLoginHydrated(
         user:        null, // user entity loaded lazily by MainShell
         token:       rawJwt,
         wasInactive: false,
+        role: 'user',
       ),
     );
 
@@ -372,9 +374,15 @@ class _AuthGateState extends State<AuthGate> {
     if (!mounted) return;
 
     g.setAuthToken(rawJwt);
-
-    // Admin starts realtime here because admin may not go through MainShell
     _startRealtimeForAdmin(rawJwt);
+
+    // ✅ ADD THIS — tell the BLoC admin is authenticated, same as user does
+    context.read<AuthBloc>().add(AuthLoginHydrated(
+      token: rawJwt,
+      wasInactive: false,
+      role: 'admin',
+      user: null,
+    ));
 
     Navigator.of(context).pushNamedAndRemoveUntil('/admin', (_) => false);
   }

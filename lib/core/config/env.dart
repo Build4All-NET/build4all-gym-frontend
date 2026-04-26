@@ -22,13 +22,14 @@
 class Env {
   /// Base URL for all HTTP calls (e.g. "http://192.168.1.4:8867").
   /// Override via --dart-define=API_BASE_URL=https://api.mygym.com
+  ///  apiBaseUrl this url for build4all backend
   static const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://192.168.1.4:8867',
   );
 
   /// WebSocket path appended to apiBaseUrl for real-time features.
-
+  /// apiProjectBaseUrl this url for our backend gym
   static const apiProjectBaseUrl = String.fromEnvironment(
     'PROJECT_API_BASE_URL',
     defaultValue: 'http://192.168.1.12:8080',

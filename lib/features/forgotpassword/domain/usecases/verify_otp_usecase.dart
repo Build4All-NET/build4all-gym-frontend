@@ -14,13 +14,13 @@ import '../entities/forgot_password_entity.dart';
 import '../repositories/forgot_password_repository.dart';
 
 class VerifyResetCode {
-  /// Abstract repository — injected so this use case is testable without HTTP.
+  /// Abstract repositories — injected so this use case is testable without HTTP.
   final ForgotPasswordRepository repo;
 
   VerifyResetCode(this.repo);
 
   /// Executes the use case.
-  /// Passes [email], [code], and [ownerProjectLinkId] to the repository.
+  /// Passes [email], [code], and [ownerProjectLinkId] to the repositories.
   /// Returns [ForgotPasswordResult] on success; throws on failure.
   Future<ForgotPasswordResult> call({
     required String email,

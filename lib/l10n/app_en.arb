@@ -417,6 +417,54 @@
   "completeProfile_backButton": "Back",
   "@completeProfile_backButton": {
     "description": "Back navigation link shown below the form"
+  },
+  "home_welcome": "Welcome",
+  "home_weightUpdated": "Your weight was updated successfully ✅",
+  "home_noData": "No data available",
+  "home_sessions": "Sessions",
+  "home_kgLost": "kg lost",
+  "home_workouts": "Workouts",
+  "home_minutes": "min",
+  "home_quickActions": "Quick Actions",
+  "home_bookClass": "Book Class",
+  "home_myProgress": "My Progress",
+  "home_membership": "Membership",
+  "home_support": "Support",
+  "home_updateWeight": "Update your weight",
+  "home_save": "Save",
+  "home_weightHint": "75.5",
+  "home_navHome": "Home",
+  "home_navActivities": "Activities",
+  "home_navProfile": "Profile",
+  "home_membershipStatus": "Membership Status",
+  "home_expiresOn": "Expires on",
+  "home_renewNow": "Renew Now",
+  "memberBottomNavHome": "Home",
+  "memberBottomNavPlans": "Plans",
+  "memberBottomNavQr": "QR",
+  "memberBottomNavClasses": "Classes",
+  "memberBottomNavAccount": "My Account",
+  "comingSoon": "Coming soon",
+  "memberHomeTodaySchedule": "Today's Schedule",
+  "memberHomeViewAll": "View All",
+  "memberHomeWithTrainer": "With coach {trainerName}",
+  "@memberHomeWithTrainer": {
+    "placeholders": {
+      "trainerName": {}
+    }
+  },
+  "memberHomeDurationMinutes": "{minutes} min",
+  "@memberHomeDurationMinutes": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "memberHomeNoScheduleToday": "No classes today — enjoy your rest day! 💪",
+  "home_quoteOfTheDay": "Quote of the day",
+  "home_progressTracking": "Progress tracking",
+  "home_weightTrackerSubtitle": "How was your week? Take a moment to update your weight and track your progress.",
+  "home_updateWeightNow": "Update my weight",
+  "home_bookTrainer": "Book Trainer",
+  "home_checkInCode": "Check-in Code",
+  "home_paymentHistory": "Payment History"
   }
-
-}

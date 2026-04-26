@@ -10,6 +10,7 @@ void main() async {
 
   // 1. Initialize Dio
   g.makeDefaultDio(Env.apiBaseUrl);
+  g.makeDefaultDio(Env.apiProjectBaseUrl);
 
   // 2. Restore saved token
   const tokenStore = AuthTokenStore();

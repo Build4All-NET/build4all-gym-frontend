@@ -352,6 +352,55 @@
   "completeProfile_backButton": "العودة",
   "@completeProfile_backButton": {
     "description": "Back navigation link shown below the form"
-  }
+  },
+ "home_welcome": "مرحباً بك",
+ "home_weightUpdated": "تم تحديث وزنك بنجاح",
+ "home_noData": "لا توجد بيانات",
+ "home_sessions": "حصة",
+ "home_kgLost": "كجم فقدان",
+ "home_workouts": "تمرين",
+ "home_minutes": "دقيقة",
+ "home_quickActions": "إجراءات سريعة",
+ "home_bookClass": "حجز حصة",
+ "home_myProgress": "تقدمي",
+ "home_membership": "العضوية",
+ "home_support": "الدعم",
+ "home_updateWeight": "حدّث وزنك",
+ "home_save": "حفظ",
+ "home_weightHint": "75.5",
+ "home_navHome": "الرئيسية",
+ "home_navActivities": "الأنشطة",
+ "home_navProfile": "الملف الشخصي",
+ "home_membershipStatus": "حالة العضوية",
+ "home_expiresOn": "تنتهي في",
+ "home_renewNow": "تجديد الآن",
+ "memberBottomNavHome": "الرئيسية",
+ "memberBottomNavPlans": "الخطط",
+ "memberBottomNavQr": "QR",
+ "memberBottomNavClasses": "الحصص",
+ "memberBottomNavAccount": "حسابي",
+ "comingSoon": "قريباً",
+ "memberHomeTodaySchedule": "جدول اليوم",
+ "memberHomeViewAll": "عرض الكل",
+ "memberHomeWithTrainer": "مع {trainerName}",
+ "@memberHomeWithTrainer": {
+   "placeholders": {
+     "trainerName": {}
+   }
+ },
+ "memberHomeDurationMinutes": "{minutes} دقيقة",
+ "@memberHomeDurationMinutes": {
+   "placeholders": {
+     "minutes": {}
+   }
+ },
+ "memberHomeNoScheduleToday": "لا توجد حصص اليوم — استمتع بيوم راحة! 💪",
+ "home_quoteOfTheDay": "مقولة اليوم",
+ "home_progressTracking": "متابعة التقدم",
+ "home_weightTrackerSubtitle": "كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك",
+ "home_updateWeightNow": "تحديث وزني الآن",
+ "home_bookTrainer": "حجز مدرب",
+ "home_checkInCode": "رمز الدخول",
+ "home_paymentHistory": "سجل الدفعات"
 
 }

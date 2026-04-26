@@ -19,9 +19,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final DualLoginOrchestrator _orchestrator;
   final AuthApiService _authApi;
   final SessionRoleStore _roleStore;
+  final AuthTokenStore _tokenStore;
 
   AuthBloc()
-      : _authApi = AuthApiService(tokenStore: const AuthTokenStore()),
+      : _tokenStore = const AuthTokenStore(),
+        _authApi = AuthApiService(tokenStore: const AuthTokenStore()),
+
         _orchestrator = DualLoginOrchestrator(
           authApi: AuthApiService(tokenStore: const AuthTokenStore()),
           adminStore: const AdminTokenStore(),
@@ -129,6 +132,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (result.adminOk) {
         await _roleStore.saveRole('admin');
         g.setAuthToken(result.adminToken!);
+        await _tokenStore.saveToken(token: result.adminToken!);
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           role: 'admin',
@@ -138,8 +142,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       // User only
+      // User only
       if (result.userOk) {
         await _roleStore.saveRole('user');
+
+        await _tokenStore.saveUserProfileInfo(
+          firstName: result.userEntity?.firstName,
+          lastName: result.userEntity?.lastName,
+          email: result.userEntity?.email,
+        );
+
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           role: 'user',
@@ -181,6 +193,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (event.role == 'admin') {
       g.setAuthToken(result.adminToken!);
+      await _tokenStore.saveToken(token: result.adminToken!);
       emit(state.copyWith(
         status: AuthStatus.authenticated,
         role: 'admin',
@@ -200,14 +213,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   // ─── Hydrate (from AuthGate token restore) ──────────────────────────────────
 
+
   void _onHydrated(AuthLoginHydrated event, Emitter<AuthState> emit) {
+
+    print('DEBUG hydrated with role: ${event.role}');
+    print('DEBUG hydrated token null: ${event.token.isEmpty}');
+
     g.setAuthToken(event.token);
     emit(state.copyWith(
       status: AuthStatus.authenticated,
       user: event.user,
       token: event.token,
       wasInactive: event.wasInactive,
-      role: 'user',
+      role: event.role,
     ));
   }
 

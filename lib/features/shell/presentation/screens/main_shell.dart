@@ -6,15 +6,31 @@ import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/core/realtime/realtime_cubit.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/core/network/connecting(wifiORserver)/connection_banner.dart';
+
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_bloc.dart';
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_event.dart';
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_state.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
+import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
+
+import 'package:build4allgym/features/member/home/presentation/screens/member_home_screen.dart';
+import 'package:build4allgym/features/member/home/presentation/widgets/member_bottom_nav_bar.dart';
+
+import 'package:build4allgym/features/member/home/data/services/member_home_remote_datasource.dart';
+import 'package:build4allgym/features/member/home/data/repositories/member_home_repository_impl.dart';
+import 'package:build4allgym/features/member/home/domain/usecases/get_member_home_usecase.dart';
+import 'package:build4allgym/features/member/home/domain/usecases/log_weight_usecase.dart';
+import 'package:build4allgym/features/member/home/presentation/bloc/member_home_bloc.dart';
+
+import 'package:build4allgym/l10n/app_localizations.dart';
 
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;
 
-  const MainShell({super.key, required this.appConfig});
+  const MainShell({
+    super.key,
+    required this.appConfig,
+  });
 
   @override
   State<MainShell> createState() => _MainShellState();
@@ -30,8 +46,9 @@ class _MainShellState extends State<MainShell> {
   }
 
   void _startRealtime() {
-    final token  = g.readAuthToken();
+    final token = g.readAuthToken();
     final tenant = widget.appConfig.ownerProjectId ?? 0;
+
     if (token.isNotEmpty && tenant > 0) {
       context.read<RealtimeCubit>().bind(
         tokenMaybeBearerOrRaw: token,
@@ -45,13 +62,28 @@ class _MainShellState extends State<MainShell> {
       tokenMaybeBearerOrRaw: '',
       tenantId: 0,
     );
+
     context.read<AuthBloc>().add(const AuthLoggedOut());
+  }
+
+  void _onBottomNavTap(int index) {
+    if (index == _currentIndex) return;
+
+    setState(() => _currentIndex = index);
+
+    if (index == 1 || index == 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.comingSoon),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final tokens   = context.read<ThemeCubit>().state.tokens;
-    final c        = tokens.colors;
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c = tokens.colors;
     final menuType = context.read<ThemeCubit>().state.menuType;
 
     return BlocListener<AuthBloc, AuthState>(
@@ -59,8 +91,7 @@ class _MainShellState extends State<MainShell> {
         if (state.status == AuthStatus.unauthenticated) {
           Navigator.of(ctx).pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (_) =>
-                  UserLoginScreen(appConfig: widget.appConfig),
+              builder: (_) => UserLoginScreen(appConfig: widget.appConfig),
             ),
                 (_) => false,
           );
@@ -68,13 +99,11 @@ class _MainShellState extends State<MainShell> {
       },
       child: menuType == 'drawer'
           ? _buildDrawerShell(c)
-          : _buildBottomNavShell(c),
+          : _buildBottomNavShell(),
     );
   }
 
-  // ─── Bottom nav layout ───────────────────────────────────────────────────────
-
-  Widget _buildBottomNavShell(c) {
+  Widget _buildBottomNavShell() {
     final pages = _pages();
 
     return Scaffold(
@@ -84,35 +113,16 @@ class _MainShellState extends State<MainShell> {
           Expanded(child: pages[_currentIndex]),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (i) => setState(() => _currentIndex = i),
-        indicatorColor: c.primary.withOpacity(0.15),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.fitness_center_outlined),
-            selectedIcon: Icon(Icons.fitness_center_rounded),
-            label: 'Activities',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline_rounded),
-            selectedIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: MemberBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onBottomNavTap,
       ),
     );
   }
 
-  // ─── Drawer layout ───────────────────────────────────────────────────────────
-
   Widget _buildDrawerShell(c) {
     final pages = _pages();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -137,7 +147,7 @@ class _MainShellState extends State<MainShell> {
             ),
             ListTile(
               leading: const Icon(Icons.home_outlined),
-              title: const Text('Home'),
+              title: Text(l10n.memberBottomNavHome),
               selected: _currentIndex == 0,
               onTap: () {
                 setState(() => _currentIndex = 0);
@@ -145,20 +155,38 @@ class _MainShellState extends State<MainShell> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.fitness_center_outlined),
-              title: const Text('Activities'),
+              leading: const Icon(Icons.credit_card_outlined),
+              title: Text(l10n.memberBottomNavPlans),
               selected: _currentIndex == 1,
               onTap: () {
-                setState(() => _currentIndex = 1);
+                Navigator.pop(context);
+                _showComingSoon();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.qr_code_2_rounded),
+              title: Text(l10n.memberBottomNavQr),
+              selected: _currentIndex == 2,
+              onTap: () {
+                setState(() => _currentIndex = 2);
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_outline_rounded),
-              title: const Text('Profile'),
-              selected: _currentIndex == 2,
+              leading: const Icon(Icons.calendar_today_outlined),
+              title: Text(l10n.memberBottomNavClasses),
+              selected: _currentIndex == 3,
               onTap: () {
-                setState(() => _currentIndex = 2);
+                Navigator.pop(context);
+                _showComingSoon();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_outline_rounded),
+              title: Text(l10n.memberBottomNavAccount),
+              selected: _currentIndex == 4,
+              onTap: () {
+                setState(() => _currentIndex = 4);
                 Navigator.pop(context);
               },
             ),
@@ -182,48 +210,61 @@ class _MainShellState extends State<MainShell> {
     );
   }
 
-  // ─── Page stubs (replace with real screens) ──────────────────────────────────
+  void _showComingSoon() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.comingSoon),
+      ),
+    );
+  }
 
   List<Widget> _pages() => [
-    _HomeTab(onLogout: _logout),
-    const _ActivitiesTab(),
+    BlocProvider<MemberHomeBloc>(
+      create: (_) {
+        final datasource = MemberHomeRemoteDatasource(
+          tokenStore: const AuthTokenStore(),
+        );
+
+        final repository = MemberHomeRepositoryImpl(datasource);
+
+        return MemberHomeBloc(
+          getMemberHomeUseCase: GetMemberHomeUseCase(repository),
+          logWeightUseCase: LogWeightUseCase(repository),
+        );
+      },
+      child: const MemberHomeScreen(),
+    ),
+    const _PlansTab(),
+    const _QrTab(),
+    const _ClassesTab(),
     const _ProfileTab(),
   ];
 }
 
-// ─── Placeholder tabs ─────────────────────────────────────────────────────────
-
-class _HomeTab extends StatelessWidget {
-  final VoidCallback onLogout;
-  const _HomeTab({required this.onLogout});
+class _PlansTab extends StatelessWidget {
+  const _PlansTab();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.home_rounded, size: 64),
-          const SizedBox(height: 16),
-          const Text('Home', style: TextStyle(fontSize: 20)),
-          const SizedBox(height: 24),
-          TextButton.icon(
-            onPressed: onLogout,
-            icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
-          ),
-        ],
-      ),
-    );
+    return const Center(child: Text('Plans'));
   }
 }
 
-class _ActivitiesTab extends StatelessWidget {
-  const _ActivitiesTab();
+class _QrTab extends StatelessWidget {
+  const _QrTab();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Activities'));
+    return const Center(child: Text('QR'));
+  }
+}
+
+class _ClassesTab extends StatelessWidget {
+  const _ClassesTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Classes'));
   }
 }
 
@@ -233,17 +274,23 @@ class _ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthBloc>().state.user;
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.person_rounded, size: 64),
           const SizedBox(height: 12),
-          Text(user?.displayName ?? 'Profile',
-              style: const TextStyle(fontSize: 18)),
+          Text(
+            user?.displayName ?? 'Profile',
+            style: const TextStyle(fontSize: 18),
+          ),
           if (user?.email != null) ...[
             const SizedBox(height: 4),
-            Text(user!.email!, style: const TextStyle(color: Colors.grey)),
+            Text(
+              user!.email!,
+              style: const TextStyle(color: Colors.grey),
+            ),
           ],
         ],
       ),

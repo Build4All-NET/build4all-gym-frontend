@@ -12,7 +12,7 @@
 //   We only care about "message" here — the rest is ignored at this layer.
 //
 // SCOPE:
-//   Used ONLY inside ForgotPasswordApiService. The repository converts this
+//   Used ONLY inside ForgotPasswordApiService. The repositories converts this
 //   model into domain entities (ForgotPasswordResult) so nothing above the
 //   data layer ever imports this file.
 //
@@ -23,7 +23,7 @@
 
 /// Wraps the backend's standard response envelope.
 /// Only the `message` field is extracted — `success` and `data` are ignored
-/// because the repository uses HTTP status codes for success/failure logic.
+/// because the repositories uses HTTP status codes for success/failure logic.
 class ForgotMessageResponse {
   /// The human-readable message from the backend (e.g. "OTP sent successfully").
   final String message;
