@@ -466,4 +466,131 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get completeProfile_backButton => 'Back';
+
+  @override
+  String get home_welcome => 'Welcome';
+
+  @override
+  String get home_weightUpdated => 'Your weight was updated successfully ✅';
+
+  @override
+  String get home_noData => 'No data available';
+
+  @override
+  String get home_sessions => 'Sessions';
+
+  @override
+  String get home_kgLost => 'kg lost';
+
+  @override
+  String get home_workouts => 'Workouts';
+
+  @override
+  String get home_todaySchedule => 'Today Schedule';
+
+  @override
+  String get home_minutes => 'min';
+
+  @override
+  String get home_quickActions => 'Quick Actions';
+
+  @override
+  String get home_bookClass => 'Book Class';
+
+  @override
+  String get home_myProgress => 'My Progress';
+
+  @override
+  String get home_membership => 'Membership';
+
+  @override
+  String get home_support => 'Support';
+
+  @override
+  String get home_updateWeight => 'Update your weight';
+
+  @override
+  String get home_save => 'Save';
+
+  @override
+  String get home_weightHint => '75.5';
+
+  @override
+  String get home_navHome => 'Home';
+
+  @override
+  String get home_navActivities => 'Activities';
+
+  @override
+  String get home_navProfile => 'Profile';
+
+  @override
+  String get home_membershipStatus => 'Membership Status';
+
+  @override
+  String get home_expiresOn => 'Expires on';
+
+  @override
+  String get home_renewNow => 'Renew Now';
+
+  @override
+  String get home_comingSoon => 'Coming soon';
+
+  @override
+  String get memberBottomNavHome => 'Home';
+
+  @override
+  String get memberBottomNavPlans => 'Plans';
+
+  @override
+  String get memberBottomNavQr => 'QR';
+
+  @override
+  String get memberBottomNavClasses => 'Classes';
+
+  @override
+  String get memberBottomNavAccount => 'My Account';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get memberHomeTodaySchedule => 'Today\'s Schedule';
+
+  @override
+  String get memberHomeViewAll => 'View All';
+
+  @override
+  String memberHomeWithTrainer(Object trainerName) {
+    return 'With coach $trainerName';
+  }
+
+  @override
+  String memberHomeDurationMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get memberHomeNoScheduleToday => 'No classes today — enjoy your rest day! 💪';
+
+  @override
+  String get home_quoteOfTheDay => 'Quote of the day';
+
+  @override
+  String get home_progressTracking => 'Progress tracking';
+
+  @override
+  String get home_weightTrackerSubtitle => 'How was your week? Take a moment to update your weight and track your progress.';
+
+  @override
+  String get home_updateWeightNow => 'Update my weight';
+
+  @override
+  String get home_bookTrainer => 'Book Trainer';
+
+  @override
+  String get home_checkInCode => 'Check-in Code';
+
+  @override
+  String get home_paymentHistory => 'Payment History';
 }

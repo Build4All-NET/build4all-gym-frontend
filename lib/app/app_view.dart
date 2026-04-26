@@ -5,6 +5,8 @@ import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/features/auth/presentation/gate/auth_gate.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
+import 'package:build4allgym/features/shell/presentation/screens/main_shell.dart';
+
 
 import 'app_router.dart';
 
@@ -23,7 +25,7 @@ class MyAppView extends StatelessWidget {
           theme: themeState.themeData,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: AuthGate(appConfig: appConfig),
+          home: MainShell(appConfig: appConfig),
           onGenerateRoute: AppRouter.onGenerateRoute,
         );
       },
