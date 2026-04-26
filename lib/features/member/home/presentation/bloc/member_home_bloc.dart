@@ -46,7 +46,12 @@ class MemberHomeBloc extends Bloc<MemberHomeEvent, MemberHomeState> {
         emit(MemberHomeError(message: failure.message));
       },
           (data) {
-        emit(MemberHomeLoaded(data: data, showWeightCard: true));
+        emit(
+          MemberHomeLoaded(
+            data: data,
+            showWeightCard: true,
+          ),
+        );
       },
     );
   }
@@ -61,7 +66,6 @@ class MemberHomeBloc extends Bloc<MemberHomeEvent, MemberHomeState> {
       ) async {
     final currentData = _currentData;
     final currentShowWeightCard = _currentShowWeightCard;
-
     final result = await getMemberHomeUseCase();
 
     result.fold(
@@ -166,4 +170,5 @@ class MemberHomeBloc extends Bloc<MemberHomeEvent, MemberHomeState> {
 
     return true;
   }
+
 }

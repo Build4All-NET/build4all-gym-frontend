@@ -1000,6 +1000,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get completeProfile_backButton;
+
+  /// No description provided for @home_welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get home_welcome;
+
+  /// No description provided for @home_weightUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weight was updated successfully ✅'**
+  String get home_weightUpdated;
+
+  /// No description provided for @home_noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get home_noData;
+
+  /// No description provided for @home_sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get home_sessions;
+
+  /// No description provided for @home_kgLost.
+  ///
+  /// In en, this message translates to:
+  /// **'kg lost'**
+  String get home_kgLost;
+
+  /// No description provided for @home_workouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get home_workouts;
+
+  /// No description provided for @home_todaySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Today Schedule'**
+  String get home_todaySchedule;
+
+  /// No description provided for @home_minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get home_minutes;
+
+  /// No description provided for @home_quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get home_quickActions;
+
+  /// No description provided for @home_bookClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Class'**
+  String get home_bookClass;
+
+  /// No description provided for @home_myProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'My Progress'**
+  String get home_myProgress;
+
+  /// No description provided for @home_membership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
+  String get home_membership;
+
+  /// No description provided for @home_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get home_support;
+
+  /// No description provided for @home_updateWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your weight'**
+  String get home_updateWeight;
+
+  /// No description provided for @home_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get home_save;
+
+  /// No description provided for @home_weightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'75.5'**
+  String get home_weightHint;
+
+  /// No description provided for @home_navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home_navHome;
+
+  /// No description provided for @home_navActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Activities'**
+  String get home_navActivities;
+
+  /// No description provided for @home_navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get home_navProfile;
+
+  /// No description provided for @home_membershipStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Status'**
+  String get home_membershipStatus;
+
+  /// No description provided for @home_expiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires on'**
+  String get home_expiresOn;
+
+  /// No description provided for @home_renewNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew Now'**
+  String get home_renewNow;
+
+  /// No description provided for @home_comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get home_comingSoon;
+
+  /// No description provided for @memberBottomNavHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get memberBottomNavHome;
+
+  /// No description provided for @memberBottomNavPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get memberBottomNavPlans;
+
+  /// No description provided for @memberBottomNavQr.
+  ///
+  /// In en, this message translates to:
+  /// **'QR'**
+  String get memberBottomNavQr;
+
+  /// No description provided for @memberBottomNavClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get memberBottomNavClasses;
+
+  /// No description provided for @memberBottomNavAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'My Account'**
+  String get memberBottomNavAccount;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @memberHomeTodaySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Schedule'**
+  String get memberHomeTodaySchedule;
+
+  /// No description provided for @memberHomeViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get memberHomeViewAll;
+
+  /// No description provided for @memberHomeWithTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'With coach {trainerName}'**
+  String memberHomeWithTrainer(Object trainerName);
+
+  /// No description provided for @memberHomeDurationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String memberHomeDurationMinutes(Object minutes);
+
+  /// No description provided for @memberHomeNoScheduleToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No classes today — enjoy your rest day! 💪'**
+  String get memberHomeNoScheduleToday;
+
+  /// No description provided for @home_quoteOfTheDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote of the day'**
+  String get home_quoteOfTheDay;
+
+  /// No description provided for @home_progressTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress tracking'**
+  String get home_progressTracking;
+
+  /// No description provided for @home_weightTrackerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your week? Take a moment to update your weight and track your progress.'**
+  String get home_weightTrackerSubtitle;
+
+  /// No description provided for @home_updateWeightNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update my weight'**
+  String get home_updateWeightNow;
+
+  /// No description provided for @home_bookTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Trainer'**
+  String get home_bookTrainer;
+
+  /// No description provided for @home_checkInCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in Code'**
+  String get home_checkInCode;
+
+  /// No description provided for @home_paymentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment History'**
+  String get home_paymentHistory;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

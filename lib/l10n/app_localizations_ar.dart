@@ -466,4 +466,131 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get completeProfile_backButton => 'العودة';
+
+  @override
+  String get home_welcome => 'مرحباً بك';
+
+  @override
+  String get home_weightUpdated => 'تم تحديث وزنك بنجاح';
+
+  @override
+  String get home_noData => 'لا توجد بيانات';
+
+  @override
+  String get home_sessions => 'حصة';
+
+  @override
+  String get home_kgLost => 'كجم فقدان';
+
+  @override
+  String get home_workouts => 'تمرين';
+
+  @override
+  String get home_todaySchedule => 'جدول اليوم';
+
+  @override
+  String get home_minutes => 'دقيقة';
+
+  @override
+  String get home_quickActions => 'إجراءات سريعة';
+
+  @override
+  String get home_bookClass => 'حجز حصة';
+
+  @override
+  String get home_myProgress => 'تقدمي';
+
+  @override
+  String get home_membership => 'العضوية';
+
+  @override
+  String get home_support => 'الدعم';
+
+  @override
+  String get home_updateWeight => 'حدّث وزنك';
+
+  @override
+  String get home_save => 'حفظ';
+
+  @override
+  String get home_weightHint => '75.5';
+
+  @override
+  String get home_navHome => 'الرئيسية';
+
+  @override
+  String get home_navActivities => 'الأنشطة';
+
+  @override
+  String get home_navProfile => 'الملف الشخصي';
+
+  @override
+  String get home_membershipStatus => 'حالة العضوية';
+
+  @override
+  String get home_expiresOn => 'تنتهي في';
+
+  @override
+  String get home_renewNow => 'تجديد الآن';
+
+  @override
+  String get home_comingSoon => 'قريباً';
+
+  @override
+  String get memberBottomNavHome => 'الرئيسية';
+
+  @override
+  String get memberBottomNavPlans => 'الخطط';
+
+  @override
+  String get memberBottomNavQr => 'QR';
+
+  @override
+  String get memberBottomNavClasses => 'الحصص';
+
+  @override
+  String get memberBottomNavAccount => 'حسابي';
+
+  @override
+  String get comingSoon => 'قريباً';
+
+  @override
+  String get memberHomeTodaySchedule => 'جدول اليوم';
+
+  @override
+  String get memberHomeViewAll => 'عرض الكل';
+
+  @override
+  String memberHomeWithTrainer(Object trainerName) {
+    return 'مع المدرب $trainerName';
+  }
+
+  @override
+  String memberHomeDurationMinutes(Object minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get memberHomeNoScheduleToday => 'لا توجد حصص اليوم — استمتع بيوم راحة! 💪';
+
+  @override
+  String get home_quoteOfTheDay => 'مقولة اليوم';
+
+  @override
+  String get home_progressTracking => 'متابعة التقدم';
+
+  @override
+  String get home_weightTrackerSubtitle => 'كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك';
+
+  @override
+  String get home_updateWeightNow => 'تحديث وزني الآن';
+
+  @override
+  String get home_bookTrainer => 'حجز مدرب';
+
+  @override
+  String get home_checkInCode => 'رمز الدخول';
+
+  @override
+  String get home_paymentHistory => 'سجل الدفعات';
 }
