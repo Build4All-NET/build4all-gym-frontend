@@ -105,6 +105,7 @@ class MembershipStatusCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // replaces Spacer
               children: [
                 Text(
                   l10n.home_membershipStatus,
@@ -114,7 +115,6 @@ class MembershipStatusCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: tokens.spacing.sm),
 
                 Text(
                   '✨ ${membership.planName}',
@@ -123,33 +123,34 @@ class MembershipStatusCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: tokens.typography.headlineSmall.copyWith(
                     color: _planColor(tokens, status),
-                    fontSize: 20,
+                    fontSize: 17,        // reduced from 20
                     fontWeight: FontWeight.w900,
-                    height: 1.05,
+                    height: 1.0,         // reduced from 1.05
                   ),
                 ),
 
-                const Spacer(),
-
-                Text(
-                  l10n.home_expiresOn,
-                  textAlign: TextAlign.end,
-                  style: tokens.typography.bodyMedium.copyWith(
-                    color: tokens.colors.onPrimary.withOpacity(0.82),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: tokens.spacing.xs),
-
-                Text(
-                  membership.expirationDate,
-                  textAlign: TextAlign.end,
-                  style: tokens.typography.titleMedium.copyWith(
-                    color: tokens.colors.onPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      l10n.home_expiresOn,
+                      textAlign: TextAlign.end,
+                      style: tokens.typography.bodySmall.copyWith(   // bodySmall instead of bodyMedium
+                        color: tokens.colors.onPrimary.withOpacity(0.82),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: tokens.spacing.xs),
+                    Text(
+                      membership.expirationDate,
+                      textAlign: TextAlign.end,
+                      style: tokens.typography.bodyMedium.copyWith(  // bodyMedium instead of titleMedium
+                        color: tokens.colors.onPrimary,
+                        fontSize: 14,    // reduced from 16
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

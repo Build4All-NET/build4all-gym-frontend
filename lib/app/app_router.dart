@@ -1,6 +1,8 @@
+import 'package:build4allgym/features/member/home/domain/usecases/log_weight_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
+import '../features/auth/data/services/auth_token_store.dart';
 import '../features/auth/presentation/signup/screens/signup_screen.dart';
 import '../features/auth/presentation/signup/screens/otp_screen.dart';
 
@@ -22,9 +24,18 @@ import '../features/admin/dashboard/presentation/bloc/admin_dashboard_bloc.dart'
 import '../features/admin/dashboard/presentation/bloc/admin_dashboard_event.dart';
 import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart';
 
+//USER main screen imports
+import '../features/member/home/presentation/bloc/member_home_bloc.dart';
+import '../features/member/home/presentation/screens/member_home_screen.dart';
+import '../features/member/home/data/repositories/member_home_repository_impl.dart';
+import '../features/member/home/domain/usecases/get_member_home_usecase.dart';
+import '../features/member/home/presentation/bloc/member_home_event.dart';
+import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart';
+import '../features/member/home/data/services/member_home_remote_datasource.dart';
 class AppRouter {
   static const String login         = '/login';
   static const String admin         = '/admin';
+  static const String user         = '/user';
   static const String signup        = '/signup';
   static const String otp           = '/otp';
   static const String forgotPassword = '/forgot-password';
@@ -56,6 +67,25 @@ class AppRouter {
             child: const AdminDashboardScreen(),
           ),
         );
+
+      case user:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) {
+              final datasource = MemberHomeRemoteDatasource(
+                tokenStore: AuthTokenStore(),
+              );
+              final repository = MemberHomeRepositoryImpl(datasource);
+
+              return MemberHomeBloc(
+                getMemberHomeUseCase: GetMemberHomeUseCase(repository),
+                logWeightUseCase: LogWeightUseCase(repository),
+              );
+            },
+            child: const MemberHomeScreen(),
+          ),
+        );
+
 
       case signup:
         return MaterialPageRoute(
