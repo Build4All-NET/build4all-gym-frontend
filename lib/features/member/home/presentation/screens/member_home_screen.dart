@@ -152,6 +152,23 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                       },
                       child: Text(l10n.appAccessRetry),
                     ),
+                    SizedBox(height: tokens.spacing.md),
+                    // ADD THIS TO LOGOUT
+                    TextButton(
+                      onPressed: () async {
+                        const storage = FlutterSecureStorage();
+                        await storage.deleteAll();
+                        if (!context.mounted) return;
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/login', // replace with your actual login route name
+                              (route) => false,
+                        );
+                      },
+                      child: const Text(
+                        'Logout',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
                   ],
                 ),
               ),

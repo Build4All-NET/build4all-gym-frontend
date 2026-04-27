@@ -52,7 +52,7 @@ class QuickActionsGrid extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: tokens.spacing.md,
               mainAxisSpacing: tokens.spacing.md,
-              childAspectRatio: 2.35, // SAME as your design
+              childAspectRatio: 2.0, // was 2.35 — lower = taller cards
             ),
             itemBuilder: (context, index) {
               final action = actions[index];
@@ -71,22 +71,23 @@ class QuickActionsGrid extends StatelessWidget {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // replaces Spacer
                     children: [
                       Icon(
                         action.icon,
                         color: tokens.colors.onPrimary,
-                        size: 28, // SAME
+                        size: 24, // slightly smaller
                       ),
-                      const Spacer(),
                       Text(
                         action.label,
                         textAlign: TextAlign.end,
-                        maxLines: 1,
-                        overflow: TextOverflow.visible,
-                        style: tokens.typography.bodyMedium.copyWith(
+                        maxLines: 2,                              // allow 2 lines
+                        overflow: TextOverflow.ellipsis,          // was TextOverflow.visible
+                        style: tokens.typography.bodySmall.copyWith(  // bodySmall instead of bodyMedium
                           color: tokens.colors.onPrimary,
-                          fontSize: 16,
+                          fontSize: 13,                           // reduced from 16
                           fontWeight: FontWeight.w700,
+                          height: 1.2,
                         ),
                       ),
                     ],

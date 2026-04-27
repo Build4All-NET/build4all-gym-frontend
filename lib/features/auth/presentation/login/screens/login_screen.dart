@@ -56,12 +56,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   // ─── navigation helpers ─────────────────────────────────────────────────────
 
   void _goHome() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => MainShell(appConfig: widget.appConfig),
-      ),
-          (_) => false,
-    );
+    Navigator.of(context).pushNamedAndRemoveUntil('/user', (_) => false);
   }
 
   void _goAdmin() {
