@@ -24,6 +24,8 @@ import '../features/admin/dashboard/presentation/bloc/admin_dashboard_bloc.dart'
 import '../features/admin/dashboard/presentation/bloc/admin_dashboard_event.dart';
 import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart';
 
+
+import '../features/shell/presentation/screens/main_shell.dart';
 //USER main screen imports
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
@@ -70,22 +72,8 @@ class AppRouter {
 
       case user:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) {
-              final datasource = MemberHomeRemoteDatasource(
-                tokenStore: AuthTokenStore(),
-              );
-              final repository = MemberHomeRepositoryImpl(datasource);
-
-              return MemberHomeBloc(
-                getMemberHomeUseCase: GetMemberHomeUseCase(repository),
-                logWeightUseCase: LogWeightUseCase(repository),
-              );
-            },
-            child: const MemberHomeScreen(),
-          ),
+          builder: (_) => MainShell(appConfig: appConfig),
         );
-
 
       case signup:
         return MaterialPageRoute(

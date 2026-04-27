@@ -32,10 +32,19 @@ class MemberHomeScreen extends StatefulWidget {
 class _MemberHomeScreenState extends State<MemberHomeScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  Future<void> _logoutAndGoToLogin(BuildContext context) async {
+    await _storage.deleteAll(); // _storage is already defined in the state class
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/login', // replace with your actual login route
+          (route) => false,
+    );
+  }
+
   String _fullName = '';
 
   static const double _maxWidth = 430;
-  static const double _headerHeight = 300;
+  static const double _headerHeight = 340;
   static const double _statsOverlap = 70;
 
   @override
@@ -116,6 +125,18 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                 backgroundColor: tokens.colors.danger,
               ),
             );
+          }
+
+          if (state is MemberHomeError) {
+            final msg = state.message.toLowerCase();
+            final isAuthError = msg.contains('unauthorized') ||
+                msg.contains('401') ||
+                msg.contains('missing token') ||
+                msg.contains('expired');
+
+            if (isAuthError) {
+              _logoutAndGoToLogin(context);
+            }
           }
         },
         builder: (context, state) {
@@ -300,17 +321,20 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         bottomRight: Radius.circular(30),
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        _buildHeader(
-                          context: context,
-                          welcomeText: welcomeText,
-                          fullName: fullName,
-                          notificationCount: notificationCount,
-                        ),
-                        SizedBox(height: tokens.spacing.xl),
-                        MembershipStatusCard(membership: membership),
-                      ],
+                    child: SafeArea(        // ← ADD THIS
+                      bottom: false,        // only pad the top
+                      child: Column(
+                        children: [
+                          _buildHeader(
+                            context: context,
+                            welcomeText: welcomeText,
+                            fullName: fullName,
+                            notificationCount: notificationCount,
+                          ),
+                          SizedBox(height: tokens.spacing.xl),
+                          MembershipStatusCard(membership: membership),
+                        ],
+                      ),
                     ),
                   ),
                   Positioned(

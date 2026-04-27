@@ -358,15 +358,11 @@ class _AuthGateState extends State<AuthGate> {
         user:        null, // user entity loaded lazily by MainShell
         token:       rawJwt,
         wasInactive: false,
-        role: 'user',
+        role: role ?? 'user',
       ),
     );
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => MainShell(appConfig: widget.appConfig),
-      ),
-    );
+    Navigator.of(context).pushNamedAndRemoveUntil('/user', (_) => false);
   }
 
   /// Set admin token globally, start realtime, navigate to admin dashboard.

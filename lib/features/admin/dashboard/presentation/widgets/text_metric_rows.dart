@@ -1,31 +1,3 @@
-/*
- * PURPOSE: Text Metric Rows Widget
- *
- * Displays additional dashboard metrics in a simple list format:
- * - Total Plans (with active count)
- * - Canceled members (last 7 days)
- * - Churn Rate (with vs last month comparison)
- * - Monthly Revenue (with vs last month comparison)
- *
- * DESIGN FEATURES:
- * - Simple horizontal layout: label on left, value on right
- * - Colored dot indicator for visual categorization
- * - Sublabel shows trend comparison (vs last month)
- * - White background cards with minimal spacing
- *
- * DATA SOURCE:
- * Receives AdminDashboardSummary entity containing:
- * - plans.totalPlans, plans.activePlans
- * - members.canceledLast7Days
- * - members.churnRate, members.churnRateVsLastMonth
- * - revenue.monthlyRevenue, revenue.monthlyRevenueVsLastMonth
- *
- * DESIGN RATIONALE:
- * These metrics are less critical than the large/small cards above
- * Simple text rows provide information without overwhelming the user
- * Useful for admins who need detailed financial/operational data
- */
-
 import 'package:flutter/material.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
 
@@ -36,103 +8,93 @@ class TextMetricRows extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extract comparison values for cleaner code
     final churnVsLast = data.members.churnRateVsLastMonth;
     final revenueVsLast = data.revenue?.monthlyRevenueVsLastMonth;
 
-    return Column(
-      children: [
-        // TOTAL PLANS ROW
-        _TextMetricRow(
-          label: 'Total Plans',
-          value: '${data.plans.totalPlans}',
-          dotColor: const Color(0xFF3B82F6), // Blue dot
-          sublabel: '${data.plans.activePlans} Active',
-          sublabelColor: const Color(0xFF3B82F6), // Blue (informational)
-        ),
-        const SizedBox(height: 10),
-
-        // CANCELED MEMBERS ROW
-        _TextMetricRow(
-          label: 'Canceled',
-          value: '${data.members.canceledLast7Days}',
-          dotColor: const Color(0xFFEF4444), // Red dot (negative metric)
-          sublabel: 'Last 7 days',
-          sublabelColor: Colors.black45, // Gray (neutral)
-        ),
-        const SizedBox(height: 10),
-
-        // CHURN RATE ROW
-        _TextMetricRow(
-          label: 'Churn Rate',
-          value: '${data.members.churnRate.toStringAsFixed(1)}%',
-          dotColor: const Color(0xFF22C55E), // Green dot
-          // Show trend: negative change is good (decreasing churn)
-          sublabel: churnVsLast <= 0
-              ? '${churnVsLast.toStringAsFixed(1)}% vs last month'
-              : '+${churnVsLast.toStringAsFixed(1)}% vs last month',
-          // Green if churn decreased, Red if increased
-          sublabelColor: churnVsLast <= 0
-              ? const Color(0xFF22C55E) // Green (good - churn decreased)
-              : const Color(0xFFEF4444), // Red (bad - churn increased)
-        ),
-        const SizedBox(height: 10),
-
-        // MONTHLY REVENUE ROW
-        _TextMetricRow(
-          label: 'Monthly Revenue',
-          // Convert to Lakhs (L) for Indian currency format
-          // 100,000 = 1L, so divide by 100,000
-          value: data.revenue != null
-              ? '₹${(data.revenue!.monthlyRevenue / 100000).toStringAsFixed(1)}L'
-              : 'N/A',
-          dotColor: const Color(0xFFA855F7), // Purple dot
-          // Show growth percentage if revenue data exists
-          sublabel: revenueVsLast != null
-              ? '+${revenueVsLast.toStringAsFixed(0)}% vs last month'
-              : null,
-          sublabelColor: const Color(0xFF22C55E), // Green (growth is good)
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _TextMetricRow(
+            label: 'Total Plans',
+            value: '${data.plans.totalPlans}',
+            dotColor: const Color(0xFF3B82F6),
+            sublabel: '${data.plans.activePlans} Active',
+            sublabelColor: const Color(0xFF3B82F6),
+            isFirst: true,
+          ),
+          const _Divider(),
+          _TextMetricRow(
+            label: 'Canceled',
+            value: '${data.members.canceledLast7Days}',
+            dotColor: const Color(0xFFDC2626),
+            sublabel: 'Last 7 days',
+            sublabelColor: const Color(0xFF9CA3AF),
+          ),
+          const _Divider(),
+          _TextMetricRow(
+            label: 'Churn Rate',
+            value: '${data.members.churnRate.toStringAsFixed(1)}%',
+            dotColor: const Color(0xFF16A34A),
+            sublabel: churnVsLast <= 0
+                ? '${churnVsLast.toStringAsFixed(1)}% vs last month'
+                : '+${churnVsLast.toStringAsFixed(1)}% vs last month',
+            sublabelColor: churnVsLast <= 0
+                ? const Color(0xFF16A34A)
+                : const Color(0xFFDC2626),
+          ),
+          const _Divider(),
+          _TextMetricRow(
+            label: 'Monthly Revenue',
+            value: data.revenue != null
+                ? '₹${(data.revenue!.monthlyRevenue / 100000).toStringAsFixed(1)}L'
+                : 'N/A',
+            dotColor: const Color(0xFF9333EA),
+            sublabel: revenueVsLast != null
+                ? '+${revenueVsLast.toStringAsFixed(0)}% vs last month'
+                : null,
+            sublabelColor: const Color(0xFF16A34A),
+            isLast: true,
+          ),
+        ],
+      ),
     );
   }
 }
 
-/*
- * TEXT METRIC ROW COMPONENT
- *
- * Individual row displaying a metric in horizontal layout
- *
- * LAYOUT:
- * Left side: Label (small) + Value (large)
- * Right side: Colored dot + Optional sublabel
- *
- * DESIGN DETAILS:
- * - White background with rounded corners
- * - Subtle shadow for depth
- * - SpaceBetween alignment pushes left and right content to edges
- * - Colored dot provides visual categorization
- *
- * PARAMETERS:
- * - label: Metric name (e.g., "Total Plans", "Churn Rate")
- * - value: Metric value (e.g., "6", "1.2%", "₹12.5L")
- * - dotColor: Color of indicator dot (semantic color)
- * - sublabel: Optional additional info (e.g., "6 Active", "+15% vs last month")
- * - sublabelColor: Color of sublabel text (indicates good/bad/neutral)
- *
- * COLOR SEMANTICS:
- * - Blue: Informational/neutral metrics
- * - Green: Positive metrics or good trends
- * - Red: Negative metrics or concerning trends
- * - Purple: Financial/revenue metrics
- * - Orange: Warning/attention needed
- */
+class _Divider extends StatelessWidget {
+  const _Divider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(
+      height: 1,
+      thickness: 1,
+      color: Color(0xFFF9FAFB),
+      indent: 16,
+      endIndent: 16,
+    );
+  }
+}
+
 class _TextMetricRow extends StatelessWidget {
   final String label;
   final String value;
   final Color dotColor;
   final String? sublabel;
   final Color sublabelColor;
+  final bool isFirst;
+  final bool isLast;
 
   const _TextMetricRow({
     required this.label,
@@ -140,60 +102,47 @@ class _TextMetricRow extends StatelessWidget {
     required this.dotColor,
     this.sublabel,
     required this.sublabelColor,
+    this.isFirst = false,
+    this.isLast = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        isFirst ? 18 : 14,
+        16,
+        isLast ? 18 : 14,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Push content to edges
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // LEFT SIDE: Label and Value stacked vertically
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // LABEL TEXT
-              // Small gray text identifying the metric
               Text(
                 label,
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Colors.black45,
+                  color: Color(0xFF9CA3AF),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 4),
-
-              // VALUE TEXT
-              // Large bold number - the main content
               Text(
                 value,
                 style: const TextStyle(
                   fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF111827),
                 ),
               ),
             ],
           ),
-
-          // RIGHT SIDE: Colored dot and optional sublabel stacked vertically
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // COLORED DOT INDICATOR
-              // Small circle for visual categorization
               Container(
                 width: 8,
                 height: 8,
@@ -202,16 +151,14 @@ class _TextMetricRow extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-
-              // OPTIONAL SUBLABEL
-              // Additional context or trend information
               if (sublabel != null) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
                   sublabel!,
                   style: TextStyle(
                     fontSize: 11,
                     color: sublabelColor,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
