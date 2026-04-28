@@ -146,6 +146,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (result.userOk) {
         await _roleStore.saveRole('user');
 
+        g.setAuthToken(result.userToken!);
+
         await _tokenStore.saveUserProfileInfo(
           firstName: result.userEntity?.firstName,
           lastName: result.userEntity?.lastName,

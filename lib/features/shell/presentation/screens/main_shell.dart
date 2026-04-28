@@ -279,19 +279,33 @@ class _ProfileTab extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.person_rounded, size: 64),
+          const Icon(Icons.person_rounded, size: 64, color: Color(0xFF9CA3AF)),
           const SizedBox(height: 12),
           Text(
             user?.displayName ?? 'Profile',
-            style: const TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           if (user?.email != null) ...[
             const SizedBox(height: 4),
-            Text(
-              user!.email!,
-              style: const TextStyle(color: Colors.grey),
-            ),
+            Text(user!.email!, style: const TextStyle(color: Colors.grey)),
           ],
+          const SizedBox(height: 32),
+          // LOGOUT BUTTON
+          ElevatedButton.icon(
+            onPressed: () {
+              context.read<AuthBloc>().add(const AuthLoggedOut());
+            },
+            icon: const Icon(Icons.logout_rounded, size: 18),
+            label: const Text('Logout'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
         ],
       ),
     );

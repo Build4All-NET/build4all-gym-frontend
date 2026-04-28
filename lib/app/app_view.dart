@@ -12,7 +12,6 @@ import 'app_router.dart';
 
 class MyAppView extends StatelessWidget {
   final AppConfig appConfig;
-
   const MyAppView({super.key, required this.appConfig});
 
   @override
@@ -25,7 +24,7 @@ class MyAppView extends StatelessWidget {
           theme: themeState.themeData,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: MainShell(appConfig: appConfig),
+          home: AuthGate(appConfig: appConfig), // ← was MainShell
           onGenerateRoute: AppRouter.onGenerateRoute,
         );
       },

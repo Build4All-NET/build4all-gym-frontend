@@ -486,9 +486,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_workouts => 'تمرين';
 
   @override
-  String get home_todaySchedule => 'جدول اليوم';
-
-  @override
   String get home_minutes => 'دقيقة';
 
   @override
@@ -534,9 +531,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_renewNow => 'تجديد الآن';
 
   @override
-  String get home_comingSoon => 'قريباً';
-
-  @override
   String get memberBottomNavHome => 'الرئيسية';
 
   @override
@@ -562,7 +556,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String memberHomeWithTrainer(Object trainerName) {
-    return 'مع المدرب $trainerName';
+    return 'مع $trainerName';
   }
 
   @override
@@ -593,4 +587,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get home_paymentHistory => 'سجل الدفعات';
+
+  @override
+  String get signup_success => 'تم التسجيل بنجاح يمكنك تسجيل الدخول الان';
 }

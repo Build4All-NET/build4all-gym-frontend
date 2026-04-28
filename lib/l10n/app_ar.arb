@@ -401,6 +401,7 @@
  "home_updateWeightNow": "تحديث وزني الآن",
  "home_bookTrainer": "حجز مدرب",
  "home_checkInCode": "رمز الدخول",
- "home_paymentHistory": "سجل الدفعات"
+ "home_paymentHistory": "سجل الدفعات",
+  "signup_success":"تم التسجيل بنجاح يمكنك تسجيل الدخول الان"
 
 }

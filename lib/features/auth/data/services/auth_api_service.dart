@@ -483,6 +483,8 @@ class AuthApiService {
     final refresh = (await _tokenStore.getRefreshToken())?.trim() ?? '';
     if (refresh.isEmpty) throw AppException('No refresh token');
 
+
+
     final uri = _uri('/api/auth/refresh');
 
     final resp = await _safePost(
@@ -490,6 +492,10 @@ class AuthApiService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'refreshToken': refresh}),
     );
+
+    debugPrint('[REFRESH] called');
+    debugPrint('[REFRESH] status: ${resp.statusCode}');
+    debugPrint('[REFRESH] body: ${resp.body}');
 
     final decoded = _safeJson(resp.body);
     if (resp.statusCode >= 400) {
