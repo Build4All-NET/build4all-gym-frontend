@@ -1037,12 +1037,6 @@ abstract class AppLocalizations {
   /// **'Workouts'**
   String get home_workouts;
 
-  /// No description provided for @home_todaySchedule.
-  ///
-  /// In en, this message translates to:
-  /// **'Today Schedule'**
-  String get home_todaySchedule;
-
   /// No description provided for @home_minutes.
   ///
   /// In en, this message translates to:
@@ -1132,12 +1126,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Renew Now'**
   String get home_renewNow;
-
-  /// No description provided for @home_comingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Coming soon'**
-  String get home_comingSoon;
 
   /// No description provided for @memberBottomNavHome.
   ///
@@ -1246,6 +1234,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Payment History'**
   String get home_paymentHistory;
+
+  /// No description provided for @signup_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully registered. You can now login.'**
+  String get signup_success;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -88,6 +88,30 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         },
                       ),
                       const SizedBox(height: 8),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: 36, height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ListTile(
+                        leading: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
+                        title: const Text(
+                          'Plans',
+                          style: TextStyle(color: Color(0xFFEF4444), fontWeight: FontWeight.w600),
+                        ),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          const storage = FlutterSecureStorage();
+                          await storage.deleteAll();
+                          if (!context.mounted) return;
+                          Navigator.of(context).pushReplacementNamed('/plans_admin');
+                        },
+                      ),
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),

@@ -466,5 +466,7 @@
   "home_updateWeightNow": "Update my weight",
   "home_bookTrainer": "Book Trainer",
   "home_checkInCode": "Check-in Code",
-  "home_paymentHistory": "Payment History"
+  "home_paymentHistory": "Payment History",
+  "signup_success":"Successfully registered. You can now login."
+
   }

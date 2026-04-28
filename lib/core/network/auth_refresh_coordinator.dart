@@ -161,8 +161,12 @@ class AuthRefreshCoordinator {
 
     try {
       return await refreshUser(tenantId: tenantId);
-    } catch (_) {
-      await _userStore.clear();
+    } catch (e) {
+      // ❗ Do NOT clear on transient failure
+      // only clear if refresh token is invalid
+      if (shouldClearAfterRefreshFailure(e)) {
+        await _userStore.clear();
+      }
       return null;
     }
   }
@@ -181,8 +185,10 @@ class AuthRefreshCoordinator {
 
     try {
       return await refreshAdmin(tenantId: tenantId);
-    } catch (_) {
-      await _adminStore.clear();
+    } catch (e) {
+      if (shouldClearAfterRefreshFailure(e)) {
+        await _adminStore.clear();
+      }
       return null;
     }
   }

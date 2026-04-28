@@ -486,9 +486,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_workouts => 'Workouts';
 
   @override
-  String get home_todaySchedule => 'Today Schedule';
-
-  @override
   String get home_minutes => 'min';
 
   @override
@@ -532,9 +529,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get home_renewNow => 'Renew Now';
-
-  @override
-  String get home_comingSoon => 'Coming soon';
 
   @override
   String get memberBottomNavHome => 'Home';
@@ -593,4 +587,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get home_paymentHistory => 'Payment History';
+
+  @override
+  String get signup_success => 'Successfully registered. You can now login.';
 }

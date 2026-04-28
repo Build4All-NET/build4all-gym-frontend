@@ -358,7 +358,7 @@ class _AuthGateState extends State<AuthGate> {
         user:        null, // user entity loaded lazily by MainShell
         token:       rawJwt,
         wasInactive: false,
-        role: role ?? 'user',
+        role: 'user',
       ),
     );
 

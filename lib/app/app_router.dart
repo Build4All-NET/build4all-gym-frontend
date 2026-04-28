@@ -2,6 +2,11 @@ import 'package:build4allgym/features/member/home/domain/usecases/log_weight_use
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
+import '../features/admin/plans/data/repositories/admin_plans_repository_impl.dart';
+import '../features/admin/plans/data/services/admin_plans_remote_service.dart';
+import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart';
+import '../features/admin/plans/presentation/bloc/admin_plans/admin_plans_bloc.dart';
+import '../features/admin/plans/presentation/screens/admin_plans_screen.dart';
 import '../features/auth/data/services/auth_token_store.dart';
 import '../features/auth/presentation/signup/screens/signup_screen.dart';
 import '../features/auth/presentation/signup/screens/otp_screen.dart';
@@ -41,6 +46,7 @@ class AppRouter {
   static const String signup        = '/signup';
   static const String otp           = '/otp';
   static const String forgotPassword = '/forgot-password';
+  static const String plans_admin = '/plans_admin';
 
   static Route onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -75,6 +81,22 @@ class AppRouter {
           builder: (_) => MainShell(appConfig: appConfig),
         );
 
+      case plans_admin:
+        return MaterialPageRoute(
+        builder: (_) => BlocProvider(
+        create: (_) => AdminPlansBloc(
+        getStats: GetAdminPlanStatsUseCase(repository: AdminPlansRepositoryImpl(
+        remoteDatasource: AdminPlansRemoteDatasourceImpl())),
+        getPlans: GetAdminPlansUseCase(repository: AdminPlansRepositoryImpl(
+        remoteDatasource: AdminPlansRemoteDatasourceImpl())),
+        getPlanTypes: GetPlanTypesUseCase(repository: AdminPlansRepositoryImpl(
+        remoteDatasource: AdminPlansRemoteDatasourceImpl())),
+        deletePlan: DeletePlanUseCase(repository: AdminPlansRepositoryImpl(
+        remoteDatasource: AdminPlansRemoteDatasourceImpl())),
+        )..add(LoadAdminPlansEvent()),
+        child: const AdminPlansScreen(),
+    ),
+        );
       case signup:
         return MaterialPageRoute(
           builder: (_) => const SignupScreen(),

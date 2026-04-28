@@ -68,7 +68,7 @@ class MembershipStatusCard extends StatelessWidget {
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(l10n.home_comingSoon),
+                          content: Text(l10n.comingSoon),
                           backgroundColor: tokens.colors.primary,
                         ),
                       );

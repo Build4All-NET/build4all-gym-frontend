@@ -113,21 +113,14 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           listenWhen: (prev, curr) =>
           !prev.isProfileComplete && curr.isProfileComplete,
           listener: (ctx, state) {
-            if (state.completedUser == null) return;
-            ctx.read<AuthBloc>().add(
-              AuthLoginHydrated(
-                user:        state.completedUser,
-                token:       '',
-                wasInactive: false,
-                role: ''
+            ScaffoldMessenger.of(ctx).showSnackBar(
+              SnackBar(
+                content: Text(l.signup_success),
+                behavior: SnackBarBehavior.floating,
               ),
             );
-            Navigator.of(ctx).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => MainShell(appConfig: widget.appConfig),
-              ),
-                  (_) => false,
-            );
+
+            Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
           },
         ),
 
