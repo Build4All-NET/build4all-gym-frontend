@@ -469,65 +469,74 @@
   "home_paymentHistory": "Payment History",
   "signup_success":"Successfully registered. You can now login.",
 
-    "mostPopular": "Most Popular",
-    "selectThisPlan": "Choose this plan",
-    "renew": "Renew",
+  "navDashboard": "Dashboard",
+  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 
-    "planTypeGym": "Gym",
-    "planTypeClasses": "Classes",
-    "planTypeMixed": "Mixed",
+  "navMembers": "Members",
+  "@navMembers": { "description": "Admin drawer — Members item" },
 
-    "billingMonthly": "Monthly",
-    "billingYearly": "Yearly",
-    "billingWeekly": "Weekly",
+  "navPlans": "Plans",
+  "@navPlans": { "description": "Admin drawer — Plans item" },
 
-    "membershipStatusActive": "Active",
-    "membershipStatusFrozen": "Frozen",
-    "membershipStatusExpired": "Expired",
+  "navStaff": "Staff",
+  "@navStaff": { "description": "Admin drawer — Staff item" },
 
-    "remainingDays": "{days} days remaining",
-    "@remainingDays": {
-      "placeholders": {
-        "days": {
-          "type": "int"
-        }
-      }
-    },
+  "navPayments": "Payments",
+  "@navPayments": { "description": "Admin drawer — Payments item" },
 
-    "membershipEndsAt": "Ends on {date}",
-    "@membershipEndsAt": {
-      "placeholders": {
-        "date": {
-          "type": "String"
-        }
-      }
-    },
-    "memberPlansTitle": "Membership Plans",
-    "memberPlansSubtitle": "Choose the plan that fits your goals",
-    "memberPlansEmpty": "No plans available right now",
-    "retry": "Retry",
-    "back": "Back",
-    "checkoutComingSoon": "Coming soon — checkout is under development",
-    "planDuration": "Duration",
-    "visitLimit": "Visit limit",
-    "unlimited": "Unlimited",
-    "freezeDays": "Freeze days",
-    "planFeatures": "Features",
-    "couponCode": "Coupon code",
-    "enterCouponCode": "Enter coupon code",
-    "apply": "Apply",
-    "couponAppliedFinalPrice": "✓ Coupon applied — final price: {price} $",
-    "@couponAppliedFinalPrice": {
-      "placeholders": {
-        "price": {
-          "type": "String"
-        }
-      }
-    },
-    "selectedPlan": "Selected plan",
-    "baseAmount": "Base amount",
-    "totalAmount": "Total amount",
-    "planDetails": "Plan details"
+  "navClasses": "Classes",
+  "@navClasses": { "description": "Admin drawer — Classes item" },
+
+  "navAiAssistant": "AI Assistant",
+  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
+
+  "navSettings": "Settings",
+  "@navSettings": { "description": "Admin drawer — Settings item" },
+
+  "navLogout": "Logout",
+  "@navLogout": { "description": "Admin drawer — Logout item" },
+
+  "logoutConfirmTitle": "Log out?",
+  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
+
+  "logoutConfirmMessage": "Are you sure you want to log out?",
+  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
+
+  "sectionCoreOwner": "CORE OWNER",
+  "@sectionCoreOwner": { "description": "Drawer section label" },
+
+  "sectionOperationsReception": "OPERATIONS / RECEPTION",
+  "@sectionOperationsReception": { "description": "Drawer section label" },
+
+  "sectionTrainingPt": "TRAINING / PT",
+  "@sectionTrainingPt": { "description": "Drawer section label" },
+
+  "navTrainers": "Trainers / PT",
+  "@navTrainers": { "description": "Drawer nav item" },
+
+  "navReceptionStaff": "Reception Staff",
+  "@navReceptionStaff": { "description": "Drawer nav item" },
+
+  "navGymProfile": "Gym Profile",
+  "@navGymProfile": { "description": "Drawer nav item" },
+
+  "navBranches": "Branches",
+  "@navBranches": { "description": "Drawer nav item" },
+
+  "navCheckins": "Check-ins",
+  "@navCheckins": { "description": "Drawer nav item" },
+
+  "navClassesPt": "Classes & PT",
+  "@navClassesPt": { "description": "Drawer nav item" },
+
+  "navNotifications": "Notifications",
+  "@navNotifications": { "description": "Drawer nav item" },
+
+  "navPtSessions": "PT Sessions",
+  "@navPtSessions": { "description": "Drawer nav item" },
+
+  "navTrainingVideos": "Training Videos",
+  "@navTrainingVideos": { "description": "Drawer nav item" }
+
+
   }
-
-
