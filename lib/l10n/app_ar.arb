@@ -454,9 +454,51 @@
         }
       }
     },
+
       "selectedPlan": "الخطة المختارة",
           "baseAmount": "المبلغ الأساسي",
           "totalAmount": "المجموع الكلي",
-          "planDetails": "تفاصيل الباقة"
+          "planDetails": "تفاصيل الباقة",
+          "dayMonday": "الإثنين",
+          "dayTuesday": "الثلاثاء",
+          "dayWednesday": "الأربعاء",
+          "dayThursday": "الخميس",
+          "dayFriday": "الجمعة",
+          "daySaturday": "السبت",
+          "daySunday": "الأحد",
+          "memberSessionsDifficultyBeginner": "مبتدئ",
+          "memberSessionsDifficultyIntermediate": "متوسط",
+          "memberSessionsDifficultyAdvanced": "متقدم",
+          "memberSessionsBookNow": "احجز الآن",
+          "memberSessionsTitle": "الحصص الرياضية",
+          "memberSessionsSubtitle": "احجز مكانك في الحصة المفضلة",
+          "memberSessionsRoom": "قاعة {roomName}",
+          "@memberSessionsRoom": {
+            "placeholders": {
+              "roomName": { "type": "String" }
+            }
+          },
+          "memberSessionsMinute": "{minutes} دقيقة",
+          "@memberSessionsMinute": {
+            "placeholders": {
+              "minutes": { "type": "int" }
+            }
+          },
+          "memberSessionsSeatsAvailable": "{count} مقاعد",
+          "@memberSessionsSeatsAvailable": {
+            "placeholders": {
+              "count": { "type": "int" }
+            }
+          },
+          "memberSessionsLoading": "جارٍ تحميل الحصص...",
+          "memberSessionsEmpty": "لا توجد حصص متاحة",
+          "memberSessionsError": "تعذر تحميل الحصص",
+          "memberSessionsFilterTitle": "تصفية الحصص",
+          "memberSessionsFilterClassType": "نوع الحصة",
+          "memberSessionsFilterTrainer": "المدرب",
+          "memberSessionsFilterBranch": "الفرع",
+          "memberSessionsFilterReset": "إعادة تعيين",
+          "memberSessionsFilterApply": "تطبيق الفلتر"
+
   }
 

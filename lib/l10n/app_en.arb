@@ -527,7 +527,51 @@
     "selectedPlan": "Selected plan",
     "baseAmount": "Base amount",
     "totalAmount": "Total amount",
-    "planDetails": "Plan details"
+    "planDetails": "Plan details",
+     "dayMonday": "Mon",
+         "dayTuesday": "Tue",
+"dayWednesday": "Wed",
+"dayThursday": "Thu",
+"dayFriday": "Fri",
+"daySaturday": "Sat",
+"daySunday": "Sun",
+    "memberSessionsDifficultyBeginner": "Beginner",
+    "memberSessionsDifficultyIntermediate": "Intermediate",
+    "memberSessionsDifficultyAdvanced": "Advanced",
+    "memberSessionsBookNow": "Book Now",
+    "memberSessionsTitle": "Sports Classes",
+    "memberSessionsSubtitle": "Book your spot in your favorite class",
+    "memberSessionsRoom": "Room {roomName}",
+    "@memberSessionsRoom": {
+      "placeholders": {
+        "roomName": { "type": "String" }
+      }
+    },
+    "memberSessionsMinute": "{minutes} min",
+    "@memberSessionsMinute": {
+      "placeholders": {
+        "minutes": { "type": "int" }
+      }
+    },
+    "memberSessionsSeatsAvailable": "{count} seats",
+    "@memberSessionsSeatsAvailable": {
+      "placeholders": {
+        "count": { "type": "int" }
+      }
+    },
+    "memberSessionsDifficultyBeginner": "Beginner",
+    "memberSessionsDifficultyIntermediate": "Intermediate",
+    "memberSessionsDifficultyAdvanced": "Advanced",
+    "memberSessionsBookNow": "Book Now",
+    "memberSessionsLoading": "Loading sessions...",
+    "memberSessionsEmpty": "No sessions available",
+    "memberSessionsError": "Failed to load sessions",
+    "memberSessionsFilterTitle": "Filter classes",
+    "memberSessionsFilterClassType": "Class type",
+    "memberSessionsFilterTrainer": "Trainer",
+    "memberSessionsFilterBranch": "Branch",
+    "memberSessionsFilterReset": "Reset",
+    "memberSessionsFilterApply": "Apply filter"
   }
 
 

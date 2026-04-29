@@ -1438,6 +1438,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plan details'**
   String get planDetails;
+
+  /// No description provided for @dayMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get dayMonday;
+
+  /// No description provided for @dayTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get dayTuesday;
+
+  /// No description provided for @dayWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get dayWednesday;
+
+  /// No description provided for @dayThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get dayThursday;
+
+  /// No description provided for @dayFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get dayFriday;
+
+  /// No description provided for @daySaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get daySaturday;
+
+  /// No description provided for @daySunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get daySunday;
+
+  /// No description provided for @memberSessionsDifficultyBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get memberSessionsDifficultyBeginner;
+
+  /// No description provided for @memberSessionsDifficultyIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get memberSessionsDifficultyIntermediate;
+
+  /// No description provided for @memberSessionsDifficultyAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get memberSessionsDifficultyAdvanced;
+
+  /// No description provided for @memberSessionsBookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get memberSessionsBookNow;
+
+  /// No description provided for @memberSessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports Classes'**
+  String get memberSessionsTitle;
+
+  /// No description provided for @memberSessionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your spot in your favorite class'**
+  String get memberSessionsSubtitle;
+
+  /// No description provided for @memberSessionsRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {roomName}'**
+  String memberSessionsRoom(String roomName);
+
+  /// No description provided for @memberSessionsMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String memberSessionsMinute(int minutes);
+
+  /// No description provided for @memberSessionsSeatsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} seats'**
+  String memberSessionsSeatsAvailable(int count);
+
+  /// No description provided for @memberSessionsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading sessions...'**
+  String get memberSessionsLoading;
+
+  /// No description provided for @memberSessionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions available'**
+  String get memberSessionsEmpty;
+
+  /// No description provided for @memberSessionsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load sessions'**
+  String get memberSessionsError;
+
+  /// No description provided for @memberSessionsFilterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter classes'**
+  String get memberSessionsFilterTitle;
+
+  /// No description provided for @memberSessionsFilterClassType.
+  ///
+  /// In en, this message translates to:
+  /// **'Class type'**
+  String get memberSessionsFilterClassType;
+
+  /// No description provided for @memberSessionsFilterTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer'**
+  String get memberSessionsFilterTrainer;
+
+  /// No description provided for @memberSessionsFilterBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get memberSessionsFilterBranch;
+
+  /// No description provided for @memberSessionsFilterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get memberSessionsFilterReset;
+
+  /// No description provided for @memberSessionsFilterApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filter'**
+  String get memberSessionsFilterApply;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -695,4 +695,85 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planDetails => 'تفاصيل الباقة';
+
+  @override
+  String get dayMonday => 'الإثنين';
+
+  @override
+  String get dayTuesday => 'الثلاثاء';
+
+  @override
+  String get dayWednesday => 'الأربعاء';
+
+  @override
+  String get dayThursday => 'الخميس';
+
+  @override
+  String get dayFriday => 'الجمعة';
+
+  @override
+  String get daySaturday => 'السبت';
+
+  @override
+  String get daySunday => 'الأحد';
+
+  @override
+  String get memberSessionsDifficultyBeginner => 'مبتدئ';
+
+  @override
+  String get memberSessionsDifficultyIntermediate => 'متوسط';
+
+  @override
+  String get memberSessionsDifficultyAdvanced => 'متقدم';
+
+  @override
+  String get memberSessionsBookNow => 'احجز الآن';
+
+  @override
+  String get memberSessionsTitle => 'الحصص الرياضية';
+
+  @override
+  String get memberSessionsSubtitle => 'احجز مكانك في الحصة المفضلة';
+
+  @override
+  String memberSessionsRoom(String roomName) {
+    return 'قاعة $roomName';
+  }
+
+  @override
+  String memberSessionsMinute(int minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String memberSessionsSeatsAvailable(int count) {
+    return '$count مقاعد';
+  }
+
+  @override
+  String get memberSessionsLoading => 'جارٍ تحميل الحصص...';
+
+  @override
+  String get memberSessionsEmpty => 'لا توجد حصص متاحة';
+
+  @override
+  String get memberSessionsError => 'تعذر تحميل الحصص';
+
+  @override
+  String get memberSessionsFilterTitle => 'تصفية الحصص';
+
+  @override
+  String get memberSessionsFilterClassType => 'نوع الحصة';
+
+  @override
+  String get memberSessionsFilterTrainer => 'المدرب';
+
+  @override
+  String get memberSessionsFilterBranch => 'الفرع';
+
+  @override
+  String get memberSessionsFilterReset => 'إعادة تعيين';
+
+  @override
+  String get memberSessionsFilterApply => 'تطبيق الفلتر';
 }
