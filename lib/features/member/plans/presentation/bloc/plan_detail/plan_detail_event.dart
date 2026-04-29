@@ -1,0 +1,30 @@
+/// Base class for all plan detail events.
+///
+/// This is full BLoC, not Cubit.
+/// The UI sends events, and the BLoC emits states.
+abstract class PlanDetailEvent {}
+
+/// Fired when the plan detail screen opens.
+///
+/// The planId comes from navigation.
+class LoadPlanDetailEvent extends PlanDetailEvent {
+  final int planId;
+
+  LoadPlanDetailEvent({
+    required this.planId,
+  });
+}
+
+/// Fired when the user taps "تطبيق" after typing a coupon code.
+class ApplyCouponEvent extends PlanDetailEvent {
+  final String couponCode;
+  final int planId;
+
+  ApplyCouponEvent({
+    required this.couponCode,
+    required this.planId,
+  });
+}
+
+/// Fired when the user clears the coupon field.
+class ClearCouponEvent extends PlanDetailEvent {}

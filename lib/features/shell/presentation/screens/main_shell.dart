@@ -21,6 +21,8 @@ import 'package:build4allgym/features/member/home/data/repositories/member_home_
 import 'package:build4allgym/features/member/home/domain/usecases/get_member_home_usecase.dart';
 import 'package:build4allgym/features/member/home/domain/usecases/log_weight_usecase.dart';
 import 'package:build4allgym/features/member/home/presentation/bloc/member_home_bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:build4allgym/features/member/plans/presentation/screens/member_plans_screen.dart';
 
 import 'package:build4allgym/l10n/app_localizations.dart';
 
@@ -71,7 +73,7 @@ class _MainShellState extends State<MainShell> {
 
     setState(() => _currentIndex = index);
 
-    if (index == 1 || index == 3) {
+    if (index == 3) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.comingSoon),
@@ -159,8 +161,8 @@ class _MainShellState extends State<MainShell> {
               title: Text(l10n.memberBottomNavPlans),
               selected: _currentIndex == 1,
               onTap: () {
+                setState(() => _currentIndex = 1);
                 Navigator.pop(context);
-                _showComingSoon();
               },
             ),
             ListTile(
@@ -234,21 +236,15 @@ class _MainShellState extends State<MainShell> {
       },
       child: const MemberHomeScreen(),
     ),
-    const _PlansTab(),
+    MemberPlansScreenProvider(
+      dio: g.dio(),
+    ),
     const _QrTab(),
     const _ClassesTab(),
     const _ProfileTab(),
   ];
 }
 
-class _PlansTab extends StatelessWidget {
-  const _PlansTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Plans'));
-  }
-}
 
 class _QrTab extends StatelessWidget {
   const _QrTab();

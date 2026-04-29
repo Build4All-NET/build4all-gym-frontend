@@ -19,7 +19,6 @@ import '../widgets/member_stats_row.dart';
 import '../widgets/membership_status_card.dart';
 import '../widgets/motivational_quote_card.dart';
 import '../widgets/quick_actions_grid.dart';
-import '../widgets/today_schedule_widget.dart';
 import '../widgets/weight_tracker_card.dart';
 
 class MemberHomeScreen extends StatefulWidget {
