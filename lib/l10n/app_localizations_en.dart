@@ -592,71 +592,107 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signup_success => 'Successfully registered. You can now login.';
 
   @override
-  String get navDashboard => 'Dashboard';
+  String get mostPopular => 'Most Popular';
 
   @override
-  String get navMembers => 'Members';
+  String get selectThisPlan => 'Choose this plan';
 
   @override
-  String get navPlans => 'Plans';
+  String get renew => 'Renew';
 
   @override
-  String get navStaff => 'Staff';
+  String get planTypeGym => 'Gym';
 
   @override
-  String get navPayments => 'Payments';
+  String get planTypeClasses => 'Classes';
 
   @override
-  String get navClasses => 'Classes';
+  String get planTypeMixed => 'Mixed';
 
   @override
-  String get navAiAssistant => 'AI Assistant';
+  String get billingMonthly => 'Monthly';
 
   @override
-  String get navSettings => 'Settings';
+  String get billingYearly => 'Yearly';
 
   @override
-  String get navLogout => 'Logout';
+  String get billingWeekly => 'Weekly';
 
   @override
-  String get logoutConfirmTitle => 'Log out?';
+  String get membershipStatusActive => 'Active';
 
   @override
-  String get logoutConfirmMessage => 'Are you sure you want to log out?';
+  String get membershipStatusFrozen => 'Frozen';
 
   @override
-  String get sectionCoreOwner => 'CORE OWNER';
+  String get membershipStatusExpired => 'Expired';
 
   @override
-  String get sectionOperationsReception => 'OPERATIONS / RECEPTION';
+  String remainingDays(int days) {
+    return '$days days remaining';
+  }
 
   @override
-  String get sectionTrainingPt => 'TRAINING / PT';
+  String membershipEndsAt(String date) {
+    return 'Ends on $date';
+  }
 
   @override
-  String get navTrainers => 'Trainers / PT';
+  String get memberPlansTitle => 'Membership Plans';
 
   @override
-  String get navReceptionStaff => 'Reception Staff';
+  String get memberPlansSubtitle => 'Choose the plan that fits your goals';
 
   @override
-  String get navGymProfile => 'Gym Profile';
+  String get memberPlansEmpty => 'No plans available right now';
 
   @override
-  String get navBranches => 'Branches';
+  String get retry => 'Retry';
 
   @override
-  String get navCheckins => 'Check-ins';
+  String get back => 'Back';
 
   @override
-  String get navClassesPt => 'Classes & PT';
+  String get checkoutComingSoon => 'Coming soon — checkout is under development';
 
   @override
-  String get navNotifications => 'Notifications';
+  String get planDuration => 'Duration';
 
   @override
-  String get navPtSessions => 'PT Sessions';
+  String get visitLimit => 'Visit limit';
 
   @override
-  String get navTrainingVideos => 'Training Videos';
+  String get unlimited => 'Unlimited';
+
+  @override
+  String get freezeDays => 'Freeze days';
+
+  @override
+  String get planFeatures => 'Features';
+
+  @override
+  String get couponCode => 'Coupon code';
+
+  @override
+  String get enterCouponCode => 'Enter coupon code';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String couponAppliedFinalPrice(String price) {
+    return '✓ Coupon applied — final price: $price \$';
+  }
+
+  @override
+  String get selectedPlan => 'Selected plan';
+
+  @override
+  String get baseAmount => 'Base amount';
+
+  @override
+  String get totalAmount => 'Total amount';
+
+  @override
+  String get planDetails => 'Plan details';
 }

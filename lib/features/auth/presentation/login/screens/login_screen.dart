@@ -61,7 +61,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
   void _goAdmin() {
     Navigator.of(context).pushNamedAndRemoveUntil('/admin', (_) => false);
-
   }
 
   // ─── build ──────────────────────────────────────────────────────────────────
