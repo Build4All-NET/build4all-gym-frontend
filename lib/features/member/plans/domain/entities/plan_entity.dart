@@ -20,6 +20,7 @@ class PlanEntity {
   final bool isFeatured;
   final List<String> features;
   final ActivePromotionEntity? activePromotion;
+  final String? iconName;
 
   const PlanEntity({
     required this.planId,
@@ -31,5 +32,6 @@ class PlanEntity {
     required this.isFeatured,
     required this.features,
     this.activePromotion,
+    this.iconName,
   });
 }

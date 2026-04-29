@@ -5,6 +5,15 @@ import '../../../domain/usecases/validate_coupon_usecase.dart';
 import 'plan_detail_event.dart';
 import 'plan_detail_state.dart';
 
+/// BLoC responsible for the plan detail screen.
+///
+/// It handles:
+/// - loading the selected plan details
+/// - validating coupon codes
+/// - clearing an applied coupon
+///
+/// This BLoC only calls domain use cases.
+/// It does not access datasource or repository directly.
 class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
   final GetPlanDetailUseCase getPlanDetail;
   final ValidateCouponUseCase validateCoupon;
@@ -18,10 +27,17 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
     on<ClearCouponEvent>(_onClearCoupon);
   }
 
+  /// Handles loading the selected plan.
+  ///
+  /// Flow:
+  /// 1. Emit loading state
+  /// 2. Call GetPlanDetailUseCase with planId
+  /// 3. Emit loaded state if successful
+  /// 4. Emit error state if something fails
   Future<void> _onLoadPlanDetail(
-    LoadPlanDetailEvent event,
-    Emitter<PlanDetailState> emit,
-  ) async {
+      LoadPlanDetailEvent event,
+      Emitter<PlanDetailState> emit,
+      ) async {
     emit(PlanDetailLoading());
 
     try {
@@ -41,15 +57,19 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
     }
   }
 
+  /// Handles coupon validation.
+  ///
+  /// This does not reload the plan.
+  /// It only updates the coupon part of the loaded state.
   Future<void> _onApplyCoupon(
-    ApplyCouponEvent event,
-    Emitter<PlanDetailState> emit,
-  ) async {
+      ApplyCouponEvent event,
+      Emitter<PlanDetailState> emit,
+      ) async {
     final currentState = state;
 
     if (currentState is! PlanDetailLoaded) return;
 
-    /// show loading spinner only on coupon button
+    // Show spinner only on the coupon button while validating.
     emit(
       PlanDetailLoaded(
         plan: currentState.plan,
@@ -68,21 +88,28 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
         PlanDetailLoaded(
           plan: currentState.plan,
           coupon: result,
+          isCouponValidating: false,
         ),
       );
     } catch (e) {
+      // Keep the plan visible even if coupon validation fails.
       emit(
         PlanDetailLoaded(
           plan: currentState.plan,
+          coupon: null,
+          isCouponValidating: false,
         ),
       );
     }
   }
 
+  /// Handles clearing the coupon field.
+  ///
+  /// Removes coupon data while keeping the plan details visible.
   void _onClearCoupon(
-    ClearCouponEvent event,
-    Emitter<PlanDetailState> emit,
-  ) {
+      ClearCouponEvent event,
+      Emitter<PlanDetailState> emit,
+      ) {
     final currentState = state;
 
     if (currentState is PlanDetailLoaded) {
@@ -90,6 +117,7 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
         PlanDetailLoaded(
           plan: currentState.plan,
           coupon: null,
+          isCouponValidating: false,
         ),
       );
     }

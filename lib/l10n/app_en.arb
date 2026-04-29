@@ -467,6 +467,67 @@
   "home_bookTrainer": "Book Trainer",
   "home_checkInCode": "Check-in Code",
   "home_paymentHistory": "Payment History",
-  "signup_success":"Successfully registered. You can now login."
+  "signup_success":"Successfully registered. You can now login.",
 
+    "mostPopular": "Most Popular",
+    "selectThisPlan": "Choose this plan",
+    "renew": "Renew",
+
+    "planTypeGym": "Gym",
+    "planTypeClasses": "Classes",
+    "planTypeMixed": "Mixed",
+
+    "billingMonthly": "Monthly",
+    "billingYearly": "Yearly",
+    "billingWeekly": "Weekly",
+
+    "membershipStatusActive": "Active",
+    "membershipStatusFrozen": "Frozen",
+    "membershipStatusExpired": "Expired",
+
+    "remainingDays": "{days} days remaining",
+    "@remainingDays": {
+      "placeholders": {
+        "days": {
+          "type": "int"
+        }
+      }
+    },
+
+    "membershipEndsAt": "Ends on {date}",
+    "@membershipEndsAt": {
+      "placeholders": {
+        "date": {
+          "type": "String"
+        }
+      }
+    },
+    "memberPlansTitle": "Membership Plans",
+    "memberPlansSubtitle": "Choose the plan that fits your goals",
+    "memberPlansEmpty": "No plans available right now",
+    "retry": "Retry",
+    "back": "Back",
+    "checkoutComingSoon": "Coming soon — checkout is under development",
+    "planDuration": "Duration",
+    "visitLimit": "Visit limit",
+    "unlimited": "Unlimited",
+    "freezeDays": "Freeze days",
+    "planFeatures": "Features",
+    "couponCode": "Coupon code",
+    "enterCouponCode": "Enter coupon code",
+    "apply": "Apply",
+    "couponAppliedFinalPrice": "✓ Coupon applied — final price: {price} $",
+    "@couponAppliedFinalPrice": {
+      "placeholders": {
+        "price": {
+          "type": "String"
+        }
+      }
+    },
+    "selectedPlan": "Selected plan",
+    "baseAmount": "Base amount",
+    "totalAmount": "Total amount",
+    "planDetails": "Plan details"
   }
+
+

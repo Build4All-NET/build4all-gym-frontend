@@ -1,4 +1,4 @@
-import '../../domain/entities/active_promotion_entity.dart';
+
 import '../../domain/entities/plan_entity.dart';
 
 class ActivePromotionModel {
@@ -39,6 +39,7 @@ class PlanListItemModel {
   final bool isFeatured;
   final List<String> features;
   final ActivePromotionModel? activePromotion;
+  final String? iconName;
 
   PlanListItemModel({
     required this.planId,
@@ -50,6 +51,7 @@ class PlanListItemModel {
     required this.isFeatured,
     required this.features,
     this.activePromotion,
+    this.iconName,
   });
 
   factory PlanListItemModel.fromJson(Map<String, dynamic> json) {
@@ -64,9 +66,10 @@ class PlanListItemModel {
       features: List<String>.from(json['features'] ?? []),
       activePromotion: json['activePromotion'] != null
           ? ActivePromotionModel.fromJson(
-              json['activePromotion'] as Map<String, dynamic>,
-            )
+        json['activePromotion'] as Map<String, dynamic>,
+      )
           : null,
+      iconName: json['iconName'] as String?,
     );
   }
 
@@ -81,6 +84,7 @@ class PlanListItemModel {
       isFeatured: isFeatured,
       features: features,
       activePromotion: activePromotion?.toEntity(),
+      iconName: iconName,
     );
   }
 }
