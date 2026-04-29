@@ -590,4 +590,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signup_success => 'تم التسجيل بنجاح يمكنك تسجيل الدخول الان';
+
+  @override
+  String get navDashboard => 'لوحة التحكم';
+
+  @override
+  String get navMembers => 'الأعضاء';
+
+  @override
+  String get navPlans => 'الخطط';
+
+  @override
+  String get navStaff => 'الموظفون';
+
+  @override
+  String get navPayments => 'المدفوعات';
+
+  @override
+  String get navClasses => 'الحصص';
+
+  @override
+  String get navAiAssistant => 'المساعد الذكي';
+
+  @override
+  String get navSettings => 'الإعدادات';
+
+  @override
+  String get navLogout => 'تسجيل الخروج';
+
+  @override
+  String get logoutConfirmTitle => 'تسجيل الخروج؟';
+
+  @override
+  String get logoutConfirmMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get sectionCoreOwner => 'القسم الرئيسي';
+
+  @override
+  String get sectionOperationsReception => 'العمليات / الاستقبال';
+
+  @override
+  String get sectionTrainingPt => 'التدريب / PT';
+
+  @override
+  String get navTrainers => 'المدربون / PT';
+
+  @override
+  String get navReceptionStaff => 'موظفو الاستقبال';
+
+  @override
+  String get navGymProfile => 'ملف الصالة';
+
+  @override
+  String get navBranches => 'الفروع';
+
+  @override
+  String get navCheckins => 'تسجيل الحضور';
+
+  @override
+  String get navClassesPt => 'الحصص والتدريب';
+
+  @override
+  String get navNotifications => 'الإشعارات';
+
+  @override
+  String get navPtSessions => 'جلسات PT';
+
+  @override
+  String get navTrainingVideos => 'فيديوهات التدريب';
 }

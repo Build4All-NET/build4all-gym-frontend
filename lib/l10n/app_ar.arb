@@ -402,6 +402,77 @@
  "home_bookTrainer": "حجز مدرب",
  "home_checkInCode": "رمز الدخول",
  "home_paymentHistory": "سجل الدفعات",
-  "signup_success":"تم التسجيل بنجاح يمكنك تسجيل الدخول الان"
+  "signup_success":"تم التسجيل بنجاح يمكنك تسجيل الدخول الان",
+
+  "navDashboard": "لوحة التحكم",
+  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
+
+  "navMembers": "الأعضاء",
+  "@navMembers": { "description": "Admin drawer — Members item" },
+
+  "navPlans": "الخطط",
+  "@navPlans": { "description": "Admin drawer — Plans item" },
+
+  "navStaff": "الموظفون",
+  "@navStaff": { "description": "Admin drawer — Staff item" },
+
+  "navPayments": "المدفوعات",
+  "@navPayments": { "description": "Admin drawer — Payments item" },
+
+  "navClasses": "الحصص",
+  "@navClasses": { "description": "Admin drawer — Classes item" },
+
+  "navAiAssistant": "المساعد الذكي",
+  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
+
+  "navSettings": "الإعدادات",
+  "@navSettings": { "description": "Admin drawer — Settings item" },
+
+  "navLogout": "تسجيل الخروج",
+  "@navLogout": { "description": "Admin drawer — Logout item" },
+
+  "logoutConfirmTitle": "تسجيل الخروج؟",
+  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
+
+  "logoutConfirmMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
+
+  "sectionCoreOwner": "القسم الرئيسي",
+  "@sectionCoreOwner": { "description": "Drawer section label" },
+
+  "sectionOperationsReception": "العمليات / الاستقبال",
+  "@sectionOperationsReception": { "description": "Drawer section label" },
+
+  "sectionTrainingPt": "التدريب / PT",
+  "@sectionTrainingPt": { "description": "Drawer section label" },
+
+
+  "navTrainers": "المدربون / PT",
+  "@navTrainers": { "description": "Drawer nav item" },
+
+  "navReceptionStaff": "موظفو الاستقبال",
+  "@navReceptionStaff": { "description": "Drawer nav item" },
+
+  "navGymProfile": "ملف الصالة",
+  "@navGymProfile": { "description": "Drawer nav item" },
+
+  "navBranches": "الفروع",
+  "@navBranches": { "description": "Drawer nav item" },
+
+  "navCheckins": "تسجيل الحضور",
+  "@navCheckins": { "description": "Drawer nav item" },
+
+
+  "navClassesPt": "الحصص والتدريب",
+  "@navClassesPt": { "description": "Drawer nav item" },
+
+  "navNotifications": "الإشعارات",
+  "@navNotifications": { "description": "Drawer nav item" },
+
+  "navPtSessions": "جلسات PT",
+  "@navPtSessions": { "description": "Drawer nav item" },
+
+  "navTrainingVideos": "فيديوهات التدريب",
+  "@navTrainingVideos": { "description": "Drawer nav item" }
 
 }
