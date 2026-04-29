@@ -592,107 +592,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signup_success => 'Successfully registered. You can now login.';
 
   @override
-  String get mostPopular => 'Most Popular';
+  String get navDashboard => 'Dashboard';
 
   @override
-  String get selectThisPlan => 'Choose this plan';
+  String get navMembers => 'Members';
 
   @override
-  String get renew => 'Renew';
+  String get navPlans => 'Plans';
 
   @override
-  String get planTypeGym => 'Gym';
+  String get navStaff => 'Staff';
 
   @override
-  String get planTypeClasses => 'Classes';
+  String get navPayments => 'Payments';
 
   @override
-  String get planTypeMixed => 'Mixed';
+  String get navClasses => 'Classes';
 
   @override
-  String get billingMonthly => 'Monthly';
+  String get navAiAssistant => 'AI Assistant';
 
   @override
-  String get billingYearly => 'Yearly';
+  String get navSettings => 'Settings';
 
   @override
-  String get billingWeekly => 'Weekly';
+  String get navLogout => 'Logout';
 
   @override
-  String get membershipStatusActive => 'Active';
+  String get logoutConfirmTitle => 'Log out?';
 
   @override
-  String get membershipStatusFrozen => 'Frozen';
+  String get logoutConfirmMessage => 'Are you sure you want to log out?';
 
   @override
-  String get membershipStatusExpired => 'Expired';
+  String get sectionCoreOwner => 'CORE OWNER';
 
   @override
-  String remainingDays(int days) {
-    return '$days days remaining';
-  }
+  String get sectionOperationsReception => 'OPERATIONS / RECEPTION';
 
   @override
-  String membershipEndsAt(String date) {
-    return 'Ends on $date';
-  }
+  String get sectionTrainingPt => 'TRAINING / PT';
 
   @override
-  String get memberPlansTitle => 'Membership Plans';
+  String get navTrainers => 'Trainers / PT';
 
   @override
-  String get memberPlansSubtitle => 'Choose the plan that fits your goals';
+  String get navReceptionStaff => 'Reception Staff';
 
   @override
-  String get memberPlansEmpty => 'No plans available right now';
+  String get navGymProfile => 'Gym Profile';
 
   @override
-  String get retry => 'Retry';
+  String get navBranches => 'Branches';
 
   @override
-  String get back => 'Back';
+  String get navCheckins => 'Check-ins';
 
   @override
-  String get checkoutComingSoon => 'Coming soon — checkout is under development';
+  String get navClassesPt => 'Classes & PT';
 
   @override
-  String get planDuration => 'Duration';
+  String get navNotifications => 'Notifications';
 
   @override
-  String get visitLimit => 'Visit limit';
+  String get navPtSessions => 'PT Sessions';
 
   @override
-  String get unlimited => 'Unlimited';
-
-  @override
-  String get freezeDays => 'Freeze days';
-
-  @override
-  String get planFeatures => 'Features';
-
-  @override
-  String get couponCode => 'Coupon code';
-
-  @override
-  String get enterCouponCode => 'Enter coupon code';
-
-  @override
-  String get apply => 'Apply';
-
-  @override
-  String couponAppliedFinalPrice(String price) {
-    return '✓ Coupon applied — final price: $price \$';
-  }
-
-  @override
-  String get selectedPlan => 'Selected plan';
-
-  @override
-  String get baseAmount => 'Base amount';
-
-  @override
-  String get totalAmount => 'Total amount';
-
-  @override
-  String get planDetails => 'Plan details';
+  String get navTrainingVideos => 'Training Videos';
 }

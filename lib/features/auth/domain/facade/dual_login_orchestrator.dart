@@ -96,6 +96,7 @@ class DualLoginOrchestrator {
       await adminStore.save(
         token: cleanedToken,
         role: cleanedRole,
+        refreshToken: adminRes.refreshToken,
         tenantId: ownerProjectLinkId.toString(),
       );
 
