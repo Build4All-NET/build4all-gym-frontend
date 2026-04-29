@@ -144,6 +144,7 @@ class AuthRefreshCoordinator {
     }
   }
 
+  // ✅ AFTER
   Future<String?> refreshUserIfNeeded({
     required String? tokenStored,
     required bool userWasInactive,
@@ -151,19 +152,19 @@ class AuthRefreshCoordinator {
   }) async {
     if (userWasInactive) return null;
 
-    final refresh = (await _userStore.getRefreshToken())?.trim() ?? '';
-    if (refresh.isEmpty) return null;
-
+    // Step 1: check access token first
     final raw = _stripBearer(tokenStored);
     if (raw.isNotEmpty && !JwtUtils.isExpired(raw)) {
       return raw;
     }
 
+    // Step 2: expired → need refresh token
+    final refresh = (await _userStore.getRefreshToken())?.trim() ?? '';
+    if (refresh.isEmpty) return null;
+
     try {
       return await refreshUser(tenantId: tenantId);
     } catch (e) {
-      // ❗ Do NOT clear on transient failure
-      // only clear if refresh token is invalid
       if (shouldClearAfterRefreshFailure(e)) {
         await _userStore.clear();
       }
@@ -171,17 +172,20 @@ class AuthRefreshCoordinator {
     }
   }
 
+  // ✅ AFTER — check access token validity FIRST, only then need refresh token
   Future<String?> refreshAdminIfNeeded({
     required String? tokenStored,
     String? tenantId,
   }) async {
-    final refresh = (await _adminStore.getRefreshToken())?.trim() ?? '';
-    if (refresh.isEmpty) return null;
-
+    // Step 1: if access token is still alive, just use it
     final raw = _stripBearer(tokenStored);
     if (raw.isNotEmpty && !JwtUtils.isExpired(raw)) {
       return raw;
     }
+
+    // Step 2: access token expired → try refresh token
+    final refresh = (await _adminStore.getRefreshToken())?.trim() ?? '';
+    if (refresh.isEmpty) return null;
 
     try {
       return await refreshAdmin(tenantId: tenantId);
