@@ -237,7 +237,7 @@ class _MainShellState extends State<MainShell> {
       child: const MemberHomeScreen(),
     ),
     MemberPlansScreenProvider(
-      dio: Dio(),
+      dio: g.dio(),
     ),
     const _QrTab(),
     const _ClassesTab(),
