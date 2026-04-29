@@ -590,4 +590,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signup_success => 'Successfully registered. You can now login.';
+
+  @override
+  String get mostPopular => 'Most Popular';
+
+  @override
+  String get selectThisPlan => 'Choose this plan';
+
+  @override
+  String get renew => 'Renew';
+
+  @override
+  String get planTypeGym => 'Gym';
+
+  @override
+  String get planTypeClasses => 'Classes';
+
+  @override
+  String get planTypeMixed => 'Mixed';
+
+  @override
+  String get billingMonthly => 'Monthly';
+
+  @override
+  String get billingYearly => 'Yearly';
+
+  @override
+  String get billingWeekly => 'Weekly';
+
+  @override
+  String get membershipStatusActive => 'Active';
+
+  @override
+  String get membershipStatusFrozen => 'Frozen';
+
+  @override
+  String get membershipStatusExpired => 'Expired';
+
+  @override
+  String remainingDays(int days) {
+    return '$days days remaining';
+  }
+
+  @override
+  String membershipEndsAt(String date) {
+    return 'Ends on $date';
+  }
+
+  @override
+  String get memberPlansTitle => 'Membership Plans';
+
+  @override
+  String get memberPlansSubtitle => 'Choose the plan that fits your goals';
+
+  @override
+  String get memberPlansEmpty => 'No plans available right now';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get checkoutComingSoon => 'Coming soon — checkout is under development';
+
+  @override
+  String get planDuration => 'Duration';
+
+  @override
+  String get visitLimit => 'Visit limit';
+
+  @override
+  String get unlimited => 'Unlimited';
+
+  @override
+  String get freezeDays => 'Freeze days';
+
+  @override
+  String get planFeatures => 'Features';
+
+  @override
+  String get couponCode => 'Coupon code';
+
+  @override
+  String get enterCouponCode => 'Enter coupon code';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String couponAppliedFinalPrice(String price) {
+    return '✓ Coupon applied — final price: $price \$';
+  }
+
+  @override
+  String get selectedPlan => 'Selected plan';
+
+  @override
+  String get baseAmount => 'Base amount';
+
+  @override
+  String get totalAmount => 'Total amount';
+
+  @override
+  String get planDetails => 'Plan details';
 }

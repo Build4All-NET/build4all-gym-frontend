@@ -590,4 +590,109 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signup_success => 'تم التسجيل بنجاح يمكنك تسجيل الدخول الان';
+
+  @override
+  String get mostPopular => 'الأكثر شعبية';
+
+  @override
+  String get selectThisPlan => 'اختر هذه الباقة';
+
+  @override
+  String get renew => 'تجديد';
+
+  @override
+  String get planTypeGym => 'جيم';
+
+  @override
+  String get planTypeClasses => 'حصص';
+
+  @override
+  String get planTypeMixed => 'مختلط';
+
+  @override
+  String get billingMonthly => 'شهرياً';
+
+  @override
+  String get billingYearly => 'سنوياً';
+
+  @override
+  String get billingWeekly => 'أسبوعياً';
+
+  @override
+  String get membershipStatusActive => 'نشط';
+
+  @override
+  String get membershipStatusFrozen => 'مجمّد';
+
+  @override
+  String get membershipStatusExpired => 'منتهي';
+
+  @override
+  String remainingDays(int days) {
+    return '$days يوم متبقي';
+  }
+
+  @override
+  String membershipEndsAt(String date) {
+    return 'ينتهي في $date';
+  }
+
+  @override
+  String get memberPlansTitle => 'باقات العضوية';
+
+  @override
+  String get memberPlansSubtitle => 'اختر الباقة المناسبة لأهدافك';
+
+  @override
+  String get memberPlansEmpty => 'لا توجد باقات متاحة حالياً';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get back => 'رجوع';
+
+  @override
+  String get checkoutComingSoon => 'قريباً — ميزة إتمام الدفع قيد التطوير';
+
+  @override
+  String get planDuration => 'المدة';
+
+  @override
+  String get visitLimit => 'عدد الزيارات';
+
+  @override
+  String get unlimited => 'غير محدود';
+
+  @override
+  String get freezeDays => 'أيام التجميد';
+
+  @override
+  String get planFeatures => 'المميزات';
+
+  @override
+  String get couponCode => 'كود الخصم';
+
+  @override
+  String get enterCouponCode => 'أدخل كود الخصم';
+
+  @override
+  String get apply => 'تطبيق';
+
+  @override
+  String couponAppliedFinalPrice(String price) {
+    return '✓ تم تطبيق الكوبون — السعر النهائي: $price \$';
+  }
+
+  @override
+  String get selectedPlan => 'الخطة المختارة';
+
+  @override
+  String get baseAmount => 'المبلغ الأساسي';
+
+  @override
+  String get totalAmount => 'المجموع الكلي';
+
+  @override
+  String get planDetails => 'تفاصيل الباقة';
 }

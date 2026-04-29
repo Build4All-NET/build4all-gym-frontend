@@ -3,11 +3,7 @@ import '../../domain/entities/my_membership_entity.dart';
 import '../../domain/entities/plan_detail_entity.dart';
 import '../../domain/entities/plan_entity.dart';
 import '../../domain/repositories/member_plans_repository.dart';
-import '../datasources/member_plans_remote_datasource.dart';
-import '../models/coupon_validation_response_model.dart';
-import '../models/my_membership_model.dart';
-import '../models/plan_detail_model.dart';
-import '../models/plan_list_item_model.dart';
+import '../services/member_plans_remote_datasource.dart';
 
 class MemberPlansRepositoryImpl implements MemberPlansRepository {
   final MemberPlansRemoteDatasource remoteDatasource;
