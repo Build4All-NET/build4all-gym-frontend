@@ -353,56 +353,57 @@
   "@completeProfile_backButton": {
     "description": "Back navigation link shown below the form"
   },
- "home_welcome": "مرحباً بك",
- "home_weightUpdated": "تم تحديث وزنك بنجاح",
- "home_noData": "لا توجد بيانات",
- "home_sessions": "حصة",
- "home_kgLost": "كجم فقدان",
- "home_workouts": "تمرين",
- "home_minutes": "دقيقة",
- "home_quickActions": "إجراءات سريعة",
- "home_bookClass": "حجز حصة",
- "home_myProgress": "تقدمي",
- "home_membership": "العضوية",
- "home_support": "الدعم",
- "home_updateWeight": "حدّث وزنك",
- "home_save": "حفظ",
- "home_weightHint": "75.5",
- "home_navHome": "الرئيسية",
- "home_navActivities": "الأنشطة",
- "home_navProfile": "الملف الشخصي",
- "home_membershipStatus": "حالة العضوية",
- "home_expiresOn": "تنتهي في",
- "home_renewNow": "تجديد الآن",
- "memberBottomNavHome": "الرئيسية",
- "memberBottomNavPlans": "الخطط",
- "memberBottomNavQr": "QR",
- "memberBottomNavClasses": "الحصص",
- "memberBottomNavAccount": "حسابي",
- "comingSoon": "قريباً",
- "memberHomeTodaySchedule": "جدول اليوم",
- "memberHomeViewAll": "عرض الكل",
- "memberHomeWithTrainer": "مع {trainerName}",
- "@memberHomeWithTrainer": {
-   "placeholders": {
-     "trainerName": {}
-   }
- },
- "memberHomeDurationMinutes": "{minutes} دقيقة",
- "@memberHomeDurationMinutes": {
-   "placeholders": {
-     "minutes": {}
-   }
- },
- "memberHomeNoScheduleToday": "لا توجد حصص اليوم — استمتع بيوم راحة! 💪",
- "home_quoteOfTheDay": "مقولة اليوم",
- "home_progressTracking": "متابعة التقدم",
- "home_weightTrackerSubtitle": "كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك",
- "home_updateWeightNow": "تحديث وزني الآن",
- "home_bookTrainer": "حجز مدرب",
- "home_checkInCode": "رمز الدخول",
- "home_paymentHistory": "سجل الدفعات",
-  "signup_success":"تم التسجيل بنجاح يمكنك تسجيل الدخول الان",
+
+  "home_welcome": "مرحباً بك",
+  "home_weightUpdated": "تم تحديث وزنك بنجاح",
+  "home_noData": "لا توجد بيانات",
+  "home_sessions": "حصة",
+  "home_kgLost": "كجم فقدان",
+  "home_workouts": "تمرين",
+  "home_minutes": "دقيقة",
+  "home_quickActions": "إجراءات سريعة",
+  "home_bookClass": "حجز حصة",
+  "home_myProgress": "تقدمي",
+  "home_membership": "العضوية",
+  "home_support": "الدعم",
+  "home_updateWeight": "حدّث وزنك",
+  "home_save": "حفظ",
+  "home_weightHint": "75.5",
+  "home_navHome": "الرئيسية",
+  "home_navActivities": "الأنشطة",
+  "home_navProfile": "الملف الشخصي",
+  "home_membershipStatus": "حالة العضوية",
+  "home_expiresOn": "تنتهي في",
+  "home_renewNow": "تجديد الآن",
+  "memberBottomNavHome": "الرئيسية",
+  "memberBottomNavPlans": "الخطط",
+  "memberBottomNavQr": "QR",
+  "memberBottomNavClasses": "الحصص",
+  "memberBottomNavAccount": "حسابي",
+  "comingSoon": "قريباً",
+  "memberHomeTodaySchedule": "جدول اليوم",
+  "memberHomeViewAll": "عرض الكل",
+  "memberHomeWithTrainer": "مع {trainerName}",
+  "@memberHomeWithTrainer": {
+    "placeholders": {
+      "trainerName": {}
+    }
+  },
+  "memberHomeDurationMinutes": "{minutes} دقيقة",
+  "@memberHomeDurationMinutes": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "memberHomeNoScheduleToday": "لا توجد حصص اليوم — استمتع بيوم راحة! 💪",
+  "home_quoteOfTheDay": "مقولة اليوم",
+  "home_progressTracking": "متابعة التقدم",
+  "home_weightTrackerSubtitle": "كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك",
+  "home_updateWeightNow": "تحديث وزني الآن",
+  "home_bookTrainer": "حجز مدرب",
+  "home_checkInCode": "رمز الدخول",
+  "home_paymentHistory": "سجل الدفعات",
+  "signup_success": "تم التسجيل بنجاح يمكنك تسجيل الدخول الان",
 
   "navDashboard": "لوحة التحكم",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
@@ -446,7 +447,6 @@
   "sectionTrainingPt": "التدريب / PT",
   "@sectionTrainingPt": { "description": "Drawer section label" },
 
-
   "navTrainers": "المدربون / PT",
   "@navTrainers": { "description": "Drawer nav item" },
 
@@ -462,7 +462,6 @@
   "navCheckins": "تسجيل الحضور",
   "@navCheckins": { "description": "Drawer nav item" },
 
-
   "navClassesPt": "الحصص والتدريب",
   "@navClassesPt": { "description": "Drawer nav item" },
 
@@ -473,6 +472,50 @@
   "@navPtSessions": { "description": "Drawer nav item" },
 
   "navTrainingVideos": "فيديوهات التدريب",
-  "@navTrainingVideos": { "description": "Drawer nav item" }
+  "@navTrainingVideos": { "description": "Drawer nav item" },
 
+  "retry": "إعادة المحاولة",
+  "memberPlansTitle": "خطط العضوية",
+  "memberPlansSubtitle": "اختر الخطة المناسبة لك",
+  "memberPlansEmpty": "لا توجد خطط متاحة",
+  "renew": "تجديد",
+  "mostPopular": "الأكثر شيوعاً",
+  "selectThisPlan": "اختيار هذه الخطة",
+  "billingMonthly": "شهري",
+  "billingYearly": "سنوي",
+  "billingWeekly": "أسبوعي",
+  "checkoutComingSoon": "الدفع قريباً",
+  "selectedPlan": "الخطة المختارة",
+  "baseAmount": "المبلغ الأساسي",
+  "totalAmount": "المبلغ الإجمالي",
+  "planDetails": "تفاصيل الخطة",
+  "planDuration": "مدة الخطة",
+  "visitLimit": "حد الزيارات",
+  "unlimited": "غير محدود",
+  "freezeDays": "أيام التجميد",
+  "planFeatures": "مميزات الخطة",
+  "couponCode": "رمز الخصم",
+  "enterCouponCode": "أدخل رمز الخصم",
+  "apply": "تطبيق",
+
+  "remainingDays": "متبقي {days} يوم",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+
+  "membershipEndsAt": "تنتهي في {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+
+  "couponAppliedFinalPrice": "السعر النهائي: {price}",
+  "@couponAppliedFinalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  }
 }
