@@ -1241,143 +1241,203 @@ abstract class AppLocalizations {
   /// **'Successfully registered. You can now login.'**
   String get signup_success;
 
-  /// Admin drawer — Dashboard item
+  /// No description provided for @mostPopular.
   ///
   /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get navDashboard;
+  /// **'Most Popular'**
+  String get mostPopular;
 
-  /// Admin drawer — Members item
+  /// No description provided for @selectThisPlan.
   ///
   /// In en, this message translates to:
-  /// **'Members'**
-  String get navMembers;
+  /// **'Choose this plan'**
+  String get selectThisPlan;
 
-  /// Admin drawer — Plans item
+  /// No description provided for @renew.
   ///
   /// In en, this message translates to:
-  /// **'Plans'**
-  String get navPlans;
+  /// **'Renew'**
+  String get renew;
 
-  /// Admin drawer — Staff item
+  /// No description provided for @planTypeGym.
   ///
   /// In en, this message translates to:
-  /// **'Staff'**
-  String get navStaff;
+  /// **'Gym'**
+  String get planTypeGym;
 
-  /// Admin drawer — Payments item
-  ///
-  /// In en, this message translates to:
-  /// **'Payments'**
-  String get navPayments;
-
-  /// Admin drawer — Classes item
+  /// No description provided for @planTypeClasses.
   ///
   /// In en, this message translates to:
   /// **'Classes'**
-  String get navClasses;
+  String get planTypeClasses;
 
-  /// Admin drawer — AI Assistant item
+  /// No description provided for @planTypeMixed.
   ///
   /// In en, this message translates to:
-  /// **'AI Assistant'**
-  String get navAiAssistant;
+  /// **'Mixed'**
+  String get planTypeMixed;
 
-  /// Admin drawer — Settings item
+  /// No description provided for @billingMonthly.
   ///
   /// In en, this message translates to:
-  /// **'Settings'**
-  String get navSettings;
+  /// **'Monthly'**
+  String get billingMonthly;
 
-  /// Admin drawer — Logout item
+  /// No description provided for @billingYearly.
   ///
   /// In en, this message translates to:
-  /// **'Logout'**
-  String get navLogout;
+  /// **'Yearly'**
+  String get billingYearly;
 
-  /// Logout confirmation dialog title
+  /// No description provided for @billingWeekly.
   ///
   /// In en, this message translates to:
-  /// **'Log out?'**
-  String get logoutConfirmTitle;
+  /// **'Weekly'**
+  String get billingWeekly;
 
-  /// Logout confirmation dialog body
+  /// No description provided for @membershipStatusActive.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to log out?'**
-  String get logoutConfirmMessage;
+  /// **'Active'**
+  String get membershipStatusActive;
 
-  /// Drawer section label
+  /// No description provided for @membershipStatusFrozen.
   ///
   /// In en, this message translates to:
-  /// **'CORE OWNER'**
-  String get sectionCoreOwner;
+  /// **'Frozen'**
+  String get membershipStatusFrozen;
 
-  /// Drawer section label
+  /// No description provided for @membershipStatusExpired.
   ///
   /// In en, this message translates to:
-  /// **'OPERATIONS / RECEPTION'**
-  String get sectionOperationsReception;
+  /// **'Expired'**
+  String get membershipStatusExpired;
 
-  /// Drawer section label
+  /// No description provided for @remainingDays.
   ///
   /// In en, this message translates to:
-  /// **'TRAINING / PT'**
-  String get sectionTrainingPt;
+  /// **'{days} days remaining'**
+  String remainingDays(int days);
 
-  /// Drawer nav item
+  /// No description provided for @membershipEndsAt.
   ///
   /// In en, this message translates to:
-  /// **'Trainers / PT'**
-  String get navTrainers;
+  /// **'Ends on {date}'**
+  String membershipEndsAt(String date);
 
-  /// Drawer nav item
+  /// No description provided for @memberPlansTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reception Staff'**
-  String get navReceptionStaff;
+  /// **'Membership Plans'**
+  String get memberPlansTitle;
 
-  /// Drawer nav item
+  /// No description provided for @memberPlansSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Gym Profile'**
-  String get navGymProfile;
+  /// **'Choose the plan that fits your goals'**
+  String get memberPlansSubtitle;
 
-  /// Drawer nav item
+  /// No description provided for @memberPlansEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Branches'**
-  String get navBranches;
+  /// **'No plans available right now'**
+  String get memberPlansEmpty;
 
-  /// Drawer nav item
+  /// No description provided for @retry.
   ///
   /// In en, this message translates to:
-  /// **'Check-ins'**
-  String get navCheckins;
+  /// **'Retry'**
+  String get retry;
 
-  /// Drawer nav item
+  /// No description provided for @back.
   ///
   /// In en, this message translates to:
-  /// **'Classes & PT'**
-  String get navClassesPt;
+  /// **'Back'**
+  String get back;
 
-  /// Drawer nav item
+  /// No description provided for @checkoutComingSoon.
   ///
   /// In en, this message translates to:
-  /// **'Notifications'**
-  String get navNotifications;
+  /// **'Coming soon — checkout is under development'**
+  String get checkoutComingSoon;
 
-  /// Drawer nav item
+  /// No description provided for @planDuration.
   ///
   /// In en, this message translates to:
-  /// **'PT Sessions'**
-  String get navPtSessions;
+  /// **'Duration'**
+  String get planDuration;
 
-  /// Drawer nav item
+  /// No description provided for @visitLimit.
   ///
   /// In en, this message translates to:
-  /// **'Training Videos'**
-  String get navTrainingVideos;
+  /// **'Visit limit'**
+  String get visitLimit;
+
+  /// No description provided for @unlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get unlimited;
+
+  /// No description provided for @freezeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze days'**
+  String get freezeDays;
+
+  /// No description provided for @planFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get planFeatures;
+
+  /// No description provided for @couponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon code'**
+  String get couponCode;
+
+  /// No description provided for @enterCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter coupon code'**
+  String get enterCouponCode;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @couponAppliedFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'✓ Coupon applied — final price: {price} \$'**
+  String couponAppliedFinalPrice(String price);
+
+  /// No description provided for @selectedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected plan'**
+  String get selectedPlan;
+
+  /// No description provided for @baseAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Base amount'**
+  String get baseAmount;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total amount'**
+  String get totalAmount;
+
+  /// No description provided for @planDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan details'**
+  String get planDetails;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
