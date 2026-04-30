@@ -24,7 +24,7 @@ class MyAppView extends StatelessWidget {
           theme: themeState.themeData,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: SessionsPageMock(),
+          home: AuthGate(appConfig: appConfig), // ← was MainShell
           onGenerateRoute: AppRouter.onGenerateRoute,
         );
       },
