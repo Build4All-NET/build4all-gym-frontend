@@ -500,6 +500,9 @@
           "memberSessionsFilterBranch": "الفرع",
           "memberSessionsFilterReset": "إعادة تعيين",
           "memberSessionsFilterApply": "تطبيق الفلتر",
+          "memberSessionsFilterApply": "تطبيق الفلتر"
+
+  }
   "navDashboard": "لوحة التحكم",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 
@@ -644,6 +647,14 @@
       "days": {}
     }
   },
+
+  "membershipEndsAt": "تنتهي في {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+
 
   "membershipEndsAt": "تنتهي في {date}",
   "@membershipEndsAt": {
