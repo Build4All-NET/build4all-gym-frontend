@@ -595,7 +595,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mostPopular => 'Most Popular';
 
   @override
-  String get selectThisPlan => 'Choose this plan';
+  String get selectThisPlan => 'Select This Plan';
 
   @override
   String get renew => 'Renew';
@@ -628,23 +628,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get membershipStatusExpired => 'Expired';
 
   @override
-  String remainingDays(int days) {
+  String remainingDays(Object days) {
     return '$days days remaining';
   }
 
   @override
-  String membershipEndsAt(String date) {
-    return 'Ends on $date';
+  String membershipEndsAt(Object date) {
+    return 'Ends at $date';
   }
 
   @override
   String get memberPlansTitle => 'Membership Plans';
 
   @override
-  String get memberPlansSubtitle => 'Choose the plan that fits your goals';
+  String get memberPlansSubtitle => 'Choose the best plan for you';
 
   @override
-  String get memberPlansEmpty => 'No plans available right now';
+  String get memberPlansEmpty => 'No plans available';
 
   @override
   String get retry => 'Retry';
@@ -653,25 +653,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String get checkoutComingSoon => 'Coming soon — checkout is under development';
+  String get checkoutComingSoon => 'Checkout coming soon';
 
   @override
-  String get planDuration => 'Duration';
+  String get planDuration => 'Plan Duration';
 
   @override
-  String get visitLimit => 'Visit limit';
+  String get visitLimit => 'Visit Limit';
 
   @override
   String get unlimited => 'Unlimited';
 
   @override
-  String get freezeDays => 'Freeze days';
+  String get freezeDays => 'Freeze Days';
 
   @override
-  String get planFeatures => 'Features';
+  String get planFeatures => 'Plan Features';
 
   @override
-  String get couponCode => 'Coupon code';
+  String get couponCode => 'Coupon Code';
 
   @override
   String get enterCouponCode => 'Enter coupon code';
@@ -680,21 +680,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apply => 'Apply';
 
   @override
-  String couponAppliedFinalPrice(String price) {
-    return '✓ Coupon applied — final price: $price \$';
+  String couponAppliedFinalPrice(Object price) {
+    return 'Final price: $price';
   }
 
   @override
-  String get selectedPlan => 'Selected plan';
+  String get selectedPlan => 'Selected Plan';
 
   @override
-  String get baseAmount => 'Base amount';
+  String get baseAmount => 'Base Amount';
 
   @override
-  String get totalAmount => 'Total amount';
+  String get totalAmount => 'Total Amount';
 
   @override
-  String get planDetails => 'Plan details';
+  String get planDetails => 'Plan Details';
 
   @override
   String get dayMonday => 'Mon';
@@ -847,4 +847,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthDecember => 'December';
+
+  @override
+  String get navDashboard => 'Dashboard';
+
+  @override
+  String get navMembers => 'Members';
+
+  @override
+  String get navPlans => 'Plans';
+
+  @override
+  String get navStaff => 'Staff';
+
+  @override
+  String get navPayments => 'Payments';
+
+  @override
+  String get navClasses => 'Classes';
+
+  @override
+  String get navAiAssistant => 'AI Assistant';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get navLogout => 'Logout';
+
+  @override
+  String get logoutConfirmTitle => 'Log out?';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to log out?';
+
+  @override
+  String get sectionCoreOwner => 'CORE OWNER';
+
+  @override
+  String get sectionOperationsReception => 'OPERATIONS / RECEPTION';
+
+  @override
+  String get sectionTrainingPt => 'TRAINING / PT';
+
+  @override
+  String get navTrainers => 'Trainers / PT';
+
+  @override
+  String get navReceptionStaff => 'Reception Staff';
+
+  @override
+  String get navGymProfile => 'Gym Profile';
+
+  @override
+  String get navBranches => 'Branches';
+
+  @override
+  String get navCheckins => 'Check-ins';
+
+  @override
+  String get navClassesPt => 'Classes & PT';
+
+  @override
+  String get navNotifications => 'Notifications';
+
+  @override
+  String get navPtSessions => 'PT Sessions';
+
+  @override
+  String get navTrainingVideos => 'Training Videos';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
 import '../bloc/admin_dashboard_state.dart';
@@ -33,6 +34,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AdminNavigationDrawer(
+        gymName: 'Build4All Gym',       // TODO: pull from AuthBloc/UserBloc state
+        branchName: 'Downtown',          // TODO: pull from AuthBloc/UserBloc state
+        adminName: 'Mounir',             // TODO: pull from AuthBloc/UserBloc state
+        adminEmail: 'mounir@gym.com',    // TODO: pull from AuthBloc/UserBloc state
+        avatarUrl: null,                 // null = shows initials
+      ),
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Column(
@@ -52,83 +60,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
-          // Hamburger
-          GestureDetector(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                ),
-                builder: (_) => SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 36, height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ListTile(
-                        leading: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
-                        title: const Text(
-                          'Logout',
-                          style: TextStyle(color: Color(0xFFEF4444), fontWeight: FontWeight.w600),
-                        ),
-                        onTap: () async {
-                          Navigator.pop(context);
-                          const storage = FlutterSecureStorage();
-                          await storage.deleteAll();
-                          if (!context.mounted) return;
-                          Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 36, height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ListTile(
-                        leading: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
-                        title: const Text(
-                          'Plans',
-                          style: TextStyle(color: Color(0xFFEF4444), fontWeight: FontWeight.w600),
-                        ),
-                        onTap: () async {
-                          Navigator.pop(context);
-                          const storage = FlutterSecureStorage();
-                          await storage.deleteAll();
-                          if (!context.mounted) return;
-                          Navigator.of(context).pushReplacementNamed('/plans_admin');
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                  ),
-                ),
-              );
-            },
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F6),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.menu_rounded, color: Color(0xFF374151), size: 18),
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu_rounded),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
             ),
           ),
-          const SizedBox(width: 10),
 
+          const SizedBox(width: 10),
           // Branch selector pill
           Expanded(
             child: PopupMenuButton<String>(

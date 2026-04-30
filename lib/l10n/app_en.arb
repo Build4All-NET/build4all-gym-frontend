@@ -418,6 +418,7 @@
   "@completeProfile_backButton": {
     "description": "Back navigation link shown below the form"
   },
+
   "home_welcome": "Welcome",
   "home_weightUpdated": "Your weight was updated successfully ✅",
   "home_noData": "No data available",
@@ -467,7 +468,7 @@
   "home_bookTrainer": "Book Trainer",
   "home_checkInCode": "Check-in Code",
   "home_paymentHistory": "Payment History",
-  "signup_success":"Successfully registered. You can now login.",
+  "signup_success": "Successfully registered. You can now login.",
 
     "mostPopular": "Most Popular",
     "selectThisPlan": "Choose this plan",
@@ -586,7 +587,120 @@
     "monthJanuary": "January", "monthFebruary": "February", "monthMarch": "March",
     "monthApril": "April", "monthMay": "May", "monthJune": "June",
     "monthJuly": "July", "monthAugust": "August", "monthSeptember": "September",
-    "monthOctober": "October", "monthNovember": "November", "monthDecember": "December"
-  }
+    "monthOctober": "October", "monthNovember": "November", "monthDecember": "December",
 
+  "navDashboard": "Dashboard",
+  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 
+  "navMembers": "Members",
+  "@navMembers": { "description": "Admin drawer — Members item" },
+
+  "navPlans": "Plans",
+  "@navPlans": { "description": "Admin drawer — Plans item" },
+
+  "navStaff": "Staff",
+  "@navStaff": { "description": "Admin drawer — Staff item" },
+
+  "navPayments": "Payments",
+  "@navPayments": { "description": "Admin drawer — Payments item" },
+
+  "navClasses": "Classes",
+  "@navClasses": { "description": "Admin drawer — Classes item" },
+
+  "navAiAssistant": "AI Assistant",
+  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
+
+  "navSettings": "Settings",
+  "@navSettings": { "description": "Admin drawer — Settings item" },
+
+  "navLogout": "Logout",
+  "@navLogout": { "description": "Admin drawer — Logout item" },
+
+  "logoutConfirmTitle": "Log out?",
+  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
+
+  "logoutConfirmMessage": "Are you sure you want to log out?",
+  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
+
+  "sectionCoreOwner": "CORE OWNER",
+  "@sectionCoreOwner": { "description": "Drawer section label" },
+
+  "sectionOperationsReception": "OPERATIONS / RECEPTION",
+  "@sectionOperationsReception": { "description": "Drawer section label" },
+
+  "sectionTrainingPt": "TRAINING / PT",
+  "@sectionTrainingPt": { "description": "Drawer section label" },
+
+  "navTrainers": "Trainers / PT",
+  "@navTrainers": { "description": "Drawer nav item" },
+
+  "navReceptionStaff": "Reception Staff",
+  "@navReceptionStaff": { "description": "Drawer nav item" },
+
+  "navGymProfile": "Gym Profile",
+  "@navGymProfile": { "description": "Drawer nav item" },
+
+  "navBranches": "Branches",
+  "@navBranches": { "description": "Drawer nav item" },
+
+  "navCheckins": "Check-ins",
+  "@navCheckins": { "description": "Drawer nav item" },
+
+  "navClassesPt": "Classes & PT",
+  "@navClassesPt": { "description": "Drawer nav item" },
+
+  "navNotifications": "Notifications",
+  "@navNotifications": { "description": "Drawer nav item" },
+
+  "navPtSessions": "PT Sessions",
+  "@navPtSessions": { "description": "Drawer nav item" },
+
+  "navTrainingVideos": "Training Videos",
+  "@navTrainingVideos": { "description": "Drawer nav item" },
+
+  "retry": "Retry",
+  "memberPlansTitle": "Membership Plans",
+  "memberPlansSubtitle": "Choose the best plan for you",
+  "memberPlansEmpty": "No plans available",
+  "renew": "Renew",
+  "mostPopular": "Most Popular",
+  "selectThisPlan": "Select This Plan",
+  "billingMonthly": "Monthly",
+  "billingYearly": "Yearly",
+  "billingWeekly": "Weekly",
+  "checkoutComingSoon": "Checkout coming soon",
+  "selectedPlan": "Selected Plan",
+  "baseAmount": "Base Amount",
+  "totalAmount": "Total Amount",
+  "planDetails": "Plan Details",
+  "planDuration": "Plan Duration",
+  "visitLimit": "Visit Limit",
+  "unlimited": "Unlimited",
+  "freezeDays": "Freeze Days",
+  "planFeatures": "Plan Features",
+  "couponCode": "Coupon Code",
+  "enterCouponCode": "Enter coupon code",
+  "apply": "Apply",
+
+  "remainingDays": "{days} days remaining",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+
+  "membershipEndsAt": "Ends at {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+
+  "couponAppliedFinalPrice": "Final price: {price}",
+  "@couponAppliedFinalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "back": "Back"
+}
