@@ -658,5 +658,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navPtSessions => 'PT Sessions';
 
   @override
+  String get planDetails => 'Plan details';
+
+  @override
+  String get dayMonday => 'Mon';
+
+  @override
+  String get dayTuesday => 'Tue';
+
+  @override
+  String get dayWednesday => 'Wed';
+
+  @override
+  String get dayThursday => 'Thu';
+
+  @override
+  String get dayFriday => 'Fri';
+
+  @override
+  String get daySaturday => 'Sat';
+
+  @override
+  String get daySunday => 'Sun';
+
+  @override
+  String get memberSessionsDifficultyBeginner => 'Beginner';
+
+  @override
+  String get memberSessionsDifficultyIntermediate => 'Intermediate';
+
+  @override
+  String get memberSessionsDifficultyAdvanced => 'Advanced';
+
+  @override
+  String get memberSessionsBookNow => 'Book Now';
+
+  @override
+  String get memberSessionsTitle => 'Sports Classes';
+
+  @override
+  String get memberSessionsSubtitle => 'Book your spot in your favorite class';
+
+  @override
+  String memberSessionsRoom(String roomName) {
+    return 'Room $roomName';
+  }
+
+  @override
+  String memberSessionsMinute(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String memberSessionsSeatsAvailable(int count) {
+    return '$count seats';
+  }
+
+  @override
+  String get memberSessionsLoading => 'Loading sessions...';
+
+  @override
+  String get memberSessionsEmpty => 'No sessions available';
+
+  @override
+  String get memberSessionsError => 'Failed to load sessions';
+
+  @override
+  String get memberSessionsFilterTitle => 'Filter classes';
+
+  @override
+  String get memberSessionsFilterClassType => 'Class type';
+
+  @override
+  String get memberSessionsFilterTrainer => 'Trainer';
+
+  @override
+  String get memberSessionsFilterBranch => 'Branch';
+
+  @override
+  String get memberSessionsFilterReset => 'Reset';
+
+  @override
+  String get memberSessionsFilterApply => 'Apply filter';
   String get navTrainingVideos => 'Training Videos';
 }

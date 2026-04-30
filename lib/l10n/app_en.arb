@@ -469,6 +469,110 @@
   "home_paymentHistory": "Payment History",
   "signup_success":"Successfully registered. You can now login.",
 
+    "mostPopular": "Most Popular",
+    "selectThisPlan": "Choose this plan",
+    "renew": "Renew",
+
+    "planTypeGym": "Gym",
+    "planTypeClasses": "Classes",
+    "planTypeMixed": "Mixed",
+
+    "billingMonthly": "Monthly",
+    "billingYearly": "Yearly",
+    "billingWeekly": "Weekly",
+
+    "membershipStatusActive": "Active",
+    "membershipStatusFrozen": "Frozen",
+    "membershipStatusExpired": "Expired",
+
+    "remainingDays": "{days} days remaining",
+    "@remainingDays": {
+      "placeholders": {
+        "days": {
+          "type": "int"
+        }
+      }
+    },
+
+    "membershipEndsAt": "Ends on {date}",
+    "@membershipEndsAt": {
+      "placeholders": {
+        "date": {
+          "type": "String"
+        }
+      }
+    },
+    "memberPlansTitle": "Membership Plans",
+    "memberPlansSubtitle": "Choose the plan that fits your goals",
+    "memberPlansEmpty": "No plans available right now",
+    "retry": "Retry",
+    "back": "Back",
+    "checkoutComingSoon": "Coming soon — checkout is under development",
+    "planDuration": "Duration",
+    "visitLimit": "Visit limit",
+    "unlimited": "Unlimited",
+    "freezeDays": "Freeze days",
+    "planFeatures": "Features",
+    "couponCode": "Coupon code",
+    "enterCouponCode": "Enter coupon code",
+    "apply": "Apply",
+    "couponAppliedFinalPrice": "✓ Coupon applied — final price: {price} $",
+    "@couponAppliedFinalPrice": {
+      "placeholders": {
+        "price": {
+          "type": "String"
+        }
+      }
+    },
+    "selectedPlan": "Selected plan",
+    "baseAmount": "Base amount",
+    "totalAmount": "Total amount",
+    "planDetails": "Plan details",
+     "dayMonday": "Mon",
+         "dayTuesday": "Tue",
+"dayWednesday": "Wed",
+"dayThursday": "Thu",
+"dayFriday": "Fri",
+"daySaturday": "Sat",
+"daySunday": "Sun",
+    "memberSessionsDifficultyBeginner": "Beginner",
+    "memberSessionsDifficultyIntermediate": "Intermediate",
+    "memberSessionsDifficultyAdvanced": "Advanced",
+    "memberSessionsBookNow": "Book Now",
+    "memberSessionsTitle": "Sports Classes",
+    "memberSessionsSubtitle": "Book your spot in your favorite class",
+    "memberSessionsRoom": "Room {roomName}",
+    "@memberSessionsRoom": {
+      "placeholders": {
+        "roomName": { "type": "String" }
+      }
+    },
+    "memberSessionsMinute": "{minutes} min",
+    "@memberSessionsMinute": {
+      "placeholders": {
+        "minutes": { "type": "int" }
+      }
+    },
+    "memberSessionsSeatsAvailable": "{count} seats",
+    "@memberSessionsSeatsAvailable": {
+      "placeholders": {
+        "count": { "type": "int" }
+      }
+    },
+    "memberSessionsDifficultyBeginner": "Beginner",
+    "memberSessionsDifficultyIntermediate": "Intermediate",
+    "memberSessionsDifficultyAdvanced": "Advanced",
+    "memberSessionsBookNow": "Book Now",
+    "memberSessionsLoading": "Loading sessions...",
+    "memberSessionsEmpty": "No sessions available",
+    "memberSessionsError": "Failed to load sessions",
+    "memberSessionsFilterTitle": "Filter classes",
+    "memberSessionsFilterClassType": "Class type",
+    "memberSessionsFilterTrainer": "Trainer",
+    "memberSessionsFilterBranch": "Branch",
+    "memberSessionsFilterReset": "Reset",
+    "memberSessionsFilterApply": "Apply filter"
+  }
   "navDashboard": "Dashboard",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 

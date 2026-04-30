@@ -150,9 +150,9 @@ class MemberPlansScreen extends StatelessWidget {
                         clipBehavior: Clip.none,
                         children: [
                           Container(
-                            height: 150,
+                            height: MediaQuery.of(context).size.height * 0.18,
                             width: double.infinity,
-                            padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topRight,
@@ -168,7 +168,7 @@ class MemberPlansScreen extends StatelessWidget {
                               ),
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   l10n.memberPlansTitle,
@@ -183,12 +183,15 @@ class MemberPlansScreen extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 Text(
                                   l10n.memberPlansSubtitle,
-                                  textAlign: TextAlign.right,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  textAlign: TextAlign.start,
                                   style: tokens.typography.bodyMedium.copyWith(
                                     fontSize: 14,
-                                    color: tokens.colors.onPrimary
-                                        .withOpacity(0.92),
+                                    color: tokens.colors.onPrimary.withOpacity(0.92),
                                     fontWeight: FontWeight.w600,
+                                    height: 1.35,
                                   ),
                                 ),
                               ],
