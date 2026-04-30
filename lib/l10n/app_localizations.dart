@@ -1241,6 +1241,354 @@ abstract class AppLocalizations {
   /// **'Successfully registered. You can now login.'**
   String get signup_success;
 
+  /// No description provided for @mostPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Popular'**
+  String get mostPopular;
+
+  /// No description provided for @selectThisPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Select This Plan'**
+  String get selectThisPlan;
+
+  /// No description provided for @renew.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew'**
+  String get renew;
+
+  /// No description provided for @planTypeGym.
+  ///
+  /// In en, this message translates to:
+  /// **'Gym'**
+  String get planTypeGym;
+
+  /// No description provided for @planTypeClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get planTypeClasses;
+
+  /// No description provided for @planTypeMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed'**
+  String get planTypeMixed;
+
+  /// No description provided for @billingMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get billingMonthly;
+
+  /// No description provided for @billingYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get billingYearly;
+
+  /// No description provided for @billingWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get billingWeekly;
+
+  /// No description provided for @membershipStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get membershipStatusActive;
+
+  /// No description provided for @membershipStatusFrozen.
+  ///
+  /// In en, this message translates to:
+  /// **'Frozen'**
+  String get membershipStatusFrozen;
+
+  /// No description provided for @membershipStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get membershipStatusExpired;
+
+  /// No description provided for @remainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days remaining'**
+  String remainingDays(Object days);
+
+  /// No description provided for @membershipEndsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends at {date}'**
+  String membershipEndsAt(Object date);
+
+  /// No description provided for @memberPlansTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Plans'**
+  String get memberPlansTitle;
+
+  /// No description provided for @memberPlansSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the best plan for you'**
+  String get memberPlansSubtitle;
+
+  /// No description provided for @memberPlansEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No plans available'**
+  String get memberPlansEmpty;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @checkoutComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout coming soon'**
+  String get checkoutComingSoon;
+
+  /// No description provided for @planDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Duration'**
+  String get planDuration;
+
+  /// No description provided for @visitLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Limit'**
+  String get visitLimit;
+
+  /// No description provided for @unlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get unlimited;
+
+  /// No description provided for @freezeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze Days'**
+  String get freezeDays;
+
+  /// No description provided for @planFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Features'**
+  String get planFeatures;
+
+  /// No description provided for @couponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon Code'**
+  String get couponCode;
+
+  /// No description provided for @enterCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter coupon code'**
+  String get enterCouponCode;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @couponAppliedFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price: {price}'**
+  String couponAppliedFinalPrice(Object price);
+
+  /// No description provided for @selectedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Plan'**
+  String get selectedPlan;
+
+  /// No description provided for @baseAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Amount'**
+  String get baseAmount;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get totalAmount;
+
+  /// No description provided for @planDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Details'**
+  String get planDetails;
+
+  /// No description provided for @dayMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get dayMonday;
+
+  /// No description provided for @dayTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get dayTuesday;
+
+  /// No description provided for @dayWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get dayWednesday;
+
+  /// No description provided for @dayThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get dayThursday;
+
+  /// No description provided for @dayFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get dayFriday;
+
+  /// No description provided for @daySaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get daySaturday;
+
+  /// No description provided for @daySunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get daySunday;
+
+  /// No description provided for @memberSessionsDifficultyBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get memberSessionsDifficultyBeginner;
+
+  /// No description provided for @memberSessionsDifficultyIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get memberSessionsDifficultyIntermediate;
+
+  /// No description provided for @memberSessionsDifficultyAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get memberSessionsDifficultyAdvanced;
+
+  /// No description provided for @memberSessionsBookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get memberSessionsBookNow;
+
+  /// No description provided for @memberSessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports Classes'**
+  String get memberSessionsTitle;
+
+  /// No description provided for @memberSessionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your spot in your favorite class'**
+  String get memberSessionsSubtitle;
+
+  /// No description provided for @memberSessionsRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {roomName}'**
+  String memberSessionsRoom(String roomName);
+
+  /// No description provided for @memberSessionsMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String memberSessionsMinute(int minutes);
+
+  /// No description provided for @memberSessionsSeatsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} seats'**
+  String memberSessionsSeatsAvailable(int count);
+
+  /// No description provided for @memberSessionsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading sessions...'**
+  String get memberSessionsLoading;
+
+  /// No description provided for @memberSessionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions available'**
+  String get memberSessionsEmpty;
+
+  /// No description provided for @memberSessionsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load sessions'**
+  String get memberSessionsError;
+
+  /// No description provided for @memberSessionsFilterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter classes'**
+  String get memberSessionsFilterTitle;
+
+  /// No description provided for @memberSessionsFilterClassType.
+  ///
+  /// In en, this message translates to:
+  /// **'Class type'**
+  String get memberSessionsFilterClassType;
+
+  /// No description provided for @memberSessionsFilterTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer'**
+  String get memberSessionsFilterTrainer;
+
+  /// No description provided for @memberSessionsFilterBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get memberSessionsFilterBranch;
+
+  /// No description provided for @memberSessionsFilterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get memberSessionsFilterReset;
+
+  /// No description provided for @memberSessionsFilterApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply filter'**
+  String get memberSessionsFilterApply;
+
   /// Admin drawer — Dashboard item
   ///
   /// In en, this message translates to:

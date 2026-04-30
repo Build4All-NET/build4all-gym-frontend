@@ -1,28 +1,4 @@
-// =============================================================================
-// FILE: member_card_widget.dart
-// LAYER: Presentation Layer → Widgets
-// PURPOSE: Renders a single member's card in the list. Shows:
-//           • Circular avatar with colored initials (or profile photo)
-//           • Name, member code, phone, status badge (color-coded)
-//           • 2-column info grid: Plan / Expiry | Due Amount (red if >0) / Branch
-//           • Row of 6 action icon buttons: WhatsApp, Attendance, Renew,
-//             Block/Unblock, Delete, Edit
-//           • Per-card loading overlay when its action is in progress
-//
-// POSITION IN FLOW:
-//   AdminMembersPage → ListView.builder → [this file] MemberCardWidget
-//   User taps Block  → dispatches MemberBlockRequested to AdminMembersBloc
-//   User taps Delete → dispatches MemberDeleteRequested to AdminMembersBloc
-//   BLoC emits MemberActionLoading(userId) → this card shows a spinner
-//   BLoC emits MemberActionSuccess         → card updates its status display
-//
-// RELATED FILES:
-//   ← Receives:        MemberCardEntity (from MembersLoaded.members)
-//   → Dispatches to:   admin_members_bloc.dart (block, delete, unblock events)
-//   ← Reads state:     MemberActionLoading, MemberActionSuccess
-//   ← Used by:         admin_members_page.dart (inside ListView.builder)
-// =============================================================================
-
+import 'package:build4allgym/app/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,83 +7,76 @@ import '../bloc/admin_members_bloc.dart';
 
 class MemberCardWidget extends StatelessWidget {
   final MemberCardEntity member;
-
   const MemberCardWidget({super.key, required this.member});
 
-  // ---------------------------------------------------------------------------
-  // Avatar background colors — cycled based on userId for visual variety.
-  // ---------------------------------------------------------------------------
+  // Avatar colors are intentional/decorative — not theme-driven.
   static const _avatarColors = [
-    Color(0xFF7C3AED), // purple
-    Color(0xFF2563EB), // blue
-    Color(0xFF059669), // green
-    Color(0xFFD97706), // amber
-    Color(0xFFDC2626), // red
+    Color(0xFF7C3AED),
+    Color(0xFF2563EB),
+    Color(0xFF059669),
+    Color(0xFFD97706),
+    Color(0xFFDC2626),
   ];
 
-  Color get _avatarColor =>
-      _avatarColors[member.userId % _avatarColors.length];
+  Color get _avatarColor => _avatarColors[member.userId % _avatarColors.length];
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return BlocBuilder<AdminMembersBloc, AdminMembersState>(
-      // buildWhen: only rebuild this card if an action state targets THIS userId,
-      // or if the members list itself changes. Avoids rebuilding ALL cards.
       buildWhen: (prev, curr) {
-        if (curr is MemberActionLoading && curr.userId == member.userId) {
-          return true;
-        }
-        if (curr is MemberActionSuccess && curr.userId == member.userId) {
-          return true;
-        }
-        if (curr is MemberActionError && curr.userId == member.userId) {
-          return true;
-        }
+        if (curr is MemberActionLoading && curr.userId == member.userId) return true;
+        if (curr is MemberActionSuccess && curr.userId == member.userId) return true;
+        if (curr is MemberActionError   && curr.userId == member.userId) return true;
         if (curr is MembersLoaded) return true;
         return false;
       },
       builder: (context, state) {
-        // Check if THIS card is currently performing an action.
-        final isLoading =
-            state is MemberActionLoading && state.userId == member.userId;
+        final isLoading = state is MemberActionLoading && state.userId == member.userId;
 
         return Stack(
           children: [
-            // ----------------------------------------------------------------
-            // Main card container — dark background with rounded corners.
-            // ----------------------------------------------------------------
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // -- Top row: avatar + name/code/phone + status badge ----
-                    _buildTopRow(),
-                    const SizedBox(height: 12),
-                    const Divider(color: Color(0xFF2A2A2A), height: 1),
-                    const SizedBox(height: 12),
-                    // -- Info grid: Plan/Expiry, Due Amount/Branch ------------
-                    _buildInfoGrid(),
-                    const SizedBox(height: 12),
-                    const Divider(color: Color(0xFF2A2A2A), height: 1),
-                    const SizedBox(height: 8),
-                    // -- Action icons row ------------------------------------
-                    _buildActionRow(context),
-                  ],
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRouter.memberDetail,
+                  arguments: {
+                    'userId': member.userId,
+                    // Pass the bloc instance so the router can provide it
+                    // to MemberDetailPage without needing its context.
+                    'bloc': context.read<AdminMembersBloc>(),
+                  },
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: cs.surfaceVariant, // ← theme
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTopRow(cs),
+                      const SizedBox(height: 12),
+                      Divider(color: cs.outline.withOpacity(0.2), height: 1),
+                      const SizedBox(height: 12),
+                      _buildInfoGrid(cs),
+                      const SizedBox(height: 12),
+                      Divider(color: cs.outline.withOpacity(0.2), height: 1),
+                      const SizedBox(height: 8),
+                      _buildActionRow(context),
+                    ],
+                  ),
                 ),
               ),
             ),
 
-            // ----------------------------------------------------------------
-            // Loading overlay — shown on top of the card while an action runs.
-            // Prevents the user from tapping other icons during the operation.
-            // ----------------------------------------------------------------
+            // Loading overlay
             if (isLoading)
               Positioned.fill(
                 child: Container(
@@ -116,11 +85,9 @@ class MemberCardWidget extends StatelessWidget {
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFF6C63FF),
-                      strokeWidth: 2,
-                    ),
+                        color: cs.primary, strokeWidth: 2),
                   ),
                 ),
               ),
@@ -130,95 +97,68 @@ class MemberCardWidget extends StatelessWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Top section: avatar circle | name, code, phone | status badge.
-  // ---------------------------------------------------------------------------
-  Widget _buildTopRow() {
+  Widget _buildTopRow(ColorScheme cs) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Circular avatar with member initials.
         CircleAvatar(
           radius: 26,
           backgroundColor: _avatarColor,
-          child: Text(
-            member.initials,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
+          child: Text(member.initials,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
         ),
         const SizedBox(width: 12),
-
-        // Name, member code, phone — flexible to not overflow.
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                member.fullName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                ),
-              ),
+              Text(member.fullName,
+                  style: TextStyle(
+                      color: cs.onSurface, fontWeight: FontWeight.w600, fontSize: 15)),
               const SizedBox(height: 2),
-              Text(
-                member.memberCode,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
+              Text(member.memberCode,
+                  style: TextStyle(color: cs.onSurface.withOpacity(0.5), fontSize: 12)),
               const SizedBox(height: 2),
-              Text(
-                member.phone,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
+              Text(member.phone,
+                  style: TextStyle(color: cs.onSurface.withOpacity(0.5), fontSize: 12)),
             ],
           ),
         ),
-
-        // Status badge — color reflects membership status.
-        _StatusBadge(status: member.membershipStatus),
+        _StatusBadge(status: member.membershipStatus ?? ''),
       ],
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // 2-column info grid: Plan | Expiry, Due Amount | Branch.
-  // ---------------------------------------------------------------------------
-  Widget _buildInfoGrid() {
+  Widget _buildInfoGrid(ColorScheme cs) {
     return Row(
       children: [
-        // Left column: Plan name, Due Amount.
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _InfoLabel(label: 'Plan'),
-              _InfoValue(value: member.planName),
+              _InfoLabel(label: 'Plan', cs: cs),
+              _InfoValue(value: member.planName ?? '—', cs: cs),
               const SizedBox(height: 8),
-              _InfoLabel(label: 'Due Amount'),
+              _InfoLabel(label: 'Due Amount', cs: cs),
               _InfoValue(
-                value: '₹${member.dueAmount.toStringAsFixed(0)}',
-                // Red text if there are dues outstanding.
-                color: member.hasDues ? const Color(0xFFEF4444) : Colors.white,
+                value: '₹${(member.dueAmount ?? 0).toStringAsFixed(0)}',
+                cs: cs,
+                // Semantic red for dues — intentional, not theme-driven.
+                overrideColor: member.hasDues ? const Color(0xFFEF4444) : null,
               ),
             ],
           ),
         ),
-
-        // Right column: Expiry date, Branch.
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _InfoLabel(label: 'Expiry'),
-              _InfoValue(value: member.expiryDate),
+              _InfoLabel(label: 'Expiry', cs: cs),
+              _InfoValue(value: member.expiryDate ?? '—', cs: cs),
               const SizedBox(height: 8),
-              _InfoLabel(label: 'Branch'),
-              _InfoValue(value: member.branchName),
+              _InfoLabel(label: 'Branch', cs: cs),
+              _InfoValue(value: member.branchName ?? '—', cs: cs),
             ],
           ),
         ),
@@ -226,106 +166,99 @@ class MemberCardWidget extends StatelessWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Row of 6 action icon buttons.
-  // ---------------------------------------------------------------------------
   Widget _buildActionRow(BuildContext context) {
     final bloc = context.read<AdminMembersBloc>();
+    final cs   = Theme.of(context).colorScheme;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        // 1. WhatsApp — opens chat (green)
+        // WhatsApp — semantic green, intentional
         _ActionIcon(
           icon: Icons.chat_bubble_outline,
           color: const Color(0xFF25D366),
           tooltip: 'WhatsApp',
-          onTap: () {
-            // TODO: Launch WhatsApp deep-link with member.phone
-          },
+          onTap: () => _launchWhatsApp(context),
         ),
-
-        // 2. Attendance — view/mark attendance (blue)
+        // Attendance
         _ActionIcon(
           icon: Icons.person_outline,
-          color: const Color(0xFF3B82F6),
+          color: cs.primary,
           tooltip: 'Attendance',
-          onTap: () {
-            // TODO: Navigate to attendance page for this member
-          },
+          onTap: () => _showComingSoon(context, 'Attendance'),
         ),
-
-        // 3. Renew — renew membership (purple)
+        // Renew
         _ActionIcon(
           icon: Icons.refresh,
-          color: const Color(0xFF8B5CF6),
+          color: cs.tertiary,
           tooltip: 'Renew',
-          onTap: () {
-            // TODO: Open renewal bottom sheet
-          },
+          onTap: () => _showComingSoon(context, 'Plan Renewal'),
         ),
-
-        // 4. Block / Unblock — toggles based on current status (orange/green)
+        // Block / Unblock — semantic colors
         _ActionIcon(
-          icon: member.isBlocked ? Icons.lock_open_outlined : Icons.block,
-          color: member.isBlocked
-              ? const Color(0xFF10B981) // green = unblock available
-              : const Color(0xFFF97316), // orange = block available
+          icon:  member.isBlocked ? Icons.lock_open_outlined : Icons.block,
+          color: member.isBlocked ? const Color(0xFF10B981) : const Color(0xFFF97316),
           tooltip: member.isBlocked ? 'Unblock' : 'Block',
           onTap: () => member.isBlocked
               ? bloc.add(MemberUnblockRequested(member.userId))
               : _showBlockDialog(context, bloc),
         ),
-
-        // 5. Delete — permanently removes member (red)
+        // Delete — semantic red
         _ActionIcon(
-          icon: Icons.delete_outline,
-          color: const Color(0xFFEF4444),
+          icon:    Icons.delete_outline,
+          color:   cs.error,
           tooltip: 'Delete',
-          onTap: () => _showDeleteConfirm(context, bloc),
+          onTap:   () => _showDeleteConfirm(context, bloc),
         ),
-
-        // 6. Edit — open edit form (grey)
+        // Edit
         _ActionIcon(
-          icon: Icons.edit_outlined,
-          color: Colors.grey,
+          icon:    Icons.edit_outlined,
+          color:   cs.onSurface.withOpacity(0.4),
           tooltip: 'Edit',
-          onTap: () {
-            // TODO: Navigate to edit member page
-          },
+          onTap:   () => _showComingSoon(context, 'Edit Member'),
         ),
       ],
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Block dialog — asks admin for a reason before blocking.
-  // ---------------------------------------------------------------------------
+  Future<void> _launchWhatsApp(BuildContext context) async {
+    final digits = member.phone.replaceAll(RegExp(r'[^\d]'), '');
+    // Uncomment after adding url_launcher:
+    // final uri = Uri.parse('https://wa.me/$digits');
+    // if (await canLaunchUrl(uri)) {
+    //   await launchUrl(uri, mode: LaunchMode.externalApplication);
+    // }
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('WhatsApp: wa.me/$digits'),
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        duration: const Duration(seconds: 2),
+      ));
+    }
+  }
+
   void _showBlockDialog(BuildContext context, AdminMembersBloc bloc) {
+    final cs = Theme.of(context).colorScheme;
     final reasonController = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text(
-          'Block Member',
-          style: TextStyle(color: Colors.white),
-        ),
+        backgroundColor: cs.surface,
+        title: Text('Block Member', style: TextStyle(color: cs.onSurface)),
         content: TextField(
           controller: reasonController,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
+          style: TextStyle(color: cs.onSurface),
+          decoration: InputDecoration(
             hintText: 'Enter reason for blocking',
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: TextStyle(color: cs.onSurface.withOpacity(0.4)),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
+                borderSide: BorderSide(color: cs.outline)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('Cancel', style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
           ),
           TextButton(
             onPressed: () {
@@ -342,153 +275,125 @@ class MemberCardWidget extends StatelessWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Delete confirmation dialog — prevents accidental deletes.
-  // ---------------------------------------------------------------------------
   void _showDeleteConfirm(BuildContext context, AdminMembersBloc bloc) {
+    final cs = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text('Delete Member', style: TextStyle(color: Colors.white)),
+        backgroundColor: cs.surface,
+        title: Text('Delete Member', style: TextStyle(color: cs.onSurface)),
         content: Text(
-          'Are you sure you want to permanently delete ${member.fullName}?',
-          style: const TextStyle(color: Colors.grey),
+          'Permanently delete ${member.fullName}? This cannot be undone.',
+          style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text('Cancel', style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               bloc.add(MemberDeleteRequested(member.userId));
             },
-            child: const Text('Delete', style: TextStyle(color: Color(0xFFEF4444))),
+            child: Text('Delete', style: TextStyle(color: cs.error)),
           ),
         ],
       ),
     );
   }
+
+  void _showComingSoon(BuildContext context, String feature) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('$feature — coming soon'),
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      duration: const Duration(seconds: 1),
+    ));
+  }
 }
 
 // =============================================================================
-// Small private helper widgets — kept in this file since they're only used here.
+// Helper widgets
 // =============================================================================
 
-/// Colored pill badge showing the member's status.
 class _StatusBadge extends StatelessWidget {
   final String status;
-
   const _StatusBadge({required this.status});
 
   @override
   Widget build(BuildContext context) {
-    Color bg;
-    Color text;
+    // Status badge colors are semantic (green=active, red=blocked) —
+    // intentionally NOT theme-driven so they stay universally readable.
+    Color bg, text;
     String label;
 
     switch (status.toLowerCase()) {
       case 'active':
-        bg = const Color(0xFF052E16);
-        text = const Color(0xFF4ADE80);
-        label = 'Active';
-        break;
+        bg = const Color(0xFF052E16); text = const Color(0xFF4ADE80); label = 'Active';
       case 'pending':
-        bg = const Color(0xFF431407);
-        text = const Color(0xFFFB923C);
-        label = 'Pending';
-        break;
+        bg = const Color(0xFF431407); text = const Color(0xFFFB923C); label = 'Pending';
       case 'blocked':
-        bg = const Color(0xFF450A0A);
-        text = const Color(0xFFF87171);
-        label = 'Blocked';
-        break;
+        bg = const Color(0xFF450A0A); text = const Color(0xFFF87171); label = 'Blocked';
       default:
-        bg = const Color(0xFF1F2937);
-        text = Colors.grey;
-        label = status;
+        bg = Theme.of(context).colorScheme.surfaceVariant;
+        text = Theme.of(context).colorScheme.onSurface.withOpacity(0.6);
+        label = status.isEmpty ? 'No Plan' : status;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(color: text, fontSize: 11, fontWeight: FontWeight.w600),
-      ),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+      child: Text(label,
+          style: TextStyle(color: text, fontSize: 11, fontWeight: FontWeight.w600)),
     );
   }
 }
 
-/// Small grey label (e.g. "Plan", "Expiry").
 class _InfoLabel extends StatelessWidget {
   final String label;
-
-  const _InfoLabel({required this.label});
+  final ColorScheme cs;
+  const _InfoLabel({required this.label, required this.cs});
 
   @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: const TextStyle(color: Colors.grey, fontSize: 11),
-    );
-  }
+  Widget build(BuildContext context) => Text(label,
+      style: TextStyle(color: cs.onSurface.withOpacity(0.5), fontSize: 11));
 }
 
-/// Value text below the label (e.g. "HIIT Quarterly", "6/1/2026").
 class _InfoValue extends StatelessWidget {
   final String value;
-  final Color color;
-
-  const _InfoValue({
-    required this.value,
-    this.color = Colors.white,
-  });
+  final ColorScheme cs;
+  final Color? overrideColor;
+  const _InfoValue({required this.value, required this.cs, this.overrideColor});
 
   @override
-  Widget build(BuildContext context) {
-    return Text(
-      value,
+  Widget build(BuildContext context) => Text(value,
       style: TextStyle(
-        color: color,
+        color: overrideColor ?? cs.onSurface,
         fontWeight: FontWeight.w600,
         fontSize: 13,
-      ),
-    );
-  }
+      ));
 }
 
-/// Tappable icon with tooltip — used in the action row.
 class _ActionIcon extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String tooltip;
   final VoidCallback onTap;
-
   const _ActionIcon({
-    required this.icon,
-    required this.color,
-    required this.tooltip,
-    required this.onTap,
+    required this.icon, required this.color,
+    required this.tooltip, required this.onTap,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.all(6),
-          child: Icon(icon, color: color, size: 22),
-        ),
+  Widget build(BuildContext context) => Tooltip(
+    message: tooltip,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Icon(icon, color: color, size: 22),
       ),
-    );
-  }
+    ),
+  );
 }

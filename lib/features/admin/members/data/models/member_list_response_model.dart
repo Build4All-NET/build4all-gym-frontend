@@ -1,39 +1,28 @@
 // =============================================================================
 // FILE: member_list_response_model.dart
 // LAYER: Data Layer → Models
-// PURPOSE: Wraps the paginated API response for the members list endpoint.
-//          The GET /api/admin/members endpoint returns:
-//          { items: [...], totalCount: 50, page: 1, size: 10, totalPages: 5 }
-//          This model parses that envelope + each item into MemberCardModel.
 //
-// POSITION IN FLOW:
-//   API JSON Response
-//     → [this file] MemberListResponseModel.fromJson()
-//         → creates List<MemberCardModel> for each "items" entry
-//     → AdminMembersRepositoryImpl maps it to MemberListResultEntity
+// FIX: Backend returns page as 0-based integer (page 0 = first page).
+//      Flutter domain is 1-based. We add +1 here so the domain layer
+//      and BLoC pagination logic never have to care about this difference.
 //
-// RELATED FILES:
-//   ← Raw JSON from: admin_members_service.dart (getMembers)
-//   ← Consumes:      member_card_model.dart (builds list of those)
-//   → Mapped to:     member_list_result_entity.dart in repository impl
+// BACKEND RESPONSE SHAPE (MemberListResponse.java):
+//   {
+//     "items":      [ { ...MemberCardDto fields... } ],
+//     "totalCount": 50,
+//     "page":       0,     ← 0-based from backend
+//     "size":       10,
+//     "totalPages": 5
+//   }
 // =============================================================================
 
 import 'member_card_model.dart';
 
 class MemberListResponseModel {
-  /// The paginated list of member cards for the current page.
   final List<MemberCardModel> items;
-
-  /// Total number of members matching the current filter (across all pages).
   final int totalCount;
-
-  /// Current page number (1-based from API).
-  final int page;
-
-  /// Number of items per page.
+  final int page;       // stored as 1-based after conversion
   final int size;
-
-  /// Total number of pages available.
   final int totalPages;
 
   const MemberListResponseModel({
@@ -44,12 +33,7 @@ class MemberListResponseModel {
     required this.totalPages,
   });
 
-  // ---------------------------------------------------------------------------
-  // fromJson — parses the full paginated API response envelope.
-  // The "items" key holds a JSON array; each element becomes a MemberCardModel.
-  // ---------------------------------------------------------------------------
   factory MemberListResponseModel.fromJson(Map<String, dynamic> json) {
-    // Safely parse the items array; fallback to empty list if key is missing.
     final rawItems = json['items'] as List<dynamic>? ?? [];
 
     return MemberListResponseModel(
@@ -57,8 +41,12 @@ class MemberListResponseModel {
           .map((item) => MemberCardModel.fromJson(item as Map<String, dynamic>))
           .toList(),
       totalCount: json['totalCount'] as int? ?? 0,
-      page: json['page'] as int? ?? 1,
-      size: json['size'] as int? ?? 10,
+
+      // Backend is 0-based → convert to 1-based for Flutter domain layer.
+      // page: 0 → 1, page: 1 → 2, etc.
+      page:       (json['page'] as int? ?? 0) + 1,
+
+      size:       json['size']       as int? ?? 10,
       totalPages: json['totalPages'] as int? ?? 1,
     );
   }

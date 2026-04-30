@@ -572,6 +572,8 @@
     "memberSessionsFilterTrainer": "Trainer",
     "memberSessionsFilterBranch": "Branch",
     "memberSessionsFilterReset": "Reset",
+    "memberSessionsFilterApply": "Apply filter",
+
     "memberSessionsFilterApply": "Apply filter"
   }
   "navDashboard": "Dashboard",
@@ -642,6 +644,51 @@
 
   "navTrainingVideos": "Training Videos",
   "@navTrainingVideos": { "description": "Drawer nav item" },
+
+  "checkoutComingSoon": "Checkout coming soon",
+  "selectThisPlan": "Select this plan",
+  "selectedPlan": "Selected plan",
+  "baseAmount": "Base amount",
+  "totalAmount": "Total amount",
+  "planDetails": "Plan details",
+  "planDuration": "Plan duration",
+  "visitLimit": "Visit limit",
+  "unlimited": "Unlimited",
+  "freezeDays": "Freeze days",
+  "planFeatures": "Plan features",
+  "billingMonthly": "Monthly",
+  "billingYearly": "Yearly",
+  "billingWeekly": "Weekly",
+  "couponCode": "Coupon code",
+  "enterCouponCode": "Enter coupon code",
+  "apply": "Apply",
+  "couponAppliedFinalPrice": "Coupon applied. Final price: {price}",
+  "@couponAppliedFinalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+
+  "retry": "Retry",
+  "memberPlansTitle": "Membership Plans",
+  "memberPlansSubtitle": "Choose the best plan for your fitness journey",
+  "memberPlansEmpty": "No membership plans available",
+
+  "remainingDays": "{days} days remaining",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "membershipEndsAt": "Ends at {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "renew": "Renew",
+
+  "mostPopular": "Most popular",
 
   "retry": "Retry",
   "memberPlansTitle": "Membership Plans",
