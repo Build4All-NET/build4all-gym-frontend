@@ -39,7 +39,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         branchName: 'Downtown',          // TODO: pull from AuthBloc/UserBloc state
         adminName: 'Mounir',             // TODO: pull from AuthBloc/UserBloc state
         adminEmail: 'mounir@gym.com',    // TODO: pull from AuthBloc/UserBloc state
-        avatarUrl: null,                 // null = shows initials
+        avatarUrl: null,
+        initialActiveId: 'dashboard',                 // null = shows initials
       ),
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(

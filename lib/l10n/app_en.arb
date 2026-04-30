@@ -418,6 +418,7 @@
   "@completeProfile_backButton": {
     "description": "Back navigation link shown below the form"
   },
+
   "home_welcome": "Welcome",
   "home_weightUpdated": "Your weight was updated successfully ✅",
   "home_noData": "No data available",
@@ -467,7 +468,111 @@
   "home_bookTrainer": "Book Trainer",
   "home_checkInCode": "Check-in Code",
   "home_paymentHistory": "Payment History",
-  "signup_success":"Successfully registered. You can now login.",
+  "signup_success": "Successfully registered. You can now login.",
+
+    "mostPopular": "Most Popular",
+    "selectThisPlan": "Choose this plan",
+    "renew": "Renew",
+
+    "planTypeGym": "Gym",
+    "planTypeClasses": "Classes",
+    "planTypeMixed": "Mixed",
+
+    "billingMonthly": "Monthly",
+    "billingYearly": "Yearly",
+    "billingWeekly": "Weekly",
+
+    "membershipStatusActive": "Active",
+    "membershipStatusFrozen": "Frozen",
+    "membershipStatusExpired": "Expired",
+
+    "remainingDays": "{days} days remaining",
+    "@remainingDays": {
+      "placeholders": {
+        "days": {
+          "type": "int"
+        }
+      }
+    },
+
+    "membershipEndsAt": "Ends on {date}",
+    "@membershipEndsAt": {
+      "placeholders": {
+        "date": {
+          "type": "String"
+        }
+      }
+    },
+    "memberPlansTitle": "Membership Plans",
+    "memberPlansSubtitle": "Choose the plan that fits your goals",
+    "memberPlansEmpty": "No plans available right now",
+    "retry": "Retry",
+    "back": "Back",
+    "checkoutComingSoon": "Coming soon — checkout is under development",
+    "planDuration": "Duration",
+    "visitLimit": "Visit limit",
+    "unlimited": "Unlimited",
+    "freezeDays": "Freeze days",
+    "planFeatures": "Features",
+    "couponCode": "Coupon code",
+    "enterCouponCode": "Enter coupon code",
+    "apply": "Apply",
+    "couponAppliedFinalPrice": "✓ Coupon applied — final price: {price} $",
+    "@couponAppliedFinalPrice": {
+      "placeholders": {
+        "price": {
+          "type": "String"
+        }
+      }
+    },
+    "selectedPlan": "Selected plan",
+    "baseAmount": "Base amount",
+    "totalAmount": "Total amount",
+    "planDetails": "Plan details",
+     "dayMonday": "Mon",
+         "dayTuesday": "Tue",
+"dayWednesday": "Wed",
+"dayThursday": "Thu",
+"dayFriday": "Fri",
+"daySaturday": "Sat",
+"daySunday": "Sun",
+    "memberSessionsDifficultyBeginner": "Beginner",
+    "memberSessionsDifficultyIntermediate": "Intermediate",
+    "memberSessionsDifficultyAdvanced": "Advanced",
+    "memberSessionsBookNow": "Book Now",
+    "memberSessionsTitle": "Sports Classes",
+    "memberSessionsSubtitle": "Book your spot in your favorite class",
+    "memberSessionsRoom": "Room {roomName}",
+    "@memberSessionsRoom": {
+      "placeholders": {
+        "roomName": { "type": "String" }
+      }
+    },
+    "memberSessionsMinute": "{minutes} min",
+    "@memberSessionsMinute": {
+      "placeholders": {
+        "minutes": { "type": "int" }
+      }
+    },
+    "memberSessionsSeatsAvailable": "{count} seats",
+    "@memberSessionsSeatsAvailable": {
+      "placeholders": {
+        "count": { "type": "int" }
+      }
+    },
+    "memberSessionsDifficultyBeginner": "Beginner",
+    "memberSessionsDifficultyIntermediate": "Intermediate",
+    "memberSessionsDifficultyAdvanced": "Advanced",
+    "memberSessionsBookNow": "Book Now",
+    "memberSessionsLoading": "Loading sessions...",
+    "memberSessionsEmpty": "No sessions available",
+    "memberSessionsError": "Failed to load sessions",
+    "memberSessionsFilterTitle": "Filter classes",
+    "memberSessionsFilterClassType": "Class type",
+    "memberSessionsFilterTrainer": "Trainer",
+    "memberSessionsFilterBranch": "Branch",
+    "memberSessionsFilterReset": "Reset",
+    "memberSessionsFilterApply": "Apply filter",
 
   "navDashboard": "Dashboard",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
@@ -537,6 +642,7 @@
 
   "navTrainingVideos": "Training Videos",
   "@navTrainingVideos": { "description": "Drawer nav item" },
+
   "checkoutComingSoon": "Checkout coming soon",
   "selectThisPlan": "Select this plan",
   "selectedPlan": "Selected plan",
@@ -580,6 +686,50 @@
   },
   "renew": "Renew",
 
-  "mostPopular": "Most popular"
+  "mostPopular": "Most popular",
 
+  "retry": "Retry",
+  "memberPlansTitle": "Membership Plans",
+  "memberPlansSubtitle": "Choose the best plan for you",
+  "memberPlansEmpty": "No plans available",
+  "renew": "Renew",
+  "mostPopular": "Most Popular",
+  "selectThisPlan": "Select This Plan",
+  "billingMonthly": "Monthly",
+  "billingYearly": "Yearly",
+  "billingWeekly": "Weekly",
+  "checkoutComingSoon": "Checkout coming soon",
+  "selectedPlan": "Selected Plan",
+  "baseAmount": "Base Amount",
+  "totalAmount": "Total Amount",
+  "planDetails": "Plan Details",
+  "planDuration": "Plan Duration",
+  "visitLimit": "Visit Limit",
+  "unlimited": "Unlimited",
+  "freezeDays": "Freeze Days",
+  "planFeatures": "Plan Features",
+  "couponCode": "Coupon Code",
+  "enterCouponCode": "Enter coupon code",
+  "apply": "Apply",
+
+  "remainingDays": "{days} days remaining",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+
+  "membershipEndsAt": "Ends at {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+
+  "couponAppliedFinalPrice": "Final price: {price}",
+  "@couponAppliedFinalPrice": {
+    "placeholders": {
+      "price": {}
+    }
   }
+}

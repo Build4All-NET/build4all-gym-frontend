@@ -13,3 +13,4 @@ class DrawerState extends Equatable {
   @override
   List<Object?> get props => [activeItemId];
 }
+
