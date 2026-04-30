@@ -39,6 +39,13 @@ class SessionBookingCancelRequested extends SessionsEvent {
 
   const SessionBookingCancelRequested(this.bookingId);
 }
+
 class SessionsFilterOptionsRequested extends SessionsEvent {
   const SessionsFilterOptionsRequested();
+}
+
+class SessionDetailRequested extends SessionsEvent {
+  final int sessionId;
+
+  const SessionDetailRequested(this.sessionId);
 }

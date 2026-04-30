@@ -1588,6 +1588,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply filter'**
   String get memberSessionsFilterApply;
+
+  /// No description provided for @sessionDetailTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get sessionDetailTimeLabel;
+
+  /// No description provided for @sessionDetailDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get sessionDetailDateLabel;
+
+  /// No description provided for @sessionDetailSeatsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Seats'**
+  String get sessionDetailSeatsLabel;
+
+  /// No description provided for @sessionDetailSeatsRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} remaining'**
+  String sessionDetailSeatsRemaining(Object count);
+
+  /// No description provided for @sessionDetailLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get sessionDetailLocationLabel;
+
+  /// No description provided for @sessionDetailAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About the Class'**
+  String get sessionDetailAboutTitle;
+
+  /// No description provided for @sessionDetailBenefitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits'**
+  String get sessionDetailBenefitsTitle;
+
+  /// No description provided for @sessionDetailEquipmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Equipment'**
+  String get sessionDetailEquipmentTitle;
+
+  /// No description provided for @sessionDetailBookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get sessionDetailBookNow;
+
+  /// No description provided for @sessionDetailAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Booked'**
+  String get sessionDetailAlreadyBooked;
+
+  /// No description provided for @sessionDetailWaitlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'On Waitlist'**
+  String get sessionDetailWaitlisted;
+
+  /// No description provided for @monthJanuary.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get monthJanuary;
+
+  /// No description provided for @monthFebruary.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get monthFebruary;
+
+  /// No description provided for @monthMarch.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get monthMarch;
+
+  /// No description provided for @monthApril.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get monthApril;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// No description provided for @monthJune.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get monthJune;
+
+  /// No description provided for @monthJuly.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get monthJuly;
+
+  /// No description provided for @monthAugust.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get monthAugust;
+
+  /// No description provided for @monthSeptember.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get monthSeptember;
+
+  /// No description provided for @monthOctober.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get monthOctober;
+
+  /// No description provided for @monthNovember.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get monthNovember;
+
+  /// No description provided for @monthDecember.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get monthDecember;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

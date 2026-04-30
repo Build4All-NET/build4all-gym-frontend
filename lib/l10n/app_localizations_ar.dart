@@ -776,4 +776,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberSessionsFilterApply => 'تطبيق الفلتر';
+
+  @override
+  String get sessionDetailTimeLabel => 'الوقت';
+
+  @override
+  String get sessionDetailDateLabel => 'التاريخ';
+
+  @override
+  String get sessionDetailSeatsLabel => 'المقاعد';
+
+  @override
+  String sessionDetailSeatsRemaining(Object count) {
+    return '$count متبقي';
+  }
+
+  @override
+  String get sessionDetailLocationLabel => 'المكان';
+
+  @override
+  String get sessionDetailAboutTitle => 'عن الحصة';
+
+  @override
+  String get sessionDetailBenefitsTitle => 'الفوائد';
+
+  @override
+  String get sessionDetailEquipmentTitle => 'المعدات المطلوبة';
+
+  @override
+  String get sessionDetailBookNow => 'احجز الآن';
+
+  @override
+  String get sessionDetailAlreadyBooked => 'تم الحجز';
+
+  @override
+  String get sessionDetailWaitlisted => 'في قائمة الانتظار';
+
+  @override
+  String get monthJanuary => 'يناير';
+
+  @override
+  String get monthFebruary => 'فبراير';
+
+  @override
+  String get monthMarch => 'مارس';
+
+  @override
+  String get monthApril => 'أبريل';
+
+  @override
+  String get monthMay => 'مايو';
+
+  @override
+  String get monthJune => 'يونيو';
+
+  @override
+  String get monthJuly => 'يوليو';
+
+  @override
+  String get monthAugust => 'أغسطس';
+
+  @override
+  String get monthSeptember => 'سبتمبر';
+
+  @override
+  String get monthOctober => 'أكتوبر';
+
+  @override
+  String get monthNovember => 'نوفمبر';
+
+  @override
+  String get monthDecember => 'ديسمبر';
 }

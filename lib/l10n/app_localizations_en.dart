@@ -776,4 +776,75 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberSessionsFilterApply => 'Apply filter';
+
+  @override
+  String get sessionDetailTimeLabel => 'Time';
+
+  @override
+  String get sessionDetailDateLabel => 'Date';
+
+  @override
+  String get sessionDetailSeatsLabel => 'Seats';
+
+  @override
+  String sessionDetailSeatsRemaining(Object count) {
+    return '$count remaining';
+  }
+
+  @override
+  String get sessionDetailLocationLabel => 'Location';
+
+  @override
+  String get sessionDetailAboutTitle => 'About the Class';
+
+  @override
+  String get sessionDetailBenefitsTitle => 'Benefits';
+
+  @override
+  String get sessionDetailEquipmentTitle => 'Required Equipment';
+
+  @override
+  String get sessionDetailBookNow => 'Book Now';
+
+  @override
+  String get sessionDetailAlreadyBooked => 'Already Booked';
+
+  @override
+  String get sessionDetailWaitlisted => 'On Waitlist';
+
+  @override
+  String get monthJanuary => 'January';
+
+  @override
+  String get monthFebruary => 'February';
+
+  @override
+  String get monthMarch => 'March';
+
+  @override
+  String get monthApril => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJune => 'June';
+
+  @override
+  String get monthJuly => 'July';
+
+  @override
+  String get monthAugust => 'August';
+
+  @override
+  String get monthSeptember => 'September';
+
+  @override
+  String get monthOctober => 'October';
+
+  @override
+  String get monthNovember => 'November';
+
+  @override
+  String get monthDecember => 'December';
 }

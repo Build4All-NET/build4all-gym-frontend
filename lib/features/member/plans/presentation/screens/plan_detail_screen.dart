@@ -5,8 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
+import '../../data/repositories/member_plans_repository_impl.dart';
+import '../../data/services/member_plans_remote_datasource.dart';
 import '../../domain/entities/coupon_validation_entity.dart';
 import '../../domain/entities/plan_detail_entity.dart';
+import '../../domain/usecases/get_plan_detail_usecase.dart';
+import '../../domain/usecases/validate_coupon_usecase.dart';
+import '../bloc/plan_detail/plan_detail_bloc.dart';
+import '../bloc/plan_detail/plan_detail_event.dart';
+import '../bloc/plan_detail/plan_detail_state.dart';
 
 class PlanDetailScreenProvider extends StatelessWidget {
   final int planId;
@@ -20,7 +27,19 @@ class PlanDetailScreenProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlanDetailScreen(planId: planId);
+    final remoteDatasource = MemberPlansRemoteDatasourceImpl(dio: dio);
+
+    final repository = MemberPlansRepositoryImpl(
+      remoteDatasource: remoteDatasource,
+    );
+
+    return BlocProvider(
+      create: (_) => PlanDetailBloc(
+        getPlanDetail: GetPlanDetailUseCase(repository: repository),
+        validateCoupon: ValidateCouponUseCase(repository: repository),
+      )..add(LoadPlanDetailEvent(planId: planId)),
+      child: PlanDetailScreen(planId: planId),
+    );
   }
 }
 
@@ -50,103 +69,143 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
-    final mockPlan = PlanDetailEntity(
-      planId: 1,
-      name: 'الباقة الفضية',
-      planType: 'جيم',
-      price: 299,
-      billingCycle: 'monthly',
-      durationDays: 30,
-      isFeatured: false,
-      description: 'باقة مناسبة للتمرين اليومي والوصول الكامل إلى النادي.',
-      allowedVisits: null,
-      freezeDaysAllowance: 7,
-      gracePeriodDays: 3,
-      autoRenew: true,
-      features: [
-        'دخول غير محدود للنادي',
-        'استخدام جميع الأجهزة',
-        'خزانة شخصية',
-        'دروس جماعية أساسية',
-      ],
-      activePromotion: null,
-    );
-
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: tokens.colors.background,
-        body: Stack(
-          children: [
-            Container(
-              height: 150,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                    tokens.colors.primary,
-                    tokens.colors.success.withOpacity(0.88),
-                  ],
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(19),
-                  bottomRight: Radius.circular(19),
+      child: BlocBuilder<PlanDetailBloc, PlanDetailState>(
+        builder: (context, state) {
+          if (state is PlanDetailLoading) {
+            return Scaffold(
+              backgroundColor: tokens.colors.background,
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: tokens.colors.primary,
                 ),
               ),
-            ),
-            SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _HeaderTitle(planName: mockPlan.name),
-                    const SizedBox(height: 28),
-                    _MainPlanCard(plan: mockPlan),
-                    SizedBox(height: tokens.spacing.lg),
-                    _CouponCard(
-                      planId: widget.planId,
-                      couponController: _couponController,
-                      coupon: null,
-                      isCouponValidating: false,
-                    ),
-                    SizedBox(height: tokens.spacing.xl),
-                    SizedBox(
-                      height: 56,
-                      child: ElevatedButton(
-                        // TODO: replace with checkout navigation when payment screen is ready.
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.checkoutComingSoon),
-                              backgroundColor: tokens.colors.primary,
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: tokens.colors.primary,
-                          foregroundColor: tokens.colors.onPrimary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                        ),
-                        child: Text(
-                          l10n.selectThisPlan,
-                          style: tokens.typography.bodyMedium.copyWith(
-                            color: tokens.colors.onPrimary,
-                            fontWeight: FontWeight.w900,
-                          ),
+            );
+          }
+
+          if (state is PlanDetailError) {
+            return Scaffold(
+              backgroundColor: tokens.colors.background,
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        state.message,
+                        textAlign: TextAlign.center,
+                        style: tokens.typography.bodyMedium.copyWith(
+                          color: tokens.colors.danger,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(l10n.back),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            );
+          }
+
+          if (state is PlanDetailLoaded) {
+            final plan = state.plan;
+
+            return Scaffold(
+              backgroundColor: tokens.colors.background,
+              body: Stack(
+                children: [
+                  Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          tokens.colors.primary,
+                          tokens.colors.success.withOpacity(0.88),
+                        ],
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(19),
+                        bottomRight: Radius.circular(19),
+                      ),
+                    ),
+                  ),
+                  SafeArea(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _HeaderTitle(planName: plan.name),
+                          const SizedBox(height: 28),
+
+                          _CheckoutPlanCard(
+                            plan: plan,
+                            coupon: state.coupon,
+                          ),
+
+                          SizedBox(height: tokens.spacing.lg),
+
+                          _CouponCard(
+                            planId: widget.planId,
+                            couponController: _couponController,
+                            coupon: state.coupon,
+                            isCouponValidating: state.isCouponValidating,
+                          ),
+
+                          SizedBox(height: tokens.spacing.lg),
+
+                          const _PaymentMethodCard(),
+
+                          SizedBox(height: tokens.spacing.xl),
+
+                          SizedBox(
+                            height: 56,
+                            child: ElevatedButton(
+                              // TODO: replace with checkout navigation when payment screen is ready.
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.checkoutComingSoon),
+                                    backgroundColor: tokens.colors.primary,
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: tokens.colors.primary,
+                                foregroundColor: tokens.colors.onPrimary,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                              ),
+                              child: Text(
+                                l10n.selectThisPlan,
+                                style: tokens.typography.bodyMedium.copyWith(
+                                  color: tokens.colors.onPrimary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -178,13 +237,17 @@ class _HeaderTitle extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Text(
-          planName,
-          textAlign: TextAlign.right,
-          style: tokens.typography.headlineSmall.copyWith(
-            color: tokens.colors.onPrimary,
-            fontSize: 26,
-            fontWeight: FontWeight.w900,
+        Flexible(
+          child: Text(
+            planName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.right,
+            style: tokens.typography.headlineSmall.copyWith(
+              color: tokens.colors.onPrimary,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ),
       ],
@@ -192,17 +255,23 @@ class _HeaderTitle extends StatelessWidget {
   }
 }
 
-class _MainPlanCard extends StatelessWidget {
+class _CheckoutPlanCard extends StatelessWidget {
   final PlanDetailEntity plan;
+  final CouponValidationEntity? coupon;
 
-  const _MainPlanCard({
+  const _CheckoutPlanCard({
     required this.plan,
+    required this.coupon,
   });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+
+    final finalPrice = coupon?.valid == true && coupon?.finalPrice != null
+        ? coupon!.finalPrice!
+        : plan.price;
 
     return _WhiteCard(
       child: Column(
@@ -256,6 +325,7 @@ class _MainPlanCard extends StatelessWidget {
               ),
             ],
           ),
+
           if (plan.description != null &&
               plan.description!.trim().isNotEmpty) ...[
             SizedBox(height: tokens.spacing.lg),
@@ -269,101 +339,20 @@ class _MainPlanCard extends StatelessWidget {
               ),
             ),
           ],
+
           SizedBox(height: tokens.spacing.lg),
           Divider(color: tokens.colors.border.withOpacity(0.32)),
           SizedBox(height: tokens.spacing.md),
+
           _SummaryRow(
             label: l10n.baseAmount,
-            value: '\$ ${plan.price.toStringAsFixed(0)}',
+            value: '\$ ${plan.price.toStringAsFixed(2)}',
           ),
           SizedBox(height: tokens.spacing.sm),
           _SummaryRow(
             label: l10n.totalAmount,
-            value: '\$ ${plan.price.toStringAsFixed(2)}',
+            value: '\$ ${finalPrice.toStringAsFixed(2)}',
             highlighted: true,
-          ),
-          SizedBox(height: tokens.spacing.lg),
-          Divider(color: tokens.colors.border.withOpacity(0.32)),
-          SizedBox(height: tokens.spacing.md),
-          Text(
-            l10n.planDetails,
-            textAlign: TextAlign.right,
-            style: tokens.typography.titleMedium.copyWith(
-              color: tokens.colors.label,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          SizedBox(height: tokens.spacing.md),
-          Row(
-            children: [
-              Expanded(
-                child: _DetailBox(
-                  title: l10n.planDuration,
-                  value: '${plan.durationDays}',
-                ),
-              ),
-              SizedBox(width: tokens.spacing.sm),
-              Expanded(
-                child: _DetailBox(
-                  title: l10n.visitLimit,
-                  value: plan.allowedVisits == null
-                      ? l10n.unlimited
-                      : plan.allowedVisits.toString(),
-                ),
-              ),
-              SizedBox(width: tokens.spacing.sm),
-              Expanded(
-                child: _DetailBox(
-                  title: l10n.freezeDays,
-                  value: (plan.freezeDaysAllowance ?? 0).toString(),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: tokens.spacing.lg),
-          Text(
-            l10n.planFeatures,
-            textAlign: TextAlign.right,
-            style: tokens.typography.titleMedium.copyWith(
-              color: tokens.colors.label,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          SizedBox(height: tokens.spacing.md),
-          ...plan.features.map(
-                (feature) => Padding(
-              padding: EdgeInsets.only(bottom: tokens.spacing.sm),
-              child: Row(
-                textDirection: TextDirection.rtl,
-                children: [
-                  Container(
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: tokens.colors.primary.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.check_rounded,
-                      color: tokens.colors.primary,
-                      size: 15,
-                    ),
-                  ),
-                  SizedBox(width: tokens.spacing.sm),
-                  Expanded(
-                    child: Text(
-                      feature,
-                      textAlign: TextAlign.right,
-                      style: tokens.typography.bodyMedium.copyWith(
-                        color: tokens.colors.body,
-                        fontWeight: FontWeight.w500,
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
@@ -381,95 +370,6 @@ class _MainPlanCard extends StatelessWidget {
       default:
         return value;
     }
-  }
-}
-
-class _SummaryRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool highlighted;
-
-  const _SummaryRow({
-    required this.label,
-    required this.value,
-    this.highlighted = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-
-    return Row(
-      children: [
-        Text(
-          value,
-          style: tokens.typography.bodyMedium.copyWith(
-            color: highlighted ? tokens.colors.primary : tokens.colors.body,
-            fontWeight: highlighted ? FontWeight.w900 : FontWeight.w600,
-          ),
-        ),
-        const Spacer(),
-        Text(
-          label,
-          textAlign: TextAlign.right,
-          style: tokens.typography.bodyMedium.copyWith(
-            color: highlighted ? tokens.colors.label : tokens.colors.muted,
-            fontWeight: highlighted ? FontWeight.w900 : FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DetailBox extends StatelessWidget {
-  final String title;
-  final String value;
-
-  const _DetailBox({
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-
-    return Container(
-      padding: EdgeInsets.all(tokens.spacing.sm),
-      decoration: BoxDecoration(
-        color: tokens.colors.background,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: tokens.colors.border.withOpacity(0.16),
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: tokens.typography.bodySmall.copyWith(
-              color: tokens.colors.muted,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(height: tokens.spacing.xs),
-          Text(
-            value,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: tokens.typography.bodySmall.copyWith(
-              color: tokens.colors.label,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -514,7 +414,9 @@ class _CouponCard extends StatelessWidget {
               ),
             ],
           ),
+
           SizedBox(height: tokens.spacing.md),
+
           Row(
             children: [
               Expanded(
@@ -547,10 +449,10 @@ class _CouponCard extends StatelessWidget {
                     final code = couponController.text.trim();
                     if (code.isEmpty) return;
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(code),
-                        backgroundColor: tokens.colors.primary,
+                    context.read<PlanDetailBloc>().add(
+                      ApplyCouponEvent(
+                        couponCode: code,
+                        planId: planId,
                       ),
                     );
                   },
@@ -584,6 +486,7 @@ class _CouponCard extends StatelessWidget {
               ),
             ],
           ),
+
           if (coupon != null) ...[
             SizedBox(height: tokens.spacing.sm),
             Text(
@@ -602,6 +505,77 @@ class _CouponCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _PaymentMethodCard extends StatelessWidget {
+  const _PaymentMethodCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+
+    return _WhiteCard(
+      child: Row(
+        textDirection: TextDirection.rtl,
+        children: [
+          Icon(
+            Icons.credit_card_rounded,
+            color: tokens.colors.primary,
+            size: 24,
+          ),
+          SizedBox(width: tokens.spacing.sm),
+          Expanded(
+            child: Text(
+              'Cash / Card عند الاستقبال',
+              textAlign: TextAlign.right,
+              style: tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.label,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool highlighted;
+
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    this.highlighted = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+
+    return Row(
+      children: [
+        Text(
+          value,
+          style: tokens.typography.bodyMedium.copyWith(
+            color: highlighted ? tokens.colors.primary : tokens.colors.body,
+            fontWeight: highlighted ? FontWeight.w900 : FontWeight.w600,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          label,
+          textAlign: TextAlign.right,
+          style: tokens.typography.bodyMedium.copyWith(
+            color: highlighted ? tokens.colors.label : tokens.colors.muted,
+            fontWeight: highlighted ? FontWeight.w900 : FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -571,7 +571,22 @@
     "memberSessionsFilterTrainer": "Trainer",
     "memberSessionsFilterBranch": "Branch",
     "memberSessionsFilterReset": "Reset",
-    "memberSessionsFilterApply": "Apply filter"
+    "memberSessionsFilterApply": "Apply filter",
+    "sessionDetailTimeLabel": "Time",
+    "sessionDetailDateLabel": "Date",
+    "sessionDetailSeatsLabel": "Seats",
+    "sessionDetailSeatsRemaining": "{count} remaining",
+    "sessionDetailLocationLabel": "Location",
+    "sessionDetailAboutTitle": "About the Class",
+    "sessionDetailBenefitsTitle": "Benefits",
+    "sessionDetailEquipmentTitle": "Required Equipment",
+    "sessionDetailBookNow": "Book Now",
+    "sessionDetailAlreadyBooked": "Already Booked",
+    "sessionDetailWaitlisted": "On Waitlist",
+    "monthJanuary": "January", "monthFebruary": "February", "monthMarch": "March",
+    "monthApril": "April", "monthMay": "May", "monthJune": "June",
+    "monthJuly": "July", "monthAugust": "August", "monthSeptember": "September",
+    "monthOctober": "October", "monthNovember": "November", "monthDecember": "December"
   }
 
 

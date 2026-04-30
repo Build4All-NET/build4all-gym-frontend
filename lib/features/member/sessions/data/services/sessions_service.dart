@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../models/book_session_model.dart';
 import '../models/filter_options_model.dart';
 import '../models/session_card_model.dart';
+import '../models/session_detail_model.dart';
 
 class SessionsService {
   final Dio _dio;
@@ -48,5 +49,12 @@ class SessionsService {
     await _dio.delete(
       '/api/member/sessions/bookings/$bookingId',
     );
+  }
+  Future<SessionDetailModel> getSessionDetail(int sessionId) async {
+    final response = await _dio.get(
+      '/api/member/sessions/$sessionId',
+    );
+
+    return SessionDetailModel.fromJson(response.data);
   }
 }

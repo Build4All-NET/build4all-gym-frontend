@@ -498,7 +498,23 @@
           "memberSessionsFilterTrainer": "المدرب",
           "memberSessionsFilterBranch": "الفرع",
           "memberSessionsFilterReset": "إعادة تعيين",
-          "memberSessionsFilterApply": "تطبيق الفلتر"
+          "memberSessionsFilterApply": "تطبيق الفلتر",
+          "sessionDetailTimeLabel": "الوقت",
+          "sessionDetailDateLabel": "التاريخ",
+          "sessionDetailSeatsLabel": "المقاعد",
+          "sessionDetailSeatsRemaining": "{count} متبقي",
+          "sessionDetailLocationLabel": "المكان",
+          "sessionDetailAboutTitle": "عن الحصة",
+          "sessionDetailBenefitsTitle": "الفوائد",
+          "sessionDetailEquipmentTitle": "المعدات المطلوبة",
+          "sessionDetailBookNow": "احجز الآن",
+          "sessionDetailAlreadyBooked": "تم الحجز",
+          "sessionDetailWaitlisted": "في قائمة الانتظار",
+          "monthJanuary": "يناير", "monthFebruary": "فبراير", "monthMarch": "مارس",
+          "monthApril": "أبريل", "monthMay": "مايو", "monthJune": "يونيو",
+          "monthJuly": "يوليو", "monthAugust": "أغسطس", "monthSeptember": "سبتمبر",
+          "monthOctober": "أكتوبر", "monthNovember": "نوفمبر", "monthDecember": "ديسمبر"
+
 
   }
 
