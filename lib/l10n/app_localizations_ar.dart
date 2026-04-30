@@ -659,4 +659,88 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get navTrainingVideos => 'فيديوهات التدريب';
+
+  @override
+  String get checkoutComingSoon => 'الدفع قريباً';
+
+  @override
+  String get selectThisPlan => 'اختر هذه الخطة';
+
+  @override
+  String get selectedPlan => 'الخطة المختارة';
+
+  @override
+  String get baseAmount => 'المبلغ الأساسي';
+
+  @override
+  String get totalAmount => 'المبلغ الإجمالي';
+
+  @override
+  String get planDetails => 'تفاصيل الخطة';
+
+  @override
+  String get planDuration => 'مدة الخطة';
+
+  @override
+  String get visitLimit => 'حد الزيارات';
+
+  @override
+  String get unlimited => 'غير محدود';
+
+  @override
+  String get freezeDays => 'أيام التجميد';
+
+  @override
+  String get planFeatures => 'ميزات الخطة';
+
+  @override
+  String get billingMonthly => 'شهري';
+
+  @override
+  String get billingYearly => 'سنوي';
+
+  @override
+  String get billingWeekly => 'أسبوعي';
+
+  @override
+  String get couponCode => 'رمز القسيمة';
+
+  @override
+  String get enterCouponCode => 'أدخل رمز القسيمة';
+
+  @override
+  String get apply => 'تطبيق';
+
+  @override
+  String couponAppliedFinalPrice(Object price) {
+    return 'تم تطبيق القسيمة. السعر النهائي: $price';
+  }
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get memberPlansTitle => 'خطط الاشتراك';
+
+  @override
+  String get memberPlansSubtitle => 'اختر الخطة الأنسب لرحلتك الرياضية';
+
+  @override
+  String get memberPlansEmpty => 'لا توجد خطط اشتراك متاحة';
+
+  @override
+  String remainingDays(Object days) {
+    return 'متبقي $days يوم';
+  }
+
+  @override
+  String membershipEndsAt(Object date) {
+    return 'ينتهي في $date';
+  }
+
+  @override
+  String get renew => 'تجديد';
+
+  @override
+  String get mostPopular => 'الأكثر شيوعاً';
 }

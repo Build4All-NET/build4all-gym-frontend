@@ -659,4 +659,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navTrainingVideos => 'Training Videos';
+
+  @override
+  String get checkoutComingSoon => 'Checkout coming soon';
+
+  @override
+  String get selectThisPlan => 'Select this plan';
+
+  @override
+  String get selectedPlan => 'Selected plan';
+
+  @override
+  String get baseAmount => 'Base amount';
+
+  @override
+  String get totalAmount => 'Total amount';
+
+  @override
+  String get planDetails => 'Plan details';
+
+  @override
+  String get planDuration => 'Plan duration';
+
+  @override
+  String get visitLimit => 'Visit limit';
+
+  @override
+  String get unlimited => 'Unlimited';
+
+  @override
+  String get freezeDays => 'Freeze days';
+
+  @override
+  String get planFeatures => 'Plan features';
+
+  @override
+  String get billingMonthly => 'Monthly';
+
+  @override
+  String get billingYearly => 'Yearly';
+
+  @override
+  String get billingWeekly => 'Weekly';
+
+  @override
+  String get couponCode => 'Coupon code';
+
+  @override
+  String get enterCouponCode => 'Enter coupon code';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String couponAppliedFinalPrice(Object price) {
+    return 'Coupon applied. Final price: $price';
+  }
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get memberPlansTitle => 'Membership Plans';
+
+  @override
+  String get memberPlansSubtitle => 'Choose the best plan for your fitness journey';
+
+  @override
+  String get memberPlansEmpty => 'No membership plans available';
+
+  @override
+  String remainingDays(Object days) {
+    return '$days days remaining';
+  }
+
+  @override
+  String membershipEndsAt(Object date) {
+    return 'Ends at $date';
+  }
+
+  @override
+  String get renew => 'Renew';
+
+  @override
+  String get mostPopular => 'Most popular';
 }
