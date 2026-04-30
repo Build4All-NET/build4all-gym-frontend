@@ -11,7 +11,7 @@ class MemberCardEntity {
   final String fullName;
   final String memberCode;
   final String phone;
-  final String? profileFileId;
+  final int? profileFileId;
   final String membershipStatus; // "active" | "pending" | "blocked" | "inactive"
   final String planName;
   final String expiryDate;
@@ -40,7 +40,7 @@ class MemberCardEntity {
     String? planName,
     String? expiryDate,
     double? dueAmount,
-    String? profileFileId,
+    int? profileFileId,
   }) {
     return MemberCardEntity(
       userId: userId,

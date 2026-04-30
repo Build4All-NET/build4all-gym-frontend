@@ -155,7 +155,7 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       fullName:         model.fullName,
       memberCode:       model.memberCode,
       phone:            model.phone,
-      profileFileId:    model.profileFileId?.toString(),
+      profileFileId:    model.profileFileId,
       membershipStatus: model.membershipStatus,
       planName:         model.planName,
       expiryDate:       model.expiryDate,

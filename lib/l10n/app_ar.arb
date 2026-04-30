@@ -500,9 +500,8 @@
           "memberSessionsFilterBranch": "الفرع",
           "memberSessionsFilterReset": "إعادة تعيين",
           "memberSessionsFilterApply": "تطبيق الفلتر",
-          "memberSessionsFilterApply": "تطبيق الفلتر"
+          "memberSessionsFilterApply": "تطبيق الفلتر",
 
-  }
   "navDashboard": "لوحة التحكم",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 
