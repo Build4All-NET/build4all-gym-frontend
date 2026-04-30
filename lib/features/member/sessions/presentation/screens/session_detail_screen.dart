@@ -78,7 +78,7 @@ class _DetailView extends StatelessWidget {
             // ── Hero image with overlaid info ──────────────────────────
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 230,
+                height: 220,
                 width: double.infinity,
                 child: Stack(
                   fit: StackFit.expand,
