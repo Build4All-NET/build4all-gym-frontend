@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "API_BASE_URL": "http://192.168.10.65:8989",
   "PROJECT_API_BASE_URL": "http://192.168.10.65:8980",
+=======
+  "API_BASE_URL": "http://192.168.1.2:8989",
+  "PROJECT_API_BASE_URL": "http://192.168.1.2:8980",
+>>>>>>> a3b48964087a5ea0e307e8ca4e0036625d69ce8f
   "APP_NAME": "B-Pro",
   "APP_TYPE": "GYM",
   "OWNER_PROJECT_LINK_ID": "1",

@@ -574,6 +574,8 @@
     "memberSessionsFilterReset": "Reset",
     "memberSessionsFilterApply": "Apply filter",
 
+    "memberSessionsFilterApply": "Apply filter",
+
   "navDashboard": "Dashboard",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 
