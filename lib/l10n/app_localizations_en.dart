@@ -741,4 +741,88 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get memberSessionsFilterApply => 'Apply filter';
   String get navTrainingVideos => 'Training Videos';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get memberPlansTitle => 'Membership Plans';
+
+  @override
+  String get memberPlansSubtitle => 'Choose the best plan for you';
+
+  @override
+  String get memberPlansEmpty => 'No plans available';
+
+  @override
+  String get renew => 'Renew';
+
+  @override
+  String get mostPopular => 'Most Popular';
+
+  @override
+  String get selectThisPlan => 'Select This Plan';
+
+  @override
+  String get billingMonthly => 'Monthly';
+
+  @override
+  String get billingYearly => 'Yearly';
+
+  @override
+  String get billingWeekly => 'Weekly';
+
+  @override
+  String get checkoutComingSoon => 'Checkout coming soon';
+
+  @override
+  String get selectedPlan => 'Selected Plan';
+
+  @override
+  String get baseAmount => 'Base Amount';
+
+  @override
+  String get totalAmount => 'Total Amount';
+
+  @override
+  String get planDetails => 'Plan Details';
+
+  @override
+  String get planDuration => 'Plan Duration';
+
+  @override
+  String get visitLimit => 'Visit Limit';
+
+  @override
+  String get unlimited => 'Unlimited';
+
+  @override
+  String get freezeDays => 'Freeze Days';
+
+  @override
+  String get planFeatures => 'Plan Features';
+
+  @override
+  String get couponCode => 'Coupon Code';
+
+  @override
+  String get enterCouponCode => 'Enter coupon code';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String remainingDays(Object days) {
+    return '$days days remaining';
+  }
+
+  @override
+  String membershipEndsAt(Object date) {
+    return 'Ends at $date';
+  }
+
+  @override
+  String couponAppliedFinalPrice(Object price) {
+    return 'Final price: $price';
+  }
 }
