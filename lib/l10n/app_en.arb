@@ -573,5 +573,74 @@
     "memberSessionsFilterReset": "Reset",
     "memberSessionsFilterApply": "Apply filter"
   }
+  "navDashboard": "Dashboard",
+  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
+
+  "navMembers": "Members",
+  "@navMembers": { "description": "Admin drawer — Members item" },
+
+  "navPlans": "Plans",
+  "@navPlans": { "description": "Admin drawer — Plans item" },
+
+  "navStaff": "Staff",
+  "@navStaff": { "description": "Admin drawer — Staff item" },
+
+  "navPayments": "Payments",
+  "@navPayments": { "description": "Admin drawer — Payments item" },
+
+  "navClasses": "Classes",
+  "@navClasses": { "description": "Admin drawer — Classes item" },
+
+  "navAiAssistant": "AI Assistant",
+  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
+
+  "navSettings": "Settings",
+  "@navSettings": { "description": "Admin drawer — Settings item" },
+
+  "navLogout": "Logout",
+  "@navLogout": { "description": "Admin drawer — Logout item" },
+
+  "logoutConfirmTitle": "Log out?",
+  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
+
+  "logoutConfirmMessage": "Are you sure you want to log out?",
+  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
+
+  "sectionCoreOwner": "CORE OWNER",
+  "@sectionCoreOwner": { "description": "Drawer section label" },
+
+  "sectionOperationsReception": "OPERATIONS / RECEPTION",
+  "@sectionOperationsReception": { "description": "Drawer section label" },
+
+  "sectionTrainingPt": "TRAINING / PT",
+  "@sectionTrainingPt": { "description": "Drawer section label" },
+
+  "navTrainers": "Trainers / PT",
+  "@navTrainers": { "description": "Drawer nav item" },
+
+  "navReceptionStaff": "Reception Staff",
+  "@navReceptionStaff": { "description": "Drawer nav item" },
+
+  "navGymProfile": "Gym Profile",
+  "@navGymProfile": { "description": "Drawer nav item" },
+
+  "navBranches": "Branches",
+  "@navBranches": { "description": "Drawer nav item" },
+
+  "navCheckins": "Check-ins",
+  "@navCheckins": { "description": "Drawer nav item" },
+
+  "navClassesPt": "Classes & PT",
+  "@navClassesPt": { "description": "Drawer nav item" },
+
+  "navNotifications": "Notifications",
+  "@navNotifications": { "description": "Drawer nav item" },
+
+  "navPtSessions": "PT Sessions",
+  "@navPtSessions": { "description": "Drawer nav item" },
+
+  "navTrainingVideos": "Training Videos",
+  "@navTrainingVideos": { "description": "Drawer nav item" }
 
 
+  }

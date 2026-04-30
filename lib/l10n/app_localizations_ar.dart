@@ -592,106 +592,70 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signup_success => 'تم التسجيل بنجاح يمكنك تسجيل الدخول الان';
 
   @override
-  String get mostPopular => 'الأكثر شعبية';
+  String get navDashboard => 'لوحة التحكم';
 
   @override
-  String get selectThisPlan => 'اختر هذه الباقة';
+  String get navMembers => 'الأعضاء';
 
   @override
-  String get renew => 'تجديد';
+  String get navPlans => 'الخطط';
 
   @override
-  String get planTypeGym => 'جيم';
+  String get navStaff => 'الموظفون';
 
   @override
-  String get planTypeClasses => 'حصص';
+  String get navPayments => 'المدفوعات';
 
   @override
-  String get planTypeMixed => 'مختلط';
+  String get navClasses => 'الحصص';
 
   @override
-  String get billingMonthly => 'شهرياً';
+  String get navAiAssistant => 'المساعد الذكي';
 
   @override
-  String get billingYearly => 'سنوياً';
+  String get navSettings => 'الإعدادات';
 
   @override
-  String get billingWeekly => 'أسبوعياً';
+  String get navLogout => 'تسجيل الخروج';
 
   @override
-  String get membershipStatusActive => 'نشط';
+  String get logoutConfirmTitle => 'تسجيل الخروج؟';
 
   @override
-  String get membershipStatusFrozen => 'مجمّد';
+  String get logoutConfirmMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
 
   @override
-  String get membershipStatusExpired => 'منتهي';
+  String get sectionCoreOwner => 'القسم الرئيسي';
 
   @override
-  String remainingDays(int days) {
-    return '$days يوم متبقي';
-  }
+  String get sectionOperationsReception => 'العمليات / الاستقبال';
 
   @override
-  String membershipEndsAt(String date) {
-    return 'ينتهي في $date';
-  }
+  String get sectionTrainingPt => 'التدريب / PT';
 
   @override
-  String get memberPlansTitle => 'باقات العضوية';
+  String get navTrainers => 'المدربون / PT';
 
   @override
-  String get memberPlansSubtitle => 'اختر الباقة المناسبة لأهدافك';
+  String get navReceptionStaff => 'موظفو الاستقبال';
 
   @override
-  String get memberPlansEmpty => 'لا توجد باقات متاحة حالياً';
+  String get navGymProfile => 'ملف الصالة';
 
   @override
-  String get retry => 'إعادة المحاولة';
+  String get navBranches => 'الفروع';
 
   @override
-  String get back => 'رجوع';
+  String get navCheckins => 'تسجيل الحضور';
 
   @override
-  String get checkoutComingSoon => 'قريباً — ميزة إتمام الدفع قيد التطوير';
+  String get navClassesPt => 'الحصص والتدريب';
 
   @override
-  String get planDuration => 'المدة';
+  String get navNotifications => 'الإشعارات';
 
   @override
-  String get visitLimit => 'عدد الزيارات';
-
-  @override
-  String get unlimited => 'غير محدود';
-
-  @override
-  String get freezeDays => 'أيام التجميد';
-
-  @override
-  String get planFeatures => 'المميزات';
-
-  @override
-  String get couponCode => 'كود الخصم';
-
-  @override
-  String get enterCouponCode => 'أدخل كود الخصم';
-
-  @override
-  String get apply => 'تطبيق';
-
-  @override
-  String couponAppliedFinalPrice(String price) {
-    return '✓ تم تطبيق الكوبون — السعر النهائي: $price \$';
-  }
-
-  @override
-  String get selectedPlan => 'الخطة المختارة';
-
-  @override
-  String get baseAmount => 'المبلغ الأساسي';
-
-  @override
-  String get totalAmount => 'المجموع الكلي';
+  String get navPtSessions => 'جلسات PT';
 
   @override
   String get planDetails => 'تفاصيل الباقة';
@@ -776,4 +740,5 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberSessionsFilterApply => 'تطبيق الفلتر';
+  String get navTrainingVideos => 'فيديوهات التدريب';
 }

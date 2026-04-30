@@ -1,13 +1,14 @@
 import 'dart:convert';
+import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-
+import '../../../../auth/data/services/auth_token_store.dart';
 import '../models/adminplanstatsmodel.dart';
 import '../models/adminplanlistitemmodel.dart';
 import '../models/AdminBranchOptionModel.dart';
 import '../models/createplanrequestmodel.dart';
 import '../models/updateplanrequestmodel.dart';
-import '../../../../../core/config/env.dart' as ENV;
+import '../../../../../core/config/env.dart';
 
 // ── Abstract ──────────────────────────────────────────────────────────────────
 
@@ -24,13 +25,16 @@ abstract class AdminPlansRemoteDatasource {
 // ── Implementation ────────────────────────────────────────────────────────────
 
 class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
-  final _storage = const FlutterSecureStorage();
 
-  // Replace with your actual base URL / ApiClient pattern
-  static const String _baseUrl = ENV.Env.apiProjectBaseUrl;
+  final _tokenStore = const AdminTokenStore();
+
+  static const String _baseUrl = Env.apiProjectBaseUrl;
 
   Future<Map<String, String>> _authHeaders() async {
-    final token = await _storage.read(key: 'jwt_token');
+
+    final token = await _tokenStore.getToken();
+    print('JWT TOKEN: $token'); // remove after debugging
+
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -100,7 +104,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
         .toList();
   }
 
-  // ── POST /api/admin/plans ─────────────────────────────────────────────────
+// ── POST /api/admin/plans ─────────────────────────────────────────────────
   @override
   Future<void> createPlan(CreatePlanRequestModel request) async {
     final headers = await _authHeaders();
@@ -109,10 +113,17 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
       headers: headers,
       body: jsonEncode(request.toJson()),
     );
-    // Expect 201 Created
     if (response.statusCode != 201 && response.statusCode != 200) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>?;
-      throw Exception(body?['message'] ?? 'Failed to create plan');
+      String? message;
+      if (response.body.isNotEmpty) {
+        try {
+          final body = jsonDecode(response.body) as Map<String, dynamic>?;
+          message = body?['message'] as String?;
+        } catch (_) {
+          message = response.body;
+        }
+      }
+      throw Exception(message ?? 'Failed to create plan');
     }
   }
 
@@ -128,7 +139,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
     _checkStatus(response);
   }
 
-  // ── DELETE /api/admin/plans/{planId} ──────────────────────────────────────
+// ── DELETE ────────────────────────────────────────────────────────────────
   @override
   Future<void> deletePlan(int planId) async {
     final headers = await _authHeaders();
@@ -136,19 +147,36 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
       Uri.parse('$_baseUrl/api/admin/plans/$planId'),
       headers: headers,
     );
-    // 400 = business rule block (e.g. active members exist) — surface message
     if (response.statusCode == 400) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>?;
-      throw Exception(body?['message'] ?? 'Cannot delete plan');
+      String? message;
+      if (response.body.isNotEmpty) {
+        try {
+          final body = jsonDecode(response.body) as Map<String, dynamic>?;
+          message = body?['message'] as String?;
+        } catch (_) {
+          message = response.body;
+        }
+      }
+      throw Exception(message ?? 'Cannot delete plan');
     }
     _checkStatus(response);
   }
 
   // ── Private helper ────────────────────────────────────────────────────────
+  // ── Private helper ────────────────────────────────────────────────────────
   void _checkStatus(http.Response response) {
     if (response.statusCode >= 400) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>?;
-      throw Exception(body?['message'] ?? 'Request failed: ${response.statusCode}');
+      String? message;
+      if (response.body.isNotEmpty) {
+        try {
+          final body = jsonDecode(response.body) as Map<String, dynamic>?;
+          message = body?['message'] as String?;
+        } catch (_) {
+          // body wasn't valid JSON (e.g. plain-text or HTML error page)
+          message = response.body;
+        }
+      }
+      throw Exception(message ?? 'Request failed: ${response.statusCode}');
     }
   }
 }

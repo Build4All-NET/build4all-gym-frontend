@@ -129,10 +129,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       // Admin only
+      // ✅ AFTER — remove that line, admin token was already saved by the orchestrator
       if (result.adminOk) {
         await _roleStore.saveRole('admin');
         g.setAuthToken(result.adminToken!);
-        await _tokenStore.saveToken(token: result.adminToken!);
+        // No _tokenStore.saveToken here — orchestrator already saved to adminStore
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           role: 'admin',
@@ -142,11 +143,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       // User only
-      // User only
+      // ── User only ──────────────────────────────────────────────────────────────
       if (result.userOk) {
         await _roleStore.saveRole('user');
-
         g.setAuthToken(result.userToken!);
+
+        await _tokenStore.saveToken(token: result.userToken!); // ✅ ADD THIS
 
         await _tokenStore.saveUserProfileInfo(
           firstName: result.userEntity?.firstName,

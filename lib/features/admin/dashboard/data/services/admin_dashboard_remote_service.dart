@@ -1,29 +1,27 @@
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/config/env.dart';
-import '../../../../auth/data/services/auth_token_store.dart';
+import '../../../../auth/data/services/admin_token_store.dart'; // ← changed
 import '../models/admin_dashboard_summary_model.dart';
-import '../../../../../core/config/app_config.dart';
 import '../../../../../core/error/exceptions.dart';
-
 
 abstract class AdminDashboardRemoteDatasource {
   Future<AdminDashboardSummaryModel> getDashboardSummary({String period = 'today'});
 }
 
 class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasource {
-  final AuthTokenStore _tokenStore;
+  final AdminTokenStore _tokenStore; // ← changed
 
   AdminDashboardRemoteDatasourceImpl()
-      : _tokenStore = const AuthTokenStore();
+      : _tokenStore = const AdminTokenStore(); // ← changed
 
   @override
   Future<AdminDashboardSummaryModel> getDashboardSummary({String period = 'today'}) async {
-    // ✅ reads from 'auth_token' key — same key BLoC writes to
-    final token = await _tokenStore.getToken();
+    final token = await _tokenStore.getToken(); // now reads 'admin_token' key ✅
 
-    print('DEBUG admin token: $token'); // remove after testing
+    if (token == null || token.trim().isEmpty) {
+      throw UnauthorizedException();
+    }
 
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/dashboard')
         .replace(queryParameters: {'period': period});
@@ -34,6 +32,7 @@ class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasour
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
+          'X-Owner-Project-Link-Id': Env.ownerProjectLinkId, // ← add this too
         },
       );
 
