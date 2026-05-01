@@ -28,6 +28,8 @@
 //   → Returns:      member_list_result_entity.dart, member_card_entity.dart
 // =============================================================================
 
+import 'package:build4allgym/features/admin/members/domain/entities/member_detail_entity.dart';
+
 import '../../domain/entities/member_card_entity.dart';
 import '../../domain/entities/member_list_result_entity.dart';
 import '../../domain/repositories/admin_members_repository.dart';
@@ -151,12 +153,18 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       fullName: model.fullName,
       memberCode: model.memberCode,
       phone: model.phone,
-      profileFileId: model.profileFileId,
+      profileFileId: model.profileFileId?.toInt(),
       membershipStatus: model.membershipStatus,
       planName: model.planName,
       expiryDate: model.expiryDate,
       dueAmount: model.dueAmount,
       branchName: model.branchName,
     );
+  }
+
+  @override
+  Future<MemberDetailEntity> getMemberDetail(int userId) {
+    // TODO: implement getMemberDetail
+    throw UnimplementedError();
   }
 }
