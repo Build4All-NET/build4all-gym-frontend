@@ -702,5 +702,30 @@
       "price": {}
     }
   },
-  "back": "Back"
+  "back": "Back",
+  "accountProfileUpdateSuccess": "Profile updated successfully",
+  "accountStatExercises": "Exercises",
+  "accountStatSessions": "Sessions",
+  "accountStatAchievements": "Achievements",
+  "accountMyBookings": "My Bookings",
+  "accountLoyaltyPoints": "Loyalty Points",
+  "accountReferralTitle": "Your Referral Code",
+  "accountReferralSubtitle": "Share and earn rewards",
+  "accountReferralCodeLabel": "Your code",
+  "accountReferralCopied": "Code copied",
+  "accountReferralShare": "Share Code",
+  "accountPersonalInfo": "Personal Information",
+  "accountEmail": "Email",
+  "accountPhone": "Phone",
+  "accountDateOfBirth": "Date of Birth",
+  "accountAddress": "Address",
+  "accountEditProfile": "Edit Profile",
+  "accountSectionAccount": "Account",
+  "accountSectionSettings": "Settings",
+  "accountPaymentMethods": "Payment Methods",
+  "accountMyMembership": "My Membership",
+  "accountNotifications": "Notifications",
+  "accountSettings": "Settings",
+  "accountHelpSupport": "Help & Support",
+  "appVersion": "Version"
 }

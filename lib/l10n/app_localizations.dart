@@ -1864,6 +1864,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training Videos'**
   String get navTrainingVideos;
+
+  /// No description provided for @accountProfileUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get accountProfileUpdateSuccess;
+
+  /// No description provided for @accountStatExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get accountStatExercises;
+
+  /// No description provided for @accountStatSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get accountStatSessions;
+
+  /// No description provided for @accountStatAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get accountStatAchievements;
+
+  /// No description provided for @accountMyBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get accountMyBookings;
+
+  /// No description provided for @accountLoyaltyPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Loyalty Points'**
+  String get accountLoyaltyPoints;
+
+  /// No description provided for @accountReferralTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Referral Code'**
+  String get accountReferralTitle;
+
+  /// No description provided for @accountReferralSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share and earn rewards'**
+  String get accountReferralSubtitle;
+
+  /// No description provided for @accountReferralCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your code'**
+  String get accountReferralCodeLabel;
+
+  /// No description provided for @accountReferralCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get accountReferralCopied;
+
+  /// No description provided for @accountReferralShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Code'**
+  String get accountReferralShare;
+
+  /// No description provided for @accountPersonalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get accountPersonalInfo;
+
+  /// No description provided for @accountEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountEmail;
+
+  /// No description provided for @accountPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get accountPhone;
+
+  /// No description provided for @accountDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get accountDateOfBirth;
+
+  /// No description provided for @accountAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get accountAddress;
+
+  /// No description provided for @accountEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get accountEditProfile;
+
+  /// No description provided for @accountSectionAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountSectionAccount;
+
+  /// No description provided for @accountSectionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get accountSectionSettings;
+
+  /// No description provided for @accountPaymentMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Methods'**
+  String get accountPaymentMethods;
+
+  /// No description provided for @accountMyMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'My Membership'**
+  String get accountMyMembership;
+
+  /// No description provided for @accountNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get accountNotifications;
+
+  /// No description provided for @accountSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get accountSettings;
+
+  /// No description provided for @accountHelpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get accountHelpSupport;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get appVersion;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
