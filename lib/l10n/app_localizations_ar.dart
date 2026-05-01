@@ -785,9 +785,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get totalAmount => 'المبلغ الإجمالي';
 
   @override
-  String get planDetails => 'تفاصيل الخطة';
-
-  @override
   String get planDuration => 'مدة الخطة';
 
   @override

@@ -783,10 +783,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalAmount => 'Total Amount';
-
-  @override
-  String get planDetails => 'Plan Details';
-
+  
   @override
   String get planDuration => 'Plan Duration';
 

@@ -1615,11 +1615,6 @@ abstract class AppLocalizations {
   /// **'Total Amount'**
   String get totalAmount;
 
-  /// No description provided for @planDetails.
-  ///
-  /// In en, this message translates to:
-  /// **'Plan Details'**
-  String get planDetails;
 
   /// No description provided for @planDuration.
   ///
