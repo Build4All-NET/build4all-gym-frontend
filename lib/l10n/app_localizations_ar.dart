@@ -691,6 +691,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get baseAmount => 'المبلغ الأساسي';
 
   @override
+
+  @override
+  String couponAppliedFinalPrice(Object price) {
+    return 'السعر النهائي: $price';
+  }
+
+  @override
+  String get selectedPlan => 'الخطة المختارة';
+
+  @override
+  String get baseAmount => 'المبلغ الأساسي';
+
+  @override
   String get totalAmount => 'المبلغ الإجمالي';
 
   @override
@@ -776,6 +789,143 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberSessionsFilterApply => 'تطبيق الفلتر';
+
+  @override
+  String get sessionDetailTimeLabel => 'الوقت';
+
+  @override
+  String get sessionDetailDateLabel => 'التاريخ';
+
+  @override
+  String get sessionDetailSeatsLabel => 'المقاعد';
+
+  @override
+  String sessionDetailSeatsRemaining(Object count) {
+    return '$count متبقي';
+  }
+
+  @override
+  String get sessionDetailLocationLabel => 'المكان';
+
+  @override
+  String get sessionDetailAboutTitle => 'عن الحصة';
+
+  @override
+  String get sessionDetailBenefitsTitle => 'الفوائد';
+
+  @override
+  String get sessionDetailEquipmentTitle => 'المعدات المطلوبة';
+
+  @override
+  String get sessionDetailBookNow => 'احجز الآن';
+
+  @override
+  String get sessionDetailAlreadyBooked => 'تم الحجز';
+
+  @override
+  String get sessionDetailWaitlisted => 'في قائمة الانتظار';
+
+  @override
+  String get monthJanuary => 'يناير';
+
+  @override
+  String get monthFebruary => 'فبراير';
+
+  @override
+  String get monthMarch => 'مارس';
+
+  @override
+  String get monthApril => 'أبريل';
+
+  @override
+  String get monthMay => 'مايو';
+
+  @override
+  String get monthJune => 'يونيو';
+
+  @override
+  String get monthJuly => 'يوليو';
+
+  @override
+  String get monthAugust => 'أغسطس';
+
+  @override
+  String get monthSeptember => 'سبتمبر';
+
+  @override
+  String get monthOctober => 'أكتوبر';
+
+  @override
+  String get monthNovember => 'نوفمبر';
+
+  @override
+  String get monthDecember => 'ديسمبر';
+
+  @override
+  String get navDashboard => 'لوحة التحكم';
+
+  @override
+  String get navMembers => 'الأعضاء';
+
+  @override
+  String get navPlans => 'الخطط';
+
+  @override
+  String get navStaff => 'الموظفون';
+
+  @override
+  String get navPayments => 'المدفوعات';
+
+  @override
+  String get navClasses => 'الحصص';
+
+  @override
+  String get navAiAssistant => 'المساعد الذكي';
+
+  @override
+  String get navSettings => 'الإعدادات';
+
+  @override
+  String get navLogout => 'تسجيل الخروج';
+
+  @override
+  String get logoutConfirmTitle => 'تسجيل الخروج؟';
+
+  @override
+  String get logoutConfirmMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get sectionCoreOwner => 'القسم الرئيسي';
+
+  @override
+  String get sectionOperationsReception => 'العمليات / الاستقبال';
+
+  @override
+  String get sectionTrainingPt => 'التدريب / PT';
+
+  @override
+  String get navTrainers => 'المدربون / PT';
+
+  @override
+  String get navReceptionStaff => 'موظفو الاستقبال';
+
+  @override
+  String get navGymProfile => 'ملف الصالة';
+
+  @override
+  String get navBranches => 'الفروع';
+
+  @override
+  String get navCheckins => 'تسجيل الحضور';
+
+  @override
+  String get navClassesPt => 'الحصص والتدريب';
+
+  @override
+  String get navNotifications => 'الإشعارات';
+
+  @override
+  String get navPtSessions => 'جلسات PT';
 
   @override
   String get navDashboard => 'لوحة التحكم';

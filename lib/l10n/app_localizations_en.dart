@@ -691,6 +691,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get baseAmount => 'Base Amount';
 
   @override
+
+  @override
+  String couponAppliedFinalPrice(Object price) {
+    return 'Final price: $price';
+  }
+
+  @override
+  String get selectedPlan => 'Selected Plan';
+
+  @override
+  String get baseAmount => 'Base Amount';
+
+  @override
   String get totalAmount => 'Total Amount';
 
   @override
@@ -776,6 +789,143 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberSessionsFilterApply => 'Apply filter';
+
+  @override
+  String get sessionDetailTimeLabel => 'Time';
+
+  @override
+  String get sessionDetailDateLabel => 'Date';
+
+  @override
+  String get sessionDetailSeatsLabel => 'Seats';
+
+  @override
+  String sessionDetailSeatsRemaining(Object count) {
+    return '$count remaining';
+  }
+
+  @override
+  String get sessionDetailLocationLabel => 'Location';
+
+  @override
+  String get sessionDetailAboutTitle => 'About the Class';
+
+  @override
+  String get sessionDetailBenefitsTitle => 'Benefits';
+
+  @override
+  String get sessionDetailEquipmentTitle => 'Required Equipment';
+
+  @override
+  String get sessionDetailBookNow => 'Book Now';
+
+  @override
+  String get sessionDetailAlreadyBooked => 'Already Booked';
+
+  @override
+  String get sessionDetailWaitlisted => 'On Waitlist';
+
+  @override
+  String get monthJanuary => 'January';
+
+  @override
+  String get monthFebruary => 'February';
+
+  @override
+  String get monthMarch => 'March';
+
+  @override
+  String get monthApril => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJune => 'June';
+
+  @override
+  String get monthJuly => 'July';
+
+  @override
+  String get monthAugust => 'August';
+
+  @override
+  String get monthSeptember => 'September';
+
+  @override
+  String get monthOctober => 'October';
+
+  @override
+  String get monthNovember => 'November';
+
+  @override
+  String get monthDecember => 'December';
+
+  @override
+  String get navDashboard => 'Dashboard';
+
+  @override
+  String get navMembers => 'Members';
+
+  @override
+  String get navPlans => 'Plans';
+
+  @override
+  String get navStaff => 'Staff';
+
+  @override
+  String get navPayments => 'Payments';
+
+  @override
+  String get navClasses => 'Classes';
+
+  @override
+  String get navAiAssistant => 'AI Assistant';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get navLogout => 'Logout';
+
+  @override
+  String get logoutConfirmTitle => 'Log out?';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to log out?';
+
+  @override
+  String get sectionCoreOwner => 'CORE OWNER';
+
+  @override
+  String get sectionOperationsReception => 'OPERATIONS / RECEPTION';
+
+  @override
+  String get sectionTrainingPt => 'TRAINING / PT';
+
+  @override
+  String get navTrainers => 'Trainers / PT';
+
+  @override
+  String get navReceptionStaff => 'Reception Staff';
+
+  @override
+  String get navGymProfile => 'Gym Profile';
+
+  @override
+  String get navBranches => 'Branches';
+
+  @override
+  String get navCheckins => 'Check-ins';
+
+  @override
+  String get navClassesPt => 'Classes & PT';
+
+  @override
+  String get navNotifications => 'Notifications';
+
+  @override
+  String get navPtSessions => 'PT Sessions';
 
   @override
   String get navDashboard => 'Dashboard';

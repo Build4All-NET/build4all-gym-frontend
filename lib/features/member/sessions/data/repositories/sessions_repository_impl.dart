@@ -3,6 +3,7 @@ import '../../domain/entities/filter_option_item_entity.dart';
 import '../../domain/entities/session_card_entity.dart';
 import '../../domain/repositories/sessions_repository.dart';
 import '../services/sessions_service.dart';
+import '../../domain/entities/session_detail_entity.dart';
 
 class SessionsRepositoryImpl implements SessionsRepository {
   final SessionsService _service;
@@ -68,5 +69,33 @@ class SessionsRepositoryImpl implements SessionsRepository {
   @override
   Future<void> cancelBooking(int bookingId) {
     return _service.cancelBooking(bookingId);
+  }
+  @override
+  Future<SessionDetailEntity> getSessionDetail(int sessionId) async {
+    try {
+      final model = await _service.getSessionDetail(sessionId);
+
+      return SessionDetailEntity(
+        sessionId: model.sessionId,
+        classTypeId: model.classTypeId,
+        trainerId: model.trainerId,
+        className: model.className,
+        trainerName: model.trainerName,
+        trainerProfileFileId: model.trainerProfileFileId,
+        trainerRating: model.trainerRating,
+        difficultyLevel: model.difficultyLevel,
+        price: model.price,
+        startTime: model.startTime,
+        endTime: model.endTime,
+        roomName: model.roomName,
+        availableSeats: model.availableSeats,
+        memberBookingStatus: model.memberBookingStatus,
+        description: model.description,
+        benefits: model.benefits,
+        equipment: model.equipment,
+      );
+    } catch (e) {
+      throw Exception('Failed to load session detail');
+    }
   }
 }

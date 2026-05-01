@@ -1430,6 +1430,32 @@ abstract class AppLocalizations {
   /// No description provided for @totalAmount.
   ///
   /// In en, this message translates to:
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @couponAppliedFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price: {price}'**
+  String couponAppliedFinalPrice(Object price);
+
+  /// No description provided for @selectedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Plan'**
+  String get selectedPlan;
+
+  /// No description provided for @baseAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Amount'**
+  String get baseAmount;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
   /// **'Total Amount'**
   String get totalAmount;
 
@@ -1588,6 +1614,280 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply filter'**
   String get memberSessionsFilterApply;
+
+  /// No description provided for @sessionDetailTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get sessionDetailTimeLabel;
+
+  /// No description provided for @sessionDetailDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get sessionDetailDateLabel;
+
+  /// No description provided for @sessionDetailSeatsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Seats'**
+  String get sessionDetailSeatsLabel;
+
+  /// No description provided for @sessionDetailSeatsRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} remaining'**
+  String sessionDetailSeatsRemaining(Object count);
+
+  /// No description provided for @sessionDetailLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get sessionDetailLocationLabel;
+
+  /// No description provided for @sessionDetailAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About the Class'**
+  String get sessionDetailAboutTitle;
+
+  /// No description provided for @sessionDetailBenefitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits'**
+  String get sessionDetailBenefitsTitle;
+
+  /// No description provided for @sessionDetailEquipmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Equipment'**
+  String get sessionDetailEquipmentTitle;
+
+  /// No description provided for @sessionDetailBookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get sessionDetailBookNow;
+
+  /// No description provided for @sessionDetailAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Booked'**
+  String get sessionDetailAlreadyBooked;
+
+  /// No description provided for @sessionDetailWaitlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'On Waitlist'**
+  String get sessionDetailWaitlisted;
+
+  /// No description provided for @monthJanuary.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get monthJanuary;
+
+  /// No description provided for @monthFebruary.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get monthFebruary;
+
+  /// No description provided for @monthMarch.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get monthMarch;
+
+  /// No description provided for @monthApril.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get monthApril;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// No description provided for @monthJune.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get monthJune;
+
+  /// No description provided for @monthJuly.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get monthJuly;
+
+  /// No description provided for @monthAugust.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get monthAugust;
+
+  /// No description provided for @monthSeptember.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get monthSeptember;
+
+  /// No description provided for @monthOctober.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get monthOctober;
+
+  /// No description provided for @monthNovember.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get monthNovember;
+
+  /// No description provided for @monthDecember.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get monthDecember;
+
+  /// Admin drawer — Dashboard item
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get navDashboard;
+
+  /// Admin drawer — Members item
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get navMembers;
+
+  /// Admin drawer — Plans item
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get navPlans;
+
+  /// Admin drawer — Staff item
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get navStaff;
+
+  /// Admin drawer — Payments item
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get navPayments;
+
+  /// Admin drawer — Classes item
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get navClasses;
+
+  /// Admin drawer — AI Assistant item
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get navAiAssistant;
+
+  /// Admin drawer — Settings item
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// Admin drawer — Logout item
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get navLogout;
+
+  /// Logout confirmation dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Log out?'**
+  String get logoutConfirmTitle;
+
+  /// Logout confirmation dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get logoutConfirmMessage;
+
+  /// Drawer section label
+  ///
+  /// In en, this message translates to:
+  /// **'CORE OWNER'**
+  String get sectionCoreOwner;
+
+  /// Drawer section label
+  ///
+  /// In en, this message translates to:
+  /// **'OPERATIONS / RECEPTION'**
+  String get sectionOperationsReception;
+
+  /// Drawer section label
+  ///
+  /// In en, this message translates to:
+  /// **'TRAINING / PT'**
+  String get sectionTrainingPt;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Trainers / PT'**
+  String get navTrainers;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Reception Staff'**
+  String get navReceptionStaff;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Profile'**
+  String get navGymProfile;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Branches'**
+  String get navBranches;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins'**
+  String get navCheckins;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Classes & PT'**
+  String get navClassesPt;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get navNotifications;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'PT Sessions'**
+  String get navPtSessions;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
 
   /// Admin drawer — Dashboard item
   ///
