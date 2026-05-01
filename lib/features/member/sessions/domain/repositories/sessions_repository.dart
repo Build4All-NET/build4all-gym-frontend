@@ -1,7 +1,7 @@
 import '../entities/book_session_result_entity.dart';
 import '../entities/filter_option_item_entity.dart';
 import '../entities/session_card_entity.dart';
-
+import '../entities/session_detail_entity.dart';
 abstract class SessionsRepository {
   Future<List<SessionCardEntity>> getSessions({
     required DateTime date,
@@ -19,4 +19,5 @@ abstract class SessionsRepository {
   Future<BookSessionResultEntity> bookSession(int sessionId);
 
   Future<void> cancelBooking(int bookingId);
+  Future<SessionDetailEntity> getSessionDetail(int sessionId);
 }

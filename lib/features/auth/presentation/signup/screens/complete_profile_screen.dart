@@ -119,7 +119,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
-
             Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
           },
         ),

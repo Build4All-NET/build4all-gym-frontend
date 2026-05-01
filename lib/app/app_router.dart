@@ -1,18 +1,24 @@
-import 'package:build4allgym/features/member/home/domain/usecases/log_weight_usecase.dart';
+import 'package:build4allgym/features/admin/members/presentation/bloc/admin_members_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
+import '../features/admin/members/data/services/admin_members_service.dart';
+import '../features/admin/members/domain/usecases/block_member_use_case.dart';
+import '../features/admin/members/domain/usecases/bulk_delete_members_use_case.dart';
+import '../features/admin/members/domain/usecases/delete_member_use_case.dart';
+import '../features/admin/members/domain/usecases/get_member_detail_use_case.dart'; // ← GA-270
+import '../features/admin/members/domain/usecases/get_members_use_case.dart';
+import '../features/admin/members/domain/usecases/unblock_member_use_case.dart';
+import '../features/admin/members/presentation/screens/member_detail_screen.dart';      // ← GA-271
 import '../features/admin/plans/data/repositories/admin_plans_repository_impl.dart';
 import '../features/admin/plans/data/services/admin_plans_remote_service.dart';
 import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart';
 import '../features/admin/plans/presentation/bloc/admin_plans/admin_plans_bloc.dart';
 import '../features/admin/plans/presentation/screens/admin_plans_screen.dart';
-import '../features/auth/data/services/auth_token_store.dart';
 import '../features/auth/presentation/signup/screens/signup_screen.dart';
 import '../features/auth/presentation/signup/screens/otp_screen.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../features/forgotpassword/data/repositories/forgot_password_repository_impl.dart';
 import '../features/forgotpassword/data/services/forgot_password_api_service.dart';
 import '../features/forgotpassword/domain/usecases/initiate_forgot_password.dart';
@@ -21,7 +27,6 @@ import '../features/forgotpassword/domain/usecases/reset_password_usecase.dart';
 import '../features/forgotpassword/presentation/bloc/forgot_password_bloc.dart';
 import '../features/forgotpassword/presentation/screens/forgot_password_screen.dart';
 
-// Admin dashboard imports
 import '../features/admin/dashboard/data/services/admin_dashboard_remote_service.dart';
 import '../features/admin/dashboard/data/repositories/admin_dashboard_repository_impl.dart';
 import '../features/admin/dashboard/domain/usecases/get_admin_dashboard_usecase.dart';
@@ -31,7 +36,6 @@ import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.
 
 import '../features/shell/presentation/screens/main_shell.dart';
 
-// USER main screen imports
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
 import '../features/member/home/data/repositories/member_home_repository_impl.dart';
@@ -39,19 +43,8 @@ import '../features/member/home/domain/usecases/get_member_home_usecase.dart';
 import '../features/member/home/presentation/bloc/member_home_event.dart';
 import '../features/member/home/data/services/member_home_remote_datasource.dart';
 
-// TODO: Uncomment each import as teammates finish their screens:
-// import '../features/admin/members/presentation/screens/admin_members_screen.dart';
-// import '../features/admin/trainers/presentation/screens/admin_trainers_screen.dart';
-// import '../features/admin/staff/presentation/screens/admin_staff_screen.dart';
-// import '../features/admin/gym_profile/presentation/screens/admin_gym_profile_screen.dart';
-// import '../features/admin/branches/presentation/screens/admin_branches_screen.dart';
-// import '../features/admin/checkins/presentation/screens/admin_checkins_screen.dart';
-// import '../features/admin/payments/presentation/screens/admin_payments_screen.dart';
-// import '../features/admin/classes/presentation/screens/admin_classes_screen.dart';
-// import '../features/admin/notifications/presentation/screens/admin_notifications_screen.dart';
-// import '../features/admin/pt_sessions/presentation/screens/admin_pt_sessions_screen.dart';
-// import '../features/admin/training_videos/presentation/screens/admin_training_videos_screen.dart';
-// import '../features/admin/settings/presentation/screens/admin_settings_screen.dart';
+import '../features/admin/members/presentation/screens/admin_members_screen.dart';
+import '../features/admin/members/data/repositories/admin_members_repository_impl.dart';
 
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
@@ -61,17 +54,18 @@ class AppRouter {
   static const String forgotPassword = '/forgot-password';
 
   // ─── Role roots ────────────────────────────────────────────────────────────
-  static const String admin          = '/admin';   // legacy root → dashboard
-  static const String user           = '/user';
+  static const String admin = '/admin';
+  static const String user  = '/user';
 
   // ─── Admin: Core Owner ─────────────────────────────────────────────────────
-  static const String adminDashboard = '/admin/dashboard';
-  static const String adminMembers   = '/admin/members';
-  static const String adminPlans     = '/admin/plans';
-  static const String adminTrainers  = '/admin/trainers';
-  static const String adminStaff     = '/admin/staff';
-  static const String adminGymProfile= '/admin/gym-profile';
-  static const String adminBranches  = '/admin/branches';
+  static const String adminDashboard  = '/admin/dashboard';
+  static const String adminMembers    = '/admin/members';
+  static const String memberDetail    = '/admin/members/detail'; // ← GA-271
+  static const String adminPlans      = '/admin/plans';
+  static const String adminTrainers   = '/admin/trainers';
+  static const String adminStaff      = '/admin/staff';
+  static const String adminGymProfile = '/admin/gym-profile';
+  static const String adminBranches   = '/admin/branches';
 
   // ─── Admin: Operations / Reception ────────────────────────────────────────
   static const String adminCheckins      = '/admin/checkins';
@@ -80,8 +74,8 @@ class AppRouter {
   static const String adminNotifications = '/admin/notifications';
 
   // ─── Admin: Training / PT ─────────────────────────────────────────────────
-  static const String adminPtSessions      = '/admin/pt-sessions';
-  static const String adminTrainingVideos  = '/admin/training-videos';
+  static const String adminPtSessions     = '/admin/pt-sessions';
+  static const String adminTrainingVideos = '/admin/training-videos';
 
   // ─── Admin: Settings ──────────────────────────────────────────────────────
   static const String adminSettings = '/admin/settings';
@@ -105,17 +99,15 @@ class AppRouter {
         );
 
       case signup:
-        return MaterialPageRoute(
-          builder: (_) => const SignupScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const SignupScreen());
 
       case otp:
         final otpArgs = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (_) => OtpScreen(
-            contact:  otpArgs['contact'] as String,
-            email:    otpArgs['email']   as String,
-            phone:    otpArgs['phone']   as String?,
+            contact:  otpArgs['contact']  as String,
+            email:    otpArgs['email']    as String,
+            phone:    otpArgs['phone']    as String?,
             password: otpArgs['password'] as String,
           ),
         );
@@ -143,7 +135,7 @@ class AppRouter {
           builder: (_) => MainShell(appConfig: appConfig),
         );
 
-    // ── Admin: Dashboard (both legacy /admin and new /admin/dashboard) ─────
+    // ── Admin: Dashboard ───────────────────────────────────────────────────
 
       case admin:
       case adminDashboard:
@@ -160,7 +152,7 @@ class AppRouter {
           ),
         );
 
-    // ── Admin: Plans (already built) ───────────────────────────────────────
+    // ── Admin: Plans ───────────────────────────────────────────────────────
 
       case adminPlans:
         return MaterialPageRoute(
@@ -192,93 +184,117 @@ class AppRouter {
         );
 
     // ── Admin: Members ─────────────────────────────────────────────────────
-    // TODO: Replace _ComingSoonScreen with AdminMembersScreen once built.
-    // import '../features/admin/members/presentation/screens/admin_members_screen.dart';
+
       case adminMembers:
+        final mArgs      = settings.arguments as Map<String, dynamic>?;
+        final branchId   = mArgs?['branchId']   as int?    ?? 1;
+        final branchName = mArgs?['branchName'] as String? ?? 'Main Branch';
+        final address    = mArgs?['address']    as String? ?? '';
+
+        final service    = AdminMembersService();
+        final repository = AdminMembersRepositoryImpl(service: service);
+
         return MaterialPageRoute(
-          builder: (_) => const _ComingSoonScreen(title: 'Members'),
+          builder: (_) => AdminMembersPage(
+            branchId:   branchId,
+            branchName: branchName,
+            address:    address,
+            bloc: AdminMembersBloc(
+              branchId:                branchId,
+              getMembersUseCase:       GetMembersUseCase(repository),
+              getMemberDetailUseCase:  GetMemberDetailUseCase(repository), // ← GA-270
+              blockMemberUseCase:      BlockMemberUseCase(repository),
+              unblockMemberUseCase:    UnblockMemberUseCase(repository),
+              deleteMemberUseCase:     DeleteMemberUseCase(repository),
+              bulkDeleteMembersUseCase: BulkDeleteMembersUseCase(repository),
+            ),
+          ),
         );
 
-    // ── Admin: Trainers / PT ───────────────────────────────────────────────
-    // TODO: Replace with AdminTrainersScreen once built.
+    // ── Admin: Member Detail ───────────────────────────────────────────────
+    // GA-271: The bloc is passed via arguments from MemberCardWidget because
+    // the router's context does NOT have AdminMembersBloc in its tree.
+    // context.read<AdminMembersBloc>() here would crash — the route is built
+    // under MaterialApp, not under AdminMembersPage.
+
+      case memberDetail:
+        final dArgs  = settings.arguments as Map<String, dynamic>;
+        final userId = dArgs['userId'] as int;
+        final bloc   = dArgs['bloc']   as AdminMembersBloc;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: bloc,
+            child: MemberDetailPage(userId: userId),
+          ),
+        );
+
+    // ── Admin: Trainers ────────────────────────────────────────────────────
       case adminTrainers:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Trainers / PT'),
         );
 
-    // ── Admin: Reception Staff ─────────────────────────────────────────────
-    // TODO: Replace with AdminStaffScreen once built.
+    // ── Admin: Staff ───────────────────────────────────────────────────────
       case adminStaff:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Reception Staff'),
         );
 
     // ── Admin: Gym Profile ─────────────────────────────────────────────────
-    // TODO: Replace with AdminGymProfileScreen once built.
       case adminGymProfile:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Gym Profile'),
         );
 
     // ── Admin: Branches ────────────────────────────────────────────────────
-    // TODO: Replace with AdminBranchesScreen once built.
       case adminBranches:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Branches'),
         );
 
     // ── Admin: Check-ins ───────────────────────────────────────────────────
-    // TODO: Replace with AdminCheckinsScreen once built.
       case adminCheckins:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Check-ins'),
         );
 
     // ── Admin: Payments ────────────────────────────────────────────────────
-    // TODO: Replace with AdminPaymentsScreen once built.
       case adminPayments:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Payments'),
         );
 
-    // ── Admin: Classes & PT ────────────────────────────────────────────────
-    // TODO: Replace with AdminClassesScreen once built.
+    // ── Admin: Classes ─────────────────────────────────────────────────────
       case adminClasses:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Classes & PT'),
         );
 
     // ── Admin: Notifications ───────────────────────────────────────────────
-    // TODO: Replace with AdminNotificationsScreen once built.
       case adminNotifications:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Notifications'),
         );
 
     // ── Admin: PT Sessions ─────────────────────────────────────────────────
-    // TODO: Replace with AdminPtSessionsScreen once built.
       case adminPtSessions:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'PT Sessions'),
         );
 
     // ── Admin: Training Videos ─────────────────────────────────────────────
-    // TODO: Replace with AdminTrainingVideosScreen once built.
       case adminTrainingVideos:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Training Videos'),
         );
 
     // ── Admin: Settings ────────────────────────────────────────────────────
-    // TODO: Replace with AdminSettingsScreen once built.
       case adminSettings:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Settings'),
         );
 
-    // ── Logout ────────────────────────────────────────────────────────────
-    // The drawer handles logout via a confirm dialog and pushes /login directly.
-    // This case is a safety fallback if /logout is ever pushed programmatically.
+    // ── Logout ─────────────────────────────────────────────────────────────
       case logout:
         return MaterialPageRoute(
           builder: (_) => UserLoginScreen(appConfig: appConfig),
@@ -296,12 +312,8 @@ class AppRouter {
 }
 
 // ─── Stub screen ─────────────────────────────────────────────────────────────
-/// Temporary placeholder shown for screens not yet implemented.
-/// Replaced screen-by-screen as teammates deliver their work.
-/// Shows the screen name so navigation is visually testable immediately.
 class _ComingSoonScreen extends StatelessWidget {
   final String title;
-
   const _ComingSoonScreen({required this.title});
 
   @override
@@ -314,10 +326,7 @@ class _ComingSoonScreen extends StatelessWidget {
           children: [
             const Icon(Icons.construction_outlined, size: 56, color: Colors.grey),
             const SizedBox(height: 16),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
               'Coming soon',

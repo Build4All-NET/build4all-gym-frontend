@@ -51,19 +51,28 @@ class AdminNavigationDrawer extends StatelessWidget {
   final String adminEmail;
   final String? avatarUrl;
 
+  /// The id of the currently active screen — must match a [NavigationItem.id]
+  /// in [adminDrawerConfig]. Each admin screen passes its own id so the
+  /// drawer always highlights the correct item when opened.
+  ///
+  /// Example: AdminDashboardScreen passes 'dashboard',
+  ///          AdminPlansScreen passes 'plans', etc.
+  final String initialActiveId;
+
   const AdminNavigationDrawer({
     super.key,
     required this.gymName,
     required this.branchName,
     required this.adminName,
     required this.adminEmail,
+    required this.initialActiveId,
     this.avatarUrl,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<DrawerCubit>(
-      create: (_) => DrawerCubit(),
+      create: (_) => DrawerCubit(initialActiveId: initialActiveId),
       child: _DrawerBody(
         gymName: gymName,
         branchName: branchName,
@@ -143,15 +152,22 @@ class _DrawerBody extends StatelessWidget {
 
               // ── FIXED BOTTOM (Settings + Logout) ─────────────────────
               const Divider(height: 1, thickness: 1),
-              for (final item in adminDrawerBottomItems)
-                AdminDrawerItemWidget(
-                  item: item,
-                  isActive: state.activeItemId == item.id,
-                  onTap: () => item.isDestructive
-                      ? _confirmLogout(context)
-                      : _navigate(context, item),
+              SafeArea(
+                top: false,
+                child: Column(
+                  children: [
+                    for (final item in adminDrawerBottomItems)
+                      AdminDrawerItemWidget(
+                        item: item,
+                        isActive: state.activeItemId == item.id,
+                        onTap: () => item.isDestructive
+                            ? _confirmLogout(context)
+                            : _navigate(context, item),
+                      ),
+                    const SizedBox(height: 8),
+                  ],
                 ),
-              const SizedBox(height: 8),
+              ),
             ],
           );
         },

@@ -572,8 +572,25 @@
     "memberSessionsFilterTrainer": "Trainer",
     "memberSessionsFilterBranch": "Branch",
     "memberSessionsFilterReset": "Reset",
-    "memberSessionsFilterApply": "Apply filter"
-  }
+    "memberSessionsFilterApply": "Apply filter",
+    "sessionDetailTimeLabel": "Time",
+    "sessionDetailDateLabel": "Date",
+    "sessionDetailSeatsLabel": "Seats",
+    "sessionDetailSeatsRemaining": "{count} remaining",
+    "sessionDetailLocationLabel": "Location",
+    "sessionDetailAboutTitle": "About the Class",
+    "sessionDetailBenefitsTitle": "Benefits",
+    "sessionDetailEquipmentTitle": "Required Equipment",
+    "sessionDetailBookNow": "Book Now",
+    "sessionDetailAlreadyBooked": "Already Booked",
+    "sessionDetailWaitlisted": "On Waitlist",
+    "monthJanuary": "January", "monthFebruary": "February", "monthMarch": "March",
+    "monthApril": "April", "monthMay": "May", "monthJune": "June",
+    "monthJuly": "July", "monthAugust": "August", "monthSeptember": "September",
+    "monthOctober": "October", "monthNovember": "November", "monthDecember": "December",
+
+    "memberSessionsFilterApply": "Apply filter",
+
   "navDashboard": "Dashboard",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
 
@@ -643,6 +660,51 @@
   "navTrainingVideos": "Training Videos",
   "@navTrainingVideos": { "description": "Drawer nav item" },
 
+  "checkoutComingSoon": "Checkout coming soon",
+  "selectThisPlan": "Select this plan",
+  "selectedPlan": "Selected plan",
+  "baseAmount": "Base amount",
+  "totalAmount": "Total amount",
+  "planDetails": "Plan details",
+  "planDuration": "Plan duration",
+  "visitLimit": "Visit limit",
+  "unlimited": "Unlimited",
+  "freezeDays": "Freeze days",
+  "planFeatures": "Plan features",
+  "billingMonthly": "Monthly",
+  "billingYearly": "Yearly",
+  "billingWeekly": "Weekly",
+  "couponCode": "Coupon code",
+  "enterCouponCode": "Enter coupon code",
+  "apply": "Apply",
+  "couponAppliedFinalPrice": "Coupon applied. Final price: {price}",
+  "@couponAppliedFinalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+
+  "retry": "Retry",
+  "memberPlansTitle": "Membership Plans",
+  "memberPlansSubtitle": "Choose the best plan for your fitness journey",
+  "memberPlansEmpty": "No membership plans available",
+
+  "remainingDays": "{days} days remaining",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "membershipEndsAt": "Ends at {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "renew": "Renew",
+
+  "mostPopular": "Most popular",
+
   "retry": "Retry",
   "memberPlansTitle": "Membership Plans",
   "memberPlansSubtitle": "Choose the best plan for you",
@@ -686,5 +748,6 @@
     "placeholders": {
       "price": {}
     }
-  }
+  },
+  "back": "Back"
 }

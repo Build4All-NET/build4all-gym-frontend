@@ -1,6 +1,6 @@
-import '../../domain/entities/book_session_result_entity.dart';
-import '../../domain/entities/session_card_entity.dart';
 import '../../domain/entities/filter_option_item_entity.dart';
+import '../../domain/entities/session_card_entity.dart';
+import '../../domain/entities/session_detail_entity.dart';
 
 abstract class SessionsState {
   const SessionsState();
@@ -44,17 +44,12 @@ class SessionBookingLoading extends SessionsState {
   const SessionBookingLoading();
 }
 
-class SessionBookingSuccess extends SessionsState {
-  final BookSessionResultEntity result;
-
-  const SessionBookingSuccess(this.result);
-}
-
 class SessionBookingError extends SessionsState {
   final String message;
 
   const SessionBookingError(this.message);
 }
+
 class SessionsFilterOptionsLoaded extends SessionsState {
   final List<FilterOptionItemEntity> classTypes;
   final List<FilterOptionItemEntity> trainers;
@@ -65,4 +60,20 @@ class SessionsFilterOptionsLoaded extends SessionsState {
     required this.trainers,
     required this.branches,
   });
+}
+
+class SessionDetailLoading extends SessionsState {
+  const SessionDetailLoading();
+}
+
+class SessionDetailLoaded extends SessionsState {
+  final SessionDetailEntity session;
+
+  const SessionDetailLoaded(this.session);
+}
+
+class SessionDetailError extends SessionsState {
+  final String message;
+
+  const SessionDetailError(this.message);
 }

@@ -2,17 +2,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/usecases/book_session_usecase.dart';
 import '../../domain/usecases/cancel_booking_usecase.dart';
+import '../../domain/usecases/get_filter_options_usecase.dart';
+import '../../domain/usecases/get_session_detail_use_case.dart';
 import '../../domain/usecases/get_sessions_usecase.dart';
 import 'sessions_event.dart';
 import 'sessions_state.dart';
-
-import '../../domain/usecases/get_filter_options_usecase.dart';
 
 class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
   final GetSessionsUseCase? getSessionsUseCase;
   final GetFilterOptionsUseCase? getFilterOptionsUseCase;
   final BookSessionUseCase? bookSessionUseCase;
   final CancelBookingUseCase? cancelBookingUseCase;
+  final GetSessionDetailUseCase? getSessionDetailUseCase;
+
   DateTime _selectedDate = DateTime.now();
   int? _classTypeId;
   int? _trainerId;
@@ -23,6 +25,7 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     this.bookSessionUseCase,
     this.cancelBookingUseCase,
     this.getFilterOptionsUseCase,
+    this.getSessionDetailUseCase,
   }) : super(const SessionsInitial()) {
     on<SessionsStarted>(_onStarted);
     on<SessionsDateChanged>(_onDateChanged);
@@ -31,6 +34,7 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     on<SessionBookRequested>(_onBookRequested);
     on<SessionBookingCancelRequested>(_onCancelRequested);
     on<SessionsFilterOptionsRequested>(_onFilterOptionsRequested);
+    on<SessionDetailRequested>(_onSessionDetailRequested);
   }
 
   Future<void> _onStarted(
@@ -39,6 +43,7 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
       ) async {
     await _loadSessions(emit);
   }
+
   Future<void> _onDateChanged(
       SessionsDateChanged event,
       Emitter<SessionsState> emit,
@@ -102,6 +107,7 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
       emit(const SessionBookingError('Failed to cancel booking'));
     }
   }
+
   Future<void> _onFilterOptionsRequested(
       SessionsFilterOptionsRequested event,
       Emitter<SessionsState> emit,
@@ -126,6 +132,25 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
         branches: options.branches,
       ),
     );
+  }
+
+  Future<void> _onSessionDetailRequested(
+      SessionDetailRequested event,
+      Emitter<SessionsState> emit,
+      ) async {
+    emit(const SessionDetailLoading());
+
+    try {
+      if (getSessionDetailUseCase == null) {
+        emit(const SessionDetailError('Service unavailable'));
+        return;
+      }
+
+      final session = await getSessionDetailUseCase!(event.sessionId);
+      emit(SessionDetailLoaded(session));
+    } catch (_) {
+      emit(const SessionDetailError('Failed to load session detail'));
+    }
   }
 
   Future<void> _loadSessions(Emitter<SessionsState> emit) async {

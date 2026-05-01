@@ -247,7 +247,8 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
         branchName: 'Downtown',          // TODO: pull from AuthBloc/UserBloc state
         adminName: 'Mounir',             // TODO: pull from AuthBloc/UserBloc state
         adminEmail: 'mounir@gym.com',    // TODO: pull from AuthBloc/UserBloc state
-        avatarUrl: null,                 // null = shows initials
+        avatarUrl: null,
+        initialActiveId: 'plans',                 // null = shows initials
       ),
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
