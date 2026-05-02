@@ -2,6 +2,17 @@ import 'package:build4allgym/features/admin/members/presentation/bloc/admin_memb
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
+import '../features/admin/classes/data/repositories/admin_classes_repository_impl.dart';
+import '../features/admin/classes/data/services/admin_classes_service.dart';
+import '../features/admin/classes/domain/usecases/cancel_class_usecase.dart';
+import '../features/admin/classes/domain/usecases/create_class_usecase.dart';
+import '../features/admin/classes/domain/usecases/get_class_form_options_usecase.dart';
+import '../features/admin/classes/domain/usecases/get_classes_by_date_usecase.dart';
+import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
+import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
+import '../features/admin/classes/presentation/bloc/admin_classes_bloc.dart';
+import '../features/admin/classes/presentation/bloc/admin_classes_event.dart';
+import '../features/admin/classes/presentation/screens/admin_classes_screen.dart';
 import '../features/admin/members/data/services/admin_members_service.dart';
 import '../features/admin/members/domain/usecases/block_member_use_case.dart';
 import '../features/admin/members/domain/usecases/bulk_delete_members_use_case.dart';
@@ -231,7 +242,7 @@ class AppRouter {
     // ── Admin: Trainers ────────────────────────────────────────────────────
       case adminTrainers:
         return MaterialPageRoute(
-          builder: (_) => const _ComingSoonScreen(title: 'Trainers / PT'),
+          builder: (_) => const AdminClassesScreen(),//
         );
 
     // ── Admin: Staff ───────────────────────────────────────────────────────
@@ -266,8 +277,21 @@ class AppRouter {
 
     // ── Admin: Classes ─────────────────────────────────────────────────────
       case adminClasses:
+        final classesRepo = AdminClassesRepositoryImpl(
+           AdminClassesService(),
+        );
         return MaterialPageRoute(
-          builder: (_) => const _ComingSoonScreen(title: 'Classes & PT'),
+          builder: (_) => BlocProvider(
+            create: (_) => AdminClassesBloc(
+              getClassesByDate:    GetClassesByDateUseCase(classesRepo),
+              getClassFormOptions: GetClassFormOptionsUseCase(classesRepo),
+              createClass:         CreateClassUseCase(classesRepo),
+              updateClass:         UpdateClassUseCase(classesRepo),
+              cancelClass:         CancelClassUseCase(classesRepo),
+              getSessionBookings:  GetSessionBookingsUseCase(classesRepo),
+            )..add(ClassesStarted(DateTime.now())),  // kick off initial load
+            child: const AdminClassesScreen(),
+          ),
         );
 
     // ── Admin: Notifications ───────────────────────────────────────────────

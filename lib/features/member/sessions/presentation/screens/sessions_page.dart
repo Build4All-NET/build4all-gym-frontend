@@ -138,10 +138,7 @@ class _SessionsView extends StatelessWidget {
                                       IconButton(
                                         onPressed: () =>
                                             _openFilterBottomSheet(context),
-                                        icon: Icon(
-                                          Icons.tune,
-                                          color: tokens.colors.onPrimary,
-                                        ),
+                                        icon: Icon(Icons.search_rounded, color: tokens.colors.onPrimary),
                                       ),
                                     ],
                                   ),

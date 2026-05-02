@@ -17,7 +17,6 @@ class DatePickerRowWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
-    final textDirection = Directionality.of(context);
 
     final today = DateTime.now();
     final days = List.generate(
@@ -27,12 +26,9 @@ class DatePickerRowWidget extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
         final gap = tokens.spacing.sm;
         final horizontalPadding = tokens.spacing.md;
-
-        final chipWidth = ((availableWidth - (horizontalPadding * 2) - (gap * 6)) / 7)
-            .clamp(54.0, 78.0);
+        const chipWidth = 72.0;
 
         return SizedBox(
           height: 86,
@@ -58,13 +54,14 @@ class DatePickerRowWidget extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color: selected
-                          ? tokens.colors.label
-                          : tokens.colors.surface,
-                      borderRadius: BorderRadius.circular(tokens.card.radius),
+                          ? tokens.colors.onPrimary
+                          : tokens.colors.onPrimary.withOpacity(0.18),
+                      borderRadius:
+                      BorderRadius.circular(tokens.card.radius),
                       border: Border.all(
                         color: selected
-                            ? tokens.colors.label
-                            : tokens.colors.border.withOpacity(0.35),
+                            ? tokens.colors.onPrimary
+                            : tokens.colors.onPrimary.withOpacity(0.35),
                       ),
                     ),
                     child: Column(
@@ -77,8 +74,8 @@ class DatePickerRowWidget extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: tokens.typography.bodySmall.copyWith(
                             color: selected
-                                ? tokens.colors.onPrimary
-                                : tokens.colors.body,
+                                ? tokens.colors.primary
+                                : tokens.colors.onPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -87,8 +84,8 @@ class DatePickerRowWidget extends StatelessWidget {
                           day.day.toString(),
                           style: tokens.typography.titleMedium.copyWith(
                             color: selected
-                                ? tokens.colors.onPrimary
-                                : tokens.colors.label,
+                                ? tokens.colors.primary
+                                : tokens.colors.onPrimary,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -110,24 +107,15 @@ class DatePickerRowWidget extends StatelessWidget {
 
   String _dayName(BuildContext context, int weekday) {
     final l10n = AppLocalizations.of(context)!;
-
     switch (weekday) {
-      case DateTime.monday:
-        return l10n.dayMonday;
-      case DateTime.tuesday:
-        return l10n.dayTuesday;
-      case DateTime.wednesday:
-        return l10n.dayWednesday;
-      case DateTime.thursday:
-        return l10n.dayThursday;
-      case DateTime.friday:
-        return l10n.dayFriday;
-      case DateTime.saturday:
-        return l10n.daySaturday;
-      case DateTime.sunday:
-        return l10n.daySunday;
-      default:
-        return '';
+      case DateTime.monday: return l10n.dayMonday;
+      case DateTime.tuesday: return l10n.dayTuesday;
+      case DateTime.wednesday: return l10n.dayWednesday;
+      case DateTime.thursday: return l10n.dayThursday;
+      case DateTime.friday: return l10n.dayFriday;
+      case DateTime.saturday: return l10n.daySaturday;
+      case DateTime.sunday: return l10n.daySunday;
+      default: return '';
     }
   }
 }

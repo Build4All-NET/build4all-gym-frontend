@@ -916,4 +916,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navTrainingVideos => 'Training Videos';
+
+  @override
+  String get accountProfileUpdateSuccess => 'Profile updated successfully';
+
+  @override
+  String get accountStatExercises => 'Exercises';
+
+  @override
+  String get accountStatSessions => 'Sessions';
+
+  @override
+  String get accountStatAchievements => 'Achievements';
+
+  @override
+  String get accountMyBookings => 'My Bookings';
+
+  @override
+  String get accountLoyaltyPoints => 'Loyalty Points';
+
+  @override
+  String get accountReferralTitle => 'Your Referral Code';
+
+  @override
+  String get accountReferralSubtitle => 'Share and earn rewards';
+
+  @override
+  String get accountReferralCodeLabel => 'Your code';
+
+  @override
+  String get accountReferralCopied => 'Code copied';
+
+  @override
+  String get accountReferralShare => 'Share Code';
+
+  @override
+  String get accountPersonalInfo => 'Personal Information';
+
+  @override
+  String get accountEmail => 'Email';
+
+  @override
+  String get accountPhone => 'Phone';
+
+  @override
+  String get accountDateOfBirth => 'Date of Birth';
+
+  @override
+  String get accountAddress => 'Address';
+
+  @override
+  String get accountEditProfile => 'Edit Profile';
+
+  @override
+  String get accountSectionAccount => 'Account';
+
+  @override
+  String get accountSectionSettings => 'Settings';
+
+  @override
+  String get accountPaymentMethods => 'Payment Methods';
+
+  @override
+  String get accountMyMembership => 'My Membership';
+
+  @override
+  String get accountNotifications => 'Notifications';
+
+  @override
+  String get accountSettings => 'Settings';
+
+  @override
+  String get accountHelpSupport => 'Help & Support';
+
+  @override
+  String get appVersion => 'Version';
 }
