@@ -992,3 +992,4 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get appVersion => 'النسخة';
 }
+  String get navTrainingVideos => 'فيديوهات التدريب';}
