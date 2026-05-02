@@ -19,6 +19,7 @@ import '../widgets/member_stats_row.dart';
 import '../widgets/membership_status_card.dart';
 import '../widgets/motivational_quote_card.dart';
 import '../widgets/quick_actions_grid.dart';
+import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_screen.dart';
 import '../widgets/weight_tracker_card.dart';
 
 class MemberHomeScreen extends StatefulWidget {
@@ -375,7 +376,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                     SizedBox(height: tokens.spacing.lg),
                     QuickActionsGrid(
                       onBookClass: () => _showComingSoon(context),
-                      onBookTrainer: () => _showComingSoon(context),
+                      onBookTrainer: () => const MemberPtScreen(),
                       onQrCode: () => _showComingSoon(context),
                       onPaymentHistory: () => _showComingSoon(context),
                     ),

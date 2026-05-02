@@ -75,15 +75,14 @@ class _DetailView extends StatelessWidget {
       children: [
         CustomScrollView(
           slivers: [
-            // ── Hero image with overlaid info ──────────────────────────
+            // ── Hero image ─────────────────────────────────────────────
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 220,
+                height: 245,
                 width: double.infinity,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Image
                     session.trainerProfileFileId != null
                         ? Image.network(
                       'http://localhost:8080/api/files/${session.trainerProfileFileId}',
@@ -93,7 +92,6 @@ class _DetailView extends StatelessWidget {
                     )
                         : _HeroPlaceholder(tokens: tokens),
 
-                    // Gradient overlay bottom
                     Positioned.fill(
                       child: DecoratedBox(
                         decoration: BoxDecoration(
@@ -110,7 +108,6 @@ class _DetailView extends StatelessWidget {
                       ),
                     ),
 
-                    // Forward arrow top-right
                     Positioned(
                       top: MediaQuery.of(context).padding.top + 8,
                       right: 12,
@@ -121,7 +118,6 @@ class _DetailView extends StatelessWidget {
                       ),
                     ),
 
-                    // Class info bottom
                     Positioned(
                       bottom: 16,
                       left: isRtl ? 16 : null,
@@ -166,8 +162,8 @@ class _DetailView extends StatelessWidget {
                                 width: 4,
                                 height: 4,
                                 decoration: BoxDecoration(
-                                  color:
-                                  tokens.colors.onPrimary.withOpacity(0.6),
+                                  color: tokens.colors.onPrimary
+                                      .withOpacity(0.6),
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -202,7 +198,12 @@ class _DetailView extends StatelessWidget {
                   SessionBenefitsWidget(benefits: session.benefits),
                   SizedBox(height: tokens.spacing.md),
                   SessionEquipmentWidget(equipment: session.equipment),
-                  const SizedBox(height: 100),
+                  SafeArea(
+                    top: false,
+                    child: SizedBox(
+                      height: tokens.button.height + tokens.spacing.lg * 3,
+                    ),
+                  ),
                 ],
               ),
             ),

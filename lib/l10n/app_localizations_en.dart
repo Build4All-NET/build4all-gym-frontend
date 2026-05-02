@@ -991,4 +991,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appVersion => 'Version';
+
+  @override
+  String get ptAll => 'All';
+
+  @override
+  String get ptFavorites => 'Favorites';
+
+  @override
+  String ptFavoritesWithCount(int count) {
+    return 'Favorites $count';
+  }
+
+  @override
+  String get ptPerSession => '/session';
+
+  @override
+  String ptYearsExperience(int years) {
+    return '$years years exp';
+  }
+
+  @override
+  String ptReviews(int count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get ptScreenTitle => 'Personal Trainers';
+
+  @override
+  String get ptScreenSubtitle => 'Choose the right trainer for your goals';
+
+  @override
+  String get ptBookSession => 'Book Session';
+
+  @override
+  String get ptNoTrainers => 'No trainers available';
 }

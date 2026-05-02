@@ -62,8 +62,7 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,8 +70,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<
-      AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -84,8 +82,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <
-      LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -2017,7 +2014,68 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version'**
   String get appVersion;
+
+  /// No description provided for @ptAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get ptAll;
+
+  /// No description provided for @ptFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get ptFavorites;
+
+  /// No description provided for @ptFavoritesWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites {count}'**
+  String ptFavoritesWithCount(int count);
+
+  /// No description provided for @ptPerSession.
+  ///
+  /// In en, this message translates to:
+  /// **'/session'**
+  String get ptPerSession;
+
+  /// No description provided for @ptYearsExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'{years} years exp'**
+  String ptYearsExperience(int years);
+
+  /// No description provided for @ptReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String ptReviews(int count);
+
+  /// No description provided for @ptScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Trainers'**
+  String get ptScreenTitle;
+
+  /// No description provided for @ptScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the right trainer for your goals'**
+  String get ptScreenSubtitle;
+
+  /// No description provided for @ptBookSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Session'**
+  String get ptBookSession;
+
+  /// No description provided for @ptNoTrainers.
+  ///
+  /// In en, this message translates to:
+  /// **'No trainers available'**
+  String get ptNoTrainers;
 }
+
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
