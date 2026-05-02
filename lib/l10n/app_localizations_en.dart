@@ -691,19 +691,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get baseAmount => 'Base Amount';
 
   @override
-
-  @override
-  String couponAppliedFinalPrice(Object price) {
-    return 'Final price: $price';
-  }
-
-  @override
-  String get selectedPlan => 'Selected Plan';
-
-  @override
-  String get baseAmount => 'Base Amount';
-
-  @override
   String get totalAmount => 'Total Amount';
 
   @override
@@ -860,72 +847,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthDecember => 'December';
-
-  @override
-  String get navDashboard => 'Dashboard';
-
-  @override
-  String get navMembers => 'Members';
-
-  @override
-  String get navPlans => 'Plans';
-
-  @override
-  String get navStaff => 'Staff';
-
-  @override
-  String get navPayments => 'Payments';
-
-  @override
-  String get navClasses => 'Classes';
-
-  @override
-  String get navAiAssistant => 'AI Assistant';
-
-  @override
-  String get navSettings => 'Settings';
-
-  @override
-  String get navLogout => 'Logout';
-
-  @override
-  String get logoutConfirmTitle => 'Log out?';
-
-  @override
-  String get logoutConfirmMessage => 'Are you sure you want to log out?';
-
-  @override
-  String get sectionCoreOwner => 'CORE OWNER';
-
-  @override
-  String get sectionOperationsReception => 'OPERATIONS / RECEPTION';
-
-  @override
-  String get sectionTrainingPt => 'TRAINING / PT';
-
-  @override
-  String get navTrainers => 'Trainers / PT';
-
-  @override
-  String get navReceptionStaff => 'Reception Staff';
-
-  @override
-  String get navGymProfile => 'Gym Profile';
-
-  @override
-  String get navBranches => 'Branches';
-
-  @override
-  String get navCheckins => 'Check-ins';
-
-  @override
-  String get navClassesPt => 'Classes & PT';
-
-  @override
-  String get navNotifications => 'Notifications';
-
-  @override
-  String get navPtSessions => 'PT Sessions';
 
   @override
   String get navDashboard => 'Dashboard';

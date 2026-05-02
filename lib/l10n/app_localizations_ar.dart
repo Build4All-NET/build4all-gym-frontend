@@ -691,19 +691,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get baseAmount => 'المبلغ الأساسي';
 
   @override
-
-  @override
-  String couponAppliedFinalPrice(Object price) {
-    return 'السعر النهائي: $price';
-  }
-
-  @override
-  String get selectedPlan => 'الخطة المختارة';
-
-  @override
-  String get baseAmount => 'المبلغ الأساسي';
-
-  @override
   String get totalAmount => 'المبلغ الإجمالي';
 
   @override
@@ -1071,3 +1058,4 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get appVersion => 'النسخة';
 }
+  String get navTrainingVideos => 'فيديوهات التدريب';}
