@@ -685,5 +685,30 @@
       "price": {}
     }
   },
-  "back": "رجوع"
+  "back": "رجوع",
+  "accountProfileUpdateSuccess": "تم تحديث الملف الشخصي بنجاح",
+  "accountStatExercises": "التمارين",
+  "accountStatSessions": "الحصص",
+  "accountStatAchievements": "الإنجازات",
+  "accountMyBookings": "حجوزاتي",
+  "accountLoyaltyPoints": "نقاط الولاء",
+  "accountReferralTitle": "كود الإحالة الخاص بك",
+  "accountReferralSubtitle": "شارك واحصل على مكافآت",
+  "accountReferralCodeLabel": "الكود الخاص بك",
+  "accountReferralCopied": "تم نسخ الكود",
+  "accountReferralShare": "مشاركة الكود",
+  "accountPersonalInfo": "المعلومات الشخصية",
+  "accountEmail": "البريد الإلكتروني",
+  "accountPhone": "رقم الجوال",
+  "accountDateOfBirth": "تاريخ الميلاد",
+  "accountAddress": "العنوان",
+  "accountEditProfile": "تعديل الملف الشخصي",
+  "accountSectionAccount": "الحساب",
+  "accountSectionSettings": "الإعدادات",
+  "accountPaymentMethods": "طرق الدفع",
+  "accountMyMembership": "عضويتي",
+  "accountNotifications": "الإشعارات",
+  "accountSettings": "الإعدادات",
+  "accountHelpSupport": "المساعدة والدعم",
+  "appVersion": "النسخة"
 }
