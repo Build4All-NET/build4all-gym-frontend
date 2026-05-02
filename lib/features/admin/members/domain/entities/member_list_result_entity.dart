@@ -2,8 +2,8 @@
 // FILE: member_list_result_entity.dart
 // LAYER: Domain Layer → Entities
 // PURPOSE: Wraps a paginated page of members in a pure domain object.
-//          The BLoC uses this to know if more pages exist (for infinite scroll)
-//          and to accumulate pages across MembersStarted events.
+//          The BLoC uses this to know if more screens exist (for infinite scroll)
+//          and to accumulate screens across MembersStarted events.
 //
 // POSITION IN FLOW:
 //   MemberListResponseModel (data layer)
@@ -25,7 +25,7 @@ class MemberListResultEntity {
   /// Members for the current page (NOT cumulative — bloc accumulates them).
   final List<MemberCardEntity> items;
 
-  /// Total matching members across ALL pages.
+  /// Total matching members across ALL screens.
   final int totalCount;
 
   /// Current 1-based page number just fetched.
@@ -34,7 +34,7 @@ class MemberListResultEntity {
   /// Records-per-page used in this request.
   final int size;
 
-  /// Total number of pages — used to know when infinite scroll should stop.
+  /// Total number of screens — used to know when infinite scroll should stop.
   final int totalPages;
 
   const MemberListResultEntity({
@@ -45,6 +45,6 @@ class MemberListResultEntity {
     required this.totalPages,
   });
 
-  /// True when there are more pages to load (used by BLoC for infinite scroll).
+  /// True when there are more screens to load (used by BLoC for infinite scroll).
   bool get hasNextPage => page < totalPages;
 }

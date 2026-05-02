@@ -1,135 +1,168 @@
 // =============================================================================
 // FILE: admin_members_service.dart
+// PATH: lib/features/admin/members/data/services/admin_members_service.dart
 // LAYER: Data Layer → Services
-// PURPOSE: Makes raw HTTP calls to the backend members API.
-//          Only responsible for network I/O — no business logic here.
-//          Returns decoded JSON Maps; the repository impl converts those
-//          into models and then into entities.
-//
-// POSITION IN FLOW:
-//   AdminMembersBloc (event)
-//     → UseCase.call()
-//     → AdminMembersRepositoryImpl.getMembers(...)
-//         → [this file] AdminMembersService.getMembers(...)  ← HTTP call
-//             ← raw JSON Map returned
-//         ← MemberListResponseModel.fromJson(json)
-//     ← MemberListResultEntity returned to BLoC
-//
-// RELATED FILES:
-//   ← Called by:    admin_members_repository_impl.dart
-//   → Returns raw JSON consumed by: member_list_response_model.dart
-//   ↑ Depends on:   your existing ApiClient (adjust import path as needed)
+// TASK: GA-268 — added getMemberDetail()
 // =============================================================================
 
-// TODO: Replace this import with your actual ApiClient path.
-// import '../../../core/network/api_client.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-/// Service class that encapsulates all HTTP calls for the Admin Members feature.
-/// Inject this via your DI system (e.g. get_it) into the repository impl.
+import '../../../../../core/config/env.dart';
+import '../../../../../core/error/exceptions.dart';
+import '../../../../auth/data/services/admin_token_store.dart';
+import '../models/member_detail_model.dart';
+
 class AdminMembersService {
-  // The shared HTTP client that handles base URL, auth headers, token refresh, etc.
-  // Replace `dynamic` with your actual ApiClient type.
-  final dynamic apiClient;
+  final AdminTokenStore _tokenStore;
 
-  AdminMembersService({required this.apiClient});
+  AdminMembersService() : _tokenStore = const AdminTokenStore();
+
+  Future<Map<String, String>> _headers() async {
+    final token = await _tokenStore.getToken();
+    if (token == null || token.trim().isEmpty) throw UnauthorizedException();
+    return {
+      'Authorization':           'Bearer $token',
+      'Content-Type':            'application/json',
+      'X-Owner-Project-Link-Id': Env.ownerProjectLinkId,
+    };
+  }
+
+  void _handleStatus(http.Response response) {
+    if (response.statusCode == 200 || response.statusCode == 204) return;
+    if (response.statusCode == 401) throw UnauthorizedException();
+    if (response.statusCode == 403) throw ForbiddenException();
+    throw ServerException(message: 'HTTP ${response.statusCode}: ${response.body}');
+  }
+
+  Map<String, dynamic> _parseMap(http.Response response) {
+    if (response.body.isEmpty) {
+      throw ServerException(message: 'Server returned an empty response.');
+    }
+    final decoded = jsonDecode(response.body);
+    if (decoded is! Map<String, dynamic>) {
+      throw ServerException(
+        message: 'Unexpected response shape: ${decoded.runtimeType}',
+      );
+    }
+    return decoded;
+  }
 
   // ---------------------------------------------------------------------------
   // GET /api/admin/members
-  // Fetches a paginated, filtered list of members.
-  //
-  // Parameters:
-  //   branchId  — filter to a specific branch (required by API)
-  //   status    — "active" | "pending" | "blocked" | "" (all)
-  //   gender    — "male" | "female" | "other" | "" (all)
-  //   search    — free-text search on name, phone, member code
-  //   sort      — "newest" | "oldest" | "alphabetical"
-  //   page      — 1-based page number
-  //   size      — records per page (default 10)
-  //
-  // Returns raw decoded JSON map (the full envelope with items + pagination).
   // ---------------------------------------------------------------------------
   Future<Map<String, dynamic>> getMembers({
     required int branchId,
     String status = '',
     String gender = '',
     String search = '',
-    String sort = 'newest',
-    int page = 1,
-    int size = 10,
+    String sort   = 'newest',
+    int page      = 1,
+    int size      = 10,
   }) async {
-    // Build query parameters — omit empty values so API isn't sent blank strings.
-    final queryParams = <String, String>{
+    final headers = await _headers();
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/members')
+        .replace(queryParameters: {
       'branchId': branchId.toString(),
-      'page': page.toString(),
-      'size': size.toString(),
-      'sort': sort,
+      'page':     (page - 1).toString(),
+      'size':     size.toString(),
+      'sort':     sort,
       if (status.isNotEmpty) 'status': status,
       if (gender.isNotEmpty) 'gender': gender,
       if (search.isNotEmpty) 'search': search,
-    };
+    });
+    try {
+      final response = await http.get(uri, headers: headers);
+      _handleStatus(response);
+      return _parseMap(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
 
-    // TODO: Replace with your actual apiClient.get() call.
-    // Example:
-    //   final response = await apiClient.get(
-    //     '/api/admin/members',
-    //     queryParameters: queryParams,
-    //   );
-    //   return response.data as Map<String, dynamic>;
-
-    // Placeholder — remove when wiring real ApiClient.
-    throw UnimplementedError('Wire up your ApiClient here.');
+  // ---------------------------------------------------------------------------
+  // GET /api/admin/members/{userId}   — GA-268
+  // ---------------------------------------------------------------------------
+  Future<MemberDetailModel> getMemberDetail(int userId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/members/$userId');
+    try {
+      final response = await http.get(uri, headers: headers);
+      _handleStatus(response);
+      return MemberDetailModel.fromJson(_parseMap(response));
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
   }
 
   // ---------------------------------------------------------------------------
   // PATCH /api/admin/members/{userId}/block
-  // Blocks a member and records a reason.
-  //
-  // Parameters:
-  //   userId — the member to block
-  //   reason — required reason string shown to member / stored in audit log
   // ---------------------------------------------------------------------------
   Future<void> blockMember(int userId, String reason) async {
-    // TODO: Replace with your actual apiClient.patch() call.
-    // await apiClient.patch(
-    //   '/api/admin/members/$userId/block',
-    //   data: {'reason': reason},
-    // );
-    throw UnimplementedError('Wire up your ApiClient here.');
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/members/$userId/block');
+    try {
+      final response = await http.patch(
+        uri, headers: headers,
+        body: reason.isNotEmpty ? jsonEncode({'reason': reason}) : null,
+      );
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
   }
 
   // ---------------------------------------------------------------------------
   // PATCH /api/admin/members/{userId}/unblock
-  // Re-activates a previously blocked member.
   // ---------------------------------------------------------------------------
   Future<void> unblockMember(int userId) async {
-    // TODO: Replace with your actual apiClient.patch() call.
-    // await apiClient.patch('/api/admin/members/$userId/unblock');
-    throw UnimplementedError('Wire up your ApiClient here.');
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/members/$userId/unblock');
+    try {
+      final response = await http.patch(uri, headers: headers);
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
   }
 
   // ---------------------------------------------------------------------------
   // DELETE /api/admin/members/{userId}
-  // Permanently deletes a single member record.
   // ---------------------------------------------------------------------------
   Future<void> deleteMember(int userId) async {
-    // TODO: Replace with your actual apiClient.delete() call.
-    // await apiClient.delete('/api/admin/members/$userId');
-    throw UnimplementedError('Wire up your ApiClient here.');
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/members/$userId');
+    try {
+      final response = await http.delete(uri, headers: headers);
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
   }
 
   // ---------------------------------------------------------------------------
   // DELETE /api/admin/members/bulk
-  // Deletes multiple members in one request.
-  //
-  // Parameters:
-  //   userIds — list of member IDs to delete
   // ---------------------------------------------------------------------------
   Future<void> bulkDeleteMembers(List<int> userIds) async {
-    // TODO: Replace with your actual apiClient.delete() call.
-    // await apiClient.delete(
-    //   '/api/admin/members/bulk',
-    //   data: {'userIds': userIds},
-    // );
-    throw UnimplementedError('Wire up your ApiClient here.');
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/members/bulk');
+    try {
+      final response = await http.delete(
+          uri, headers: headers, body: jsonEncode(userIds));
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
   }
 }

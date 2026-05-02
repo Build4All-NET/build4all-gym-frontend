@@ -21,11 +21,18 @@ import 'package:build4allgym/features/member/home/data/repositories/member_home_
 import 'package:build4allgym/features/member/home/domain/usecases/get_member_home_usecase.dart';
 import 'package:build4allgym/features/member/home/domain/usecases/log_weight_usecase.dart';
 import 'package:build4allgym/features/member/home/presentation/bloc/member_home_bloc.dart';
-import 'package:dio/dio.dart';
+
 import 'package:build4allgym/features/member/plans/presentation/screens/member_plans_screen.dart';
+import 'package:build4allgym/features/member/sessions/presentation/screens/sessions_page.dart';
 
 import 'package:build4allgym/l10n/app_localizations.dart';
 
+import '../../../member/sessions/data/repositories/sessions_repository_impl.dart';
+import '../../../member/sessions/domain/usecases/book_session_usecase.dart';
+import '../../../member/sessions/domain/usecases/cancel_booking_usecase.dart';
+import '../../../member/sessions/domain/usecases/get_filter_options_usecase.dart';
+import '../../../member/sessions/domain/usecases/get_sessions_usecase.dart';
+import '../../../member/sessions/data/services/sessions_service.dart';
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;
 
@@ -72,14 +79,6 @@ class _MainShellState extends State<MainShell> {
     if (index == _currentIndex) return;
 
     setState(() => _currentIndex = index);
-
-    if (index == 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.comingSoon),
-        ),
-      );
-    }
   }
 
   @override
@@ -147,6 +146,7 @@ class _MainShellState extends State<MainShell> {
                 ),
               ),
             ),
+
             ListTile(
               leading: const Icon(Icons.home_outlined),
               title: Text(l10n.memberBottomNavHome),
@@ -156,6 +156,7 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
+
             ListTile(
               leading: const Icon(Icons.credit_card_outlined),
               title: Text(l10n.memberBottomNavPlans),
@@ -165,6 +166,7 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
+
             ListTile(
               leading: const Icon(Icons.qr_code_2_rounded),
               title: Text(l10n.memberBottomNavQr),
@@ -174,15 +176,17 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
+
             ListTile(
               leading: const Icon(Icons.calendar_today_outlined),
               title: Text(l10n.memberBottomNavClasses),
               selected: _currentIndex == 3,
               onTap: () {
+                setState(() => _currentIndex = 3);
                 Navigator.pop(context);
-                _showComingSoon();
               },
             ),
+
             ListTile(
               leading: const Icon(Icons.person_outline_rounded),
               title: Text(l10n.memberBottomNavAccount),
@@ -192,13 +196,16 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
+
             const Spacer(),
             const Divider(),
+
             ListTile(
               leading: const Icon(Icons.logout_rounded),
               title: const Text('Logout'),
               onTap: _logout,
             ),
+
             const SizedBox(height: 16),
           ],
         ),
@@ -208,14 +215,6 @@ class _MainShellState extends State<MainShell> {
           const ConnectionBanner(),
           Expanded(child: pages[_currentIndex]),
         ],
-      ),
-    );
-  }
-
-  void _showComingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.comingSoon),
       ),
     );
   }
@@ -236,15 +235,47 @@ class _MainShellState extends State<MainShell> {
       },
       child: const MemberHomeScreen(),
     ),
+
     MemberPlansScreenProvider(
       dio: g.dio(),
     ),
+
     const _QrTab(),
-    const _ClassesTab(),
+
+    SessionsPage(
+      getSessionsUseCase: GetSessionsUseCase(
+        SessionsRepositoryImpl(
+          SessionsService(
+            g.dio()
+          ),
+        ),
+      ),
+      bookSessionUseCase: BookSessionUseCase(
+        SessionsRepositoryImpl(
+          SessionsService(
+            g.dio()
+          ),
+        ),
+      ),
+      cancelBookingUseCase: CancelBookingUseCase(
+        SessionsRepositoryImpl(
+          SessionsService(
+            g.dio()
+          ),
+        ),
+      ),
+      getFilterOptionsUseCase: GetFilterOptionsUseCase(
+        SessionsRepositoryImpl(
+          SessionsService(
+            g.dio()
+          ),
+        ),
+      ),
+    ),
+
     const _ProfileTab(),
   ];
 }
-
 
 class _QrTab extends StatelessWidget {
   const _QrTab();
@@ -252,15 +283,6 @@ class _QrTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('QR'));
-  }
-}
-
-class _ClassesTab extends StatelessWidget {
-  const _ClassesTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Classes'));
   }
 }
 
@@ -275,18 +297,27 @@ class _ProfileTab extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.person_rounded, size: 64, color: Color(0xFF9CA3AF)),
+          const Icon(
+            Icons.person_rounded,
+            size: 64,
+            color: Color(0xFF9CA3AF),
+          ),
           const SizedBox(height: 12),
           Text(
             user?.displayName ?? 'Profile',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           if (user?.email != null) ...[
             const SizedBox(height: 4),
-            Text(user!.email!, style: const TextStyle(color: Colors.grey)),
+            Text(
+              user!.email!,
+              style: const TextStyle(color: Colors.grey),
+            ),
           ],
           const SizedBox(height: 32),
-          // LOGOUT BUTTON
           ElevatedButton.icon(
             onPressed: () {
               context.read<AuthBloc>().add(const AuthLoggedOut());
@@ -296,7 +327,10 @@ class _ProfileTab extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 32,
+                vertical: 12,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

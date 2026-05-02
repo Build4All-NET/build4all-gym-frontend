@@ -517,6 +517,7 @@
           "monthOctober": "أكتوبر", "monthNovember": "نوفمبر", "monthDecember": "ديسمبر",
 
 
+          "memberSessionsFilterApply": "تطبيق الفلتر",
 
   "navDashboard": "لوحة التحكم",
   "@navDashboard": { "description": "Admin drawer — Dashboard item" },
@@ -587,6 +588,51 @@
   "navTrainingVideos": "فيديوهات التدريب",
   "@navTrainingVideos": { "description": "Drawer nav item" },
 
+  "checkoutComingSoon": "الدفع قريباً",
+  "selectThisPlan": "اختر هذه الخطة",
+  "selectedPlan": "الخطة المختارة",
+  "baseAmount": "المبلغ الأساسي",
+  "totalAmount": "المبلغ الإجمالي",
+  "planDetails": "تفاصيل الخطة",
+  "planDuration": "مدة الخطة",
+  "visitLimit": "حد الزيارات",
+  "unlimited": "غير محدود",
+  "freezeDays": "أيام التجميد",
+  "planFeatures": "ميزات الخطة",
+  "billingMonthly": "شهري",
+  "billingYearly": "سنوي",
+  "billingWeekly": "أسبوعي",
+  "couponCode": "رمز القسيمة",
+  "enterCouponCode": "أدخل رمز القسيمة",
+  "apply": "تطبيق",
+  "couponAppliedFinalPrice": "تم تطبيق القسيمة. السعر النهائي: {price}",
+  "@couponAppliedFinalPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+
+  "retry": "إعادة المحاولة",
+  "memberPlansTitle": "خطط الاشتراك",
+  "memberPlansSubtitle": "اختر الخطة الأنسب لرحلتك الرياضية",
+  "memberPlansEmpty": "لا توجد خطط اشتراك متاحة",
+
+  "remainingDays": "متبقي {days} يوم",
+  "@remainingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "membershipEndsAt": "ينتهي في {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "renew": "تجديد",
+
+  "mostPopular": "الأكثر شيوعاً",
+
   "retry": "إعادة المحاولة",
   "memberPlansTitle": "خطط العضوية",
   "memberPlansSubtitle": "اختر الخطة المناسبة لك",
@@ -617,6 +663,14 @@
       "days": {}
     }
   },
+
+  "membershipEndsAt": "تنتهي في {date}",
+  "@membershipEndsAt": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+
 
   "membershipEndsAt": "تنتهي في {date}",
   "@membershipEndsAt": {

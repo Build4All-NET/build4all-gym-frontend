@@ -1,19 +1,9 @@
 // =============================================================================
 // FILE: member_card_entity.dart
 // LAYER: Domain Layer → Entities
-// PURPOSE: Pure Dart business object representing a single gym member.
-//          The data layer maps MemberCardModel → MemberCardEntity.
 //
-// POSITION IN FLOW:
-//   MemberCardModel (data layer)
-//     → AdminMembersRepositoryImpl._toEntity()
-//     → [this file] MemberCardEntity  ← BLoC stores List<MemberCardEntity>
-//     → MemberCardWidget reads this to render the card UI
-//
-// RELATED FILES:
-//   ← Mapped from: member_card_model.dart  (via repository impl)
-//   → Used by:     admin_members_state.dart (MembersLoaded.members)
-//   → Rendered by: member_card_widget.dart
+// CHANGE: Added copyWith() so the BLoC can patch status/dueAmount
+//         client-side after block/unblock without re-fetching from the API.
 // =============================================================================
 
 class MemberCardEntity {
@@ -21,10 +11,10 @@ class MemberCardEntity {
   final String fullName;
   final String memberCode;
   final String phone;
-  final String? profileFileId; // null → show initials avatar
+  final int? profileFileId;
   final String membershipStatus; // "active" | "pending" | "blocked" | "inactive"
   final String planName;
-  final String expiryDate; // ISO-8601 string
+  final String expiryDate;
   final double dueAmount;
   final String branchName;
 
@@ -42,10 +32,34 @@ class MemberCardEntity {
   });
 
   // ---------------------------------------------------------------------------
-  // Computed helpers used by the UI — keep presentation logic out of widgets.
+  // copyWith — used by the BLoC to patch individual fields in-place.
+  // Example: m.copyWith(membershipStatus: 'blocked')
+  // ---------------------------------------------------------------------------
+  MemberCardEntity copyWith({
+    String? membershipStatus,
+    String? planName,
+    String? expiryDate,
+    double? dueAmount,
+    int? profileFileId,
+  }) {
+    return MemberCardEntity(
+      userId: userId,
+      fullName: fullName,
+      memberCode: memberCode,
+      phone: phone,
+      profileFileId: profileFileId ?? this.profileFileId,
+      membershipStatus: membershipStatus ?? this.membershipStatus,
+      planName: planName ?? this.planName,
+      expiryDate: expiryDate ?? this.expiryDate,
+      dueAmount: dueAmount ?? this.dueAmount,
+      branchName: branchName,
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Computed helpers used by the UI.
   // ---------------------------------------------------------------------------
 
-  /// Returns uppercase initials for the avatar circle, e.g. "Vikram Singh" → "VS".
   String get initials {
     final parts = fullName.trim().split(' ');
     if (parts.isEmpty) return '?';
@@ -53,11 +67,8 @@ class MemberCardEntity {
     return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 
-  /// Returns true when the member has outstanding dues.
-  bool get hasDues => dueAmount > 0;
-
-  /// Convenience check so widgets don't hardcode the status string.
-  bool get isBlocked => membershipStatus.toLowerCase() == 'blocked';
-  bool get isActive => membershipStatus.toLowerCase() == 'active';
-  bool get isPending => membershipStatus.toLowerCase() == 'pending';
+  bool get hasDues    => dueAmount > 0;
+  bool get isBlocked  => membershipStatus.toLowerCase() == 'blocked';
+  bool get isActive   => membershipStatus.toLowerCase() == 'active';
+  bool get isPending  => membershipStatus.toLowerCase() == 'pending';
 }

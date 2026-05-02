@@ -1430,6 +1430,32 @@ abstract class AppLocalizations {
   /// No description provided for @totalAmount.
   ///
   /// In en, this message translates to:
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @couponAppliedFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price: {price}'**
+  String couponAppliedFinalPrice(Object price);
+
+  /// No description provided for @selectedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Plan'**
+  String get selectedPlan;
+
+  /// No description provided for @baseAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Amount'**
+  String get baseAmount;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
   /// **'Total Amount'**
   String get totalAmount;
 
@@ -1726,6 +1752,142 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'December'**
   String get monthDecember;
+
+  /// Admin drawer — Dashboard item
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get navDashboard;
+
+  /// Admin drawer — Members item
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get navMembers;
+
+  /// Admin drawer — Plans item
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get navPlans;
+
+  /// Admin drawer — Staff item
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get navStaff;
+
+  /// Admin drawer — Payments item
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get navPayments;
+
+  /// Admin drawer — Classes item
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get navClasses;
+
+  /// Admin drawer — AI Assistant item
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get navAiAssistant;
+
+  /// Admin drawer — Settings item
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// Admin drawer — Logout item
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get navLogout;
+
+  /// Logout confirmation dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Log out?'**
+  String get logoutConfirmTitle;
+
+  /// Logout confirmation dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get logoutConfirmMessage;
+
+  /// Drawer section label
+  ///
+  /// In en, this message translates to:
+  /// **'CORE OWNER'**
+  String get sectionCoreOwner;
+
+  /// Drawer section label
+  ///
+  /// In en, this message translates to:
+  /// **'OPERATIONS / RECEPTION'**
+  String get sectionOperationsReception;
+
+  /// Drawer section label
+  ///
+  /// In en, this message translates to:
+  /// **'TRAINING / PT'**
+  String get sectionTrainingPt;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Trainers / PT'**
+  String get navTrainers;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Reception Staff'**
+  String get navReceptionStaff;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Profile'**
+  String get navGymProfile;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Branches'**
+  String get navBranches;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins'**
+  String get navCheckins;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Classes & PT'**
+  String get navClassesPt;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get navNotifications;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
+  /// **'PT Sessions'**
+  String get navPtSessions;
+
+  /// Drawer nav item
+  ///
+  /// In en, this message translates to:
 
   /// Admin drawer — Dashboard item
   ///
