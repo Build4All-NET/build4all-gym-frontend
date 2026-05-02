@@ -1,27 +1,20 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/classes/presentation/screens/admin_classes_screen.dart
+// CHANGE: Replaced AppBar widget with Container-based header that matches
+//         AdminDashboardScreen / AdminMembersScreen / AdminPlansScreen exactly.
 //
-// PURPOSE:
-//   The main "Classes & Schedules" screen shown in the screenshots.
-//   Wraps everything in a BlocProvider and handles the full state lifecycle.
-//
-// LAYOUT (top to bottom, matching Figma):
-//   1. AppBar: hamburger menu | branch chip (center) | + add button | bell
-//   2. ClassDateFilterWidget — horizontally scrollable date chips
-//   3. Section label: "Today's Classes — Monday, March 16, 2026"
-//   4. ListView of ClassCardWidgets (or empty state / loading / error)
-//
-// BlocConsumer:
-//   LISTENER: ClassActionSuccess → green snackbar + list refresh
-//             ClassActionError   → red snackbar
-//   BUILDER:  ClassesLoading     → CircularProgressIndicator
-//             ClassesLoaded      → date filter + card list
-//             ClassesError       → error text + Retry button
+// LAYOUT (top to bottom):
+//   SafeArea → Column:
+//     1. _ClassesAppBar  — [hamburger] [branch pill] [title] [spacer] [+] [bell]
+//     2. ClassDateFilterWidget
+//     3. Section label
+//     4. ListView of ClassCardWidgets (or empty / loading / error)
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
 import '../bloc/admin_classes_state.dart';
@@ -40,13 +33,11 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
   @override
   void initState() {
     super.initState();
-    // Kick off the initial load with today's date
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AdminClassesBloc>().add(ClassesStarted(DateTime.now()));
     });
   }
 
-  // Formats the selected date for the section header label
   String _formatSectionHeader(DateTime date) {
     final now = DateTime.now();
     final isToday = date.year == now.year &&
@@ -54,7 +45,7 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
         date.day == now.day;
     final dayLabel = isToday
         ? "Today's Classes"
-        : DateFormat('EEEE\'s Classes').format(date); // e.g. "Monday's Classes"
+        : DateFormat('EEEE\'s Classes').format(date);
     return '$dayLabel — ${DateFormat('EEEE, MMMM d, yyyy').format(date)}';
   }
 
@@ -90,220 +81,341 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ── Drawer ─────────────────────────────────────────────────────────
+      drawer: const AdminNavigationDrawer(
+        gymName:         'Build4All Gym',
+        branchName:      'Downtown',
+        adminName:       'Mounir',
+        adminEmail:      'mounir@gym.com',
+        avatarUrl:       null,
+        initialActiveId: 'classes_pt',
+      ),
       backgroundColor: const Color(0xFFF5F6FA),
 
-      // ── AppBar ──────────────────────────────────────────────────────────
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Color(0xFF1A1A2E)),
-          onPressed: () {
-            // Open admin drawer — connect to your existing DrawerScreen
-            Scaffold.of(context).openDrawer();
+      // ── Body — no appBar property, header is inside SafeArea ────────────
+      body: SafeArea(
+        child: BlocConsumer<AdminClassesBloc, AdminClassesState>(
+          listener: (context, state) {
+            if (state is ClassActionSuccess) {
+              final messages = {
+                'created':   'Class created successfully',
+                'updated':   'Class updated successfully',
+                'cancelled': 'Class cancelled',
+              };
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(messages[state.actionType] ?? 'Done'),
+                backgroundColor: const Color(0xFF4CAF50),
+                behavior: SnackBarBehavior.floating,
+              ));
+            }
+            if (state is ClassActionError) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(state.message),
+                backgroundColor: const Color(0xFFF44336),
+                behavior: SnackBarBehavior.floating,
+              ));
+            }
+          },
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+
+                // ── 1. App bar — matches dashboard / members / plans ─────
+                _ClassesAppBar(
+                  onAddTap: () {
+                    context.read<AdminClassesBloc>()
+                        .add(const ClassFormOptionsRequested());
+                    AddEditClassBottomSheet.show(context);
+                  },
+                ),
+
+                // ── 2‑4. Content area ────────────────────────────────────
+                if (state is ClassesLoading)
+                  const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (state is ClassesError)
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.error_outline,
+                              size: 48, color: Color(0xFFF44336)),
+                          const SizedBox(height: 12),
+                          Text(state.message,
+                              style:
+                              const TextStyle(color: Color(0xFFF44336))),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => context
+                                .read<AdminClassesBloc>()
+                                .add(ClassesStarted(DateTime.now())),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else if (state is ClassesLoaded) ...[
+
+                    const SizedBox(height: 12),
+
+                    // Date filter chip row
+                    ClassDateFilterWidget(selectedDate: state.selectedDate),
+
+                    const SizedBox(height: 16),
+
+                    // Section header label
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        _formatSectionHeader(state.selectedDate),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF757575),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Class list or empty state
+                    Expanded(
+                      child: state.classes.isEmpty
+                          ? const Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.event_busy,
+                                size: 48, color: Color(0xFFBDBDBD)),
+                            SizedBox(height: 12),
+                            Text('No classes scheduled for this day',
+                                style: TextStyle(
+                                    color: Color(0xFF9E9E9E),
+                                    fontSize: 14)),
+                          ],
+                        ),
+                      )
+                          : ListView.builder(
+                        padding:
+                        const EdgeInsets.only(bottom: 80),
+                        itemCount: state.classes.length,
+                        itemBuilder: (context, index) {
+                          final session = state.classes[index];
+                          final loadingId = state
+                          is ClassActionLoading
+                              ? (state as ClassActionLoading)
+                              .sessionId
+                              : null;
+                          return ClassCardWidget(
+                            session: session,
+                            loadingSessionId: loadingId,
+                            onBookingsTap: () {
+                              SessionBookingsBottomSheet.show(
+                                context,
+                                sessionId: session.sessionId,
+                                className: session.className,
+                              );
+                            },
+                            onEditTap: () {
+                              context.read<AdminClassesBloc>().add(
+                                  const ClassFormOptionsRequested());
+                              AddEditClassBottomSheet.show(
+                                context,
+                                sessionId: session.sessionId,
+                                existing: session,
+                              );
+                            },
+                            onCancelTap: () =>
+                                _showCancelConfirmation(
+                                    context, session.sessionId),
+                          );
+                        },
+                      ),
+                    ),
+                  ] else
+                    const Expanded(child: SizedBox.shrink()),
+              ],
+            );
           },
         ),
-        title: Column(
-          children: [
-            const Text(
-              'Classes & Schedules',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A2E)),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _ClassesAppBar
+// Mirrors AdminDashboardScreen / AdminMembersScreen / AdminPlansScreen header.
+//
+// Layout: [hamburger] [branch pill — Expanded] [Classes & Schedules] [spacer]
+//         [+ add] [bell]
+// ─────────────────────────────────────────────────────────────────────────────
+class _ClassesAppBar extends StatelessWidget {
+  const _ClassesAppBar({required this.onAddTap});
+
+  final VoidCallback onAddTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      color: cs.onPrimary, // white — same as dashboard
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          // ── Hamburger ─────────────────────────────────────────────────
+          Builder(
+            builder: (ctx) => IconButton(
+              icon:      const Icon(Icons.menu_rounded),
+              color:     cs.onSurface,
+              onPressed: () => Scaffold.of(ctx).openDrawer(),
             ),
-            // Branch context chip — matches the "Viewing: Mumbai Central" in screenshot
-            BlocBuilder<AdminClassesBloc, AdminClassesState>(
-              builder: (context, state) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.location_on,
-                        size: 12, color: Color(0xFF757575)),
-                    const SizedBox(width: 2),
-                    const Text(
-                      'Viewing: Mumbai Central',
-                      style: TextStyle(fontSize: 10, color: Color(0xFF757575)),
-                    ),
-                  ],
-                );
-              },
+          ),
+
+          const SizedBox(width: 10),
+
+          // ── Branch pill (expanded) ────────────────────────────────────
+          const Expanded(child: _BranchPill()),
+
+          const SizedBox(width: 10),
+
+          // ── Screen title ──────────────────────────────────────────────
+          Text(
+            'Classes',
+            style: TextStyle(
+              fontSize:   17,
+              fontWeight: FontWeight.w700,
+              color:      cs.onSurface,
             ),
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          // + Add New Class button
-          IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(6),
+          ),
+
+          const Spacer(),
+
+          // ── + Add new class button ────────────────────────────────────
+          GestureDetector(
+            onTap: onAddTap,
+            child: Container(
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A2E),
-                borderRadius: BorderRadius.circular(8),
+                color:        cs.primary,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.add, color: Colors.white, size: 18),
             ),
-            onPressed: () {
-              // Load form options then open Add sheet
-              context.read<AdminClassesBloc>()
-                  .add(const ClassFormOptionsRequested());
-              AddEditClassBottomSheet.show(context);
-            },
           ),
-          // Notification bell
-          IconButton(
-            icon: Badge(
-              label: const Text('3'),
-              child: const Icon(Icons.notifications_outlined,
-                  color: Color(0xFF1A1A2E)),
-            ),
-            onPressed: () {},
-          ),
+
+          const SizedBox(width: 8),
+
+          // ── Notification bell ─────────────────────────────────────────
+          const _NotificationBell(),
         ],
       ),
+    );
+  }
+}
 
-      // ── Body ─────────────────────────────────────────────────────────────
-      body: BlocConsumer<AdminClassesBloc, AdminClassesState>(
-        listener: (context, state) {
-          // ── Success: show green snackbar ─────────────────────────────
-          if (state is ClassActionSuccess) {
-            final messages = {
-              'created':   'Class created successfully',
-              'updated':   'Class updated successfully',
-              'cancelled': 'Class cancelled',
-            };
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(messages[state.actionType] ?? 'Done'),
-              backgroundColor: const Color(0xFF4CAF50),
-              behavior: SnackBarBehavior.floating,
-            ));
-          }
+// ─────────────────────────────────────────────────────────────────────────────
+// _BranchPill — identical to AdminMembersScreen._BranchPill
+// ─────────────────────────────────────────────────────────────────────────────
+class _BranchPill extends StatelessWidget {
+  const _BranchPill();
 
-          // ── Error: show red snackbar ─────────────────────────────────
-          if (state is ClassActionError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(state.message),
-              backgroundColor: const Color(0xFFF44336),
-              behavior: SnackBarBehavior.floating,
-            ));
-          }
-        },
-        builder: (context, state) {
+  @override
+  Widget build(BuildContext context) {
+    final cs     = Theme.of(context).colorScheme;
+    final pillBg = cs.primary.withOpacity(0.08);
+    final pillFg = cs.primary;
 
-          // ── Loading ────────────────────────────────────────────────
-          if (state is ClassesLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          // ── Error ──────────────────────────────────────────────────
-          if (state is ClassesError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(state.message,
-                      style: const TextStyle(color: Color(0xFFF44336))),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => context
-                        .read<AdminClassesBloc>()
-                        .add(ClassesStarted(DateTime.now())),
-                    child: const Text('Retry'),
-                  ),
-                ],
+    return GestureDetector(
+      onTap: () {
+        // TODO: show branch picker and dispatch ClassesStarted with new branchId
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color:        pillBg,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.location_on_rounded, size: 14, color: pillFg),
+            const SizedBox(width: 5),
+            Flexible(
+              child: Text(
+                'All Branches', // TODO: pull from AuthBloc / branch state
+                style: TextStyle(
+                  fontSize:   13,
+                  fontWeight: FontWeight.w600,
+                  color:      pillFg,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            );
-          }
-
-          // ── Loaded ─────────────────────────────────────────────────
-          if (state is ClassesLoaded) {
-            final loadingSessionId =
-            state is ClassActionLoading ? (state as dynamic).sessionId : null;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-
-                const SizedBox(height: 12),
-
-                // Date filter chip row
-                ClassDateFilterWidget(selectedDate: state.selectedDate),
-
-                const SizedBox(height: 16),
-
-                // Section header label
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    _formatSectionHeader(state.selectedDate),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF757575),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // Class list or empty state
-                Expanded(
-                  child: state.classes.isEmpty
-                      ? const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.event_busy,
-                            size: 48, color: Color(0xFFBDBDBD)),
-                        SizedBox(height: 12),
-                        Text('No classes scheduled for this day',
-                            style: TextStyle(
-                                color: Color(0xFF9E9E9E),
-                                fontSize: 14)),
-                      ],
-                    ),
-                  )
-                      : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: state.classes.length,
-                    itemBuilder: (context, index) {
-                      final session = state.classes[index];
-                      return ClassCardWidget(
-                        session: session,
-                        loadingSessionId: loadingSessionId,
-                        // Bookings button
-                        onBookingsTap: () {
-                          SessionBookingsBottomSheet.show(
-                            context,
-                            sessionId: session.sessionId,
-                            className: session.className,
-                          );
-                        },
-                        // Edit button
-                        onEditTap: () {
-                          context.read<AdminClassesBloc>()
-                              .add(const ClassFormOptionsRequested());
-                          AddEditClassBottomSheet.show(
-                            context,
-                            sessionId: session.sessionId,
-                            existing: session,
-                          );
-                        },
-                        // Cancel button — shows confirmation dialog first
-                        onCancelTap: () => _showCancelConfirmation(
-                            context, session.sessionId),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          }
-
-          // Default initial state — empty while first load fires
-          return const SizedBox.shrink();
-        },
+            ),
+            const SizedBox(width: 3),
+            Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: pillFg),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _NotificationBell — identical to AdminMembersScreen._NotificationBell
+// ─────────────────────────────────────────────────────────────────────────────
+class _NotificationBell extends StatelessWidget {
+  const _NotificationBell();
+
+  static const int _count = 0; // TODO: drive from notifications BLoC
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Stack(
+      children: [
+        Container(
+          width:  36,
+          height: 36,
+          decoration: BoxDecoration(
+            color:        cs.surfaceVariant,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            Icons.notifications_none_rounded,
+            color: cs.onSurfaceVariant,
+            size:  18,
+          ),
+        ),
+        if (_count > 0)
+          Positioned(
+            top:   2,
+            right: 2,
+            child: Container(
+              width:  16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: cs.error,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  _count > 99 ? '99+' : '$_count',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
