@@ -915,4 +915,147 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navPtSessions => 'جلسات PT';
 
   @override
+  String get navDashboard => 'لوحة التحكم';
+
+  @override
+  String get navMembers => 'الأعضاء';
+
+  @override
+  String get navPlans => 'الخطط';
+
+  @override
+  String get navStaff => 'الموظفون';
+
+  @override
+  String get navPayments => 'المدفوعات';
+
+  @override
+  String get navClasses => 'الحصص';
+
+  @override
+  String get navAiAssistant => 'المساعد الذكي';
+
+  @override
+  String get navSettings => 'الإعدادات';
+
+  @override
+  String get navLogout => 'تسجيل الخروج';
+
+  @override
+  String get logoutConfirmTitle => 'تسجيل الخروج؟';
+
+  @override
+  String get logoutConfirmMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get sectionCoreOwner => 'القسم الرئيسي';
+
+  @override
+  String get sectionOperationsReception => 'العمليات / الاستقبال';
+
+  @override
+  String get sectionTrainingPt => 'التدريب / PT';
+
+  @override
+  String get navTrainers => 'المدربون / PT';
+
+  @override
+  String get navReceptionStaff => 'موظفو الاستقبال';
+
+  @override
+  String get navGymProfile => 'ملف الصالة';
+
+  @override
+  String get navBranches => 'الفروع';
+
+  @override
+  String get navCheckins => 'تسجيل الحضور';
+
+  @override
+  String get navClassesPt => 'الحصص والتدريب';
+
+  @override
+  String get navNotifications => 'الإشعارات';
+
+  @override
+  String get navPtSessions => 'جلسات PT';
+
+  @override
+  String get navTrainingVideos => 'فيديوهات التدريب';
+
+  @override
+  String get accountProfileUpdateSuccess => 'تم تحديث الملف الشخصي بنجاح';
+
+  @override
+  String get accountStatExercises => 'التمارين';
+
+  @override
+  String get accountStatSessions => 'الحصص';
+
+  @override
+  String get accountStatAchievements => 'الإنجازات';
+
+  @override
+  String get accountMyBookings => 'حجوزاتي';
+
+  @override
+  String get accountLoyaltyPoints => 'نقاط الولاء';
+
+  @override
+  String get accountReferralTitle => 'كود الإحالة الخاص بك';
+
+  @override
+  String get accountReferralSubtitle => 'شارك واحصل على مكافآت';
+
+  @override
+  String get accountReferralCodeLabel => 'الكود الخاص بك';
+
+  @override
+  String get accountReferralCopied => 'تم نسخ الكود';
+
+  @override
+  String get accountReferralShare => 'مشاركة الكود';
+
+  @override
+  String get accountPersonalInfo => 'المعلومات الشخصية';
+
+  @override
+  String get accountEmail => 'البريد الإلكتروني';
+
+  @override
+  String get accountPhone => 'رقم الجوال';
+
+  @override
+  String get accountDateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get accountAddress => 'العنوان';
+
+  @override
+  String get accountEditProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get accountSectionAccount => 'الحساب';
+
+  @override
+  String get accountSectionSettings => 'الإعدادات';
+
+  @override
+  String get accountPaymentMethods => 'طرق الدفع';
+
+  @override
+  String get accountMyMembership => 'عضويتي';
+
+  @override
+  String get accountNotifications => 'الإشعارات';
+
+  @override
+  String get accountSettings => 'الإعدادات';
+
+  @override
+  String get accountHelpSupport => 'المساعدة والدعم';
+
+  @override
+  String get appVersion => 'النسخة';
+}
   String get navTrainingVideos => 'فيديوهات التدريب';}
