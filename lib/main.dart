@@ -4,10 +4,16 @@ import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/core/config/env.dart';
 import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'features/admin/AppBar/presentation/branch_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  BlocProvider(
+    create: (_) => BranchCubit(), // loads on demand
+  );
   // 1. Initialize Dio
   g.makeDefaultDio(Env.apiBaseUrl);
   g.makeDefaultDio(Env.apiProjectBaseUrl);

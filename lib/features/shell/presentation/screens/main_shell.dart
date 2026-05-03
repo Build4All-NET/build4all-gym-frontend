@@ -1,3 +1,6 @@
+import 'package:build4allgym/features/member/account/domain/repositories/member_account_repository.dart';
+import 'package:build4allgym/features/member/account/presentation/bloc/member_account_bloc.dart';
+import 'package:build4allgym/features/member/account/presentation/screens/member_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +30,10 @@ import 'package:build4allgym/features/member/sessions/presentation/screens/sessi
 
 import 'package:build4allgym/l10n/app_localizations.dart';
 
+import '../../../member/account/data/repositories/member_account_repository_impl.dart';
+import '../../../member/account/data/services/member_account_service.dart';
+import '../../../member/account/domain/usecases/get_member_account_usecase.dart';
+import '../../../member/account/domain/usecases/update_profile_usecase.dart';
 import '../../../member/sessions/data/repositories/sessions_repository_impl.dart';
 import '../../../member/sessions/domain/usecases/book_session_usecase.dart';
 import '../../../member/sessions/domain/usecases/cancel_booking_usecase.dart';
@@ -225,7 +232,6 @@ class _MainShellState extends State<MainShell> {
         final datasource = MemberHomeRemoteDatasource(
           tokenStore: const AuthTokenStore(),
         );
-
         final repository = MemberHomeRepositoryImpl(datasource);
 
         return MemberHomeBloc(
@@ -273,7 +279,20 @@ class _MainShellState extends State<MainShell> {
       ),
     ),
 
-    const _ProfileTab(),
+    MemberAccountScreen(
+      bloc: MemberAccountBloc(
+        getMemberAccountUseCase: GetMemberAccountUseCase(
+          MemberAccountRepositoryImpl(
+            MemberAccountService(g.dio()),
+          ),
+        ),
+        updateProfileUseCase: UpdateProfileUseCase(
+          MemberAccountRepositoryImpl(
+            MemberAccountService(g.dio()),
+          ),
+        ),
+      ),
+    ),
   ];
 }
 

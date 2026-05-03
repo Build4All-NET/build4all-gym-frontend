@@ -2,6 +2,7 @@ import 'package:build4allgym/features/admin/members/presentation/bloc/admin_memb
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
+import '../features/admin/AppBar/presentation/branch_cubit.dart';
 import '../features/admin/classes/data/repositories/admin_classes_repository_impl.dart';
 import '../features/admin/classes/data/services/admin_classes_service.dart';
 import '../features/admin/classes/domain/usecases/cancel_class_usecase.dart';
@@ -26,6 +27,8 @@ import '../features/admin/plans/data/services/admin_plans_remote_service.dart';
 import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart';
 import '../features/admin/plans/presentation/bloc/admin_plans/admin_plans_bloc.dart';
 import '../features/admin/plans/presentation/screens/admin_plans_screen.dart';
+import '../features/admin/trainers/domain/usecases/get_trainer_detail_usecase.dart';
+import '../features/admin/trainers/presentation/bloc/admin_trainers_event.dart';
 import '../features/auth/presentation/signup/screens/signup_screen.dart';
 import '../features/auth/presentation/signup/screens/otp_screen.dart';
 
@@ -56,6 +59,17 @@ import '../features/member/home/data/services/member_home_remote_datasource.dart
 
 import '../features/admin/members/presentation/screens/admin_members_screen.dart';
 import '../features/admin/members/data/repositories/admin_members_repository_impl.dart';
+
+
+import '../features/admin/trainers/data/services/admin_trainers_service.dart';
+import '../features/admin/trainers/data/repositories/admin_trainers_repository_impl.dart';
+import '../features/admin/trainers/domain/usecases/get_trainers_usecase.dart';
+import '../features/admin/trainers/domain/usecases/get_trainer_form_options_usecase.dart';
+import '../features/admin/trainers/domain/usecases/create_trainer_usecase.dart';
+import '../features/admin/trainers/domain/usecases/update_trainer_usecase.dart';
+import '../features/admin/trainers/domain/usecases/block_trainer_usecase.dart';
+import '../features/admin/trainers/presentation/bloc/admin_trainers_bloc.dart';
+import '../features/admin/trainers/presentation/screens/admin_trainers_screen.dart';
 
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
@@ -167,29 +181,38 @@ class AppRouter {
 
       case adminPlans:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => AdminPlansBloc(
-              getStats: GetAdminPlanStatsUseCase(
-                repository: AdminPlansRepositoryImpl(
-                  remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-                ),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              // ← ADD: BranchCubit for the AppBar branch pill
+              BlocProvider(
+                create: (_) => BranchCubit()..loadBranches(),
               ),
-              getPlans: GetAdminPlansUseCase(
-                repository: AdminPlansRepositoryImpl(
-                  remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-                ),
+              // ← EXISTING: unchanged
+              BlocProvider(
+                create: (_) => AdminPlansBloc(
+                  getStats: GetAdminPlanStatsUseCase(
+                    repository: AdminPlansRepositoryImpl(
+                      remoteDatasource: AdminPlansRemoteDatasourceImpl(),
+                    ),
+                  ),
+                  getPlans: GetAdminPlansUseCase(
+                    repository: AdminPlansRepositoryImpl(
+                      remoteDatasource: AdminPlansRemoteDatasourceImpl(),
+                    ),
+                  ),
+                  getPlanTypes: GetPlanTypesUseCase(
+                    repository: AdminPlansRepositoryImpl(
+                      remoteDatasource: AdminPlansRemoteDatasourceImpl(),
+                    ),
+                  ),
+                  deletePlan: DeletePlanUseCase(
+                    repository: AdminPlansRepositoryImpl(
+                      remoteDatasource: AdminPlansRemoteDatasourceImpl(),
+                    ),
+                  ),
+                )..add(LoadAdminPlansEvent()),
               ),
-              getPlanTypes: GetPlanTypesUseCase(
-                repository: AdminPlansRepositoryImpl(
-                  remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-                ),
-              ),
-              deletePlan: DeletePlanUseCase(
-                repository: AdminPlansRepositoryImpl(
-                  remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-                ),
-              ),
-            )..add(LoadAdminPlansEvent()),
+            ],
             child: const AdminPlansScreen(),
           ),
         );
@@ -241,8 +264,27 @@ class AppRouter {
 
     // ── Admin: Trainers ────────────────────────────────────────────────────
       case adminTrainers:
+        final service    = AdminTrainersService();
+        final repository = AdminTrainersRepositoryImpl(service);
         return MaterialPageRoute(
-          builder: (_) => const AdminClassesScreen(),//
+    builder: (_) => MultiBlocProvider(
+    providers: [
+    // ← ADD: BranchCubit for the AppBar branch pill
+    BlocProvider(
+    create: (_) => BranchCubit()..loadBranches(),
+    ),
+            BlocProvider(
+            create: (_) => AdminTrainersBloc(
+              getTrainers:    GetTrainersUseCase(repository),
+              getFormOptions: GetTrainerFormOptionsUseCase(repository),
+              createTrainer:  CreateTrainerUseCase(repository),
+              updateTrainer:  UpdateTrainerUseCase(repository),
+              blockTrainer:   BlockTrainerUseCase(repository),
+              getTrainerDetail: GetTrainerDetailUseCase(repository),
+            )..add(const TrainersStarted()),
+
+          ),
+    ], child: const AdminTrainersScreen(),),
         );
 
     // ── Admin: Staff ───────────────────────────────────────────────────────
@@ -281,7 +323,12 @@ class AppRouter {
            AdminClassesService(),
         );
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
+           builder: (_) => MultiBlocProvider(
+    providers: [
+    // ← ADD: BranchCubit for the AppBar branch pill
+    BlocProvider(
+    create: (_) => BranchCubit()..loadBranches(),
+    ), BlocProvider(
             create: (_) => AdminClassesBloc(
               getClassesByDate:    GetClassesByDateUseCase(classesRepo),
               getClassFormOptions: GetClassFormOptionsUseCase(classesRepo),
@@ -290,9 +337,8 @@ class AppRouter {
               cancelClass:         CancelClassUseCase(classesRepo),
               getSessionBookings:  GetSessionBookingsUseCase(classesRepo),
             )..add(ClassesStarted(DateTime.now())),  // kick off initial load
-            child: const AdminClassesScreen(),
-          ),
-        );
+
+          )], child: const AdminClassesScreen(),),);
 
     // ── Admin: Notifications ───────────────────────────────────────────────
       case adminNotifications:
