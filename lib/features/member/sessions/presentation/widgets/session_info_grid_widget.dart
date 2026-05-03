@@ -57,9 +57,10 @@ class SessionInfoGridWidget extends StatelessWidget {
         crossAxisCount: 2,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
         crossAxisSpacing: tokens.spacing.sm,
         mainAxisSpacing: tokens.spacing.sm,
-        childAspectRatio: 2.4,
+        childAspectRatio: 2,
         children: items.map((item) => _GridCell(item: item)).toList(),
       ),
     );
@@ -167,7 +168,7 @@ class _GridCell extends StatelessWidget {
                   item.label,
                   style: tokens.typography.bodySmall.copyWith(
                     color: tokens.colors.muted,
-                    fontSize: 10,
+                    fontSize: 11,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -178,9 +179,9 @@ class _GridCell extends StatelessWidget {
                   style: tokens.typography.bodySmall.copyWith(
                     color: tokens.colors.label,
                     fontWeight: FontWeight.w700,
-                    fontSize: 11,
+                    fontSize: 13,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

@@ -53,7 +53,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         Localizations.localeOf(context).languageCode == 'ar';
 
     return Container(
-      padding: EdgeInsets.all(tokens.spacing.lg),
+      padding: EdgeInsets.fromLTRB(
+        tokens.spacing.lg,
+        tokens.spacing.lg,
+        tokens.spacing.lg,
+        tokens.spacing.lg + MediaQuery.of(context).padding.bottom + 16,
+      ),
       decoration: BoxDecoration(
         color: tokens.colors.surface,
         borderRadius: BorderRadius.vertical(

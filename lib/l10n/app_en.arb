@@ -774,5 +774,24 @@
   "accountNotifications": "Notifications",
   "accountSettings": "Settings",
   "accountHelpSupport": "Help & Support",
-  "appVersion": "Version"
+  "appVersion": "Version",
+  "ptAll": "All",
+  "ptFavorites": "Favorites",
+  "ptFavoritesWithCount": "Favorites {count}",
+  "@ptFavoritesWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ptPerSession": "/session",
+  "ptYearsExperience": "{years} years exp",
+  "@ptYearsExperience": {
+    "placeholders": { "years": { "type": "int" } }
+  },
+  "ptReviews": "{count} reviews",
+  "@ptReviews": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ptScreenTitle": "Personal Trainers",
+  "ptScreenSubtitle": "Choose the right trainer for your goals",
+  "ptBookSession": "Book Session",
+  "ptNoTrainers": "No trainers available"
 }

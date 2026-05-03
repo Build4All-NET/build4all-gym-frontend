@@ -6,6 +6,7 @@ import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/session_card_entity.dart';
 import '../bloc/sessions_bloc.dart';
 import '../bloc/sessions_event.dart';
+import '../screens/session_detail_screen.dart';
 
 class SessionCardWidget extends StatelessWidget {
   final SessionCardEntity session;
@@ -39,7 +40,7 @@ class SessionCardWidget extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: tokens.spacing.lg,
+        horizontal: tokens.spacing.sm,
         vertical: tokens.spacing.sm,
       ),
       decoration: BoxDecoration(
@@ -58,24 +59,11 @@ class SessionCardWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Green accent top bar ─────────────────────────────────
-          Container(
-            height: 4,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [tokens.colors.primary, tokens.colors.success],
-              ),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(tokens.card.radius),
-                topRight: Radius.circular(tokens.card.radius),
-              ),
-            ),
-          ),
-
           Padding(
             padding: EdgeInsets.all(tokens.card.padding),
             child: Row(
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+              textDirection:
+              isArabic ? TextDirection.rtl : TextDirection.ltr,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 imageBox,
@@ -108,7 +96,8 @@ class SessionCardWidget extends StatelessWidget {
                         session.className,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                        textAlign:
+                        isArabic ? TextAlign.right : TextAlign.left,
                         style: tokens.typography.titleMedium.copyWith(
                           fontWeight: FontWeight.w800,
                           color: tokens.colors.label,
@@ -122,13 +111,14 @@ class SessionCardWidget extends StatelessWidget {
                             : 'with ${session.trainerName}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                        textAlign:
+                        isArabic ? TextAlign.right : TextAlign.left,
                         style: tokens.typography.bodySmall.copyWith(
                           color: tokens.colors.body,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Room + duration with icons
+                      // Room + duration
                       Row(
                         mainAxisAlignment: isArabic
                             ? MainAxisAlignment.end
@@ -138,7 +128,8 @@ class SessionCardWidget extends StatelessWidget {
                               size: 13, color: tokens.colors.muted),
                           const SizedBox(width: 3),
                           Text(
-                            l10n.memberSessionsMinute(session.durationMinutes),
+                            l10n.memberSessionsMinute(
+                                session.durationMinutes),
                             style: tokens.typography.bodySmall.copyWith(
                               color: tokens.colors.body,
                               fontSize: 11,
@@ -168,9 +159,11 @@ class SessionCardWidget extends StatelessWidget {
                       // Price + seats + Book Now
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        textDirection:
-                        isArabic ? TextDirection.rtl : TextDirection.ltr,
+                        textDirection: isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         children: [
+                          // Price + seats
                           Column(
                             crossAxisAlignment: isArabic
                                 ? CrossAxisAlignment.end
@@ -178,7 +171,8 @@ class SessionCardWidget extends StatelessWidget {
                             children: [
                               Text(
                                 '\$${session.price.toStringAsFixed(2)}',
-                                style: tokens.typography.titleMedium.copyWith(
+                                style:
+                                tokens.typography.titleMedium.copyWith(
                                   color: tokens.colors.primary,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -196,20 +190,29 @@ class SessionCardWidget extends StatelessWidget {
                               ),
                             ],
                           ),
+                          // Book Now button — fixed width + height
                           SizedBox(
-                            height: 36,
+                            width: 110,
+                            height: 44,
                             child: ElevatedButton(
                               onPressed: () {
-                                context.read<SessionsBloc>().add(
-                                  SessionBookRequested(session.sessionId),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<SessionsBloc>(),
+                                      child: SessionDetailScreen(
+                                        sessionId: session.sessionId,
+                                      ),
+                                    ),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: tokens.colors.primary,
                                 foregroundColor: tokens.colors.onPrimary,
                                 elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18),
+                                padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       tokens.button.radius),
@@ -217,7 +220,8 @@ class SessionCardWidget extends StatelessWidget {
                               ),
                               child: Text(
                                 l10n.memberSessionsBookNow,
-                                style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -246,27 +250,36 @@ class SessionCardWidget extends StatelessWidget {
         color: tokens.colors.primary.withOpacity(0.12),
         borderRadius: BorderRadius.circular(tokens.card.radius),
       ),
-      child: Icon(Icons.fitness_center, color: tokens.colors.primary, size: 34),
+      child:
+      Icon(Icons.fitness_center, color: tokens.colors.primary, size: 34),
     );
   }
 
   Color _difficultyColor(BuildContext context, String level) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     switch (level.toUpperCase()) {
-      case 'BEGINNER': return tokens.colors.success;
-      case 'INTERMEDIATE': return Colors.orange;
-      case 'ADVANCED': return tokens.colors.danger;
-      default: return tokens.colors.muted;
+      case 'BEGINNER':
+        return tokens.colors.success;
+      case 'INTERMEDIATE':
+        return Colors.orange;
+      case 'ADVANCED':
+        return tokens.colors.danger;
+      default:
+        return tokens.colors.muted;
     }
   }
 
   String _difficultyLabel(BuildContext context, String level) {
     final l10n = AppLocalizations.of(context)!;
     switch (level.toUpperCase()) {
-      case 'BEGINNER': return l10n.memberSessionsDifficultyBeginner;
-      case 'INTERMEDIATE': return l10n.memberSessionsDifficultyIntermediate;
-      case 'ADVANCED': return l10n.memberSessionsDifficultyAdvanced;
-      default: return level;
+      case 'BEGINNER':
+        return l10n.memberSessionsDifficultyBeginner;
+      case 'INTERMEDIATE':
+        return l10n.memberSessionsDifficultyIntermediate;
+      case 'ADVANCED':
+        return l10n.memberSessionsDifficultyAdvanced;
+      default:
+        return level;
     }
   }
 }

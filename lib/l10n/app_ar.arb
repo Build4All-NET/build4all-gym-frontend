@@ -710,5 +710,24 @@
   "accountNotifications": "الإشعارات",
   "accountSettings": "الإعدادات",
   "accountHelpSupport": "المساعدة والدعم",
-  "appVersion": "النسخة"
+  "appVersion": "النسخة",
+  "ptAll": "الكل",
+  "ptFavorites": "المفضلة",
+  "ptFavoritesWithCount": "المفضلة {count}",
+  "@ptFavoritesWithCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ptPerSession": "/جلسة",
+  "ptYearsExperience": "{years} سنوات خبرة",
+  "@ptYearsExperience": {
+    "placeholders": { "years": { "type": "int" } }
+  },
+  "ptReviews": "{count} تقييم",
+  "@ptReviews": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ptScreenTitle": "المدربون الشخصيون",
+  "ptScreenSubtitle": "اختر المدرب المناسب لأهدافك",
+  "ptBookSession": "حجز جلسة",
+  "ptNoTrainers": "لا يوجد مدربون متاحون"
 }

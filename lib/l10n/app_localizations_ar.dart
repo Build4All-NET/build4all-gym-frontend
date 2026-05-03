@@ -991,5 +991,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get appVersion => 'النسخة';
+
+  @override
+  String get ptAll => 'الكل';
+
+  @override
+  String get ptFavorites => 'المفضلة';
+
+  @override
+  String ptFavoritesWithCount(int count) {
+    return 'المفضلة $count';
+  }
+
+  @override
+  String get ptPerSession => '/جلسة';
+
+  @override
+  String ptYearsExperience(int years) {
+    return '$years سنوات خبرة';
+  }
+
+  @override
+  String ptReviews(int count) {
+    return '$count تقييم';
+  }
+
+  @override
+  String get ptScreenTitle => 'المدربون الشخصيون';
+
+  @override
+  String get ptScreenSubtitle => 'اختر المدرب المناسب لأهدافك';
+
+  @override
+  String get ptBookSession => 'حجز جلسة';
+
+  @override
+  String get ptNoTrainers => 'لا يوجد مدربون متاحون';
 }
-  String get navTrainingVideos => 'فيديوهات التدريب';}
