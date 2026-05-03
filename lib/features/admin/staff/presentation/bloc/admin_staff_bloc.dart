@@ -65,16 +65,19 @@ class AdminStaffBloc extends Bloc<AdminStaffEvent, AdminStaffState> {
       StaffStarted event,
       Emitter<AdminStaffState> emit,
       ) async {
+    // Persist branch filter so reload-after-action keeps the same filter
+    if (event.branchId != null) _activeBranchId = event.branchId;
+
     emit(const StaffLoading());
     try {
       final result = await _getStaff(
         branchId: _activeBranchId,
-        search: _activeSearch,
+        search:   _activeSearch,
       );
       emit(StaffLoaded(
-        staff: result.staff,
-        totalStaff: result.totalStaff,
-        activeStaff: result.activeStaff,
+        staff:        result.staff,
+        totalStaff:   result.totalStaff,
+        activeStaff:  result.activeStaff,
         activeSearch: _activeSearch,
       ));
     } catch (e) {
@@ -149,7 +152,6 @@ class AdminStaffBloc extends Bloc<AdminStaffEvent, AdminStaffState> {
       emit(StaffActionError(event.staffId, e.toString()));
     }
   }
-
   @override
   Future<void> close() {
     _searchDebounce?.cancel();

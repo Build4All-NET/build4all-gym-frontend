@@ -376,7 +376,13 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                     SizedBox(height: tokens.spacing.lg),
                     QuickActionsGrid(
                       onBookClass: () => _showComingSoon(context),
-                      onBookTrainer: () => const MemberPtScreen(),
+                      onBookTrainer: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const MemberPtScreen(),
+                          ),
+                        );
+                      },
                       onQrCode: () => _showComingSoon(context),
                       onPaymentHistory: () => _showComingSoon(context),
                     ),
