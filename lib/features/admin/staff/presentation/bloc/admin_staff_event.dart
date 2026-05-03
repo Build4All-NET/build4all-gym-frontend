@@ -11,36 +11,31 @@ import '../../data/models/update_staff_request_model.dart';
 // They should point to:
 //   lib/features/admin/staff/data/models/create_staff_request_model.dart
 //   lib/features/admin/staff/data/models/update_staff_request_model.dart
-
 abstract class AdminStaffEvent {
   const AdminStaffEvent();
 }
 
-/// Dispatched on screen init (initState) to trigger the initial data load.
 class StaffStarted extends AdminStaffEvent {
-  const StaffStarted();
+  final int? branchId; // null = All Branches
+  const StaffStarted({this.branchId});
 }
 
-/// Dispatched by StaffSearchBarWidget on every keystroke (debounced 300 ms in BLoC).
 class StaffSearchChanged extends AdminStaffEvent {
   final String query;
   const StaffSearchChanged(this.query);
 }
 
-/// Dispatched when the user taps "Add Staff Member" and confirms in the bottom sheet.
 class StaffCreateRequested extends AdminStaffEvent {
   final CreateStaffRequestModel request;
   const StaffCreateRequested(this.request);
 }
 
-/// Dispatched when the user taps "Save Changes" in edit mode of the bottom sheet.
 class StaffUpdateRequested extends AdminStaffEvent {
   final int staffId;
   final UpdateStaffRequestModel request;
   const StaffUpdateRequested(this.staffId, this.request);
 }
 
-/// Dispatched after the user confirms the remove dialog on a staff card.
 class StaffRemoveRequested extends AdminStaffEvent {
   final int staffId;
   const StaffRemoveRequested(this.staffId);
