@@ -1027,4 +1027,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptNoTrainers => 'لا يوجد مدربون متاحون';
+
+  @override
+  String accountMemberSince(String date) {
+    return 'عضو منذ $date';
+  }
 }

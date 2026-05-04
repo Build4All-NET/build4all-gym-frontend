@@ -40,19 +40,27 @@ class _WeightTrackerCardState extends State<WeightTrackerCard> {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Container(
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    return Container(
         width: double.infinity,
         padding: EdgeInsets.all(tokens.spacing.lg),
         decoration: BoxDecoration(
           color: tokens.colors.success.withOpacity(0.10),
           borderRadius: BorderRadius.circular(22),
           border: Border(
-            right: BorderSide(
+            right: isRtl
+                ? BorderSide(
               color: tokens.colors.success,
               width: 4,
-            ),
+            )
+                : BorderSide.none,
+            left: !isRtl
+                ? BorderSide(
+              color: tokens.colors.success,
+              width: 4,
+            )
+                : BorderSide.none,
           ),
         ),
         child: Column(
@@ -77,11 +85,12 @@ class _WeightTrackerCardState extends State<WeightTrackerCard> {
 
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment:
+                    isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     children: [
                       Text(
                         l10n.home_progressTracking,
-                        textAlign: TextAlign.end,
+                        textAlign: isRtl ? TextAlign.end : TextAlign.start,
                         style: tokens.typography.bodyMedium.copyWith(
                           color: tokens.colors.success,
                           fontWeight: FontWeight.w800,
@@ -90,7 +99,7 @@ class _WeightTrackerCardState extends State<WeightTrackerCard> {
                       SizedBox(height: tokens.spacing.xs),
                       Text(
                         l10n.home_weightTrackerSubtitle,
-                        textAlign: TextAlign.end,
+                        textAlign: isRtl ? TextAlign.end : TextAlign.start,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: tokens.typography.bodySmall.copyWith(
@@ -132,7 +141,7 @@ class _WeightTrackerCardState extends State<WeightTrackerCard> {
               child: TextField(
                 controller: _controller,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                textAlign: TextAlign.end,
+                textAlign: isRtl ? TextAlign.right : TextAlign.left,
                 decoration: InputDecoration(
                   hintText: l10n.home_weightHint,
                   filled: true,
@@ -189,7 +198,7 @@ class _WeightTrackerCardState extends State<WeightTrackerCard> {
             ),
           ],
         ),
-      ),
+
     );
   }
 }

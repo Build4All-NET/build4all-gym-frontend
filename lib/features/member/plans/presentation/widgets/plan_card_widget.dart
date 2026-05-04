@@ -22,16 +22,14 @@ class PlanCardWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final bool featured = plan.isFeatured;
-    final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    final textDirection = isArabic ? TextDirection.rtl : TextDirection.ltr;
-    final textAlign = isArabic ? TextAlign.right : TextAlign.left;
+    final textDirection = isRtl ? TextDirection.rtl : TextDirection.ltr;
+    final textAlign = isRtl ? TextAlign.end : TextAlign.start;
     final crossAxis =
-    isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start;
 
-    return Directionality(
-      textDirection: textDirection,
-      child: Container(
+    return Container(
         margin: EdgeInsets.only(bottom: tokens.spacing.lg),
         decoration: BoxDecoration(
           color: tokens.colors.surface,
@@ -63,7 +61,7 @@ class PlanCardWidget extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  isArabic
+                  isRtl
                       ? '⭐ ${l10n.mostPopular}'
                       : '${l10n.mostPopular} ⭐',
                   style: tokens.typography.bodyMedium.copyWith(
@@ -100,7 +98,7 @@ class PlanCardWidget extends StatelessWidget {
 
                             Row(
                               textDirection: textDirection,
-                              mainAxisAlignment: isArabic
+                              mainAxisAlignment: isRtl
                                   ? MainAxisAlignment.end
                                   : MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -133,7 +131,7 @@ class PlanCardWidget extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Row(
                                   textDirection: textDirection,
-                                  mainAxisAlignment: isArabic
+                                  mainAxisAlignment: isRtl
                                       ? MainAxisAlignment.start
                                       : MainAxisAlignment.start,
                                   children: [
@@ -212,7 +210,6 @@ class PlanCardWidget extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 

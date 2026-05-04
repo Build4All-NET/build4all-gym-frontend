@@ -18,6 +18,7 @@ class MembershipStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     final status = membership.status.toLowerCase().trim();
     final showRenewButton = membership.canRenew || status == 'expired';
@@ -39,7 +40,8 @@ class MembershipStatusCard extends StatelessWidget {
           SizedBox(
             width: 116,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+              isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.end,
               children: [
                 Container(
                   width: 58,
@@ -104,12 +106,13 @@ class MembershipStatusCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment:
+              isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween, // replaces Spacer
               children: [
                 Text(
                   l10n.home_membershipStatus,
-                  textAlign: TextAlign.end,
+                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
                   style: tokens.typography.bodySmall.copyWith(
                     color: tokens.colors.onPrimary.withOpacity(0.82),
                     fontWeight: FontWeight.w500,
@@ -118,7 +121,7 @@ class MembershipStatusCard extends StatelessWidget {
 
                 Text(
                   '✨ ${membership.planName}',
-                  textAlign: TextAlign.end,
+                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: tokens.typography.headlineSmall.copyWith(
@@ -130,11 +133,12 @@ class MembershipStatusCard extends StatelessWidget {
                 ),
 
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment:
+                  isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.home_expiresOn,
-                      textAlign: TextAlign.end,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.bodySmall.copyWith(   // bodySmall instead of bodyMedium
                         color: tokens.colors.onPrimary.withOpacity(0.82),
                         fontWeight: FontWeight.w500,
@@ -143,7 +147,7 @@ class MembershipStatusCard extends StatelessWidget {
                     SizedBox(height: tokens.spacing.xs),
                     Text(
                       membership.expirationDate,
-                      textAlign: TextAlign.end,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.bodyMedium.copyWith(  // bodyMedium instead of titleMedium
                         color: tokens.colors.onPrimary,
                         fontSize: 14,    // reduced from 16

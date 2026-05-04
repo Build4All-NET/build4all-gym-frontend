@@ -35,13 +35,11 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
 
     return BlocProvider.value(
       value: widget.bloc,
-      child: Directionality(
-        textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-        child: Scaffold(
+      child: Scaffold(
           backgroundColor: tokens.colors.background,
           body: BlocConsumer<MemberAccountBloc, MemberAccountState>(
             listener: (context, state) {
@@ -119,7 +117,6 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
               );
             },
           ),
-        ),
       ),
     );
   }
@@ -163,11 +160,12 @@ class _AccountBody extends StatelessWidget {
                   ),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                  isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.memberBottomNavAccount,
-                      textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.headlineSmall.copyWith(
                         color: tokens.colors.onPrimary,
                         fontWeight: FontWeight.w900,
