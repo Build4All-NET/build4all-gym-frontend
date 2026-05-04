@@ -1,16 +1,16 @@
-// PATH: lib/features/admin/trainers/presentation/widgets/trainer_search_filter_bar_widget.dart
-// =============================================================================
+// lib/features/admin/trainers/presentation/widgets/trainer_search_filter_bar_widget.dart
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/theme/theme_cubit.dart';
 import '../bloc/admin_trainers_bloc.dart';
 import '../bloc/admin_trainers_event.dart';
 import '../bloc/admin_trainers_state.dart';
 
 class TrainerSearchFilterBarWidget extends StatefulWidget {
   const TrainerSearchFilterBarWidget({super.key});
+
   @override
   State<TrainerSearchFilterBarWidget> createState() =>
       _TrainerSearchFilterBarWidgetState();
@@ -28,14 +28,15 @@ class _TrainerSearchFilterBarWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     return BlocBuilder<AdminTrainersBloc, AdminTrainersState>(
       builder: (context, state) {
-        // Get specialty list from form options if loaded
         List<String> specialties = [];
         if (state is TrainerFormOptionsLoaded) {
           specialties = state.options.specialties;
         } else if (state is TrainersLoaded) {
-          // Try to extract from loaded trainers
           specialties = state.trainers
               .expand((t) => t.specialties)
               .toSet()
@@ -55,33 +56,43 @@ class _TrainerSearchFilterBarWidgetState
                 flex: 6,
                 child: TextField(
                   controller: _controller,
+                  style: TextStyle(fontSize: 14, color: c.label),
                   decoration: InputDecoration(
                     hintText:  'Search by name or specialty',
-                    prefixIcon: const Icon(Icons.search,
-                        color: Color(0xFF757575), size: 20),
+                    hintStyle: TextStyle(color: c.muted, fontSize: 14),
+                    prefixIcon: Icon(Icons.search, color: c.muted, size: 20),
                     suffixIcon: _controller.text.isNotEmpty
                         ? IconButton(
-                      icon: const Icon(Icons.clear,
-                          color: Color(0xFF757575), size: 18),
+                      icon: Icon(Icons.clear,
+                          color: c.muted, size: 18),
                       onPressed: () {
                         _controller.clear();
-                        context.read<AdminTrainersBloc>()
+                        context
+                            .read<AdminTrainersBloc>()
                             .add(const TrainersSearchChanged(''));
                       },
                     )
                         : null,
-                    filled:      true,
-                    fillColor:   Colors.white,
-                    contentPadding:
-                    const EdgeInsets.symmetric(vertical: 0),
+                    filled:         true,
+                    fillColor:      c.surface,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: c.primary, width: 1.5),
+                    ),
                   ),
                   onChanged: (q) {
                     setState(() {}); // update clear button
-                    context.read<AdminTrainersBloc>()
+                    context
+                        .read<AdminTrainersBloc>()
                         .add(TrainersSearchChanged(q));
                   },
                 ),
@@ -95,27 +106,33 @@ class _TrainerSearchFilterBarWidgetState
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
-                    color:        Colors.white,
+                    color:        c.surface,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String?>(
-                      value:       activeSpecialty,
-                      isExpanded:  true,
-                      hint: const Text('All',
-                          style: TextStyle(fontSize: 13,
-                              color: Color(0xFF757575))),
+                      value:      activeSpecialty,
+                      isExpanded: true,
+                      hint: Text(
+                        'All',
+                        style: TextStyle(fontSize: 13, color: c.muted),
+                      ),
+                      style: TextStyle(fontSize: 13, color: c.label),
                       items: [
-                        const DropdownMenuItem<String?>(
+                        DropdownMenuItem<String?>(
                           value: null,
                           child: Text('All',
-                              style: TextStyle(fontSize: 13)),
+                              style: TextStyle(
+                                  fontSize: 13, color: c.label)),
                         ),
                         ...specialties.map((s) => DropdownMenuItem<String?>(
                           value: s,
-                          child: Text(s,
-                              style: const TextStyle(fontSize: 13),
-                              overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            s,
+                            style: TextStyle(
+                                fontSize: 13, color: c.label),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         )),
                       ],
                       onChanged: (value) => context

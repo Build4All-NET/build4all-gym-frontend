@@ -1,14 +1,10 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// FILE: lib/features/admin/staff/presentation/widgets/staff_search_bar_widget.dart
-//
-// MATCHES FIGMA: hint text "Search staff by name", grey background, no border.
-// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/admin/staff/presentation/widgets/staff_search_bar_widget.dart
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../../../../core/theme/theme_cubit.dart';
 import '../bloc/admin_staff_bloc.dart';
 import '../bloc/admin_staff_event.dart';
 
@@ -39,34 +35,38 @@ class _StaffSearchBarWidgetState extends State<StaffSearchBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
       child: TextField(
         controller: _controller,
         onChanged: _onChanged,
-        style: const TextStyle(fontSize: 14, color: Color(0xFF1E293B)),
+        style: TextStyle(fontSize: 14, color: c.label),
         decoration: InputDecoration(
           hintText: 'Search staff by name',
-          hintStyle:
-          const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
-          prefixIcon:
-          const Icon(Icons.search, color: Color(0xFF94A3B8), size: 20),
+          hintStyle: TextStyle(color: c.muted, fontSize: 14),
+          prefixIcon: Icon(Icons.search, color: c.muted, size: 20),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: c.surface,
           contentPadding:
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            borderSide: BorderSide(color: c.border.withOpacity(0.3)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            borderSide: BorderSide(color: c.border.withOpacity(0.3)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide:
-            const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+            borderSide: BorderSide(color: c.primary, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: c.error),
           ),
         ),
       ),

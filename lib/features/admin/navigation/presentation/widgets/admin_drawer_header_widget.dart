@@ -1,10 +1,11 @@
 // lib/features/admin/navigation/presentation/widgets/admin_drawer_header_widget.dart
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 /// The header of the Admin Navigation Drawer.
 ///
-/// Design (matches Figma):
+/// Design:
 /// ┌───────────────────────────────────────┐  ← primary gradient background
 /// │  [Gym Icon]  FitZone Gym          [X] │  ← Row 1: gym info + close button
 /// │              • Mumbai Central         │
@@ -18,8 +19,8 @@ class AdminDrawerHeaderWidget extends StatelessWidget {
   final String adminName;
   final String adminEmail;
   final String? avatarUrl;
-  final VoidCallback onClose;         // tapping X
-  final VoidCallback onProfileTap;    // tapping the user card
+  final VoidCallback onClose;
+  final VoidCallback onProfileTap;
 
   const AdminDrawerHeaderWidget({
     super.key,
@@ -34,14 +35,16 @@ class AdminDrawerHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Replace hardcoded colors with tokens from ThemeCubit:
-    // final tokens = context.read<ThemeCubit>().state.tokens;
-    const headerBgStart = Color(0xFF3B5BDB); // tokens.primary dark
-    const headerBgEnd   = Color(0xFF4263EB); // tokens.primary
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c = tokens.colors;
+
+    // Derive gradient stops from primary token
+    final headerBgStart = Color.lerp(c.primary, Colors.black, 0.18)!;
+    final headerBgEnd   = c.primary;
 
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -94,12 +97,12 @@ class AdminDrawerHeaderWidget extends StatelessWidget {
                         const SizedBox(height: 2),
                         Row(
                           children: [
-                            // Green online dot
+                            // Online dot — use success token
                             Container(
                               width: 7,
                               height: 7,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF51CF66),
+                              decoration: BoxDecoration(
+                                color: c.success,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -152,10 +155,8 @@ class AdminDrawerHeaderWidget extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      // Avatar
                       _buildAvatar(),
                       const SizedBox(width: 10),
-                      // Name + email
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +204,6 @@ class AdminDrawerHeaderWidget extends StatelessWidget {
         backgroundColor: Colors.white24,
       );
     }
-    // Initials fallback
     final initials = adminName.isNotEmpty
         ? adminName
         .trim()

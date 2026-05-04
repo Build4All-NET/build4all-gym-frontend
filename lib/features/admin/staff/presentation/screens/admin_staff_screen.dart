@@ -1,12 +1,11 @@
-// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/staff/presentation/screens/admin_staff_screen.dart
-// ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:build4allgym/features/admin/navigation/presentation/widgets/admin_navigation_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/core/network/globals.dart';
+import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/features/admin/AppBar/presentation/admin_app_bar.dart';
 import 'package:build4allgym/features/admin/AppBar/presentation/branch_cubit.dart';
 
@@ -45,9 +44,6 @@ class AdminStaffScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// StatefulWidget so we can track _selectedBranchId for the branch pill
-// ─────────────────────────────────────────────────────────────────────────────
 class _AdminStaffView extends StatefulWidget {
   const _AdminStaffView();
 
@@ -56,26 +52,22 @@ class _AdminStaffView extends StatefulWidget {
 }
 
 class _AdminStaffViewState extends State<_AdminStaffView> {
-  int? _selectedBranchId; // null = All Branches
+  int? _selectedBranchId;
 
   @override
   void initState() {
     super.initState();
-    // Load branches for the pill — safe to call if already loaded (no-op)
     context.read<BranchCubit>().loadBranches();
   }
 
   void _onBranchChanged(int? branchId) {
     setState(() => _selectedBranchId = branchId);
-    // Re-fetch staff filtered by the newly selected branch
-    context.read<AdminStaffBloc>().add(
-      StaffStarted(branchId: branchId),
-    );
+    context.read<AdminStaffBloc>().add(StaffStarted(branchId: branchId));
   }
 
   void _openAddDialog() {
     showDialog(
-      context: context,
+      context:           context,
       barrierDismissible: false,
       builder: (_) => BlocProvider.value(
         value: context.read<AdminStaffBloc>(),
@@ -86,6 +78,9 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
@@ -97,31 +92,28 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
           avatarUrl:       null,
           initialActiveId: 'reception_staff',
         ),
-        backgroundColor: const Color(0xFFF5F7FA),
-        // ── No appBar property — AdminAppBar lives inside the body ──────────
+        backgroundColor: c.background,
         body: SafeArea(
           child: Column(
             children: [
-              // ── Shared Admin AppBar ───────────────────────────────────────
               AdminAppBar(
-                title:            'Staff',
-                selectedBranchId: _selectedBranchId,
-                onBranchChanged:  _onBranchChanged,
-                onAddTap:         _openAddDialog,
-                notificationCount: 0, // TODO: wire to real notification count
+                title:             'Staff',
+                selectedBranchId:  _selectedBranchId,
+                onBranchChanged:   _onBranchChanged,
+                onAddTap:          _openAddDialog,
+                notificationCount: 0,
               ),
 
-              // ── Body ──────────────────────────────────────────────────────
               Expanded(
                 child: BlocConsumer<AdminStaffBloc, AdminStaffState>(
                   listener: (context, state) {
                     if (state is StaffActionSuccess) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(_successMessage(state.actionType)),
-                          backgroundColor: const Color(0xFF16A34A),
-                          behavior: SnackBarBehavior.floating,
-                          margin: const EdgeInsets.all(12),
+                          content:         Text(_successMessage(state.actionType)),
+                          backgroundColor: c.success,
+                          behavior:        SnackBarBehavior.floating,
+                          margin:          const EdgeInsets.all(12),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8)),
                         ),
@@ -130,10 +122,10 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                     if (state is StaffActionError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(state.message),
-                          backgroundColor: const Color(0xFFDC2626),
-                          behavior: SnackBarBehavior.floating,
-                          margin: const EdgeInsets.all(12),
+                          content:         Text(state.message),
+                          backgroundColor: c.danger,
+                          behavior:        SnackBarBehavior.floating,
+                          margin:          const EdgeInsets.all(12),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8)),
                         ),
@@ -142,7 +134,8 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                   },
                   builder: (context, state) {
                     if (state is StaffLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(
+                          child: CircularProgressIndicator(color: c.primary));
                     }
 
                     if (state is StaffError) {
@@ -150,24 +143,23 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.error_outline,
-                                size: 48, color: Color(0xFFDC2626)),
+                            Icon(Icons.error_outline,
+                                size: 48, color: c.danger),
                             const SizedBox(height: 12),
                             Text(state.message,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    color: Color(0xFF64748B))),
+                                style: TextStyle(color: c.muted)),
                             const SizedBox(height: 16),
                             ElevatedButton.icon(
                               onPressed: () => context
                                   .read<AdminStaffBloc>()
                                   .add(StaffStarted(
                                   branchId: _selectedBranchId)),
-                              icon: const Icon(Icons.refresh),
+                              icon:  const Icon(Icons.refresh),
                               label: const Text('Retry'),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2563EB),
-                                foregroundColor: Colors.white,
+                                backgroundColor: c.primary,
+                                foregroundColor: c.onPrimary,
                               ),
                             ),
                           ],
@@ -181,33 +173,30 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                         state is StaffActionError) {
                       final loaded = _lastLoaded(context);
                       if (loaded == null) {
-                        return const Center(
-                            child: CircularProgressIndicator());
+                        return Center(
+                            child: CircularProgressIndicator(
+                                color: c.primary));
                       }
 
                       return Column(
                         children: [
-                          // ── Stats row ─────────────────────────────────────
                           StaffStatsRowWidget(
                             totalStaff:  loaded.totalStaff,
                             activeStaff: loaded.activeStaff,
                           ),
-                          // ── Search bar ────────────────────────────────────
                           const StaffSearchBarWidget(),
-                          // ── Staff list ────────────────────────────────────
                           Expanded(
                             child: loaded.staff.isEmpty
-                                ? const Center(
+                                ? Center(
                               child: Text(
                                 'No staff members found.',
-                                style: TextStyle(
-                                    color: Color(0xFF94A3B8)),
+                                style: TextStyle(color: c.muted),
                               ),
                             )
                                 : ListView.builder(
-                              padding: const EdgeInsets.only(
+                              padding:    const EdgeInsets.only(
                                   top: 4, bottom: 100),
-                              itemCount: loaded.staff.length,
+                              itemCount:  loaded.staff.length,
                               itemBuilder: (ctx, i) =>
                                   StaffCardWidget(
                                       staff: loaded.staff[i]),
@@ -225,13 +214,12 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
           ),
         ),
 
-        // ── FAB ───────────────────────────────────────────────────────────────
         floatingActionButton: FloatingActionButton(
-          onPressed: _openAddDialog,
-          backgroundColor: const Color(0xFF1E293B),
-          foregroundColor: Colors.white,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add, size: 28),
+          onPressed:       _openAddDialog,
+          backgroundColor: c.label,
+          foregroundColor: c.onPrimary,
+          shape:           const CircleBorder(),
+          child:           const Icon(Icons.add, size: 28),
         ),
       ),
     );

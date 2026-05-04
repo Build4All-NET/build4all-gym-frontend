@@ -1,4 +1,8 @@
+// FILE: lib/features/admin/dashboard/presentation/widgets/quick_actions_section.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 class QuickActionsSection extends StatelessWidget {
   final VoidCallback onAddMember;
@@ -16,66 +20,86 @@ class QuickActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokens  = context.read<ThemeCubit>().state.tokens;
+    final c       = tokens.colors;
+    final card    = tokens.card;
+
+    final accentA = c.primary;
+    final accentB = c.success;
+    final accentC = Color.lerp(c.primary, c.label, 0.3) ?? c.primary;
+    final accentD = Color.lerp(c.danger, c.primary, 0.5) ?? c.primary;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 2, bottom: 14),
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 14),
           child: Text(
             'Quick Actions',
             style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF111827),
-            ),
+                fontSize:   17,
+                fontWeight: FontWeight.w700,
+                color:      c.label),
           ),
         ),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            color:        c.surface,
+            borderRadius: BorderRadius.circular(card.radius),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color:     Colors.black.withOpacity(0.05),
                 blurRadius: 12,
-                offset: const Offset(0, 4),
+                offset:    const Offset(0, 4),
               ),
             ],
           ),
           child: Column(
             children: [
               _ActionRow(
-                icon: Icons.person_add_outlined,
-                iconColor: const Color(0xFF3B82F6),
-                iconBg: const Color(0xFFEFF6FF),
-                label: 'Add Member',
-                onTap: onAddMember,
-                isFirst: true,
+                icon:      Icons.person_add_outlined,
+                iconColor: accentA,
+                iconBg:    accentA.withOpacity(0.1),
+                label:     'Add Member',
+                onTap:     onAddMember,
+                isFirst:   true,
+                chevronColor: c.border,
+                labelColor:   c.body,
+                cardRadius:   card.radius,
               ),
-              const _RowDivider(),
+              _RowDivider(color: c.border.withOpacity(0.1)),
               _ActionRow(
-                icon: Icons.attach_money_rounded,
-                iconColor: const Color(0xFF16A34A),
-                iconBg: const Color(0xFFF0FDF4),
-                label: 'Record Payment',
-                onTap: onRecordPayment,
+                icon:        Icons.attach_money_rounded,
+                iconColor:   accentB,
+                iconBg:      accentB.withOpacity(0.1),
+                label:       'Record Payment',
+                onTap:       onRecordPayment,
+                chevronColor: c.border,
+                labelColor:  c.body,
+                cardRadius:  card.radius,
               ),
-              const _RowDivider(),
+              _RowDivider(color: c.border.withOpacity(0.1)),
               _ActionRow(
-                icon: Icons.credit_card_outlined,
-                iconColor: const Color(0xFF9333EA),
-                iconBg: const Color(0xFFFAF5FF),
-                label: 'Add Plan',
-                onTap: onAddPlan,
+                icon:        Icons.credit_card_outlined,
+                iconColor:   accentC,
+                iconBg:      accentC.withOpacity(0.1),
+                label:       'Add Plan',
+                onTap:       onAddPlan,
+                chevronColor: c.border,
+                labelColor:  c.body,
+                cardRadius:  card.radius,
               ),
-              const _RowDivider(),
+              _RowDivider(color: c.border.withOpacity(0.1)),
               _ActionRow(
-                icon: Icons.send_outlined,
-                iconColor: const Color(0xFFF97316),
-                iconBg: const Color(0xFFFFF7ED),
-                label: 'Send Announcement',
-                onTap: onSendAnnouncement,
-                isLast: true,
+                icon:        Icons.send_outlined,
+                iconColor:   accentD,
+                iconBg:      accentD.withOpacity(0.1),
+                label:       'Send Announcement',
+                onTap:       onSendAnnouncement,
+                isLast:      true,
+                chevronColor: c.border,
+                labelColor:  c.body,
+                cardRadius:  card.radius,
               ),
             ],
           ),
@@ -86,28 +110,27 @@ class QuickActionsSection extends StatelessWidget {
 }
 
 class _RowDivider extends StatelessWidget {
-  const _RowDivider();
+  final Color color;
+  const _RowDivider({required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(
-      height: 1,
-      thickness: 1,
-      color: Color(0xFFF9FAFB),
-      indent: 62,
-      endIndent: 0,
-    );
+    return Divider(
+        height: 1, thickness: 1, color: color, indent: 62, endIndent: 0);
   }
 }
 
 class _ActionRow extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final String label;
+  final Color    iconColor;
+  final Color    iconBg;
+  final String   label;
   final VoidCallback onTap;
-  final bool isFirst;
-  final bool isLast;
+  final bool     isFirst;
+  final bool     isLast;
+  final Color    chevronColor;
+  final Color    labelColor;
+  final double   cardRadius;
 
   const _ActionRow({
     required this.icon,
@@ -116,7 +139,10 @@ class _ActionRow extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.isFirst = false,
-    this.isLast = false,
+    this.isLast  = false,
+    required this.chevronColor,
+    required this.labelColor,
+    required this.cardRadius,
   });
 
   @override
@@ -124,20 +150,20 @@ class _ActionRow extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap:        onTap,
         borderRadius: BorderRadius.vertical(
-          top: isFirst ? const Radius.circular(16) : Radius.zero,
-          bottom: isLast ? const Radius.circular(16) : Radius.zero,
+          top:    isFirst ? Radius.circular(cardRadius) : Radius.zero,
+          bottom: isLast  ? Radius.circular(cardRadius) : Radius.zero,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
               Container(
-                width: 38,
+                width:  38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: iconBg,
+                  color:        iconBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: iconColor, size: 18),
@@ -146,18 +172,14 @@ class _ActionRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF374151),
-                  ),
+                  style: TextStyle(
+                      fontSize:   14,
+                      fontWeight: FontWeight.w600,
+                      color:      labelColor),
                 ),
               ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: Color(0xFFD1D5DB),
-                size: 20,
-              ),
+              Icon(Icons.chevron_right_rounded,
+                  color: chevronColor.withOpacity(0.5), size: 20),
             ],
           ),
         ),

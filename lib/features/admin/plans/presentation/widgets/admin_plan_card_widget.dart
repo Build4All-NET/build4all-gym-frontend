@@ -1,5 +1,9 @@
+// FILE: lib/features/admin/plans/presentation/widgets/admin_plan_card_widget.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_plan_list_item_entity.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 class AdminPlanCardWidget extends StatelessWidget {
   final AdminPlanListItemEntity plan;
@@ -17,18 +21,22 @@ class AdminPlanCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+    final card   = tokens.card;
+
     return Opacity(
       opacity: plan.isActive ? 1.0 : 0.65,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color:        c.surface,
+          borderRadius: BorderRadius.circular(card.radius),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color:     Colors.black.withOpacity(0.06),
               blurRadius: 12,
-              offset: const Offset(0, 3),
+              offset:    const Offset(0, 3),
             ),
           ],
         ),
@@ -37,7 +45,8 @@ class AdminPlanCardWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── TOP ROW: name + type badge | active badge ─────────────
+
+              // ── Top row ───────────────────────────────────────────────────
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -48,49 +57,48 @@ class AdminPlanCardWidget extends StatelessWidget {
                         Flexible(
                           child: Text(
                             plan.name,
-                            style: const TextStyle(
-                              fontSize: 15,
+                            style: TextStyle(
+                              fontSize:   15,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF111827),
+                              color:      c.label,
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         _PillBadge(
-                          label: plan.planType,
-                          color: const Color(0xFFF3F4F6),
-                          textColor: const Color(0xFF6B7280),
+                          label:     plan.planType,
+                          color:     c.border.withOpacity(0.15),
+                          textColor: c.muted,
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 8),
                   _PillBadge(
-                    label: plan.isActive ? 'Active' : 'Inactive',
-                    color: plan.isActive
-                        ? const Color(0xFFDCFCE7)
-                        : const Color(0xFFF3F4F6),
-                    textColor: plan.isActive
-                        ? const Color(0xFF16A34A)
-                        : const Color(0xFF9CA3AF),
+                    label:     plan.isActive ? 'Active' : 'Inactive',
+                    color:     plan.isActive
+                        ? c.success.withOpacity(0.12)
+                        : c.border.withOpacity(0.15),
+                    textColor: plan.isActive ? c.success : c.muted,
                   ),
                 ],
               ),
 
-              // ── PROMOTION ─────────────────────────────────────────────
+              // ── Promotion ─────────────────────────────────────────────────
               if (plan.promotionText != null) ...[
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.local_offer_rounded,
-                        size: 13, color: Color(0xFFEC4899)),
+                    Icon(Icons.local_offer_rounded,
+                        size: 13,
+                        color: Color.lerp(c.danger, c.primary, 0.3)),
                     const SizedBox(width: 5),
                     Flexible(
                       child: Text(
                         plan.promotionText!,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFFEC4899),
+                        style: TextStyle(
+                          fontSize:   12,
+                          color:      Color.lerp(c.danger, c.primary, 0.3),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -99,37 +107,43 @@ class AdminPlanCardWidget extends StatelessWidget {
                 ),
               ],
 
-              // ── DESCRIPTION ───────────────────────────────────────────
+              // ── Description ───────────────────────────────────────────────
               if (plan.description != null) ...[
                 const SizedBox(height: 6),
                 Text(
                   plan.description!,
-                  style: const TextStyle(
-                      fontSize: 13, color: Color(0xFF6B7280), height: 1.4),
+                  style: TextStyle(
+                      fontSize: 13, color: c.body, height: 1.4),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
 
               const SizedBox(height: 14),
-              const Divider(height: 1, color: Color(0xFFF3F4F6)),
+              Divider(height: 1, color: c.border.withOpacity(0.15)),
               const SizedBox(height: 14),
 
-              // ── DETAILS GRID ──────────────────────────────────────────
+              // ── Details grid ──────────────────────────────────────────────
               Row(
                 children: [
                   Expanded(
                     child: _DetailCell(
-                      icon: Icons.attach_money_rounded,
-                      label: 'Price',
-                      value: '₹${plan.price.toStringAsFixed(0)}',
+                      icon:      Icons.attach_money_rounded,
+                      label:     'Price',
+                      value:     '₹${plan.price.toStringAsFixed(0)}',
+                      iconColor: c.muted,
+                      labelColor: c.muted,
+                      valueColor: c.label,
                     ),
                   ),
                   Expanded(
                     child: _DetailCell(
-                      icon: Icons.calendar_today_outlined,
-                      label: 'Duration',
-                      value: _formatBillingCycle(plan.billingCycle),
+                      icon:       Icons.calendar_today_outlined,
+                      label:      'Duration',
+                      value:      _formatBillingCycle(plan.billingCycle),
+                      iconColor:  c.muted,
+                      labelColor: c.muted,
+                      valueColor: c.label,
                     ),
                   ),
                 ],
@@ -139,69 +153,74 @@ class AdminPlanCardWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _DetailCell(
-                      icon: Icons.people_outline_rounded,
-                      label: 'Members',
-                      value: plan.memberCount.toString(),
+                      icon:       Icons.people_outline_rounded,
+                      label:      'Members',
+                      value:      plan.memberCount.toString(),
+                      iconColor:  c.muted,
+                      labelColor: c.muted,
+                      valueColor: c.label,
                     ),
                   ),
                   Expanded(
                     child: _DetailCell(
-                      icon: Icons.confirmation_number_outlined,
-                      label: 'Visit Limit',
-                      value: plan.allowedVisits != null
+                      icon:       Icons.confirmation_number_outlined,
+                      label:      'Visit Limit',
+                      value:      plan.allowedVisits != null
                           ? plan.allowedVisits.toString()
                           : 'Unlimited',
+                      iconColor:  c.muted,
+                      labelColor: c.muted,
+                      valueColor: c.label,
                     ),
                   ),
                 ],
               ),
 
-              // ── BRANCHES ──────────────────────────────────────────────
+              // ── Branches ──────────────────────────────────────────────────
               if (plan.branches.isNotEmpty) ...[
                 const SizedBox(height: 14),
-                const Text(
+                Text(
                   'Available at:',
                   style: TextStyle(
-                    fontSize: 11,
-                    color: Color(0xFF9CA3AF),
-                    fontWeight: FontWeight.w500,
-                  ),
+                      fontSize:   11,
+                      color:      c.muted,
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 6),
                 Wrap(
-                  spacing: 6,
+                  spacing:    6,
                   runSpacing: 6,
                   children: plan.branches
                       .map((b) => _PillBadge(
-                    label: b,
-                    color: const Color(0xFFF3F4F6),
-                    textColor: const Color(0xFF374151),
-                    fontSize: 11,
+                    label:     b,
+                    color:     c.border.withOpacity(0.12),
+                    textColor: c.body,
+                    fontSize:  11,
                   ))
                       .toList(),
                 ),
               ],
 
               const SizedBox(height: 14),
-              const Divider(height: 1, color: Color(0xFFF3F4F6)),
+              Divider(height: 1, color: c.border.withOpacity(0.15)),
               const SizedBox(height: 12),
 
-              // ── ACTION BUTTONS ────────────────────────────────────────
+              // ── Action buttons ────────────────────────────────────────────
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: onEdit,
-                      icon: const Icon(Icons.edit_outlined, size: 15),
+                      icon:  const Icon(Icons.edit_outlined, size: 15),
                       label: const Text('Edit',
                           style: TextStyle(fontSize: 13)),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF374151),
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        foregroundColor: c.body,
+                        side:            BorderSide(
+                            color: c.border.withOpacity(0.4)),
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        shape:   RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                   ),
@@ -210,27 +229,23 @@ class AdminPlanCardWidget extends StatelessWidget {
                     child: OutlinedButton.icon(
                       onPressed: isDeleting ? null : onDelete,
                       icon: isDeleting
-                          ? const SizedBox(
-                        width: 15,
+                          ? SizedBox(
+                        width:  15,
                         height: 15,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Color(0xFFDC2626),
-                        ),
+                        child:  CircularProgressIndicator(
+                            strokeWidth: 2, color: c.danger),
                       )
-                          : const Icon(Icons.delete_outline_rounded,
-                          size: 15),
+                          : const Icon(Icons.delete_outline_rounded, size: 15),
                       label: Text(
                         isDeleting ? 'Deleting...' : 'Delete',
                         style: const TextStyle(fontSize: 13),
                       ),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFFDC2626),
-                        side: const BorderSide(color: Color(0xFFDC2626)),
+                        foregroundColor: c.danger,
+                        side:            BorderSide(color: c.danger),
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        shape:   RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                   ),
@@ -245,26 +260,30 @@ class AdminPlanCardWidget extends StatelessWidget {
 
   String _formatBillingCycle(String cycle) {
     return switch (cycle.toLowerCase()) {
-      'monthly' => '1 month',
+      'monthly'   => '1 month',
       'quarterly' => '3 months',
-      'yearly' => '1 year',
-      'one_time' => 'One time',
-      _ => cycle,
+      'yearly'    => '1 year',
+      'one_time'  => 'One time',
+      _           => cycle,
     };
   }
 }
 
-// ── Detail cell: icon + label on top, value below ──────────────────────────
-
 class _DetailCell extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final String value;
+  final String   label;
+  final String   value;
+  final Color    iconColor;
+  final Color    labelColor;
+  final Color    valueColor;
 
   const _DetailCell({
     required this.icon,
     required this.label,
     required this.value,
+    required this.iconColor,
+    required this.labelColor,
+    required this.valueColor,
   });
 
   @override
@@ -274,38 +293,30 @@ class _DetailCell extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 13, color: const Color(0xFF9CA3AF)),
+            Icon(icon, size: 13, color: iconColor),
             const SizedBox(width: 4),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF9CA3AF),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            Text(label,
+                style: TextStyle(
+                    fontSize:   11,
+                    color:      labelColor,
+                    fontWeight: FontWeight.w500)),
           ],
         ),
         const SizedBox(height: 3),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF111827),
-          ),
-        ),
+        Text(value,
+            style: TextStyle(
+                fontSize:   14,
+                fontWeight: FontWeight.w600,
+                color:      valueColor)),
       ],
     );
   }
 }
 
-// ── Pill badge ─────────────────────────────────────────────────────────────
-
 class _PillBadge extends StatelessWidget {
   final String label;
-  final Color color;
-  final Color textColor;
+  final Color  color;
+  final Color  textColor;
   final double fontSize;
 
   const _PillBadge({
@@ -320,16 +331,15 @@ class _PillBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color,
+        color:        color,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         label,
         style: TextStyle(
-          fontSize: fontSize,
-          color: textColor,
-          fontWeight: FontWeight.w500,
-        ),
+            fontSize:   fontSize,
+            color:      textColor,
+            fontWeight: FontWeight.w500),
       ),
     );
   }

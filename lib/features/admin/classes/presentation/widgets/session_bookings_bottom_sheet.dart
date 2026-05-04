@@ -1,19 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/classes/presentation/widgets/session_bookings_bottom_sheet.dart
-//
-// PURPOSE:
-//   Read-only modal bottom sheet that lists all BOOKED and WAITLISTED members
-//   for a class session. Opened when the Bookings action button is tapped.
-//
-// STATES handled inside the sheet:
-//   SessionBookingsLoading → CircularProgressIndicator
-//   SessionBookingsLoaded  → member list (or "No bookings yet" if empty)
-//   Other states           → ignored (sheet is read-only, no mutations here)
-//
-// MEMBER ROW:
-//   Left: circular avatar (initials if no profileFileId, network image if present)
-//   Center: fullName (bold) + phone (grey)
-//   Right: status chip — green "BOOKED" or orange "Waitlist N"
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
@@ -22,10 +8,11 @@ import '../../domain/entities/session_booking_item_entity.dart';
 import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
 import '../bloc/admin_classes_state.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 class SessionBookingsBottomSheet extends StatelessWidget {
   final int    sessionId;
-  final String className; // shown in the header e.g. "Morning Yoga Flow — 15 booked"
+  final String className;
 
   const SessionBookingsBottomSheet({
     super.key,
@@ -35,7 +22,6 @@ class SessionBookingsBottomSheet extends StatelessWidget {
 
   static void show(BuildContext context,
       {required int sessionId, required String className}) {
-    // Dispatch the event BEFORE opening the sheet so loading starts immediately
     context.read<AdminClassesBloc>().add(SessionBookingsRequested(sessionId));
 
     showModalBottomSheet(
@@ -52,11 +38,15 @@ class SessionBookingsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+    final card   = tokens.card;
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color:        c.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(card.radius + 8)),
       ),
       child: Column(
         children: [
@@ -67,46 +57,45 @@ class SessionBookingsBottomSheet extends StatelessWidget {
             child: Container(
               width: 40, height: 4,
               decoration: BoxDecoration(
-                  color: const Color(0xFFE0E0E0),
+                  color:        c.border.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(2)),
             ),
           ),
 
-          // ── Header row: title + close button ─────────────────────────────
+          // ── Header ────────────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                const Text(
+                Text(
                   'Session Bookings',
                   style: TextStyle(
-                      fontSize: 18,
+                      fontSize:   18,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A2E)),
+                      color:      c.label),
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon:      Icon(Icons.close, color: c.muted),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
           ),
 
-          const Divider(height: 1, color: Color(0xFFF0F0F0)),
+          Divider(height: 1, color: c.border.withOpacity(0.15)),
 
-          // ── Body: driven by BLoC state ────────────────────────────────────
+          // ── Body ─────────────────────────────────────────────────────────
           Expanded(
             child: BlocBuilder<AdminClassesBloc, AdminClassesState>(
               builder: (context, state) {
 
-                // Loading spinner
                 if (state is SessionBookingsLoading &&
                     state.sessionId == sessionId) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: CircularProgressIndicator(color: c.primary));
                 }
 
-                // Loaded — show list
                 if (state is SessionBookingsLoaded &&
                     state.sessionId == sessionId) {
                   final bookings = state.bookings;
@@ -114,14 +103,13 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Sub-header: class name + count
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
                         child: Text(
                           '$className — ${bookings.length} booked',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF757575),
+                          style: TextStyle(
+                            fontSize:   13,
+                            color:      c.muted,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -129,22 +117,19 @@ class SessionBookingsBottomSheet extends StatelessWidget {
 
                       Expanded(
                         child: bookings.isEmpty
-                        // Empty state
-                            ? const Center(
+                            ? Center(
                           child: Text(
                             'No bookings yet',
-                            style: TextStyle(
-                                color: Color(0xFF9E9E9E), fontSize: 15),
+                            style: TextStyle(color: c.muted, fontSize: 15),
                           ),
                         )
-                        // Member list
                             : ListView.separated(
-                          padding: EdgeInsets.zero,
-                          itemCount: bookings.length,
-                          separatorBuilder: (_, __) => const Divider(
-                              height: 1,
-                              indent: 72,
-                              color: Color(0xFFF0F0F0)),
+                          padding:          EdgeInsets.zero,
+                          itemCount:        bookings.length,
+                          separatorBuilder: (_, __) => Divider(
+                              height:  1,
+                              indent:  72,
+                              color:   c.border.withOpacity(0.15)),
                           itemBuilder: (context, index) =>
                               _MemberRow(booking: bookings[index]),
                         ),
@@ -153,7 +138,6 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                   );
                 }
 
-                // Default / other states — show nothing special
                 return const SizedBox.shrink();
               },
             ),
@@ -164,7 +148,7 @@ class SessionBookingsBottomSheet extends StatelessWidget {
   }
 }
 
-// ── Single member row in the bookings list ────────────────────────────────────
+// ── Single member row ─────────────────────────────────────────────────────────
 class _MemberRow extends StatelessWidget {
   final SessionBookingItemEntity booking;
 
@@ -172,6 +156,9 @@ class _MemberRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     final initials = booking.fullName
         .split(' ')
         .take(2)
@@ -180,59 +167,61 @@ class _MemberRow extends StatelessWidget {
 
     final isWaitlisted = booking.status == 'WAITLISTED';
 
+    // Derive waitlist/booked colors from theme tokens
+    final chipBg    = isWaitlisted
+        ? c.danger.withOpacity(0.12)
+        : c.success.withOpacity(0.12);
+    final chipText  = isWaitlisted ? c.danger : c.success;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
 
-          // ── Avatar: network image if profileFileId exists, else initials ──
+          // ── Avatar ──────────────────────────────────────────────────────
           CircleAvatar(
-            radius: 22,
-            backgroundColor: const Color(0xFF1A1A2E).withOpacity(0.1),
+            radius:          22,
+            backgroundColor: c.primary.withOpacity(0.1),
             backgroundImage: booking.profileFileId != null
-                ? NetworkImage(
-                'YOUR_BASE_URL/files/${booking.profileFileId}')
+                ? NetworkImage('YOUR_BASE_URL/files/${booking.profileFileId}')
                 : null,
             child: booking.profileFileId == null
                 ? Text(initials,
-                style: const TextStyle(
-                    color: Color(0xFF1A1A2E),
+                style: TextStyle(
+                    color:      c.primary,
                     fontWeight: FontWeight.w700,
-                    fontSize: 13))
+                    fontSize:   13))
                 : null,
           ),
 
           const SizedBox(width: 12),
 
-          // ── Name + phone ──────────────────────────────────────────────────
+          // ── Name + phone ─────────────────────────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   booking.fullName,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Color(0xFF1A1A2E)),
+                      fontSize:   14,
+                      color:      c.label),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   booking.phone,
-                  style: const TextStyle(
-                      fontSize: 12, color: Color(0xFF9E9E9E)),
+                  style: TextStyle(fontSize: 12, color: c.muted),
                 ),
               ],
             ),
           ),
 
-          // ── Status chip ───────────────────────────────────────────────────
+          // ── Status chip ──────────────────────────────────────────────────
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: isWaitlisted
-                  ? const Color(0xFFFF9800).withOpacity(0.12)
-                  : const Color(0xFF4CAF50).withOpacity(0.12),
+              color:        chipBg,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -240,10 +229,8 @@ class _MemberRow extends StatelessWidget {
                   ? 'Waitlist ${booking.waitlistPosition ?? ''}'
                   : 'Booked',
               style: TextStyle(
-                color: isWaitlisted
-                    ? const Color(0xFFE65100)
-                    : const Color(0xFF2E7D32),
-                fontSize: 11,
+                color:      chipText,
+                fontSize:   11,
                 fontWeight: FontWeight.w700,
               ),
             ),
