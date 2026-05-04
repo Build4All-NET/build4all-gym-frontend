@@ -321,8 +321,8 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         bottomRight: Radius.circular(30),
                       ),
                     ),
-                    child: SafeArea(        // ← ADD THIS
-                      bottom: false,        // only pad the top
+                    child: SafeArea(
+                      bottom: false,
                       child: Column(
                         children: [
                           _buildHeader(
