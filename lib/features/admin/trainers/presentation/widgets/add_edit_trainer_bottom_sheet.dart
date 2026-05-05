@@ -1,6 +1,9 @@
-// PATH: lib/features/admin/trainers/presentation/widgets/add_edit_trainer_bottom_sheet.dart
+// lib/features/admin/trainers/presentation/widgets/add_edit_trainer_bottom_sheet.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../data/models/create_trainer_request_model.dart';
 import '../../data/models/trainer_availability_model.dart';
 import '../../data/models/update_trainer_request_model.dart';
@@ -53,18 +56,18 @@ class AddEditTrainerBottomSheet extends StatefulWidget {
 class _AddEditTrainerBottomSheetState
     extends State<AddEditTrainerBottomSheet> {
 
-  final _formKey        = GlobalKey<FormState>();
-  final _fullNameCtrl   = TextEditingController();
-  final _emailCtrl      = TextEditingController();
-  final _phoneCtrl      = TextEditingController();
-  final _passwordCtrl   = TextEditingController();
-  final _yearsCtrl      = TextEditingController();
-  final _notesCtrl      = TextEditingController();
-  final _specialtyCtrl  = TextEditingController(); // ← for typing specialties
+  final _formKey       = GlobalKey<FormState>();
+  final _fullNameCtrl  = TextEditingController();
+  final _emailCtrl     = TextEditingController();
+  final _phoneCtrl     = TextEditingController();
+  final _passwordCtrl  = TextEditingController();
+  final _yearsCtrl     = TextEditingController();
+  final _notesCtrl     = TextEditingController();
+  final _specialtyCtrl = TextEditingController();
 
   bool         _obscurePassword = true;
   bool         _isSubmitting    = false;
-  List<String> _specialties     = [];   // ← replaces _selectedSpecialty (supports multiple)
+  List<String> _specialties     = [];
   int?         _selectedBranchId;
 
   final List<_AvailabilitySlot> _slots = [];
@@ -86,7 +89,7 @@ class _AddEditTrainerBottomSheetState
     _phoneCtrl.text    = d.phone    ?? '';
     _yearsCtrl.text    = d.yearsOfExperience?.toString() ?? '';
     _notesCtrl.text    = d.notes    ?? '';
-    _specialties       = List<String>.from(d.specialties); // ← prefill chips
+    _specialties       = List<String>.from(d.specialties);
     _selectedBranchId  = d.branchIds.isNotEmpty ? d.branchIds.first : null;
 
     for (final slot in d.availabilitySchedule) {
@@ -106,7 +109,7 @@ class _AddEditTrainerBottomSheetState
     _passwordCtrl.dispose();
     _yearsCtrl.dispose();
     _notesCtrl.dispose();
-    _specialtyCtrl.dispose(); // ← dispose
+    _specialtyCtrl.dispose();
     super.dispose();
   }
 
@@ -192,7 +195,7 @@ class _AddEditTrainerBottomSheetState
               ? null : _emailCtrl.text.trim(),
           phone:                _phoneCtrl.text.trim().isEmpty
               ? null : _phoneCtrl.text.trim(),
-          specialties:          _specialties,        // ← send all chips
+          specialties:          _specialties,
           branchIds:            [_selectedBranchId!],
           availabilitySchedule: schedule,
           yearsOfExperience:    int.tryParse(_yearsCtrl.text),
@@ -209,7 +212,7 @@ class _AddEditTrainerBottomSheetState
           phone:                _phoneCtrl.text.trim().isEmpty
               ? null : _phoneCtrl.text.trim(),
           password:             _passwordCtrl.text,
-          specialties:          _specialties,        // ← send all chips
+          specialties:          _specialties,
           branchIds:            [_selectedBranchId!],
           availabilitySchedule: schedule,
           yearsOfExperience:    int.tryParse(_yearsCtrl.text),
@@ -224,6 +227,9 @@ class _AddEditTrainerBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     final safeBranchId = widget.options.branches
         .any((b) => b.id == _selectedBranchId)
         ? _selectedBranchId : null;
@@ -235,9 +241,9 @@ class _AddEditTrainerBottomSheetState
       minChildSize:     0.5,
       maxChildSize:     0.97,
       builder: (_, scrollCtrl) => Container(
-        decoration: const BoxDecoration(
-          color:        Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color:        c.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
@@ -246,7 +252,7 @@ class _AddEditTrainerBottomSheetState
               margin: const EdgeInsets.only(top: 12),
               width: 40, height: 4,
               decoration: BoxDecoration(
-                color:        Colors.grey[300],
+                color:        c.border.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -258,22 +264,22 @@ class _AddEditTrainerBottomSheetState
                 children: [
                   Text(
                     _isEditMode ? 'Edit Trainer' : 'Add New Trainer',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize:   18,
                       fontWeight: FontWeight.w700,
-                      color:      Color(0xFF1A1A2E),
+                      color:      c.label,
                     ),
                   ),
                   const Spacer(),
                   IconButton(
-                    icon:      const Icon(Icons.close),
+                    icon:      Icon(Icons.close, color: c.muted),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
             ),
 
-            const Divider(),
+            Divider(color: c.border.withOpacity(0.3)),
 
             // Form
             Expanded(
@@ -284,20 +290,22 @@ class _AddEditTrainerBottomSheetState
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                   children: [
 
-                    _label('Full Name *'),
+                    _label('Full Name *', c),
                     TextFormField(
                       controller: _fullNameCtrl,
-                      decoration: _deco('Enter full name'),
-                      validator:  (v) => (v == null || v.trim().isEmpty)
-                          ? 'Required' : null,
+                      style:      TextStyle(color: c.label),
+                      decoration: _deco('Enter full name', c),
+                      validator:  (v) =>
+                      (v == null || v.trim().isEmpty) ? 'Required' : null,
                     ),
                     gap,
 
-                    _label('Email'),
+                    _label('Email', c),
                     TextFormField(
                       controller:   _emailCtrl,
                       keyboardType: TextInputType.emailAddress,
-                      decoration:   _deco('trainer@gym.com'),
+                      style:        TextStyle(color: c.label),
+                      decoration:   _deco('trainer@gym.com', c),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) return null;
                         if (!v.contains('@')) return 'Invalid email';
@@ -306,24 +314,29 @@ class _AddEditTrainerBottomSheetState
                     ),
                     gap,
 
-                    _label('Phone Number'),
+                    _label('Phone Number', c),
                     TextFormField(
                       controller:   _phoneCtrl,
                       keyboardType: TextInputType.phone,
-                      decoration:   _deco('+961 XX XXX XXX'),
+                      style:        TextStyle(color: c.label),
+                      decoration:   _deco('+961 XX XXX XXX', c),
                     ),
                     gap,
 
                     if (!_isEditMode) ...[
-                      _label('Password *'),
+                      _label('Password *', c),
                       TextFormField(
                         controller:  _passwordCtrl,
                         obscureText: _obscurePassword,
-                        decoration:  _deco('Min 6 characters').copyWith(
+                        style:       TextStyle(color: c.label),
+                        decoration:  _deco('Min 6 characters', c).copyWith(
                           suffixIcon: IconButton(
-                            icon: Icon(_obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined),
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: c.muted,
+                            ),
                             onPressed: () => setState(
                                     () => _obscurePassword = !_obscurePassword),
                           ),
@@ -334,9 +347,10 @@ class _AddEditTrainerBottomSheetState
                       gap,
                     ],
 
-                    // ── Specialties — type + chips ───────────────────────
-                    _label('Specialties'),
+                    // ── Specialties ──────────────────────────────────────
+                    _label('Specialties', c),
                     _SpecialtyInput(
+                      c:           c,
                       controller:  _specialtyCtrl,
                       specialties: _specialties,
                       suggestions: widget.options.specialties,
@@ -345,10 +359,10 @@ class _AddEditTrainerBottomSheetState
                     ),
                     gap,
 
-                    _label('Branch Assignment *'),
+                    _label('Branch Assignment *', c),
                     DropdownButtonFormField<int>(
                       value:      safeBranchId,
-                      decoration: _deco('Select branch'),
+                      decoration: _deco('Select branch', c),
                       items: widget.options.branches
                           .map((b) => DropdownMenuItem(
                           value: b.id, child: Text(b.name)))
@@ -360,19 +374,21 @@ class _AddEditTrainerBottomSheetState
                     ),
                     gap,
 
-                    _label('Years of Experience'),
+                    _label('Years of Experience', c),
                     TextFormField(
                       controller:   _yearsCtrl,
                       keyboardType: TextInputType.number,
-                      decoration:   _deco('e.g. 5'),
+                      style:        TextStyle(color: c.label),
+                      decoration:   _deco('e.g. 5', c),
                     ),
                     gap,
 
-                    _label('Notes / Bio'),
+                    _label('Notes / Bio', c),
                     TextFormField(
                       controller: _notesCtrl,
                       maxLines:   3,
-                      decoration: _deco('Optional bio or notes'),
+                      style:      TextStyle(color: c.label),
+                      decoration: _deco('Optional bio or notes', c),
                     ),
 
                     const SizedBox(height: 20),
@@ -380,35 +396,39 @@ class _AddEditTrainerBottomSheetState
                     // Availability schedule
                     Row(
                       children: [
-                        const Text('Availability Schedule',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize:   14,
-                              color:      Color(0xFF1A1A2E),
-                            )),
+                        Text(
+                          'Availability Schedule',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize:   14,
+                            color:      c.label,
+                          ),
+                        ),
                         const Spacer(),
                         TextButton.icon(
-                          icon:      const Icon(Icons.add, size: 16),
-                          label:     const Text('Add Slot'),
+                          icon:      Icon(Icons.add, size: 16, color: c.primary),
+                          label:     Text('Add Slot',
+                              style: TextStyle(color: c.primary)),
                           onPressed: _addSlot,
                         ),
                       ],
                     ),
 
                     if (_slots.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child:   Text('No availability slots yet.',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color:    Color(0xFF9E9E9E))),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'No availability slots yet.',
+                          style: TextStyle(fontSize: 12, color: c.muted),
+                        ),
                       )
                     else
                       ..._slots.asMap().entries.map((entry) {
                         final i    = entry.key;
                         final slot = entry.value;
                         return _AvailabilitySlotRow(
-                          slot:        slot,
+                          c:          c,
+                          slot:       slot,
                           onPickStart: () => _pickTime(i, true),
                           onPickEnd:   () => _pickTime(i, false),
                           onDelete:    () => _removeSlot(i),
@@ -428,8 +448,10 @@ class _AddEditTrainerBottomSheetState
                           child: OutlinedButton(
                             onPressed: () => Navigator.of(context).pop(),
                             style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14)),
+                              foregroundColor: c.body,
+                              side: BorderSide(color: c.border.withOpacity(0.4)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
                             child: const Text('Cancel'),
                           ),
                         ),
@@ -439,24 +461,20 @@ class _AddEditTrainerBottomSheetState
                           child: ElevatedButton(
                             onPressed: _isSubmitting ? null : _onSave,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1A1A2E),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 14),
+                              backgroundColor: c.label,
+                              foregroundColor: c.onPrimary,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
                             ),
                             child: _isSubmitting
-                                ? const SizedBox(
-                                width:  20,
-                                height: 20,
-                                child:  CircularProgressIndicator(
-                                    color:       Colors.white,
-                                    strokeWidth: 2))
+                                ? SizedBox(
+                              width: 20, height: 20,
+                              child: CircularProgressIndicator(
+                                  color: c.onPrimary, strokeWidth: 2),
+                            )
                                 : Text(
-                              _isEditMode
-                                  ? 'Save Changes'
-                                  : 'Save Trainer',
+                              _isEditMode ? 'Save Changes' : 'Save Trainer',
                               style: const TextStyle(
                                   fontWeight: FontWeight.w700),
                             ),
@@ -474,34 +492,43 @@ class _AddEditTrainerBottomSheetState
     );
   }
 
-  Widget _label(String text) => Padding(
+  Widget _label(String text, ColorTokens c) => Padding(
     padding: const EdgeInsets.only(bottom: 6),
-    child: Text(text,
-        style: const TextStyle(
-          fontSize:   13,
-          fontWeight: FontWeight.w600,
-          color:      Color(0xFF374151),
-        )),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontSize:   13,
+        fontWeight: FontWeight.w600,
+        color:      c.body,
+      ),
+    ),
   );
 
-  InputDecoration _deco(String hint) => InputDecoration(
+  InputDecoration _deco(String hint, ColorTokens c) => InputDecoration(
     hintText:       hint,
+    hintStyle:      TextStyle(color: c.muted),
     filled:         true,
-    fillColor:      const Color(0xFFF9FAFB),
-    contentPadding: const EdgeInsets.symmetric(
-        horizontal: 14, vertical: 12),
+    fillColor:      c.background,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide:   const BorderSide(color: Color(0xFFE5E7EB)),
+      borderSide:   BorderSide(color: c.border.withOpacity(0.3)),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide:   const BorderSide(color: Color(0xFFE5E7EB)),
+      borderSide:   BorderSide(color: c.border.withOpacity(0.3)),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(
-          color: Color(0xFF1A1A2E), width: 1.5),
+      borderSide:   BorderSide(color: c.primary, width: 1.5),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide:   BorderSide(color: c.error),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide:   BorderSide(color: c.error, width: 1.5),
     ),
   );
 }
@@ -509,11 +536,10 @@ class _AddEditTrainerBottomSheetState
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _SpecialtyInput
-// Type a specialty name → press + or Enter → saved as a chip
-// Shows autocomplete suggestions from existing trainer specialties in DB
 // ─────────────────────────────────────────────────────────────────────────────
 class _SpecialtyInput extends StatelessWidget {
   const _SpecialtyInput({
+    required this.c,
     required this.controller,
     required this.specialties,
     required this.suggestions,
@@ -521,6 +547,7 @@ class _SpecialtyInput extends StatelessWidget {
     required this.onRemove,
   });
 
+  final ColorTokens           c;
   final TextEditingController controller;
   final List<String>          specialties;
   final List<String>          suggestions;
@@ -536,8 +563,6 @@ class _SpecialtyInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-        // ── Text field + Add button ─────────────────────────────────────
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -554,26 +579,25 @@ class _SpecialtyInput extends StatelessWidget {
                   return TextField(
                     controller: autoCtrl,
                     focusNode:  focusNode,
+                    style:      TextStyle(color: c.label),
                     decoration: InputDecoration(
                       hintText:       'e.g. Yoga, CrossFit…',
+                      hintStyle:      TextStyle(color: c.muted),
                       filled:         true,
-                      fillColor:      const Color(0xFFF9FAFB),
+                      fillColor:      c.background,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                        const BorderSide(color: Color(0xFFE5E7EB)),
+                        borderSide:   BorderSide(color: c.border.withOpacity(0.3)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide:
-                        const BorderSide(color: Color(0xFFE5E7EB)),
+                        borderSide:   BorderSide(color: c.border.withOpacity(0.3)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color(0xFF1A1A2E), width: 1.5),
+                        borderSide:   BorderSide(color: c.primary, width: 1.5),
                       ),
                     ),
                     onSubmitted: (value) {
@@ -592,48 +616,46 @@ class _SpecialtyInput extends StatelessWidget {
                 width:  48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color:        const Color(0xFF1A1A2E),
+                  color:        c.primary,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.add,
-                    color: Colors.white, size: 22),
+                child: Icon(Icons.add, color: c.onPrimary, size: 22),
               ),
             ),
           ],
         ),
 
-        // ── Added specialty chips ───────────────────────────────────────
         if (specialties.isNotEmpty) ...[
           const SizedBox(height: 8),
           Wrap(
             spacing:    6,
             runSpacing: 6,
             children: specialties.map((s) => Chip(
-              label:      Text(s,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      color:    Color(0xFF1976D2))),
-              deleteIcon: const Icon(Icons.close,
-                  size: 14, color: Color(0xFF1976D2)),
+              label: Text(
+                s,
+                style: TextStyle(
+                    fontSize: 12,
+                    color:    c.primary),
+              ),
+              deleteIcon: Icon(Icons.close, size: 14, color: c.primary),
               onDeleted:  () => onRemove(s),
-              backgroundColor: const Color(0xFFE3F2FD),
+              backgroundColor: c.primary.withOpacity(0.1),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(color: Color(0xFF90CAF9))),
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: c.primary.withOpacity(0.4)),
+              ),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             )).toList(),
           ),
         ],
 
-        // ── Hint ───────────────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Text(
             specialties.isEmpty
                 ? 'Type a specialty and press + or Enter to add'
                 : '${specialties.length} specialty added',
-            style: const TextStyle(
-                fontSize: 11, color: Color(0xFF9E9E9E)),
+            style: TextStyle(fontSize: 11, color: c.muted),
           ),
         ),
       ],
@@ -657,6 +679,7 @@ const _weekdays = [
 // ── Slot row ──────────────────────────────────────────────────────────────────
 class _AvailabilitySlotRow extends StatelessWidget {
   const _AvailabilitySlotRow({
+    required this.c,
     required this.slot,
     required this.onPickStart,
     required this.onPickEnd,
@@ -666,6 +689,7 @@ class _AvailabilitySlotRow extends StatelessWidget {
     required this.endLabel,
   });
 
+  final ColorTokens        c;
   final _AvailabilitySlot  slot;
   final VoidCallback       onPickStart;
   final VoidCallback       onPickEnd;
@@ -680,9 +704,9 @@ class _AvailabilitySlotRow extends StatelessWidget {
       margin:  const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color:        const Color(0xFFF9FAFB),
+        color:        c.background,
         borderRadius: BorderRadius.circular(10),
-        border:       Border.all(color: const Color(0xFFE5E7EB)),
+        border:       Border.all(color: c.border.withOpacity(0.3)),
       ),
       child: Row(
         children: [
@@ -691,13 +715,13 @@ class _AvailabilitySlotRow extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 value:      slot.weekday,
-                hint:       const Text('Day',
-                    style: TextStyle(fontSize: 12)),
+                hint:       Text('Day',
+                    style: TextStyle(fontSize: 12, color: c.muted)),
                 isExpanded: true,
                 items: List.generate(7, (i) => DropdownMenuItem(
                     value: i + 1,
                     child: Text(_weekdays[i],
-                        style: const TextStyle(fontSize: 12)))),
+                        style: TextStyle(fontSize: 12, color: c.label)))),
                 onChanged: onWeekday,
               ),
             ),
@@ -707,24 +731,23 @@ class _AvailabilitySlotRow extends StatelessWidget {
             flex: 2,
             child: GestureDetector(
               onTap: onPickStart,
-              child: _timeBox(startLabel),
+              child: _timeBox(startLabel, c),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-            child:   Text('–',
-                style: TextStyle(color: Color(0xFF9E9E9E))),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text('–', style: TextStyle(color: c.muted)),
           ),
           Expanded(
             flex: 2,
             child: GestureDetector(
               onTap: onPickEnd,
-              child: _timeBox(endLabel),
+              child: _timeBox(endLabel, c),
             ),
           ),
           IconButton(
-            icon:        const Icon(Icons.delete_outline,
-                size: 18, color: Color(0xFFF44336)),
+            icon:        Icon(Icons.delete_outline,
+                size: 18, color: c.danger),
             onPressed:   onDelete,
             padding:     EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -734,15 +757,17 @@ class _AvailabilitySlotRow extends StatelessWidget {
     );
   }
 
-  Widget _timeBox(String label) => Container(
+  Widget _timeBox(String label, ColorTokens c) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
     decoration: BoxDecoration(
-      color:        Colors.white,
+      color:        c.surface,
       borderRadius: BorderRadius.circular(8),
-      border:       Border.all(color: const Color(0xFFE5E7EB)),
+      border:       Border.all(color: c.border.withOpacity(0.3)),
     ),
-    child: Text(label,
-        style:     const TextStyle(fontSize: 12),
-        textAlign: TextAlign.center),
+    child: Text(
+      label,
+      style:     TextStyle(fontSize: 12, color: c.label),
+      textAlign: TextAlign.center,
+    ),
   );
 }

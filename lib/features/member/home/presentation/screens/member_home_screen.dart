@@ -105,6 +105,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
 
+
     return Scaffold(
       backgroundColor: tokens.colors.background,
       body: BlocConsumer<MemberHomeBloc, MemberHomeState>(
@@ -148,9 +149,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             );
           }
 
-         /* if (state is MemberHomeError) {
-            return _mockUI(context);
-          }*/
+
 
           if (state is MemberHomeError) {
             return Center(
@@ -232,50 +231,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
       ),
     );
   }
-/*
-  Widget _mockUI(BuildContext context) {
-    return _buildContent(
-      context: context,
-      membership: const MembershipCard(
-        planName: 'ذهبية نشطة',
-        planType: 'GOLD',
-        status: 'active',
-        startDate: '2024-06-15',
-        expirationDate: '2024-07-15',
-        remainingDays: 23,
-        canRenew: true,
-        canFreeze: true,
-      ),
-      stats: const MemberStats(
-        sessionsCount: 12,
-        kgLost: 8.5,
-        workoutsCount: 24,
-        referralCode: null,
-      ),
-      quote: const MotivationalQuote(
-        text: 'القوة لا تأتي من الفوز، بل من المثابرة',
-        languageCode: 'ar',
-      ),
-      scheduleItems: [
-        ScheduleItem(
-          type: 'CLASS',
-          title: 'يوغا صباحية',
-          trainerName: 'سارة أحمد',
-          startTime: DateTime.now()
-              .copyWith(hour: 17, minute: 0)
-              .toIso8601String(),
-          durationMinutes: 60,
-          roomName: 'قاعة 1',
-          status: 'booked',
-        ),
-      ],
-      showWeightCard: true,
-      welcomeText: 'مرحبا بك',
-      fullName: 'أحمد محمد',
-      notificationCount: 3,
-    );
-  }
-*/
+
   Widget _buildContent({
     required BuildContext context,
     required MembershipCard membership,
@@ -321,8 +277,8 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         bottomRight: Radius.circular(30),
                       ),
                     ),
-                    child: SafeArea(        // ← ADD THIS
-                      bottom: false,        // only pad the top
+                    child: SafeArea(
+                      bottom: false,
                       child: Column(
                         children: [
                           _buildHeader(
@@ -403,6 +359,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     required int notificationCount,
   }) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Row(
       children: [
@@ -421,7 +378,8 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             if (notificationCount > 0)
               Positioned(
                 top: -5,
-                right: -4,
+                right: isRtl ? -4 : null,
+                left: !isRtl ? -4 : null,
                 child: Container(
                   width: 24,
                   height: 24,
@@ -443,10 +401,12 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
         ),
         const Spacer(),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment:
+          isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
               welcomeText,
+              textAlign: isRtl ? TextAlign.end : TextAlign.start,
               style: tokens.typography.bodyMedium.copyWith(
                 color: tokens.colors.onPrimary.withOpacity(0.88),
                 fontWeight: FontWeight.w500,
@@ -455,6 +415,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             SizedBox(height: tokens.spacing.sm),
             Text(
               fullName.isEmpty ? ' ' : fullName,
+              textAlign: isRtl ? TextAlign.end : TextAlign.start,
               style: tokens.typography.headlineSmall.copyWith(
                 color: tokens.colors.onPrimary,
                 fontSize: 25,

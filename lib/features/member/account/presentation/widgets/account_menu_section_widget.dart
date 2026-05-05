@@ -17,14 +17,17 @@ class AccountMenuSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+      isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(bottom: tokens.spacing.sm),
           child: Text(
             title,
+            textAlign: isRtl ? TextAlign.end : TextAlign.start,
             style: tokens.typography.bodySmall.copyWith(
               color: tokens.colors.muted,
               fontWeight: FontWeight.w600,

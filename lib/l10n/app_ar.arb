@@ -729,5 +729,13 @@
   "ptScreenTitle": "المدربون الشخصيون",
   "ptScreenSubtitle": "اختر المدرب المناسب لأهدافك",
   "ptBookSession": "حجز جلسة",
-  "ptNoTrainers": "لا يوجد مدربون متاحون"
+  "ptNoTrainers": "لا يوجد مدربون متاحون",
+  "accountMemberSince": "عضو منذ {date}",
+  "@accountMemberSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

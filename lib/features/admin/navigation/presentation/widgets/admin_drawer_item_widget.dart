@@ -1,18 +1,20 @@
 // lib/features/admin/navigation/presentation/widgets/admin_drawer_item_widget.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 import '../../config/navigation_item.dart';
 
 /// A single navigation row in the drawer.
 ///
-/// Design (matches Figma):
+/// Design:
 ///   [Icon]  Label text
 ///
-/// - No left indicator bar (unlike the previous version)
 /// - Subtle grey background tint on active item
-/// - Red color for destructive items (Logout)
+/// - Danger/error color for destructive items (Logout)
 /// - Icon + text both change color when active
+/// - All colors sourced from ThemeCubit tokens
 class AdminDrawerItemWidget extends StatelessWidget {
   final NavigationItem item;
   final bool isActive;
@@ -27,13 +29,14 @@ class AdminDrawerItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
+    final l10n   = AppLocalizations.of(context)!;
+    final theme  = Theme.of(context);
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
 
-    // TODO: swap with tokens.primary from ThemeCubit
-    const activeColor = Color(0xFF3B5BDB);
-    final destructiveColor = theme.colorScheme.error;
-    final defaultColor = theme.colorScheme.onSurface.withOpacity(0.65);
+    final activeColor      = c.primary;
+    final destructiveColor = c.danger;
+    final defaultColor     = c.body.withOpacity(0.65);
 
     final Color itemColor = item.isDestructive
         ? destructiveColor
@@ -48,7 +51,6 @@ class AdminDrawerItemWidget extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          // Subtle active background — exactly like the design
           color: isActive && !item.isDestructive
               ? activeColor.withOpacity(0.07)
               : Colors.transparent,
@@ -79,22 +81,22 @@ class AdminDrawerItemWidget extends StatelessWidget {
 
   String _resolveLabel(AppLocalizations l10n, String key) {
     switch (key) {
-      case 'navDashboard':         return l10n.navDashboard;
-      case 'navMembers':           return l10n.navMembers;
-      case 'navPlans':             return l10n.navPlans;
-      case 'navTrainers':          return l10n.navTrainers;
-      case 'navReceptionStaff':    return l10n.navReceptionStaff;
-      case 'navGymProfile':        return l10n.navGymProfile;
-      case 'navBranches':          return l10n.navBranches;
-      case 'navCheckins':          return l10n.navCheckins;
-      case 'navPayments':          return l10n.navPayments;
-      case 'navClassesPt':         return l10n.navClassesPt;
-      case 'navNotifications':     return l10n.navNotifications;
-      case 'navPtSessions':        return l10n.navPtSessions;
-      case 'navTrainingVideos':    return l10n.navTrainingVideos;
-      case 'navSettings':          return l10n.navSettings;
-      case 'navLogout':            return l10n.navLogout;
-      default:                     return key;
+      case 'navDashboard':      return l10n.navDashboard;
+      case 'navMembers':        return l10n.navMembers;
+      case 'navPlans':          return l10n.navPlans;
+      case 'navTrainers':       return l10n.navTrainers;
+      case 'navReceptionStaff': return l10n.navReceptionStaff;
+      case 'navGymProfile':     return l10n.navGymProfile;
+      case 'navBranches':       return l10n.navBranches;
+      case 'navCheckins':       return l10n.navCheckins;
+      case 'navPayments':       return l10n.navPayments;
+      case 'navClassesPt':      return l10n.navClassesPt;
+      case 'navNotifications':  return l10n.navNotifications;
+      case 'navPtSessions':     return l10n.navPtSessions;
+      case 'navTrainingVideos': return l10n.navTrainingVideos;
+      case 'navSettings':       return l10n.navSettings;
+      case 'navLogout':         return l10n.navLogout;
+      default:                  return key;
     }
   }
 }

@@ -1,10 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/classes/presentation/widgets/class_date_filter_widget.dart
-//
-// PURPOSE:
-//   Horizontally scrollable row of date chips covering 14 days (7 before + today
-//   + 6 after). Auto-scrolls to center the selected chip on first render.
-//   Tapping a chip dispatches ClassesDateChanged to AdminClassesBloc.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
@@ -24,8 +19,6 @@ class ClassDateFilterWidget extends StatefulWidget {
 class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
   late final ScrollController _scrollController;
 
-  // Generate 14 dates: 7 days before today through 6 days after today
-  // Today sits at index 7 (the center)
   final List<DateTime> _dates = List.generate(14, (i) {
     final today = DateTime.now();
     return DateTime(today.year, today.month, today.day - 7 + i);
@@ -35,20 +28,21 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    // Scroll to center today's chip after the first frame renders
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToSelected());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _scrollToSelected());
   }
 
   void _scrollToSelected() {
-    // Each chip is approximately 60px wide — scroll to put selected in center
     final selectedIndex = _dates.indexWhere((d) =>
-    d.year  == widget.selectedDate.year &&
+    d.year == widget.selectedDate.year &&
         d.month == widget.selectedDate.month &&
-        d.day   == widget.selectedDate.day);
+        d.day == widget.selectedDate.day);
     if (selectedIndex >= 0) {
-      final chipWidth = 60.0;
+      const chipWidth = 60.0;
       final screenWidth = MediaQuery.of(context).size.width;
-      final offset = (selectedIndex * chipWidth) - (screenWidth / 2) + (chipWidth / 2);
+      final offset = (selectedIndex * chipWidth) -
+          (screenWidth / 2) +
+          (chipWidth / 2);
       _scrollController.animateTo(
         offset.clamp(0.0, _scrollController.position.maxScrollExtent),
         duration: const Duration(milliseconds: 300),
@@ -65,22 +59,25 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   bool _isSelected(DateTime date) =>
-      date.year  == widget.selectedDate.year &&
+      date.year == widget.selectedDate.year &&
           date.month == widget.selectedDate.month &&
-          date.day   == widget.selectedDate.day;
+          date.day == widget.selectedDate.day;
 
   String _weekdayLabel(DateTime date) {
-    // Short weekday abbreviation
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return days[date.weekday - 1];
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return SizedBox(
       height: 72,
       child: ListView.separated(
@@ -90,44 +87,46 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
         itemCount: _dates.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final date     = _dates[index];
+          final date = _dates[index];
           final selected = _isSelected(date);
-          final today    = _isToday(date);
+          final today = _isToday(date);
 
           return GestureDetector(
-            onTap: () {
-              // Dispatch date change event to BLoC
-              context.read<AdminClassesBloc>().add(ClassesDateChanged(date));
-            },
+            onTap: () => context
+                .read<AdminClassesBloc>()
+                .add(ClassesDateChanged(date)),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: 54,
               decoration: BoxDecoration(
-                color: selected
-                    ? const Color(0xFF1A1A2E)   // dark filled for selected
-                    : Colors.white,
+                color: selected ? cs.primary : cs.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selected
-                      ? const Color(0xFF1A1A2E)
-                      : const Color(0xFFE0E0E0),
+                      ? cs.primary
+                      : cs.outline.withOpacity(0.3),
                 ),
                 boxShadow: selected
-                    ? [BoxShadow(
-                    color: const Color(0xFF1A1A2E).withOpacity(0.2),
-                    blurRadius: 8, offset: const Offset(0, 2))]
+                    ? [
+                  BoxShadow(
+                    color: cs.primary.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  )
+                ]
                     : [],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    // Show "Today" label for today's chip, weekday for others
                     today ? 'Today' : _weekdayLabel(date),
                     style: TextStyle(
                       fontSize: today ? 9 : 10,
                       fontWeight: FontWeight.w600,
-                      color: selected ? Colors.white : const Color(0xFF757575),
+                      color: selected
+                          ? cs.onPrimary
+                          : cs.onSurface.withOpacity(0.5),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -136,7 +135,7 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: selected ? Colors.white : const Color(0xFF1A1A2E),
+                      color: selected ? cs.onPrimary : cs.onSurface,
                     ),
                   ),
                 ],
@@ -149,25 +148,13 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
   }
 }
 
-
 // ─────────────────────────────────────────────────────────────────────────────
-// FILE: class_card_widget.dart
-//
-// PURPOSE:
-//   Displays ONE class session as a white card matching the Figma design.
-//   Shows: class name, type tag, trainer, branch, time, duration, capacity bar,
-//   and three action buttons (Bookings, Edit, Cancel).
-//
-//   nearlyFull = true → shows orange "Nearly Full" badge top-right.
-//   Capacity bar color changes based on fill percentage:
-//     < 60%  → green
-//     60-80% → orange
-//     > 80%  → red
+// FILE: lib/features/admin/classes/presentation/widgets/class_card_widget.dart
 // ─────────────────────────────────────────────────────────────────────────────
 
 class ClassCardWidget extends StatelessWidget {
-  final dynamic session;       // AdminClassCardEntity
-  final int?    loadingSessionId; // from ClassActionLoading state — which card is spinning
+  final dynamic session;
+  final int? loadingSessionId;
   final VoidCallback onBookingsTap;
   final VoidCallback onEditTap;
   final VoidCallback onCancelTap;
@@ -181,16 +168,18 @@ class ClassCardWidget extends StatelessWidget {
     required this.onCancelTap,
   });
 
+  // Capacity bar colors are semantic data indicators — intentionally NOT theme-driven
   Color _capacityBarColor(int booked, int capacity) {
     if (capacity == 0) return Colors.grey;
     final ratio = booked / capacity;
-    if (ratio < 0.6) return const Color(0xFF4CAF50);  // green
-    if (ratio < 0.8) return const Color(0xFFFF9800);  // orange
-    return const Color(0xFFF44336);                    // red
+    if (ratio < 0.6) return const Color(0xFF4CAF50);
+    if (ratio < 0.8) return const Color(0xFFFF9800);
+    return const Color(0xFFF44336);
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final isLoading = loadingSessionId == session.sessionId;
     final fillRatio = session.capacity > 0
         ? (session.bookedCount / session.capacity).clamp(0.0, 1.0)
@@ -199,11 +188,11 @@ class ClassCardWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: cs.onSurface.withOpacity(0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -221,16 +210,18 @@ class ClassCardWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     session.className,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A2E),
+                      color: cs.onSurface,
                     ),
                   ),
                 ),
+                // "Nearly Full" badge — orange is semantic (warning), not brand
                 if (session.nearlyFull)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFF9800).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
@@ -251,17 +242,18 @@ class ClassCardWidget extends StatelessWidget {
 
             // ── Type tag chip ───────────────────────────────────────────────
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: cs.surfaceVariant,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFE0E0E0)),
+                border: Border.all(color: cs.outline.withOpacity(0.3)),
               ),
               child: Text(
                 session.typeName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF616161),
+                  color: cs.onSurface.withOpacity(0.6),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -269,7 +261,7 @@ class ClassCardWidget extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // ── Info grid: trainer, branch, time, duration ─────────────────
+            // ── Info grid ──────────────────────────────────────────────────
             Row(
               children: [
                 Expanded(
@@ -302,21 +294,25 @@ class ClassCardWidget extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            // ── Capacity row + progress bar ─────────────────────────────────
+            // ── Capacity ───────────────────────────────────────────────────
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Capacity',
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF757575),
-                        fontWeight: FontWeight.w500)),
+                Text(
+                  'Capacity',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: cs.onSurface.withOpacity(0.5),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 Text(
                   '${session.bookedCount}/${session.capacity}',
-                  style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A1A2E)),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: cs.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -326,48 +322,47 @@ class ClassCardWidget extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: fillRatio,
                 minHeight: 6,
-                backgroundColor: const Color(0xFFEEEEEE),
+                backgroundColor: cs.outline.withOpacity(0.15),
                 valueColor: AlwaysStoppedAnimation<Color>(
                     _capacityBarColor(session.bookedCount, session.capacity)),
               ),
             ),
 
             const SizedBox(height: 14),
-            const Divider(height: 1, color: Color(0xFFF0F0F0)),
+            Divider(height: 1, color: cs.outline.withOpacity(0.1)),
             const SizedBox(height: 12),
 
             // ── Action buttons ─────────────────────────────────────────────
             isLoading
-                ? const Center(
+                ? Center(
               child: SizedBox(
                 height: 32,
                 width: 32,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: cs.primary),
               ),
             )
                 : Row(
               children: [
-                // Bookings button
                 _ActionButton(
                   icon: Icons.people_outline,
                   label: 'Bookings',
-                  color: const Color(0xFF1A1A2E),
+                  color: cs.primary,
                   onTap: onBookingsTap,
                 ),
                 const SizedBox(width: 8),
-                // Edit button
                 _ActionButton(
                   icon: Icons.edit_outlined,
                   label: 'Edit',
-                  color: const Color(0xFF616161),
+                  color: cs.onSurface.withOpacity(0.6),
                   onTap: onEditTap,
                 ),
                 const SizedBox(width: 8),
-                // Cancel button — red
+                // Cancel button — error color is semantic
                 _ActionButton(
                   icon: Icons.close,
                   label: 'Cancel',
-                  color: const Color(0xFFF44336),
+                  color: cs.error,
                   onTap: onCancelTap,
                 ),
               ],
@@ -379,24 +374,24 @@ class ClassCardWidget extends StatelessWidget {
   }
 }
 
-// ── Private helpers for ClassCardWidget ──────────────────────────────────────
-
 class _InfoItem extends StatelessWidget {
   final IconData icon;
-  final String   label;
+  final String label;
 
   const _InfoItem({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Icon(icon, size: 15, color: const Color(0xFF9E9E9E)),
+        Icon(icon, size: 15, color: cs.onSurface.withOpacity(0.4)),
         const SizedBox(width: 5),
         Flexible(
           child: Text(
             label,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF424242)),
+            style: TextStyle(
+                fontSize: 13, color: cs.onSurface.withOpacity(0.7)),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -406,9 +401,9 @@ class _InfoItem extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  final IconData     icon;
-  final String       label;
-  final Color        color;
+  final IconData icon;
+  final String label;
+  final Color color;
   final VoidCallback onTap;
 
   const _ActionButton({
@@ -424,9 +419,11 @@ class _ActionButton extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 15, color: color),
-        label: Text(label,
-            style: TextStyle(
-                fontSize: 12, color: color, fontWeight: FontWeight.w600)),
+        label: Text(
+          label,
+          style: TextStyle(
+              fontSize: 12, color: color, fontWeight: FontWeight.w600),
+        ),
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 8),
           side: BorderSide(color: color.withOpacity(0.4)),

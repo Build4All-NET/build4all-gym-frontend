@@ -1,29 +1,10 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// FILE: lib/features/admin/staff/presentation/widgets/add_edit_staff_bottom_sheet.dart
-//
-// Dual-mode: ADD (existingStaff == null) and EDIT (existingStaff != null).
-//
-// FORM FIELDS:
-//   Full Name, Email, Phone — required text inputs.
-//   Role — dropdown: Reception | Admin | Assistant.
-//   Branch — dropdown: currently a placeholder list; wire to a branch provider
-//            when the branch list API is available.
-//   Password — shown in ADD mode only; empty = backend auto-generates.
-//
-// ON SAVE:
-//   ADD:  builds CreateStaffRequestModel (password null if field empty),
-//         dispatches StaffCreateRequested, closes sheet.
-//   EDIT: builds UpdateStaffRequestModel (only changed non-null fields),
-//         dispatches StaffUpdateRequested, closes sheet.
-//
-// VALIDATION:
-//   Uses Flutter's Form + GlobalKey<FormState>. Required fields use
-//   validator callbacks. Email is validated with a basic regex.
-// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/admin/staff/presentation/widgets/add_edit_staff_bottom_sheet.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../data/models/create_staff_request_model.dart';
 import '../../data/models/update_staff_request_model.dart';
 import '../../domain/entities/admin_staff_card_entity.dart';
@@ -31,7 +12,6 @@ import '../bloc/admin_staff_bloc.dart';
 import '../bloc/admin_staff_event.dart';
 
 class AddEditStaffBottomSheet extends StatefulWidget {
-  /// When non-null, the sheet operates in EDIT mode.
   final AdminStaffCardEntity? existingStaff;
 
   const AddEditStaffBottomSheet({super.key, this.existingStaff});
@@ -50,15 +30,11 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
   late final TextEditingController _passwordCtrl;
 
   String? _selectedRole;
-  int? _selectedBranchId;
+  int?    _selectedBranchId;
 
   bool get _isEditMode => widget.existingStaff != null;
 
-  // Role options shown in the dropdown.
-  // Must match the allowed labels the backend validates.
-  static const _roleOptions = ['Reception', 'Admin', 'Assistant'];
-
-  // Placeholder branch list — replace with data from a branches provider/API.
+  static const _roleOptions   = ['Reception', 'Admin', 'Assistant'];
   static const _branchOptions = <Map<String, dynamic>>[
     {'id': 1, 'name': 'Main Branch'},
     {'id': 2, 'name': 'Downtown Branch'},
@@ -67,15 +43,12 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
   @override
   void initState() {
     super.initState();
-    final s = widget.existingStaff;
-    _fullNameCtrl = TextEditingController(text: s?.fullName ?? '');
-    _emailCtrl    = TextEditingController(text: s?.email ?? '');
-    _phoneCtrl    = TextEditingController(text: s?.phone ?? '');
-    _passwordCtrl = TextEditingController();
-    _selectedRole = s?.roleName;
-    // In edit mode we don't pre-select branch from the entity because branchName
-    // (String) doesn't map back to a branchId cleanly without the branch list.
-    // A real implementation would resolve branchId from the branches provider.
+    final s        = widget.existingStaff;
+    _fullNameCtrl  = TextEditingController(text: s?.fullName ?? '');
+    _emailCtrl     = TextEditingController(text: s?.email ?? '');
+    _phoneCtrl     = TextEditingController(text: s?.phone ?? '');
+    _passwordCtrl  = TextEditingController();
+    _selectedRole  = s?.roleName;
   }
 
   @override
@@ -93,33 +66,26 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
     final bloc = context.read<AdminStaffBloc>();
 
     if (_isEditMode) {
-      // EDIT mode — build partial update (only changed fields)
       final request = UpdateStaffRequestModel(
         fullName: _fullNameCtrl.text.trim().isEmpty
-            ? null
-            : _fullNameCtrl.text.trim(),
+            ? null : _fullNameCtrl.text.trim(),
         email: _emailCtrl.text.trim().isEmpty
-            ? null
-            : _emailCtrl.text.trim(),
+            ? null : _emailCtrl.text.trim(),
         phone: _phoneCtrl.text.trim().isEmpty
-            ? null
-            : _phoneCtrl.text.trim(),
+            ? null : _phoneCtrl.text.trim(),
         roleName: _selectedRole,
         branchId: _selectedBranchId,
       );
       bloc.add(StaffUpdateRequested(widget.existingStaff!.staffId, request));
     } else {
-      // ADD mode — build full create request
       final request = CreateStaffRequestModel(
         fullName: _fullNameCtrl.text.trim(),
         email:    _emailCtrl.text.trim(),
         phone:    _phoneCtrl.text.trim(),
         roleName: _selectedRole!,
         branchId: _selectedBranchId!,
-        // null password → backend auto-generates and emails it
         password: _passwordCtrl.text.trim().isEmpty
-            ? null
-            : _passwordCtrl.text.trim(),
+            ? null : _passwordCtrl.text.trim(),
       );
       bloc.add(StaffCreateRequested(request));
     }
@@ -129,15 +95,17 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens     = context.read<ThemeCubit>().state.tokens;
+    final c          = tokens.colors;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Directionality(
-      textDirection: TextDirection.ltr, // flip to rtl when locale requires
+      textDirection: TextDirection.ltr,
       child: Container(
         padding: EdgeInsets.only(bottom: bottomInset),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
@@ -153,7 +121,7 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: c.border.withOpacity(0.4),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -165,12 +133,12 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2563EB),
+                        color: c.primary,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.manage_accounts,
-                        color: Colors.white,
+                        color: c.onPrimary,
                         size: 22,
                       ),
                     ),
@@ -183,18 +151,18 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                             _isEditMode
                                 ? 'Edit Staff Member'
                                 : 'Add New Staff Member',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E293B),
+                              color: c.label,
                             ),
                           ),
                           if (!_isEditMode)
-                            const Text(
+                            Text(
                               'Fill in the details to add a new\nreception staff member to your gym',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Color(0xFF64748B),
+                                color: c.muted,
                               ),
                             ),
                         ],
@@ -206,15 +174,14 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
 
                 // ── Section label ──────────────────────────────────────────
                 Row(
-                  children: const [
-                    Icon(Icons.person_outline,
-                        size: 16, color: Color(0xFF2563EB)),
-                    SizedBox(width: 6),
+                  children: [
+                    Icon(Icons.person_outline, size: 16, color: c.primary),
+                    const SizedBox(width: 6),
                     Text(
                       'Personal Information',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
+                        color: c.label,
                         fontSize: 14,
                       ),
                     ),
@@ -223,8 +190,9 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                 const SizedBox(height: 14),
 
                 // ── Full Name ──────────────────────────────────────────────
-                _buildLabel('Full Name'),
+                _buildLabel('Full Name', c),
                 _buildTextField(
+                  c: c,
                   controller: _fullNameCtrl,
                   hint: 'Enter full name',
                   validator: (v) =>
@@ -235,8 +203,9 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                 const SizedBox(height: 14),
 
                 // ── Email ──────────────────────────────────────────────────
-                _buildLabel('Email Address'),
+                _buildLabel('Email Address', c),
                 _buildTextField(
+                  c: c,
                   controller: _emailCtrl,
                   hint: 'staff@fitzone.com',
                   keyboardType: TextInputType.emailAddress,
@@ -256,8 +225,9 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                 const SizedBox(height: 14),
 
                 // ── Phone ──────────────────────────────────────────────────
-                _buildLabel('Phone Number'),
+                _buildLabel('Phone Number', c),
                 _buildTextField(
+                  c: c,
                   controller: _phoneCtrl,
                   hint: '+91 98765 43210',
                   keyboardType: TextInputType.phone,
@@ -269,26 +239,27 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                 const SizedBox(height: 14),
 
                 // ── Role dropdown ──────────────────────────────────────────
-                _buildLabel('Role'),
+                _buildLabel('Role', c),
                 DropdownButtonFormField<String>(
                   value: _selectedRole,
-                  hint: const Text('Select role'),
+                  hint: Text('Select role',
+                      style: TextStyle(color: c.muted, fontSize: 14)),
                   items: _roleOptions
-                      .map((r) =>
-                      DropdownMenuItem(value: r, child: Text(r)))
+                      .map((r) => DropdownMenuItem(value: r, child: Text(r)))
                       .toList(),
                   onChanged: (v) => setState(() => _selectedRole = v),
                   validator: (v) =>
                   v == null && !_isEditMode ? 'Role is required' : null,
-                  decoration: _inputDecoration(),
+                  decoration: _inputDecoration(c),
                 ),
                 const SizedBox(height: 14),
 
                 // ── Branch dropdown ────────────────────────────────────────
-                _buildLabel('Branch Assignment'),
+                _buildLabel('Branch Assignment', c),
                 DropdownButtonFormField<int>(
                   value: _selectedBranchId,
-                  hint: const Text('Select branch'),
+                  hint: Text('Select branch',
+                      style: TextStyle(color: c.muted, fontSize: 14)),
                   items: _branchOptions
                       .map((b) => DropdownMenuItem<int>(
                     value: b['id'] as int,
@@ -298,28 +269,24 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                   onChanged: (v) => setState(() => _selectedBranchId = v),
                   validator: (v) =>
                   v == null && !_isEditMode ? 'Branch is required' : null,
-                  decoration: _inputDecoration(),
+                  decoration: _inputDecoration(c),
                 ),
                 const SizedBox(height: 14),
 
-                // ── Password (ADD mode only) ────────────────────────────────
+                // ── Password (ADD mode only) ───────────────────────────────
                 if (!_isEditMode) ...[
-                  _buildLabel('Password'),
+                  _buildLabel('Password', c),
                   _buildTextField(
+                    c: c,
                     controller: _passwordCtrl,
                     hint: 'Auto-generate or enter',
                     obscureText: true,
-                    // No validator — password is truly optional.
-                    // Empty → backend auto-generates.
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       'Leave empty to auto-generate a secure password',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF94A3B8),
-                      ),
+                      style: TextStyle(fontSize: 11, color: c.muted),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -330,13 +297,13 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                 // ── Action buttons ─────────────────────────────────────────
                 Row(
                   children: [
-                    // Cancel — white outlined
+                    // Cancel
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF2563EB),
-                          side: const BorderSide(color: Color(0xFF2563EB)),
+                          foregroundColor: c.primary,
+                          side: BorderSide(color: c.primary),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -346,13 +313,13 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Confirm — blue filled
+                    // Confirm
                     Expanded(
                       child: ElevatedButton(
                         onPressed: _submit,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2563EB),
-                          foregroundColor: Colors.white,
+                          backgroundColor: c.primary,
+                          foregroundColor: c.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -373,23 +340,22 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
     );
   }
 
-  // ── Private form helpers ───────────────────────────────────────────────────
-
-  Widget _buildLabel(String text) {
+  Widget _buildLabel(String text, ColorTokens c) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w500,
-          color: Color(0xFF374151),
+          color: c.body,
         ),
       ),
     );
   }
 
   Widget _buildTextField({
+    required ColorTokens c,
     required TextEditingController controller,
     required String hint,
     TextInputType? keyboardType,
@@ -401,32 +367,37 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
-      decoration: _inputDecoration().copyWith(hintText: hint),
+      style: TextStyle(fontSize: 14, color: c.label),
+      decoration: _inputDecoration(c).copyWith(hintText: hint),
     );
   }
 
-  InputDecoration _inputDecoration() {
+  InputDecoration _inputDecoration(ColorTokens c) {
     return InputDecoration(
       filled: true,
-      fillColor: const Color(0xFFF8FAFC),
+      fillColor: c.background,
+      hintStyle: TextStyle(color: c.muted, fontSize: 14),
       contentPadding:
       const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: c.border.withOpacity(0.3)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: c.border.withOpacity(0.3)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide:
-        const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+        borderSide: BorderSide(color: c.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFDC2626)),
+        borderSide: BorderSide(color: c.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: c.error, width: 1.5),
       ),
     );
   }

@@ -15,6 +15,8 @@ import '../bloc/plan_detail/plan_detail_bloc.dart';
 import '../bloc/plan_detail/plan_detail_event.dart';
 import '../bloc/plan_detail/plan_detail_state.dart';
 
+
+ // ________________________note : this code not ready , payment ___________________________________
 class PlanDetailScreenProvider extends StatelessWidget {
   final int planId;
   final Dio dio;

@@ -18,10 +18,9 @@ class MyMembershipCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Container(
+    return Container(
         margin: EdgeInsets.only(bottom: tokens.spacing.lg),
         decoration: BoxDecoration(
           color: tokens.colors.surface,
@@ -44,16 +43,16 @@ class MyMembershipCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
-                textDirection: TextDirection.rtl,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment:
+                      isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                       children: [
                         Text(
                           membership.planName,
-                          textAlign: TextAlign.right,
+                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
                           style: tokens.typography.headlineSmall.copyWith(
                             color: tokens.colors.label,
                             fontWeight: FontWeight.w900,
@@ -65,7 +64,7 @@ class MyMembershipCardWidget extends StatelessWidget {
 
                         Text(
                           l10n.remainingDays(membership.remainingDays),
-                          textAlign: TextAlign.right,
+                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
                           style: tokens.typography.bodyMedium.copyWith(
                             color: tokens.colors.primary,
                             fontWeight: FontWeight.w800,
@@ -76,7 +75,7 @@ class MyMembershipCardWidget extends StatelessWidget {
 
                         Text(
                           l10n.membershipEndsAt(membership.endDate),
-                          textAlign: TextAlign.right,
+                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
                           style: tokens.typography.bodyMedium.copyWith(
                             color: tokens.colors.muted,
                             fontWeight: FontWeight.w600,
@@ -119,7 +118,6 @@ class MyMembershipCardWidget extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

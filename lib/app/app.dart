@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/core/config/app_config.dart';
+import 'package:build4allgym/core/localization/locale_cubit.dart';
+import 'package:build4allgym/core/localization/locale_storage.dart';
 import 'package:build4allgym/core/network/connecting(wifiORserver)/connection_cubit.dart';
 import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/core/realtime/realtime_cubit.dart';
@@ -14,17 +16,26 @@ import 'app_view.dart';
 class MyApp extends StatelessWidget {
   final AppConfig appConfig;
 
-  const MyApp({super.key, required this.appConfig});
+  const MyApp({
+    super.key,
+    required this.appConfig,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
+
+        BlocProvider(
+          create: (_) => LocaleCubit(LocaleStorage())..loadSavedLocale(),
+        ),
+
         BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => RealtimeCubit()),
+
         BlocProvider(
-          create: (ctx) {
+          create: (_) {
             final cubit = ConnectionCubit(connectivity: Connectivity());
             g.registerConnectionCubit(cubit);
             return cubit;

@@ -1,9 +1,9 @@
-// PATH: lib/features/admin/trainers/presentation/screens/admin_trainers_screen.dart
-// =============================================================================
+// FILE: lib/features/admin/trainers/presentation/screens/admin_trainers_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/theme/theme_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../domain/entities/AdminTrainerDetailEntity.dart';
@@ -26,13 +26,11 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
   TrainerFormOptionsEntity? _cachedOptions;
   int? _pendingEditTrainerId;
   TrainersLoaded? _lastLoadedState;
-
-  int? _selectedBranchId; // null = All Branches
+  int? _selectedBranchId;
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bloc = context.read<AdminTrainersBloc>();
       bloc.add(const TrainersStarted());
@@ -42,31 +40,25 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
 
   void _showLoadingDialog() {
     showDialog(
-      context: context,
+      context:           context,
       barrierDismissible: false,
-      builder: (_) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (_) => const Center(child: CircularProgressIndicator()),
     );
   }
 
   void _closeDialogIfOpen() {
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }
+    if (Navigator.of(context).canPop()) Navigator.of(context).pop();
   }
 
   void _openAddSheet() {
     final options = _cachedOptions;
-
     if (options == null) {
       context.read<AdminTrainersBloc>().add(
         const TrainerFormOptionsRequested(),
       );
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Loading trainer form options...'),
+          content:  Text('Loading trainer form options...'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -75,7 +67,7 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
 
     AddEditTrainerBottomSheet.show(
       context,
-      options: options,
+      options:  options,
       onCreate: (request) => context
           .read<AdminTrainersBloc>()
           .add(TrainerCreateRequested(request)),
@@ -89,23 +81,18 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
         const TrainerFormOptionsRequested(),
       );
     }
-
     _pendingEditTrainerId = trainerId;
     _showLoadingDialog();
-
-    context.read<AdminTrainersBloc>().add(
-      TrainerDetailRequested(trainerId),
-    );
+    context.read<AdminTrainersBloc>().add(TrainerDetailRequested(trainerId));
   }
 
   void _openEditSheet(AdminTrainerDetailEntity detail) {
-    final options = _cachedOptions;
+    final options   = _cachedOptions;
     final trainerId = _pendingEditTrainerId;
-
     if (options == null || trainerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Trainer form options are not ready yet'),
+          content:  Text('Trainer form options are not ready yet'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -115,70 +102,55 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
     AddEditTrainerBottomSheet.show(
       context,
       trainerId: trainerId,
-      options: options,
-      detail: detail,
-      onCreate: (_) {},
-      onUpdate: (id, request) => context
+      options:   options,
+      detail:    detail,
+      onCreate:  (_) {},
+      onUpdate:  (id, request) => context
           .read<AdminTrainersBloc>()
           .add(TrainerUpdateRequested(id, request)),
     );
   }
 
-  Widget _buildTrainersList(
-      BuildContext context,
-      TrainersLoaded loadedState,
-      ) {
+  Widget _buildTrainersList(BuildContext context, TrainersLoaded loadedState) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 4,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Text(
             '${loadedState.total} Trainer${loadedState.total == 1 ? '' : 's'}',
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF757575),
-            ),
+            style: TextStyle(
+                fontSize:   13,
+                fontWeight: FontWeight.w600,
+                color:      c.muted),
           ),
         ),
         Expanded(
           child: loadedState.trainers.isEmpty
-              ? const Center(
+              ? Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.sports_outlined,
-                  size: 48,
-                  color: Color(0xFFBDBDBD),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  'No trainers found',
-                  style: TextStyle(
-                    color: Color(0xFF9E9E9E),
-                    fontSize: 14,
-                  ),
-                ),
+                Icon(Icons.sports_outlined,
+                    size: 48, color: c.border.withOpacity(0.5)),
+                const SizedBox(height: 12),
+                Text('No trainers found',
+                    style: TextStyle(color: c.muted, fontSize: 14)),
               ],
             ),
           )
               : ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-            itemCount: loadedState.trainers.length,
+            padding:    const EdgeInsets.fromLTRB(16, 0, 16, 80),
+            itemCount:  loadedState.trainers.length,
             itemBuilder: (context, index) {
               final trainer = loadedState.trainers[index];
-
               return TrainerCardWidget(
-                trainer: trainer,
+                trainer:   trainer,
                 isLoading: false,
-                onEditTap: () => _requestEditTrainer(
-                  trainer.trainerId,
-                ),
+                onEditTap: () =>
+                    _requestEditTrainer(trainer.trainerId),
               );
             },
           ),
@@ -188,33 +160,29 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
   }
 
   void _onBranchChanged(int? branchId) {
-    setState(() {
-      _selectedBranchId = branchId;
-    });
-
-    // For now reload trainers.
-    // If your BLoC supports branch filtering later, pass branchId in a custom event.
+    setState(() => _selectedBranchId = branchId);
     context.read<AdminTrainersBloc>().add(const TrainersStarted());
   }
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     return Scaffold(
       drawer: const AdminNavigationDrawer(
-        gymName: 'Build4All Gym',
-        branchName: 'Downtown',
-        adminName: 'Mounir',
-        adminEmail: 'mounir@gym.com',
-        avatarUrl: null,
+        gymName:         'Build4All Gym',
+        branchName:      'Downtown',
+        adminName:       'Mounir',
+        adminEmail:      'mounir@gym.com',
+        avatarUrl:       null,
         initialActiveId: 'trainers',
       ),
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: c.background,
       body: SafeArea(
         child: BlocConsumer<AdminTrainersBloc, AdminTrainersState>(
           listener: (context, state) {
-            if (state is TrainersLoaded) {
-              _lastLoadedState = state;
-            }
+            if (state is TrainersLoaded) _lastLoadedState = state;
 
             if (state is TrainerFormOptionsLoaded) {
               _cachedOptions = state.options;
@@ -227,21 +195,20 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
 
             if (state is TrainerDetailError) {
               _closeDialogIfOpen();
-
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: const Color(0xFFF44336),
-                  behavior: SnackBarBehavior.floating,
+                  content:         Text(state.message),
+                  backgroundColor: c.danger,
+                  behavior:        SnackBarBehavior.floating,
                 ),
               );
             }
 
             if (state is TrainerActionSuccess) {
               final messages = {
-                'created': 'Trainer added successfully ✓',
-                'updated': 'Trainer updated ✓',
-                'blocked': 'Trainer blocked',
+                'created':   'Trainer added successfully ✓',
+                'updated':   'Trainer updated ✓',
+                'blocked':   'Trainer blocked',
                 'unblocked': 'Trainer unblocked ✓',
               };
 
@@ -249,8 +216,8 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
                 SnackBar(
                   content: Text(messages[state.actionType] ?? 'Done'),
                   backgroundColor: state.actionType == 'blocked'
-                      ? const Color(0xFFFF9800)
-                      : const Color(0xFF4CAF50),
+                      ? Color.lerp(c.danger, c.primary, 0.5)
+                      : c.success,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -261,9 +228,9 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
             if (state is TrainerActionError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: const Color(0xFFF44336),
-                  behavior: SnackBarBehavior.floating,
+                  content:         Text(state.message),
+                  backgroundColor: c.danger,
+                  behavior:        SnackBarBehavior.floating,
                 ),
               );
             }
@@ -276,46 +243,41 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AdminAppBar(
-                  title: 'Trainers / PT',
-                  selectedBranchId: _selectedBranchId,
-                  onBranchChanged: _onBranchChanged,
-                  onAddTap: _openAddSheet,
+                  title:             'Trainers / PT',
+                  selectedBranchId:  _selectedBranchId,
+                  onBranchChanged:   _onBranchChanged,
+                  onAddTap:          _openAddSheet,
                   notificationCount: 0,
                 ),
 
                 const TrainerSearchFilterBarWidget(),
-
                 const SizedBox(height: 4),
 
                 if (state is TrainersLoading && loadedState == null)
-                  const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
+                  Expanded(
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              color: c.primary)))
                 else if (state is TrainersError && loadedState == null)
                   Expanded(
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 48,
-                            color: Color(0xFFF44336),
-                          ),
+                          Icon(Icons.error_outline,
+                              size: 48, color: c.danger),
                           const SizedBox(height: 12),
-                          Text(
-                            state.message,
-                            style: const TextStyle(
-                              color: Color(0xFFF44336),
-                            ),
-                          ),
+                          Text(state.message,
+                              style: TextStyle(color: c.danger)),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => context
                                 .read<AdminTrainersBloc>()
                                 .add(const TrainersStarted()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: c.primary,
+                              foregroundColor: c.onPrimary,
+                            ),
                             child: const Text('Retry'),
                           ),
                         ],
@@ -324,12 +286,9 @@ class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
                   )
                 else if (loadedState != null)
                     Expanded(
-                      child: _buildTrainersList(context, loadedState),
-                    )
+                        child: _buildTrainersList(context, loadedState))
                   else
-                    const Expanded(
-                      child: SizedBox.shrink(),
-                    ),
+                    const Expanded(child: SizedBox.shrink()),
               ],
             );
           },
