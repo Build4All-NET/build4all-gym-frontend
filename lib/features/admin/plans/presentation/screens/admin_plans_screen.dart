@@ -1,4 +1,4 @@
-// PATH: lib/features/admin/plans/presentation/screens/admin_plans_screen.dart
+// FILE: lib/features/admin/plans/presentation/screens/admin_plans_screen.dart
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import '../bloc/admin_plans/admin_plans_bloc.dart';
 import '../widgets/plan_stats_card_widget.dart';
 import '../widgets/admin_plan_card_widget.dart';
 import '../widgets/plan_form_bottom_sheet.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 class AdminPlansScreen extends StatefulWidget {
   const AdminPlansScreen({super.key});
@@ -22,17 +23,13 @@ class AdminPlansScreen extends StatefulWidget {
 class _AdminPlansScreenState extends State<AdminPlansScreen> {
   final _searchController = TextEditingController();
   Timer? _debounce;
-
-  // ── Branch state — driven by BranchCubit, no longer static ───────────────
-  int? _selectedBranchId; // null = All Branches
+  int? _selectedBranchId;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Load branches from DB if not already loaded
       context.read<BranchCubit>().loadBranches();
-      // Load plans
       context.read<AdminPlansBloc>().add(LoadAdminPlansEvent());
     });
   }
@@ -53,11 +50,10 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
 
   void _onBranchChanged(int? branchId) {
     setState(() => _selectedBranchId = branchId);
-    // TODO: pass branchId to plans BLoC when plans support branch filtering
-    // context.read<AdminPlansBloc>().add(LoadAdminPlansEvent(branchId: branchId));
   }
 
   void _showDeleteDialog(int planId) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -74,8 +70,8 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
               context.read<AdminPlansBloc>()
                   .add(DeletePlanEvent(planId: planId));
             },
-            child: const Text('Delete',
-                style: TextStyle(color: Color(0xFFD32F2F))),
+            child: Text('Delete',
+                style: TextStyle(color: c.danger)),
           ),
         ],
       ),
@@ -84,6 +80,10 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+    final card   = tokens.card;
+
     return Scaffold(
       drawer: const AdminNavigationDrawer(
         gymName:         'Build4All Gym',
@@ -93,41 +93,40 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
         avatarUrl:       null,
         initialActiveId: 'plans',
       ),
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: c.background,
 
       body: SafeArea(
         child: Column(
           children: [
 
-            // ── Shared AppBar — branches from DB via BranchCubit ──────────
             AdminAppBar(
-              title:            'Plans',
-              selectedBranchId: _selectedBranchId,
-              onBranchChanged:  _onBranchChanged,
+              title:             'Plans',
+              selectedBranchId:  _selectedBranchId,
+              onBranchChanged:   _onBranchChanged,
               onAddTap: () => PlanFormBottomSheet.show(
                 context,
                 onSuccess: () => context
                     .read<AdminPlansBloc>()
                     .add(RefreshPlansEvent()),
               ),
-              notificationCount: 0, // TODO: wire to notifications BLoC
+              notificationCount: 0,
             ),
 
-            // ── Body ──────────────────────────────────────────────────────
             Expanded(
               child: BlocConsumer<AdminPlansBloc, AdminPlansState>(
                 listener: (context, state) {
                   if (state is AdminPlansError) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content:         Text(state.message),
-                      backgroundColor: const Color(0xFFD32F2F),
+                      backgroundColor: c.danger,
                     ));
                   }
                 },
                 builder: (context, state) {
 
                   if (state is AdminPlansLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                        child: CircularProgressIndicator(color: c.primary));
                   }
 
                   if (state is AdminPlansError) {
@@ -135,17 +134,21 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.error_outline,
-                              size: 48, color: Colors.grey),
+                          Icon(Icons.error_outline,
+                              size: 48, color: c.muted),
                           const SizedBox(height: 12),
                           Text(state.message,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.grey)),
+                              style: TextStyle(color: c.muted)),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => context
                                 .read<AdminPlansBloc>()
                                 .add(LoadAdminPlansEvent()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: c.primary,
+                              foregroundColor: c.onPrimary,
+                            ),
                             child: const Text('Retry'),
                           ),
                         ],
@@ -157,40 +160,45 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                     return Column(
                       children: [
 
-                        // ── Filter + Search row ────────────────────────────
+                        // ── Filter + Search ────────────────────────────────
                         Container(
-                          color:   Colors.white,
+                          color:   c.surface,
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                           child: Row(
                             children: [
-                              // Type filter dropdown
                               Expanded(
                                 flex: 2,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
+                                  padding:    const EdgeInsets.symmetric(horizontal: 12),
                                   decoration: BoxDecoration(
-                                    color:        const Color(0xFFF5F5F5),
+                                    color:        c.background,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: DropdownButton<String?>(
                                     value:      state.activeTypeFilter,
                                     isExpanded: true,
                                     underline:  const SizedBox.shrink(),
-                                    hint: const Text('All Types',
-                                        style: TextStyle(fontSize: 13)),
+                                    hint: Text('All Types',
+                                        style: TextStyle(
+                                            fontSize: 13, color: c.muted)),
+                                    dropdownColor: c.surface,
+                                    style: TextStyle(
+                                        fontSize: 13, color: c.label),
                                     items: [
-                                      const DropdownMenuItem(
+                                      DropdownMenuItem(
                                         value: null,
                                         child: Text('All Types',
-                                            style: TextStyle(fontSize: 13)),
+                                            style: TextStyle(
+                                                fontSize:  13,
+                                                color:     c.label)),
                                       ),
                                       ...state.types.map((t) =>
                                           DropdownMenuItem(
                                             value: t,
                                             child: Text(t,
-                                                style: const TextStyle(
-                                                    fontSize: 13)),
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    color:    c.label)),
                                           )),
                                     ],
                                     onChanged: (v) => context
@@ -200,23 +208,21 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              // Search field
                               Expanded(
                                 flex: 3,
                                 child: TextField(
                                   controller: _searchController,
                                   onChanged:  _onSearchChanged,
-                                  style: const TextStyle(fontSize: 13),
+                                  style: TextStyle(
+                                      fontSize: 13, color: c.label),
                                   decoration: InputDecoration(
-                                    hintText: 'Search plans...',
+                                    hintText:  'Search plans...',
                                     hintStyle: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey[400]),
+                                        fontSize: 13, color: c.muted),
                                     prefixIcon: Icon(Icons.search,
-                                        size:  18,
-                                        color: Colors.grey[400]),
+                                        size: 18, color: c.muted),
                                     filled:    true,
-                                    fillColor: const Color(0xFFF5F5F5),
+                                    fillColor: c.background,
                                     contentPadding:
                                     const EdgeInsets.symmetric(
                                         vertical: 10),
@@ -231,9 +237,9 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                           ),
                         ),
 
-                        // ── Stats + Plan list ──────────────────────────────
                         Expanded(
                           child: RefreshIndicator(
+                            color:     c.primary,
                             onRefresh: () async => context
                                 .read<AdminPlansBloc>()
                                 .add(RefreshPlansEvent()),
@@ -241,21 +247,20 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                               children: [
                                 PlanStatsCardWidget(stats: state.stats),
                                 if (state.plans.isEmpty)
-                                  const Padding(
-                                    padding: EdgeInsets.all(40),
+                                  Padding(
+                                    padding: const EdgeInsets.all(40),
                                     child: Center(
                                       child: Text('No plans found',
                                           style: TextStyle(
-                                              color: Colors.grey)),
+                                              color: c.muted)),
                                     ),
                                   )
                                 else
                                   ...state.plans.map((plan) =>
                                       AdminPlanCardWidget(
-                                        plan: plan,
+                                        plan:       plan,
                                         isDeleting: state.isDeletingPlan &&
-                                            state.deletingPlanId ==
-                                                plan.planId,
+                                            state.deletingPlanId == plan.planId,
                                         onEdit: () =>
                                             PlanFormBottomSheet.show(
                                               context,
@@ -291,8 +296,8 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
               .read<AdminPlansBloc>()
               .add(RefreshPlansEvent()),
         ),
-        backgroundColor: const Color(0xFF2E7D32),
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: c.success,
+        child: Icon(Icons.add, color: c.onPrimary),
       ),
     );
   }

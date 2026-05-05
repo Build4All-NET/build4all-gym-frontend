@@ -1,7 +1,11 @@
+// lib/features/admin/plans/presentation/widgets/plan_form_bottom_sheet.dart
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../domain/entities/admin_plan_list_item_entity.dart';
 import '../../domain/entities/admin_branch_option_entity.dart';
 import '../../domain/usecases/admin_plans_usecases.dart';
@@ -81,23 +85,23 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
   bool get _isEditMode => widget.existingPlan != null;
 
-  // Raw API values — these must exactly match what the backend enum stores.
-  static const _billingCycles = ['monthly', 'quarterly', 'yearly', 'one_time', 'custom'];
-  static const _statuses      = ['active', 'inactive'];
+  static const _billingCycles = [
+    'monthly', 'quarterly', 'yearly', 'one_time', 'custom'
+  ];
+  static const _statuses = ['active', 'inactive'];
 
   @override
   void initState() {
     super.initState();
-    final plan = widget.existingPlan;
+    final plan             = widget.existingPlan;
     _nameController        = TextEditingController(text: plan?.name ?? '');
-    _priceController       = TextEditingController(text: plan?.price.toString() ?? '');
-    _descriptionController = TextEditingController(text: plan?.description ?? '');
-    _promotionController   = TextEditingController(text: plan?.promotionText ?? '');
+    _priceController       = TextEditingController(
+        text: plan?.price.toString() ?? '');
+    _descriptionController = TextEditingController(
+        text: plan?.description ?? '');
+    _promotionController   = TextEditingController(
+        text: plan?.promotionText ?? '');
 
-    // FIX: normalize billingCycle to raw API value before assigning.
-    // The entity may carry a display label ("One-time", "Monthly") if the
-    // backend or a mapping layer formatted it. We convert it back to the
-    // raw enum ("one_time", "monthly") so it matches the dropdown items.
     _selectedType         = plan?.planType;
     _selectedBillingCycle = _normaliseCycle(plan?.billingCycle);
     _selectedStatus       = plan != null
@@ -105,16 +109,6 @@ class _PlanFormContentState extends State<_PlanFormContent> {
         : null;
   }
 
-  /// Converts any billing cycle format → raw API enum value.
-  ///
-  /// Handles:
-  ///   "one_time" / "One-time" / "One time" / "1 time" → "one_time"
-  ///   "monthly"  / "Monthly"  / "1 Month"             → "monthly"
-  ///   "quarterly"/ "Quarterly"/ "3 Months"             → "quarterly"
-  ///   "yearly"   / "Yearly"   / "1 Year"               → "yearly"
-  ///   "custom"   / "Custom"                            → "custom"
-  ///   already correct raw value                        → unchanged
-  ///   null or unrecognised                             → null
   String? _normaliseCycle(String? raw) {
     if (raw == null) return null;
     final v = raw.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
@@ -123,9 +117,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     if (v.contains('quarter') || v == '3_months')  return 'quarterly';
     if (v.contains('year') || v == '1_year')       return 'yearly';
     if (v.contains('custom'))                       return 'custom';
-    // Already a raw value that exists in the list — return as-is.
     if (_billingCycles.contains(v)) return v;
-    return null; // unrecognised → let user re-select
+    return null;
   }
 
   @override
@@ -141,7 +134,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     if (!_formKey.currentState!.validate()) return;
 
     final price     = double.tryParse(_priceController.text.trim()) ?? 0.0;
-    final branchIds = _selectedBranchId != null ? [_selectedBranchId!] : <int>[];
+    final branchIds = _selectedBranchId != null
+        ? [_selectedBranchId!] : <int>[];
 
     if (_isEditMode) {
       context.read<PlanFormBloc>().add(
@@ -183,6 +177,9 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+
     return BlocConsumer<PlanFormBloc, PlanFormState>(
       listener: (context, state) {
         if (state is PlanFormSuccess) {
@@ -190,7 +187,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: const Color(0xFF4CAF50),
+              backgroundColor: c.success,
             ),
           );
           widget.onSuccess();
@@ -198,9 +195,10 @@ class _PlanFormContentState extends State<_PlanFormContent> {
       },
       builder: (context, state) {
         if (state is PlanFormDataLoading) {
-          return const SizedBox(
+          return SizedBox(
             height: 200,
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+                child: CircularProgressIndicator(color: c.primary)),
           );
         }
 
@@ -228,12 +226,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── Handle ───────────────────────────────────────────────
+                  // ── Handle ──────────────────────────────────────────────
                   Center(
                     child: Container(
                       width: 40, height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: c.border.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -241,27 +239,32 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   const SizedBox(height: 16),
                   Text(
                     _isEditMode ? 'Edit Plan' : 'Add New Plan',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: c.label),
                   ),
                   const SizedBox(height: 20),
 
                   // ── Plan Name ────────────────────────────────────────────
-                  const _FormLabel('Plan Name *'),
+                  _FormLabel('Plan Name *', c),
                   TextFormField(
                     controller: _nameController,
-                    decoration: _inputDecoration('e.g. Gold Monthly'),
+                    style: TextStyle(color: c.label),
+                    decoration: _inputDecoration('e.g. Gold Monthly', c),
                     validator: (v) =>
                     v == null || v.trim().isEmpty ? 'Required' : null,
                   ),
                   const SizedBox(height: 14),
 
                   // ── Type / Activity ──────────────────────────────────────
-                  const _FormLabel('Type / Activity *'),
+                  _FormLabel('Type / Activity *', c),
                   DropdownButtonFormField<String>(
                     value: _selectedType,
-                    decoration: _inputDecoration('Select type'),
+                    decoration: _inputDecoration('Select type', c),
                     items: types
-                        .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                        .map((t) =>
+                        DropdownMenuItem(value: t, child: Text(t)))
                         .toList(),
                     onChanged: (v) => setState(() => _selectedType = v),
                     validator: (v) => v == null ? 'Required' : null,
@@ -269,61 +272,71 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   const SizedBox(height: 14),
 
                   // ── Price ────────────────────────────────────────────────
-                  const _FormLabel('Price *'),
+                  _FormLabel('Price *', c),
                   TextFormField(
                     controller: _priceController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: _inputDecoration('e.g. 49.99'),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true),
+                    style: TextStyle(color: c.label),
+                    decoration: _inputDecoration('e.g. 49.99', c),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return 'Required';
-                      if (double.tryParse(v.trim()) == null) return 'Enter a valid number';
+                      if (double.tryParse(v.trim()) == null) {
+                        return 'Enter a valid number';
+                      }
                       return null;
                     },
                   ),
                   const SizedBox(height: 14),
 
                   // ── Duration ─────────────────────────────────────────────
-                  const _FormLabel('Duration *'),
+                  _FormLabel('Duration *', c),
                   DropdownButtonFormField<String>(
                     value: _selectedBillingCycle,
-                    decoration: _inputDecoration('Select duration'),
+                    decoration: _inputDecoration('Select duration', c),
                     items: _billingCycles
-                        .map((c) => DropdownMenuItem(
-                      value: c,
-                      child: Text(_formatBillingCycle(c)),
+                        .map((cyc) => DropdownMenuItem(
+                      value: cyc,
+                      child: Text(_formatBillingCycle(cyc)),
                     ))
                         .toList(),
-                    onChanged: (v) => setState(() => _selectedBillingCycle = v),
+                    onChanged: (v) =>
+                        setState(() => _selectedBillingCycle = v),
                     validator: (v) => v == null ? 'Required' : null,
                   ),
                   const SizedBox(height: 14),
 
                   // ── Description ──────────────────────────────────────────
-                  const _FormLabel('Description'),
+                  _FormLabel('Description', c),
                   TextFormField(
                     controller: _descriptionController,
                     maxLines: 2,
-                    decoration: _inputDecoration('Optional description'),
+                    style: TextStyle(color: c.label),
+                    decoration:
+                    _inputDecoration('Optional description', c),
                   ),
                   const SizedBox(height: 14),
 
                   // ── Promotion ────────────────────────────────────────────
-                  const _FormLabel('Promotion'),
+                  _FormLabel('Promotion', c),
                   TextFormField(
                     controller: _promotionController,
-                    decoration: _inputDecoration('e.g. 10% off for new members'),
+                    style: TextStyle(color: c.label),
+                    decoration: _inputDecoration(
+                        'e.g. 10% off for new members', c),
                   ),
                   const SizedBox(height: 14),
 
                   // ── Status ───────────────────────────────────────────────
-                  const _FormLabel('Status *'),
+                  _FormLabel('Status *', c),
                   DropdownButtonFormField<String>(
                     value: _selectedStatus,
-                    decoration: _inputDecoration('Select status'),
+                    decoration: _inputDecoration('Select status', c),
                     items: _statuses
                         .map((s) => DropdownMenuItem(
                       value: s,
-                      child: Text(s[0].toUpperCase() + s.substring(1)),
+                      child: Text(
+                          s[0].toUpperCase() + s.substring(1)),
                     ))
                         .toList(),
                     onChanged: (v) => setState(() => _selectedStatus = v),
@@ -332,23 +345,24 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   const SizedBox(height: 14),
 
                   // ── Branches ─────────────────────────────────────────────
-                  const _FormLabel('Available Branches *'),
+                  _FormLabel('Available Branches *', c),
                   DropdownButtonFormField<int>(
                     value: _selectedBranchId,
-                    decoration: _inputDecoration('Select branch'),
+                    decoration: _inputDecoration('Select branch', c),
                     items: branches
                         .map((b) => DropdownMenuItem(
                       value: b.branchId,
                       child: Text(b.branchName),
                     ))
                         .toList(),
-                    onChanged: (v) => setState(() => _selectedBranchId = v),
+                    onChanged: (v) =>
+                        setState(() => _selectedBranchId = v),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
                       'Note: Multi-select support coming soon',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      style: TextStyle(fontSize: 11, color: c.muted),
                     ),
                   ),
 
@@ -358,12 +372,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFEBEE),
+                        color: c.danger.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         state.message,
-                        style: const TextStyle(color: Color(0xFFD32F2F)),
+                        style: TextStyle(color: c.danger),
                       ),
                     ),
                   ],
@@ -378,23 +392,26 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                           ? null
                           : () => _submit(types, branches),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E7D32),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: c.success,
+                        foregroundColor: c.onPrimary,
+                        padding:
+                        const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: isSubmitting
-                          ? const SizedBox(
-                        width: 20, height: 20,
+                          ? SizedBox(
+                        width: 20,
+                        height: 20,
                         child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2),
+                            color: c.onPrimary, strokeWidth: 2),
                       )
                           : Text(
                         _isEditMode ? 'Save Changes' : 'Create Plan',
                         style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -418,27 +435,33 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     };
   }
 
-  InputDecoration _inputDecoration(String hint) {
+  InputDecoration _inputDecoration(String hint, ColorTokens c) {
     return InputDecoration(
       hintText: hint,
+      hintStyle: TextStyle(color: c.muted),
       filled: true,
-      fillColor: const Color(0xFFF5F5F5),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      fillColor: c.background,
+      contentPadding:
+      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: c.border.withOpacity(0.3)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: c.border.withOpacity(0.3)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
+        borderSide: BorderSide(color: c.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFD32F2F)),
+        borderSide: BorderSide(color: c.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: c.error, width: 1.5),
       ),
     );
   }
@@ -446,7 +469,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
 class _FormLabel extends StatelessWidget {
   final String text;
-  const _FormLabel(this.text);
+  final ColorTokens c;
+  const _FormLabel(this.text, this.c);
 
   @override
   Widget build(BuildContext context) {
@@ -454,10 +478,10 @@ class _FormLabel extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF424242),
+          color: c.body,
         ),
       ),
     );

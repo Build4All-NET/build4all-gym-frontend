@@ -1,13 +1,27 @@
+// FILE: lib/features/admin/dashboard/presentation/widgets/large_stat_cards_grid.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 class LargeStatCardsGrid extends StatelessWidget {
   final AdminDashboardSummary data;
-
   const LargeStatCardsGrid({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c      = tokens.colors;
+    final card   = tokens.card;
+
+    // Use theme-derived accent colors — primary for main stats, success/danger for growth
+    final growthPositive = c.success;
+    final growthNegative = c.danger;
+    final pendingColor   = Color.lerp(c.danger, c.primary, 0.5) ?? c.primary;
+    final checkColor     = c.success;
+    final ptColor        = Color.lerp(c.primary, c.label, 0.3) ?? c.primary;
+
     return Column(
       children: [
         IntrinsicHeight(
@@ -16,29 +30,35 @@ class LargeStatCardsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: _LargeStatCard(
-                  iconColor: const Color(0xFF3B82F6),
-                  iconBg: const Color(0xFFEFF6FF),
-                  icon: Icons.group_outlined,
-                  value: '${data.members.activeMembers}',
-                  sublabel: data.members.activeMembersGrowth >= 0
+                  iconColor: c.primary,
+                  iconBg:    c.primary.withOpacity(0.1),
+                  icon:      Icons.group_outlined,
+                  value:     '${data.members.activeMembers}',
+                  sublabel:  data.members.activeMembersGrowth >= 0
                       ? '+${data.members.activeMembersGrowth.toStringAsFixed(0)}% growth'
                       : '${data.members.activeMembersGrowth.toStringAsFixed(0)}% growth',
                   sublabelColor: data.members.activeMembersGrowth >= 0
-                      ? const Color(0xFF16A34A)
-                      : const Color(0xFFDC2626),
-                  title: 'Active Members',
+                      ? growthPositive
+                      : growthNegative,
+                  title:     'Active Members',
+                  cardColor: c.surface,
+                  titleColor: c.muted,
+                  valueColor: c.label,
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: _LargeStatCard(
-                  iconColor: const Color(0xFFF97316),
-                  iconBg: const Color(0xFFFFF7ED),
-                  icon: Icons.calendar_today_outlined,
-                  value: '${data.members.pendingRenewals}',
-                  sublabel: 'Due soon',
-                  sublabelColor: const Color(0xFFF97316),
-                  title: 'Pending Renewals',
+                  iconColor:     pendingColor,
+                  iconBg:        pendingColor.withOpacity(0.1),
+                  icon:          Icons.calendar_today_outlined,
+                  value:         '${data.members.pendingRenewals}',
+                  sublabel:      'Due soon',
+                  sublabelColor: pendingColor,
+                  title:         'Pending Renewals',
+                  cardColor:     c.surface,
+                  titleColor:    c.muted,
+                  valueColor:    c.label,
                 ),
               ),
             ],
@@ -51,25 +71,31 @@ class LargeStatCardsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: _LargeStatCard(
-                  iconColor: const Color(0xFF16A34A),
-                  iconBg: const Color(0xFFF0FDF4),
-                  icon: Icons.how_to_reg_outlined,
-                  value: '${data.checkins.todayCheckins}',
-                  sublabel: 'Live now',
-                  sublabelColor: const Color(0xFF16A34A),
-                  title: "Today's Check-ins",
+                  iconColor:     checkColor,
+                  iconBg:        checkColor.withOpacity(0.1),
+                  icon:          Icons.how_to_reg_outlined,
+                  value:         '${data.checkins.todayCheckins}',
+                  sublabel:      'Live now',
+                  sublabelColor: checkColor,
+                  title:         "Today's Check-ins",
+                  cardColor:     c.surface,
+                  titleColor:    c.muted,
+                  valueColor:    c.label,
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: _LargeStatCard(
-                  iconColor: const Color(0xFF9333EA),
-                  iconBg: const Color(0xFFFAF5FF),
-                  icon: Icons.fitness_center_outlined,
-                  value: '${data.checkins.upcomingPTSessions}',
-                  sublabel: 'Sessions',
-                  sublabelColor: const Color(0xFF9333EA),
-                  title: 'Upcoming PT',
+                  iconColor:     ptColor,
+                  iconBg:        ptColor.withOpacity(0.1),
+                  icon:          Icons.fitness_center_outlined,
+                  value:         '${data.checkins.upcomingPTSessions}',
+                  sublabel:      'Sessions',
+                  sublabelColor: ptColor,
+                  title:         'Upcoming PT',
+                  cardColor:     c.surface,
+                  titleColor:    c.muted,
+                  valueColor:    c.label,
                 ),
               ),
             ],
@@ -81,13 +107,16 @@ class LargeStatCardsGrid extends StatelessWidget {
 }
 
 class _LargeStatCard extends StatelessWidget {
-  final Color iconColor;
-  final Color iconBg;
+  final Color   iconColor;
+  final Color   iconBg;
   final IconData icon;
-  final String value;
-  final String title;
-  final String sublabel;
-  final Color sublabelColor;
+  final String  value;
+  final String  title;
+  final String  sublabel;
+  final Color   sublabelColor;
+  final Color   cardColor;
+  final Color   titleColor;
+  final Color   valueColor;
 
   const _LargeStatCard({
     required this.iconColor,
@@ -97,73 +126,66 @@ class _LargeStatCard extends StatelessWidget {
     required this.title,
     required this.sublabel,
     required this.sublabelColor,
+    required this.cardColor,
+    required this.titleColor,
+    required this.valueColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width:   double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:        cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color:     Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset:    const Offset(0, 3),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize:       MainAxisSize.min,
         children: [
-          // Icon container — fixed compact size
           Container(
-            width: 44,
+            width:  44,
             height: 44,
             decoration: BoxDecoration(
-              color: iconBg,
+              color:        iconBg,
               borderRadius: BorderRadius.circular(11),
             ),
             child: Icon(icon, color: iconColor, size: 22),
           ),
           const SizedBox(height: 12),
-          // Title
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF9CA3AF),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text(title,
+              style: TextStyle(
+                  fontSize:   12,
+                  color:      titleColor,
+                  fontWeight: FontWeight.w500)),
           const SizedBox(height: 3),
-          // Value
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF111827),
-              height: 1.1,
-            ),
-          ),
+          Text(value,
+              style: TextStyle(
+                  fontSize:   26,
+                  fontWeight: FontWeight.w700,
+                  color:      valueColor,
+                  height:     1.1)),
           const SizedBox(height: 5),
-          // Sublabel
           Row(
             children: [
-              Icon(Icons.trending_up_rounded, size: 12, color: sublabelColor),
+              Icon(Icons.trending_up_rounded,
+                  size: 12, color: sublabelColor),
               const SizedBox(width: 3),
               Flexible(
                 child: Text(
                   sublabel,
                   style: TextStyle(
-                    fontSize: 11,
-                    color: sublabelColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+                      fontSize:   11,
+                      color:      sublabelColor,
+                      fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

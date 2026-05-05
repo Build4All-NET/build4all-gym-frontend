@@ -1,13 +1,23 @@
+// FILE: lib/features/admin/dashboard/presentation/widgets/small_metric_cards_grid.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 class SmallMetricCardsGrid extends StatelessWidget {
   final AdminDashboardSummary data;
-
   const SmallMetricCardsGrid({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    final tokens     = context.read<ThemeCubit>().state.tokens;
+    final c          = tokens.colors;
+    final accentA    = c.primary;
+    final accentB    = c.success;
+    final accentC    = Color.lerp(c.danger, c.primary, 0.5) ?? c.primary;
+    final accentD    = Color.lerp(c.primary, c.label, 0.3) ?? c.primary;
+
     return Column(
       children: [
         IntrinsicHeight(
@@ -16,29 +26,35 @@ class SmallMetricCardsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: _SmallMetricCard(
-                  icon: Icons.directions_run_rounded,
-                  iconColor: const Color(0xFF3B82F6),
-                  iconBg: const Color(0xFFEFF6FF),
-                  value: '${data.checkins.attendanceCount}',
-                  label: 'Attendance',
-                  badge: '+${data.checkins.attendanceGrowth.toStringAsFixed(0)}%',
-                  badgeColor: const Color(0xFF16A34A),
+                  icon:       Icons.directions_run_rounded,
+                  iconColor:  accentA,
+                  iconBg:     accentA.withOpacity(0.1),
+                  value:      '${data.checkins.attendanceCount}',
+                  label:      'Attendance',
+                  badge:      '+${data.checkins.attendanceGrowth.toStringAsFixed(0)}%',
+                  badgeColor: accentB,
+                  cardColor:  c.surface,
+                  labelColor: c.muted,
+                  valueColor: c.label,
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: _SmallMetricCard(
-                  icon: Icons.attach_money_rounded,
-                  iconColor: const Color(0xFF16A34A),
-                  iconBg: const Color(0xFFF0FDF4),
-                  value: data.revenue != null
+                  icon:       Icons.attach_money_rounded,
+                  iconColor:  accentB,
+                  iconBg:     accentB.withOpacity(0.1),
+                  value:      data.revenue != null
                       ? '₹${data.revenue!.paymentsCollected.toStringAsFixed(0)}'
                       : 'N/A',
-                  label: 'Payments Collected',
-                  badge: data.revenue != null
+                  label:      'Payments Collected',
+                  badge:      data.revenue != null
                       ? '+${data.revenue!.paymentsGrowth.toStringAsFixed(0)}%'
                       : null,
-                  badgeColor: const Color(0xFF16A34A),
+                  badgeColor: accentB,
+                  cardColor:  c.surface,
+                  labelColor: c.muted,
+                  valueColor: c.label,
                 ),
               ),
             ],
@@ -51,24 +67,30 @@ class SmallMetricCardsGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: _SmallMetricCard(
-                  icon: Icons.calendar_month_outlined,
-                  iconColor: const Color(0xFFF97316),
-                  iconBg: const Color(0xFFFFF7ED),
-                  value: '${data.members.expiringPlansNext7Days}',
-                  label: 'Expiring Plans',
-                  sublabel: 'Next 7 days',
+                  icon:       Icons.calendar_month_outlined,
+                  iconColor:  accentC,
+                  iconBg:     accentC.withOpacity(0.1),
+                  value:      '${data.members.expiringPlansNext7Days}',
+                  label:      'Expiring Plans',
+                  sublabel:   'Next 7 days',
+                  cardColor:  c.surface,
+                  labelColor: c.muted,
+                  valueColor: c.label,
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: _SmallMetricCard(
-                  icon: Icons.people_outline_rounded,
-                  iconColor: const Color(0xFF9333EA),
-                  iconBg: const Color(0xFFFAF5FF),
-                  value: '${data.members.totalMembers}',
-                  label: 'Total Members',
-                  badge: '~${data.members.activeMembers} Active',
-                  badgeColor: const Color(0xFF16A34A),
+                  icon:       Icons.people_outline_rounded,
+                  iconColor:  accentD,
+                  iconBg:     accentD.withOpacity(0.1),
+                  value:      '${data.members.totalMembers}',
+                  label:      'Total Members',
+                  badge:      '~${data.members.activeMembers} Active',
+                  badgeColor: accentB,
+                  cardColor:  c.surface,
+                  labelColor: c.muted,
+                  valueColor: c.label,
                 ),
               ),
             ],
@@ -81,13 +103,16 @@ class SmallMetricCardsGrid extends StatelessWidget {
 
 class _SmallMetricCard extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final String value;
-  final String label;
-  final String? badge;
-  final Color? badgeColor;
-  final String? sublabel;
+  final Color    iconColor;
+  final Color    iconBg;
+  final String   value;
+  final String   label;
+  final String?  badge;
+  final Color?   badgeColor;
+  final String?  sublabel;
+  final Color    cardColor;
+  final Color    labelColor;
+  final Color    valueColor;
 
   const _SmallMetricCard({
     required this.icon,
@@ -98,6 +123,9 @@ class _SmallMetricCard extends StatelessWidget {
     this.badge,
     this.badgeColor,
     this.sublabel,
+    required this.cardColor,
+    required this.labelColor,
+    required this.valueColor,
   });
 
   @override
@@ -105,90 +133,78 @@ class _SmallMetricCard extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: double.infinity,
+          width:   double.infinity,
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:        cardColor,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color:     Colors.black.withOpacity(0.05),
                 blurRadius: 10,
-                offset: const Offset(0, 3),
+                offset:    const Offset(0, 3),
               ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize:       MainAxisSize.min,
             children: [
               Container(
-                width: 36,
+                width:  36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: iconBg,
+                  color:        iconBg,
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child: Icon(icon, color: iconColor, size: 18),
               ),
               const SizedBox(height: 10),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF111827),
-                  height: 1.1,
-                ),
-              ),
+              Text(value,
+                  style: TextStyle(
+                      fontSize:   20,
+                      fontWeight: FontWeight.w700,
+                      color:      valueColor,
+                      height:     1.1)),
               const SizedBox(height: 3),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF9CA3AF),
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Text(label,
+                  style: TextStyle(
+                      fontSize:   11,
+                      color:      labelColor,
+                      fontWeight: FontWeight.w500),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
               if (sublabel != null) ...[
                 const SizedBox(height: 2),
-                Text(
-                  sublabel!,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Color(0xFFD1D5DB),
-                  ),
-                ),
+                Text(sublabel!,
+                    style: TextStyle(
+                        fontSize: 10,
+                        color:    labelColor.withOpacity(0.6))),
               ],
             ],
           ),
         ),
         if (badge != null)
           Positioned(
-            top: 10,
+            top:   10,
             right: 10,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              padding:    const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(
-                color: (badgeColor ?? const Color(0xFF16A34A)).withOpacity(0.1),
+                color:        (badgeColor ?? iconColor).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.trending_up_rounded,
-                    size: 9,
-                    color: badgeColor ?? const Color(0xFF16A34A),
-                  ),
+                  Icon(Icons.trending_up_rounded,
+                      size: 9, color: badgeColor ?? iconColor),
                   const SizedBox(width: 2),
                   Text(
                     badge!,
                     style: TextStyle(
-                      color: badgeColor ?? const Color(0xFF16A34A),
-                      fontSize: 9,
+                      color:      badgeColor ?? iconColor,
+                      fontSize:   9,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
