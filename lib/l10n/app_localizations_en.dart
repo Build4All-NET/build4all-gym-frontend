@@ -1027,4 +1027,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ptNoTrainers => 'No trainers available';
+
+  @override
+  String accountMemberSince(String date) {
+    return 'Member since $date';
+  }
 }

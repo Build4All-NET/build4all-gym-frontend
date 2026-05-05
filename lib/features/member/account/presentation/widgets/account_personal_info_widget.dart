@@ -41,6 +41,7 @@ class AccountPersonalInfoWidget extends StatelessWidget {
         children: [
           Text(
             l10n.accountPersonalInfo,
+            textAlign: isRtl ? TextAlign.end : TextAlign.start,
             style: tokens.typography.titleMedium.copyWith(
               fontWeight: FontWeight.w800,
             ),
@@ -87,6 +88,7 @@ class AccountPersonalInfoWidget extends StatelessWidget {
               ),
               child: Text(
                 l10n.accountEditProfile,
+                textAlign: isRtl ? TextAlign.end : TextAlign.start,
                 style: TextStyle(
                   fontSize: tokens.button.textSize,
                   fontWeight: FontWeight.w700,

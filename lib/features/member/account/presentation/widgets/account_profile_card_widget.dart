@@ -39,7 +39,7 @@ class AccountProfileCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       account.fullName,
-                      textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.titleMedium.copyWith(
                         color: tokens.colors.onPrimary,
                         fontWeight: FontWeight.w800,
@@ -49,10 +49,8 @@ class AccountProfileCardWidget extends StatelessWidget {
                     if (account.memberSince != null) ...[
                       SizedBox(height: tokens.spacing.xs),
                       Text(
-                        isRtl
-                            ? 'عضو منذ ${account.memberSince}'
-                            : 'Member since ${account.memberSince}',
-                        textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                        l10n.accountMemberSince(account.memberSince!),
+                        textAlign: isRtl ? TextAlign.end : TextAlign.start,
                         style: tokens.typography.bodySmall.copyWith(
                           color: tokens.colors.onPrimary.withOpacity(0.85),
                         ),
@@ -69,6 +67,7 @@ class AccountProfileCardWidget extends StatelessWidget {
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
+                          textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
                           children: [
                             Icon(
                               Icons.workspace_premium_rounded,

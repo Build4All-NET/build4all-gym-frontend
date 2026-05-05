@@ -59,12 +59,20 @@ class MotivationalQuoteCard extends StatelessWidget {
           color: tokens.colors.danger.withOpacity(0.10),
           borderRadius: BorderRadius.circular(22),
 
-          // Keeps your existing side accent design.
+
           border: Border(
-            right: BorderSide(
+            right: isArabic
+                ? BorderSide(
               color: tokens.colors.danger,
               width: 4,
-            ),
+            )
+                : BorderSide.none,
+            left: !isArabic
+                ? BorderSide(
+              color: tokens.colors.danger,
+              width: 4,
+            )
+                : BorderSide.none,
           ),
 
           // Shadow depends on selected theme settings.

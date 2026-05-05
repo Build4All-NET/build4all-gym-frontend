@@ -65,10 +65,9 @@ class MemberPlansScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: tokens.colors.background,
         body: BlocBuilder<PlansListBloc, PlansListState>(
           builder: (context, state) {
@@ -168,11 +167,12 @@ class MemberPlansScreen extends StatelessWidget {
                               ),
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                              isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   l10n.memberPlansTitle,
-                                  textAlign: TextAlign.right,
+                                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
                                   style:
                                   tokens.typography.headlineSmall.copyWith(
                                     fontSize: 25,
@@ -186,7 +186,7 @@ class MemberPlansScreen extends StatelessWidget {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   softWrap: true,
-                                  textAlign: TextAlign.start,
+                                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
                                   style: tokens.typography.bodyMedium.copyWith(
                                     fontSize: 14,
                                     color: tokens.colors.onPrimary.withOpacity(0.92),
@@ -299,7 +299,6 @@ class MemberPlansScreen extends StatelessWidget {
             return const SizedBox.shrink();
           },
         ),
-      ),
     );
   }
 }

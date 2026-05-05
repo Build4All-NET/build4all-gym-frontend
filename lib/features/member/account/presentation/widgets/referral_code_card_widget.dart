@@ -64,12 +64,14 @@ class ReferralCodeCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       l10n.accountReferralTitle,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.titleMedium.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     Text(
                       l10n.accountReferralSubtitle,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.bodySmall.copyWith(
                         color: tokens.colors.muted,
                       ),
@@ -103,12 +105,14 @@ class ReferralCodeCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       l10n.accountReferralCodeLabel,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.bodySmall.copyWith(
                         color: tokens.colors.muted,
                       ),
                     ),
                     Text(
                       referralCode!,
+                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
                       style: tokens.typography.titleMedium.copyWith(
                         color: tokens.colors.primary,
                         fontWeight: FontWeight.w900,
@@ -159,6 +163,7 @@ class ReferralCodeCardWidget extends StatelessWidget {
               icon: const Icon(Icons.share_rounded, size: 18),
               label: Text(
                 l10n.accountReferralShare,
+                textAlign: isRtl ? TextAlign.end : TextAlign.start,
                 style: TextStyle(
                   fontSize: tokens.button.textSize,
                   fontWeight: FontWeight.w700,
