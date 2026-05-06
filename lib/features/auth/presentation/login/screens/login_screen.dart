@@ -131,7 +131,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     children: [
                       // ── Top section with logo and title ──
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: sp.xl),
+                        padding: EdgeInsetsDirectional.symmetric(vertical: sp.xl),
                         child: Column(
                           children: [
                             // Logo
@@ -189,7 +189,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             ),
                           ),
                           child: SingleChildScrollView(
-                            padding: EdgeInsets.all(sp.lg),
+                            padding: EdgeInsetsDirectional.all(sp.lg),
                             child: Form(
                               key: _formKey,
                               child: BlocBuilder<AuthBloc, AuthState>(
@@ -206,7 +206,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         color: labelColor,
                                         fontWeight: FontWeight.w500,
                                       ),
-                                      textAlign: TextAlign.right,
+                                      textAlign: TextAlign.start,
                                     ),
                                     SizedBox(height: sp.xs),
 
@@ -216,8 +216,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                       keyboardType: _usePhone
                                           ? TextInputType.phone
                                           : TextInputType.emailAddress,
-                                      textDirection: TextDirection.ltr,
-                                      textAlign: TextAlign.left,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color: c.label,
                                         fontSize: 15,
@@ -267,7 +266,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           color: hintColor,
                                           size: 20,
                                         ),
-                                        contentPadding: const EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsetsDirectional.symmetric(
                                           horizontal: 16,
                                           vertical: 16,
                                         ),
@@ -294,7 +293,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         color: labelColor,
                                         fontWeight: FontWeight.w500,
                                       ),
-                                      textAlign: TextAlign.right,
+                                      textAlign: TextAlign.start,
                                     ),
                                     SizedBox(height: sp.xs),
 
@@ -302,8 +301,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                     TextFormField(
                                       controller: _passwordCtrl,
                                       obscureText: _obscurePass,
-                                      textAlign: TextAlign.left,
-                                      textDirection: TextDirection.ltr,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color: c.label,
                                         fontSize: 15,
@@ -361,7 +359,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           color: hintColor,
                                           size: 20,
                                         ),
-                                        contentPadding: const EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsetsDirectional.symmetric(
                                           horizontal: 16,
                                           vertical: 16,
                                         ),
@@ -384,7 +382,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         // meaning no ForgotPasswordBloc is ever provided above the screen.
                                         onPressed: () => Navigator.pushNamed(context, AppRouter.forgotPassword),
                                         style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
+                                          padding: EdgeInsetsDirectional.zero,
                                           minimumSize: const Size(0, 0),
                                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         ),
@@ -445,7 +443,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: sp.md),
+                                          padding: EdgeInsetsDirectional.symmetric(horizontal: sp.md),
                                           child: Text(
                                             l.general_or,
                                             style: TextStyle(
@@ -544,7 +542,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                             );
                                           },
                                           style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
+                                            padding: EdgeInsetsDirectional.zero,
                                             minimumSize: const Size(0, 0),
                                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                           ),

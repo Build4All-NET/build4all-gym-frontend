@@ -9,6 +9,8 @@ import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
 import '../core/network/globals.dart';
 import '../features/admin/AppBar/presentation/branch_cubit.dart';
+import '../features/admin/branches/presentation/bloc/branches_event.dart';
+import '../features/admin/branches/presentation/screens/branches_list_page.dart';
 import '../features/admin/classes/data/repositories/admin_classes_repository_impl.dart';
 import '../features/admin/classes/data/services/admin_classes_service.dart';
 import '../features/admin/classes/domain/usecases/cancel_class_usecase.dart';
@@ -24,13 +26,13 @@ import '../features/admin/members/data/services/admin_members_service.dart';
 import '../features/admin/members/domain/usecases/block_member_use_case.dart';
 import '../features/admin/members/domain/usecases/bulk_delete_members_use_case.dart';
 import '../features/admin/members/domain/usecases/delete_member_use_case.dart';
-import '../features/admin/members/domain/usecases/get_member_detail_use_case.dart'; // ← GA-270
+import '../features/admin/members/domain/usecases/get_member_detail_use_case.dart';
 import '../features/admin/members/domain/usecases/get_members_use_case.dart';
 import '../features/admin/members/domain/usecases/unblock_member_use_case.dart';
-import '../features/admin/members/presentation/screens/member_detail_screen.dart'; // ← GA-271
+import '../features/admin/members/presentation/screens/member_detail_screen.dart';
 import '../features/admin/plans/data/repositories/admin_plans_repository_impl.dart';
 import '../features/admin/plans/data/services/admin_plans_remote_service.dart';
-import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart';
+import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart' hide GetBranchesUseCase;
 import '../features/admin/plans/presentation/bloc/admin_plans/admin_plans_bloc.dart';
 import '../features/admin/plans/presentation/screens/admin_plans_screen.dart';
 import '../features/admin/staff/domain/usecases/create_staff_usecase.dart';
@@ -80,6 +82,14 @@ import '../features/admin/trainers/domain/usecases/block_trainer_usecase.dart';
 import '../features/admin/trainers/presentation/bloc/admin_trainers_bloc.dart';
 import '../features/admin/trainers/presentation/screens/admin_trainers_screen.dart';
 import '../features/admin/staff/presentation/screens/admin_staff_screen.dart';
+
+// ── Branches imports ──────────────────────────────────────────────────────────
+import '../features/admin/branches/data/repository/branch_repository_impl.dart';
+import '../features/admin/branches/domain/usecase/get_branches_usecase.dart';
+import '../features/admin/branches/domain/usecase/get_branch_detail_usecase.dart';
+import '../features/admin/branches/domain/usecase/create_branch_usecase.dart';
+import '../features/admin/branches/presentation/bloc/branches_bloc.dart';
+
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login = '/login';
@@ -94,7 +104,7 @@ class AppRouter {
   // ─── Admin: Core Owner ─────────────────────────────────────────────────────
   static const String adminDashboard = '/admin/dashboard';
   static const String adminMembers = '/admin/members';
-  static const String memberDetail = '/admin/members/detail'; // ← GA-271
+  static const String memberDetail = '/admin/members/detail';
   static const String adminPlans = '/admin/plans';
   static const String adminTrainers = '/admin/trainers';
   static const String adminStaff = '/admin/staff';
@@ -124,7 +134,7 @@ class AppRouter {
     final appConfig = args is AppConfig ? args : AppConfig.fromEnv();
 
     switch (settings.name) {
-      // ── Auth ───────────────────────────────────────────────────────────────
+    // ── Auth ───────────────────────────────────────────────────────────────
 
       case login:
         return MaterialPageRoute(
@@ -161,14 +171,14 @@ class AppRouter {
           },
         );
 
-      // ── Member shell ───────────────────────────────────────────────────────
+    // ── Member shell ───────────────────────────────────────────────────────
 
       case user:
         return MaterialPageRoute(
           builder: (_) => MainShell(appConfig: appConfig),
         );
 
-      // ── Admin: Dashboard ───────────────────────────────────────────────────
+    // ── Admin: Dashboard ───────────────────────────────────────────────────
 
       case admin:
       case adminDashboard:
@@ -185,15 +195,13 @@ class AppRouter {
           ),
         );
 
-      // ── Admin: Plans ───────────────────────────────────────────────────────
+    // ── Admin: Plans ───────────────────────────────────────────────────────
 
       case adminPlans:
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              // ← ADD: BranchCubit for the AppBar branch pill
               BlocProvider(create: (_) => BranchCubit()..loadBranches()),
-              // ← EXISTING: unchanged
               BlocProvider(
                 create: (_) => AdminPlansBloc(
                   getStats: GetAdminPlanStatsUseCase(
@@ -223,7 +231,7 @@ class AppRouter {
           ),
         );
 
-      // ── Admin: Members ─────────────────────────────────────────────────────
+    // ── Admin: Members ─────────────────────────────────────────────────────
 
       case adminMembers:
         final mArgs = settings.arguments as Map<String, dynamic>?;
@@ -242,9 +250,7 @@ class AppRouter {
             bloc: AdminMembersBloc(
               branchId: branchId,
               getMembersUseCase: GetMembersUseCase(repository),
-              getMemberDetailUseCase: GetMemberDetailUseCase(
-                repository,
-              ), // ← GA-270
+              getMemberDetailUseCase: GetMemberDetailUseCase(repository),
               blockMemberUseCase: BlockMemberUseCase(repository),
               unblockMemberUseCase: UnblockMemberUseCase(repository),
               deleteMemberUseCase: DeleteMemberUseCase(repository),
@@ -253,11 +259,7 @@ class AppRouter {
           ),
         );
 
-      // ── Admin: Member Detail ───────────────────────────────────────────────
-      // GA-271: The bloc is passed via arguments from MemberCardWidget because
-      // the router's context does NOT have AdminMembersBloc in its tree.
-      // context.read<AdminMembersBloc>() here would crash — the route is built
-      // under MaterialApp, not under AdminMembersPage.
+    // ── Admin: Member Detail ───────────────────────────────────────────────
 
       case memberDetail:
         final dArgs = settings.arguments as Map<String, dynamic>;
@@ -270,14 +272,14 @@ class AppRouter {
           ),
         );
 
-      // ── Admin: Trainers ────────────────────────────────────────────────────
+    // ── Admin: Trainers ────────────────────────────────────────────────────
+
       case adminTrainers:
         final service = AdminTrainersService();
         final repository = AdminTrainersRepositoryImpl(service);
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              // ← ADD: BranchCubit for the AppBar branch pill
               BlocProvider(create: (_) => BranchCubit()..loadBranches()),
               BlocProvider(
                 create: (_) => AdminTrainersBloc(
@@ -294,40 +296,61 @@ class AppRouter {
           ),
         );
 
-      // ── Admin: Staff ───────────────────────────────────────────────────────
+    // ── Admin: Staff ───────────────────────────────────────────────────────
+
       case adminStaff:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => BranchCubit()..loadBranches(),
-            child: const AdminStaffScreen(), // ← AdminStaffScreen, not AdminClassesScreen
+            child: const AdminStaffScreen(),
           ),
         );
 
-      // ── Admin: Gym Profile ─────────────────────────────────────────────────
+    // ── Admin: Gym Profile ─────────────────────────────────────────────────
+
       case adminGymProfile:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Gym Profile'),
         );
 
-      // ── Admin: Branches ────────────────────────────────────────────────────
+    // ── Admin: Branches ────────────────────────────────────────────────────
       case adminBranches:
+        final branchesRepo = BranchRepositoryImpl();
+
         return MaterialPageRoute(
-          builder: (_) => const _ComingSoonScreen(title: 'Branches'),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider<BranchesBloc>(
+                create: (_) => BranchesBloc(
+                  getBranchesUseCase:     GetBranchesUseCase(branchesRepo),
+                  getBranchDetailUseCase: GetBranchDetailUseCase(branchesRepo),
+                  createBranchUseCase:    CreateBranchUseCase(branchesRepo),
+                )..add(const LoadBranches()),
+              ),
+              BlocProvider<BranchCubit>(
+                create: (_) => BranchCubit()..loadBranches(),
+              ),
+            ],
+            child: const BranchesListPage(),
+          ),
         );
 
-      // ── Admin: Check-ins ───────────────────────────────────────────────────
+    // ── Admin: Check-ins ───────────────────────────────────────────────────
+
       case adminCheckins:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Check-ins'),
         );
 
-      // ── Admin: Payments ────────────────────────────────────────────────────
+    // ── Admin: Payments ────────────────────────────────────────────────────
+
       case adminPayments:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Payments'),
         );
 
-      // ── Admin: Classes ─────────────────────────────────────────────────────
+    // ── Admin: Classes ─────────────────────────────────────────────────────
+
       case adminClasses:
         final classesRepo = AdminClassesRepositoryImpl(AdminClassesService());
         return MaterialPageRoute(
@@ -345,45 +368,51 @@ class AppRouter {
                 )..add(ClassesStarted(DateTime.now())),
               ),
             ],
-            child: const AdminClassesScreen(), // ← correct
+            child: const AdminClassesScreen(),
           ),
         );
 
-      // ── Admin: Notifications ───────────────────────────────────────────────
+    // ── Admin: Notifications ───────────────────────────────────────────────
+
       case adminNotifications:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Notifications'),
         );
 
-      // ── Admin: PT Sessions ─────────────────────────────────────────────────
+    // ── Admin: PT Sessions ─────────────────────────────────────────────────
+
       case adminPtSessions:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'PT Sessions'),
         );
 
-      // ── Admin: Training Videos ─────────────────────────────────────────────
+    // ── Admin: Training Videos ─────────────────────────────────────────────
+
       case adminTrainingVideos:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Training Videos'),
         );
 
-      // ── Admin: Settings ────────────────────────────────────────────────────
+    // ── Admin: Settings ────────────────────────────────────────────────────
+
       case adminSettings:
         return MaterialPageRoute(
           builder: (_) => const _ComingSoonScreen(title: 'Settings'),
         );
 
-      // ── Logout ─────────────────────────────────────────────────────────────
+    // ── Logout ─────────────────────────────────────────────────────────────
+
       case logout:
         return MaterialPageRoute(
           builder: (_) => UserLoginScreen(appConfig: appConfig),
         );
 
-      // ── 404 fallback ───────────────────────────────────────────────────────
+    // ── 404 fallback ───────────────────────────────────────────────────────
+
       default:
         return MaterialPageRoute(
           builder: (_) =>
-              const Scaffold(body: Center(child: Text('Route not found'))),
+          const Scaffold(body: Center(child: Text('Route not found'))),
         );
     }
   }
@@ -412,9 +441,9 @@ class _ComingSoonScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Coming soon',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
             ),
           ],
         ),

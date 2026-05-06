@@ -72,7 +72,6 @@ class SessionsRepositoryImpl implements SessionsRepository {
   }
   @override
   Future<SessionDetailEntity> getSessionDetail(int sessionId) async {
-    try {
       final model = await _service.getSessionDetail(sessionId);
 
       return SessionDetailEntity(
@@ -90,12 +89,9 @@ class SessionsRepositoryImpl implements SessionsRepository {
         roomName: model.roomName,
         availableSeats: model.availableSeats,
         memberBookingStatus: model.memberBookingStatus,
-        description: model.description,
+        description: model.description ?? 'No description available',
         benefits: model.benefits,
         equipment: model.equipment,
       );
-    } catch (e) {
-      throw Exception('Failed to load session detail');
-    }
   }
 }

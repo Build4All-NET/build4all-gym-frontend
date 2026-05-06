@@ -13,11 +13,11 @@ class SessionDetailModel {
   final String roomName;
   final int availableSeats;
   final String? memberBookingStatus;
-  final String description;
+  final String? description;
   final List<String> benefits;
   final List<String> equipment;
 
-  const SessionDetailModel({
+  SessionDetailModel({
     required this.sessionId,
     required this.classTypeId,
     required this.trainerId,
@@ -32,34 +32,32 @@ class SessionDetailModel {
     required this.roomName,
     required this.availableSeats,
     this.memberBookingStatus,
-    required this.description,
+    this.description,
     required this.benefits,
     required this.equipment,
   });
 
   factory SessionDetailModel.fromJson(Map<String, dynamic> json) {
     return SessionDetailModel(
-      sessionId: json['sessionId'] as int,
-      classTypeId: json['classTypeId'] as int,
-      trainerId: json['trainerId'] as int,
+      sessionId: (json['sessionId'] as num).toInt(),
+      classTypeId: (json['classTypeId'] as num).toInt(),
+      trainerId: (json['trainerId'] as num).toInt(),
       className: json['className'] as String,
       trainerName: json['trainerName'] as String,
-      trainerProfileFileId: json['trainerProfileFileId'] as int?,
+      trainerProfileFileId: json['trainerProfileFileId'] == null
+          ? null
+          : (json['trainerProfileFileId'] as num).toInt(),
       trainerRating: (json['trainerRating'] as num).toDouble(),
       difficultyLevel: json['difficultyLevel'] as String,
       price: (json['price'] as num).toDouble(),
       startTime: DateTime.parse(json['startTime'] as String),
       endTime: DateTime.parse(json['endTime'] as String),
       roomName: json['roomName'] as String,
-      availableSeats: json['availableSeats'] as int,
+      availableSeats: (json['availableSeats'] as num).toInt(),
       memberBookingStatus: json['memberBookingStatus'] as String?,
-      description: json['description'] as String,
-      benefits: (json['benefits'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      equipment: (json['equipment'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      description: json['description'] as String?,
+      benefits: List<String>.from(json['benefits'] ?? []),
+      equipment: List<String>.from(json['equipment'] ?? []),
     );
   }
 

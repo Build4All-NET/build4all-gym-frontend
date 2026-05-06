@@ -180,7 +180,7 @@ class _SignupContentState extends State<_SignupContent> {
                 content: Text(_resolveError(state.errorCode, l)),
                 backgroundColor: c.error,
                 behavior: SnackBarBehavior.floating,
-                margin: const EdgeInsets.all(16),
+                margin: const EdgeInsetsDirectional.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(card.radius),
                 ),
@@ -223,7 +223,7 @@ class _SignupContentState extends State<_SignupContent> {
                     children: [
                       // ── Gradient header ───────────────────────────────
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: sp.xl),
+                        padding: EdgeInsetsDirectional.symmetric(vertical: sp.xl),
                         child: Column(
                           children: [
                             // Logo — c.surface background, c.primary icon
@@ -281,7 +281,7 @@ class _SignupContentState extends State<_SignupContent> {
                             ),
                           ),
                           child: SingleChildScrollView(
-                            padding: EdgeInsets.all(sp.lg),
+                            padding: EdgeInsetsDirectional.all(sp.lg),
                             child: Form(
                               key: _formKey,
                               child: BlocBuilder<RegisterBloc, RegisterState>(
@@ -346,8 +346,7 @@ class _SignupContentState extends State<_SignupContent> {
                                       keyboardType: _usePhone
                                           ? TextInputType.phone
                                           : TextInputType.emailAddress,
-                                      textDirection: TextDirection.ltr,
-                                      textAlign:     TextAlign.left,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color:    c.label,
                                         fontSize: 15,
@@ -385,8 +384,7 @@ class _SignupContentState extends State<_SignupContent> {
                                     TextFormField(
                                       controller:    _passwordCtrl,
                                       obscureText:   _obscurePass,
-                                      textAlign:     TextAlign.left,
-                                      textDirection: TextDirection.ltr,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color:    c.label,
                                         fontSize: 15,
@@ -432,8 +430,7 @@ class _SignupContentState extends State<_SignupContent> {
                                     TextFormField(
                                       controller:    _confirmCtrl,
                                       obscureText:   _obscureConfirm,
-                                      textAlign:     TextAlign.left,
-                                      textDirection: TextDirection.ltr,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color:    c.label,
                                         fontSize: 15,
@@ -517,7 +514,7 @@ class _SignupContentState extends State<_SignupContent> {
                                           onPressed: () =>
                                               Navigator.pop(context),
                                           style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
+                                            padding: EdgeInsetsDirectional.zero,
                                             minimumSize:
                                             const Size(0, 0),
                                             tapTargetSize:
@@ -609,7 +606,7 @@ class _SignupContentState extends State<_SignupContent> {
       ),
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 16),
     );
   }
 }
@@ -640,7 +637,7 @@ class _StepIndicator extends StatelessWidget {
         : 'Step $currentStep of $totalSteps';
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         // Very subtle tint of primary — same technique used in card tokens
         color:        c.primary.withOpacity(0.04),
@@ -776,7 +773,7 @@ class _ToggleTab extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.all(3),
+        margin: const EdgeInsetsDirectional.all(3),
         decoration: BoxDecoration(
           color:        bgColor,
           borderRadius: BorderRadius.circular(tokens.button.radius - 3),
