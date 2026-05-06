@@ -8,10 +8,12 @@ import 'package:build4allgym/l10n/app_localizations.dart';
 
 class TodayScheduleWidget extends StatelessWidget {
   final List<ScheduleItem> items;
+  final VoidCallback onViewAll;
 
   const TodayScheduleWidget({
     super.key,
     required this.items,
+    required this.onViewAll,
   });
 
   @override
@@ -36,11 +38,7 @@ class TodayScheduleWidget extends StatelessWidget {
               ),
               const Spacer(),
               InkWell(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.comingSoon)),
-                  );
-                },
+                onTap: onViewAll,
                 child: Text(
                   l10n.memberHomeViewAll,
                   style: tokens.typography.bodyMedium.copyWith(

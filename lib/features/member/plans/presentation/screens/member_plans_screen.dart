@@ -176,49 +176,38 @@ class MemberPlansScreen extends StatelessWidget {
                             ],
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 120, 16, 0),
+                          child: BlocBuilder<MyMembershipBloc, MyMembershipState>(
+                            builder: (context, membershipState) {
+                              if (membershipState is MyMembershipLoaded) {
+                                return MyMembershipCardWidget(
+                                  membership: membershipState.membership,
+                                );
+                              }
 
-                        if (plans.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 120, 16, 0),
-                            child: PlanCardWidget(
-                              plan: plans.first,
-                              onSelectPlan: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => PlanDetailScreenProvider(
-                                      planId: plans.first.planId,
-                                      dio: dio,
-                                    ),
+                              if (membershipState is MyMembershipLoading) {
+                                return Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: tokens.colors.surface,
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  child: LinearProgressIndicator(
+                                    color: tokens.colors.primary,
                                   ),
                                 );
-                              },
-                            ),
+                              }
+
+                              return const SizedBox.shrink();
+                            },
                           ),
+                        ),
                       ],
                     ),
                   ),
 
-                  BlocBuilder<MyMembershipBloc, MyMembershipState>(
-                    builder: (context, membershipState) {
-                      if (membershipState is MyMembershipLoaded) {
-                        return SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                          sliver: SliverToBoxAdapter(
-                            child: MyMembershipCardWidget(membership: membershipState.membership),
-                          ),
-                        );
-                      }
-                      if (membershipState is MyMembershipLoading) {
-                        return SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                          sliver: SliverToBoxAdapter(
-                            child: LinearProgressIndicator(color: tokens.colors.primary),
-                          ),
-                        );
-                      }
-                      return const SliverToBoxAdapter(child: SizedBox.shrink());
-                    },
-                  ),
+
 
                   if (plans.isEmpty)
                     SliverToBoxAdapter(
@@ -241,7 +230,7 @@ class MemberPlansScreen extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                               (context, index) {
                             final otherPlans = plans.skip(1).toList();
-                            final plan = otherPlans[index];
+                            final plan = plans[index];
                             return PlanCardWidget(
                               plan: plan,
                               onSelectPlan: () {
@@ -256,7 +245,7 @@ class MemberPlansScreen extends StatelessWidget {
                               },
                             );
                           },
-                          childCount: plans.length > 1 ? plans.length - 1 : 0,
+                          childCount: plans.length,
                         ),
                       ),
                     ),

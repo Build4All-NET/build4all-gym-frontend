@@ -23,7 +23,12 @@ import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_s
 import '../widgets/weight_tracker_card.dart';
 
 class MemberHomeScreen extends StatefulWidget {
-  const MemberHomeScreen({super.key});
+  final ValueChanged<int> onTabSelected;
+
+  const MemberHomeScreen({
+    super.key,
+    required this.onTabSelected,
+  });
 
   @override
   State<MemberHomeScreen> createState() => _MemberHomeScreenState();
@@ -115,6 +120,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
               SnackBar(
                 content: Text(l10n.home_weightUpdated),
                 backgroundColor: tokens.colors.success,
+                behavior: SnackBarBehavior.floating,
               ),
             );
           }
@@ -325,15 +331,16 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                       ),
                       SizedBox(height: tokens.spacing.lg),
                     ],
-                    TodayScheduleWidget(items: scheduleItems),
+                    TodayScheduleWidget(
+                      items: scheduleItems,
+                      onViewAll: () {
+                        widget.onTabSelected(3);
+                      },
+                    ),
                     SizedBox(height: tokens.spacing.lg),
                     QuickActionsGrid(
                       onBookClass: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const SessionsPage(),
-                          ),
-                        );
+                        widget.onTabSelected(3);
                       },
                       onBookTrainer: () {
                         Navigator.of(context).push(

@@ -19,7 +19,7 @@ class WeightTrackerCard extends StatefulWidget {
 }
 
 class _WeightTrackerCardState extends State<WeightTrackerCard> {
-  final TextEditingController _controller = TextEditingController(text: '75.5');
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void dispose() {

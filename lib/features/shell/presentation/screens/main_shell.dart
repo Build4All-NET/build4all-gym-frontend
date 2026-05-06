@@ -240,7 +240,9 @@ class _MainShellState extends State<MainShell> {
           logWeightUseCase: LogWeightUseCase(repository),
         );
       },
-      child: const MemberHomeScreen(),
+      child: MemberHomeScreen(
+        onTabSelected: _onBottomNavTap,
+      ),
     ),
 
     MemberPlansScreenProvider(
