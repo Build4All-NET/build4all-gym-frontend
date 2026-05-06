@@ -41,6 +41,11 @@ import '../features/admin/staff/domain/usecases/remove_staff_usecase.dart';
 import '../features/admin/staff/presentation/bloc/admin_staff_bloc.dart';
 import '../features/admin/trainers/domain/usecases/get_trainer_detail_usecase.dart';
 import '../features/admin/trainers/presentation/bloc/admin_trainers_event.dart';
+import '../features/admin/training_videos/data/repositories/training_video_repository_impl.dart';
+import '../features/admin/training_videos/data/services/training_video_remote_datasource.dart';
+import '../features/admin/training_videos/presentation/bloc/training_videos_bloc.dart';
+import '../features/admin/training_videos/presentation/bloc/training_videos_event.dart';
+import '../features/admin/training_videos/presentation/screens/training_videos_list_page.dart';
 import '../features/auth/presentation/signup/screens/signup_screen.dart';
 import '../features/auth/presentation/signup/screens/otp_screen.dart';
 
@@ -90,6 +95,12 @@ import '../features/admin/branches/domain/usecase/get_branch_detail_usecase.dart
 import '../features/admin/branches/domain/usecase/create_branch_usecase.dart';
 import '../features/admin/branches/presentation/bloc/branches_bloc.dart';
 
+
+//pt vds
+import '../features/admin/training_videos/domain/usecases/get_training_videos_usecase.dart';
+import '../features/admin/training_videos/domain/usecases/get_video_categories_usecase.dart';
+import '../features/admin/training_videos/domain/usecases/create_training_video_use_case.dart';
+import '../features/admin/training_videos/domain/usecases/GetTrainersUseCase.dart';
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login = '/login';
@@ -283,7 +294,7 @@ class AppRouter {
               BlocProvider(create: (_) => BranchCubit()..loadBranches()),
               BlocProvider(
                 create: (_) => AdminTrainersBloc(
-                  getTrainers: GetTrainersUseCase(repository),
+                  getTrainers: GetTrainersUseCases(repository),
                   getFormOptions: GetTrainerFormOptionsUseCase(repository),
                   createTrainer: CreateTrainerUseCase(repository),
                   updateTrainer: UpdateTrainerUseCase(repository),
@@ -386,11 +397,22 @@ class AppRouter {
           builder: (_) => const _ComingSoonScreen(title: 'PT Sessions'),
         );
 
-    // ── Admin: Training Videos ─────────────────────────────────────────────
+    // ── Admin: Training Videos ─────────────────────────────────────────────────
 
       case adminTrainingVideos:
+        final videosRepo = TrainingVideoRepositoryImpl(
+          TrainingVideoRemoteDataSourceImpl(),
+        );
         return MaterialPageRoute(
-          builder: (_) => const _ComingSoonScreen(title: 'Training Videos'),
+          builder: (_) => BlocProvider(
+            create: (_) => TrainingVideosBloc(
+              getTrainingVideosUseCase: GetTrainingVideosUseCase(videosRepo),
+              getVideoCategoriesUseCase: GetVideoCategoriesUseCase(videosRepo),
+              createTrainingVideoUseCase: CreateTrainingVideoUseCase(videosRepo),
+              getTrainersUseCase: GetTrainersUseCase(videosRepo),
+            )..add(LoadTrainingVideos()),
+            child: const TrainingVideosListPage(),
+          ),
         );
 
     // ── Admin: Settings ────────────────────────────────────────────────────

@@ -15,7 +15,7 @@ import 'admin_trainers_state.dart';
 
 class AdminTrainersBloc extends Bloc<AdminTrainersEvent, AdminTrainersState> {
 
-  final GetTrainersUseCase           _getTrainers;
+  final GetTrainersUseCases           _getTrainers;
   final GetTrainerFormOptionsUseCase _getFormOptions;
   final CreateTrainerUseCase         _createTrainer;
   final UpdateTrainerUseCase         _updateTrainer;
@@ -30,7 +30,7 @@ class AdminTrainersBloc extends Bloc<AdminTrainersEvent, AdminTrainersState> {
   Timer? _searchDebounce;
 
   AdminTrainersBloc({
-    required GetTrainersUseCase           getTrainers,
+    required GetTrainersUseCases           getTrainers,
     required GetTrainerFormOptionsUseCase getFormOptions,
     required CreateTrainerUseCase         createTrainer,
     required UpdateTrainerUseCase         updateTrainer,
