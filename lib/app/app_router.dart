@@ -94,7 +94,7 @@ class AppRouter {
   // ─── Admin: Core Owner ─────────────────────────────────────────────────────
   static const String adminDashboard = '/admin/dashboard';
   static const String adminMembers = '/admin/members';
-  static const String memberDetail = '/admin/members/detail'; // ← GA-271
+  static const String memberDetail = '/admin/members/detail'; //
   static const String adminPlans = '/admin/plans';
   static const String adminTrainers = '/admin/trainers';
   static const String adminStaff = '/admin/staff';
