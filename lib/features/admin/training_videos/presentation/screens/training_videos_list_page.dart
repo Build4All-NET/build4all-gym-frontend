@@ -12,11 +12,11 @@ class TrainingVideosListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => context.read<TrainingVideosBloc>()
-        ..add(LoadTrainingVideos()),
-      child: const _TrainingVideosListView(),
-    );
+    // The BLoC is already provided by the router (app_router.dart) and
+    // LoadTrainingVideos() is already dispatched there. Do NOT wrap again
+    // with BlocProvider here — that would double-dispatch and risk
+    // closing the shared BLoC on dispose.
+    return const _TrainingVideosListView();
   }
 }
 
@@ -137,7 +137,15 @@ class _LoadedBody extends StatelessWidget {
         else
           SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (context, index) => VideoCard(video: state.videos[index]),
+                  (context, index) {
+                final video = state.videos[index];
+                // Look up category name from the loaded categories list
+                final categoryName = state.categories
+                    .where((c) => c.categoryId == video.categoryId)
+                    .map((c) => c.name)
+                    .firstOrNull;
+                return VideoCard(video: video, categoryName: categoryName);
+              },
               childCount: state.videos.length,
             ),
           ),

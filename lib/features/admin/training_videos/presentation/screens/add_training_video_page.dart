@@ -208,6 +208,8 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
         buildWhen: (_, curr) =>
         curr is VideoFormOptionsLoaded ||
             curr is CategoryCreating ||
+            curr is CategoryCreated ||     // clears the spinner
+            curr is CategoryCreateError || // clears the spinner on failure
             curr is CreateVideoLoading,
         builder: (context, state) {
           if (state is VideoFormOptionsLoaded) {
@@ -359,10 +361,10 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
 
                   // ── Video URL ──────────────────────────────────────────
                   TextFormField(
-                    controller: _videoUrlController,
-                    decoration: const InputDecoration(
-                        labelText: 'Video URL * (YouTube/Vimeo)'),
-                    keyboardType: TextInputType.url
+                      controller: _videoUrlController,
+                      decoration: const InputDecoration(
+                          labelText: 'Video URL * (YouTube/Vimeo)'),
+                      keyboardType: TextInputType.url
                   ),
                   const SizedBox(height: 16),
 

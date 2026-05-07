@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/training_video_entity.dart';
-import 'package:video_player/video_player.dart';
+
 class VideoCard extends StatelessWidget {
   final TrainingVideoEntity video;
-   VideoCard({super.key, required this.video});
+  // Category name resolved by the parent — null shows a generic fallback.
+  final String? categoryName;
+
+  const VideoCard({super.key, required this.video, this.categoryName});
 
   String _formatDuration(int seconds) {
     final m = seconds ~/ 60;
     final s = seconds % 60;
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
-  late final controller = VideoPlayerController.networkUrl(
-    Uri.parse(video.videoUrl!),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class VideoCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    // Category chip
+                    // Category chip — shows resolved category name
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
@@ -102,7 +102,7 @@ class VideoCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        video.title,
+                        categoryName ?? 'Category',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                         ),
