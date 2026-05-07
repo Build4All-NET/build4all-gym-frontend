@@ -23,11 +23,8 @@ class QuickActionsGrid extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
-    // Reads the current app direction from MaterialApp.
-    // Arabic locale => RTL, English/French => LTR.
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    // Labels come from localization files, so they update with app language.
     final actions = [
       _QuickAction(
         Icons.fitness_center_rounded,
@@ -55,15 +52,14 @@ class QuickActionsGrid extends StatelessWidget {
       ),
     ];
 
-    // No manual Directionality here.
-    // This widget follows the global direction from MaterialApp.locale.
     return Column(
-      crossAxisAlignment:
-      isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isRtl
+          ? CrossAxisAlignment.stretch
+          : CrossAxisAlignment.start,
       children: [
         Text(
           l10n.home_quickActions,
-          textAlign: isRtl ? TextAlign.end : TextAlign.start,
+          textAlign: isRtl ? TextAlign.right : TextAlign.left,
           style: tokens.typography.headlineSmall.copyWith(
             color: tokens.colors.label,
             fontSize: 22,
@@ -98,11 +94,11 @@ class QuickActionsGrid extends StatelessWidget {
                   color: action.color,
                   borderRadius: BorderRadius.circular(18),
                 ),
-
-                // Align card content based on the current language direction.
                 child: Column(
-                  crossAxisAlignment:
-                  isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  // icon + text hug the RIGHT in Arabic, LEFT in English
+                  crossAxisAlignment: isRtl
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(
@@ -110,17 +106,19 @@ class QuickActionsGrid extends StatelessWidget {
                       color: tokens.colors.onPrimary,
                       size: 24,
                     ),
-
-                    Text(
-                      action.label,
-                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: tokens.typography.bodySmall.copyWith(
-                        color: tokens.colors.onPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        height: 1.2,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        action.label,
+                        textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: tokens.typography.bodySmall.copyWith(
+                          color: tokens.colors.onPrimary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
+                        ),
                       ),
                     ),
                   ],

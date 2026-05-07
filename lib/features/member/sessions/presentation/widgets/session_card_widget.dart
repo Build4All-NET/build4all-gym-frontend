@@ -195,18 +195,30 @@ class SessionCardWidget extends StatelessWidget {
                             width: 110,
                             height: 44,
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
+                              onPressed: () async {
+                                final listBloc = context.read<SessionsBloc>();
+
+                                await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => BlocProvider.value(
-                                      value: context.read<SessionsBloc>(),
+                                    builder: (_) => BlocProvider(
+                                      create: (_) => SessionsBloc(
+                                        getSessionsUseCase: listBloc.getSessionsUseCase,
+                                        bookSessionUseCase: listBloc.bookSessionUseCase,
+                                        cancelBookingUseCase: listBloc.cancelBookingUseCase,
+                                        getFilterOptionsUseCase: listBloc.getFilterOptionsUseCase,
+                                        getSessionDetailUseCase: listBloc.getSessionDetailUseCase,
+                                      ),
                                       child: SessionDetailScreen(
                                         sessionId: session.sessionId,
                                       ),
                                     ),
                                   ),
                                 );
+
+                                if (context.mounted) {
+                                  listBloc.add(const SessionsStarted());
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: tokens.colors.primary,

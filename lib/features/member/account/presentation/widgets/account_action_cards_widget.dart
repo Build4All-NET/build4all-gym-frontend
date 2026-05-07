@@ -21,32 +21,32 @@ class AccountActionCardsWidget extends StatelessWidget {
         // Bookings card
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              // TODO: Navigate to sessions screen
-            },
+            onTap: () {},
             child: Container(
               height: 110,
               padding: EdgeInsets.all(tokens.spacing.md),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    tokens.colors.danger,
-                    tokens.colors.success,
-                  ],
+                  colors: [tokens.colors.danger, tokens.colors.success],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(tokens.card.radius),
               ),
               child: Column(
-                crossAxisAlignment:
-                isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                crossAxisAlignment: isRtl
+                    ? CrossAxisAlignment.stretch
+                    : CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Icon(Icons.bookmark_rounded,
-                      color: tokens.colors.onPrimary, size: 28),
+                  Align(
+                    alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Icon(Icons.bookmark_rounded,
+                        color: tokens.colors.onPrimary, size: 28),
+                  ),
                   Text(
                     '${account.activeBookingsCount}',
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
                     style: tokens.typography.headlineSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -54,7 +54,7 @@ class AccountActionCardsWidget extends StatelessWidget {
                   ),
                   Text(
                     l10n.accountMyBookings,
-                    textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
                     style: tokens.typography.bodySmall.copyWith(
                       color: Colors.white.withOpacity(0.9),
                     ),
@@ -82,14 +82,19 @@ class AccountActionCardsWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(tokens.card.radius),
             ),
             child: Column(
-              crossAxisAlignment:
-              isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isRtl
+                  ? CrossAxisAlignment.stretch
+                  : CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                 Icon(Icons.card_giftcard_rounded,
-                    color: tokens.colors.onPrimary, size: 28),
+                Align(
+                  alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Icon(Icons.card_giftcard_rounded,
+                      color: tokens.colors.onPrimary, size: 28),
+                ),
                 Text(
                   '450',
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
                   style: tokens.typography.headlineSmall.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
@@ -97,7 +102,7 @@ class AccountActionCardsWidget extends StatelessWidget {
                 ),
                 Text(
                   l10n.accountLoyaltyPoints,
-                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
                   style: tokens.typography.bodySmall.copyWith(
                     color: Colors.white.withOpacity(0.9),
                   ),

@@ -22,6 +22,135 @@ class MembershipStatusCard extends StatelessWidget {
 
     final status = membership.status.toLowerCase().trim();
     final showRenewButton = membership.canRenew || status == 'expired';
+    final localizedPlanName = _localizedPlanName(membership.planName, status, l10n);
+
+    final iconColumn = IntrinsicWidth(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  tokens.colors.danger.withOpacity(0.90),
+                  tokens.colors.success.withOpacity(0.80),
+                ],
+              ),
+            ),
+            child: Icon(
+              Icons.workspace_premium_rounded,
+              color: tokens.colors.onPrimary,
+              size: 28,
+            ),
+          ),
+          const Spacer(),
+          if (showRenewButton)
+            InkWell(
+              borderRadius: BorderRadius.circular(999),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.comingSoon),
+                    backgroundColor: tokens.colors.primary,
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                decoration: BoxDecoration(
+                  color: tokens.colors.onPrimary,
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: [
+                    BoxShadow(
+                      color: tokens.colors.label.withOpacity(0.12),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.home_renewNow,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: tokens.colors.primary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: isRtl ? 13 : 12,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+
+    final textColumn = Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Column(
+          // RTL → stretch so TextAlign.right works | LTR → start as normal
+          crossAxisAlignment: isRtl
+              ? CrossAxisAlignment.stretch
+              : CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              l10n.home_membershipStatus,
+              textAlign: isRtl ? TextAlign.right : TextAlign.left,
+              style: tokens.typography.bodySmall.copyWith(
+                color: tokens.colors.onPrimary.withOpacity(0.82),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              localizedPlanName,
+              textAlign: isRtl ? TextAlign.right : TextAlign.left,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: tokens.typography.headlineSmall.copyWith(
+                color: _planColor(tokens, status),
+                fontSize: 17,
+                fontWeight: FontWeight.w900,
+                height: 1.0,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: isRtl
+                  ? CrossAxisAlignment.stretch
+                  : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.home_expiresOn,
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                  style: tokens.typography.bodySmall.copyWith(
+                    color: tokens.colors.onPrimary.withOpacity(0.82),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: tokens.spacing.xs),
+                Text(
+                  membership.expirationDate,
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: tokens.colors.onPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
 
     return Container(
       width: double.infinity,
@@ -36,132 +165,39 @@ class MembershipStatusCard extends StatelessWidget {
         ),
       ),
       child: Row(
+        textDirection: TextDirection.ltr, // icon always LEFT
         children: [
-          SizedBox(
-            width: 116,
-            child: Column(
-              crossAxisAlignment:
-              isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-              children: [
-                Container(
-                  width: 58,
-                  height: 58,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        tokens.colors.danger.withOpacity(0.90),
-                        tokens.colors.success.withOpacity(0.80),
-                      ],
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.workspace_premium_rounded,
-                    color: tokens.colors.onPrimary,
-                    size: 30,
-                  ),
-                ),
-                const Spacer(),
-                if (showRenewButton)
-                  InkWell(
-                    borderRadius: BorderRadius.circular(999),
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.comingSoon),
-                          backgroundColor: tokens.colors.primary,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: tokens.spacing.lg,
-                        vertical: tokens.spacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: tokens.colors.onPrimary,
-                        borderRadius: BorderRadius.circular(999),
-                        boxShadow: [
-                          BoxShadow(
-                            color: tokens.colors.label.withOpacity(0.12),
-                            blurRadius: 14,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        l10n.home_renewNow,
-                        style: tokens.typography.bodyMedium.copyWith(
-                          color: tokens.colors.primary,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-              isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // replaces Spacer
-              children: [
-                Text(
-                  l10n.home_membershipStatus,
-                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                  style: tokens.typography.bodySmall.copyWith(
-                    color: tokens.colors.onPrimary.withOpacity(0.82),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
-                Text(
-                  '✨ ${membership.planName}',
-                  textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: tokens.typography.headlineSmall.copyWith(
-                    color: _planColor(tokens, status),
-                    fontSize: 17,        // reduced from 20
-                    fontWeight: FontWeight.w900,
-                    height: 1.0,         // reduced from 1.05
-                  ),
-                ),
-
-                Column(
-                  crossAxisAlignment:
-                  isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.home_expiresOn,
-                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                      style: tokens.typography.bodySmall.copyWith(   // bodySmall instead of bodyMedium
-                        color: tokens.colors.onPrimary.withOpacity(0.82),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: tokens.spacing.xs),
-                    Text(
-                      membership.expirationDate,
-                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                      style: tokens.typography.bodyMedium.copyWith(  // bodyMedium instead of titleMedium
-                        color: tokens.colors.onPrimary,
-                        fontSize: 14,    // reduced from 16
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          iconColumn,
+          textColumn,
         ],
       ),
     );
+  }
+
+  String _localizedPlanName(
+      String planName,
+      String status,
+      AppLocalizations l10n,
+      ) {
+    final normalized = planName.toLowerCase().trim();
+
+    if (normalized.isEmpty ||
+        normalized == 'no active membership' ||
+        normalized == 'no membership' ||
+        normalized == 'none') {
+      return l10n.membershipStatusExpired;
+    }
+
+    switch (normalized) {
+      case 'active':
+        return l10n.membershipStatusActive;
+      case 'frozen':
+        return l10n.membershipStatusFrozen;
+      case 'expired':
+        return l10n.membershipStatusExpired;
+      default:
+        return planName;
+    }
   }
 
   Color _planColor(dynamic tokens, String status) {
