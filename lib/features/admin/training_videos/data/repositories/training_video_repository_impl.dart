@@ -6,6 +6,9 @@ import '../models/create_training_video_request.dart';
 import '../../domain/entities/trainer_option.dart';
 import '../services/training_video_remote_datasource.dart';
 
+// Abstract
+
+// Impl
 class TrainingVideoRepositoryImpl implements TrainingVideoRepository {
   final TrainingVideoRemoteDataSource remoteDataSource;
   TrainingVideoRepositoryImpl(this.remoteDataSource);
@@ -17,13 +20,22 @@ class TrainingVideoRepositoryImpl implements TrainingVideoRepository {
   }
 
   @override
-  Future<List<VideoCategoryEntity>> getCategories() =>
-      remoteDataSource.getCategories();
+  Future<List<VideoCategoryEntity>> getCategories() => remoteDataSource.getCategories();
 
   @override
   Future<void> createVideo(CreateTrainingVideoRequest request) =>
       remoteDataSource.createVideo(request);
+
   @override
-  Future<List<TrainerOption>> getTrainers() =>
-      remoteDataSource.getTrainers();
+  Future<List<TrainerOption>> getTrainers() async {
+    try {
+      return await remoteDataSource.getTrainers();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  @override
+  Future<VideoCategoryEntity> createCategory(String name) =>
+      remoteDataSource.createCategory(name); // ✅
 }

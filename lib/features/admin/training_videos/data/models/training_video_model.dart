@@ -4,7 +4,7 @@ class TrainingVideoModel extends TrainingVideoEntity {
   const TrainingVideoModel({
     required super.videoId,
     required super.title,
-    required super.categoryName,
+    required super.categoryId,
     super.thumbnailUrl,
     required super.durationSeconds,
     required super.viewCount,
@@ -17,7 +17,7 @@ class TrainingVideoModel extends TrainingVideoEntity {
     return TrainingVideoModel(
       videoId: json['videoId'] as int,
       title: json['title'] as String,
-      categoryName: json['categoryName'] as String,
+      categoryId: json['categoryId'] as int,
       thumbnailUrl: json['thumbnailUrl'] as String?,
       durationSeconds: json['durationSeconds'] as int,
       viewCount: json['viewCount'] as int,

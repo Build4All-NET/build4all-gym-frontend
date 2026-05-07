@@ -28,9 +28,24 @@ class TrainingVideosError extends TrainingVideosState {
 }
 
 // Form-specific states
+// Updated — now carries categories too
 class VideoFormOptionsLoaded extends TrainingVideosState {
-  final List<TrainerOption> trainers; // ✅ categories removed (free text now)
-  VideoFormOptionsLoaded({required this.trainers});
+  final List<TrainerOption> trainers;
+  final List<VideoCategoryEntity> categories;
+  VideoFormOptionsLoaded({required this.trainers, required this.categories});
+}
+
+// New states for inline category creation
+class CategoryCreating extends TrainingVideosState {}
+
+class CategoryCreated extends TrainingVideosState {
+  final VideoCategoryEntity category; // the newly created one
+  CategoryCreated(this.category);
+}
+
+class CategoryCreateError extends TrainingVideosState {
+  final String message;
+  CategoryCreateError(this.message);
 }
 
 class CreateVideoLoading extends TrainingVideosState {}

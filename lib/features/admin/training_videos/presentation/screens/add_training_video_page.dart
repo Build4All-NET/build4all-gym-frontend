@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../core/network/globals.dart'; // for decodeJwtPayload
+import '../../domain/entities/video_category_entity.dart';
 import '../bloc/training_videos_bloc.dart';
 import '../bloc/training_videos_event.dart';
 import '../bloc/training_videos_state.dart';
 import '../../data/models/create_training_video_request.dart';
 import '../../domain/entities/trainer_option.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 
 class AddTrainingVideoPage extends StatefulWidget {
   const AddTrainingVideoPage({super.key});
@@ -17,19 +20,19 @@ class AddTrainingVideoPage extends StatefulWidget {
 class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _titleController       = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _categoryController    = TextEditingController(); // ✅ free text
-  final _videoUrlController    = TextEditingController();
+  final _titleController        = TextEditingController();
+  final _descriptionController  = TextEditingController();
+  final _videoUrlController     = TextEditingController();
   final _thumbnailUrlController = TextEditingController();
-  final _minutesController     = TextEditingController();
-  final _secondsController     = TextEditingController();
-
+  final _minutesController      = TextEditingController();
+  final _secondsController      = TextEditingController();
+  File? _selectedVideo;
   bool _isPublished = true;
   List<TrainerOption> _trainers = [];
+  List<VideoCategoryEntity> _categories = []; // ✅
   int? _selectedTrainerId;
+  int? _selectedCategoryId;               // ✅
 
-  // ── Role detection from JWT ──────────────────────────────────────────────
   late final String _role;
   late final int? _jwtTrainerId;
   late final bool _isOwner;
@@ -37,33 +40,25 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
   @override
   void initState() {
     super.initState();
-
-    // Read role + trainer identity directly from JWT claims
     final payload = decodeJwtPayload();
     _role = ((payload?['role'] as String?) ?? '').toUpperCase().trim();
     _isOwner = _role == 'OWNER' || _role == 'ADMIN';
 
-    // If trainer: extract their ID from JWT (sub = userId, or trainerId claim)
     if (!_isOwner) {
       final raw = payload?['trainerId'] ?? payload?['sub'];
-      _jwtTrainerId = raw is int
-          ? raw
-          : int.tryParse(raw?.toString() ?? '');
+      _jwtTrainerId = raw is int ? raw : int.tryParse(raw?.toString() ?? '');
     } else {
       _jwtTrainerId = null;
     }
 
-    // Only owners need to load the trainer dropdown
-    if (_isOwner) {
-      context.read<TrainingVideosBloc>().add(LoadVideoFormOptions());
-    }
+    // Always load form options (categories needed for everyone)
+    context.read<TrainingVideosBloc>().add(LoadVideoFormOptions());
   }
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _categoryController.dispose();
     _videoUrlController.dispose();
     _thumbnailUrlController.dispose();
     _minutesController.dispose();
@@ -71,8 +66,67 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
     super.dispose();
   }
 
+  /// Opens a dialog to type a new category name and dispatches AddNewCategory
+  Future<void> _showAddCategoryDialog() async {
+    final controller = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('New Category'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            hintText: 'e.g. Cardio, Strength, Yoga...',
+            labelText: 'Category name',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && controller.text.trim().isNotEmpty) {
+      if (mounted) {
+        context.read<TrainingVideosBloc>().add(
+          AddNewCategory(controller.text.trim()),
+        );
+      }
+    }
+    controller.dispose();
+  }
+
+  Future<void> _pickVideo() async {
+
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.video,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _selectedVideo = File(result.files.single.path!);
+      });
+    }
+  }
+
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_selectedCategoryId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select or create a category')),
+      );
+      return;
+    }
 
     final minutes = int.tryParse(_minutesController.text) ?? 0;
     final seconds = int.tryParse(_secondsController.text) ?? 0;
@@ -85,7 +139,6 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
       return;
     }
 
-    // Owner uses dropdown selection; trainer uses their JWT id
     final resolvedTrainerId = _isOwner ? _selectedTrainerId : _jwtTrainerId;
 
     context.read<TrainingVideosBloc>().add(
@@ -93,8 +146,9 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
         CreateTrainingVideoRequest(
           title: _titleController.text.trim(),
           description: _descriptionController.text.trim(),
-          categoryName: _categoryController.text.trim(), // ✅ free text
+          categoryId: _selectedCategoryId!,  // ✅ int
           videoUrl: _videoUrlController.text.trim(),
+          videoFile: _selectedVideo,
           thumbnailUrl: _thumbnailUrlController.text.trim(),
           durationSeconds: totalSeconds,
           isPublished: _isPublished,
@@ -106,32 +160,62 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TrainingVideosBloc, TrainingVideosState>(
-      listenWhen: (_, curr) =>
-      curr is CreateVideoSuccess || curr is CreateVideoError,
-      listener: (context, state) {
-        if (state is CreateVideoSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Video added successfully')),
-          );
-          Navigator.pop(context);
-        } else if (state is CreateVideoError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        // Success/error for video submission
+        BlocListener<TrainingVideosBloc, TrainingVideosState>(
+          listenWhen: (_, curr) =>
+          curr is CreateVideoSuccess || curr is CreateVideoError,
+          listener: (context, state) {
+            if (state is CreateVideoSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Video added successfully')),
+              );
+              Navigator.pop(context);
+            } else if (state is CreateVideoError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            }
+          },
+        ),
+        // Category created → add to list and auto-select
+        BlocListener<TrainingVideosBloc, TrainingVideosState>(
+          listenWhen: (_, curr) =>
+          curr is CategoryCreated || curr is CategoryCreateError,
+          listener: (context, state) {
+            if (state is CategoryCreated) {
+              setState(() {
+                _categories = [..._categories, state.category];
+                _selectedCategoryId = state.category.categoryId;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Category "${state.category.name}" created and selected',
+                  ),
+                ),
+              );
+            } else if (state is CategoryCreateError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed: ${state.message}')),
+              );
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<TrainingVideosBloc, TrainingVideosState>(
         buildWhen: (_, curr) =>
         curr is VideoFormOptionsLoaded ||
-            curr is CreateVideoLoading ||
-            curr is CreateVideoError ||
-            curr is CreateVideoSuccess,
+            curr is CategoryCreating ||
+            curr is CreateVideoLoading,
         builder: (context, state) {
           if (state is VideoFormOptionsLoaded) {
-            _trainers = state.trainers;
+            _trainers   = state.trainers;
+            _categories = state.categories;
           }
           final isLoading = state is CreateVideoLoading;
+          final isCategoryCreating = state is CategoryCreating;
 
           return Scaffold(
             appBar: AppBar(
@@ -162,25 +246,58 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Category — free text ✅ ────────────────────────────
-                  TextFormField(
-                    controller: _categoryController,
-                    decoration: const InputDecoration(
-                      labelText: 'Category *',
-                      hintText: 'e.g. Cardio, Strength, Yoga...',
-                      helperText: 'Type a new or existing category name',
-                    ),
-                    textCapitalization: TextCapitalization.words,
-                    validator: (v) =>
-                    (v == null || v.trim().isEmpty)
-                        ? 'Category is required'
-                        : null,
+                  // ── Category — dropdown + "+" button ✅ ───────────────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<int?>(
+                          value: _selectedCategoryId,
+                          decoration: const InputDecoration(
+                            labelText: 'Category *',
+                          ),
+                          hint: const Text('Select a category'),
+                          items: _categories
+                              .map((c) => DropdownMenuItem<int?>(
+                            value: c.categoryId,
+                            child: Text(c.name),
+                          ))
+                              .toList(),
+                          onChanged: (val) =>
+                              setState(() => _selectedCategoryId = val),
+                          validator: (v) =>
+                          v == null ? 'Please select a category' : null,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // "+" button to create a new category inline
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: isCategoryCreating
+                            ? const SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2),
+                            ),
+                          ),
+                        )
+                            : IconButton.filled(
+                          onPressed: _showAddCategoryDialog,
+                          icon: const Icon(Icons.add),
+                          tooltip: 'Add new category',
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Trainer assignment — role-aware ✅ ─────────────────
+                  // ── Trainer — role-aware ───────────────────────────────
                   if (_isOwner) ...[
-                    // Owner: pick from dropdown
                     DropdownButtonFormField<int?>(
                       value: _selectedTrainerId,
                       decoration: const InputDecoration(
@@ -200,7 +317,6 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                     ),
                     const SizedBox(height: 16),
                   ] else ...[
-                    // Trainer: show read-only chip — their ID auto-attached
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 10),
@@ -211,8 +327,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                             .withOpacity(0.4),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                            color: Theme.of(context).colorScheme.outline),
                       ),
                       child: Row(
                         children: [
@@ -228,19 +343,26 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                     const SizedBox(height: 16),
                   ],
 
+                  ElevatedButton.icon(
+                    onPressed: _pickVideo,
+                    icon: const Icon(Icons.video_library),
+                    label: const Text('Pick Video From Phone'),
+                  ),
+
+                  if (_selectedVideo != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        _selectedVideo!.path.split('/').last,
+                      ),
+                    ),
+
                   // ── Video URL ──────────────────────────────────────────
                   TextFormField(
                     controller: _videoUrlController,
                     decoration: const InputDecoration(
                         labelText: 'Video URL * (YouTube/Vimeo)'),
-                    keyboardType: TextInputType.url,
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'URL is required';
-                      if (!v.trim().startsWith('https://')) {
-                        return 'Must be a valid HTTPS URL';
-                      }
-                      return null;
-                    },
+                    keyboardType: TextInputType.url
                   ),
                   const SizedBox(height: 16),
 

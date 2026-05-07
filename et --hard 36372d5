@@ -1,0 +1,68 @@
+*   [33m320139e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mpt-vds[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #47 from Build4All-NET/pt-vds
+[31m|[m[32m\[m  
+[31m|[m *   [33mdc744f6[m Merge branch 'main' into pt-vds
+[31m|[m [33m|[m[31m\[m  
+[31m|[m [33m|[m[31m/[m  
+[31m|[m[31m/[m[33m|[m   
+* [33m|[m   [33m7ec3dc2[m Merge pull request #46 from Build4All-NET/trainingvds
+[35m|[m[36m\[m [33m\[m  
+[35m|[m * [33m|[m [33me32e483[m training vds updated
+[35m|[m * [33m|[m [33m0fc060d[m training vds
+[35m|[m [36m|[m * [33m36372d5[m[33m ([m[1;31morigin/pt-vds[m[33m)[m pt
+[35m|[m [36m|[m * [33mc1a7412[m[33m ([m[1;32madmin-trainer[m[33m)[m saving
+[35m|[m [36m|[m *   [33mfc8885c[m saving
+[35m|[m [36m|[m [1;31m|[m[35m\[m  
+[35m|[m [36m|[m[35m_[m[1;31m|[m[35m/[m  
+[35m|[m[35m/[m[36m|[m [1;31m|[m   
+* [36m|[m [1;31m|[m   [33m10efe2a[m Merge pull request #45 from Build4All-NET/fixingscreens
+[1;33m|[m[1;34m\[m [36m\[m [1;31m\[m  
+[1;33m|[m * [36m|[m [1;31m|[m [33me606291[m home,acc,plans fixed
+* [1;34m|[m [36m|[m [1;31m|[m   [33m34ce63f[m Merge pull request #44 from Build4All-NET/dynamic
+[1;35m|[m[36m\[m [1;34m\[m [36m\[m [1;31m\[m  
+[1;35m|[m [36m|[m [1;34m|[m[36m/[m [1;31m/[m  
+[1;35m|[m [36m|[m[36m/[m[1;34m|[m [1;31m|[m   
+[1;35m|[m * [1;34m|[m [1;31m|[m [33m0a1b0bb[m dynamic themed
+* [1;36m|[m [1;34m|[m [1;31m|[m   [33m970be0c[m Merge pull request #43 from Build4All-NET/ptscreen
+[1;36m|[m[1;34m\[m [1;36m\[m [1;34m\[m [1;31m\[m  
+[1;36m|[m [1;34m|[m[1;36m/[m [1;34m/[m [1;31m/[m  
+[1;36m|[m[1;36m/[m[1;34m|[m [1;34m/[m [1;31m/[m   
+[1;36m|[m [1;34m|[m[1;34m/[m [1;31m/[m    
+[1;36m|[m * [1;31m|[m [33me88c8fc[m fixing the pt prob and class
+[1;36m|[m * [1;31m|[m [33m4fe87cd[m Update member home screen after pull
+[1;36m|[m[1;36m/[m [1;31m/[m  
+* [1;31m|[m   [33m6801230[m Merge pull request #42 from Build4All-NET/admin-trainer
+[33m|[m[34m\[m [1;31m\[m  
+[33m|[m [34m|[m * [33mbd4db5d[m saving
+[33m|[m [34m|[m[34m/[m  
+[33m|[m * [33mace360b[m[33m ([m[1;31morigin/admin-trainer[m[33m)[m fix
+[33m|[m[33m/[m  
+*   [33mab8df6e[m Merge pull request #41 from Build4All-NET/admin-trainer
+[35m|[m[36m\[m  
+[35m|[m * [33mc1a8a5b[m trainer admin screen
+* [36m|[m   [33m7b69c01[m Merge pull request #40 from Build4All-NET/ptscreen
+[1;31m|[m[1;32m\[m [36m\[m  
+[1;31m|[m * [36m\[m   [33m19e95aa[m Merge branch 'main' into ptscreen
+[1;31m|[m [1;33m|[m[1;31m\[m [36m\[m  
+[1;31m|[m [1;33m|[m[1;31m/[m [36m/[m  
+[1;31m|[m[1;31m/[m[1;33m|[m [36m|[m   
+* [1;33m|[m [36m|[m   [33m6bda508[m Merge pull request #39 from Build4All-NET/adminstaff
+[1;35m|[m[1;36m\[m [1;33m\[m [36m\[m  
+[1;35m|[m * [1;33m|[m [36m|[m [33mb46fa60[m admin staff done
+[1;35m|[m * [1;33m|[m [36m|[m   [33m6e9198d[m admin
+[1;35m|[m [31m|[m[1;35m\[m [1;33m\[m [36m\[m  
+[1;35m|[m [31m|[m[1;35m/[m [1;33m/[m [36m/[m  
+[1;35m|[m[1;35m/[m[31m|[m [1;33m|[m [36m|[m   
+[1;35m|[m * [1;33m|[m [36m|[m [33md155ccf[m admin
+[1;35m|[m [32m|[m * [36m|[m [33m8ad1555[m done pt screen
+[1;35m|[m [32m|[m[1;35m/[m [36m/[m  
+[1;35m|[m[1;35m/[m[32m|[m [36m|[m   
+* [32m|[m [36m|[m   [33m33b7ba4[m Merge pull request #38 from Build4All-NET/amdin-class
+[33m|[m[34m\[m [32m\[m [36m\[m  
+[33m|[m * [32m\[m [36m\[m   [33m4b69af9[m Merge branch 'main' into amdin-class
+[33m|[m [36m|[m[33m\[m [32m\[m [36m\[m  
+[33m|[m [36m|[m[33m/[m [32m/[m [36m/[m  
+[33m|[m[33m/[m[36m|[m [32m|[m [36m/[m   
+[33m|[m [36m|[m [32m|[m[36m/[m    
+[33m|[m [36m|[m[36m/[m[32m|[m     
+* [36m|[m [32m|[m   [33m8cc5b8d[m Merge pull request #36 from Build4All-NET/memberaccountscreen
+[1;31m|[m[1;32m\[m [36m\[m [32m\[m  

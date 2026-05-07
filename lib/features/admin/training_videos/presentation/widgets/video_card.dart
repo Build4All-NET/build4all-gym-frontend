@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/training_video_entity.dart';
-
+import 'package:video_player/video_player.dart';
 class VideoCard extends StatelessWidget {
   final TrainingVideoEntity video;
-  const VideoCard({super.key, required this.video});
+   VideoCard({super.key, required this.video});
 
   String _formatDuration(int seconds) {
     final m = seconds ~/ 60;
     final s = seconds % 60;
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
+  late final controller = VideoPlayerController.networkUrl(
+    Uri.parse(video.videoUrl!),
+  );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       clipBehavior: Clip.antiAlias,
@@ -98,7 +102,7 @@ class VideoCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        video.categoryName,
+                        video.title,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                         ),

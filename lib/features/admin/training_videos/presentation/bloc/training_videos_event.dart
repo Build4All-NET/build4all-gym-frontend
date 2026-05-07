@@ -18,3 +18,7 @@ class SubmitCreateVideo extends TrainingVideosEvent {
   final CreateTrainingVideoRequest request;
   SubmitCreateVideo(this.request);
 }
+class AddNewCategory extends TrainingVideosEvent {
+  final String name;
+  AddNewCategory(this.name);
+}

@@ -5,7 +5,7 @@ class VideoCategoryModel extends VideoCategoryEntity {
 
   factory VideoCategoryModel.fromJson(Map<String, dynamic> json) =>
       VideoCategoryModel(
-        categoryId: json['categoryId'] as int,
+        categoryId: (json['categoryId'] as num).toInt(), // ✅ num → int safely
         name: json['name'] as String,
       );
 }
