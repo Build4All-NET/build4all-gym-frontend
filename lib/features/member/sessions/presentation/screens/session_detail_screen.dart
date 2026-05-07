@@ -85,7 +85,7 @@ class _DetailView extends StatelessWidget {
                   children: [
                     session.trainerProfileFileId != null
                         ? Image.network(
-                      'http://localhost:8080/api/files/${session.trainerProfileFileId}',
+                      'http://192.168.0.101:8980/api/files/${session.trainerProfileFileId}',
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) =>
                           _HeroPlaceholder(tokens: tokens),
@@ -193,7 +193,9 @@ class _DetailView extends StatelessWidget {
                   SizedBox(height: tokens.spacing.lg),
                   SessionInfoGridWidget(session: session),
                   SizedBox(height: tokens.spacing.md),
-                  SessionAboutWidget(description: session.description),
+                  SessionAboutWidget(
+                    description: session.description ?? 'No description available',
+                  ),
                   SizedBox(height: tokens.spacing.md),
                   SessionBenefitsWidget(benefits: session.benefits),
                   SizedBox(height: tokens.spacing.md),

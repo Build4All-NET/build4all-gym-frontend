@@ -133,7 +133,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 content:         Text(_resolveError(state.errorCode, l)),
                 backgroundColor: c.error,
                 behavior:        SnackBarBehavior.floating,
-                margin:          const EdgeInsets.all(16),
+                margin:          const EdgeInsetsDirectional.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(card.radius),
                 ),
@@ -170,7 +170,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                             ),
                           ),
                           child: SingleChildScrollView(
-                            padding: EdgeInsets.all(sp.lg),
+                            padding: EdgeInsetsDirectional.all(sp.lg),
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 260),
                               transitionBuilder: (child, anim) =>
@@ -222,7 +222,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     final icon     = _subStep == 1 ? Icons.person_outline_rounded : Icons.alternate_email_rounded;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: sp.xl),
+      padding: EdgeInsetsDirectional.symmetric(vertical: sp.xl),
       child: Column(
         children: [
           Container(
@@ -343,7 +343,6 @@ class _SubStep1 extends StatelessWidget {
           SizedBox(height: sp.xs),
           TextFormField(
             controller:    firstNameCtrl,
-            textDirection: TextDirection.rtl,
             style: TextStyle(color: c.label, fontSize: 15),
             decoration: _inputDecoration(
               hint: l.completeProfile_firstNameHint,
@@ -361,7 +360,7 @@ class _SubStep1 extends StatelessWidget {
           SizedBox(height: sp.xs),
           TextFormField(
             controller:    lastNameCtrl,
-            textDirection: TextDirection.rtl,
+
             style: TextStyle(color: c.label, fontSize: 15),
             decoration: _inputDecoration(
               hint: l.completeProfile_lastNameHint,
@@ -463,8 +462,8 @@ class _SubStep2 extends StatelessWidget {
                       color: c.primary,
                     ),
                   ),
-                  const Positioned(
-                    top: -4, right: -8,
+                  const PositionedDirectional(
+                    top: -4, end: -8,
                     child: Text('✨', style: TextStyle(fontSize: 18)),
                   ),
                 ],
@@ -483,8 +482,7 @@ class _SubStep2 extends StatelessWidget {
             SizedBox(height: sp.xs),
             TextFormField(
               controller:    usernameCtrl,
-              textDirection: TextDirection.ltr,
-              textAlign:     TextAlign.left,
+                textAlign: TextAlign.start,
               style: TextStyle(color: c.label, fontSize: 15),
               decoration: _inputDecoration(
                 hint:       'username',
@@ -597,7 +595,7 @@ class _ProfileTypeCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding:  const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        padding:  const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
           color: selected ? c.primary.withOpacity(0.06) : c.surface,
           borderRadius: BorderRadius.circular(card.radius),
@@ -662,7 +660,7 @@ class _InfoBox extends StatelessWidget {
     final c    = tokens.colors;
     final card = tokens.card;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color:        c.primary.withOpacity(0.06),
         borderRadius: BorderRadius.circular(card.radius),
@@ -708,7 +706,7 @@ class _StepIndicator extends StatelessWidget {
         : 'Step $currentStep of $totalSteps';
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color:        c.primary.withOpacity(0.04),
         borderRadius: BorderRadius.circular(tokens.card.radius),
@@ -757,7 +755,7 @@ class _BackLink extends StatelessWidget {
       onPressed: onBack,
       style: TextButton.styleFrom(
         foregroundColor: c.muted,
-        padding:         EdgeInsets.zero,
+        padding:         EdgeInsetsDirectional.zero,
         minimumSize:     const Size(0, 0),
         tapTargetSize:   MaterialTapTargetSize.shrinkWrap,
       ),
@@ -798,6 +796,6 @@ InputDecoration _inputDecoration({
     focusedBorder:      OutlineInputBorder(borderRadius: BorderRadius.circular(radius), borderSide: BorderSide(color: c.primary, width: 1.5)),
     errorBorder:        OutlineInputBorder(borderRadius: BorderRadius.circular(radius), borderSide: BorderSide(color: c.error, width: 1)),
     focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(radius), borderSide: BorderSide(color: c.error, width: 1.5)),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 16),
   );
 }

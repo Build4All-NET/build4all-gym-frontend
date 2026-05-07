@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
-
+import 'package:build4allgym/features/member/sessions/presentation/screens/sessions_page.dart';
 import '../../domain/entities/member_home.dart';
 import '../../domain/entities/member_stats.dart';
 import '../../domain/entities/membership_card.dart';
@@ -23,7 +23,12 @@ import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_s
 import '../widgets/weight_tracker_card.dart';
 
 class MemberHomeScreen extends StatefulWidget {
-  const MemberHomeScreen({super.key});
+  final ValueChanged<int> onTabSelected;
+
+  const MemberHomeScreen({
+    super.key,
+    required this.onTabSelected,
+  });
 
   @override
   State<MemberHomeScreen> createState() => _MemberHomeScreenState();
@@ -33,10 +38,10 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   Future<void> _logoutAndGoToLogin(BuildContext context) async {
-    await _storage.deleteAll(); // _storage is already defined in the state class
+    await _storage.deleteAll();
     if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(
-      '/login', // replace with your actual login route
+      '/login',
           (route) => false,
     );
   }
@@ -53,13 +58,14 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     _loadUserName();
     context.read<MemberHomeBloc>().add(const MemberHomeLoadRequested());
   }
+
   void _showComingSoon(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.comingSoon)),
     );
   }
+
   Future<void> _loadUserName() async {
     final firstName = await _storage.read(key: 'user_first_name') ?? '';
     final lastName = await _storage.read(key: 'user_last_name') ?? '';
@@ -114,6 +120,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
               SnackBar(
                 content: Text(l10n.home_weightUpdated),
                 backgroundColor: tokens.colors.success,
+                behavior: SnackBarBehavior.floating,
               ),
             );
           }
@@ -148,10 +155,6 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             );
           }
 
-         /* if (state is MemberHomeError) {
-            return _mockUI(context);
-          }*/
-
           if (state is MemberHomeError) {
             return Center(
               child: Padding(
@@ -174,14 +177,13 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                       child: Text(l10n.appAccessRetry),
                     ),
                     SizedBox(height: tokens.spacing.md),
-                    // ADD THIS TO LOGOUT
                     TextButton(
                       onPressed: () async {
                         const storage = FlutterSecureStorage();
                         await storage.deleteAll();
                         if (!context.mounted) return;
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/login', // replace with your actual login route name
+                          '/login',
                               (route) => false,
                         );
                       },
@@ -232,50 +234,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
       ),
     );
   }
-/*
-  Widget _mockUI(BuildContext context) {
-    return _buildContent(
-      context: context,
-      membership: const MembershipCard(
-        planName: 'ذهبية نشطة',
-        planType: 'GOLD',
-        status: 'active',
-        startDate: '2024-06-15',
-        expirationDate: '2024-07-15',
-        remainingDays: 23,
-        canRenew: true,
-        canFreeze: true,
-      ),
-      stats: const MemberStats(
-        sessionsCount: 12,
-        kgLost: 8.5,
-        workoutsCount: 24,
-        referralCode: null,
-      ),
-      quote: const MotivationalQuote(
-        text: 'القوة لا تأتي من الفوز، بل من المثابرة',
-        languageCode: 'ar',
-      ),
-      scheduleItems: [
-        ScheduleItem(
-          type: 'CLASS',
-          title: 'يوغا صباحية',
-          trainerName: 'سارة أحمد',
-          startTime: DateTime.now()
-              .copyWith(hour: 17, minute: 0)
-              .toIso8601String(),
-          durationMinutes: 60,
-          roomName: 'قاعة 1',
-          status: 'booked',
-        ),
-      ],
-      showWeightCard: true,
-      welcomeText: 'مرحبا بك',
-      fullName: 'أحمد محمد',
-      notificationCount: 3,
-    );
-  }
-*/
+
   Widget _buildContent({
     required BuildContext context,
     required MembershipCard membership,
@@ -301,11 +260,11 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                 children: [
                   Container(
                     height: _headerHeight,
-                    padding: EdgeInsets.fromLTRB(
-                      tokens.spacing.lg,
-                      7,
-                      tokens.spacing.lg,
-                      0,
+                    padding: EdgeInsetsDirectional.only(
+                      start: tokens.spacing.lg,
+                      end: tokens.spacing.lg,
+                      top: 7,
+                      bottom: 0,
                     ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -321,8 +280,8 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         bottomRight: Radius.circular(30),
                       ),
                     ),
-                    child: SafeArea(        // ← ADD THIS
-                      bottom: false,        // only pad the top
+                    child: SafeArea(
+                      bottom: false,
                       child: Column(
                         children: [
                           _buildHeader(
@@ -372,10 +331,17 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                       ),
                       SizedBox(height: tokens.spacing.lg),
                     ],
-                    TodayScheduleWidget(items: scheduleItems),
+                    TodayScheduleWidget(
+                      items: scheduleItems,
+                      onViewAll: () {
+                        widget.onTabSelected(3);
+                      },
+                    ),
                     SizedBox(height: tokens.spacing.lg),
                     QuickActionsGrid(
-                      onBookClass: () => _showComingSoon(context),
+                      onBookClass: () {
+                        widget.onTabSelected(3);
+                      },
                       onBookTrainer: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -403,9 +369,38 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     required int notificationCount,
   }) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Row(
       children: [
+        // TEXT on the LEFT for LTR (English), Flutter mirrors to RIGHT for RTL (Arabic)
+        Column(
+          crossAxisAlignment:
+          isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              welcomeText,
+              textAlign: isRtl ? TextAlign.end : TextAlign.start,
+              style: tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.onPrimary.withOpacity(0.88),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: tokens.spacing.sm),
+            Text(
+              fullName.isEmpty ? ' ' : fullName,
+              textAlign: isRtl ? TextAlign.end : TextAlign.start,
+              style: tokens.typography.headlineSmall.copyWith(
+                color: tokens.colors.onPrimary,
+                fontSize: 25,
+                fontWeight: FontWeight.w900,
+                height: 1.05,
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        // ICON on the RIGHT for LTR (English), Flutter mirrors to LEFT for RTL (Arabic)
         Stack(
           clipBehavior: Clip.none,
           children: [
@@ -421,7 +416,8 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             if (notificationCount > 0)
               Positioned(
                 top: -5,
-                right: -4,
+                right: isRtl ? -4 : null,
+                left: !isRtl ? -4 : null,
                 child: Container(
                   width: 24,
                   height: 24,
@@ -439,29 +435,6 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                   ),
                 ),
               ),
-          ],
-        ),
-        const Spacer(),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              welcomeText,
-              style: tokens.typography.bodyMedium.copyWith(
-                color: tokens.colors.onPrimary.withOpacity(0.88),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: tokens.spacing.sm),
-            Text(
-              fullName.isEmpty ? ' ' : fullName,
-              style: tokens.typography.headlineSmall.copyWith(
-                color: tokens.colors.onPrimary,
-                fontSize: 25,
-                fontWeight: FontWeight.w900,
-                height: 1.05,
-              ),
-            ),
           ],
         ),
       ],

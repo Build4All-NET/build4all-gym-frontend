@@ -6,6 +6,7 @@ import '../../../../../l10n/app_localizations.dart';
 import '../../domain/usecases/book_session_usecase.dart';
 import '../../domain/usecases/cancel_booking_usecase.dart';
 import '../../domain/usecases/get_sessions_usecase.dart';
+import '../../domain/usecases/get_session_detail_use_case.dart';
 import '../bloc/sessions_bloc.dart';
 import '../bloc/sessions_event.dart';
 import '../bloc/sessions_state.dart';
@@ -18,6 +19,7 @@ class SessionsPage extends StatelessWidget {
   final BookSessionUseCase? bookSessionUseCase;
   final CancelBookingUseCase? cancelBookingUseCase;
   final GetFilterOptionsUseCase? getFilterOptionsUseCase;
+  final GetSessionDetailUseCase? getSessionDetailUseCase;
 
   const SessionsPage({
     super.key,
@@ -25,6 +27,7 @@ class SessionsPage extends StatelessWidget {
     this.bookSessionUseCase,
     this.cancelBookingUseCase,
     this.getFilterOptionsUseCase,
+    this.getSessionDetailUseCase
   });
 
   @override
@@ -35,6 +38,7 @@ class SessionsPage extends StatelessWidget {
         bookSessionUseCase: bookSessionUseCase,
         cancelBookingUseCase: cancelBookingUseCase,
         getFilterOptionsUseCase: getFilterOptionsUseCase,
+        getSessionDetailUseCase: getSessionDetailUseCase,
       )..add(const SessionsStarted()),
       child: const _SessionsView(),
     );

@@ -8,21 +8,22 @@ import 'package:build4allgym/l10n/app_localizations.dart';
 
 class TodayScheduleWidget extends StatelessWidget {
   final List<ScheduleItem> items;
+  final VoidCallback onViewAll;
 
   const TodayScheduleWidget({
     super.key,
     required this.items,
+    required this.onViewAll,
   });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -37,11 +38,7 @@ class TodayScheduleWidget extends StatelessWidget {
               ),
               const Spacer(),
               InkWell(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.comingSoon)),
-                  );
-                },
+                onTap: onViewAll,
                 child: Text(
                   l10n.memberHomeViewAll,
                   style: tokens.typography.bodyMedium.copyWith(
@@ -65,13 +62,14 @@ class TodayScheduleWidget extends StatelessWidget {
               ],
             ),
         ],
-      ),
+
     );
   }
 }
 
 class ScheduleItemCard extends StatelessWidget {
   final ScheduleItem item;
+
 
   const ScheduleItemCard({
     super.key,
@@ -82,6 +80,7 @@ class ScheduleItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     DateTime? startDate;
     bool isPm = false;
@@ -155,14 +154,15 @@ class ScheduleItemCard extends StatelessWidget {
                   SizedBox(width: tokens.spacing.lg),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment:
+                      isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           item.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.end,
+                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
                           style: tokens.typography.titleMedium.copyWith(
                             color: tokens.colors.label,
                             fontSize: 22,
@@ -174,7 +174,7 @@ class ScheduleItemCard extends StatelessWidget {
                           l10n.memberHomeWithTrainer(item.trainerName),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.end,
+                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
                           style: tokens.typography.bodyMedium.copyWith(
                             color: tokens.colors.body,
                             fontWeight: FontWeight.w500,
@@ -182,7 +182,7 @@ class ScheduleItemCard extends StatelessWidget {
                         ),
                         SizedBox(height: tokens.spacing.sm),
                         Wrap(
-                          alignment: WrapAlignment.end,
+                          alignment: isRtl ? WrapAlignment.end : WrapAlignment.start,
                           spacing: tokens.spacing.md,
                           children: [
                             _ScheduleMetaItem(

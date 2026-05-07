@@ -40,6 +40,7 @@ import '../../../member/sessions/domain/usecases/cancel_booking_usecase.dart';
 import '../../../member/sessions/domain/usecases/get_filter_options_usecase.dart';
 import '../../../member/sessions/domain/usecases/get_sessions_usecase.dart';
 import '../../../member/sessions/data/services/sessions_service.dart';
+import '../../../member/sessions/domain/usecases/get_session_detail_use_case.dart';
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;
 
@@ -239,7 +240,9 @@ class _MainShellState extends State<MainShell> {
           logWeightUseCase: LogWeightUseCase(repository),
         );
       },
-      child: const MemberHomeScreen(),
+      child: MemberHomeScreen(
+        onTabSelected: _onBottomNavTap,
+      ),
     ),
 
     MemberPlansScreenProvider(
@@ -256,6 +259,10 @@ class _MainShellState extends State<MainShell> {
           ),
         ),
       ),
+      getSessionDetailUseCase: GetSessionDetailUseCase(
+        SessionsRepositoryImpl(SessionsService(g.dio())),
+      ),
+
       bookSessionUseCase: BookSessionUseCase(
         SessionsRepositoryImpl(
           SessionsService(

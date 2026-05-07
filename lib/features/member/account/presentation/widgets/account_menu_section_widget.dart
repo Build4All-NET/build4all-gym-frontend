@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
-import 'package:build4allgym/l10n/app_localizations.dart';
 
 class AccountMenuSectionWidget extends StatelessWidget {
   final String title;
@@ -17,25 +16,31 @@ class AccountMenuSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+      isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: tokens.spacing.sm),
-          child: Text(
-            title,
-            style: tokens.typography.bodySmall.copyWith(
-              color: tokens.colors.muted,
-              fontWeight: FontWeight.w600,
+        if (title.isNotEmpty)
+          Padding(
+            padding: EdgeInsets.only(bottom: tokens.spacing.sm),
+            child: Text(
+              title,
+              textAlign: isRtl ? TextAlign.right : TextAlign.left,
+              style: tokens.typography.bodySmall.copyWith(
+                color: tokens.colors.muted,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
         Container(
           decoration: BoxDecoration(
             color: tokens.colors.surface,
             borderRadius: BorderRadius.circular(tokens.card.radius),
-            border: Border.all(color: tokens.colors.border.withOpacity(0.15)),
+            border: Border.all(
+              color: tokens.colors.border.withOpacity(0.15),
+            ),
             boxShadow: [
               BoxShadow(
                 color: tokens.colors.label.withOpacity(0.05),
@@ -119,8 +124,8 @@ class AccountMenuRowWidget extends StatelessWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: item.iconBgColor ??
-                    tokens.colors.primary.withOpacity(0.08),
+                color:
+                item.iconBgColor ?? tokens.colors.primary.withOpacity(0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -129,20 +134,27 @@ class AccountMenuRowWidget extends StatelessWidget {
                 size: 18,
               ),
             ),
+
             SizedBox(width: tokens.spacing.md),
+
             Expanded(
               child: Text(
                 item.label,
+                textAlign: isRtl ? TextAlign.right : TextAlign.left,
                 style: tokens.typography.bodyMedium.copyWith(
                   color: item.labelColor ?? tokens.colors.label,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            Icon(
-              isRtl ? Icons.chevron_left : Icons.chevron_right,
-              color: tokens.colors.muted,
-              size: 20,
+
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Icon(
+                isRtl ? Icons.chevron_left : Icons.chevron_right,
+                color: tokens.colors.muted,
+                size: 20,
+              ),
             ),
           ],
         ),

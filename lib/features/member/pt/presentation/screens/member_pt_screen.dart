@@ -59,7 +59,6 @@ class _MemberPtView extends StatelessWidget {
           builder: (context, state) {
             return CustomScrollView(
               slivers: [
-                // ── Header ────────────────────────────────────────
                 SliverToBoxAdapter(
                   child: Container(
                     width: double.infinity,
@@ -71,9 +70,7 @@ class _MemberPtView extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        begin: isRtl
-                            ? Alignment.topRight
-                            : Alignment.topLeft,
+                        begin: isRtl ? Alignment.topRight : Alignment.topLeft,
                         end: isRtl
                             ? Alignment.bottomLeft
                             : Alignment.bottomRight,
@@ -88,28 +85,80 @@ class _MemberPtView extends StatelessWidget {
                       ),
                     ),
                     child: Column(
-                      crossAxisAlignment: isRtl
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          l10n.ptScreenTitle,
-                          textAlign:
-                          isRtl ? TextAlign.right : TextAlign.left,
-                          style: tokens.typography.headlineSmall.copyWith(
-                            color: tokens.colors.onPrimary,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 26,
-                          ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Align(
+                              alignment: isRtl
+                                  ? Alignment.centerLeft
+                                  : Alignment.centerRight,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: tokens.colors.onPrimary
+                                        .withOpacity(0.18),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Icon(
+                                      isRtl
+                                          ? Icons.arrow_back_ios_new_rounded
+                                          : Icons.arrow_forward_ios_rounded,
+                                      color: tokens.colors.onPrimary,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            Align(
+                              alignment: isRtl
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.only(
+                                  end: 52,
+                                ),
+                                child: Text(
+                                  l10n.ptScreenTitle,
+                                  textAlign:
+                                  isRtl ? TextAlign.right : TextAlign.left,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style:
+                                  tokens.typography.headlineSmall.copyWith(
+                                    color: tokens.colors.onPrimary,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 26,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+
                         const SizedBox(height: 6),
-                        Text(
-                          l10n.ptScreenSubtitle,
-                          textAlign:
-                          isRtl ? TextAlign.right : TextAlign.left,
-                          style: tokens.typography.bodyMedium.copyWith(
-                            color:
-                            tokens.colors.onPrimary.withOpacity(0.85),
+
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            end: 52,
+                          ),
+                          child: Text(
+                            l10n.ptScreenSubtitle,
+                            textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                            style: tokens.typography.bodyMedium.copyWith(
+                              color: tokens.colors.onPrimary.withOpacity(0.85),
+                            ),
                           ),
                         ),
                       ],
@@ -117,7 +166,6 @@ class _MemberPtView extends StatelessWidget {
                   ),
                 ),
 
-                // ── Filter chips ───────────────────────────────────
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -140,7 +188,6 @@ class _MemberPtView extends StatelessWidget {
                   ),
                 ),
 
-                // ── Content ────────────────────────────────────────
                 if (state is TrainersLoading)
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
@@ -157,8 +204,11 @@ class _MemberPtView extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.error_outline,
-                                color: tokens.colors.danger, size: 48),
+                            Icon(
+                              Icons.error_outline,
+                              color: tokens.colors.danger,
+                              size: 48,
+                            ),
                             SizedBox(height: tokens.spacing.md),
                             Text(
                               state.message,
@@ -177,7 +227,8 @@ class _MemberPtView extends StatelessWidget {
                                 foregroundColor: tokens.colors.onPrimary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      tokens.button.radius),
+                                    tokens.button.radius,
+                                  ),
                                 ),
                               ),
                               child: Text(l10n.retry),
@@ -201,8 +252,7 @@ class _MemberPtView extends StatelessWidget {
                     )
                   else if (state is TrainersLoaded)
                       SliverPadding(
-                        padding:
-                        EdgeInsets.only(bottom: tokens.spacing.xl),
+                        padding: EdgeInsets.only(bottom: tokens.spacing.xl),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                                 (context, index) => TrainerCardWidget(
@@ -224,7 +274,6 @@ class _MemberPtView extends StatelessWidget {
   }
 }
 
-// ── Shimmer skeleton card ─────────────────────────────────────────────────────
 class _ShimmerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -272,7 +321,10 @@ class _ShimmerBox extends StatelessWidget {
   final double width;
   final double height;
 
-  const _ShimmerBox({required this.width, required this.height});
+  const _ShimmerBox({
+    required this.width,
+    required this.height,
+  });
 
   @override
   Widget build(BuildContext context) {

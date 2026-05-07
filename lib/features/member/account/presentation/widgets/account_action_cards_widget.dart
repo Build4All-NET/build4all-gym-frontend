@@ -14,34 +14,39 @@ class AccountActionCardsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Row(
       children: [
         // Bookings card
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              // TODO: Navigate to sessions screen
-            },
+            onTap: () {},
             child: Container(
               height: 110,
               padding: EdgeInsets.all(tokens.spacing.md),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                gradient: LinearGradient(
+                  colors: [tokens.colors.danger, tokens.colors.success],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(tokens.card.radius),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: isRtl
+                    ? CrossAxisAlignment.stretch
+                    : CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(Icons.bookmark_rounded,
-                      color: Colors.white, size: 28),
+                  Align(
+                    alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Icon(Icons.bookmark_rounded,
+                        color: tokens.colors.onPrimary, size: 28),
+                  ),
                   Text(
                     '${account.activeBookingsCount}',
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
                     style: tokens.typography.headlineSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -49,6 +54,7 @@ class AccountActionCardsWidget extends StatelessWidget {
                   ),
                   Text(
                     l10n.accountMyBookings,
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
                     style: tokens.typography.bodySmall.copyWith(
                       color: Colors.white.withOpacity(0.9),
                     ),
@@ -65,21 +71,30 @@ class AccountActionCardsWidget extends StatelessWidget {
             height: 110,
             padding: EdgeInsets.all(tokens.spacing.md),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFF59E0B), Color(0xFFEF4444)],
+              gradient: LinearGradient(
+                colors: [
+                  tokens.colors.primary,
+                  tokens.colors.primary.withOpacity(0.72),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(tokens.card.radius),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: isRtl
+                  ? CrossAxisAlignment.stretch
+                  : CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.card_giftcard_rounded,
-                    color: Colors.white, size: 28),
+                Align(
+                  alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Icon(Icons.card_giftcard_rounded,
+                      color: tokens.colors.onPrimary, size: 28),
+                ),
                 Text(
                   '450',
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
                   style: tokens.typography.headlineSmall.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
@@ -87,6 +102,7 @@ class AccountActionCardsWidget extends StatelessWidget {
                 ),
                 Text(
                   l10n.accountLoyaltyPoints,
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
                   style: tokens.typography.bodySmall.copyWith(
                     color: Colors.white.withOpacity(0.9),
                   ),

@@ -35,90 +35,77 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return BlocProvider.value(
       value: widget.bloc,
-      child: Directionality(
-        textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-        child: Scaffold(
-          backgroundColor: tokens.colors.background,
-          body: BlocConsumer<MemberAccountBloc, MemberAccountState>(
-            listener: (context, state) {
-              if (state is ProfileUpdateSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.accountProfileUpdateSuccess),
-                    backgroundColor: tokens.colors.success,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
-              if (state is ProfileUpdateError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: tokens.colors.danger,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
-            },
-            builder: (context, state) {
-              if (state is MemberAccountLoading) {
-                return Center(
-                  child: CircularProgressIndicator(
-                      color: tokens.colors.primary),
-                );
-              }
-
-              if (state is MemberAccountError) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(tokens.spacing.lg),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.error_outline,
-                            color: tokens.colors.danger, size: 48),
-                        SizedBox(height: tokens.spacing.md),
-                        Text(
-                          state.message,
-                          textAlign: TextAlign.center,
-                          style: tokens.typography.bodyMedium
-                              .copyWith(color: tokens.colors.danger),
-                        ),
-                        SizedBox(height: tokens.spacing.lg),
-                        ElevatedButton(
-                          onPressed: () => context
-                              .read<MemberAccountBloc>()
-                              .add(const MemberAccountStarted()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: tokens.colors.primary,
-                            foregroundColor: tokens.colors.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  tokens.button.radius),
-                            ),
-                          ),
-                          child: Text(l10n.retry),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              if (state is MemberAccountLoaded) {
-                return _AccountBody(account: state.account);
-              }
-
-              return Center(
-                child: CircularProgressIndicator(
-                    color: tokens.colors.primary),
+      child: Scaffold(
+        backgroundColor: tokens.colors.background,
+        body: BlocConsumer<MemberAccountBloc, MemberAccountState>(
+          listener: (context, state) {
+            if (state is ProfileUpdateSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.accountProfileUpdateSuccess),
+                  backgroundColor: tokens.colors.success,
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
-            },
-          ),
+            }
+            if (state is ProfileUpdateError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: tokens.colors.danger,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state is MemberAccountLoading) {
+              return Center(
+                child: CircularProgressIndicator(color: tokens.colors.primary),
+              );
+            }
+
+            if (state is MemberAccountError) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.all(tokens.spacing.lg),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.error_outline, color: tokens.colors.danger, size: 48),
+                      SizedBox(height: tokens.spacing.md),
+                      Text(
+                        state.message,
+                        textAlign: TextAlign.center,
+                        style: tokens.typography.bodyMedium.copyWith(color: tokens.colors.danger),
+                      ),
+                      SizedBox(height: tokens.spacing.lg),
+                      ElevatedButton(
+                        onPressed: () => context.read<MemberAccountBloc>().add(const MemberAccountStarted()),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: tokens.colors.primary,
+                          foregroundColor: tokens.colors.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(tokens.button.radius),
+                          ),
+                        ),
+                        child: Text(l10n.retry),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            if (state is MemberAccountLoaded) {
+              return _AccountBody(account: state.account);
+            }
+
+            return Center(child: CircularProgressIndicator(color: tokens.colors.primary));
+          },
         ),
       ),
     );
@@ -139,7 +126,6 @@ class _AccountBody extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // ── Header with overlapping cards ──────────────────────────
           Stack(
             clipBehavior: Clip.none,
             children: [
@@ -163,7 +149,10 @@ class _AccountBody extends StatelessWidget {
                   ),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // FIX: stretch for Arabic so title hugs right edge
+                  crossAxisAlignment: isRtl
+                      ? CrossAxisAlignment.stretch
+                      : CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.memberBottomNavAccount,
@@ -198,9 +187,7 @@ class _AccountBody extends StatelessWidget {
                 SizedBox(height: tokens.spacing.lg),
                 AccountPersonalInfoWidget(
                   account: account,
-                  onEditTap: () {
-                    // TODO: Navigate to edit profile screen
-                  },
+                  onEditTap: () {},
                 ),
                 SizedBox(height: tokens.spacing.lg),
                 AccountMenuSectionWidget(
@@ -209,9 +196,7 @@ class _AccountBody extends StatelessWidget {
                     AccountMenuItem(
                       icon: Icons.edit_rounded,
                       label: l10n.accountEditProfile,
-                      onTap: () {
-                        // TODO: Navigate to edit profile screen
-                      },
+                      onTap: () {},
                     ),
                     AccountMenuItem(
                       icon: Icons.credit_card_rounded,

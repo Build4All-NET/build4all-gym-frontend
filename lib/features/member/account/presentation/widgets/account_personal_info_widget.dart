@@ -36,41 +36,26 @@ class AccountPersonalInfoWidget extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment:
-        isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isRtl
+            ? CrossAxisAlignment.stretch
+            : CrossAxisAlignment.start,
         children: [
           Text(
             l10n.accountPersonalInfo,
+            textAlign: isRtl ? TextAlign.right : TextAlign.left,
             style: tokens.typography.titleMedium.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           SizedBox(height: tokens.spacing.md),
           if (account.email != null)
-            _InfoRow(
-              icon: Icons.email_rounded,
-              label: l10n.accountEmail,
-              value: account.email!,
-            ),
+            _InfoRow(icon: Icons.email_rounded, label: l10n.accountEmail, value: account.email!),
           if (account.phone != null)
-            _InfoRow(
-              icon: Icons.phone_rounded,
-              label: l10n.accountPhone,
-              value: account.phone!,
-            ),
+            _InfoRow(icon: Icons.phone_rounded, label: l10n.accountPhone, value: account.phone!),
           if (account.dateOfBirth != null)
-            _InfoRow(
-              icon: Icons.cake_rounded,
-              label: l10n.accountDateOfBirth,
-              value: account.dateOfBirth!,
-            ),
+            _InfoRow(icon: Icons.cake_rounded, label: l10n.accountDateOfBirth, value: account.dateOfBirth!),
           if (account.address != null)
-            _InfoRow(
-              icon: Icons.location_on_rounded,
-              label: l10n.accountAddress,
-              value: account.address!,
-              isLast: true,
-            ),
+            _InfoRow(icon: Icons.location_on_rounded, label: l10n.accountAddress, value: account.address!, isLast: true),
           SizedBox(height: tokens.spacing.md),
           SizedBox(
             width: double.infinity,
@@ -121,7 +106,8 @@ class _InfoRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: isLast ? 0 : tokens.spacing.md),
       child: Row(
-        textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+        // Always LTR: icon LEFT, text RIGHT
+        textDirection: TextDirection.ltr,
         children: [
           Container(
             width: 40,
@@ -135,11 +121,14 @@ class _InfoRow extends StatelessWidget {
           SizedBox(width: tokens.spacing.md),
           Expanded(
             child: Column(
-              crossAxisAlignment:
-              isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              // RTL: text aligns to the right end of the expanded space
+              crossAxisAlignment: isRtl
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
                   style: tokens.typography.bodySmall.copyWith(
                     color: tokens.colors.muted,
                     fontSize: 11,
@@ -147,6 +136,7 @@ class _InfoRow extends StatelessWidget {
                 ),
                 Text(
                   value,
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
                   style: tokens.typography.bodyMedium.copyWith(
                     color: tokens.colors.label,
                     fontWeight: FontWeight.w600,

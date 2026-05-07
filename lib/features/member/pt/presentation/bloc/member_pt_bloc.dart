@@ -18,7 +18,11 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
   bool _favoritesOnly = false;
 
   // Cache specialties so they persist across filter changes.
+  // Cache specialties so they persist across filter changes.
   List<String> _cachedSpecialties = [];
+  List<TrainerCardEntity> _allTrainers = [];
+  int _favoriteCount = 0;
+
 
   MemberPtBloc({
     required GetTrainersUseCase getTrainersUseCase,
@@ -64,10 +68,12 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     }
 
     _cachedSpecialties = filterResult.data!.specialties as List<String>;
+    _allTrainers = trainersResult.data!.trainers as List<TrainerCardEntity>;
+    _favoriteCount = trainersResult.data!.favoriteCount as int;
 
     emit(TrainersLoaded(
-      trainers: trainersResult.data!.trainers as List<TrainerCardEntity>,
-      favoriteCount: trainersResult.data!.favoriteCount as int,
+      trainers: _applyLocalFilters(),
+      favoriteCount: _favoriteCount,
       specialties: _cachedSpecialties,
       activeSpecialtyFilter: _activeSpecialtyFilter,
       favoritesOnly: _favoritesOnly,
@@ -81,21 +87,10 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       ) async {
     _activeSpecialtyFilter = event.specialty;
     _favoritesOnly = false;
-    emit(const TrainersLoading());
-
-    final result = await _getTrainersUseCase(
-      specialtyFilter: _activeSpecialtyFilter,
-      favoritesOnly: _favoritesOnly,
-    );
-
-    if (result.failure != null) {
-      emit(TrainersError(result.failure!.message));
-      return;
-    }
 
     emit(TrainersLoaded(
-      trainers: result.data!.trainers,
-      favoriteCount: result.data!.favoriteCount,
+      trainers: _applyLocalFilters(),
+      favoriteCount: _favoriteCount,
       specialties: _cachedSpecialties,
       activeSpecialtyFilter: _activeSpecialtyFilter,
       favoritesOnly: _favoritesOnly,
@@ -109,23 +104,10 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       ) async {
     _activeSpecialtyFilter = null;
     _favoritesOnly = !_favoritesOnly;
-    emit(const TrainersLoading());
-
-    final result = await _getTrainersUseCase(
-      specialtyFilter: _activeSpecialtyFilter,
-
-
-      favoritesOnly: _favoritesOnly,
-    );
-
-    if (result.failure != null) {
-      emit(TrainersError(result.failure!.message));
-      return;
-    }
 
     emit(TrainersLoaded(
-      trainers: result.data!.trainers,
-      favoriteCount: result.data!.favoriteCount,
+      trainers: _applyLocalFilters(),
+      favoriteCount: _favoriteCount,
       specialties: _cachedSpecialties,
       activeSpecialtyFilter: _activeSpecialtyFilter,
       favoritesOnly: _favoritesOnly,
@@ -171,5 +153,24 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       activeSpecialtyFilter: _activeSpecialtyFilter,
       favoritesOnly: _favoritesOnly,
     ));
+  }
+  List<TrainerCardEntity> _applyLocalFilters() {
+    var filtered = List<TrainerCardEntity>.from(_allTrainers);
+
+    if (_favoritesOnly) {
+      filtered = filtered
+          .where((trainer) => trainer.isFavorited)
+          .toList();
+    }
+
+    if (_activeSpecialtyFilter != null) {
+      filtered = filtered
+          .where(
+            (trainer) => trainer.specialties.contains(_activeSpecialtyFilter),
+      )
+          .toList();
+    }
+
+    return filtered;
   }
 }

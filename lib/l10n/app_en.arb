@@ -793,5 +793,13 @@
   "ptScreenTitle": "Personal Trainers",
   "ptScreenSubtitle": "Choose the right trainer for your goals",
   "ptBookSession": "Book Session",
-  "ptNoTrainers": "No trainers available"
+  "ptNoTrainers": "No trainers available",
+  "accountMemberSince": "Member since {date}",
+  "@accountMemberSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

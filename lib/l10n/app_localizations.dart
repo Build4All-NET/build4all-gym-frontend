@@ -2074,6 +2074,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No trainers available'**
   String get ptNoTrainers;
+
+  /// No description provided for @accountMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since {date}'**
+  String accountMemberSince(String date);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

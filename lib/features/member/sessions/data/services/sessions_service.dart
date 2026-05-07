@@ -51,10 +51,20 @@ class SessionsService {
     );
   }
   Future<SessionDetailModel> getSessionDetail(int sessionId) async {
-    final response = await _dio.get(
-      '/api/member/sessions/$sessionId',
-    );
+    try {
+      final response = await _dio.get('/api/member/sessions/$sessionId');
 
-    return SessionDetailModel.fromJson(response.data);
+      print('SESSION DETAIL STATUS: ${response.statusCode}');
+      print('SESSION DETAIL DATA: ${response.data}');
+      print('SESSION DETAIL DATA TYPE: ${response.data.runtimeType}');
+
+      final data = Map<String, dynamic>.from(response.data as Map);
+
+      return SessionDetailModel.fromJson(data);
+    } catch (e, s) {
+      print('FAILED TO LOAD SESSION DETAIL ERROR: $e');
+      print('STACKTRACE: $s');
+      rethrow;
+    }
   }
 }

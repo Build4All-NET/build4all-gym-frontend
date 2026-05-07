@@ -5,6 +5,7 @@ import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_entity.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_stats_entity.dart';
+
 class AccountProfileCardWidget extends StatelessWidget {
   final MemberAccountEntity account;
 
@@ -33,8 +34,9 @@ class AccountProfileCardWidget extends StatelessWidget {
 
               Expanded(
                 child: Column(
+                  // FIX: stretch so text hugs the edge next to the photo
                   crossAxisAlignment: isRtl
-                      ? CrossAxisAlignment.end
+                      ? CrossAxisAlignment.stretch
                       : CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -49,9 +51,7 @@ class AccountProfileCardWidget extends StatelessWidget {
                     if (account.memberSince != null) ...[
                       SizedBox(height: tokens.spacing.xs),
                       Text(
-                        isRtl
-                            ? 'عضو منذ ${account.memberSince}'
-                            : 'Member since ${account.memberSince}',
+                        l10n.accountMemberSince(account.memberSince!),
                         textAlign: isRtl ? TextAlign.right : TextAlign.left,
                         style: tokens.typography.bodySmall.copyWith(
                           color: tokens.colors.onPrimary.withOpacity(0.85),
@@ -60,30 +60,34 @@ class AccountProfileCardWidget extends StatelessWidget {
                     ],
                     if (account.planName != null) ...[
                       SizedBox(height: tokens.spacing.sm),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: tokens.colors.onPrimary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.workspace_premium_rounded,
-                              color: tokens.colors.onPrimary,
-                              size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              account.planName!,
-                              style: tokens.typography.bodySmall.copyWith(
+                      // Align badge to right in RTL, left in LTR
+                      Align(
+                        alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: tokens.colors.onPrimary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                            children: [
+                              Icon(
+                                Icons.workspace_premium_rounded,
                                 color: tokens.colors.onPrimary,
-                                fontWeight: FontWeight.w700,
+                                size: 14,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 4),
+                              Text(
+                                account.planName!,
+                                style: tokens.typography.bodySmall.copyWith(
+                                  color: tokens.colors.onPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -105,7 +109,7 @@ class AccountProfileCardWidget extends StatelessWidget {
             ),
           ),
 
-          // ── Stats row — only sessions + exercises ──────────────────
+          // ── Stats row ─────────────────────────────────────────────
           AccountStatsRowWidget(stats: account.stats),
         ],
       ),
@@ -157,7 +161,6 @@ class AccountProfileCardWidget extends StatelessWidget {
 }
 
 // ── AccountStatsRowWidget ─────────────────────────────────────────────────────
-// Receives MemberAccountStatsEntity — only sessions + exercises, no achievements.
 class AccountStatsRowWidget extends StatelessWidget {
   final MemberAccountStatsEntity stats;
 
