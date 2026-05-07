@@ -11,6 +11,7 @@ class TrainingVideoModel extends TrainingVideoEntity {
     required super.trainerName,
     required super.isPublished,
     required super.createdAt,
+    super.videoUrl,
   });
 
   factory TrainingVideoModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class TrainingVideoModel extends TrainingVideoEntity {
       trainerName: json['trainerName'] as String,
       isPublished: json['isPublished'] as bool,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      videoUrl: json['videoUrl'] as String?,
     );
   }
 }
