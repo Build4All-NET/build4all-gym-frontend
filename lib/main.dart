@@ -11,9 +11,6 @@ import 'features/admin/AppBar/presentation/branch_cubit.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  BlocProvider(
-    create: (_) => BranchCubit(), // loads on demand
-  );
   // 1. Initialize Dio
   g.makeDefaultDio(Env.apiBaseUrl);
   g.makeDefaultDio(Env.apiProjectBaseUrl);

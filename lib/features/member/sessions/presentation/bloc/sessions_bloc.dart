@@ -147,9 +147,15 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
       }
 
       final session = await getSessionDetailUseCase!(event.sessionId);
+
+      print('BLOC SESSION DETAIL LOADED: ${session.className}');
+
       emit(SessionDetailLoaded(session));
-    } catch (_) {
-      emit(const SessionDetailError('Failed to load session detail'));
+    } catch (e, s) {
+      print('BLOC SESSION DETAIL ERROR: $e');
+      print('STACKTRACE: $s');
+
+      emit(SessionDetailError(e.toString()));
     }
   }
 
