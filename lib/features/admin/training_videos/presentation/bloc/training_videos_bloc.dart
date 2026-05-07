@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/trainer_option.dart';
+import '../../domain/entities/video_category_entity.dart';
+import '../../domain/usecases/CreateCategoryUseCase.dart';
 import '../../domain/usecases/get_training_videos_usecase.dart';
 import '../../domain/usecases/get_video_categories_usecase.dart';
 import '../../domain/usecases/create_training_video_use_case.dart';
@@ -12,20 +15,25 @@ class TrainingVideosBloc extends Bloc<TrainingVideosEvent, TrainingVideosState> 
   final GetVideoCategoriesUseCase _getVideoCategoriesUseCase;
   final CreateTrainingVideoUseCase _createTrainingVideoUseCase;
   final GetTrainersUseCase _getTrainersUseCase;
+  final CreateCategoryUseCase _createCategoryUseCase; // ✅ new
+
   TrainingVideosBloc({
     required GetTrainingVideosUseCase getTrainingVideosUseCase,
     required GetVideoCategoriesUseCase getVideoCategoriesUseCase,
     required CreateTrainingVideoUseCase createTrainingVideoUseCase,
     required GetTrainersUseCase getTrainersUseCase,
+    required CreateCategoryUseCase createCategoryUseCase, // ✅ new
   })  : _getTrainingVideosUseCase = getTrainingVideosUseCase,
         _getVideoCategoriesUseCase = getVideoCategoriesUseCase,
         _createTrainingVideoUseCase = createTrainingVideoUseCase,
         _getTrainersUseCase = getTrainersUseCase,
+        _createCategoryUseCase = createCategoryUseCase,
         super(TrainingVideosInitial()) {
     on<LoadTrainingVideos>(_onLoad);
     on<FilterByCategory>(_onFilter);
     on<LoadVideoFormOptions>(_onLoadFormOptions);
     on<SubmitCreateVideo>(_onSubmitCreate);
+    on<AddNewCategory>(_onAddNewCategory); // ✅ new
   }
 
   Future<void> _onLoad(LoadTrainingVideos event, Emitter emit) async {
@@ -69,11 +77,27 @@ class TrainingVideosBloc extends Bloc<TrainingVideosEvent, TrainingVideosState> 
 
   Future<void> _onLoadFormOptions(LoadVideoFormOptions event, Emitter emit) async {
     try {
-      // getTrainersUseCase now returns List<TrainerOption> directly (already unwrapped)
-      final trainers = await _getTrainersUseCase();
-      emit(VideoFormOptionsLoaded(trainers: trainers));
+      // Load both in parallel
+      final results = await Future.wait([
+        _getTrainersUseCase(),
+        _getVideoCategoriesUseCase(),
+      ]);
+      emit(VideoFormOptionsLoaded(
+        trainers: results[0] as List<TrainerOption>,
+        categories: results[1] as List<VideoCategoryEntity>,
+      ));
     } catch (e) {
       emit(CreateVideoError(e.toString()));
+    }
+  }
+
+  Future<void> _onAddNewCategory(AddNewCategory event, Emitter emit) async {
+    emit(CategoryCreating());
+    try {
+      final newCategory = await _createCategoryUseCase(event.name);
+      emit(CategoryCreated(newCategory));
+    } catch (e) {
+      emit(CategoryCreateError(e.toString()));
     }
   }
 

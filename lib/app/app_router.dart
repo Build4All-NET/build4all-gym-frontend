@@ -43,6 +43,7 @@ import '../features/admin/trainers/domain/usecases/get_trainer_detail_usecase.da
 import '../features/admin/trainers/presentation/bloc/admin_trainers_event.dart';
 import '../features/admin/training_videos/data/repositories/training_video_repository_impl.dart';
 import '../features/admin/training_videos/data/services/training_video_remote_datasource.dart';
+import '../features/admin/training_videos/domain/usecases/CreateCategoryUseCase.dart';
 import '../features/admin/training_videos/presentation/bloc/training_videos_bloc.dart';
 import '../features/admin/training_videos/presentation/bloc/training_videos_event.dart';
 import '../features/admin/training_videos/presentation/screens/training_videos_list_page.dart';
@@ -410,6 +411,7 @@ class AppRouter {
               getVideoCategoriesUseCase: GetVideoCategoriesUseCase(videosRepo),
               createTrainingVideoUseCase: CreateTrainingVideoUseCase(videosRepo),
               getTrainersUseCase: GetTrainersUseCase(videosRepo),
+              createCategoryUseCase:      CreateCategoryUseCase(videosRepo),
             )..add(LoadTrainingVideos()),
             child: const TrainingVideosListPage(),
           ),

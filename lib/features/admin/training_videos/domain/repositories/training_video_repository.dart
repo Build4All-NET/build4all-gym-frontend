@@ -1,3 +1,5 @@
+import 'package:build4allgym/features/admin/training_videos/data/models/video_category_model.dart';
+
 import '../../../../member/pt/domain/entities/trainer_list_response_entity.dart';
 import '../entities/trainer_option.dart';
 import '../entities/training_video_entity.dart';
@@ -10,5 +12,6 @@ abstract class TrainingVideoRepository {
   Future<(VideoStatsEntity, List<TrainingVideoEntity>)> getVideos({int? categoryId});
   Future<List<VideoCategoryEntity>> getCategories();
   Future<void> createVideo(CreateTrainingVideoRequest request);
-  Future<List<TrainerOption>> getTrainers(); }
+  Future<List<TrainerOption>> getTrainers();
+  Future<VideoCategoryEntity> createCategory(String name);}
 
