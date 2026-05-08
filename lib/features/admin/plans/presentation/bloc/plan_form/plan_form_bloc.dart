@@ -2,8 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/entities/admin_branch_option_entity.dart';
 import '../../../domain/usecases/admin_plans_usecases.dart';
-import '../../../data/models/createplanrequestmodel.dart';
-import '../../../data/models/updateplanrequestmodel.dart';
+import '../../../data/models/CreatePlanRequestModel.dart';
+import '../../../data/models/UpdatePlanRequestModel.dart';
 
 part 'plan_form_event.dart';
 part 'plan_form_state.dart';
