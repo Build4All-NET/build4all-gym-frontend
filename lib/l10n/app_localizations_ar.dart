@@ -1032,4 +1032,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String accountMemberSince(String date) {
     return 'عضو منذ $date';
   }
+
+  @override
+  String get ptBookingChooseDate => 'اختر التاريخ';
+
+  @override
+  String get ptBookingChooseTime => 'اختر الوقت';
+
+  @override
+  String get ptBookingNoSlotsForDate => 'لا توجد أوقات متاحة لهذا التاريخ.';
+
+  @override
+  String get ptDetailSession => 'جلسة';
+
+  @override
+  String get ptTrainingVideosTitle => 'فيديوهات تدريبية';
+
+  @override
+  String get ptTrainingVideosEmpty => 'لا توجد فيديوهات تدريبية بعد.';
+
+  @override
+  String get ptTrainingVideosMissingUrl => 'رابط الفيديو غير موجود.';
+
+  @override
+  String get ptTrainingVideosOpenError => 'تعذر فتح هذا الفيديو.';
+
+  @override
+  String get ptTrainerDetailsNotFound => 'لم يتم العثور على تفاصيل المدرب.';
+
+  @override
+  String get ptFavoriteUpdateFailed => 'تعذر تحديث المفضلة.';
+
+  @override
+  String get ptConfirmBooking => 'تأكيد الحجز';
+
+  @override
+  String ptBookingSelected(String date, String time) {
+    return 'تم اختيار الحجز: $date الساعة $time';
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../domain/entities/trainer_detail_entity.dart';
+import '../../domain/usecases/get_trainer_detail_usecase.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../data/repositories/member_pt_repository_impl.dart';
@@ -10,6 +11,7 @@ import '../../domain/usecases/get_filter_options_usecase.dart';
 import '../../domain/usecases/toggle_favorite_trainer_usecase.dart';
 import '../bloc/member_pt_bloc.dart';
 import '../widgets/trainer_card_widget.dart';
+import '../../domain/usecases/get_trainer_detail_usecase.dart';
 import '../widgets/trainer_filter_chips_widget.dart';
 
 class MemberPtScreen extends StatelessWidget {
@@ -25,6 +27,7 @@ class MemberPtScreen extends StatelessWidget {
         getTrainersUseCase: GetTrainersUseCase(repository),
         getFilterOptionsUseCase: GetFilterOptionsUseCase(repository),
         toggleFavoriteTrainerUseCase: ToggleFavoriteTrainerUseCase(repository),
+        getTrainerDetailUseCase: GetTrainerDetailUseCase(repository),
       )..add(const TrainersStarted()),
       child: const _MemberPtView(),
     );

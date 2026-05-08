@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../screens/trainer_detail_screen.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/trainer_card_entity.dart';
@@ -158,8 +158,18 @@ class TrainerCardWidget extends StatelessWidget {
                 width: double.infinity,
                 height: tokens.button.height,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to PT booking screen
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => TrainerDetailScreen(
+                          trainerId: trainer.trainerId,
+                        ),
+                      ),
+                    );
+
+                    if (!context.mounted) return;
+
+                    context.read<MemberPtBloc>().add(const TrainersStarted());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: tokens.colors.primary,

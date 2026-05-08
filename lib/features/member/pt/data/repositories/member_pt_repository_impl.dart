@@ -6,6 +6,8 @@ import '../../domain/entities/toggle_favorite_response_entity.dart';
 import '../../domain/entities/trainer_list_response_entity.dart';
 import '../../domain/repositories/member_pt_repository.dart';
 import '../services/member_pt_service.dart';
+import '../../domain/entities/trainer_detail_entity.dart';
+import '../../domain/entities/time_slot_entity.dart';
 
 class MemberPtRepositoryImpl implements MemberPtRepository {
   final MemberPtService _service;
@@ -78,6 +80,68 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
       return (data: null, failure: ServerFailure(e.message));
     } on NetworkException {
       return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+  // ── getTrainerDetail ──────────────────────────────────────────────────────
+  @override
+  Future<({TrainerDetailEntity? data, Failure? failure})> getTrainerDetail(
+      int trainerId,
+      ) async {
+    try {
+      final model = await _service.getTrainerDetail(trainerId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (
+      data: null,
+      failure: const AuthFailure('Session expired. Please log in again.'),
+      );
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (
+      data: null,
+      failure: const NetworkFailure('No internet connection.'),
+      );
+    }
+  }
+  // ── getAvailableSlots ─────────────────────────────────────────────────────
+  @override
+  Future<({List<TimeSlotEntity>? data, Failure? failure})> getAvailableSlots({
+    required int trainerId,
+    required DateTime date,
+  }) async {
+    try {
+      final models = await _service.getAvailableSlots(
+        trainerId: trainerId,
+        date: date,
+      );
+
+      return (
+      data: models.map((model) => model.toEntity()).toList(),
+      failure: null,
+      );
+    } on UnauthorizedException {
+      return (
+      data: null,
+      failure: const AuthFailure('Session expired. Please log in again.'),
+      );
+    } on ForbiddenException {
+      return (
+      data: null,
+      failure: const AuthFailure('Access denied.'),
+      );
+    } on ServerException catch (e) {
+      return (
+      data: null,
+      failure: ServerFailure(e.message),
+      );
+    } on NetworkException {
+      return (
+      data: null,
+      failure: const NetworkFailure('No internet connection.'),
+      );
     }
   }
 }

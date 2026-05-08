@@ -1032,4 +1032,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String accountMemberSince(String date) {
     return 'Member since $date';
   }
+
+  @override
+  String get ptBookingChooseDate => 'Choose Date';
+
+  @override
+  String get ptBookingChooseTime => 'Choose Time';
+
+  @override
+  String get ptBookingNoSlotsForDate => 'No available slots for this date.';
+
+  @override
+  String get ptDetailSession => 'session';
+
+  @override
+  String get ptTrainingVideosTitle => 'Training Videos';
+
+  @override
+  String get ptTrainingVideosEmpty => 'No training videos yet.';
+
+  @override
+  String get ptTrainingVideosMissingUrl => 'Video URL is missing.';
+
+  @override
+  String get ptTrainingVideosOpenError => 'Could not open this video.';
+
+  @override
+  String get ptTrainerDetailsNotFound => 'Trainer details not found.';
+
+  @override
+  String get ptFavoriteUpdateFailed => 'Failed to update favorite.';
+
+  @override
+  String get ptConfirmBooking => 'Confirm Booking';
+
+  @override
+  String ptBookingSelected(String date, String time) {
+    return 'Booking selected: $date at $time';
+  }
 }
