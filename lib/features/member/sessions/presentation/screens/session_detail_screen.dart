@@ -7,9 +7,9 @@ import '../../domain/entities/session_detail_entity.dart';
 import '../bloc/sessions_bloc.dart';
 import '../bloc/sessions_event.dart';
 import '../bloc/sessions_state.dart';
-import '../widgets/session_about_widget.dart';
-import '../widgets/session_benefits_widget.dart';
-import '../widgets/session_equipment_widget.dart';
+import '../widgets/SessionAboutWidget.dart';
+import '../widgets/SessionBenefitsWidget.dart';
+import '../widgets/SessionEquipmentWidget.dart';
 import '../widgets/session_info_grid_widget.dart';
 
 class SessionDetailScreen extends StatefulWidget {
