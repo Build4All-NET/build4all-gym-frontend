@@ -801,5 +801,23 @@
         "type": "String"
       }
     }
+  },
+  "ptBookingChooseDate": "Choose Date",
+  "ptBookingChooseTime": "Choose Time",
+  "ptBookingNoSlotsForDate": "No available slots for this date.",
+  "ptDetailSession": "session",
+  "ptTrainingVideosTitle": "Training Videos",
+  "ptTrainingVideosEmpty": "No training videos yet.",
+  "ptTrainingVideosMissingUrl": "Video URL is missing.",
+  "ptTrainingVideosOpenError": "Could not open this video.",
+  "ptTrainerDetailsNotFound": "Trainer details not found.",
+  "ptFavoriteUpdateFailed": "Failed to update favorite.",
+  "ptConfirmBooking": "Confirm Booking",
+  "ptBookingSelected": "Booking selected: {date} at {time}",
+  "@ptBookingSelected": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
   }
 }
