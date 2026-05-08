@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/training_video_entity.dart';
+import '../screens/video_player_page.dart';
 
 class VideoCard extends StatelessWidget {
   final TrainingVideoEntity video;
@@ -19,7 +20,28 @@ class VideoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
+    return InkWell(
+        onTap: () {
+      if (video.videoUrl == null || video.videoUrl!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No video URL available'),
+          ),
+        );
+        return;
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VideoPlayerPage(
+            videoUrl: video.videoUrl!,
+            title: video.title,
+          ),
+        ),
+      );
+    },
+    child: Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -126,6 +148,7 @@ class VideoCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 

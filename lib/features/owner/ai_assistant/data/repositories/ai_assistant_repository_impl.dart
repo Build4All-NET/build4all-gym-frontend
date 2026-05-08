@@ -6,9 +6,9 @@
 // Implements AiAssistantRepository (the abstract contract from domain layer).
 //
 // Responsibilities:
-//   1. Calls the remote service methods (HTTP)
-//   2. Catches typed exceptions and wraps them in user-friendly error messages
-//   3. Maps data-layer models to domain-layer entities
+//   1. Call AiAssistantRemoteService (data layer)
+//   2. Catch DioException and convert to plain Exception with a clean message
+//   3. Convert data models to domain entities
 //
 // Pattern matches AdminMembersRepositoryImpl exactly — each method has the
 // same try/catch structure with the same four exception types.

@@ -7,7 +7,6 @@
 // Shown on the start screen (before the owner types anything).
 // Tapping a chip dispatches AiSuggestionTapped to the BLoC.
 // =============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,41 +16,70 @@ import '../bloc/ai_assistant_bloc.dart';
 class SuggestedQuestionsWidget extends StatelessWidget {
   final List<SuggestedQuestionEntity> suggestions;
 
-  const SuggestedQuestionsWidget({super.key, required this.suggestions});
+  const SuggestedQuestionsWidget({
+    super.key,
+    required this.suggestions,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (suggestions.isEmpty) return const SizedBox.shrink();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+
+        // ─────────────────────────────────────────────
+        // HEADER
+        // ─────────────────────────────────────────────
         const Text(
           'Suggested Questions',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+
         const SizedBox(height: 12),
-        // One chip per suggested question
-        ...suggestions.map(
-              (s) => _SuggestionChip(question: s.question),
+
+        // ─────────────────────────────────────────────
+        // LIST OF CHIPS
+        // ─────────────────────────────────────────────
+        Column(
+          children: suggestions.map((s) {
+            return _SuggestionChip(question: s.question);
+          }).toList(),
         ),
       ],
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SINGLE CHIP
+// ─────────────────────────────────────────────────────────────────────────────
 class _SuggestionChip extends StatelessWidget {
   final String question;
 
-  const _SuggestionChip({required this.question});
+  const _SuggestionChip({
+    required this.question,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.read<AiAssistantBloc>()
-          .add(AiSuggestionTapped(question)),
+      onTap: () {
+        context.read<AiAssistantBloc>().add(
+          AiSuggestionTapped(question),
+        );
+      },
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -66,7 +94,10 @@ class _SuggestionChip extends StatelessWidget {
         ),
         child: Text(
           question,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

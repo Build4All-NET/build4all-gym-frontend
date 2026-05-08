@@ -2080,6 +2080,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Member since {date}'**
   String accountMemberSince(String date);
+
+  /// No description provided for @ptBookingChooseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Date'**
+  String get ptBookingChooseDate;
+
+  /// No description provided for @ptBookingChooseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Time'**
+  String get ptBookingChooseTime;
+
+  /// No description provided for @ptBookingNoSlotsForDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No available slots for this date.'**
+  String get ptBookingNoSlotsForDate;
+
+  /// No description provided for @ptDetailSession.
+  ///
+  /// In en, this message translates to:
+  /// **'session'**
+  String get ptDetailSession;
+
+  /// No description provided for @ptTrainingVideosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training Videos'**
+  String get ptTrainingVideosTitle;
+
+  /// No description provided for @ptTrainingVideosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No training videos yet.'**
+  String get ptTrainingVideosEmpty;
+
+  /// No description provided for @ptTrainingVideosMissingUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Video URL is missing.'**
+  String get ptTrainingVideosMissingUrl;
+
+  /// No description provided for @ptTrainingVideosOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this video.'**
+  String get ptTrainingVideosOpenError;
+
+  /// No description provided for @ptTrainerDetailsNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer details not found.'**
+  String get ptTrainerDetailsNotFound;
+
+  /// No description provided for @ptFavoriteUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update favorite.'**
+  String get ptFavoriteUpdateFailed;
+
+  /// No description provided for @ptConfirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Booking'**
+  String get ptConfirmBooking;
+
+  /// No description provided for @ptBookingSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking selected: {date} at {time}'**
+  String ptBookingSelected(String date, String time);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

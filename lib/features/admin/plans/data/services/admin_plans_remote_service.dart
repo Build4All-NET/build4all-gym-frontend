@@ -3,11 +3,11 @@ import 'package:build4allgym/features/auth/data/services/admin_token_store.dart'
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../../../auth/data/services/auth_token_store.dart';
-import '../models/adminplanstatsmodel.dart';
-import '../models/adminplanlistitemmodel.dart';
 import '../models/AdminBranchOptionModel.dart';
-import '../models/createplanrequestmodel.dart';
-import '../models/updateplanrequestmodel.dart';
+import '../models/AdminPlanStatsModel.dart';
+import '../models/AdminPlanListItemModel.dart';
+import '../models/CreatePlanRequestModel.dart';
+import '../models/UpdatePlanRequestModel.dart';
 import '../../../../../core/config/env.dart';
 
 // ── Abstract ──────────────────────────────────────────────────────────────────
