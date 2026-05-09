@@ -819,5 +819,54 @@
       "date": { "type": "String" },
       "time": { "type": "String" }
     }
-  }
+  },
+    "ptBookingSummary": "Booking summary",
+    "ptBookingTrainer": "Trainer:",
+    "ptBookingDate": "Date:",
+    "ptBookingTime": "Time:",
+    "ptBookingTotalAmount": "Total amount:",
+    "ptBookingSuccess": "Booking confirmed successfully.",
+    "ptSlotAlreadyBooked": "You already booked this time slot.",
+    "ptPackageChoosePackage": "Choose package",
+    "ptPackageChooseDays": "Choose days",
+    "ptPackageChooseTime": "Choose time",
+    "ptPackageBookingSummary": "Booking summary",
+    "ptPackageConfirmBooking": "Confirm booking",
+    "ptPackageBookingSuccess": "Package booking confirmed successfully.",
+    "ptPackageBookingFailed": "Could not confirm package booking.",
+    "ptPackageNoPackages": "No packages available right now",
+    "ptPackageSessions": "sessions",
+    "ptPackageDays": "days",
+    "ptPackageFinalPrice": "Final price",
+    "ptPackageOriginalPrice": "Original price",
+    "ptPackageSalePrice": "Sale price",
+    "ptPackageSelectedPackage": "Selected package",
+    "ptPackageSelectedDays": "Selected days",
+    "ptPackageSelectedTime": "Selected time",
+    "ptPackageMaxSessionsReached": "You cannot select more days than the package sessions",
+
+    "ptPackageDaysPerWeekRange": "Choose {min} to {max} days per week",
+    "@ptPackageDaysPerWeekRange": {
+      "placeholders": {
+        "min": { "type": "int" },
+        "max": { "type": "int" }
+      }
+    },
+
+    "ptPackageDaysPerWeekExact": "Choose {count} day(s) per week",
+    "@ptPackageDaysPerWeekExact": {
+      "placeholders": {
+        "count": { "type": "int" }
+      }
+    },
+
+    "ptPackageMaxDaysReached": "You cannot select more than {max} days per week",
+    "@ptPackageMaxDaysReached": {
+      "placeholders": {
+        "max": { "type": "int" }
+      }
+    },
+    "ptPackageNoAvailableSlots": "No available times",
+    "ptWeeklySlotsFailed": "Could not load available times"
+
 }
