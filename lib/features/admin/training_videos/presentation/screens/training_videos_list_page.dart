@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/training_videos_bloc.dart';
 import '../bloc/training_videos_event.dart';
 import '../bloc/training_videos_state.dart';
@@ -25,10 +27,20 @@ class _TrainingVideosListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.watch<AdminProfileCubit>().state;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Training Videos'),
         centerTitle: false,
+      ),
+      drawer: AdminNavigationDrawer(
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
+        initialActiveId: 'training_videos',
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push(

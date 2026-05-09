@@ -9,6 +9,7 @@ import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/features/admin/AppBar/presentation/admin_app_bar.dart';
 import 'package:build4allgym/features/admin/AppBar/presentation/branch_cubit.dart';
 
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../data/repositories/admin_staff_repository_impl.dart';
 import '../../data/services/admin_staff_service.dart';
 import '../../domain/usecases/create_staff_usecase.dart';
@@ -80,17 +81,19 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
+    
+    final profile = context.watch<AdminProfileCubit>().state;
 
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
-        drawer: const AdminNavigationDrawer(
-          gymName:         'Build4All Gym',
-          branchName:      'Downtown',
-          adminName:       'Mounir',
-          adminEmail:      'mounir@gym.com',
-          avatarUrl:       null,
-          initialActiveId: 'reception_staff',
+    drawer:  AdminNavigationDrawer(
+    gymName:    profile.gymName,
+    branchName: profile.branchName,
+    adminName:  profile.adminName,
+    adminEmail: profile.adminEmail,
+    avatarUrl:  profile.avatarUrl,
+    initialActiveId: 'reception_staff',
         ),
         backgroundColor: c.background,
         body: SafeArea(

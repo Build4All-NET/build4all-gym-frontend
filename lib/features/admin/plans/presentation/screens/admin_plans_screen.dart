@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
@@ -84,13 +85,15 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
     final c      = tokens.colors;
     final card   = tokens.card;
 
+    final profile = context.watch<AdminProfileCubit>().state;
+
     return Scaffold(
-      drawer: const AdminNavigationDrawer(
-        gymName:         'Build4All Gym',
-        branchName:      'Downtown',
-        adminName:       'Mounir',
-        adminEmail:      'mounir@gym.com',
-        avatarUrl:       null,
+      drawer:  AdminNavigationDrawer(
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
         initialActiveId: 'plans',
       ),
       backgroundColor: c.background,

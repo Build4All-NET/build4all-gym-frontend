@@ -179,7 +179,10 @@ class AdminClassesService {
           .map((e) =>
           SessionBookingItemModel.fromJson(e as Map<String, dynamic>))
           .toList();
-    } catch (e) {
+    } catch (e, stack) {
+      print('🔴 raw error type: ${e.runtimeType}');
+      print('🔴 raw error: $e');
+      print(stack);
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
       throw NetworkException();
     }
