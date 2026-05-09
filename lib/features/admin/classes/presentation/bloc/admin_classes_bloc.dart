@@ -161,8 +161,13 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     try {
       final bookings = await _getSessionBookings(event.sessionId);
       emit(SessionBookingsLoaded(event.sessionId, bookings));
-    } catch (e) {
-      emit(ClassActionError(event.sessionId, e.toString()));
+    } catch (e, stack) {
+      print('❌ SessionBookings error: $e');
+      print(stack);
+      emit(SessionBookingsError(
+        sessionId: event.sessionId,
+        message:   e.toString(), // show real error on screen too
+      ));
     }
   }
 

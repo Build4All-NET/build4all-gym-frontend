@@ -16,6 +16,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../admin_profile/admin_profile_cubit.dart';
+
 class AuthGate extends StatefulWidget {
   final AppConfig appConfig;
 
@@ -379,7 +381,6 @@ class _AuthGateState extends State<AuthGate> {
       role: 'admin',
       user: null,
     ));
-
     Navigator.of(context).pushNamedAndRemoveUntil('/admin', (_) => false);
   }
 

@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_members_bloc.dart';
 import '../widgets/member_card_widget.dart';
@@ -70,18 +71,18 @@ class _AdminMembersView extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: cs.surface,
+    final profile = context.watch<AdminProfileCubit>().state;
 
+    return Scaffold(
       drawer: SafeArea(
         child: AdminNavigationDrawer(
-          gymName:         'Build4All Gym',   // TODO: pull from AuthBloc state
-          branchName:      branchName,        // ← real value now
-          adminName:       'Admin',           // TODO: pull from AuthBloc state
-          adminEmail:      'admin@gym.com',   // TODO: pull from AuthBloc state
-          avatarUrl:       null,
-          initialActiveId: 'members',
-        ),
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
+        initialActiveId: 'members',
+      ),
       ),
 
       body: SafeArea(

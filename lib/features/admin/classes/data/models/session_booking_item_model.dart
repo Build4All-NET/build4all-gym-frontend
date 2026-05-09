@@ -10,7 +10,7 @@ class SessionBookingItemModel {
   final int     bookingId;
   final int     userId;
   final String  fullName;
-  final String  phone;
+  final String?  phone;
   final int?    profileFileId;    // nullable — member may have no photo
   final String  status;           // "BOOKED" or "WAITLISTED"
   final int?    waitlistPosition; // null when status = "BOOKED"
@@ -19,7 +19,7 @@ class SessionBookingItemModel {
     required this.bookingId,
     required this.userId,
     required this.fullName,
-    required this.phone,
+     this.phone,
     this.profileFileId,
     required this.status,
     this.waitlistPosition,
@@ -27,13 +27,13 @@ class SessionBookingItemModel {
 
   factory SessionBookingItemModel.fromJson(Map<String, dynamic> json) {
     return SessionBookingItemModel(
-      bookingId:       json['bookingId']       as int,
-      userId:          json['userId']          as int,
-      fullName:        json['fullName']        as String,
-      phone:           json['phone']           as String,
-      profileFileId:   json['profileFileId']   as int?,
-      status:          json['status']          as String,
-      waitlistPosition:json['waitlistPosition'] as int?,
+      bookingId:        json['bookingId']        as int,
+      userId:           json['userId']           as int,
+      fullName:         json['fullName']         as String? ?? 'Unknown',
+      phone:            json['phone']            as String? ?? '',
+      profileFileId:    json['profileFileId']    as int?,
+      status:           json['status']           as String? ?? 'BOOKED',
+      waitlistPosition: json['waitlistPosition'] as int?,
     );
   }
 
