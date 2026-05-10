@@ -1163,4 +1163,136 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'Could not load available times';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
+
+  @override
+  String get editProfileSubtitle => 'Update your personal information';
+
+  @override
+  String get editProfileFullName => 'Full Name';
+
+  @override
+  String get editProfileEmail => 'Email';
+
+  @override
+  String get editProfilePhone => 'Phone Number';
+
+  @override
+  String get editProfileDateOfBirth => 'Date of Birth';
+
+  @override
+  String get editProfileAddress => 'Address';
+
+  @override
+  String get editProfileGender => 'Gender';
+
+  @override
+  String get editProfileMale => 'Male';
+
+  @override
+  String get editProfileFemale => 'Female';
+
+  @override
+  String get editProfileSave => 'Save Changes';
+
+  @override
+  String get editProfileCancel => 'Cancel';
+
+  @override
+  String get editProfileNameRequired => 'Name is required';
+
+  @override
+  String get editProfileEmailRequired => 'Email is required';
+
+  @override
+  String get editProfileInvalidEmail => 'Invalid email address';
+
+  @override
+  String get accountGender => 'Gender';
+
+  @override
+  String get accountGenderMale => 'Male';
+
+  @override
+  String get accountGenderFemale => 'Female';
+
+  @override
+  String get editProfileFirstName => 'First Name';
+
+  @override
+  String get editProfileLastName => 'Last Name';
+
+  @override
+  String get editProfileUsername => 'Username';
+
+  @override
+  String get editProfileChangePassword => 'Change Password';
+
+  @override
+  String get editProfileCurrentPassword => 'Current Password';
+
+  @override
+  String get editProfileNewPassword => 'New Password';
+
+  @override
+  String get editProfileRequired => 'Required.';
+
+  @override
+  String get editProfileUsernameRequired => 'Username is required.';
+
+  @override
+  String get editProfileEmailRequiredMessage => 'Email is required.';
+
+  @override
+  String get editProfileInvalidEmailMessage => 'Invalid email address.';
+
+  @override
+  String get editProfilePhoneRequired => 'Phone number is required.';
+
+  @override
+  String get editProfileCurrentPasswordRequired => 'Current password is required.';
+
+  @override
+  String get editProfileNewPasswordRequired => 'New password is required.';
+
+  @override
+  String get editProfilePasswordTooShort => 'New password must be at least 6 characters.';
+
+  @override
+  String get editProfilePasswordSameAsCurrent => 'New password must be different from current password.';
+
+  @override
+  String get editProfileInvalidOwnerProject => 'Invalid owner project link id.';
+
+  @override
+  String get editProfileEmailVerified => 'Email verified successfully.';
+
+  @override
+  String get editProfilePasswordUpdated => 'Password updated successfully.';
+
+  @override
+  String get editProfileOnlyLetters => 'Only letters and spaces are allowed.';
+
+  @override
+  String get editProfileVerifyNewEmail => 'Verify new email';
+
+  @override
+  String get editProfileVerifyPasswordChange => 'Verify password change';
+
+  @override
+  String get editProfileCodeSentTo => 'Code sent to';
+
+  @override
+  String get editProfileVerificationCode => 'Verification code';
+
+  @override
+  String get editProfileResend => 'Resend';
+
+  @override
+  String get editProfileVerify => 'Verify';
+
+  @override
+  String get editProfileCodeRequired => 'Verification code is required.';
 }

@@ -34,6 +34,13 @@ import '../../../member/account/data/repositories/member_account_repository_impl
 import '../../../member/account/data/services/member_account_service.dart';
 import '../../../member/account/domain/usecases/get_member_account_usecase.dart';
 import '../../../member/account/domain/usecases/update_profile_usecase.dart';
+
+import '../../../member/build4all_profile/data/repositories/member_build4all_profile_repository_impl.dart';
+import '../../../member/build4all_profile/data/services/member_build4all_profile_service.dart';
+import '../../../member/build4all_profile/domain/usecases/get_member_build4all_profile_usecase.dart';
+import '../../../member/build4all_profile/presentation/bloc/member_build4all_profile_bloc.dart';
+import '../../../member/build4all_profile/presentation/bloc/member_build4all_profile_event.dart';
+
 import '../../../member/sessions/data/repositories/sessions_repository_impl.dart';
 import '../../../member/sessions/domain/usecases/book_session_usecase.dart';
 import '../../../member/sessions/domain/usecases/cancel_booking_usecase.dart';
@@ -41,6 +48,7 @@ import '../../../member/sessions/domain/usecases/get_filter_options_usecase.dart
 import '../../../member/sessions/domain/usecases/get_sessions_usecase.dart';
 import '../../../member/sessions/data/services/sessions_service.dart';
 import '../../../member/sessions/domain/usecases/get_session_detail_use_case.dart';
+
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;
 
@@ -154,7 +162,6 @@ class _MainShellState extends State<MainShell> {
                 ),
               ),
             ),
-
             ListTile(
               leading: const Icon(Icons.home_outlined),
               title: Text(l10n.memberBottomNavHome),
@@ -164,7 +171,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.credit_card_outlined),
               title: Text(l10n.memberBottomNavPlans),
@@ -174,7 +180,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.qr_code_2_rounded),
               title: Text(l10n.memberBottomNavQr),
@@ -184,7 +189,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.calendar_today_outlined),
               title: Text(l10n.memberBottomNavClasses),
@@ -194,7 +198,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.person_outline_rounded),
               title: Text(l10n.memberBottomNavAccount),
@@ -204,16 +207,13 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             const Spacer(),
             const Divider(),
-
             ListTile(
               leading: const Icon(Icons.logout_rounded),
               title: const Text('Logout'),
               onTap: _logout,
             ),
-
             const SizedBox(height: 16),
           ],
         ),
@@ -254,48 +254,56 @@ class _MainShellState extends State<MainShell> {
     SessionsPage(
       getSessionsUseCase: GetSessionsUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
       getSessionDetailUseCase: GetSessionDetailUseCase(
         SessionsRepositoryImpl(SessionsService(g.dio())),
       ),
-
       bookSessionUseCase: BookSessionUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
       cancelBookingUseCase: CancelBookingUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
       getFilterOptionsUseCase: GetFilterOptionsUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
     ),
 
-    MemberAccountScreen(
-      bloc: MemberAccountBloc(
-        getMemberAccountUseCase: GetMemberAccountUseCase(
-          MemberAccountRepositoryImpl(
-            MemberAccountService(g.dio()),
-          ),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<MemberBuild4AllProfileBloc>(
+          create: (_) {
+            final build4allRepo = MemberBuild4AllProfileRepositoryImpl(
+              MemberBuild4AllProfileService(),
+            );
+
+            return MemberBuild4AllProfileBloc(
+              getProfileUseCase: GetMemberBuild4AllProfileUseCase(
+                build4allRepo,
+              ),
+            )..add(const MemberBuild4AllProfileStarted());
+          },
         ),
-        updateProfileUseCase: UpdateProfileUseCase(
-          MemberAccountRepositoryImpl(
-            MemberAccountService(g.dio()),
+      ],
+      child: MemberAccountScreen(
+        bloc: MemberAccountBloc(
+          getMemberAccountUseCase: GetMemberAccountUseCase(
+            MemberAccountRepositoryImpl(
+              MemberAccountService(g.dio()),
+            ),
+          ),
+          updateProfileUseCase: UpdateProfileUseCase(
+            MemberAccountRepositoryImpl(
+              MemberAccountService(g.dio()),
+            ),
           ),
         ),
       ),

@@ -1,23 +1,37 @@
 class UpdateProfileRequestModel {
-  final String fullName;
-  final String phone;
+  // Gym-owned member date of birth.
   final String? dateOfBirth;
+
+  // Gym-owned member address.
   final String? address;
 
+  // Gym-owned member gender.
+  //
+  // Expected values sent to Gym backend:
+  // - MALE
+  // - FEMALE
+  // - OTHER
+  // - PREFER_NOT_TO_SAY
+  final String? gender;
+
   const UpdateProfileRequestModel({
-    required this.fullName,
-    required this.phone,
     this.dateOfBirth,
     this.address,
+    this.gender,
   });
 
-  // No fromJson() needed — this is a request model only.
+  // Sent to:
+  // PATCH /api/member/account/profile
+  //
+  // Gym backend owns only:
+  // - dateOfBirth
+  // - address
+  // - gender
   Map<String, dynamic> toJson() {
     return {
-      'fullName': fullName,
-      'phone': phone,
       if (dateOfBirth != null) 'dateOfBirth': dateOfBirth,
       if (address != null) 'address': address,
+      if (gender != null) 'gender': gender,
     };
   }
 }

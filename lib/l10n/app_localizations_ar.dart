@@ -1163,4 +1163,136 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
+
+  @override
+  String get editProfileTitle => 'تعديل الملف الشخصي';
+
+  @override
+  String get editProfileSubtitle => 'قم بتحديث معلوماتك الشخصية';
+
+  @override
+  String get editProfileFullName => 'الاسم الكامل';
+
+  @override
+  String get editProfileEmail => 'البريد الإلكتروني';
+
+  @override
+  String get editProfilePhone => 'رقم الهاتف';
+
+  @override
+  String get editProfileDateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get editProfileAddress => 'العنوان';
+
+  @override
+  String get editProfileGender => 'الجنس';
+
+  @override
+  String get editProfileMale => 'ذكر';
+
+  @override
+  String get editProfileFemale => 'أنثى';
+
+  @override
+  String get editProfileSave => 'حفظ التغييرات';
+
+  @override
+  String get editProfileCancel => 'إلغاء';
+
+  @override
+  String get editProfileNameRequired => 'الاسم مطلوب';
+
+  @override
+  String get editProfileEmailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get editProfileInvalidEmail => 'البريد الإلكتروني غير صالح';
+
+  @override
+  String get accountGender => 'الجنس';
+
+  @override
+  String get accountGenderMale => 'ذكر';
+
+  @override
+  String get accountGenderFemale => 'أنثى';
+
+  @override
+  String get editProfileFirstName => 'الاسم الأول';
+
+  @override
+  String get editProfileLastName => 'اسم العائلة';
+
+  @override
+  String get editProfileUsername => 'اسم المستخدم';
+
+  @override
+  String get editProfileChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get editProfileCurrentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get editProfileNewPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get editProfileRequired => 'هذا الحقل مطلوب.';
+
+  @override
+  String get editProfileUsernameRequired => 'اسم المستخدم مطلوب.';
+
+  @override
+  String get editProfileEmailRequiredMessage => 'البريد الإلكتروني مطلوب.';
+
+  @override
+  String get editProfileInvalidEmailMessage => 'البريد الإلكتروني غير صالح.';
+
+  @override
+  String get editProfilePhoneRequired => 'رقم الهاتف مطلوب.';
+
+  @override
+  String get editProfileCurrentPasswordRequired => 'كلمة المرور الحالية مطلوبة.';
+
+  @override
+  String get editProfileNewPasswordRequired => 'كلمة المرور الجديدة مطلوبة.';
+
+  @override
+  String get editProfilePasswordTooShort => 'يجب أن تكون كلمة المرور الجديدة 6 أحرف على الأقل.';
+
+  @override
+  String get editProfilePasswordSameAsCurrent => 'يجب أن تكون كلمة المرور الجديدة مختلفة عن الحالية.';
+
+  @override
+  String get editProfileInvalidOwnerProject => 'معرّف التطبيق غير صالح.';
+
+  @override
+  String get editProfileEmailVerified => 'تم تأكيد البريد الإلكتروني بنجاح.';
+
+  @override
+  String get editProfilePasswordUpdated => 'تم تحديث كلمة المرور بنجاح.';
+
+  @override
+  String get editProfileOnlyLetters => 'يسمح فقط بالأحرف والمسافات.';
+
+  @override
+  String get editProfileVerifyNewEmail => 'تأكيد البريد الإلكتروني الجديد';
+
+  @override
+  String get editProfileVerifyPasswordChange => 'تأكيد تغيير كلمة المرور';
+
+  @override
+  String get editProfileCodeSentTo => 'تم إرسال الرمز إلى';
+
+  @override
+  String get editProfileVerificationCode => 'رمز التحقق';
+
+  @override
+  String get editProfileResend => 'إعادة الإرسال';
+
+  @override
+  String get editProfileVerify => 'تحقق';
+
+  @override
+  String get editProfileCodeRequired => 'رمز التحقق مطلوب.';
 }

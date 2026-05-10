@@ -8,17 +8,14 @@ abstract class MemberAccountState extends Equatable {
   List<Object?> get props => [];
 }
 
-// Default state before any load.
 class MemberAccountInitial extends MemberAccountState {
   const MemberAccountInitial();
 }
 
-// Emitted while GET /api/member/account is in flight.
 class MemberAccountLoading extends MemberAccountState {
   const MemberAccountLoading();
 }
 
-// Emitted on successful load — drives all widgets.
 class MemberAccountLoaded extends MemberAccountState {
   final MemberAccountEntity account;
 
@@ -28,7 +25,6 @@ class MemberAccountLoaded extends MemberAccountState {
   List<Object?> get props => [account];
 }
 
-// Emitted on network or server error — shows retry.
 class MemberAccountError extends MemberAccountState {
   final String message;
 
@@ -38,17 +34,15 @@ class MemberAccountError extends MemberAccountState {
   List<Object?> get props => [message];
 }
 
-// Emitted while PATCH is in flight — disables save button.
 class ProfileUpdateLoading extends MemberAccountState {
   const ProfileUpdateLoading();
 }
 
-// Emitted after successful update — triggers snackbar and refreshes data.
 class ProfileUpdateSuccess extends MemberAccountState {
   const ProfileUpdateSuccess();
 }
 
-// Emitted on 409 phone conflict or other errors — shows inline error.
+// Emitted when Gym profile update fails.
 class ProfileUpdateError extends MemberAccountState {
   final String message;
 

@@ -345,20 +345,65 @@ class _AuthGateState extends State<AuthGate> {
     // Dismissed → show login
     _goLogin();
   }
+  /// Ensures user id exists in secure storage before entering the user app.
+  ///
+  /// After hot restart, AuthGate may hydrate from an existing token.
+  /// The Build4All profile feature needs auth_user_id to call:
+  /// GET /api/users/{userId}
+  ///
+  /// If auth_user_id is missing, we recover it from JWT claims.
+  Future<bool> _ensureUserIdForHydration(String rawJwt) async {
+    final existingUserId = await _userStore.getUserId();
+    if (existingUserId > 0) return true;
+
+    final claims = JwtUtils.decode(rawJwt);
+    if (claims == null) {
+      debugPrint('[AuthGate] Cannot decode user token');
+      return false;
+    }
+
+    final rawId = claims['id'] ?? claims['userId'] ?? claims['sub'];
+    final userId = rawId is int
+        ? rawId
+        : int.tryParse(rawId?.toString() ?? '');
+
+    if (userId == null || userId <= 0) {
+      debugPrint('[AuthGate] Missing user id in token claims');
+      return false;
+    }
+
+    await _userStore.saveUserId(userId);
+
+    await _userStore.saveUserJson({
+      'id': userId,
+      'email': claims['email'],
+      'username': claims['username'],
+    });
+
+    debugPrint('[AuthGate] Recovered auth_user_id from JWT: $userId');
+    return true;
+  }
 
   /// Hydrate the AuthBloc with the saved user token and navigate to MainShell.
   Future<void> _hydrateUserAndGo(String rawJwt) async {
     if (!mounted) return;
 
+    final ok = await _ensureUserIdForHydration(rawJwt);
+
+    if (!ok) {
+      debugPrint('[AuthGate] User hydration failed → clearing user auth');
+      await _userStore.clear();
+      await _roleStore.clear();
+      _goLogin();
+      return;
+    }
+
     g.setAuthToken(rawJwt);
 
-    // Tell the BLoC the user is already logged in
-    // MainShell will start realtime on its own initState
-    final role  = await _roleStore.getRole();
     context.read<AuthBloc>().add(
       AuthLoginHydrated(
-        user:        null, // user entity loaded lazily by MainShell
-        token:       rawJwt,
+        user: null,
+        token: rawJwt,
         wasInactive: false,
         role: 'user',
       ),
