@@ -2152,6 +2152,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking selected: {date} at {time}'**
   String ptBookingSelected(String date, String time);
+
+  /// No description provided for @ptBookingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking summary'**
+  String get ptBookingSummary;
+
+  /// No description provided for @ptBookingTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer:'**
+  String get ptBookingTrainer;
+
+  /// No description provided for @ptBookingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date:'**
+  String get ptBookingDate;
+
+  /// No description provided for @ptBookingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time:'**
+  String get ptBookingTime;
+
+  /// No description provided for @ptBookingTotalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total amount:'**
+  String get ptBookingTotalAmount;
+
+  /// No description provided for @ptBookingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed successfully.'**
+  String get ptBookingSuccess;
+
+  /// No description provided for @ptSlotAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'You already booked this time slot.'**
+  String get ptSlotAlreadyBooked;
+
+  /// No description provided for @ptPackageChoosePackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose package'**
+  String get ptPackageChoosePackage;
+
+  /// No description provided for @ptPackageChooseDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose days'**
+  String get ptPackageChooseDays;
+
+  /// No description provided for @ptPackageChooseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose time'**
+  String get ptPackageChooseTime;
+
+  /// No description provided for @ptPackageBookingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking summary'**
+  String get ptPackageBookingSummary;
+
+  /// No description provided for @ptPackageConfirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm booking'**
+  String get ptPackageConfirmBooking;
+
+  /// No description provided for @ptPackageBookingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Package booking confirmed successfully.'**
+  String get ptPackageBookingSuccess;
+
+  /// No description provided for @ptPackageBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not confirm package booking.'**
+  String get ptPackageBookingFailed;
+
+  /// No description provided for @ptPackageNoPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No packages available right now'**
+  String get ptPackageNoPackages;
+
+  /// No description provided for @ptPackageSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'sessions'**
+  String get ptPackageSessions;
+
+  /// No description provided for @ptPackageDays.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get ptPackageDays;
+
+  /// No description provided for @ptPackageFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price'**
+  String get ptPackageFinalPrice;
+
+  /// No description provided for @ptPackageOriginalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Original price'**
+  String get ptPackageOriginalPrice;
+
+  /// No description provided for @ptPackageSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get ptPackageSalePrice;
+
+  /// No description provided for @ptPackageSelectedPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected package'**
+  String get ptPackageSelectedPackage;
+
+  /// No description provided for @ptPackageSelectedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected days'**
+  String get ptPackageSelectedDays;
+
+  /// No description provided for @ptPackageSelectedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected time'**
+  String get ptPackageSelectedTime;
+
+  /// No description provided for @ptPackageMaxSessionsReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot select more days than the package sessions'**
+  String get ptPackageMaxSessionsReached;
+
+  /// No description provided for @ptPackageDaysPerWeekRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {min} to {max} days per week'**
+  String ptPackageDaysPerWeekRange(int min, int max);
+
+  /// No description provided for @ptPackageDaysPerWeekExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {count} day(s) per week'**
+  String ptPackageDaysPerWeekExact(int count);
+
+  /// No description provided for @ptPackageMaxDaysReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot select more than {max} days per week'**
+  String ptPackageMaxDaysReached(int max);
+
+  /// No description provided for @ptPackageNoAvailableSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No available times'**
+  String get ptPackageNoAvailableSlots;
+
+  /// No description provided for @ptWeeklySlotsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load available times'**
+  String get ptWeeklySlotsFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

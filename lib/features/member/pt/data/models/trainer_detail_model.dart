@@ -1,6 +1,14 @@
 import '../../domain/entities/trainer_detail_entity.dart';
 import 'trainer_video_model.dart';
+import 'pt_package_model.dart';
 
+/// API model for trainer detail.
+///
+/// This parses:
+/// - trainer profile
+/// - certifications
+/// - assigned videos
+/// - PT packages
 class TrainerDetailModel {
   final int id;
   final String fullName;
@@ -15,6 +23,9 @@ class TrainerDetailModel {
   final List<TrainerVideoModel> assignedVideos;
   final int? branchId;
 
+  /// New backend field.
+  final List<PtPackageModel> packages;
+
   const TrainerDetailModel({
     required this.id,
     required this.fullName,
@@ -28,10 +39,12 @@ class TrainerDetailModel {
     required this.certifications,
     required this.assignedVideos,
     this.branchId,
+    required this.packages,
   });
 
   factory TrainerDetailModel.fromJson(Map<String, dynamic> json) {
     final videosJson = json['assignedVideos'];
+    final packagesJson = json['packages'];
 
     return TrainerDetailModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
@@ -45,7 +58,9 @@ class TrainerDetailModel {
       isFavorite: json['isFavorite'] as bool? ??
           json['favorite'] as bool? ??
           false,
+
       certifications: List<String>.from(json['certifications'] ?? []),
+
       assignedVideos: videosJson is List
           ? videosJson
           .map(
@@ -55,9 +70,20 @@ class TrainerDetailModel {
       )
           .toList()
           : const [],
+
       branchId: json['branchId'] != null
           ? (json['branchId'] as num).toInt()
           : null,
+
+      packages: packagesJson is List
+          ? packagesJson
+          .map(
+            (item) => PtPackageModel.fromJson(
+          item as Map<String, dynamic>,
+        ),
+      )
+          .toList()
+          : const [],
     );
   }
 
@@ -75,6 +101,7 @@ class TrainerDetailModel {
       'certifications': certifications,
       'assignedVideos': assignedVideos.map((video) => video.toJson()).toList(),
       'branchId': branchId,
+      'packages': packages.map((ptPackage) => ptPackage.toJson()).toList(),
     };
   }
 
@@ -92,6 +119,7 @@ class TrainerDetailModel {
       certifications: certifications,
       assignedVideos: assignedVideos.map((video) => video.toEntity()).toList(),
       branchId: branchId,
+      packages: packages.map((ptPackage) => ptPackage.toEntity()).toList(),
     );
   }
 }

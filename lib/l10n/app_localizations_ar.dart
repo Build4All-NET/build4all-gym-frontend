@@ -1070,4 +1070,97 @@ class AppLocalizationsAr extends AppLocalizations {
   String ptBookingSelected(String date, String time) {
     return 'تم اختيار الحجز: $date الساعة $time';
   }
+
+  @override
+  String get ptBookingSummary => 'ملخص الحجز';
+
+  @override
+  String get ptBookingTrainer => 'المدرب:';
+
+  @override
+  String get ptBookingDate => 'التاريخ:';
+
+  @override
+  String get ptBookingTime => 'الوقت:';
+
+  @override
+  String get ptBookingTotalAmount => 'المبلغ الإجمالي:';
+
+  @override
+  String get ptBookingSuccess => 'تم تأكيد الحجز بنجاح.';
+
+  @override
+  String get ptSlotAlreadyBooked => 'لقد حجزت هذا الموعد مسبقاً.';
+
+  @override
+  String get ptPackageChoosePackage => 'اختر الباقة';
+
+  @override
+  String get ptPackageChooseDays => 'اختر الأيام';
+
+  @override
+  String get ptPackageChooseTime => 'اختر الوقت';
+
+  @override
+  String get ptPackageBookingSummary => 'ملخص الحجز';
+
+  @override
+  String get ptPackageConfirmBooking => 'تأكيد الحجز';
+
+  @override
+  String get ptPackageBookingSuccess => 'تم تأكيد حجز الباقة بنجاح.';
+
+  @override
+  String get ptPackageBookingFailed => 'تعذر تأكيد حجز الباقة.';
+
+  @override
+  String get ptPackageNoPackages => 'لا توجد باقات متاحة حالياً';
+
+  @override
+  String get ptPackageSessions => 'جلسات';
+
+  @override
+  String get ptPackageDays => 'أيام';
+
+  @override
+  String get ptPackageFinalPrice => 'السعر النهائي';
+
+  @override
+  String get ptPackageOriginalPrice => 'السعر الأصلي';
+
+  @override
+  String get ptPackageSalePrice => 'سعر الخصم';
+
+  @override
+  String get ptPackageSelectedPackage => 'الباقة المختارة';
+
+  @override
+  String get ptPackageSelectedDays => 'الأيام المختارة';
+
+  @override
+  String get ptPackageSelectedTime => 'الوقت المختار';
+
+  @override
+  String get ptPackageMaxSessionsReached => 'لا يمكنك اختيار أيام أكثر من عدد جلسات الباقة';
+
+  @override
+  String ptPackageDaysPerWeekRange(int min, int max) {
+    return 'Choose $min to $max days per week';
+  }
+
+  @override
+  String ptPackageDaysPerWeekExact(int count) {
+    return 'Choose $count day(s) per week';
+  }
+
+  @override
+  String ptPackageMaxDaysReached(int max) {
+    return 'You cannot select more than $max days per week';
+  }
+
+  @override
+  String get ptPackageNoAvailableSlots => 'لا توجد أوقات متاحة';
+
+  @override
+  String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
 }

@@ -1,5 +1,9 @@
 import 'trainer_video_entity.dart';
+import 'pt_package_entity.dart';
 
+/// Domain entity for trainer detail.
+///
+/// Used by the UI. No JSON parsing here.
 class TrainerDetailEntity {
   final int id;
   final String fullName;
@@ -14,6 +18,9 @@ class TrainerDetailEntity {
   final List<TrainerVideoEntity> assignedVideos;
   final int? branchId;
 
+  /// New Figma design needs trainer packages.
+  final List<PtPackageEntity> packages;
+
   const TrainerDetailEntity({
     required this.id,
     required this.fullName,
@@ -27,6 +34,7 @@ class TrainerDetailEntity {
     required this.certifications,
     required this.assignedVideos,
     this.branchId,
+    required this.packages,
   });
 
   TrainerDetailEntity copyWith({
@@ -42,6 +50,7 @@ class TrainerDetailEntity {
     List<String>? certifications,
     List<TrainerVideoEntity>? assignedVideos,
     int? branchId,
+    List<PtPackageEntity>? packages,
   }) {
     return TrainerDetailEntity(
       id: id ?? this.id,
@@ -56,6 +65,7 @@ class TrainerDetailEntity {
       certifications: certifications ?? this.certifications,
       assignedVideos: assignedVideos ?? this.assignedVideos,
       branchId: branchId ?? this.branchId,
+      packages: packages ?? this.packages,
     );
   }
 }

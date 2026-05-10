@@ -755,5 +755,54 @@
       "date": { "type": "String" },
       "time": { "type": "String" }
     }
-  }
+  },
+  "ptBookingSummary": "ملخص الحجز",
+  "ptBookingTrainer": "المدرب:",
+  "ptBookingDate": "التاريخ:",
+  "ptBookingTime": "الوقت:",
+  "ptBookingTotalAmount": "المبلغ الإجمالي:",
+  "ptBookingSuccess": "تم تأكيد الحجز بنجاح.",
+  "ptSlotAlreadyBooked": "لقد حجزت هذا الموعد مسبقاً.",
+  "ptPackageChoosePackage": "اختر الباقة",
+  "ptPackageChooseDays": "اختر الأيام",
+  "ptPackageChooseTime": "اختر الوقت",
+  "ptPackageBookingSummary": "ملخص الحجز",
+  "ptPackageConfirmBooking": "تأكيد الحجز",
+  "ptPackageBookingSuccess": "تم تأكيد حجز الباقة بنجاح.",
+  "ptPackageBookingFailed": "تعذر تأكيد حجز الباقة.",
+  "ptPackageNoPackages": "لا توجد باقات متاحة حالياً",
+  "ptPackageSessions": "جلسات",
+  "ptPackageDays": "أيام",
+  "ptPackageFinalPrice": "السعر النهائي",
+  "ptPackageOriginalPrice": "السعر الأصلي",
+  "ptPackageSalePrice": "سعر الخصم",
+  "ptPackageSelectedPackage": "الباقة المختارة",
+  "ptPackageSelectedDays": "الأيام المختارة",
+  "ptPackageSelectedTime": "الوقت المختار",
+  "ptPackageMaxSessionsReached": "لا يمكنك اختيار أيام أكثر من عدد جلسات الباقة",
+  "ptPackageDaysPerWeekRange": "Choose {min} to {max} days per week",
+  "@ptPackageDaysPerWeekRange": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+
+  "ptPackageDaysPerWeekExact": "Choose {count} day(s) per week",
+  "@ptPackageDaysPerWeekExact": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "ptPackageMaxDaysReached": "You cannot select more than {max} days per week",
+  "@ptPackageMaxDaysReached": {
+    "placeholders": {
+      "max": { "type": "int" }
+    }
+  },
+  "ptPackageNoAvailableSlots": "لا توجد أوقات متاحة",
+  "ptWeeklySlotsFailed": "تعذر تحميل الأوقات المتاحة"
+
 }
+
