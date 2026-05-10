@@ -1,12 +1,12 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/data/services/trainer_pt_sessions_service.dart
+// FILE: lib/features/admin/pt_dashboard/data/services/trainer_pt_sessions_service.dart
 // LAYER: Data — HTTP calls only, no domain logic
 //
 // Endpoints:
-//   GET    /api/trainer/pt-sessions?branchId=&date=      → session list
-//   GET    /api/trainer/pt-sessions/stats?branchId=&date=→ stats cards
-//   POST   /api/trainer/pt-sessions                      → create session
-//   PATCH  /api/trainer/pt-sessions/{id}/status          → update status
+//   GET    /api/trainer/pt-sessions?branchId=&date=       → session list
+//   GET    /api/trainer/pt-sessions/stats?branchId=&date= → stats cards
+//   POST   /api/trainer/pt-sessions                       → create session
+//   PATCH  /api/trainer/pt-sessions/{id}/status           → update status
 //
 // Auth: JWT from FlutterSecureStorage via _authHeaders().
 // =============================================================================
@@ -30,7 +30,7 @@ class TrainerPtSessionsService {
 
   static final _dateFmt = DateFormat('yyyy-MM-dd');
 
-  // ── Auth headers ────────────────────────────────────────────────────────────
+  // ── Auth headers ─────────────────────────────────────────────────────────
 
   Future<Map<String, String>> _authHeaders() async {
     final token = await _storage.read(key: 'jwt_token');
@@ -40,22 +40,22 @@ class TrainerPtSessionsService {
     };
   }
 
-  // ── Response body decoder ───────────────────────────────────────────────────
+  // ── Response body decoder ─────────────────────────────────────────────────
 
-  String _decodeBody(http.Response response) {
-    return utf8.decode(response.bodyBytes);
-  }
+  String _decodeBody(http.Response response) =>
+      utf8.decode(response.bodyBytes);
 
-  // ── Shared error handler ────────────────────────────────────────────────────
+  // ── Shared error handler ──────────────────────────────────────────────────
+  // Always throws — callers don't need to rethrow after calling this.
 
-  void _handleError(http.Response response) {
+  Never _handleError(http.Response response) {
     final body = _decodeBody(response);
     if (response.statusCode == 401) throw UnauthorizedException();
     if (response.statusCode == 403) throw ForbiddenException();
     throw ServerException(message: body);
   }
 
-  // ── GET sessions by date ────────────────────────────────────────────────────
+  // ── GET sessions by date ──────────────────────────────────────────────────
 
   Future<List<PtSessionModel>> getSessionsByDate({
     required int branchId,
@@ -69,19 +69,16 @@ class TrainerPtSessionsService {
 
     try {
       final response = await http.get(uri, headers: headers);
-      final body = _decodeBody(response);
-
       debugPrint('GET SESSIONS STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final decoded = jsonDecode(body) as Map<String, dynamic>;
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
         final data = decoded['data'] as List<dynamic>;
         return data
             .map((e) => PtSessionModel.fromJson(e as Map<String, dynamic>))
             .toList();
       }
       _handleError(response);
-      return [];
     } catch (e) {
       if (e is UnauthorizedException ||
           e is ForbiddenException ||
@@ -90,7 +87,7 @@ class TrainerPtSessionsService {
     }
   }
 
-  // ── GET stats by date ───────────────────────────────────────────────────────
+  // ── GET stats by date ─────────────────────────────────────────────────────
 
   Future<PtSessionStatsModel> getStatsByDate({
     required int branchId,
@@ -104,18 +101,15 @@ class TrainerPtSessionsService {
 
     try {
       final response = await http.get(uri, headers: headers);
-      final body = _decodeBody(response);
-
       debugPrint('GET STATS STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final decoded = jsonDecode(body) as Map<String, dynamic>;
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
         return PtSessionStatsModel.fromJson(
           decoded['data'] as Map<String, dynamic>,
         );
       }
       _handleError(response);
-      rethrow;
     } catch (e) {
       if (e is UnauthorizedException ||
           e is ForbiddenException ||
@@ -124,7 +118,7 @@ class TrainerPtSessionsService {
     }
   }
 
-  // ── POST create session ─────────────────────────────────────────────────────
+  // ── POST create session ───────────────────────────────────────────────────
 
   Future<PtSessionModel> createSession(Map<String, dynamic> body) async {
     final headers = await _authHeaders();
@@ -136,18 +130,16 @@ class TrainerPtSessionsService {
         headers: headers,
         body: jsonEncode(body),
       );
-      final responseBody = _decodeBody(response);
-
       debugPrint('CREATE SESSION STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final decoded = jsonDecode(responseBody) as Map<String, dynamic>;
+        final decoded =
+            jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
         return PtSessionModel.fromJson(
           decoded['data'] as Map<String, dynamic>,
         );
       }
       _handleError(response);
-      rethrow;
     } catch (e) {
       if (e is UnauthorizedException ||
           e is ForbiddenException ||
@@ -156,7 +148,7 @@ class TrainerPtSessionsService {
     }
   }
 
-  // ── PATCH update status ─────────────────────────────────────────────────────
+  // ── PATCH update status ───────────────────────────────────────────────────
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {
     final headers = await _authHeaders();
@@ -170,18 +162,16 @@ class TrainerPtSessionsService {
         headers: headers,
         body: jsonEncode({'status': status}),
       );
-      final responseBody = _decodeBody(response);
-
-      debugPrint('UPDATE STATUS STATUS: ${response.statusCode}');
+      debugPrint('UPDATE STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final decoded = jsonDecode(responseBody) as Map<String, dynamic>;
+        final decoded =
+            jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
         return PtSessionModel.fromJson(
           decoded['data'] as Map<String, dynamic>,
         );
       }
       _handleError(response);
-      rethrow;
     } catch (e) {
       if (e is UnauthorizedException ||
           e is ForbiddenException ||
