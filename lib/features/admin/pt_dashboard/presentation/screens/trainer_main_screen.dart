@@ -1,32 +1,31 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/screens/trainer_main_screen.dart
+// FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart
 //
-// DESIGN: Bottom navigation shell for the trainer-side app.
+// Bottom navigation shell for the trainer-side (PT) app.
 //
-// Tabs (matching screenshots 8, 10):
-//   0 — Dashboard  (Images 1-2)
-//   1 — Sessions   (Image 12)
-//   2 — Packages   (Images 3-7)
-//   3 — Schedule   (Images 8-9)
-//   4 — More / Services (Images 10-11)
+// Tabs:
+//   0  Dashboard   — TrainerDashboardScreen
+//   1  Sessions    — TrainerPtSessionsScreen
+//   2  Packages    — TrainerPackagesScreen
+//   3  Schedule    — TrainerScheduleScreen
+//   4  More        — TrainerServicesScreen
 //
-// Navigation contract:
-//   - The BLoC is provided here so ALL tabs share the same instance.
-//   - Quick actions on the Dashboard call [_switchTab] to jump to the
-//     relevant tab — the user can always return by tapping the tab bar.
-//   - IndexedStack keeps each tab alive (no rebuild on tab switch).
+// BLoC contract:
+//   TrainerPtSessionsBloc is provided HERE so all 5 tabs share the same
+//   instance. IndexedStack keeps every tab alive (no rebuild on tab switch).
 // =============================================================================
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+
 import '../../data/repositories/trainer_pt_sessions_repository_impl.dart';
 import '../../data/services/trainer_pt_sessions_service.dart';
 import '../../domain/usecases/trainer_pt_sessions_usecases.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../bloc/trainer_pt_sessions_event.dart';
-import '../widgets/book_session_sheet_widget.dart';
 
 import 'trainer_dashboard_screen.dart';
 import 'trainer_packages_screen.dart';
@@ -35,7 +34,7 @@ import 'trainer_schedule_screen.dart';
 import 'trainer_services_screen.dart';
 
 class TrainerMainScreen extends StatefulWidget {
-  /// Optional initial tab index.  Useful when deep-linking into a specific tab.
+  /// Optional initial tab index. Useful when deep-linking into a specific tab.
   final int initialIndex;
 
   const TrainerMainScreen({super.key, this.initialIndex = 0});
@@ -58,8 +57,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     setState(() => _currentIndex = index);
   }
 
-  // ── Bottom nav items ────────────────────────────────────────────────────────
-
+  // ── Bottom nav tab definitions ─────────────────────────────────────────────
   static const _navItems = <_NavItem>[
     _NavItem(icon: Icons.grid_view_rounded,      label: 'Dashboard'),
     _NavItem(icon: Icons.calendar_today_rounded, label: 'Sessions'),
@@ -70,6 +68,14 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    //      AdminProfileCubit.state.branchId holds the tenant/branch ID that was
+    //      stored at login by AdminTokenStore (from the auth response).
+    //      We fall back to 1 only if the token did not carry a branchId claim,
+    //      which should never happen in production.
+    final profile  = context.read<AdminProfileCubit>().state;
+    final branchId = profile.branchId ?? 1;
+
     final service    = TrainerPtSessionsService();
     final repository = TrainerPtSessionsRepositoryImpl(service: service);
 
@@ -79,7 +85,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
         getStats:      GetSessionStatsUseCase(repository),
         createSession: CreateSessionUseCase(repository),
         updateStatus:  UpdateSessionStatusUseCase(repository),
-      )..add(const PtSessionsStarted(branchId: 1)), // TODO: real branchId
+      )..add(PtSessionsStarted(branchId: branchId)), //  real branchId
       child: _MainShell(
         currentIndex: _currentIndex,
         onTabSwitch:  _switchTab,
@@ -89,12 +95,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   }
 }
 
-// ── Shell (receives BLoC from above) ─────────────────────────────────────────
+// ── Shell widget (receives BLoC from above via context) ───────────────────────
 
 class _MainShell extends StatelessWidget {
-  final int currentIndex;
+  final int              currentIndex;
   final ValueChanged<int> onTabSwitch;
-  final List<_NavItem> navItems;
+  final List<_NavItem>   navItems;
 
   const _MainShell({
     required this.currentIndex,
@@ -106,86 +112,66 @@ class _MainShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
 
-    // Build tab bodies — passing onTabSwitch where navigation is needed.
+    // Each tab is built once and kept alive by IndexedStack.
     final bodies = <Widget>[
-      // 0: Dashboard — receives callback so quick actions can switch tabs.
+      // Tab 0: Dashboard — receives onTabSwitch so quick actions switch tabs.
       TrainerDashboardScreen(onTabSwitch: onTabSwitch),
-
-      // 1: Sessions — standalone, Book Session sheet opens from AppBar.
+      // Tab 1: Sessions
       const TrainerPtSessionsScreen(),
-
-      // 2: Packages
+      // Tab 2: Packages
       const TrainerPackagesScreen(),
-
-      // 3: Schedule
+      // Tab 3: Schedule
       const TrainerScheduleScreen(),
-
-      // 4: More / Services
+      // Tab 4: More / Services
       const TrainerServicesScreen(),
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
-      // IndexedStack keeps all tabs alive to preserve scroll position / state.
+      backgroundColor: cs.background,
+      // IndexedStack preserves scroll position and BLoC state across tab switches
       body: IndexedStack(
         index: currentIndex,
         children: bodies,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cs.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color:     Colors.black.withOpacity(0.08),
               blurRadius: 12,
-              offset: const Offset(0, -3),
+              offset:    const Offset(0, -4),
             ),
           ],
         ),
         child: SafeArea(
+          top: false,
           child: SizedBox(
-            height: 64,
+            height: 60,
             child: Row(
               children: List.generate(navItems.length, (i) {
-                final selected = i == currentIndex;
-                final item     = navItems[i];
+                final isActive = i == currentIndex;
                 return Expanded(
-                  child: InkWell(
-                    onTap: () => onTabSwitch(i),
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
+                  child: GestureDetector(
+                    onTap:     () => onTabSwitch(i),
+                    behavior:  HitTestBehavior.opaque,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: selected
-                                ? const Color(0xFF4F46E5).withOpacity(0.1)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            item.icon,
-                            size: 22,
-                            color: selected
-                                ? const Color(0xFF4F46E5)
-                                : const Color(0xFF9CA3AF),
-                          ),
+                        Icon(
+                          navItems[i].icon,
+                          size:  22,
+                          color: isActive ? cs.primary : cs.muted,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 3),
                         Text(
-                          item.label,
+                          navItems[i].label,
                           style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: selected
-                                ? FontWeight.w600
+                            fontSize:   10,
+                            fontWeight: isActive
+                                ? FontWeight.w700
                                 : FontWeight.w400,
-                            color: selected
-                                ? const Color(0xFF4F46E5)
-                                : const Color(0xFF9CA3AF),
+                            color: isActive ? cs.primary : cs.muted,
                           ),
                         ),
                       ],
@@ -201,10 +187,9 @@ class _MainShell extends StatelessWidget {
   }
 }
 
-// ── Nav item data ─────────────────────────────────────────────────────────────
-
+// ── Simple data class for nav tab definitions ─────────────────────────────────
 class _NavItem {
   final IconData icon;
-  final String label;
+  final String   label;
   const _NavItem({required this.icon, required this.label});
 }
