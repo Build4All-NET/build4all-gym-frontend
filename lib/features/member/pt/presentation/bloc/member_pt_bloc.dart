@@ -49,7 +49,7 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       ) async {
     emit(const TrainersLoading());
 
-    // Call both use cases concurrently.
+    // Call both usecases concurrently.
     final results = await Future.wait([
       _getFilterOptionsUseCase(),
       _getTrainersUseCase(

@@ -18,10 +18,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../../../core/config/env.dart';
-import '../../../../../core/exceptions/server_exception.dart';
-import '../../../../../core/exceptions/unauthorized_exception.dart';
-import '../../../../../core/exceptions/forbidden_exception.dart';
-import '../../../../../core/exceptions/network_exception.dart';
+import '../../../../../core/exceptions/server_exception.dart' hide ServerException;
+import '../../../../../core/error/exceptions.dart';
+import '../../../../../core/exceptions/forbidden_exception.dart' hide ForbiddenException;
+import '../../../../../core/exceptions/network_exception.dart' hide NetworkException;
 import '../models/pt_session_model.dart';
 import '../models/pt_session_stats_model.dart';
 

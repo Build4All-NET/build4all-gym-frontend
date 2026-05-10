@@ -9,6 +9,13 @@ import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
 import '../core/network/globals.dart';
 import '../features/admin/AppBar/presentation/branch_cubit.dart';
+import '../features/admin/ai_assistant/data/repositories/ai_assistant_repository_impl.dart';
+import '../features/admin/ai_assistant/data/services/ai_assistant_remote_service.dart';
+import '../features/admin/ai_assistant/domain/usecases/get_recent_queries_usecase.dart';
+import '../features/admin/ai_assistant/domain/usecases/get_suggested_questions_usecase.dart';
+import '../features/admin/ai_assistant/domain/usecases/send_ai_query_usecase.dart';
+import '../features/admin/ai_assistant/presentation/bloc/ai_assistant_bloc.dart';
+import '../features/admin/ai_assistant/presentation/screens/ai_assistant_screen.dart';
 import '../features/admin/branches/presentation/bloc/branches_event.dart';
 import '../features/admin/branches/presentation/screens/branches_list_page.dart';
 import '../features/admin/classes/data/repositories/admin_classes_repository_impl.dart';
@@ -121,7 +128,7 @@ class AppRouter {
   static const String adminPlans      = '/admin/plans';
   static const String adminTrainers   = '/admin/trainers';
   static const String adminStaff      = '/admin/staff';
-  static const String adminGymProfile = '/admin/gym-profile';
+  static const String adminAiAssistant = '/admin/ai_assistant';
   static const String adminBranches   = '/admin/branches';
 
   // ─── Admin: Operations / Reception ────────────────────────────────────────
@@ -342,10 +349,25 @@ class AppRouter {
 
     // ── Admin: Gym Profile ─────────────────────────────────────────────────
 
-      case adminGymProfile:
+      case adminAiAssistant:
+        final aiRepo = AiAssistantRepositoryImpl(
+          service: AiAssistantRemoteService(),
+        );
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            const _ComingSoonScreen(title: 'Gym Profile'),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => AiAssistantBloc(
+                    sendAiQueryUseCase:           SendAiQueryUseCase(aiRepo),
+                    getSuggestedQuestionsUseCase: GetSuggestedQuestionsUseCase(aiRepo),
+                    getRecentQueriesUseCase:      GetRecentQueriesUseCase(aiRepo),
+                  )..add(const AiAssistantStarted()),
+                ),
+              ],
+              child: const AiAssistantScreen(),
+            ),
           ),
         );
 
