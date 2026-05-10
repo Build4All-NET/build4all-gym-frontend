@@ -75,6 +75,7 @@ import '../features/admin/dashboard/presentation/bloc/admin_dashboard_event.dart
 import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart';
 
 import '../features/shell/presentation/screens/main_shell.dart';
+import '../features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart';
 
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
@@ -451,7 +452,7 @@ class AppRouter {
       case adminPtSessions:
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            const _ComingSoonScreen(title: 'PT Sessions'),
+            const TrainerMainScreen(),
           ),
         );
 

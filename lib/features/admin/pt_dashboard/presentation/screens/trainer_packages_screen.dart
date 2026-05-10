@@ -17,10 +17,13 @@
 //       Currently uses stub data for the package list.
 // =============================================================================
 
+import 'package:build4allgym/features/admin/pt_dashboard/data/models/pt_package_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../data/services/pt_package_service.dart';
+import '../bloc/pt_package_bloc.dart';
 
 class TrainerPackagesScreen extends StatefulWidget {
   const TrainerPackagesScreen({super.key});
@@ -30,31 +33,27 @@ class TrainerPackagesScreen extends StatefulWidget {
 }
 
 class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
+  late final PtPackageBloc _bloc;
   // Stub packages — replace with real BLoC data.
-  final _packages = const [
-    _PackageData(
-      name: 'Weight Loss Package',
-      description: 'Complete weight loss transformation program',
-      sessions: 16,
-      minDays: 1,
-      maxDays: 2,
-      validityDays: 112,
-      regularPrice: 640,
-      salePrice: 500,
-      isActive: true,
-    ),
-    _PackageData(
-      name: 'Strength Builder',
-      description: 'Advanced strength and muscle building',
-      sessions: 24,
-      minDays: 2,
-      maxDays: 3,
-      validityDays: 84,
-      regularPrice: 800,
-      salePrice: null,
-      isActive: true,
-    ),
-  ];
+
+  // Replace _packages list with:
+  int get _trainerId => /* read from auth/session storage */;
+  int get _tenantId  => /* read from auth/session storage */;
+  int get _branchId  => /* read from auth/session storage */;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = PtPackageBloc(PtPackageService());
+    _bloc.add(LoadPackages(trainerId: _trainerId, tenantId: _tenantId, branchId: _branchId));
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +100,32 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _packages.length,
-        itemBuilder: (_, i) =>
-            _PackageCard(pkg: _packages[i]),
+      body: BlocConsumer<PtPackageBloc, PtPackageState>(
+        bloc: _bloc,
+        listener: (context, state) {
+          if (state is PtPackageMutated) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('✅ Package saved.'), backgroundColor: Color(0xFF22C55E)),
+            );
+            _bloc.add(LoadPackages(trainerId: _trainerId, tenantId: _tenantId, branchId: _branchId));
+          }
+          if (state is PtPackageError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${state.message}'), backgroundColor: Colors.red),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is PtPackageLoading) return const Center(child: CircularProgressIndicator());
+          if (state is PtPackageLoaded) {
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: state.packages.length,
+              itemBuilder: (_, i) => _PackageCard(pkg: state.packages[i], bloc: _bloc),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -143,8 +163,9 @@ class _PackageData {
 // ── Package card ──────────────────────────────────────────────────────────────
 
 class _PackageCard extends StatelessWidget {
-  final _PackageData pkg;
-  const _PackageCard({super.key, required this.pkg});
+  final PtPackageModel pkg;
+  final PtPackageBloc bloc;
+  const _PackageCard({super.key, required this.pkg, required this.bloc});
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +215,7 @@ class _PackageCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        pkg.description,
+                        pkg.packageType,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.8),
                           fontSize: 12,
@@ -203,7 +224,7 @@ class _PackageCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (pkg.isActive)
+                if (pkg.active)
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
@@ -231,21 +252,21 @@ class _PackageCard extends StatelessWidget {
                   children: [
                     _StatChip(
                       icon: Icons.inventory_2_outlined,
-                      value: '${pkg.sessions}',
+                      value: '${pkg.numberOfSessions}',
                       label: 'Sessions',
                       color: const Color(0xFF4F46E5),
                     ),
                     const SizedBox(width: 8),
                     _StatChip(
                       icon: Icons.calendar_today_outlined,
-                      value: '${pkg.minDays}-${pkg.maxDays}',
+                      value: '${pkg.minDaysPerWeek}-${pkg.maxDaysPerWeek}',
                       label: 'Days/Week',
                       color: const Color(0xFF22C55E),
                     ),
                     const SizedBox(width: 8),
                     _StatChip(
                       icon: Icons.access_time_rounded,
-                      value: '${pkg.validityDays}',
+                      value: '${pkg.daysAvailable}',
                       label: 'Days',
                       color: const Color(0xFFF59E0B),
                     ),
@@ -259,7 +280,7 @@ class _PackageCard extends StatelessWidget {
                   children: [
                     if (pkg.salePrice != null) ...[
                       Text(
-                        '\$${pkg.regularPrice.toStringAsFixed(0)}',
+                        '\$${pkg.price.toStringAsFixed(0)}',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[400],
@@ -269,7 +290,7 @@ class _PackageCard extends StatelessWidget {
                       const SizedBox(width: 8),
                     ],
                     Text(
-                      '\$${(pkg.salePrice ?? pkg.regularPrice).toStringAsFixed(0)}',
+                      '\$${(pkg.salePrice ?? pkg.price).toStringAsFixed(0)}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -315,8 +336,8 @@ class _PackageCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '• ${pkg.minDays} day/week → '
-                  '${(pkg.sessions / pkg.minDays).ceil()} weeks',
+                  '• ${pkg.minDaysPerWeek} day/week → '
+                  '${(pkg.numberOfSessions / pkg.minDaysPerWeek).ceil()} weeks',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -324,8 +345,8 @@ class _PackageCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '• ${pkg.maxDays} days/week → '
-                  '${(pkg.sessions / pkg.maxDays).ceil()} weeks',
+                  '• ${pkg.maxDaysPerWeek} days/week → '
+                  '${(pkg.numberOfSessions / pkg.maxDaysPerWeek).ceil()} weeks',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -462,15 +483,25 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
   }
 
   void _submit() {
-    // TODO: dispatch create package event to BLoC.
+    widget.bloc.add(CreatePackage(
+      trainerId: widget.trainerId,
+      tenantId: widget.tenantId,
+      branchId: widget.branchId,
+      data: {
+        'name': _nameCtrl.text.trim(),
+        'packageType': _packageType ?? 'CUSTOM',
+        'ptServiceId': int.tryParse(_linkedService ?? ''),
+        'numberOfSessions': int.tryParse(_totalSessionsCtrl.text) ?? 0,
+        'daysAvailable': int.tryParse(_validityCtrl.text) ?? 0,
+        'minDaysPerWeek': int.tryParse(_minDaysCtrl.text) ?? 1,
+        'maxDaysPerWeek': int.tryParse(_maxDaysCtrl.text) ?? 2,
+        'price': double.tryParse(_regularPriceCtrl.text) ?? 0,
+        if (_salePriceCtrl.text.isNotEmpty)
+          'salePrice': double.tryParse(_salePriceCtrl.text),
+        'active': true,
+      },
+    ));
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('✅ Package created successfully.'),
-        backgroundColor: Color(0xFF22C55E),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override
