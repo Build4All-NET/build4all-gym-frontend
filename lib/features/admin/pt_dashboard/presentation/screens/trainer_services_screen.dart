@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../data/services/pt_service_service.dart';
+import '../bloc/pt_service_bloc.dart';
 
 class TrainerServicesScreen extends StatefulWidget {
   const TrainerServicesScreen({super.key});
@@ -25,40 +27,15 @@ class TrainerServicesScreen extends StatefulWidget {
 class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
   String _activeFilter = 'All';
 
-  // Stub services — replace with real BLoC data.
-  final _services = <_ServiceData>[
-    const _ServiceData(
-      name: 'Personal Training',
-      description: 'One-on-one customized workout sessions',
-      category: 'General',
-      durationMin: 60,
-      price: 50,
-      isActive: true,
-    ),
-    const _ServiceData(
-      name: 'Strength Training',
-      description: 'Focus on building muscle and strength',
-      category: 'Specialized',
-      durationMin: 45,
-      price: 45,
-      isActive: true,
-    ),
-    const _ServiceData(
-      name: 'Weight Loss Program',
-      description: 'Targeted fat burning and cardio sessions',
-      category: 'General',
-      durationMin: 60,
-      price: 55,
-      isActive: true,
-    ),
-  ];
+  late final PtServiceBloc _bloc;
 
-  List<_ServiceData> get _filtered =>
-      _activeFilter == 'All'
-          ? _services
-          : _services
-              .where((s) => s.category == _activeFilter)
-              .toList();
+  @override
+  void initState() {
+    super.initState();
+    _bloc = PtServiceBloc(PtServiceService());
+    _bloc.add(LoadServices(/* tenantId from auth */));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +107,32 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
           ),
 
           // Service list
+
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _filtered.length,
-              itemBuilder: (_, i) =>
-                  _ServiceCard(service: _filtered[i]),
+            child: BlocConsumer<PtServiceBloc, PtServiceState>(
+              bloc: _bloc,
+              listener: (ctx, state) {
+                if (state is PtServiceMutated) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(content: Text('✅ Service saved.'), backgroundColor: Color(0xFF22C55E)),
+                  );
+                  _bloc.add(LoadServices(/* tenantId */));
+                }
+              },
+              builder: (ctx, state) {
+                if (state is PtServiceLoading) return const Center(child: CircularProgressIndicator());
+                if (state is PtServiceLoaded) {
+                  final filtered = _activeFilter == 'All'
+                      ? state.services
+                      : state.services.where((s) => s.description.contains(_activeFilter)).toList();
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filtered.length,
+                    itemBuilder: (_, i) => _ServiceCard(service: filtered[i]),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ),
         ],
@@ -153,25 +150,6 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
   }
 }
 
-// ── Service data model (stub) ─────────────────────────────────────────────────
-
-class _ServiceData {
-  final String name;
-  final String description;
-  final String category;
-  final int durationMin;
-  final double price;
-  final bool isActive;
-
-  const _ServiceData({
-    required this.name,
-    required this.description,
-    required this.category,
-    required this.durationMin,
-    required this.price,
-    required this.isActive,
-  });
-}
 
 // ── Filter chip ───────────────────────────────────────────────────────────────
 
@@ -386,27 +364,17 @@ class _CreateServiceDialogState
 
   void _submit() {
     if (_nameCtrl.text.trim().isEmpty) return;
-
-    widget.onCreated(_ServiceData(
-      name: _nameCtrl.text.trim(),
-      description: _descriptionCtrl.text.trim(),
-      category: _categoryCtrl.text.trim().isEmpty
-          ? 'General'
-          : _categoryCtrl.text.trim(),
-      durationMin:
-          int.tryParse(_durationCtrl.text.trim()) ?? 60,
-      price: double.tryParse(_priceCtrl.text.trim()) ?? 50,
-      isActive: true,
+    widget.bloc.add(CreateService(
+      tenantId: widget.tenantId,
+      data: {
+        'name': _nameCtrl.text.trim(),
+        'description': _descriptionCtrl.text.trim(),
+        'durationMinutes': int.tryParse(_durationCtrl.text) ?? 60,
+        'price': double.tryParse(_priceCtrl.text) ?? 50,
+        'isActive': true,
+      },
     ));
-
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('✅ Service created successfully.'),
-        backgroundColor: Color(0xFF22C55E),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override

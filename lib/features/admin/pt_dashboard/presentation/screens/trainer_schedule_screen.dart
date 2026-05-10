@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../data/models/availability_model.dart';
+import '../bloc/availability_bloc.dart';
 
 class TrainerScheduleScreen extends StatefulWidget {
   const TrainerScheduleScreen({super.key});
@@ -23,21 +25,16 @@ class TrainerScheduleScreen extends StatefulWidget {
 }
 
 class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
-  // Stub availability data — replace with real BLoC data.
-  final _slots = <_AvailabilitySlot>[
-    const _AvailabilitySlot(day: 'Monday', start: '08:00', end: '12:00', recurring: true),
-    const _AvailabilitySlot(day: 'Monday', start: '16:00', end: '21:00', recurring: true),
-    const _AvailabilitySlot(day: 'Tuesday', start: '16:00', end: '21:00', recurring: true),
-    const _AvailabilitySlot(day: 'Wednesday', start: '08:00', end: '12:00', recurring: true),
-    const _AvailabilitySlot(day: 'Thursday', start: '16:00', end: '21:00', recurring: true),
-  ];
 
-  void _addSlot(_AvailabilitySlot slot) {
-    setState(() => _slots.add(slot));
-  }
 
-  void _deleteSlot(int index) {
-    setState(() => _slots.removeAt(index));
+
+  late final AvailabilityBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = AvailabilityBloc(AvailabilityHttpService());
+    _bloc.add(LoadAvailability(trainerId: /* from auth */, branchId: /* from auth */));
   }
 
   @override
@@ -98,21 +95,45 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
           ),
         ],
       ),
-      body: grouped.isEmpty
-          ? const Center(
-              child: Text('No availability set yet.',
-                  style: TextStyle(color: Colors.grey)))
-          : ListView(
+
+      body: BlocConsumer<AvailabilityBloc, AvailabilityState>(
+        bloc: _bloc,
+        listener: (ctx, state) {
+          if (state is AvailabilityMutated) {
+            _bloc.add(LoadAvailability(trainerId: _trainerId, branchId: _branchId));
+          }
+          if (state is AvailabilityError) {
+            ScaffoldMessenger.of(ctx).showSnackBar(
+                SnackBar(content: Text('Error: ${state.message}'), backgroundColor: Colors.red));
+          }
+        },
+        builder: (ctx, state) {
+          if (state is AvailabilityLoading) return const Center(child: CircularProgressIndicator());
+          if (state is AvailabilityLoaded) {
+            final slots = state.slots;
+            if (slots.isEmpty) return const Center(child: Text('No availability set yet.'));
+            // Build grouped map using slot.dayName
+            final grouped = <String, List<AvailabilityModel>>{};
+            for (final s in slots) {
+              grouped.putIfAbsent(s.dayName, () => []).add(s);
+            }
+            const dayOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+            return ListView(
               padding: const EdgeInsets.all(16),
               children: dayOrder
                   .where((d) => grouped.containsKey(d))
                   .map((day) => _DaySection(
-                        day: day,
-                        slots: grouped[day]!,
-                        onDelete: _deleteSlot,
-                      ))
+                day: day,
+                slots: grouped[day]!,
+                onDelete: (id) => _bloc.add(DeleteSlot(id)),
+              ))
                   .toList(),
-            ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () =>
             _AddAvailabilityDialog.show(context, onAdd: _addSlot),
@@ -123,22 +144,6 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
       ),
     );
   }
-}
-
-// ── Slot model (stub) ─────────────────────────────────────────────────────────
-
-class _AvailabilitySlot {
-  final String day;
-  final String start;
-  final String end;
-  final bool recurring;
-
-  const _AvailabilitySlot({
-    required this.day,
-    required this.start,
-    required this.end,
-    required this.recurring,
-  });
 }
 
 class _IndexedSlot {
@@ -230,7 +235,7 @@ class _SlotRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${slot.start} - ${slot.end}',
+                  '${slot.startDisplay} - ${slot.endDisplay}',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -308,24 +313,24 @@ class _AddAvailabilityDialogState
   String _formatTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
+// Map day name to weekday number
+  static const _dayNumbers = {
+    'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
+    'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7,
+  };
+
   void _submit() {
-    if (_selectedDay == null || _startTime == null || _endTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please fill all required fields.')),
-      );
-      return;
-    }
-
-    widget.onAdd(_AvailabilitySlot(
-      day: _selectedDay!,
-      start: _formatTime(_startTime!),
-      end: _formatTime(_endTime!),
-      recurring: _recurring,
+    widget.bloc.add(AddSlot(
+      trainerId: widget.trainerId,
+      branchId: widget.branchId,
+      weekday: _dayNumbers[_selectedDay]!,
+      startTime: _startTime.format(context), // "HH:mm"
+      endTime: _endTime.format(context),
     ));
-
     Navigator.pop(context);
   }
+
+
 
   @override
   Widget build(BuildContext context) {

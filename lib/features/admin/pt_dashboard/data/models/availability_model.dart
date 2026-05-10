@@ -1,3 +1,4 @@
+
 import '../../domain/entities/availability_entity.dart';
 
 class AvailabilityModel extends AvailabilityEntity {
