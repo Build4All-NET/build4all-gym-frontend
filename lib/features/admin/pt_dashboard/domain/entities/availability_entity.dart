@@ -1,3 +1,4 @@
+
 class AvailabilityEntity {
   final int availabilityId;
   final int trainerId;
