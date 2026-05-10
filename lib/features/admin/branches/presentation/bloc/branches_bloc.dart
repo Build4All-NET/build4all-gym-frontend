@@ -17,7 +17,7 @@ class BranchesBloc extends Bloc<BranchesEvent, BranchesState> {
   final GetBranchDetailUseCase getBranchDetailUseCase;
   final CreateBranchUseCase    createBranchUseCase;
 
-  // CRITICAL: all use cases must be passed at construction with their repositories
+  // CRITICAL: all usecases must be passed at construction with their repositories
   BranchesBloc({
     required this.getBranchesUseCase,
     required this.getBranchDetailUseCase,

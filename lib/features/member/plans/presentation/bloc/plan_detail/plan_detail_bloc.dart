@@ -12,7 +12,7 @@ import 'plan_detail_state.dart';
 /// - validating coupon codes
 /// - clearing an applied coupon
 ///
-/// This BLoC only calls domain use cases.
+/// This BLoC only calls domain usecases.
 /// It does not access datasource or repository directly.
 class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
   final GetPlanDetailUseCase getPlanDetail;

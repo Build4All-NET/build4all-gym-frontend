@@ -29,18 +29,30 @@ class TrainerCardModel {
 
   factory TrainerCardModel.fromJson(Map<String, dynamic> json) {
     return TrainerCardModel(
-      trainerId: (json['trainerId'] as num).toInt(),
-      fullName: json['fullName'] as String,
+      trainerId: (json['trainerId'] as num?)?.toInt() ?? 0,
+      fullName: json['fullName'] as String? ?? '',
       profileFileId: json['profileFileId'] as String?,
-      specialties: List<String>.from(json['specialties'] ?? []),
-      certifications: List<String>.from(json['certifications'] ?? []),
-      pricePerSession: (json['pricePerSession'] as num).toDouble(),
-      yearsOfExperience: json['yearsOfExperience'] != null
-          ? (json['yearsOfExperience'] as num).toInt()
-          : null,
-      reviewCount: (json['reviewCount'] as num).toInt(),
-      avgRating: (json['avgRating'] as num).toDouble(),
-      isFavorited: json['favorited'] as bool? ?? json['isFavorited'] as bool? ?? false,
+
+      specialties: (json['specialties'] as List<dynamic>? ?? [])
+          .map((item) => item.toString())
+          .toList(),
+
+      certifications: (json['certifications'] as List<dynamic>? ?? [])
+          .map((item) => item.toString())
+          .toList(),
+
+      // Backend can return null here, so fallback to 0.0.
+      pricePerSession: (json['pricePerSession'] as num?)?.toDouble() ?? 0.0,
+
+      yearsOfExperience: (json['yearsOfExperience'] as num?)?.toInt(),
+
+      reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+
+      avgRating: (json['avgRating'] as num?)?.toDouble() ?? 0.0,
+
+      isFavorited:
+      json['favorited'] as bool? ?? json['isFavorited'] as bool? ?? false,
+
       isOnline: json['online'] as bool? ?? json['isOnline'] as bool? ?? false,
     );
   }

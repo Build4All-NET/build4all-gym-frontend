@@ -26,7 +26,7 @@ import 'forgot_password_state.dart';
 //   ExceptionMapper.toMessage().
 //
 // RELATIONSHIPS:
-//   ▶ Depends on:  SendResetCode, VerifyResetCode, UpdatePassword (use cases)
+//   ▶ Depends on:  SendResetCode, VerifyResetCode, UpdatePassword (usecases)
 //   ◀ Listened by: ForgotPasswordEmailScreen, ForgotPasswordVerifyScreen,
 //                  ForgotPasswordNewPasswordScreen
 // ─────────────────────────────────────────────────────────────────────────────

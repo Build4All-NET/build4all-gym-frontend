@@ -9,9 +9,9 @@ import 'member_home_state.dart';
 /// BLoC for the member home screen.
 ///
 /// Why this exists:
-/// - UI should not call use cases directly.
+/// - UI should not call usecases directly.
 /// - BLoC receives UI events.
-/// - BLoC calls use cases.
+/// - BLoC calls usecases.
 /// - BLoC emits states for the UI.
 ///
 /// Flow:

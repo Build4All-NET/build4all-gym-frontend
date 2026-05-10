@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
@@ -40,14 +41,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     final c      = tokens.colors;
     final sp     = tokens.spacing;
     final card   = tokens.card;
+    final profile = context.watch<AdminProfileCubit>().state;
 
     return Scaffold(
-      drawer: const AdminNavigationDrawer(
-        gymName:         'Build4All Gym',
-        branchName:      'Downtown',
-        adminName:       'Mounir',
-        adminEmail:      'mounir@gym.com',
-        avatarUrl:       null,
+      drawer:  AdminNavigationDrawer(
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
         initialActiveId: 'dashboard',
       ),
       backgroundColor: c.background,

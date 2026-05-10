@@ -36,10 +36,10 @@ const _coreOwnerItems = [
     route: '/admin/staff',
   ),
   NavigationItem(
-    id: 'gym_profile',
-    iconData: Icons.account_circle_outlined,
+    id: 'ai_assistant',
+    iconData: Icons.chat_bubble,
     labelKey: 'navGymProfile',
-    route: '/admin/gym-profile',
+    route: '/admin/ai_assistant',
   ),
   NavigationItem(
     id: 'branches',

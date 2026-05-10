@@ -17,7 +17,7 @@
 // RELATIONSHIPS:
 //   ▶ Implements:  ForgotPasswordRepository
 //   ▶ Uses:        ForgotPasswordApiService
-//   ◀ Injected into: SendResetCode, VerifyResetCode, UpdatePassword use cases
+//   ◀ Injected into: SendResetCode, VerifyResetCode, UpdatePassword usecases
 //                    (via dependency injection at app startup)
 // ─────────────────────────────────────────────────────────────────────────────
 

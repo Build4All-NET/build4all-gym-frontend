@@ -120,7 +120,7 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
         bookingId:        m.bookingId,
         userId:           m.userId,
         fullName:         m.fullName,
-        phone:            m.phone,
+        phone:            m.phone.toString(),
         profileFileId:    m.profileFileId,
         status:           m.status,
         waitlistPosition: m.waitlistPosition,

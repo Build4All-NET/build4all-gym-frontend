@@ -3,7 +3,7 @@
 // LAYER: Domain Layer → Use Cases
 // PURPOSE: Single-responsibility class for fetching the paginated member list.
 //          Sits between the BLoC and the repository. The BLoC only talks to
-//          use cases — never directly to the repository or service.
+//          usecases — never directly to the repository or service.
 //          Holds no state; just orchestrates the call and returns the result.
 //
 // POSITION IN FLOW:

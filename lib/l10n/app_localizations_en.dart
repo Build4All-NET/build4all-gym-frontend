@@ -1070,4 +1070,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String ptBookingSelected(String date, String time) {
     return 'Booking selected: $date at $time';
   }
+
+  @override
+  String get ptBookingSummary => 'Booking summary';
+
+  @override
+  String get ptBookingTrainer => 'Trainer:';
+
+  @override
+  String get ptBookingDate => 'Date:';
+
+  @override
+  String get ptBookingTime => 'Time:';
+
+  @override
+  String get ptBookingTotalAmount => 'Total amount:';
+
+  @override
+  String get ptBookingSuccess => 'Booking confirmed successfully.';
+
+  @override
+  String get ptSlotAlreadyBooked => 'You already booked this time slot.';
+
+  @override
+  String get ptPackageChoosePackage => 'Choose package';
+
+  @override
+  String get ptPackageChooseDays => 'Choose days';
+
+  @override
+  String get ptPackageChooseTime => 'Choose time';
+
+  @override
+  String get ptPackageBookingSummary => 'Booking summary';
+
+  @override
+  String get ptPackageConfirmBooking => 'Confirm booking';
+
+  @override
+  String get ptPackageBookingSuccess => 'Package booking confirmed successfully.';
+
+  @override
+  String get ptPackageBookingFailed => 'Could not confirm package booking.';
+
+  @override
+  String get ptPackageNoPackages => 'No packages available right now';
+
+  @override
+  String get ptPackageSessions => 'sessions';
+
+  @override
+  String get ptPackageDays => 'days';
+
+  @override
+  String get ptPackageFinalPrice => 'Final price';
+
+  @override
+  String get ptPackageOriginalPrice => 'Original price';
+
+  @override
+  String get ptPackageSalePrice => 'Sale price';
+
+  @override
+  String get ptPackageSelectedPackage => 'Selected package';
+
+  @override
+  String get ptPackageSelectedDays => 'Selected days';
+
+  @override
+  String get ptPackageSelectedTime => 'Selected time';
+
+  @override
+  String get ptPackageMaxSessionsReached => 'You cannot select more days than the package sessions';
+
+  @override
+  String ptPackageDaysPerWeekRange(int min, int max) {
+    return 'Choose $min to $max days per week';
+  }
+
+  @override
+  String ptPackageDaysPerWeekExact(int count) {
+    return 'Choose $count day(s) per week';
+  }
+
+  @override
+  String ptPackageMaxDaysReached(int max) {
+    return 'You cannot select more than $max days per week';
+  }
+
+  @override
+  String get ptPackageNoAvailableSlots => 'No available times';
+
+  @override
+  String get ptWeeklySlotsFailed => 'Could not load available times';
 }

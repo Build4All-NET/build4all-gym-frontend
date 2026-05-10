@@ -3,17 +3,41 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
+
 import '../../data/repositories/member_pt_repository_impl.dart';
 import '../../data/services/member_pt_service.dart';
-import '../../domain/entities/time_slot_entity.dart';
+
 import '../../domain/entities/trainer_detail_entity.dart';
-import '../../domain/usecases/get_available_slots_usecase.dart';
+
+import '../../domain/usecases/create_package_booking_usecase.dart';
 import '../../domain/usecases/get_trainer_detail_usecase.dart';
+import '../../domain/usecases/get_weekly_available_slots_usecase.dart';
 import '../../domain/usecases/toggle_favorite_trainer_usecase.dart';
-import '../widgets/booking_datetime_selector_widget.dart';
+
+import '../bloc/pt_package_booking_bloc.dart';
+import '../bloc/pt_package_booking_event.dart';
+
+import '../widgets/pt_package_booking_section_widget.dart';
+import '../widgets/pt_package_confirm_bar_widget.dart';
 import '../widgets/trainer_detail_card_widget.dart';
 import '../widgets/training_videos_section_widget.dart';
 
+/// Trainer detail screen for the PT package booking flow.
+///
+/// Flow:
+/// 1. GET /api/member/trainers/{trainerId}
+/// 2. Backend returns trainer details + packages.
+/// 3. Member selects package.
+/// 4. Member selects stable weekdays.
+/// 5. For each selected weekday, Bloc loads trainer availability:
+///    GET /api/member/trainers/{trainerId}/weekly-slots?day=MONDAY
+/// 6. Member selects time per day.
+/// 7. POST /api/member/pt-package-bookings
+///
+/// Important:
+/// - No dates in the package booking flow.
+/// - Weekdays are stable backend codes.
+/// - UI weekday labels come from ARB.
 class TrainerDetailScreen extends StatefulWidget {
   final int trainerId;
 
@@ -27,20 +51,43 @@ class TrainerDetailScreen extends StatefulWidget {
 }
 
 class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
+  /// Loads trainer detail from backend.
+  ///
+  /// Expected backend response includes:
+  /// - trainer basic info
+  /// - assigned videos
+  /// - certifications
+  /// - branchId
+  /// - packages
   late final GetTrainerDetailUseCase _getTrainerDetailUseCase;
-  late final GetAvailableSlotsUseCase _getAvailableSlotsUseCase;
+
+  /// Toggles favorite status for the trainer.
   late final ToggleFavoriteTrainerUseCase _toggleFavoriteTrainerUseCase;
+
+  /// Creates a package booking.
+  late final CreatePackageBookingUseCase _createPackageBookingUseCase;
+
+  /// Loads recurring weekly available slots from trainer availability.
+  ///
+  /// Used when the member selects a weekday in package booking.
+  late final GetWeeklyAvailableSlotsUseCase _getWeeklyAvailableSlotsUseCase;
+
+  /// Bloc for package booking state.
+  ///
+  /// Stores:
+  /// - trainerId
+  /// - packages
+  /// - selected package
+  /// - selected weekly schedule
+  /// - available slots per selected day
+  /// - booking submit state
+  late final PtPackageBookingBloc _packageBookingBloc;
 
   bool _isLoading = true;
   String? _errorMessage;
+
+  /// Trainer detail loaded from backend.
   TrainerDetailEntity? _trainer;
-
-  DateTime _selectedDate = DateTime.now();
-  TimeSlotEntity? _selectedSlot;
-
-  List<TimeSlotEntity> _availableSlots = [];
-  bool _isSlotsLoading = false;
-  String? _slotsError;
 
   bool _isFavoriteLoading = false;
 
@@ -48,19 +95,43 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
   void initState() {
     super.initState();
 
+    /// Build service/repository/usecases manually.
     final service = MemberPtService();
     final repository = MemberPtRepositoryImpl(service: service);
 
     _getTrainerDetailUseCase = GetTrainerDetailUseCase(repository);
-    _getAvailableSlotsUseCase = GetAvailableSlotsUseCase(repository);
     _toggleFavoriteTrainerUseCase = ToggleFavoriteTrainerUseCase(repository);
+    _createPackageBookingUseCase = CreatePackageBookingUseCase(repository);
+    _getWeeklyAvailableSlotsUseCase =
+        GetWeeklyAvailableSlotsUseCase(repository);
+
+    /// Package booking bloc.
+    ///
+    /// It needs both:
+    /// - createPackageBookingUseCase: to confirm booking
+    /// - getWeeklyAvailableSlotsUseCase: to load PT availability per weekday
+    _packageBookingBloc = PtPackageBookingBloc(
+      createPackageBookingUseCase: _createPackageBookingUseCase,
+      getWeeklyAvailableSlotsUseCase: _getWeeklyAvailableSlotsUseCase,
+    );
 
     _loadTrainerDetail();
-    _loadAvailableSlots();
 
     debugPrint('Opening trainer detail for trainerId: ${widget.trainerId}');
   }
 
+  @override
+  void dispose() {
+    _packageBookingBloc.close();
+    super.dispose();
+  }
+
+  /// Loads trainer details.
+  ///
+  /// After trainer details are loaded successfully, we start the package bloc
+  /// with:
+  /// - trainerId
+  /// - packages returned by backend
   Future<void> _loadTrainerDetail() async {
     setState(() {
       _isLoading = true;
@@ -93,37 +164,24 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
       _trainer = result.data;
       _isLoading = false;
     });
-  }
 
-  Future<void> _loadAvailableSlots() async {
-    setState(() {
-      _isSlotsLoading = true;
-      _slotsError = null;
-      _availableSlots = [];
-      _selectedSlot = null;
-    });
-
-    final result = await _getAvailableSlotsUseCase(
-      trainerId: widget.trainerId,
-      date: _selectedDate,
+    /// Initialize package booking state with trainer packages.
+    ///
+    /// PtPackageBookingBloc will select the first package by default
+    /// if packages list is not empty.
+    _packageBookingBloc.add(
+      PtPackageBookingStarted(
+        trainerId: widget.trainerId,
+        packages: result.data!.packages,
+      ),
     );
-
-    if (!mounted) return;
-
-    if (result.failure != null) {
-      setState(() {
-        _isSlotsLoading = false;
-        _slotsError = result.failure!.message;
-      });
-      return;
-    }
-
-    setState(() {
-      _availableSlots = result.data ?? [];
-      _isSlotsLoading = false;
-    });
   }
 
+  /// Toggles trainer favorite state.
+  ///
+  /// Optimistic UI:
+  /// - update UI immediately
+  /// - if backend fails, rollback
   Future<void> _toggleFavorite() async {
     final trainer = _trainer;
 
@@ -171,15 +229,6 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
     });
   }
 
-  void _onDateChanged(DateTime date) {
-    setState(() {
-      _selectedDate = date;
-      _selectedSlot = null;
-    });
-
-    _loadAvailableSlots();
-  }
-
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
@@ -187,173 +236,118 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
 
     return Directionality(
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-      child: Scaffold(
-        backgroundColor: tokens.colors.background,
-        body: _isLoading
-            ? Center(
-          child: CircularProgressIndicator(
-            color: tokens.colors.primary,
+      child: BlocProvider.value(
+        value: _packageBookingBloc,
+        child: Scaffold(
+          backgroundColor: tokens.colors.background,
+          body: _isLoading
+              ? Center(
+            child: CircularProgressIndicator(
+              color: tokens.colors.primary,
+            ),
+          )
+              : _errorMessage != null
+              ? _ErrorView(
+            message: _errorMessage!,
+            onRetry: _loadTrainerDetail,
+          )
+              : _TrainerDetailBody(
+            trainer: _trainer!,
+            isFavoriteLoading: _isFavoriteLoading,
+            onFavoritePressed: _toggleFavorite,
           ),
-        )
-            : _errorMessage != null
-            ? _ErrorView(
-          message: _errorMessage!,
-          onRetry: _loadTrainerDetail,
-        )
-            : _TrainerDetailBody(
-          trainer: _trainer!,
-          selectedDate: _selectedDate,
-          selectedSlot: _selectedSlot,
-          slots: _availableSlots,
-          isSlotsLoading: _isSlotsLoading,
-          slotsError: _slotsError,
-          isFavoriteLoading: _isFavoriteLoading,
-          onFavoritePressed: _toggleFavorite,
-          onDateChanged: _onDateChanged,
-          onSlotChanged: (slot) {
-            setState(() {
-              _selectedSlot = slot;
-            });
-          },
         ),
       ),
     );
   }
 }
 
-// ── Main body ────────────────────────────────────────────────────────────────
-
+/// Main body of trainer detail page.
+///
+/// Shows:
+/// - header
+/// - trainer card
+/// - training videos
+/// - package booking section
+/// - sticky package confirm bar
 class _TrainerDetailBody extends StatelessWidget {
   final TrainerDetailEntity trainer;
-  final DateTime selectedDate;
-  final TimeSlotEntity? selectedSlot;
-  final List<TimeSlotEntity> slots;
-  final bool isSlotsLoading;
-  final String? slotsError;
   final bool isFavoriteLoading;
   final VoidCallback onFavoritePressed;
-  final ValueChanged<DateTime> onDateChanged;
-  final ValueChanged<TimeSlotEntity> onSlotChanged;
 
   const _TrainerDetailBody({
     required this.trainer,
-    required this.selectedDate,
-    required this.selectedSlot,
-    required this.slots,
-    required this.isSlotsLoading,
-    required this.slotsError,
     required this.isFavoriteLoading,
     required this.onFavoritePressed,
-    required this.onDateChanged,
-    required this.onSlotChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
-    final l10n = AppLocalizations.of(context)!;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: _Header(title: trainer.fullName),
-        ),
-        SliverToBoxAdapter(
-          child: Transform.translate(
-            offset: const Offset(0.0, 7.0),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: tokens.spacing.lg,
-              ),
-              child: Column(
-                crossAxisAlignment:
-                isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  TrainerDetailCardWidget(
-                    trainer: trainer,
-                    onFavoritePressed: onFavoritePressed,
-                    isFavoriteLoading: isFavoriteLoading,
+    return Stack(
+      children: [
+        CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: _Header(title: trainer.fullName),
+            ),
+            SliverToBoxAdapter(
+              child: Transform.translate(
+                offset: const Offset(0.0, 7.0),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: tokens.spacing.lg,
                   ),
-                  SizedBox(height: tokens.spacing.lg),
-                  TrainingVideosSectionWidget(
-                    videos: trainer.assignedVideos,
-                  ),
-                  SizedBox(height: tokens.spacing.xl),
-                  BookingDateTimeSelectorWidget(
-                    selectedDate: selectedDate,
-                    selectedSlot: selectedSlot,
-                    slots: slots,
-                    isSlotsLoading: isSlotsLoading,
-                    slotsError: slotsError,
-                    onDateChanged: onDateChanged,
-                    onSlotChanged: onSlotChanged,
-                  ),
-                  SizedBox(height: tokens.spacing.xl),
-                  SizedBox(
-                    width: double.infinity,
-                    height: tokens.button.height,
-                    child: ElevatedButton(
-                      onPressed: selectedSlot == null
-                          ? null
-                          : () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              l10n.ptBookingSelected(
-                                _formatDate(selectedDate),
-                                selectedSlot!.label,
-                              ),
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: tokens.colors.primary,
-                        foregroundColor: tokens.colors.onPrimary,
-                        disabledBackgroundColor:
-                        tokens.colors.border.withOpacity(0.20),
-                        disabledForegroundColor: tokens.colors.muted,
-                        elevation: 0.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            tokens.button.radius,
-                          ),
+                  child: Column(
+                    crossAxisAlignment:
+                    isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    children: [
+                      TrainerDetailCardWidget(
+                        trainer: trainer,
+                        onFavoritePressed: onFavoritePressed,
+                        isFavoriteLoading: isFavoriteLoading,
+                      ),
+
+                      SizedBox(height: tokens.spacing.lg),
+
+                      TrainingVideosSectionWidget(
+                        videos: trainer.assignedVideos,
+                      ),
+
+                      SizedBox(height: tokens.spacing.xl),
+
+                      const PtPackageBookingSectionWidget(),
+
+                      /// Bottom padding so content does not hide behind
+                      /// sticky confirm bar.
+                      SafeArea(
+                        top: false,
+                        child: SizedBox(
+                          height: tokens.button.height + tokens.spacing.lg * 4,
                         ),
                       ),
-                      child: Text(
-                        l10n.ptConfirmBooking,
-                        style: tokens.typography.bodyMedium.copyWith(
-                          color: selectedSlot == null
-                              ? tokens.colors.muted
-                              : tokens.colors.onPrimary,
-                          fontSize: tokens.button.textSize,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
-                  SizedBox(height: tokens.spacing.xl + 24.0),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
+        ),
+
+        const Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: PtPackageConfirmBarWidget(),
         ),
       ],
     );
   }
-
-  static String _formatDate(DateTime date) {
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-
-    return '${date.year}-$month-$day';
-  }
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
-
+/// Header with back button and trainer name.
 class _Header extends StatelessWidget {
   final String title;
 
@@ -409,7 +403,7 @@ class _Header extends StatelessWidget {
           Align(
             alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsetsDirectional.only(
+              padding: const EdgeInsetsDirectional.only(
                 end: 52.0,
               ),
               child: Text(
@@ -431,8 +425,7 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ── Error view ───────────────────────────────────────────────────────────────
-
+/// Error view shown when trainer detail fails to load.
 class _ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
@@ -458,7 +451,9 @@ class _ErrorView extends StatelessWidget {
               color: tokens.colors.danger,
               size: 48.0,
             ),
+
             SizedBox(height: tokens.spacing.md),
+
             Text(
               message,
               textAlign: TextAlign.center,
@@ -466,7 +461,9 @@ class _ErrorView extends StatelessWidget {
                 color: tokens.colors.danger,
               ),
             ),
+
             SizedBox(height: tokens.spacing.lg),
+
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(

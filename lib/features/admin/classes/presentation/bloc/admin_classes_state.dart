@@ -115,3 +115,18 @@ class SessionBookingsLoaded extends AdminClassesState {
   @override
   List<Object?> get props => [sessionId, bookings];
 }
+
+// admin_classes_state.dart
+
+class SessionBookingsError extends AdminClassesState {
+  final int    sessionId;
+  final String message;
+
+  const SessionBookingsError({
+    required this.sessionId,
+    required this.message,
+  });
+
+  @override
+  List<Object?> get props => [sessionId, message];
+}
