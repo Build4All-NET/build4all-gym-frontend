@@ -8,7 +8,7 @@
 
 import '../entities/pt_session_entity.dart';
 import '../entities/pt_session_stats_entity.dart';
-import '../../../../core/errors/failure.dart';
+import '../../../../../core/error/failures.dart';
 
 abstract class TrainerPtSessionsRepository {
   /// GET /api/trainer/pt-sessions?branchId=&date=

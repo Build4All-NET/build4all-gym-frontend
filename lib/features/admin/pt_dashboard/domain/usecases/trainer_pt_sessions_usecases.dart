@@ -6,10 +6,10 @@
 // to match the admin/plans pattern used in this project.
 // =============================================================================
 
+import '../../../../../core/error/failures.dart';
 import '../entities/pt_session_entity.dart';
 import '../entities/pt_session_stats_entity.dart';
 import '../repositories/trainer_pt_sessions_repository.dart';
-import '../../../../core/errors/failure.dart';
 
 // ── 1. Get sessions by date ──────────────────────────────────────────────────
 

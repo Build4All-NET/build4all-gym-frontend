@@ -11,11 +11,11 @@ import '../../domain/entities/pt_session_stats_entity.dart';
 import '../../domain/repositories/trainer_pt_sessions_repository.dart';
 import '../models/pt_session_stats_model.dart';
 import '../services/trainer_pt_sessions_service.dart';
-import '../../../../../core/errors/failure.dart';
-import '../../../../../core/exceptions/server_exception.dart';
-import '../../../../../core/exceptions/unauthorized_exception.dart';
-import '../../../../../core/exceptions/forbidden_exception.dart';
-import '../../../../../core/exceptions/network_exception.dart';
+import '../../../../../core/error/failures.dart';
+import '../../../../../core/exceptions/server_exception.dart' hide ServerException;
+import '../../../../../core/error/exceptions.dart';
+import '../../../../../core/exceptions/forbidden_exception.dart' hide ForbiddenException;
+import '../../../../../core/exceptions/network_exception.dart' hide NetworkException;
 
 class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   final TrainerPtSessionsService _service;
