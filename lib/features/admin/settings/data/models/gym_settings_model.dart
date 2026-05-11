@@ -1,0 +1,77 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// lib/features/admin/settings/data/models/gym_settings_model.dart
+//
+// PURPOSE:
+//   Data-layer model that knows how to serialize/deserialize to/from JSON.
+//   The domain entity (SettingsBusinessRulesEntity) knows nothing about JSON —
+//   this model bridges the gap between HTTP responses and the domain layer.
+//
+// JSON SHAPE (matches the backend GymSettingsDto):
+//   {
+//     "allowClassWithoutMembership": true,
+//     "requireMembershipForClass":   false,
+//     "allowMembershipWithoutClass": true,
+//     "allowBothIndependently":      true
+//   }
+// ─────────────────────────────────────────────────────────────────────────────
+
+import '../../domain/entities/settings_business_rules_entity.dart';
+
+class GymSettingsModel {
+  final bool allowClassWithoutMembership;
+  final bool requireMembershipForClass;
+  final bool allowMembershipWithoutClass;
+  final bool allowBothIndependently;
+
+  const GymSettingsModel({
+    required this.allowClassWithoutMembership,
+    required this.requireMembershipForClass,
+    required this.allowMembershipWithoutClass,
+    required this.allowBothIndependently,
+  });
+
+  // ── JSON deserialization ────────────────────────────────────────────────────
+
+  /// Parses the JSON map returned by GET /api/admin/settings.
+  /// Uses ?? defaults in case the backend omits a field (defensive coding).
+  factory GymSettingsModel.fromJson(Map<String, dynamic> json) =>
+      GymSettingsModel(
+        allowClassWithoutMembership:
+        json['allowClassWithoutMembership'] as bool? ?? true,
+        requireMembershipForClass:
+        json['requireMembershipForClass'] as bool? ?? false,
+        allowMembershipWithoutClass:
+        json['allowMembershipWithoutClass'] as bool? ?? true,
+        allowBothIndependently:
+        json['allowBothIndependently'] as bool? ?? true,
+      );
+
+  // ── JSON serialization ──────────────────────────────────────────────────────
+
+  /// Converts the model to the JSON body expected by PUT /api/admin/settings.
+  Map<String, dynamic> toJson() => {
+    'allowClassWithoutMembership': allowClassWithoutMembership,
+    'requireMembershipForClass': requireMembershipForClass,
+    'allowMembershipWithoutClass': allowMembershipWithoutClass,
+    'allowBothIndependently': allowBothIndependently,
+  };
+
+  // ── Mapping helpers ─────────────────────────────────────────────────────────
+
+  /// Converts this data model → domain entity (for the repository to return).
+  SettingsBusinessRulesEntity toEntity() => SettingsBusinessRulesEntity(
+    allowClassWithoutMembership: allowClassWithoutMembership,
+    requireMembershipForClass: requireMembershipForClass,
+    allowMembershipWithoutClass: allowMembershipWithoutClass,
+    allowBothIndependently: allowBothIndependently,
+  );
+
+  /// Converts a domain entity → data model (for the repository to serialize before PUT).
+  factory GymSettingsModel.fromEntity(SettingsBusinessRulesEntity entity) =>
+      GymSettingsModel(
+        allowClassWithoutMembership: entity.allowClassWithoutMembership,
+        requireMembershipForClass: entity.requireMembershipForClass,
+        allowMembershipWithoutClass: entity.allowMembershipWithoutClass,
+        allowBothIndependently: entity.allowBothIndependently,
+      );
+}
