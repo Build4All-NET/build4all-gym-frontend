@@ -22,7 +22,7 @@
 // which the repository impl returns to the BLoC via the use case.
 // =============================================================================
 
-import '../../../../owner/ai_assistant/domain/repositories/ai_assistant_repository.dart';
+import '../../../../admin/ai_assistant/domain/repositories/ai_assistant_repository.dart';
 import 'ai_stat_card_model.dart';
 
 class AiQueryResponseModel {

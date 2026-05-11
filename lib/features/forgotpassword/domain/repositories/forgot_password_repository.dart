@@ -7,13 +7,13 @@
 //   concrete implementation. This is the "D" in SOLID (Dependency Inversion).
 //
 // WHY ABSTRACT:
-//   - Makes the BLoC and use cases testable without a real network.
+//   - Makes the BLoC and usecases testable without a real network.
 //   - Swapping the backend or mocking in tests requires changing only
-//     ForgotPasswordRepositoryImpl, not the use cases or BLoC.
+//     ForgotPasswordRepositoryImpl, not the usecases or BLoC.
 //
 // RELATIONSHIPS:
 //   ▶ Implemented by: ForgotPasswordRepositoryImpl (data layer)
-//   ◀ Injected into:  SendResetCode, VerifyResetCode, UpdatePassword use cases
+//   ◀ Injected into:  SendResetCode, VerifyResetCode, UpdatePassword usecases
 // ─────────────────────────────────────────────────────────────────────────────
 
 import '../entities/forgot_password_entity.dart';

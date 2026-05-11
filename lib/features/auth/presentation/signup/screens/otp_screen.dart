@@ -122,7 +122,7 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   // ─── verify ───────────────────────────────────────────────────────────────
-  // Creates use cases inline — AuthRepositoryImpl is NOT in the widget tree,
+  // Creates usecases inline — AuthRepositoryImpl is NOT in the widget tree,
   // so we never use context.read<AuthRepositoryImpl>().
 
   Future<void> _verify(AppThemeTokens tokens, AppLocalizations l) async {
@@ -135,7 +135,7 @@ class _OtpScreenState extends State<OtpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Build use cases directly — same pattern as signup_screen.dart
+      // Build usecases directly — same pattern as signup_screen.dart
       final tokenStore = const AuthTokenStore();
       final apiService = AuthApiService(
         client:     http.Client(),

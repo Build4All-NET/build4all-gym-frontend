@@ -1,0 +1,110 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../../../core/config/env.dart';
+import '../../../../../core/exceptions/server_exception.dart' hide ServerException;
+import '../../../../../core/error/exceptions.dart';
+import '../../../../../core/exceptions/forbidden_exception.dart' hide ForbiddenException;
+import '../../../../../core/exceptions/network_exception.dart' hide NetworkException;
+import '../models/pt_package_model.dart';
+
+class PtPackageService {
+  final _storage = const FlutterSecureStorage();
+
+  Future<Map<String, String>> _headers() async {
+    final token = await _storage.read(key: 'jwt_token');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
+  Never _handleError(http.Response r) {
+    if (r.statusCode == 401) throw UnauthorizedException();
+    if (r.statusCode == 403) throw ForbiddenException();
+    throw ServerException(message: utf8.decode(r.bodyBytes));
+  }
+
+  Future<List<PtPackageModel>> getPackages({
+    required int trainerId,
+    required int tenantId,
+    required int branchId,
+  }) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/trainer/packages'
+          '?trainerId=$trainerId&tenantId=$tenantId&branchId=$branchId',
+    );
+    try {
+      final r = await http.get(uri, headers: headers);
+      debugPrint('GET PACKAGES: ${r.statusCode}');
+      if (r.statusCode == 200) {
+        final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
+        return list
+            .map((e) => PtPackageModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  Future<PtPackageModel> createPackage({
+    required int trainerId,
+    required int tenantId,
+    required int branchId,
+    required Map<String, dynamic> body,
+  }) async {
+    final headers = await _headers();
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages');
+    try {
+      final r = await http.post(
+        uri,
+        headers: headers,
+        body: jsonEncode({...body, 'trainerId': trainerId, 'tenantId': tenantId, 'branchId': branchId}),
+      );
+      debugPrint('CREATE PACKAGE: ${r.statusCode}');
+      if (r.statusCode == 200 || r.statusCode == 201) {
+        return PtPackageModel.fromJson(
+            jsonDecode(utf8.decode(r.bodyBytes)) as Map<String, dynamic>);
+      }
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  Future<PtPackageModel> updatePackage(int id, Map<String, dynamic> body) async {
+    final headers = await _headers();
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages/$id');
+    try {
+      final r = await http.put(uri, headers: headers, body: jsonEncode(body));
+      if (r.statusCode == 200) {
+        return PtPackageModel.fromJson(
+            jsonDecode(utf8.decode(r.bodyBytes)) as Map<String, dynamic>);
+      }
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  Future<void> deactivatePackage(int id) async {
+    final headers = await _headers();
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages/$id');
+    try {
+      final r = await http.delete(uri, headers: headers);
+      if (r.statusCode == 204) return;
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+}

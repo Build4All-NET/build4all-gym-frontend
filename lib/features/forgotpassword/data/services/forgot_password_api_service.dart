@@ -4,7 +4,7 @@
 // PURPOSE:
 //   Raw HTTP client for the three forgot-password backend endpoints.
 //   Handles serialization, error detection, and low-level exception wrapping.
-//   Everything above this layer (repositories, use cases, BLoC) never touches
+//   Everything above this layer (repositories, usecases, BLoC) never touches
 //   http.Response or JSON directly.
 //
 // THREE STEPS:
