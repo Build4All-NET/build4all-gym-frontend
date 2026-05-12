@@ -1,7 +1,8 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -20,6 +21,7 @@ import '../models/pt_package_booking_request_model.dart';
 import '../models/pt_package_booking_response_model.dart';
 
 class MemberPtService {
+  final _client = AuthedHttpClient();
   final AuthTokenStore _tokenStore;
 
   MemberPtService() : _tokenStore = const AuthTokenStore();
@@ -86,7 +88,7 @@ class MemberPtService {
     try {
       debugPrint('TRAINERS URI: $uri');
 
-      final response = await http.get(
+      final response = await _client.get(
         uri,
         headers: headers,
       );
@@ -139,7 +141,7 @@ class MemberPtService {
     );
 
     try {
-      final response = await http.get(
+      final response = await _client.get(
         uri,
         headers: headers,
       );
@@ -194,7 +196,7 @@ class MemberPtService {
     );
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: headers,
       );
@@ -250,7 +252,7 @@ class MemberPtService {
     try {
       debugPrint('DETAIL URI: $uri');
 
-      final response = await http.get(
+      final response = await _client.get(
         uri,
         headers: headers,
       );
@@ -316,7 +318,7 @@ class MemberPtService {
     try {
       debugPrint('SLOTS URI: $uri');
 
-      final response = await http.get(
+      final response = await _client.get(
         uri,
         headers: headers,
       );
@@ -398,7 +400,7 @@ class MemberPtService {
     try {
       debugPrint('WEEKLY SLOTS URI: $uri');
 
-      final response = await http.get(
+      final response = await _client.get(
         uri,
         headers: headers,
       );
@@ -463,7 +465,7 @@ class MemberPtService {
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-sessions');
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: headers,
         body: jsonEncode(request.toJson()),
@@ -538,7 +540,7 @@ class MemberPtService {
     );
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: headers,
         body: jsonEncode(request.toJson()),

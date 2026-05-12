@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/shared/data/services/admin_branches_service.dart
 //
 // CHANGE: GET /api/admin/branches  →  GET /api/admin/branches/options
@@ -13,6 +13,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -20,6 +21,7 @@ import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/branch_option_model.dart';
 
 class AdminBranchesService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   AdminBranchesService() : _tokenStore = const AdminTokenStore();
@@ -53,7 +55,7 @@ class AdminBranchesService {
         '${Env.apiProjectBaseUrl}/api/admin/branches/options');
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
 
       final rawList = jsonDecode(response.body) as List<dynamic>;

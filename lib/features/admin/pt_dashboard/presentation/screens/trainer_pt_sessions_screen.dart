@@ -138,7 +138,10 @@ class _SessionsView extends StatelessWidget {
               message: state.message,
               onRetry: () {
                 final bloc = context.read<TrainerPtSessionsBloc>();
-                bloc.add(PtSessionsStarted(branchId: bloc.currentBranchId));
+                bloc.add(PtSessionsStarted(
+                  branchId:  bloc.currentBranchId,
+                  trainerId: bloc.currentTrainerId,
+                ));
               },
             );
           }

@@ -15,11 +15,18 @@ class AdminProfile {
   final String  branchName;
   final String? avatarUrl;
 
-  // branchId is read from AdminTokenStore.getTenantId() which the
-  //            auth flow writes at login time. Every screen that previously
-  //            used branchId: 1 (a stub) can now read:
-  //              context.read<AdminProfileCubit>().state.branchId ?? 1
+  /// tenantId (ownerProjectLinkId) stored at login.
   final int? branchId;
+
+  /// DB user ID decoded from JWT 'userId' claim.
+  /// Used as trainerId when the logged-in user is a TRAINER.
+  final int? userId;
+
+  /// Role decoded from JWT 'roles' claim, e.g. "TRAINER", "ADMIN", "OWNER".
+  final String role;
+
+  bool get isTrainerRole => role == 'TRAINER';
+  bool get isAdminRole   => role == 'ADMIN' || role == 'OWNER' || role == 'MANAGER';
 
   const AdminProfile({
     required this.adminName,
@@ -27,16 +34,19 @@ class AdminProfile {
     required this.gymName,
     required this.branchName,
     this.avatarUrl,
-    this.branchId, // nullable — null if the tenant ID is not stored yet
+    this.branchId,
+    this.userId,
+    this.role = '',
   });
 
-  // Fallback used before _load() completes
   static const empty = AdminProfile(
     adminName:  'Admin',
     adminEmail: '',
     gymName:    'Gym',
     branchName: '',
     branchId:   null,
+    userId:     null,
+    role:       '',
   );
 }
 
@@ -59,31 +69,30 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
     final claims = JwtUtils.decode(token);
     if (claims == null) return;
 
-    // Read tenantId that the auth flow stored at login.
-    //    AdminTokenStore writes this key when the login response contains
-    //    a tenantId / branchId field. We parse it to int; null if absent.
     final rawTenantId = await tokenStore.getTenantId();
     final branchId    = rawTenantId != null ? int.tryParse(rawTenantId) : null;
 
+    // DB user ID from JWT 'userId' claim (set by JwtService.generateToken).
+    final userId = JwtUtils.userIdFromToken(token);
+
+    // Role from JWT 'roles' list, e.g. ["ROLE_TRAINER"] → "TRAINER".
+    final rawRoles = claims['roles'];
+    String role = '';
+    if (rawRoles is List && rawRoles.isNotEmpty) {
+      role = rawRoles.first.toString().replaceFirst('ROLE_', '');
+    } else if (rawRoles is String && rawRoles.isNotEmpty) {
+      role = rawRoles.replaceFirst('ROLE_', '');
+    }
+
     emit(AdminProfile(
-      // Full name of the logged-in admin (from "name" claim in JWT)
       adminName:  claims['name']       as String? ?? 'Admin',
-
-      // Email / username (from "sub" claim — standard JWT subject)
       adminEmail: claims['sub']        as String? ?? '',
-
-      // Gym display name comes from compile-time --dart-define=APP_NAME
-      // (not from the JWT, since one token can serve multiple gym apps)
       gymName:    Env.appName,
-
-      // Branch the admin belongs to (set at login by backend, stored in JWT)
       branchName: claims['branchName'] as String? ?? 'Main Branch',
-
-      // Optional avatar URL (may not exist in all JWT implementations)
       avatarUrl:  claims['avatarUrl']  as String?,
-
-      //  Numeric branch / tenant ID — used to pass to API calls that need it
       branchId:   branchId,
+      userId:     userId,
+      role:       role,
     ));
   }
 }

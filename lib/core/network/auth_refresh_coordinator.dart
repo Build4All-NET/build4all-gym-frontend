@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:build4allgym/core/config/env.dart';
 import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/core/utils/jwt_utils.dart';
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
@@ -21,9 +22,10 @@ class AuthRefreshCoordinator {
     return Dio(
       BaseOptions(
         baseUrl: g.appServerRoot,
-        headers: const {
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'X-Owner-Project-Link-Id': Env.ownerProjectLinkId,
         },
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 60),

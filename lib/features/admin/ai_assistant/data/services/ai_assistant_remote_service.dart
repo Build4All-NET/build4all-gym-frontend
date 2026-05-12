@@ -1,4 +1,4 @@
-// =============================================================================
+﻿// =============================================================================
 // FILE: ai_assistant_remote_service.dart
 // PATH: lib/features/owner/ai_assistant/data/services/ai_assistant_remote_service.dart
 // LAYER: Data Layer → Services (Remote)
@@ -22,6 +22,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -31,6 +32,7 @@ import '../models/ai_query_request_model.dart';
 import '../models/ai_query_response_model.dart';
 
 class AiAssistantRemoteService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   AiAssistantRemoteService()
@@ -77,7 +79,7 @@ class AiAssistantRemoteService {
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/owner/ai-assistant/query');
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: await _headers(),
         body: jsonEncode(requestModel.toJson()),
@@ -116,7 +118,7 @@ class AiAssistantRemoteService {
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/owner/ai-assistant/suggestions');
 
     try {
-      final response = await http.get(uri, headers: await _headers());
+      final response = await _client.get(uri, headers: await _headers());
       _checkStatus(response);
 
       // Response: [ { "question": "What's my revenue today?" }, ... ]
@@ -148,7 +150,7 @@ class AiAssistantRemoteService {
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/owner/ai-assistant/history');
 
     try {
-      final response = await http.get(uri, headers: await _headers());
+      final response = await _client.get(uri, headers: await _headers());
       _checkStatus(response);
 
       final list = jsonDecode(response.body) as List<dynamic>;

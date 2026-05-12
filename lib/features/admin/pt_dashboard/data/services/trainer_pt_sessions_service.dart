@@ -1,4 +1,4 @@
-// =============================================================================
+﻿// =============================================================================
 // FILE: lib/features/admin/pt_dashboard/data/services/trainer_pt_sessions_service.dart
 // LAYER: Data — HTTP calls only, no domain logic
 //
@@ -15,6 +15,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/config/env.dart';
@@ -27,6 +28,7 @@ import '../models/pt_session_model.dart';
 import '../models/pt_session_stats_model.dart';
 
 class TrainerPtSessionsService {
+  final _client = AuthedHttpClient();
   static final _dateFmt = DateFormat('yyyy-MM-dd');
 
   // ── Auth headers ─────────────────────────────────────────────────────────
@@ -60,16 +62,17 @@ class TrainerPtSessionsService {
 
   Future<List<PtSessionModel>> getSessionsByDate({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   }) async {
     final headers = await _authHeaders();
     final uri = Uri.parse(
       '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions'
-      '?branchId=$branchId&date=${_dateFmt.format(date)}',
+      '?branchId=$branchId&trainerId=$trainerId&date=${_dateFmt.format(date)}',
     );
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       debugPrint('GET SESSIONS STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200) {
@@ -92,16 +95,17 @@ class TrainerPtSessionsService {
 
   Future<PtSessionStatsModel> getStatsByDate({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   }) async {
     final headers = await _authHeaders();
     final uri = Uri.parse(
       '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/stats'
-      '?branchId=$branchId&date=${_dateFmt.format(date)}',
+      '?branchId=$branchId&trainerId=$trainerId&date=${_dateFmt.format(date)}',
     );
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       debugPrint('GET STATS STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200) {
@@ -121,12 +125,13 @@ class TrainerPtSessionsService {
 
   // ── POST create session ───────────────────────────────────────────────────
 
-  Future<PtSessionModel> createSession(Map<String, dynamic> body) async {
+  Future<PtSessionModel> createSession(Map<String, dynamic> body, {int trainerId = 0}) async {
     final headers = await _authHeaders();
-    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/pt-sessions');
+    final baseUrl = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions';
+    final uri = Uri.parse(trainerId > 0 ? '$baseUrl?trainerId=$trainerId' : baseUrl);
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: headers,
         body: jsonEncode(body),
@@ -158,7 +163,7 @@ class TrainerPtSessionsService {
     );
 
     try {
-      final response = await http.patch(
+      final response = await _client.patch(
         uri,
         headers: headers,
         body: jsonEncode({'status': status}),

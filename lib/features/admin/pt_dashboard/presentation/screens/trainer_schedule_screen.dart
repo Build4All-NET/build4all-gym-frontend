@@ -17,7 +17,12 @@ import '../bloc/availability_bloc.dart';
 
 class TrainerScheduleScreen extends StatefulWidget {
   final int branchId;
-  const TrainerScheduleScreen({super.key, required this.branchId});
+  final int trainerId;
+  const TrainerScheduleScreen({
+    super.key,
+    required this.branchId,
+    required this.trainerId,
+  });
 
   @override
   State<TrainerScheduleScreen> createState() => _TrainerScheduleScreenState();
@@ -31,7 +36,7 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
     super.initState();
     _bloc = AvailabilityBloc(AvailabilityHttpService());
     _bloc.add(LoadAvailability(
-      trainerId: widget.branchId,
+      trainerId: widget.trainerId,
       branchId:  widget.branchId,
     ));
   }
@@ -72,7 +77,7 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
               onPressed: () => _AddAvailabilityDialog.show(
                 context,
                 bloc: _bloc,
-                trainerId: widget.branchId,
+                trainerId: widget.trainerId,
                 branchId: widget.branchId,
               ),
               icon: const Icon(Icons.add, size: 18),
@@ -96,7 +101,7 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
         listener: (ctx, state) {
           if (state is AvailabilityMutated) {
             _bloc.add(LoadAvailability(
-              trainerId: widget.branchId,
+              trainerId: widget.trainerId,
               branchId:  widget.branchId,
             ));
           }
@@ -140,7 +145,7 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
         onPressed: () => _AddAvailabilityDialog.show(
           context,
           bloc:      _bloc,
-          trainerId: widget.branchId,
+          trainerId: widget.trainerId,
           branchId:  widget.branchId,
         ),
         backgroundColor: cs.primary,

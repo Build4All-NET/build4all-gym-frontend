@@ -1,4 +1,4 @@
-// =============================================================================
+﻿// =============================================================================
 // FILE: admin_members_service.dart
 // PATH: lib/features/admin/members/data/services/admin_members_service.dart
 // LAYER: Data Layer → Services
@@ -7,6 +7,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -14,6 +15,7 @@ import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/member_detail_model.dart';
 
 class AdminMembersService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   AdminMembersService() : _tokenStore = const AdminTokenStore();
@@ -72,7 +74,7 @@ class AdminMembersService {
       if (search.isNotEmpty) 'search': search,
     });
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return _parseMap(response);
     } catch (e) {
@@ -89,7 +91,7 @@ class AdminMembersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/members/$userId');
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return MemberDetailModel.fromJson(_parseMap(response));
     } catch (e) {
@@ -106,7 +108,7 @@ class AdminMembersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/members/$userId/block');
     try {
-      final response = await http.patch(
+      final response = await _client.patch(
         uri, headers: headers,
         body: reason.isNotEmpty ? jsonEncode({'reason': reason}) : null,
       );
@@ -125,7 +127,7 @@ class AdminMembersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/members/$userId/unblock');
     try {
-      final response = await http.patch(uri, headers: headers);
+      final response = await _client.patch(uri, headers: headers);
       _handleStatus(response);
     } catch (e) {
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
@@ -141,7 +143,7 @@ class AdminMembersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/members/$userId');
     try {
-      final response = await http.delete(uri, headers: headers);
+      final response = await _client.delete(uri, headers: headers);
       _handleStatus(response);
     } catch (e) {
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
@@ -157,7 +159,7 @@ class AdminMembersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/members/bulk');
     try {
-      final response = await http.delete(
+      final response = await _client.delete(
           uri, headers: headers, body: jsonEncode(userIds));
       _handleStatus(response);
     } catch (e) {

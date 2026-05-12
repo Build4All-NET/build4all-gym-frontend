@@ -1,7 +1,8 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/exceptions/server_exception.dart' hide ServerException;
@@ -12,6 +13,7 @@ import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/pt_package_model.dart';
 
 class PtPackageService {
+  final _client = AuthedHttpClient();
   final _tokenStore = const AdminTokenStore();
 
 
@@ -40,7 +42,7 @@ class PtPackageService {
           '?trainerId=$trainerId&tenantId=$tenantId&branchId=$branchId',
     );
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       debugPrint('GET PACKAGES: ${r.statusCode}');
       if (r.statusCode == 200) {
         final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
@@ -64,7 +66,7 @@ class PtPackageService {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages');
     try {
-      final r = await http.post(
+      final r = await _client.post(
         uri,
         headers: headers,
         body: jsonEncode({...body, 'trainerId': trainerId, 'tenantId': tenantId, 'branchId': branchId}),
@@ -85,7 +87,7 @@ class PtPackageService {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages/$id');
     try {
-      final r = await http.put(uri, headers: headers, body: jsonEncode(body));
+      final r = await _client.put(uri, headers: headers, body: jsonEncode(body));
       if (r.statusCode == 200) {
         return PtPackageModel.fromJson(
             jsonDecode(utf8.decode(r.bodyBytes)) as Map<String, dynamic>);
@@ -101,7 +103,7 @@ class PtPackageService {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages/$id');
     try {
-      final r = await http.delete(uri, headers: headers);
+      final r = await _client.delete(uri, headers: headers);
       if (r.statusCode == 204) return;
       _handleError(r);
     } catch (e) {
