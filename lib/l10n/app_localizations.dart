@@ -2326,6 +2326,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @editProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your personal information'**
+  String get editProfileSubtitle;
+
+  /// No description provided for @editProfileFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get editProfileFullName;
+
+  /// No description provided for @editProfileEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get editProfileEmail;
+
+  /// No description provided for @editProfilePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get editProfilePhone;
+
+  /// No description provided for @editProfileDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get editProfileDateOfBirth;
+
+  /// No description provided for @editProfileAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get editProfileAddress;
+
+  /// No description provided for @editProfileGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get editProfileGender;
+
+  /// No description provided for @editProfileMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get editProfileMale;
+
+  /// No description provided for @editProfileFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get editProfileFemale;
+
+  /// No description provided for @editProfileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get editProfileSave;
+
+  /// No description provided for @editProfileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get editProfileCancel;
+
+  /// No description provided for @editProfileNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get editProfileNameRequired;
+
+  /// No description provided for @editProfileEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get editProfileEmailRequired;
+
+  /// No description provided for @editProfileInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get editProfileInvalidEmail;
+
+  /// No description provided for @accountGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get accountGender;
+
+  /// No description provided for @accountGenderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get accountGenderMale;
+
+  /// No description provided for @accountGenderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get accountGenderFemale;
+
+  /// No description provided for @editProfileFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get editProfileFirstName;
+
+  /// No description provided for @editProfileLastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get editProfileLastName;
+
+  /// No description provided for @editProfileUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get editProfileUsername;
+
+  /// No description provided for @editProfileChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get editProfileChangePassword;
+
+  /// No description provided for @editProfileCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get editProfileCurrentPassword;
+
+  /// No description provided for @editProfileNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get editProfileNewPassword;
+
+  /// No description provided for @editProfileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required.'**
+  String get editProfileRequired;
+
+  /// No description provided for @editProfileUsernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required.'**
+  String get editProfileUsernameRequired;
+
+  /// No description provided for @editProfileEmailRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required.'**
+  String get editProfileEmailRequiredMessage;
+
+  /// No description provided for @editProfileInvalidEmailMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address.'**
+  String get editProfileInvalidEmailMessage;
+
+  /// No description provided for @editProfilePhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required.'**
+  String get editProfilePhoneRequired;
+
+  /// No description provided for @editProfileCurrentPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password is required.'**
+  String get editProfileCurrentPasswordRequired;
+
+  /// No description provided for @editProfileNewPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'New password is required.'**
+  String get editProfileNewPasswordRequired;
+
+  /// No description provided for @editProfilePasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'New password must be at least 6 characters.'**
+  String get editProfilePasswordTooShort;
+
+  /// No description provided for @editProfilePasswordSameAsCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'New password must be different from current password.'**
+  String get editProfilePasswordSameAsCurrent;
+
+  /// No description provided for @editProfileInvalidOwnerProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid owner project link id.'**
+  String get editProfileInvalidOwnerProject;
+
+  /// No description provided for @editProfileEmailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verified successfully.'**
+  String get editProfileEmailVerified;
+
+  /// No description provided for @editProfilePasswordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated successfully.'**
+  String get editProfilePasswordUpdated;
+
+  /// No description provided for @editProfileOnlyLetters.
+  ///
+  /// In en, this message translates to:
+  /// **'Only letters and spaces are allowed.'**
+  String get editProfileOnlyLetters;
+
+  /// No description provided for @editProfileVerifyNewEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify new email'**
+  String get editProfileVerifyNewEmail;
+
+  /// No description provided for @editProfileVerifyPasswordChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify password change'**
+  String get editProfileVerifyPasswordChange;
+
+  /// No description provided for @editProfileCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Code sent to'**
+  String get editProfileCodeSentTo;
+
+  /// No description provided for @editProfileVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code'**
+  String get editProfileVerificationCode;
+
+  /// No description provided for @editProfileResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get editProfileResend;
+
+  /// No description provided for @editProfileVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get editProfileVerify;
+
+  /// No description provided for @editProfileCodeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code is required.'**
+  String get editProfileCodeRequired;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

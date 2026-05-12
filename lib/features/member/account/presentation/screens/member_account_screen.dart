@@ -3,22 +3,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
+
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_bloc.dart';
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_event.dart';
+
 import 'package:build4allgym/features/member/account/domain/entities/member_account_entity.dart';
 import 'package:build4allgym/features/member/account/presentation/bloc/member_account_bloc.dart';
 import 'package:build4allgym/features/member/account/presentation/bloc/member_account_event.dart';
 import 'package:build4allgym/features/member/account/presentation/bloc/member_account_state.dart';
+
+import 'package:build4allgym/features/member/build4all_profile/domain/entities/member_build4all_profile_entity.dart';
+import 'package:build4allgym/features/member/build4all_profile/presentation/bloc/member_build4all_profile_bloc.dart';
+import 'package:build4allgym/features/member/build4all_profile/presentation/bloc/member_build4all_profile_event.dart';
+import 'package:build4allgym/features/member/build4all_profile/presentation/bloc/member_build4all_profile_state.dart';
+
 import 'package:build4allgym/features/member/account/presentation/widgets/account_profile_card_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/widgets/account_action_cards_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/widgets/referral_code_card_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/widgets/account_personal_info_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/widgets/account_menu_section_widget.dart';
-
+import 'package:build4allgym/features/member/account/presentation/screens/member_edit_profile_screen.dart';
 class MemberAccountScreen extends StatefulWidget {
   final MemberAccountBloc bloc;
 
-  const MemberAccountScreen({super.key, required this.bloc});
+  const MemberAccountScreen({
+    super.key,
+    required this.bloc,
+  });
 
   @override
   State<MemberAccountScreen> createState() => _MemberAccountScreenState();
@@ -40,7 +51,7 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
       value: widget.bloc,
       child: Scaffold(
         backgroundColor: tokens.colors.background,
-        body: BlocConsumer<MemberAccountBloc, MemberAccountState>(
+        body: BlocListener<MemberAccountBloc, MemberAccountState>(
           listener: (context, state) {
             if (state is ProfileUpdateSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -51,6 +62,7 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
                 ),
               );
             }
+
             if (state is ProfileUpdateError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -61,51 +73,121 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
               );
             }
           },
-          builder: (context, state) {
-            if (state is MemberAccountLoading) {
-              return Center(
-                child: CircularProgressIndicator(color: tokens.colors.primary),
-              );
-            }
+          child: BlocBuilder<MemberAccountBloc, MemberAccountState>(
+            builder: (context, accountState) {
+              return BlocBuilder<MemberBuild4AllProfileBloc,
+                  MemberBuild4AllProfileState>(
+                builder: (context, profileState) {
+                  if (accountState is MemberAccountLoading ||
+                      profileState is MemberBuild4AllProfileLoading ||
+                      accountState is MemberAccountInitial ||
+                      profileState is MemberBuild4AllProfileInitial) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: tokens.colors.primary,
+                      ),
+                    );
+                  }
 
-            if (state is MemberAccountError) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.all(tokens.spacing.lg),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.error_outline, color: tokens.colors.danger, size: 48),
-                      SizedBox(height: tokens.spacing.md),
-                      Text(
-                        state.message,
-                        textAlign: TextAlign.center,
-                        style: tokens.typography.bodyMedium.copyWith(color: tokens.colors.danger),
-                      ),
-                      SizedBox(height: tokens.spacing.lg),
-                      ElevatedButton(
-                        onPressed: () => context.read<MemberAccountBloc>().add(const MemberAccountStarted()),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: tokens.colors.primary,
-                          foregroundColor: tokens.colors.onPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(tokens.button.radius),
-                          ),
-                        ),
-                        child: Text(l10n.retry),
-                      ),
-                    ],
-                  ),
+                  if (accountState is MemberAccountError) {
+                    return _AccountErrorView(
+                      message: accountState.message,
+                      onRetry: () {
+                        context
+                            .read<MemberAccountBloc>()
+                            .add(const MemberAccountStarted());
+
+                        context
+                            .read<MemberBuild4AllProfileBloc>()
+                            .add(const MemberBuild4AllProfileRefreshRequested());
+                      },
+                    );
+                  }
+
+                  if (profileState is MemberBuild4AllProfileError) {
+                    return _AccountErrorView(
+                      message: profileState.message,
+                      onRetry: () {
+                        context
+                            .read<MemberAccountBloc>()
+                            .add(const MemberAccountStarted());
+
+                        context
+                            .read<MemberBuild4AllProfileBloc>()
+                            .add(const MemberBuild4AllProfileRefreshRequested());
+                      },
+                    );
+                  }
+
+                  if (accountState is MemberAccountLoaded &&
+                      profileState is MemberBuild4AllProfileLoaded) {
+                    return _AccountBody(
+                      account: accountState.account,
+                      profile: profileState.profile,
+                    );
+                  }
+
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: tokens.colors.primary,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountErrorView extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _AccountErrorView({
+    required this.message,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(tokens.spacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline,
+              color: tokens.colors.danger,
+              size: 48,
+            ),
+            SizedBox(height: tokens.spacing.md),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.danger,
+              ),
+            ),
+            SizedBox(height: tokens.spacing.lg),
+            ElevatedButton(
+              onPressed: onRetry,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: tokens.colors.primary,
+                foregroundColor: tokens.colors.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(tokens.button.radius),
                 ),
-              );
-            }
-
-            if (state is MemberAccountLoaded) {
-              return _AccountBody(account: state.account);
-            }
-
-            return Center(child: CircularProgressIndicator(color: tokens.colors.primary));
-          },
+              ),
+              child: Text(l10n.retry),
+            ),
+          ],
         ),
       ),
     );
@@ -114,8 +196,34 @@ class _MemberAccountScreenState extends State<MemberAccountScreen> {
 
 class _AccountBody extends StatelessWidget {
   final MemberAccountEntity account;
+  final MemberBuild4AllProfileEntity profile;
 
-  const _AccountBody({required this.account});
+  const _AccountBody({
+    required this.account,
+    required this.profile,
+  });
+
+  void _openEditProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider.value(
+              value: context.read<MemberAccountBloc>(),
+            ),
+            BlocProvider.value(
+              value: context.read<MemberBuild4AllProfileBloc>(),
+            ),
+          ],
+          child: MemberEditProfileScreen(
+            account: account,
+            profile: profile,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +249,10 @@ class _AccountBody extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: isRtl ? Alignment.topRight : Alignment.topLeft,
                     end: isRtl ? Alignment.bottomLeft : Alignment.bottomRight,
-                    colors: [tokens.colors.primary, tokens.colors.success],
+                    colors: [
+                      tokens.colors.primary,
+                      tokens.colors.success,
+                    ],
                   ),
                   borderRadius: const BorderRadiusDirectional.only(
                     bottomStart: Radius.circular(28),
@@ -149,7 +260,6 @@ class _AccountBody extends StatelessWidget {
                   ),
                 ),
                 child: Column(
-                  // FIX: stretch for Arabic so title hugs right edge
                   crossAxisAlignment: isRtl
                       ? CrossAxisAlignment.stretch
                       : CrossAxisAlignment.start,
@@ -163,7 +273,10 @@ class _AccountBody extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: tokens.spacing.lg),
-                    AccountProfileCardWidget(account: account),
+                    AccountProfileCardWidget(
+                      account: account,
+                      profile: profile,
+                    ),
                   ],
                 ),
               ),
@@ -175,9 +288,7 @@ class _AccountBody extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 76),
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: tokens.spacing.lg),
             child: Column(
@@ -187,7 +298,8 @@ class _AccountBody extends StatelessWidget {
                 SizedBox(height: tokens.spacing.lg),
                 AccountPersonalInfoWidget(
                   account: account,
-                  onEditTap: () {},
+                  profile: profile,
+                  onEditTap: () => _openEditProfile(context),
                 ),
                 SizedBox(height: tokens.spacing.lg),
                 AccountMenuSectionWidget(
@@ -196,7 +308,7 @@ class _AccountBody extends StatelessWidget {
                     AccountMenuItem(
                       icon: Icons.edit_rounded,
                       label: l10n.accountEditProfile,
-                      onTap: () {},
+                      onTap: () => _openEditProfile(context),
                     ),
                     AccountMenuItem(
                       icon: Icons.credit_card_rounded,

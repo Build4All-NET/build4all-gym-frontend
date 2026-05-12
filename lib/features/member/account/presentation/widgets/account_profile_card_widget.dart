@@ -5,11 +5,17 @@ import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_entity.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_stats_entity.dart';
+import 'package:build4allgym/features/member/build4all_profile/domain/entities/member_build4all_profile_entity.dart';
 
 class AccountProfileCardWidget extends StatelessWidget {
   final MemberAccountEntity account;
+  final MemberBuild4AllProfileEntity profile;
 
-  const AccountProfileCardWidget({super.key, required this.account});
+  const AccountProfileCardWidget({
+    super.key,
+    required this.account,
+    required this.profile,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,22 +31,19 @@ class AccountProfileCardWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Top row: name + photo ──────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (isRtl) _buildPhoto(context, tokens),
               if (isRtl) SizedBox(width: tokens.spacing.md),
-
               Expanded(
                 child: Column(
-                  // FIX: stretch so text hugs the edge next to the photo
                   crossAxisAlignment: isRtl
                       ? CrossAxisAlignment.stretch
                       : CrossAxisAlignment.start,
                   children: [
                     Text(
-                      account.fullName,
+                      profile.fullName,
                       textAlign: isRtl ? TextAlign.right : TextAlign.left,
                       style: tokens.typography.titleMedium.copyWith(
                         color: tokens.colors.onPrimary,
@@ -60,18 +63,22 @@ class AccountProfileCardWidget extends StatelessWidget {
                     ],
                     if (account.planName != null) ...[
                       SizedBox(height: tokens.spacing.sm),
-                      // Align badge to right in RTL, left in LTR
                       Align(
-                        alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                        alignment:
+                        isRtl ? Alignment.centerRight : Alignment.centerLeft,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: tokens.colors.onPrimary.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                            textDirection:
+                            isRtl ? TextDirection.rtl : TextDirection.ltr,
                             children: [
                               Icon(
                                 Icons.workspace_premium_rounded,
@@ -94,13 +101,10 @@ class AccountProfileCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
-
               if (!isRtl) SizedBox(width: tokens.spacing.md),
               if (!isRtl) _buildPhoto(context, tokens),
             ],
           ),
-
-          // ── Divider ───────────────────────────────────────────────
           Padding(
             padding: EdgeInsets.symmetric(vertical: tokens.spacing.md),
             child: Divider(
@@ -108,8 +112,6 @@ class AccountProfileCardWidget extends StatelessWidget {
               height: 1,
             ),
           ),
-
-          // ── Stats row ─────────────────────────────────────────────
           AccountStatsRowWidget(stats: account.stats),
         ],
       ),
@@ -117,6 +119,8 @@ class AccountProfileCardWidget extends StatelessWidget {
   }
 
   Widget _buildPhoto(BuildContext context, dynamic tokens) {
+    final imageUrl = profile.profileImageUrl?.trim();
+
     return Stack(
       children: [
         Container(
@@ -127,10 +131,10 @@ class AccountProfileCardWidget extends StatelessWidget {
             color: tokens.colors.onPrimary.withOpacity(0.2),
             border: Border.all(color: tokens.colors.onPrimary, width: 2),
           ),
-          child: account.profileFileId != null
+          child: imageUrl != null && imageUrl.isNotEmpty
               ? ClipOval(
             child: Image.network(
-              'http://localhost:8080/api/files/${account.profileFileId}',
+              imageUrl,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Icon(
                 Icons.person,
@@ -139,7 +143,11 @@ class AccountProfileCardWidget extends StatelessWidget {
               ),
             ),
           )
-              : Icon(Icons.person, color: tokens.colors.onPrimary, size: 36),
+              : Icon(
+            Icons.person,
+            color: tokens.colors.onPrimary,
+            size: 36,
+          ),
         ),
         Positioned(
           bottom: 0,
@@ -152,7 +160,11 @@ class AccountProfileCardWidget extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: tokens.colors.primary, width: 1.5),
             ),
-            child: Icon(Icons.edit_rounded, size: 13, color: tokens.colors.primary),
+            child: Icon(
+              Icons.edit_rounded,
+              size: 13,
+              color: tokens.colors.primary,
+            ),
           ),
         ),
       ],
@@ -160,7 +172,6 @@ class AccountProfileCardWidget extends StatelessWidget {
   }
 }
 
-// ── AccountStatsRowWidget ─────────────────────────────────────────────────────
 class AccountStatsRowWidget extends StatelessWidget {
   final MemberAccountStatsEntity stats;
 
@@ -233,6 +244,7 @@ class _StatDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+
     return Container(
       width: 1,
       height: 40,

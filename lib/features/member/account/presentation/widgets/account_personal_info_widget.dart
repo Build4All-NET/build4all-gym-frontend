@@ -4,14 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_entity.dart';
+import 'package:build4allgym/features/member/build4all_profile/domain/entities/member_build4all_profile_entity.dart';
 
 class AccountPersonalInfoWidget extends StatelessWidget {
   final MemberAccountEntity account;
+  final MemberBuild4AllProfileEntity profile;
   final VoidCallback onEditTap;
 
   const AccountPersonalInfoWidget({
     super.key,
     required this.account,
+    required this.profile,
     required this.onEditTap,
   });
 
@@ -20,6 +23,9 @@ class AccountPersonalInfoWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    final email = profile.email?.trim();
+    final phone = profile.phoneNumber?.trim();
 
     return Container(
       padding: EdgeInsets.all(tokens.spacing.lg),
@@ -36,9 +42,8 @@ class AccountPersonalInfoWidget extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: isRtl
-            ? CrossAxisAlignment.stretch
-            : CrossAxisAlignment.start,
+        crossAxisAlignment:
+        isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
         children: [
           Text(
             l10n.accountPersonalInfo,
@@ -48,14 +53,36 @@ class AccountPersonalInfoWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: tokens.spacing.md),
-          if (account.email != null)
-            _InfoRow(icon: Icons.email_rounded, label: l10n.accountEmail, value: account.email!),
-          if (account.phone != null)
-            _InfoRow(icon: Icons.phone_rounded, label: l10n.accountPhone, value: account.phone!),
+
+          if (email != null && email.isNotEmpty)
+            _InfoRow(
+              icon: Icons.email_rounded,
+              label: l10n.accountEmail,
+              value: email,
+            ),
+
+          if (phone != null && phone.isNotEmpty)
+            _InfoRow(
+              icon: Icons.phone_rounded,
+              label: l10n.accountPhone,
+              value: phone,
+            ),
+
           if (account.dateOfBirth != null)
-            _InfoRow(icon: Icons.cake_rounded, label: l10n.accountDateOfBirth, value: account.dateOfBirth!),
+            _InfoRow(
+              icon: Icons.cake_rounded,
+              label: l10n.accountDateOfBirth,
+              value: account.dateOfBirth!,
+            ),
+
           if (account.address != null)
-            _InfoRow(icon: Icons.location_on_rounded, label: l10n.accountAddress, value: account.address!, isLast: true),
+            _InfoRow(
+              icon: Icons.location_on_rounded,
+              label: l10n.accountAddress,
+              value: account.address!,
+              isLast: true,
+            ),
+
           SizedBox(height: tokens.spacing.md),
           SizedBox(
             width: double.infinity,
@@ -106,7 +133,6 @@ class _InfoRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: isLast ? 0 : tokens.spacing.md),
       child: Row(
-        // Always LTR: icon LEFT, text RIGHT
         textDirection: TextDirection.ltr,
         children: [
           Container(
@@ -121,10 +147,8 @@ class _InfoRow extends StatelessWidget {
           SizedBox(width: tokens.spacing.md),
           Expanded(
             child: Column(
-              // RTL: text aligns to the right end of the expanded space
-              crossAxisAlignment: isRtl
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment:
+              isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
