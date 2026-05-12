@@ -1,12 +1,10 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/screens/trainer_schedule_screen.dart
+// FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_schedule_screen.dart
 //
 // DESIGN: Images 8-9 — Schedule tab (Availability).
 //
 // Shows recurring weekly time slots grouped by day of week.
 // "+ Add Slot" button and FAB both open the Add Availability dialog.
-//
-// TODO: Wire to real backend availability endpoints when implemented.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -14,45 +12,40 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../data/models/availability_model.dart';
+import '../../data/services/availability_service.dart';
 import '../bloc/availability_bloc.dart';
 
 class TrainerScheduleScreen extends StatefulWidget {
-  const TrainerScheduleScreen({super.key});
+  final int branchId;
+  const TrainerScheduleScreen({super.key, required this.branchId});
 
   @override
-  State<TrainerScheduleScreen> createState() =>
-      _TrainerScheduleScreenState();
+  State<TrainerScheduleScreen> createState() => _TrainerScheduleScreenState();
 }
 
 class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
-
-
-
   late final AvailabilityBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _bloc = AvailabilityBloc(AvailabilityHttpService());
-    _bloc.add(LoadAvailability(trainerId: /* from auth */, branchId: /* from auth */));
+    _bloc.add(LoadAvailability(
+      trainerId: widget.branchId,
+      branchId:  widget.branchId,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final cs = tokens.colors;
-
-    // Group by day
-    final grouped = <String, List<_IndexedSlot>>{};
-    for (int i = 0; i < _slots.length; i++) {
-      grouped.putIfAbsent(_slots[i].day, () => []);
-      grouped[_slots[i].day]!.add(_IndexedSlot(index: i, slot: _slots[i]));
-    }
-
-    const dayOrder = [
-      'Monday', 'Tuesday', 'Wednesday',
-      'Thursday', 'Friday', 'Saturday', 'Sunday',
-    ];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
@@ -77,18 +70,20 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
             padding: const EdgeInsets.only(right: 12),
             child: ElevatedButton.icon(
               onPressed: () => _AddAvailabilityDialog.show(
-                  context, onAdd: _addSlot),
+                context,
+                bloc: _bloc,
+                trainerId: widget.branchId,
+                branchId: widget.branchId,
+              ),
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Slot',
-                  style: TextStyle(fontSize: 13)),
+              label: const Text('Add Slot', style: TextStyle(fontSize: 13)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: cs.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
@@ -100,7 +95,10 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
         bloc: _bloc,
         listener: (ctx, state) {
           if (state is AvailabilityMutated) {
-            _bloc.add(LoadAvailability(trainerId: _trainerId, branchId: _branchId));
+            _bloc.add(LoadAvailability(
+              trainerId: widget.branchId,
+              branchId:  widget.branchId,
+            ));
           }
           if (state is AvailabilityError) {
             ScaffoldMessenger.of(ctx).showSnackBar(
@@ -108,25 +106,29 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
           }
         },
         builder: (ctx, state) {
-          if (state is AvailabilityLoading) return const Center(child: CircularProgressIndicator());
+          if (state is AvailabilityLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (state is AvailabilityLoaded) {
             final slots = state.slots;
             if (slots.isEmpty) return const Center(child: Text('No availability set yet.'));
-            // Build grouped map using slot.dayName
             final grouped = <String, List<AvailabilityModel>>{};
             for (final s in slots) {
               grouped.putIfAbsent(s.dayName, () => []).add(s);
             }
-            const dayOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+            const dayOrder = [
+              'Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday', 'Sunday',
+            ];
             return ListView(
               padding: const EdgeInsets.all(16),
               children: dayOrder
                   .where((d) => grouped.containsKey(d))
                   .map((day) => _DaySection(
-                day: day,
-                slots: grouped[day]!,
-                onDelete: (id) => _bloc.add(DeleteSlot(id)),
-              ))
+                        day: day,
+                        slots: grouped[day]!,
+                        onDelete: (id) => _bloc.add(DeleteSlot(id)),
+                      ))
                   .toList(),
             );
           }
@@ -135,8 +137,12 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            _AddAvailabilityDialog.show(context, onAdd: _addSlot),
+        onPressed: () => _AddAvailabilityDialog.show(
+          context,
+          bloc:      _bloc,
+          trainerId: widget.branchId,
+          branchId:  widget.branchId,
+        ),
         backgroundColor: cs.primary,
         foregroundColor: Colors.white,
         elevation: 4,
@@ -146,17 +152,11 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
   }
 }
 
-class _IndexedSlot {
-  final int index;
-  final _AvailabilitySlot slot;
-  const _IndexedSlot({required this.index, required this.slot});
-}
-
 // ── Day section ───────────────────────────────────────────────────────────────
 
 class _DaySection extends StatelessWidget {
   final String day;
-  final List<_IndexedSlot> slots;
+  final List<AvailabilityModel> slots;
   final ValueChanged<int> onDelete;
 
   const _DaySection({
@@ -182,8 +182,8 @@ class _DaySection extends StatelessWidget {
           ),
         ),
         ...slots.map((s) => _SlotRow(
-              indexed: s,
-              onDelete: () => onDelete(s.index),
+              slot: s,
+              onDelete: () => onDelete(s.availabilityId),
             )),
         const SizedBox(height: 12),
       ],
@@ -194,15 +194,13 @@ class _DaySection extends StatelessWidget {
 // ── Slot row ──────────────────────────────────────────────────────────────────
 
 class _SlotRow extends StatelessWidget {
-  final _IndexedSlot indexed;
+  final AvailabilityModel slot;
   final VoidCallback onDelete;
 
-  const _SlotRow({super.key, required this.indexed, required this.onDelete});
+  const _SlotRow({super.key, required this.slot, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
-    final slot = indexed.slot;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -245,8 +243,7 @@ class _SlotRow extends StatelessWidget {
                 if (slot.recurring)
                   Text(
                     'Recurring weekly',
-                    style: TextStyle(
-                        fontSize: 12, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                   ),
               ],
             ),
@@ -265,27 +262,37 @@ class _SlotRow extends StatelessWidget {
 // ── Add Availability dialog ───────────────────────────────────────────────────
 
 class _AddAvailabilityDialog extends StatefulWidget {
-  final ValueChanged<_AvailabilitySlot> onAdd;
+  final AvailabilityBloc bloc;
+  final int trainerId;
+  final int branchId;
 
-  const _AddAvailabilityDialog({required this.onAdd});
+  const _AddAvailabilityDialog({
+    required this.bloc,
+    required this.trainerId,
+    required this.branchId,
+  });
 
   static Future<void> show(
     BuildContext context, {
-    required ValueChanged<_AvailabilitySlot> onAdd,
+    required AvailabilityBloc bloc,
+    required int trainerId,
+    required int branchId,
   }) {
     return showDialog(
       context: context,
-      builder: (_) => _AddAvailabilityDialog(onAdd: onAdd),
+      builder: (_) => _AddAvailabilityDialog(
+        bloc: bloc,
+        trainerId: trainerId,
+        branchId: branchId,
+      ),
     );
   }
 
   @override
-  State<_AddAvailabilityDialog> createState() =>
-      _AddAvailabilityDialogState();
+  State<_AddAvailabilityDialog> createState() => _AddAvailabilityDialogState();
 }
 
-class _AddAvailabilityDialogState
-    extends State<_AddAvailabilityDialog> {
+class _AddAvailabilityDialogState extends State<_AddAvailabilityDialog> {
   String? _selectedDay;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
@@ -295,6 +302,11 @@ class _AddAvailabilityDialogState
     'Monday', 'Tuesday', 'Wednesday',
     'Thursday', 'Friday', 'Saturday', 'Sunday',
   ];
+
+  static const _dayNumbers = {
+    'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
+    'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7,
+  };
 
   Future<void> _pickTime(bool isStart) async {
     final picked = await showTimePicker(
@@ -313,30 +325,22 @@ class _AddAvailabilityDialogState
   String _formatTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
-// Map day name to weekday number
-  static const _dayNumbers = {
-    'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
-    'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7,
-  };
-
   void _submit() {
+    if (_selectedDay == null || _startTime == null || _endTime == null) return;
     widget.bloc.add(AddSlot(
       trainerId: widget.trainerId,
       branchId: widget.branchId,
       weekday: _dayNumbers[_selectedDay]!,
-      startTime: _startTime.format(context), // "HH:mm"
-      endTime: _endTime.format(context),
+      startTime: _formatTime(_startTime!),
+      endTime: _formatTime(_endTime!),
     ));
     Navigator.pop(context);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -356,15 +360,13 @@ class _AddAvailabilityDialogState
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close,
-                      color: Color(0xFF9CA3AF)),
+                  child: const Icon(Icons.close, color: Color(0xFF9CA3AF)),
                 ),
               ],
             ),
 
             const SizedBox(height: 20),
 
-            // Day of week
             const _Label2('Day of Week'),
             const SizedBox(height: 6),
             DropdownButtonFormField<String>(
@@ -372,15 +374,13 @@ class _AddAvailabilityDialogState
               hint: const Text('Select day'),
               decoration: _dec2(null),
               items: _days
-                  .map((d) =>
-                      DropdownMenuItem(value: d, child: Text(d)))
+                  .map((d) => DropdownMenuItem(value: d, child: Text(d)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedDay = v),
             ),
 
             const SizedBox(height: 16),
 
-            // Start + End time
             Row(
               children: [
                 Expanded(
@@ -415,10 +415,8 @@ class _AddAvailabilityDialogState
 
             const SizedBox(height: 16),
 
-            // Recurring toggle
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFFF0F4FF),
                 borderRadius: BorderRadius.circular(12),
@@ -439,8 +437,7 @@ class _AddAvailabilityDialogState
                         ),
                         Text(
                           'Repeat this slot every week',
-                          style: TextStyle(
-                              fontSize: 12, color: Colors.grey[500]),
+                          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                         ),
                       ],
                     ),
@@ -456,7 +453,6 @@ class _AddAvailabilityDialogState
 
             const SizedBox(height: 24),
 
-            // Buttons
             Row(
               children: [
                 Expanded(
@@ -474,8 +470,7 @@ class _AddAvailabilityDialogState
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _submit,
-                    icon: const Icon(Icons.check_circle_outline,
-                        size: 18),
+                    icon: const Icon(Icons.check_circle_outline, size: 18),
                     label: const Text('Add Availability'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4F46E5),
@@ -483,8 +478,7 @@ class _AddAvailabilityDialogState
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
@@ -531,16 +525,13 @@ class _TimePickerField extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.access_time_rounded,
-                size: 18, color: Colors.grey[400]),
+            Icon(Icons.access_time_rounded, size: 18, color: Colors.grey[400]),
             const SizedBox(width: 8),
             Text(
               time != null ? time!.format(context) : '--:-- --',
               style: TextStyle(
                 fontSize: 14,
-                color: time != null
-                    ? const Color(0xFF1A1A2E)
-                    : Colors.grey[400],
+                color: time != null ? const Color(0xFF1A1A2E) : Colors.grey[400],
               ),
             ),
           ],

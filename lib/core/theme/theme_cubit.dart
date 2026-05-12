@@ -64,43 +64,7 @@ class ThemeCubit extends Cubit<ThemeState> {
   }
 
   Future<void> loadTheme() async {
-    // 1) Try compile-time theme first (CI baked)
-    final envB64 = Env.themeJsonB64.trim();
-    if (envB64.isNotEmpty) {
-      _applyThemeFromB64(envB64, source: 'ENV');
-      emit(state.copyWith(isLoaded: true));
-      return;
-    }
-
-    // 2) No env theme => try runtime config from backend
-    try {
-      final apiBaseUrl = Env.apiBaseUrl.trim();
-      final linkId = Env.ownerProjectLinkId.trim();
-
-      if (apiBaseUrl.isEmpty || linkId.isEmpty) {
-        // nothing we can do
-        emit(state.copyWith(isLoaded: true));
-        return;
-      }
-
-      final cfg = await _runtimeService.fetchByLinkId(
-        apiBaseUrl: apiBaseUrl,
-        linkId: linkId,
-      );
-
-      final runtimeB64 = (cfg['THEME_JSON_B64'] ?? '').toString().trim();
-      if (runtimeB64.isNotEmpty) {
-        _applyThemeFromB64(runtimeB64, source: 'RUNTIME');
-      }
-
-      emit(state.copyWith(isLoaded: true));
-    } catch (e) {
-      // ignore: avoid_print
-      print('Theme runtime load failed: $e');
-      emit(state.copyWith(isLoaded: true));
-    }
-
-    // Load saved theme mode preference from SharedPreferences
+    // ── Always load the saved theme mode first ────────────────────────────────
     final prefs = await SharedPreferences.getInstance();
     final savedModeName = prefs.getString('settings_theme_mode');
     if (savedModeName != null) {
@@ -109,6 +73,35 @@ class ThemeCubit extends Cubit<ThemeState> {
         orElse: () => ThemeMode.system,
       );
       emit(state.copyWith(selectedThemeMode: savedMode));
+    }
+
+    // ── Then apply the visual theme from env or runtime ───────────────────────
+    final envB64 = Env.themeJsonB64.trim();
+    if (envB64.isNotEmpty) {
+      _applyThemeFromB64(envB64, source: 'ENV');
+      emit(state.copyWith(isLoaded: true));
+      return;  // safe to return now — ThemeMode is already loaded above
+    }
+
+    try {
+      final apiBaseUrl = Env.apiBaseUrl.trim();
+      final linkId = Env.ownerProjectLinkId.trim();
+      if (apiBaseUrl.isEmpty || linkId.isEmpty) {
+        emit(state.copyWith(isLoaded: true));
+        return;
+      }
+      final cfg = await _runtimeService.fetchByLinkId(
+        apiBaseUrl: apiBaseUrl,
+        linkId: linkId,
+      );
+      final runtimeB64 = (cfg['THEME_JSON_B64'] ?? '').toString().trim();
+      if (runtimeB64.isNotEmpty) {
+        _applyThemeFromB64(runtimeB64, source: 'RUNTIME');
+      }
+      emit(state.copyWith(isLoaded: true));
+    } catch (e) {
+      print('Theme runtime load failed: $e');
+      emit(state.copyWith(isLoaded: true));
     }
   }
 
@@ -137,4 +130,5 @@ class ThemeCubit extends Cubit<ThemeState> {
     await prefs.setString('settings_theme_mode', mode.name);
     emit(state.copyWith(selectedThemeMode: mode));
   }
+
 }

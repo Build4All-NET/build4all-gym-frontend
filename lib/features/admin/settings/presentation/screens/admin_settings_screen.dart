@@ -11,6 +11,8 @@ import '../../../../../../common/settings/cubits/appearance_settings_cubit.dart'
 import '../../../../../../common/settings/widgets/appearance_section_widget.dart';
 import '../../../../../../common/settings/widgets/language_section_widget.dart';
 import '../../../../../../common/settings/widgets/settings_version_footer.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../cubit/admin_settings_cubit.dart';
 import '../cubit/admin_settings_state.dart';
 import '../widgets/account_security_section_widget.dart';
@@ -29,12 +31,16 @@ class AdminSettingsScreen extends StatelessWidget {
     // shows the correct card on first render.
     // BlocListener bridges taps in the widget back to AdminSettingsCubit
     // (which owns dirty-state and the eventual Save call).
+    // AFTER
     return BlocProvider<AppearanceSettingsCubit>(
-      create: (_) => AppearanceSettingsCubit(
-        initial: adminCubit.state.selectedThemeMode,
+      create: (ctx) => AppearanceSettingsCubit(
+        initial: ctx.read<ThemeCubit>().state.selectedThemeMode,  // ✅ reads actual saved mode
       ),
       child: BlocListener<AppearanceSettingsCubit, ThemeMode>(
-        listener: (context, themeMode) => adminCubit.setThemeMode(themeMode),
+        listener: (context, themeMode) {
+          adminCubit.setThemeMode(themeMode);                        // dirty tracking
+          context.read<ThemeCubit>().setThemeMode(themeMode);        // ✅ live preview
+        },
         child: const _AdminSettingsBody(),
       ),
     );
@@ -52,17 +58,29 @@ class _AdminSettingsBody extends StatelessWidget {
     final c = tokens.colors;
     final state = context.watch<AdminSettingsCubit>().state;
     final cubit = context.read<AdminSettingsCubit>();
-
+    final profile = context.watch<AdminProfileCubit>().state;
     return Scaffold(
       backgroundColor: c.background,
+
+      drawer: AdminNavigationDrawer(
+        gymName: profile.gymName,
+        branchName: profile.branchName,
+        adminName: profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl: profile.avatarUrl,
+        initialActiveId: 'settings',
+      ),
+
 
       // ── AppBar ────────────────────────────────────────────────────────────
       appBar: AppBar(
         backgroundColor: c.surface,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: c.label),
-          onPressed: () => Scaffold.of(context).openDrawer(),
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: Icon(Icons.menu, color: c.label),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
         ),
         title: Text('Settings', style: tokens.typography.titleMedium),
         actions: [
@@ -174,6 +192,8 @@ class _AdminSettingsBody extends StatelessWidget {
 
     if (success) {
       await context.read<LocaleCubit>().setLocale(state.pendingLocale);
+      if (!context.mounted) return;
+      context.read<ThemeCubit>().setThemeMode(state.selectedThemeMode);
       // context.read<ThemeCubit>().setThemeMode(state.selectedThemeMode);
       // ↑ Uncomment when GA-478 adds setThemeMode() to ThemeCubit.
 

@@ -26,7 +26,13 @@ import '../../data/services/pt_package_service.dart';
 import '../bloc/pt_package_bloc.dart';
 
 class TrainerPackagesScreen extends StatefulWidget {
-  const TrainerPackagesScreen({super.key});
+  final int tenantId;
+  final int branchId;
+  const TrainerPackagesScreen({
+    super.key,
+    required this.tenantId,
+    required this.branchId,
+  });
 
   @override
   State<TrainerPackagesScreen> createState() => _TrainerPackagesScreenState();
@@ -34,19 +40,16 @@ class TrainerPackagesScreen extends StatefulWidget {
 
 class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   late final PtPackageBloc _bloc;
-  // Stub packages — replace with real BLoC data.
-
-  // Replace _packages list with:
-  int get _trainerId => /* read from auth/session storage */;
-  int get _tenantId  => /* read from auth/session storage */;
-  int get _branchId  => /* read from auth/session storage */;
-
 
   @override
   void initState() {
     super.initState();
     _bloc = PtPackageBloc(PtPackageService());
-    _bloc.add(LoadPackages(trainerId: _trainerId, tenantId: _tenantId, branchId: _branchId));
+    _bloc.add(LoadPackages(
+      trainerId: widget.branchId,
+      tenantId:  widget.tenantId,
+      branchId:  widget.branchId,
+    ));
   }
 
   @override
@@ -82,7 +85,13 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: ElevatedButton.icon(
-              onPressed: () => _CreatePackageDialog.show(context),
+              onPressed: () => _CreatePackageDialog.show(
+                context,
+                bloc:      _bloc,
+                trainerId: widget.branchId,
+                tenantId:  widget.tenantId,
+                branchId:  widget.branchId,
+              ),
               icon: const Icon(Icons.add, size: 18),
               label: const Text('New Package',
                   style: TextStyle(fontSize: 13)),
@@ -107,7 +116,11 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('✅ Package saved.'), backgroundColor: Color(0xFF22C55E)),
             );
-            _bloc.add(LoadPackages(trainerId: _trainerId, tenantId: _tenantId, branchId: _branchId));
+            _bloc.add(LoadPackages(
+              trainerId: widget.branchId,
+              tenantId:  widget.tenantId,
+              branchId:  widget.branchId,
+            ));
           }
           if (state is PtPackageError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -129,35 +142,6 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
       ),
     );
   }
-}
-
-// ── Package data model (stub) ─────────────────────────────────────────────────
-
-class _PackageData {
-  final String name;
-  final String description;
-  final int sessions;
-  final int minDays;
-  final int maxDays;
-  final int validityDays;
-  final double regularPrice;
-  final double? salePrice;
-  final bool isActive;
-
-  const _PackageData({
-    required this.name,
-    required this.description,
-    required this.sessions,
-    required this.minDays,
-    required this.maxDays,
-    required this.validityDays,
-    required this.regularPrice,
-    this.salePrice,
-    required this.isActive,
-  });
-
-  double get savings =>
-      salePrice != null ? regularPrice - salePrice! : 0;
 }
 
 // ── Package card ──────────────────────────────────────────────────────────────
@@ -429,19 +413,39 @@ class _StatChip extends StatelessWidget {
 // ── Create Package 4-step dialog ──────────────────────────────────────────────
 
 class _CreatePackageDialog extends StatefulWidget {
-  const _CreatePackageDialog();
+  final PtPackageBloc bloc;
+  final int trainerId;
+  final int tenantId;
+  final int branchId;
 
-  static Future<void> show(BuildContext context) {
+  const _CreatePackageDialog({
+    required this.bloc,
+    required this.trainerId,
+    required this.tenantId,
+    required this.branchId,
+  });
+
+  static Future<void> show(
+    BuildContext context, {
+    required PtPackageBloc bloc,
+    required int trainerId,
+    required int tenantId,
+    required int branchId,
+  }) {
     return showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const _CreatePackageDialog(),
+      builder: (_) => _CreatePackageDialog(
+        bloc: bloc,
+        trainerId: trainerId,
+        tenantId: tenantId,
+        branchId: branchId,
+      ),
     );
   }
 
   @override
-  State<_CreatePackageDialog> createState() =>
-      _CreatePackageDialogState();
+  State<_CreatePackageDialog> createState() => _CreatePackageDialogState();
 }
 
 class _CreatePackageDialogState extends State<_CreatePackageDialog> {
@@ -483,6 +487,7 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
   }
 
   void _submit() {
+    if (_nameCtrl.text.trim().isEmpty) return;
     widget.bloc.add(CreatePackage(
       trainerId: widget.trainerId,
       tenantId: widget.tenantId,
@@ -490,7 +495,7 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
       data: {
         'name': _nameCtrl.text.trim(),
         'packageType': _packageType ?? 'CUSTOM',
-        'ptServiceId': int.tryParse(_linkedService ?? ''),
+        if (_linkedService != null) 'ptServiceId': int.tryParse(_linkedService!),
         'numberOfSessions': int.tryParse(_totalSessionsCtrl.text) ?? 0,
         'daysAvailable': int.tryParse(_validityCtrl.text) ?? 0,
         'minDaysPerWeek': int.tryParse(_minDaysCtrl.text) ?? 1,

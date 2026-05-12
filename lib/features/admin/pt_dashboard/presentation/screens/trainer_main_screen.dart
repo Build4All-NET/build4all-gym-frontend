@@ -10,15 +10,15 @@
 //   3  Schedule    — TrainerScheduleScreen
 //   4  More        — TrainerServicesScreen
 //
-// BLoC contract:
-//   TrainerPtSessionsBloc is provided HERE so all 5 tabs share the same
-//   instance. IndexedStack keeps every tab alive (no rebuild on tab switch).
+// Branch selection lives here: the selected branchId is passed to every tab
+// that needs it. When the user switches branch, all tabs reload via ValueKey.
 // =============================================================================
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../admin/AppBar/presentation/branch_cubit.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 
 import '../../data/repositories/trainer_pt_sessions_repository_impl.dart';
@@ -34,9 +34,7 @@ import 'trainer_schedule_screen.dart';
 import 'trainer_services_screen.dart';
 
 class TrainerMainScreen extends StatefulWidget {
-  /// Optional initial tab index. Useful when deep-linking into a specific tab.
   final int initialIndex;
-
   const TrainerMainScreen({super.key, this.initialIndex = 0});
 
   @override
@@ -45,6 +43,10 @@ class TrainerMainScreen extends StatefulWidget {
 
 class _TrainerMainScreenState extends State<TrainerMainScreen> {
   late int _currentIndex;
+  int? _selectedBranchId;
+  int  _tenantId = 1;
+  late TrainerPtSessionsBloc _sessionsBloc;
+  bool _blocInitialized = false;
 
   @override
   void initState() {
@@ -52,12 +54,54 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     _currentIndex = widget.initialIndex;
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_blocInitialized) {
+      // tenantId = gym-chain identifier stored at login (ownerProjectLinkId).
+      // AdminProfileCubit exposes it as .branchId (legacy naming in that cubit).
+      final profileState = context.read<AdminProfileCubit>().state;
+      _tenantId = profileState.branchId ?? 1;
+
+      final branchId = _effectiveBranchId(context);
+      final service = TrainerPtSessionsService();
+      final repository = TrainerPtSessionsRepositoryImpl(service: service);
+      _sessionsBloc = TrainerPtSessionsBloc(
+        getSessions:   GetSessionsByDateUseCase(repository),
+        getStats:      GetSessionStatsUseCase(repository),
+        createSession: CreateSessionUseCase(repository),
+        updateStatus:  UpdateSessionStatusUseCase(repository),
+      )..add(PtSessionsStarted(branchId: branchId));
+      _blocInitialized = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _sessionsBloc.close();
+    super.dispose();
+  }
+
+  int _effectiveBranchId(BuildContext context) {
+    if (_selectedBranchId != null) return _selectedBranchId!;
+    final branchState = context.read<BranchCubit>().state;
+    if (branchState is BranchLoaded && branchState.branches.isNotEmpty) {
+      return branchState.branches.first.id;
+    }
+    return 1;
+  }
+
   void _switchTab(int index) {
     if (_currentIndex == index) return;
     setState(() => _currentIndex = index);
   }
 
-  // ── Bottom nav tab definitions ─────────────────────────────────────────────
+  void _onBranchChanged(int? branchId) {
+    setState(() => _selectedBranchId = branchId);
+    final effectiveId = branchId ?? _effectiveBranchId(context);
+    _sessionsBloc.add(PtSessionsStarted(branchId: effectiveId));
+  }
+
   static const _navItems = <_NavItem>[
     _NavItem(icon: Icons.grid_view_rounded,      label: 'Dashboard'),
     _NavItem(icon: Icons.calendar_today_rounded, label: 'Sessions'),
@@ -68,67 +112,70 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveBranchId = _effectiveBranchId(context);
 
-    //      AdminProfileCubit.state.branchId holds the tenant/branch ID that was
-    //      stored at login by AdminTokenStore (from the auth response).
-    //      We fall back to 1 only if the token did not carry a branchId claim,
-    //      which should never happen in production.
-    final profile  = context.read<AdminProfileCubit>().state;
-    final branchId = profile.branchId ?? 1;
-
-    final service    = TrainerPtSessionsService();
-    final repository = TrainerPtSessionsRepositoryImpl(service: service);
-
-    return BlocProvider(
-      create: (_) => TrainerPtSessionsBloc(
-        getSessions:   GetSessionsByDateUseCase(repository),
-        getStats:      GetSessionStatsUseCase(repository),
-        createSession: CreateSessionUseCase(repository),
-        updateStatus:  UpdateSessionStatusUseCase(repository),
-      )..add(PtSessionsStarted(branchId: branchId)), //  real branchId
+    return BlocProvider.value(
+      value: _sessionsBloc,
       child: _MainShell(
-        currentIndex: _currentIndex,
-        onTabSwitch:  _switchTab,
-        navItems:     _navItems,
+        currentIndex:    _currentIndex,
+        onTabSwitch:     _switchTab,
+        navItems:        _navItems,
+        tenantId:        _tenantId,
+        branchId:        effectiveBranchId,
+        onBranchChanged: _onBranchChanged,
       ),
     );
   }
 }
 
-// ── Shell widget (receives BLoC from above via context) ───────────────────────
+// ── Shell widget ──────────────────────────────────────────────────────────────
 
 class _MainShell extends StatelessWidget {
-  final int              currentIndex;
-  final ValueChanged<int> onTabSwitch;
-  final List<_NavItem>   navItems;
+  final int               currentIndex;
+  final ValueChanged<int>  onTabSwitch;
+  final List<_NavItem>    navItems;
+  final int               tenantId;
+  final int               branchId;
+  final ValueChanged<int?> onBranchChanged;
 
   const _MainShell({
     required this.currentIndex,
     required this.onTabSwitch,
     required this.navItems,
+    required this.tenantId,
+    required this.branchId,
+    required this.onBranchChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
 
-    // Each tab is built once and kept alive by IndexedStack.
+    // ValueKey ensures tabs fully rebuild (and reload data) when branchId changes.
     final bodies = <Widget>[
-      // Tab 0: Dashboard — receives onTabSwitch so quick actions switch tabs.
-      TrainerDashboardScreen(onTabSwitch: onTabSwitch),
-      // Tab 1: Sessions
+      TrainerDashboardScreen(
+        key: ValueKey('dashboard_$branchId'),
+        onTabSwitch:     onTabSwitch,
+        onBranchChanged: onBranchChanged,
+      ),
       const TrainerPtSessionsScreen(),
-      // Tab 2: Packages
-      const TrainerPackagesScreen(),
-      // Tab 3: Schedule
-      const TrainerScheduleScreen(),
-      // Tab 4: More / Services
-      const TrainerServicesScreen(),
+      TrainerPackagesScreen(
+        key:      ValueKey('packages_$branchId'),
+        tenantId: tenantId,
+        branchId: branchId,
+      ),
+      TrainerScheduleScreen(
+        key:      ValueKey('schedule_$branchId'),
+        branchId: branchId,
+      ),
+      TrainerServicesScreen(
+        key:      ValueKey('services_$branchId'),
+        tenantId: tenantId,
+      ),
     ];
 
     return Scaffold(
       backgroundColor: cs.background,
-      // IndexedStack preserves scroll position and BLoC state across tab switches
       body: IndexedStack(
         index: currentIndex,
         children: bodies,
@@ -138,9 +185,9 @@ class _MainShell extends StatelessWidget {
           color: cs.surface,
           boxShadow: [
             BoxShadow(
-              color:     Colors.black.withOpacity(0.08),
+              color:      Colors.black.withOpacity(0.08),
               blurRadius: 12,
-              offset:    const Offset(0, -4),
+              offset:     const Offset(0, -4),
             ),
           ],
         ),
@@ -187,7 +234,6 @@ class _MainShell extends StatelessWidget {
   }
 }
 
-// ── Simple data class for nav tab definitions ─────────────────────────────────
 class _NavItem {
   final IconData icon;
   final String   label;

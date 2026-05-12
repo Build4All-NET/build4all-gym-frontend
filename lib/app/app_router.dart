@@ -235,15 +235,23 @@ class AppRouter {
       case adminDashboard:
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            BlocProvider(
-              create: (_) => AdminDashboardBloc(
-                getAdminDashboardUseCase: GetAdminDashboardUseCase(
-                  repository: AdminDashboardRepositoryImpl(
-                    remoteDatasource: AdminDashboardRemoteDatasourceImpl(),
-                  ),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => BranchCubit()..loadBranches(),
                 ),
-              )..add(const AdminDashboardLoadRequested()),
-              child: const AdminDashboardScreen(),
+                BlocProvider(
+                  create: (_) => AdminDashboardBloc(
+                    getAdminDashboardUseCase: GetAdminDashboardUseCase(
+                      repository: AdminDashboardRepositoryImpl(
+                        remoteDatasource:
+                        AdminDashboardRemoteDatasourceImpl(),
+                      ),
+                    ),
+                  )..add(const AdminDashboardLoadRequested()),
+                ),
+              ],
+              child: AdminDashboardScreen(), // replace with your screen
             ),
           ),
         );
@@ -474,7 +482,10 @@ class AppRouter {
       case adminPtSessions:
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            const TrainerMainScreen(),
+            BlocProvider(
+              create: (_) => BranchCubit()..loadBranches(),
+              child: const TrainerMainScreen(),
+            ),
           ),
         );
 

@@ -22,18 +22,19 @@ import '../../../../../core/exceptions/server_exception.dart' hide ServerExcepti
 import '../../../../../core/error/exceptions.dart';
 import '../../../../../core/exceptions/forbidden_exception.dart' hide ForbiddenException;
 import '../../../../../core/exceptions/network_exception.dart' hide NetworkException;
+import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/pt_session_model.dart';
 import '../models/pt_session_stats_model.dart';
 
 class TrainerPtSessionsService {
-  final _storage = const FlutterSecureStorage();
-
   static final _dateFmt = DateFormat('yyyy-MM-dd');
 
   // ── Auth headers ─────────────────────────────────────────────────────────
+  final _tokenStore = const AdminTokenStore();
+
 
   Future<Map<String, String>> _authHeaders() async {
-    final token = await _storage.read(key: 'jwt_token');
+    final token = await _tokenStore.getToken();
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
