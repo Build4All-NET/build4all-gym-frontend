@@ -18,7 +18,10 @@ import 'package:intl/intl.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../AppBar/presentation/admin_app_bar.dart';
+import '../../../AppBar/presentation/branch_cubit.dart';
 
+import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../domain/entities/pt_session_entity.dart';
 import '../../domain/entities/pt_session_stats_entity.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
@@ -26,13 +29,13 @@ import '../bloc/trainer_pt_sessions_state.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerDashboardScreen extends StatelessWidget {
-  /// Called with a tab index when a quick action requests tab navigation.
-  /// Provided by TrainerMainScreen.
   final ValueChanged<int> onTabSwitch;
+  final ValueChanged<int?> onBranchChanged;
 
   const TrainerDashboardScreen({
     super.key,
     required this.onTabSwitch,
+    required this.onBranchChanged,
   });
 
   @override
@@ -40,11 +43,64 @@ class TrainerDashboardScreen extends StatelessWidget {
     //  Read theme tokens so every child can use c.* for colors.
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
+    final profile = context.watch<AdminProfileCubit>().state;
 
     return Scaffold(
+      drawer:  AdminNavigationDrawer(
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
+        initialActiveId: 'pt_sessions',
+      ),
       // c.background from ThemeCubit.
       backgroundColor: c.background,
-      appBar: _DashboardAppBar(tokens: tokens),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: SafeArea(
+          bottom: false,
+          child: AdminAppBar(
+            title: 'Trainer Dashboard',
+            selectedBranchId:
+            context.watch<AdminProfileCubit>().state.branchId,
+            onBranchChanged: onBranchChanged,
+            notificationCount: 0,
+            onNotificationTap: () {},
+            actions: [
+              Builder(
+                builder: (context) {
+                  final c = tokens.colors;
+                  final name =
+                      context.watch<AdminProfileCubit>().state.adminName;
+
+                  final initials =
+                  name.isNotEmpty ? name[0].toUpperCase() : '?';
+
+                  return Container(
+                    margin: const EdgeInsets.only(left: 6),
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: c.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      initials,
+                      style: TextStyle(
+                        color: c.onPrimary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
       body: BlocBuilder<TrainerPtSessionsBloc, TrainerPtSessionsState>(
         builder: (context, state) {
           final sessions = state is PtSessionsLoaded
@@ -79,8 +135,13 @@ class TrainerDashboardScreen extends StatelessWidget {
 // ── AppBar ─────────────────────────────────────────────────────────────────────
 
 class _DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final AppThemeTokens tokens;
-  const _DashboardAppBar({required this.tokens});
+  final AppThemeTokens     tokens;
+  final ValueChanged<int?> onBranchChanged;
+
+  const _DashboardAppBar({
+    required this.tokens,
+    required this.onBranchChanged,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -89,47 +150,95 @@ class _DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
 
-    //  reads profile.branchName which comes from the JWT claim
-    //            'branchName' decoded by AdminProfileCubit._load().
-    final branchName = context.watch<AdminProfileCubit>().state.branchName;
-
     return AppBar(
-      // c.surface so dark-mode works.
       backgroundColor: c.surface,
       elevation:       0,
       titleSpacing:    0,
       leading: Builder(
         builder: (ctx) => IconButton(
-          // Now: c.label (theme-aware).
           icon:      Icon(Icons.menu_rounded, color: c.label),
           onPressed: () => Scaffold.of(ctx).openDrawer(),
         ),
       ),
-      title: Container(
-        padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color:        c.background,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.location_on_rounded, size: 14, color: c.primary),
-            const SizedBox(width: 4),
-            // Real branch name from JWT / AdminProfileCubit.
-            Text(
-              branchName.isNotEmpty ? branchName : '—',
-              style: TextStyle(
-                fontSize:   13,
-                fontWeight: FontWeight.w500,
-                color:      c.label,
+      title: BlocBuilder<BranchCubit, BranchState>(
+        builder: (context, branchState) {
+          final branches = branchState is BranchLoaded
+              ? branchState.branches
+              : <dynamic>[];
+
+          // Build a simple dropdown pill showing the branch list.
+          if (branches.isEmpty) {
+            return Container(
+              padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color:        c.background,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.location_on_rounded, size: 14, color: c.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    branchState is BranchLoading ? '...' : '—',
+                    style: TextStyle(fontSize: 13, color: c.label),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return PopupMenuButton<int?>(
+            offset:    const Offset(0, 44),
+            shape:     RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            color:     c.surface,
+            elevation: 8,
+            onSelected: onBranchChanged,
+            itemBuilder: (_) => [
+              ...branchState is BranchLoaded
+                  ? branchState.branches.map((b) => PopupMenuItem<int?>(
+                      value: b.id,
+                      child: Row(
+                        children: [
+                          Icon(Icons.location_on_rounded, size: 16, color: c.primary),
+                          const SizedBox(width: 8),
+                          Text(b.name,
+                              style: TextStyle(fontSize: 13, color: c.label)),
+                        ],
+                      ),
+                    ))
+                  : <PopupMenuEntry<int?>>[],
+            ],
+            child: Container(
+              padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color:        c.background,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.location_on_rounded, size: 14, color: c.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    context.watch<AdminProfileCubit>().state.branchName.isNotEmpty
+                        ? context.watch<AdminProfileCubit>().state.branchName
+                        : (branchState is BranchLoaded && branchState.branches.isNotEmpty
+                            ? branchState.branches.first.name
+                            : '—'),
+                    style: TextStyle(
+                      fontSize:   13,
+                      fontWeight: FontWeight.w500,
+                      color:      c.label,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: c.muted),
+                ],
               ),
             ),
-            const SizedBox(width: 4),
-            Icon(Icons.keyboard_arrow_down_rounded,
-                size: 18, color: c.muted),
-          ],
-        ),
+          );
+        },
       ),
       actions: [
         // Notification bell (count is decorative — hook to real notifications when available)
@@ -657,7 +766,10 @@ class _QuickActionsSection extends StatelessWidget {
     //  profile.branchId is set from AdminTokenStore.getTenantId()
     //            which is written at login time. Falls back to 1 only if the
     //            tenant ID claim was absent from the JWT (should not happen).
-    final branchId = context.read<AdminProfileCubit>().state.branchId ?? 1;
+    final branchState = context.read<BranchCubit>().state;
+    final branchId = branchState is BranchLoaded && branchState.branches.isNotEmpty
+        ? branchState.branches.first.id
+        : 1;
 
     //  All action card background and icon colors use ThemeCubit.
     final items = <_QAItem>[

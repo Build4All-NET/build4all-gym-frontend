@@ -13,29 +13,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../data/models/pt_service_model.dart';
 import '../../data/services/pt_service_service.dart';
 import '../bloc/pt_service_bloc.dart';
 
 class TrainerServicesScreen extends StatefulWidget {
-  const TrainerServicesScreen({super.key});
+  final int tenantId;
+  const TrainerServicesScreen({super.key, required this.tenantId});
 
   @override
-  State<TrainerServicesScreen> createState() =>
-      _TrainerServicesScreenState();
+  State<TrainerServicesScreen> createState() => _TrainerServicesScreenState();
 }
 
 class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
   String _activeFilter = 'All';
-
   late final PtServiceBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _bloc = PtServiceBloc(PtServiceService());
-    _bloc.add(LoadServices(/* tenantId from auth */));
+    _bloc.add(LoadServices(widget.tenantId));
   }
 
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +71,8 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
             child: ElevatedButton.icon(
               onPressed: () => _CreateServiceDialog.show(
                 context,
-                onCreated: (s) => setState(() => _services.add(s)),
+                bloc:     _bloc,
+                tenantId: widget.tenantId,
               ),
               icon: const Icon(Icons.add, size: 18),
               label: const Text('New Service',
@@ -116,7 +122,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
                   ScaffoldMessenger.of(ctx).showSnackBar(
                     const SnackBar(content: Text('✅ Service saved.'), backgroundColor: Color(0xFF22C55E)),
                   );
-                  _bloc.add(LoadServices(/* tenantId */));
+                  _bloc.add(LoadServices(widget.tenantId));
                 }
               },
               builder: (ctx, state) {
@@ -140,7 +146,8 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _CreateServiceDialog.show(
           context,
-          onCreated: (s) => setState(() => _services.add(s)),
+          bloc:     _bloc,
+          tenantId: widget.tenantId,
         ),
         backgroundColor: cs.primary,
         foregroundColor: Colors.white,
@@ -194,7 +201,7 @@ class _FilterChip extends StatelessWidget {
 // ── Service card ──────────────────────────────────────────────────────────────
 
 class _ServiceCard extends StatelessWidget {
-  final _ServiceData service;
+  final PtServiceModel service;
   const _ServiceCard({super.key, required this.service});
 
   @override
@@ -265,7 +272,7 @@ class _ServiceCard extends StatelessWidget {
                     size: 14, color: Colors.grey[400]),
                 const SizedBox(width: 4),
                 Text(
-                  '${service.durationMin} min',
+                  '${service.durationMinutes} min',
                   style:
                       TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
@@ -325,23 +332,27 @@ class _ServiceCard extends StatelessWidget {
 // ── Create Service dialog ─────────────────────────────────────────────────────
 
 class _CreateServiceDialog extends StatefulWidget {
-  final ValueChanged<_ServiceData> onCreated;
+  final PtServiceBloc bloc;
+  final int tenantId;
 
-  const _CreateServiceDialog({required this.onCreated});
+  const _CreateServiceDialog({
+    required this.bloc,
+    required this.tenantId,
+  });
 
   static Future<void> show(
     BuildContext context, {
-    required ValueChanged<_ServiceData> onCreated,
+    required PtServiceBloc bloc,
+    required int tenantId,
   }) {
     return showDialog(
       context: context,
-      builder: (_) => _CreateServiceDialog(onCreated: onCreated),
+      builder: (_) => _CreateServiceDialog(bloc: bloc, tenantId: tenantId),
     );
   }
 
   @override
-  State<_CreateServiceDialog> createState() =>
-      _CreateServiceDialogState();
+  State<_CreateServiceDialog> createState() => _CreateServiceDialogState();
 }
 
 class _CreateServiceDialogState
@@ -369,6 +380,7 @@ class _CreateServiceDialogState
       data: {
         'name': _nameCtrl.text.trim(),
         'description': _descriptionCtrl.text.trim(),
+        'category': _categoryCtrl.text.trim(),
         'durationMinutes': int.tryParse(_durationCtrl.text) ?? 60,
         'price': double.tryParse(_priceCtrl.text) ?? 50,
         'isActive': true,

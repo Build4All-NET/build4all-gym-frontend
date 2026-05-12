@@ -19,6 +19,8 @@ class TrainerPtSessionsBloc
   DateTime _selectedDate = DateTime.now();
   late int _branchId;
 
+  int get currentBranchId => _branchId;
+
   TrainerPtSessionsBloc({
     required GetSessionsByDateUseCase getSessions,
     required GetSessionStatsUseCase getStats,

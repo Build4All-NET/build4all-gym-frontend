@@ -5,17 +5,20 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../../core/config/env.dart';
-import '../../../../../core/exceptions/server_exception.dart';
+import '../../../../../core/error/exceptions.dart';
+import '../../../../../core/exceptions/server_exception.dart' hide ServerException;
 import '../../../../../core/exceptions/auth_exception.dart';
-import '../../../../../core/exceptions/forbidden_exception.dart';
-import '../../../../../core/exceptions/network_exception.dart';
+import '../../../../../core/exceptions/forbidden_exception.dart' hide ForbiddenException;
+import '../../../../../core/exceptions/network_exception.dart' hide NetworkException;
+import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/availability_model.dart';
 
 class AvailabilityHttpService {
-  final _storage = const FlutterSecureStorage();
+  final _tokenStore = const AdminTokenStore();
+
 
   Future<Map<String, String>> _headers() async {
-    final token = await _storage.read(key: 'jwt_token');
+    final token = await _tokenStore.getToken();
     return {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
   }
 

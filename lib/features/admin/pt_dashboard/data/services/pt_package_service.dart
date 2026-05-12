@@ -8,13 +8,15 @@ import '../../../../../core/exceptions/server_exception.dart' hide ServerExcepti
 import '../../../../../core/error/exceptions.dart';
 import '../../../../../core/exceptions/forbidden_exception.dart' hide ForbiddenException;
 import '../../../../../core/exceptions/network_exception.dart' hide NetworkException;
+import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/pt_package_model.dart';
 
 class PtPackageService {
-  final _storage = const FlutterSecureStorage();
+  final _tokenStore = const AdminTokenStore();
+
 
   Future<Map<String, String>> _headers() async {
-    final token = await _storage.read(key: 'jwt_token');
+    final token = await _tokenStore.getToken();
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',

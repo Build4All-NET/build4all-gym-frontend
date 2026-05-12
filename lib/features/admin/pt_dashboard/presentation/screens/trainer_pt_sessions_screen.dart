@@ -72,7 +72,7 @@ class _SessionsView extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => BookSessionSheet.show(
                     context,
-                    branchId: 1, // TODO: real branchId
+                    branchId:    context.read<TrainerPtSessionsBloc>().currentBranchId,
                     selectedDate: date,
                   ),
                   icon: const Icon(Icons.add, size: 18),
@@ -136,9 +136,10 @@ class _SessionsView extends StatelessWidget {
           if (state is PtSessionsError) {
             return _ErrorView(
               message: state.message,
-              onRetry: () => context
-                  .read<TrainerPtSessionsBloc>()
-                  .add(const PtSessionsStarted(branchId: 1)),
+              onRetry: () {
+                final bloc = context.read<TrainerPtSessionsBloc>();
+                bloc.add(PtSessionsStarted(branchId: bloc.currentBranchId));
+              },
             );
           }
 
