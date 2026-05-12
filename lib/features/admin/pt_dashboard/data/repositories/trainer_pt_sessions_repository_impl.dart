@@ -29,12 +29,14 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   @override
   Future<({List<PtSessionEntity>? data, Failure? failure})> getSessionsByDate({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   }) async {
     try {
       final models = await _service.getSessionsByDate(
-        branchId: branchId,
-        date: date,
+        branchId:  branchId,
+        trainerId: trainerId,
+        date:      date,
       );
       return (data: models.map((m) => m.toEntity()).toList(), failure: null);
     } on UnauthorizedException {
@@ -53,12 +55,14 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   @override
   Future<({PtSessionStatsEntity? data, Failure? failure})> getStatsByDate({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   }) async {
     try {
       final model = await _service.getStatsByDate(
-        branchId: branchId,
-        date: date,
+        branchId:  branchId,
+        trainerId: trainerId,
+        date:      date,
       );
       return (data: model.toEntity(), failure: null);
     } on UnauthorizedException {
@@ -77,6 +81,7 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   @override
   Future<({PtSessionEntity? data, Failure? failure})> createSession({
     required int branchId,
+    required int trainerId,
     required int userId,
     int? serviceId,
     int? memberPtPackageId,
@@ -87,15 +92,15 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
     try {
       final body = <String, dynamic>{
         'branchId': branchId,
-        'userId': userId,
-        if (serviceId != null) 'serviceId': serviceId,
+        'userId':   userId,
+        if (serviceId != null)         'serviceId': serviceId,
         if (memberPtPackageId != null) 'memberPtPackageId': memberPtPackageId,
         'startTime': startTime.toIso8601String().substring(0, 19),
-        'endTime': endTime.toIso8601String().substring(0, 19),
+        'endTime':   endTime.toIso8601String().substring(0, 19),
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       };
 
-      final model = await _service.createSession(body);
+      final model = await _service.createSession(body, trainerId: trainerId);
       return (data: model.toEntity(), failure: null);
     } on UnauthorizedException {
       return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));

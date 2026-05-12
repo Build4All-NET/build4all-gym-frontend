@@ -28,10 +28,12 @@ import '../bloc/pt_package_bloc.dart';
 class TrainerPackagesScreen extends StatefulWidget {
   final int tenantId;
   final int branchId;
+  final int trainerId;
   const TrainerPackagesScreen({
     super.key,
     required this.tenantId,
     required this.branchId,
+    required this.trainerId,
   });
 
   @override
@@ -46,7 +48,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
     super.initState();
     _bloc = PtPackageBloc(PtPackageService());
     _bloc.add(LoadPackages(
-      trainerId: widget.branchId,
+      trainerId: widget.trainerId,
       tenantId:  widget.tenantId,
       branchId:  widget.branchId,
     ));
@@ -88,7 +90,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               onPressed: () => _CreatePackageDialog.show(
                 context,
                 bloc:      _bloc,
-                trainerId: widget.branchId,
+                trainerId: widget.trainerId,
                 tenantId:  widget.tenantId,
                 branchId:  widget.branchId,
               ),
@@ -117,7 +119,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               const SnackBar(content: Text('✅ Package saved.'), backgroundColor: Color(0xFF22C55E)),
             );
             _bloc.add(LoadPackages(
-              trainerId: widget.branchId,
+              trainerId: widget.trainerId,
               tenantId:  widget.tenantId,
               branchId:  widget.branchId,
             ));

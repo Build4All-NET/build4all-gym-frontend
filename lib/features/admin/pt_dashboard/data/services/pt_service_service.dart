@@ -1,7 +1,8 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -12,6 +13,7 @@ import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/pt_service_model.dart';
 
 class PtServiceService {
+  final _client = AuthedHttpClient();
   final _tokenStore = const AdminTokenStore();
 
 
@@ -31,7 +33,7 @@ class PtServiceService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/trainer/services?tenantId=$tenantId');
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       debugPrint('GET SERVICES: ${r.statusCode}');
       if (r.statusCode == 200) {
         final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
@@ -48,7 +50,7 @@ class PtServiceService {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/services');
     try {
-      final r = await http.post(uri, headers: headers,
+      final r = await _client.post(uri, headers: headers,
           body: jsonEncode({...body, 'tenantId': tenantId}));
       debugPrint('CREATE SERVICE: ${r.statusCode}');
       if (r.statusCode == 200 || r.statusCode == 201) {

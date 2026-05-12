@@ -1,8 +1,9 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/trainers/data/services/admin_trainers_service.dart
 // ─────────────────────────────────────────────────────────────────────────────
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
@@ -14,6 +15,7 @@ import '../models/trainer_form_options_model.dart';
 import '../models/update_trainer_request_model.dart';
 
 class AdminTrainersService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   AdminTrainersService() : _tokenStore = const AdminTokenStore();
@@ -52,7 +54,7 @@ class AdminTrainersService {
         .replace(queryParameters: params.isEmpty ? null : params);
 
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       _handleStatus(r);
       return AdminTrainerListResponseModel.fromJson(jsonDecode(r.body));
     } catch (e) {
@@ -66,7 +68,7 @@ class AdminTrainersService {
     final headers = await _headers();
     final uri     = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/trainers/form-options');
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       _handleStatus(r);
       return TrainerFormOptionsModel.fromJson(
           jsonDecode(r.body) as Map<String, dynamic>);
@@ -81,7 +83,7 @@ class AdminTrainersService {
     final headers = await _headers();
     final uri     = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/trainers');
     try {
-      final r = await http.post(uri,
+      final r = await _client.post(uri,
           headers: headers, body: jsonEncode(request.toJson()));
       _handleStatus(r);
       final json = jsonDecode(r.body) as Map<String, dynamic>;
@@ -98,7 +100,7 @@ class AdminTrainersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/trainers/$trainerId');
     try {
-      final r = await http.put(uri,
+      final r = await _client.put(uri,
           headers: headers, body: jsonEncode(request.toJson()));
       _handleStatus(r);
     } catch (e) {
@@ -113,7 +115,7 @@ class AdminTrainersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/trainers/$trainerId/block');
     try {
-      final r = await http.patch(uri, headers: headers);
+      final r = await _client.patch(uri, headers: headers);
       _handleStatus(r);
       // BE returns new status as { "status": "BLOCKED" } or "ACTIVE"
       final json = jsonDecode(r.body) as Map<String, dynamic>;
@@ -132,7 +134,7 @@ class AdminTrainersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/trainers/$trainerId/detail');
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       _handleStatus(r);
       return AdminTrainerDetailModel.fromJson(
           jsonDecode(r.body) as Map<String, dynamic>);

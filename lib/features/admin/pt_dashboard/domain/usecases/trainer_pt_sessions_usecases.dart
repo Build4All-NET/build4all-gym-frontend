@@ -19,9 +19,10 @@ class GetSessionsByDateUseCase {
 
   Future<({List<PtSessionEntity>? data, Failure? failure})> call({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   }) =>
-      _repository.getSessionsByDate(branchId: branchId, date: date);
+      _repository.getSessionsByDate(branchId: branchId, trainerId: trainerId, date: date);
 }
 
 // ── 2. Get session stats ────────────────────────────────────────────────────
@@ -32,9 +33,10 @@ class GetSessionStatsUseCase {
 
   Future<({PtSessionStatsEntity? data, Failure? failure})> call({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   }) =>
-      _repository.getStatsByDate(branchId: branchId, date: date);
+      _repository.getStatsByDate(branchId: branchId, trainerId: trainerId, date: date);
 }
 
 // ── 3. Create session ───────────────────────────────────────────────────────
@@ -45,6 +47,7 @@ class CreateSessionUseCase {
 
   Future<({PtSessionEntity? data, Failure? failure})> call({
     required int branchId,
+    required int trainerId,
     required int userId,
     int? serviceId,
     int? memberPtPackageId,
@@ -53,13 +56,14 @@ class CreateSessionUseCase {
     String? notes,
   }) =>
       _repository.createSession(
-        branchId: branchId,
-        userId: userId,
-        serviceId: serviceId,
+        branchId:          branchId,
+        trainerId:         trainerId,
+        userId:            userId,
+        serviceId:         serviceId,
         memberPtPackageId: memberPtPackageId,
-        startTime: startTime,
-        endTime: endTime,
-        notes: notes,
+        startTime:         startTime,
+        endTime:           endTime,
+        notes:             notes,
       );
 }
 

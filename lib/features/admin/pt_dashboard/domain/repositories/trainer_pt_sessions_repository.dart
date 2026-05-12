@@ -11,21 +11,24 @@ import '../entities/pt_session_stats_entity.dart';
 import '../../../../../core/error/failures.dart';
 
 abstract class TrainerPtSessionsRepository {
-  /// GET /api/trainer/pt-sessions?branchId=&date=
+  /// GET /api/trainer/pt-sessions?branchId=&trainerId=&date=
   Future<({List<PtSessionEntity>? data, Failure? failure})> getSessionsByDate({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   });
 
-  /// GET /api/trainer/pt-sessions/stats?branchId=&date=
+  /// GET /api/trainer/pt-sessions/stats?branchId=&trainerId=&date=
   Future<({PtSessionStatsEntity? data, Failure? failure})> getStatsByDate({
     required int branchId,
+    required int trainerId,
     required DateTime date,
   });
 
-  /// POST /api/trainer/pt-sessions
+  /// POST /api/trainer/pt-sessions?trainerId=
   Future<({PtSessionEntity? data, Failure? failure})> createSession({
     required int branchId,
+    required int trainerId,
     required int userId,
     int? serviceId,
     int? memberPtPackageId,

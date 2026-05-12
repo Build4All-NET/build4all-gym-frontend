@@ -1,15 +1,18 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 import '../../../../../core/config/env.dart';
 import '../../../../auth/data/services/admin_token_store.dart'; // ← changed
 import '../models/admin_dashboard_summary_model.dart';
 import '../../../../../core/error/exceptions.dart';
 
 abstract class AdminDashboardRemoteDatasource {
+  final _client = AuthedHttpClient();
   Future<AdminDashboardSummaryModel> getDashboardSummary({String period = 'today'});
 }
 
 class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasource {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore; // ← changed
 
   AdminDashboardRemoteDatasourceImpl()
@@ -27,7 +30,7 @@ class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasour
         .replace(queryParameters: {'period': period});
 
     try {
-      final response = await http.get(
+      final response = await _client.get(
         uri,
         headers: {
           'Authorization': 'Bearer $token',

@@ -16,11 +16,12 @@ abstract class TrainerPtSessionsEvent extends Equatable {
 /// Fired from initState. Loads sessions + stats for today.
 class PtSessionsStarted extends TrainerPtSessionsEvent {
   final int branchId;
+  final int trainerId;
 
-  const PtSessionsStarted({required this.branchId});
+  const PtSessionsStarted({required this.branchId, required this.trainerId});
 
   @override
-  List<Object?> get props => [branchId];
+  List<Object?> get props => [branchId, trainerId];
 }
 
 // ── Date navigation ──────────────────────────────────────────────────────────

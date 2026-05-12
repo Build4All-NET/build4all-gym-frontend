@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/branches/data/services/admin_branches_service.dart
 //
 // PURPOSE:
@@ -11,6 +11,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -21,6 +22,7 @@ import '../model/branch_detail_model.dart';
 import '../model/create_branch_request_model.dart';
 
 class AdminBranchesService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   // const constructor so it can be created inline anywhere
@@ -66,7 +68,7 @@ class AdminBranchesService {
         .replace(queryParameters: params.isEmpty ? null : params);
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return AdminBranchListResponseModel.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
@@ -86,7 +88,7 @@ class AdminBranchesService {
         '${Env.apiProjectBaseUrl}/api/admin/branches/$branchId');
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return BranchDetailModel.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
@@ -107,7 +109,7 @@ class AdminBranchesService {
     Uri.parse('${Env.apiProjectBaseUrl}/api/admin/branches');
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: headers,
         body: jsonEncode(request.toJson()),
@@ -134,7 +136,7 @@ class AdminBranchesService {
         '${Env.apiProjectBaseUrl}/api/admin/branches/options');
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       final rawList = jsonDecode(response.body) as List<dynamic>;
       return rawList

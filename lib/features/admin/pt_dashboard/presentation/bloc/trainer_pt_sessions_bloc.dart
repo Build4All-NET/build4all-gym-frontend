@@ -15,11 +15,13 @@ class TrainerPtSessionsBloc
   final CreateSessionUseCase _createSession;
   final UpdateSessionStatusUseCase _updateStatus;
 
-  /// Persisted so post-action refreshes hit the correct date + branchId.
+  /// Persisted so post-action refreshes hit the correct date + branchId + trainerId.
   DateTime _selectedDate = DateTime.now();
-  late int _branchId;
+  int _branchId  = 1;
+  int _trainerId = 0;
 
-  int get currentBranchId => _branchId;
+  int get currentBranchId  => _branchId;
+  int get currentTrainerId => _trainerId;
 
   TrainerPtSessionsBloc({
     required GetSessionsByDateUseCase getSessions,
@@ -44,7 +46,8 @@ class TrainerPtSessionsBloc
     PtSessionsStarted event,
     Emitter<TrainerPtSessionsState> emit,
   ) async {
-    _branchId = event.branchId;
+    _branchId  = event.branchId;
+    _trainerId = event.trainerId;
     _selectedDate = DateTime.now();
     await _loadForDate(emit, _selectedDate);
   }
@@ -132,13 +135,14 @@ class TrainerPtSessionsBloc
     emit(PtSessionActionLoading(sessionId: -1, previousState: current));
 
     final result = await _createSession(
-      branchId:         event.branchId,
-      userId:           event.userId,
-      serviceId:        event.serviceId,
+      branchId:          event.branchId,
+      trainerId:         _trainerId,
+      userId:            event.userId,
+      serviceId:         event.serviceId,
       memberPtPackageId: event.memberPtPackageId,
-      startTime:        event.startTime,
-      endTime:          event.endTime,
-      notes:            event.notes,
+      startTime:         event.startTime,
+      endTime:           event.endTime,
+      notes:             event.notes,
     );
 
     if (result.failure != null || result.data == null) {
@@ -170,8 +174,8 @@ class TrainerPtSessionsBloc
     emit(PtSessionsLoading());
 
     final results = await Future.wait([
-      _getSessions(branchId: _branchId, date: date),
-      _getStats(branchId: _branchId, date: date),
+      _getSessions(branchId: _branchId, trainerId: _trainerId, date: date),
+      _getStats(branchId: _branchId, trainerId: _trainerId, date: date),
     ]);
 
     final sessionsResult = results[0] as ({dynamic data, dynamic failure});
