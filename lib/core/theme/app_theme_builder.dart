@@ -151,4 +151,83 @@ class AppThemeBuilder {
       ),
     );
   }
+
+  static ThemeData buildDark(AppThemeTokens tokens) {
+    final c = tokens.colors;
+    final b = tokens.button;
+    final card = tokens.card;
+    final text = tokens.typography;
+
+    const darkBackground = Color(0xFF121212);
+    const darkSurface = Color(0xFF1E1E1E);
+    const darkLabel = Color(0xFFF3F4F6);
+    const darkBody = Color(0xFFD1D5DB);
+
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: c.primary,
+      primary: c.primary,
+      onPrimary: c.onPrimary,
+      background: darkBackground,
+      surface: darkSurface,
+      error: c.error,
+      secondary: c.primary,
+      onSecondary: c.onPrimary,
+      onBackground: darkBody,
+      onSurface: darkLabel,
+      onError: c.onPrimary,
+      brightness: Brightness.dark,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: darkBackground,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: darkSurface,
+        foregroundColor: darkLabel,
+        elevation: 0,
+      ),
+      textTheme: TextTheme(
+        headlineSmall: text.headlineSmall.copyWith(color: darkLabel),
+        titleMedium: text.titleMedium.copyWith(color: darkLabel),
+        bodyMedium: text.bodyMedium.copyWith(color: darkBody),
+        bodySmall: text.bodySmall.copyWith(color: darkBody.withOpacity(0.8)),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: c.primary,
+          foregroundColor: c.onPrimary,
+          minimumSize: const Size.fromHeight(52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(b.radius),
+          ),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: darkSurface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(card.radius),
+          side: const BorderSide(color: Color(0xFF374151), width: 0.8),
+        ),
+        margin: EdgeInsets.zero,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkSurface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(card.radius),
+          borderSide: const BorderSide(color: Color(0xFF374151)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(card.radius),
+          borderSide: const BorderSide(color: Color(0xFF374151)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(card.radius),
+          borderSide: BorderSide(color: c.primary, width: 1.4),
+        ),
+      ),
+    );
+  }
 }

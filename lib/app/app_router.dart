@@ -97,6 +97,16 @@ import '../features/admin/trainers/domain/usecases/block_trainer_usecase.dart';
 import '../features/admin/trainers/presentation/bloc/admin_trainers_bloc.dart';
 import '../features/admin/trainers/presentation/screens/admin_trainers_screen.dart';
 
+
+import '../features/admin/settings/data/repositories/admin_settings_repository_impl.dart';
+import '../features/admin/settings/data/services/admin_settings_remote_service.dart';
+import '../features/admin/settings/domain/usecases/get_admin_settings_usecase.dart';
+import '../features/admin/settings/presentation/cubit/admin_settings_cubit.dart';
+import '../features/admin/settings/presentation/screens/admin_settings_screen.dart';
+import '../features/member/settings/presentation/cubit/member_settings_cubit.dart';
+import '../features/member/settings/presentation/screens/member_settings_screen.dart';
+
+
 // ── Branches imports ──────────────────────────────────────────────────────────
 import '../features/admin/branches/data/repository/branch_repository_impl.dart';
 import '../features/admin/branches/domain/usecase/get_branches_usecase.dart';
@@ -143,6 +153,7 @@ class AppRouter {
 
   // ─── Admin: Settings ──────────────────────────────────────────────────────
   static const String adminSettings = '/admin/settings';
+  static const String userSettings = '/user/settings';
 
   // ─── Logout ────────────────────────────────────────────────────────────────
   static const String logout = '/logout';
@@ -205,6 +216,17 @@ class AppRouter {
       case user:
         return MaterialPageRoute(
           builder: (_) => MainShell(appConfig: appConfig),
+        );
+
+
+
+    // ── User: Settings ────────────────────────────────────────────────────
+      case userSettings:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => MemberSettingsCubit(),
+            child: const MemberSettingsScreen(),
+          ),
         );
 
     // ── Admin: Dashboard ───────────────────────────────────────────────────
@@ -480,11 +502,18 @@ class AppRouter {
     // ── Admin: Settings ────────────────────────────────────────────────────
 
       case adminSettings:
-        return MaterialPageRoute(
-          builder: (_) => _withProfile(
-            const _ComingSoonScreen(title: 'Settings'),
-          ),
-        );
+         final repo = AdminSettingsRepositoryImpl(AdminSettingsRemoteService());
+         return MaterialPageRoute(
+           builder: (_) => _withProfile(
+             BlocProvider(
+               create: (_) => AdminSettingsCubit(
+                 getSettings: GetAdminSettingsUseCase(repo),
+                 saveSettings: SaveAdminSettingsUseCase(repo),
+               ),
+               child: const AdminSettingsScreen(),
+                   ),
+           ),
+       );
 
     // ── Logout ─────────────────────────────────────────────────────────────
 
