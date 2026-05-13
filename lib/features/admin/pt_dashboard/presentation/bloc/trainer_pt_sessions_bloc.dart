@@ -1,5 +1,10 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/bloc/trainer_pt_sessions_bloc.dart
+// FILE: lib/features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_bloc.dart
+//
+// FIX SUMMARY:
+//   1. _onCreate now uses event.trainerId (supports admin creating for any trainer).
+//   2. _loadForDate passes both branchId and trainerId correctly.
+//   3. Removed stale currentBranchId getter dependency from UI.
 // =============================================================================
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,27 +16,26 @@ import 'trainer_pt_sessions_state.dart';
 class TrainerPtSessionsBloc
     extends Bloc<TrainerPtSessionsEvent, TrainerPtSessionsState> {
   final GetSessionsByDateUseCase _getSessions;
-  final GetSessionStatsUseCase _getStats;
-  final CreateSessionUseCase _createSession;
+  final GetSessionStatsUseCase   _getStats;
+  final CreateSessionUseCase     _createSession;
   final UpdateSessionStatusUseCase _updateStatus;
 
-  /// Persisted so post-action refreshes hit the correct date + branchId + trainerId.
   DateTime _selectedDate = DateTime.now();
-  int  _branchId  = 1;
-  int? _trainerId; // null = all trainers (admin/owner); non-null = specific trainer
+  int      _branchId     = 1;
+  int      _trainerId    = 0;
 
-  int  get currentBranchId  => _branchId;
-  int? get currentTrainerId => _trainerId;
+  int get currentBranchId  => _branchId;
+  int get currentTrainerId => _trainerId;
 
   TrainerPtSessionsBloc({
     required GetSessionsByDateUseCase getSessions,
-    required GetSessionStatsUseCase getStats,
-    required CreateSessionUseCase createSession,
+    required GetSessionStatsUseCase   getStats,
+    required CreateSessionUseCase     createSession,
     required UpdateSessionStatusUseCase updateStatus,
-  })  : _getSessions = getSessions,
-        _getStats = getStats,
-        _createSession = createSession,
-        _updateStatus = updateStatus,
+  })  : _getSessions    = getSessions,
+        _getStats       = getStats,
+        _createSession  = createSession,
+        _updateStatus   = updateStatus,
         super(PtSessionsInitial()) {
     on<PtSessionsStarted>(_onStarted);
     on<PtSessionsDateChanged>(_onDateChanged);
@@ -43,11 +47,11 @@ class TrainerPtSessionsBloc
   // ── Initial load ──────────────────────────────────────────────────────────
 
   Future<void> _onStarted(
-    PtSessionsStarted event,
-    Emitter<TrainerPtSessionsState> emit,
-  ) async {
-    _branchId  = event.branchId;
-    _trainerId = event.trainerId;
+      PtSessionsStarted event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+    _branchId     = event.branchId;
+    _trainerId    = event.trainerId;
     _selectedDate = DateTime.now();
     await _loadForDate(emit, _selectedDate);
   }
@@ -55,55 +59,56 @@ class TrainerPtSessionsBloc
   // ── Date navigation ───────────────────────────────────────────────────────
 
   Future<void> _onDateChanged(
-    PtSessionsDateChanged event,
-    Emitter<TrainerPtSessionsState> emit,
-  ) async {
+      PtSessionsDateChanged event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
     _selectedDate = event.date;
     final prevTabIndex =
-        state is PtSessionsLoaded ? (state as PtSessionsLoaded).selectedTabIndex : 0;
+    state is PtSessionsLoaded
+        ? (state as PtSessionsLoaded).selectedTabIndex
+        : 0;
     await _loadForDate(emit, _selectedDate, tabIndex: prevTabIndex);
   }
 
   // ── Tab switch ────────────────────────────────────────────────────────────
 
   void _onTabChanged(
-    PtSessionsTabChanged event,
-    Emitter<TrainerPtSessionsState> emit,
-  ) {
+      PtSessionsTabChanged event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) {
     if (state is! PtSessionsLoaded) return;
     final current = state as PtSessionsLoaded;
     emit(current.copyWith(selectedTabIndex: event.tabIndex));
   }
 
-  // ── Status update (Complete / Cancel / No-Show) ───────────────────────────
+  // ── Status update ─────────────────────────────────────────────────────────
 
   Future<void> _onStatusUpdate(
-    PtSessionStatusUpdateRequested event,
-    Emitter<TrainerPtSessionsState> emit,
-  ) async {
+      PtSessionStatusUpdateRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
     if (state is! PtSessionsLoaded) return;
     final current = state as PtSessionsLoaded;
 
     emit(PtSessionActionLoading(
-      sessionId: event.sessionId,
+      sessionId:     event.sessionId,
       previousState: current,
     ));
 
     final result = await _updateStatus(
       sessionId: event.sessionId,
-      status: event.status,
+      status:    event.status,
     );
 
     if (result.failure != null || result.data == null) {
       emit(PtSessionActionError(
-        message: result.failure?.message ?? 'Failed to update session.',
+        message:       result.failure?.message ?? 'Failed to update session.',
         previousState: current,
       ));
       emit(current);
       return;
     }
 
-    // Replace the updated session in the list in-place.
     final updatedSessions = current.sessions.map((s) {
       if (s.ptSessionId == event.sessionId) return result.data!;
       return s;
@@ -112,7 +117,7 @@ class TrainerPtSessionsBloc
     final updatedState = current.copyWith(sessions: updatedSessions);
 
     emit(PtSessionActionSuccess(
-      actionType: event.status.toLowerCase(),
+      actionType:   event.status.toLowerCase(),
       updatedState: updatedState,
     ));
     emit(updatedState);
@@ -121,22 +126,24 @@ class TrainerPtSessionsBloc
   // ── Create session ────────────────────────────────────────────────────────
 
   Future<void> _onCreate(
-    PtSessionCreateRequested event,
-    Emitter<TrainerPtSessionsState> emit,
-  ) async {
+      PtSessionCreateRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
     final current = state is PtSessionsLoaded
         ? state as PtSessionsLoaded
         : PtSessionsLoaded(
-            sessions: const [],
-            stats: PtSessionStatsEntity.empty,
-            selectedDate: _selectedDate,
-          );
+      sessions:    const [],
+      stats:       PtSessionStatsEntity.empty,
+      selectedDate: _selectedDate,
+    );
 
     emit(PtSessionActionLoading(sessionId: -1, previousState: current));
 
+    // FIX: use event.trainerId (may differ from _trainerId when admin creates
+    // for a different trainer than currently viewed).
     final result = await _createSession(
       branchId:          event.branchId,
-      trainerId:         event.trainerId ?? _trainerId,
+      trainerId:         event.trainerId,  // ← use event, not _trainerId
       userId:            event.userId,
       serviceId:         event.serviceId,
       memberPtPackageId: event.memberPtPackageId,
@@ -147,18 +154,18 @@ class TrainerPtSessionsBloc
 
     if (result.failure != null || result.data == null) {
       emit(PtSessionActionError(
-        message: result.failure?.message ?? 'Failed to create session.',
+        message:       result.failure?.message ?? 'Failed to create session.',
         previousState: current,
       ));
       emit(current);
       return;
     }
 
-    // Append the new session and refresh stats.
+    // Refresh the current view (same date, same trainer = _trainerId).
     await _loadForDate(
       emit,
       _selectedDate,
-      tabIndex: current.selectedTabIndex,
+      tabIndex:   current.selectedTabIndex,
       actionType: 'created',
     );
   }
@@ -166,16 +173,12 @@ class TrainerPtSessionsBloc
   // ── Private: load sessions + stats for a date ─────────────────────────────
 
   Future<void> _loadForDate(
-    Emitter<TrainerPtSessionsState> emit,
-    DateTime date, {
-    int tabIndex = 0,
-    String? actionType,
-  }) async {
-    // Only show full-screen spinner on the very first load; keep existing data
-    // visible during refreshes so the UI does not freeze on every date change.
-    if (state is! PtSessionsLoaded) {
-      emit(PtSessionsLoading());
-    }
+      Emitter<TrainerPtSessionsState> emit,
+      DateTime date, {
+        int     tabIndex   = 0,
+        String? actionType,
+      }) async {
+    emit(PtSessionsLoading());
 
     final results = await Future.wait([
       _getSessions(branchId: _branchId, trainerId: _trainerId, date: date),
@@ -183,7 +186,7 @@ class TrainerPtSessionsBloc
     ]);
 
     final sessionsResult = results[0] as ({dynamic data, dynamic failure});
-    final statsResult = results[1] as ({dynamic data, dynamic failure});
+    final statsResult    = results[1] as ({dynamic data, dynamic failure});
 
     if (sessionsResult.failure != null) {
       emit(PtSessionsError(
@@ -201,7 +204,7 @@ class TrainerPtSessionsBloc
 
     if (actionType != null) {
       emit(PtSessionActionSuccess(
-        actionType: actionType,
+        actionType:   actionType,
         updatedState: loadedState,
       ));
     }

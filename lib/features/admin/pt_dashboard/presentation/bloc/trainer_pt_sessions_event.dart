@@ -1,5 +1,8 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/bloc/trainer_pt_sessions_event.dart
+// FILE: lib/features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_event.dart
+//
+// FIX: PtSessionCreateRequested now carries trainerId so admin can create
+//      sessions for any trainer (not just the JWT user).
 // =============================================================================
 
 import 'package:equatable/equatable.dart';
@@ -13,14 +16,11 @@ abstract class TrainerPtSessionsEvent extends Equatable {
 
 // ── Initial load ─────────────────────────────────────────────────────────────
 
-/// Fired from initState. Loads sessions + stats for today.
-/// trainerId == null → admin/owner mode (all trainers).
-/// trainerId != null → trainer mode (own sessions only).
 class PtSessionsStarted extends TrainerPtSessionsEvent {
   final int branchId;
-  final int? trainerId;
+  final int trainerId;
 
-  const PtSessionsStarted({required this.branchId, this.trainerId});
+  const PtSessionsStarted({required this.branchId, required this.trainerId});
 
   @override
   List<Object?> get props => [branchId, trainerId];
@@ -28,7 +28,6 @@ class PtSessionsStarted extends TrainerPtSessionsEvent {
 
 // ── Date navigation ──────────────────────────────────────────────────────────
 
-/// Fired when user taps < or > on the date navigator.
 class PtSessionsDateChanged extends TrainerPtSessionsEvent {
   final DateTime date;
 
@@ -40,7 +39,6 @@ class PtSessionsDateChanged extends TrainerPtSessionsEvent {
 
 // ── Tab filter ───────────────────────────────────────────────────────────────
 
-/// Fired when user switches between Today / Upcoming / Completed tabs.
 class PtSessionsTabChanged extends TrainerPtSessionsEvent {
   /// 0 = Today, 1 = Upcoming, 2 = Completed
   final int tabIndex;
@@ -53,10 +51,8 @@ class PtSessionsTabChanged extends TrainerPtSessionsEvent {
 
 // ── Status update ─────────────────────────────────────────────────────────────
 
-/// Fired when trainer taps Complete / Cancel on a session card.
-/// status: COMPLETED | CANCELLED | NO_SHOW
 class PtSessionStatusUpdateRequested extends TrainerPtSessionsEvent {
-  final int sessionId;
+  final int    sessionId;
   final String status;
 
   const PtSessionStatusUpdateRequested({
@@ -70,21 +66,21 @@ class PtSessionStatusUpdateRequested extends TrainerPtSessionsEvent {
 
 // ── Create session ────────────────────────────────────────────────────────────
 
-/// Fired when trainer/admin submits the Book Session form.
-/// trainerId overrides the bloc's stored trainerId (admin selecting a specific trainer).
 class PtSessionCreateRequested extends TrainerPtSessionsEvent {
-  final int branchId;
-  final int? trainerId;
-  final int userId;
-  final int? serviceId;
-  final int? memberPtPackageId;
+  final int      branchId;
+  /// The trainer this session belongs to.
+  /// Admin passes the selected trainerId; trainer passes their own ID.
+  final int      trainerId;
+  final int      userId;
+  final int?     serviceId;
+  final int?     memberPtPackageId;
   final DateTime startTime;
   final DateTime endTime;
-  final String? notes;
+  final String?  notes;
 
   const PtSessionCreateRequested({
     required this.branchId,
-    this.trainerId,
+    required this.trainerId,
     required this.userId,
     this.serviceId,
     this.memberPtPackageId,
@@ -95,13 +91,13 @@ class PtSessionCreateRequested extends TrainerPtSessionsEvent {
 
   @override
   List<Object?> get props => [
-        branchId,
-        trainerId,
-        userId,
-        serviceId,
-        memberPtPackageId,
-        startTime,
-        endTime,
-        notes,
-      ];
+    branchId,
+    trainerId,
+    userId,
+    serviceId,
+    memberPtPackageId,
+    startTime,
+    endTime,
+    notes,
+  ];
 }
