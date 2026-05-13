@@ -14,11 +14,13 @@ abstract class TrainerPtSessionsEvent extends Equatable {
 // ── Initial load ─────────────────────────────────────────────────────────────
 
 /// Fired from initState. Loads sessions + stats for today.
+/// trainerId == null → admin/owner mode (all trainers).
+/// trainerId != null → trainer mode (own sessions only).
 class PtSessionsStarted extends TrainerPtSessionsEvent {
   final int branchId;
-  final int trainerId;
+  final int? trainerId;
 
-  const PtSessionsStarted({required this.branchId, required this.trainerId});
+  const PtSessionsStarted({required this.branchId, this.trainerId});
 
   @override
   List<Object?> get props => [branchId, trainerId];
@@ -68,9 +70,11 @@ class PtSessionStatusUpdateRequested extends TrainerPtSessionsEvent {
 
 // ── Create session ────────────────────────────────────────────────────────────
 
-/// Fired when trainer submits the Book Session form.
+/// Fired when trainer/admin submits the Book Session form.
+/// trainerId overrides the bloc's stored trainerId (admin selecting a specific trainer).
 class PtSessionCreateRequested extends TrainerPtSessionsEvent {
   final int branchId;
+  final int? trainerId;
   final int userId;
   final int? serviceId;
   final int? memberPtPackageId;
@@ -80,6 +84,7 @@ class PtSessionCreateRequested extends TrainerPtSessionsEvent {
 
   const PtSessionCreateRequested({
     required this.branchId,
+    this.trainerId,
     required this.userId,
     this.serviceId,
     this.memberPtPackageId,
@@ -91,6 +96,7 @@ class PtSessionCreateRequested extends TrainerPtSessionsEvent {
   @override
   List<Object?> get props => [
         branchId,
+        trainerId,
         userId,
         serviceId,
         memberPtPackageId,

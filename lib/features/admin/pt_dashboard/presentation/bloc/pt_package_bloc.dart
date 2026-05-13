@@ -7,10 +7,10 @@ import '../../data/models/pt_package_model.dart';
 abstract class PtPackageEvent {}
 
 class LoadPackages extends PtPackageEvent {
-  final int trainerId;
+  final int? trainerId; // null = all trainers (admin/owner)
   final int tenantId;
   final int branchId;
-  LoadPackages({required this.trainerId, required this.tenantId, required this.branchId});
+  LoadPackages({this.trainerId, required this.tenantId, required this.branchId});
 }
 
 class CreatePackage extends PtPackageEvent {

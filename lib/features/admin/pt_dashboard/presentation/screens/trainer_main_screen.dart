@@ -31,8 +31,11 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   late int _currentIndex;
   int? _selectedBranchId;
   int  _tenantId  = 1;
-  int  _trainerId = 0;
+  /// For TRAINER role: their own userId (set once from JWT).
+  /// For ADMIN role: the trainer selected in the picker (null until trainers load).
+  int? _trainerId;
   bool _isAdmin   = false;
+  bool _adminSessionsStarted = false; // guard — fire sessions once for admin
   List<AdminTrainerCardModel> _trainers = [];
   bool _loadingTrainers = false;
   String? _trainersError;
@@ -79,17 +82,26 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       });
     }
 
-    if (profile.isTrainerRole && _trainerId == 0) {
-      final newId = profile.userId ?? 0;
-      if (newId != 0) {
+    if (profile.isTrainerRole && _trainerId == null) {
+      final newId = profile.userId;
+      if (newId != null) {
         setState(() => _trainerId = newId);
         _sessionsBloc.add(PtSessionsStarted(
           branchId:  _effectiveBranchId(context),
           trainerId: newId,
         ));
       }
-    } else if (profile.isAdminRole && _trainers.isEmpty && _trainerId == 0 && !_loadingTrainers) {
-      _loadTrainersForAdmin();
+    } else if (profile.isAdminRole && !_adminSessionsStarted) {
+      // Admin: start sessions immediately with null (all trainers) — no need to
+      // wait for the trainer list to be fetched first.
+      setState(() => _adminSessionsStarted = true);
+      _sessionsBloc.add(PtSessionsStarted(
+        branchId:  _effectiveBranchId(context),
+        trainerId: null,
+      ));
+      if (_trainers.isEmpty && !_loadingTrainers) {
+        _loadTrainersForAdmin();
+      }
     }
   }
 
@@ -118,16 +130,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       setState(() {
         _trainers = response.trainers;
         _loadingTrainers = false;
-        if (_trainers.isNotEmpty && _trainerId == 0) {
+        // Set first trainer as the selected one for packages/schedule screens.
+        // Sessions are already running with trainerId=null (show all).
+        if (_trainers.isNotEmpty && _trainerId == null) {
           _trainerId = _trainers.first.trainerId;
         }
       });
-      if (_trainerId != 0) {
-        _sessionsBloc.add(PtSessionsStarted(
-          branchId:  _effectiveBranchId(context),
-          trainerId: _trainerId,
-        ));
-      }
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -146,14 +154,21 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     setState(() {
       _selectedBranchId = branchId;
       if (_isAdmin) {
-        _trainers      = [];
-        _trainerId     = 0;
-        _trainersError = null;
+        _trainers             = [];
+        _trainerId            = null;
+        _trainersError        = null;
+        _adminSessionsStarted = false; // allow re-firing sessions for new branch
       }
     });
     if (_isAdmin) {
+      // Re-fire sessions with null (all) for the new branch, then reload trainers.
+      setState(() => _adminSessionsStarted = true);
+      _sessionsBloc.add(PtSessionsStarted(
+        branchId:  branchId ?? _effectiveBranchId(context),
+        trainerId: null,
+      ));
       _loadTrainersForAdmin();
-    } else if (_trainerId != 0) {
+    } else if (_trainerId != null) {
       final effectiveId = branchId ?? _effectiveBranchId(context);
       _sessionsBloc.add(PtSessionsStarted(branchId: effectiveId, trainerId: _trainerId));
     }
@@ -184,7 +199,9 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       listener:   (_, profile) => _syncTrainerFromProfile(profile),
       child: BlocProvider.value(
         value: _sessionsBloc,
-        child: _trainerId == 0
+        // For ADMIN: show shell immediately (sessions use null = all trainers).
+        // For TRAINER: wait until own userId is resolved from the JWT.
+        child: (!_isAdmin && _trainerId == null)
             ? _buildResolving()
             : _MainShell(
                 currentIndex:     _currentIndex,
@@ -192,7 +209,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
                 navItems:         _navItems,
                 tenantId:         _tenantId,
                 branchId:         effectiveBranchId,
-                trainerId:        _trainerId,
+                trainerId:        _trainerId ?? 0,
                 isAdmin:          _isAdmin,
                 trainers:         _trainers,
                 onBranchChanged:  _onBranchChanged,
@@ -281,7 +298,7 @@ class _MainShell extends StatelessWidget {
         onTabSwitch:     onTabSwitch,
         onBranchChanged: onBranchChanged,
       ),
-      const TrainerPtSessionsScreen(),
+      TrainerPtSessionsScreen(isAdmin: isAdmin, trainers: trainers),
       TrainerPackagesScreen(
         key:       ValueKey('packages_${branchId}_$trainerId'),
         tenantId:  tenantId,

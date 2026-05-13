@@ -60,7 +60,7 @@ class SessionCardWidget extends StatelessWidget {
                     _AvatarBadge(initials: session.initials),
                     const SizedBox(width: 12),
 
-                    // Member name + service
+                    // Member name + service + trainer
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,6 +81,18 @@ class SessionCardWidget extends StatelessWidget {
                               color: Colors.grey[600],
                             ),
                           ),
+                          if (session.trainerName != null &&
+                              session.trainerName!.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              session.trainerName!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF4F46E5),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

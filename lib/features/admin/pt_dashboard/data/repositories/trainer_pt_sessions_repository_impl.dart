@@ -25,7 +25,7 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   @override
   Future<({List<PtSessionEntity>? data, Failure? failure})> getSessionsByDate({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required DateTime date,
   }) async {
     try {
@@ -51,7 +51,7 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   @override
   Future<({PtSessionStatsEntity? data, Failure? failure})> getStatsByDate({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required DateTime date,
   }) async {
     try {
@@ -77,7 +77,7 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
   @override
   Future<({PtSessionEntity? data, Failure? failure})> createSession({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required int userId,
     int? serviceId,
     int? memberPtPackageId,

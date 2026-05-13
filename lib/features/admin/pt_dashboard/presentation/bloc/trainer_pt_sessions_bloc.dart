@@ -17,11 +17,11 @@ class TrainerPtSessionsBloc
 
   /// Persisted so post-action refreshes hit the correct date + branchId + trainerId.
   DateTime _selectedDate = DateTime.now();
-  int _branchId  = 1;
-  int _trainerId = 0;
+  int  _branchId  = 1;
+  int? _trainerId; // null = all trainers (admin/owner); non-null = specific trainer
 
-  int get currentBranchId  => _branchId;
-  int get currentTrainerId => _trainerId;
+  int  get currentBranchId  => _branchId;
+  int? get currentTrainerId => _trainerId;
 
   TrainerPtSessionsBloc({
     required GetSessionsByDateUseCase getSessions,
@@ -136,7 +136,7 @@ class TrainerPtSessionsBloc
 
     final result = await _createSession(
       branchId:          event.branchId,
-      trainerId:         _trainerId,
+      trainerId:         event.trainerId ?? _trainerId,
       userId:            event.userId,
       serviceId:         event.serviceId,
       memberPtPackageId: event.memberPtPackageId,
@@ -171,7 +171,11 @@ class TrainerPtSessionsBloc
     int tabIndex = 0,
     String? actionType,
   }) async {
-    emit(PtSessionsLoading());
+    // Only show full-screen spinner on the very first load; keep existing data
+    // visible during refreshes so the UI does not freeze on every date change.
+    if (state is! PtSessionsLoaded) {
+      emit(PtSessionsLoading());
+    }
 
     final results = await Future.wait([
       _getSessions(branchId: _branchId, trainerId: _trainerId, date: date),

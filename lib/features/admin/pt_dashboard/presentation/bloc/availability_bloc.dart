@@ -5,8 +5,9 @@ import '../../data/models/availability_model.dart';
 
 abstract class AvailabilityEvent {}
 class LoadAvailability extends AvailabilityEvent {
-  final int trainerId; final int branchId;
-  LoadAvailability({required this.trainerId, required this.branchId});
+  final int? trainerId; // null = all trainers (admin/owner)
+  final int branchId;
+  LoadAvailability({this.trainerId, required this.branchId});
 }
 class AddSlot extends AvailabilityEvent {
   final int trainerId;

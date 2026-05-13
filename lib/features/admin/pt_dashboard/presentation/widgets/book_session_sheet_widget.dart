@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../data/models/pt_service_model.dart';
 import '../../data/services/pt_service_service.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
@@ -16,12 +17,16 @@ class BookSessionSheet extends StatefulWidget {
   final int branchId;
   final int tenantId;
   final DateTime selectedDate;
+  final bool isAdmin;
+  final List<AdminTrainerCardModel> trainers;
 
   const BookSessionSheet({
     super.key,
     required this.branchId,
     required this.tenantId,
     required this.selectedDate,
+    this.isAdmin = false,
+    this.trainers = const [],
   });
 
   static Future<void> show(
@@ -29,6 +34,8 @@ class BookSessionSheet extends StatefulWidget {
     required int branchId,
     required int tenantId,
     required DateTime selectedDate,
+    bool isAdmin = false,
+    List<AdminTrainerCardModel> trainers = const [],
   }) {
     return showModalBottomSheet(
       context: context,
@@ -40,6 +47,8 @@ class BookSessionSheet extends StatefulWidget {
           branchId: branchId,
           tenantId: tenantId,
           selectedDate: selectedDate,
+          isAdmin: isAdmin,
+          trainers: trainers,
         ),
       ),
     );
@@ -61,6 +70,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
   List<PtServiceModel> _services = [];
   bool _servicesLoading = false;
   PtServiceModel? _selectedService;
+  int? _selectedTrainerId;
 
   @override
   void initState() {
@@ -145,9 +155,17 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
       return;
     }
 
+    if (widget.isAdmin && _selectedTrainerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a trainer.')),
+      );
+      return;
+    }
+
     context.read<TrainerPtSessionsBloc>().add(
           PtSessionCreateRequested(
             branchId:  widget.branchId,
+            trainerId: widget.isAdmin ? _selectedTrainerId : null,
             userId:    userId,
             serviceId: _selectedService?.serviceId,
             startTime: _combine(_startTime!),
@@ -248,6 +266,28 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                         ? 'Enter a valid member ID'
                         : null,
               ),
+
+              // Trainer dropdown — admin/owner only
+              if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                _FieldLabel('Trainer'),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<int>(
+                  value: _selectedTrainerId,
+                  decoration: _inputDecoration('Select a trainer'),
+                  isExpanded: true,
+                  items: widget.trainers
+                      .map((t) => DropdownMenuItem<int>(
+                            value: t.trainerId,
+                            child: Text(
+                              t.fullName,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedTrainerId = v),
+                ),
+              ],
 
               const SizedBox(height: 16),
 

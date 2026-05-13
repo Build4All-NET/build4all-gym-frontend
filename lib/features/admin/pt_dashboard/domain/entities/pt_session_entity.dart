@@ -24,6 +24,10 @@ class PtSessionEntity {
   /// Example: "Ahmed Hassan"
   final String? memberName;
 
+  /// Trainer who owns this session (included in backend response).
+  final int? trainerId;
+  final String? trainerName;
+
   final int? serviceId;
 
   /// Not returned by backend; enriched by service lookup.
@@ -56,6 +60,8 @@ class PtSessionEntity {
     this.branchId,
     required this.userId,
     this.memberName,
+    this.trainerId,
+    this.trainerName,
     this.serviceId,
     this.serviceName,
     this.memberPtPackageId,
@@ -97,12 +103,16 @@ class PtSessionEntity {
     String? paymentStatus,
     String? memberName,
     String? serviceName,
+    int? trainerId,
+    String? trainerName,
   }) {
     return PtSessionEntity(
       ptSessionId: ptSessionId,
       branchId: branchId,
       userId: userId,
       memberName: memberName ?? this.memberName,
+      trainerId: trainerId ?? this.trainerId,
+      trainerName: trainerName ?? this.trainerName,
       serviceId: serviceId,
       serviceName: serviceName ?? this.serviceName,
       memberPtPackageId: memberPtPackageId,
