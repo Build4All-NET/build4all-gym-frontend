@@ -27,6 +27,8 @@ class PtSessionModel {
   final int ptSessionId;
   final int? branchId;
   final int userId;
+  final int? trainerId;
+  final String? trainerName;
   final int? serviceId;
   final int? memberPtPackageId;
   final int? sessionIndex;
@@ -41,6 +43,8 @@ class PtSessionModel {
     required this.ptSessionId,
     this.branchId,
     required this.userId,
+    this.trainerId,
+    this.trainerName,
     this.serviceId,
     this.memberPtPackageId,
     this.sessionIndex,
@@ -57,6 +61,8 @@ class PtSessionModel {
       ptSessionId:       json['ptSessionId']       as int,
       branchId:          json['branchId']           as int?,
       userId:            json['userId']             as int,
+      trainerId:         json['trainerId']          as int?,
+      trainerName:       json['trainerName']        as String?,
       serviceId:         json['serviceId']          as int?,
       memberPtPackageId: json['memberPtPackageId']  as int?,
       sessionIndex:      json['sessionIndex']       as int?,
@@ -76,9 +82,9 @@ class PtSessionModel {
       ptSessionId:       ptSessionId,
       branchId:          branchId,
       userId:            userId,
-      // memberName is not in the backend response.
-      // TODO: enrich via member lookup endpoint or show "Member #userId" fallback.
       memberName:        null,
+      trainerId:         trainerId,
+      trainerName:       trainerName,
       serviceId:         serviceId,
       serviceName:       null,
       memberPtPackageId: memberPtPackageId,

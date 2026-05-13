@@ -32,14 +32,15 @@ class PtPackageService {
   }
 
   Future<List<PtPackageModel>> getPackages({
-    required int trainerId,
+    int? trainerId,
     required int tenantId,
     required int branchId,
   }) async {
     final headers = await _headers();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/packages'
+        '?tenantId=$tenantId&branchId=$branchId';
     final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/trainer/packages'
-          '?trainerId=$trainerId&tenantId=$tenantId&branchId=$branchId',
+      trainerId != null ? '$base&trainerId=$trainerId' : base,
     );
     try {
       final r = await _client.get(uri, headers: headers);

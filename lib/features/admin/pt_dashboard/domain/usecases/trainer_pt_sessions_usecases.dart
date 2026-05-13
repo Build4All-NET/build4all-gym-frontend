@@ -19,7 +19,7 @@ class GetSessionsByDateUseCase {
 
   Future<({List<PtSessionEntity>? data, Failure? failure})> call({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required DateTime date,
   }) =>
       _repository.getSessionsByDate(branchId: branchId, trainerId: trainerId, date: date);
@@ -33,7 +33,7 @@ class GetSessionStatsUseCase {
 
   Future<({PtSessionStatsEntity? data, Failure? failure})> call({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required DateTime date,
   }) =>
       _repository.getStatsByDate(branchId: branchId, trainerId: trainerId, date: date);
@@ -47,7 +47,7 @@ class CreateSessionUseCase {
 
   Future<({PtSessionEntity? data, Failure? failure})> call({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required int userId,
     int? serviceId,
     int? memberPtPackageId,

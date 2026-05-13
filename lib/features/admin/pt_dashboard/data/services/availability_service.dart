@@ -31,12 +31,13 @@ class AvailabilityHttpService {
   }
 
   Future<List<AvailabilityModel>> getSlots({
-    required int trainerId,
+    int? trainerId,
     required int branchId,
   }) async {
     final headers = await _headers();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/availability?branchId=$branchId';
     final uri = Uri.parse(
-        '${Env.apiProjectBaseUrl}/api/trainer/availability?trainerId=$trainerId&branchId=$branchId');
+        trainerId != null ? '$base&trainerId=$trainerId' : base);
     try {
       final r = await _client.get(uri, headers: headers);
       debugPrint('GET AVAILABILITY: ${r.statusCode}');

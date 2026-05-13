@@ -23,6 +23,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../bloc/trainer_pt_sessions_event.dart';
@@ -31,18 +32,28 @@ import '../widgets/session_card_widget.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerPtSessionsScreen extends StatelessWidget {
-  const TrainerPtSessionsScreen({super.key});
+  final bool isAdmin;
+  final List<AdminTrainerCardModel> trainers;
+
+  const TrainerPtSessionsScreen({
+    super.key,
+    this.isAdmin = false,
+    this.trainers = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const _SessionsView();
+    return _SessionsView(isAdmin: isAdmin, trainers: trainers);
   }
 }
 
 // ── Main view ─────────────────────────────────────────────────────────────────
 
 class _SessionsView extends StatelessWidget {
-  const _SessionsView();
+  final bool isAdmin;
+  final List<AdminTrainerCardModel> trainers;
+
+  const _SessionsView({required this.isAdmin, required this.trainers});
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +84,11 @@ class _SessionsView extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => BookSessionSheet.show(
                     context,
-                    branchId:    context.read<TrainerPtSessionsBloc>().currentBranchId,
-                    tenantId:    context.read<AdminProfileCubit>().state.branchId ?? 1,
+                    branchId:     context.read<TrainerPtSessionsBloc>().currentBranchId,
+                    tenantId:     context.read<AdminProfileCubit>().state.branchId ?? 1,
                     selectedDate: date,
+                    isAdmin:      isAdmin,
+                    trainers:     trainers,
                   ),
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text(

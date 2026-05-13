@@ -62,13 +62,14 @@ class TrainerPtSessionsService {
 
   Future<List<PtSessionModel>> getSessionsByDate({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required DateTime date,
   }) async {
     final headers = await _authHeaders();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions'
+        '?branchId=$branchId&date=${_dateFmt.format(date)}';
     final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions'
-      '?branchId=$branchId&trainerId=$trainerId&date=${_dateFmt.format(date)}',
+      trainerId != null ? '$base&trainerId=$trainerId' : base,
     );
 
     try {
@@ -95,13 +96,14 @@ class TrainerPtSessionsService {
 
   Future<PtSessionStatsModel> getStatsByDate({
     required int branchId,
-    required int trainerId,
+    int? trainerId,
     required DateTime date,
   }) async {
     final headers = await _authHeaders();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/stats'
+        '?branchId=$branchId&date=${_dateFmt.format(date)}';
     final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/stats'
-      '?branchId=$branchId&trainerId=$trainerId&date=${_dateFmt.format(date)}',
+      trainerId != null ? '$base&trainerId=$trainerId' : base,
     );
 
     try {
@@ -125,10 +127,10 @@ class TrainerPtSessionsService {
 
   // ── POST create session ───────────────────────────────────────────────────
 
-  Future<PtSessionModel> createSession(Map<String, dynamic> body, {int trainerId = 0}) async {
+  Future<PtSessionModel> createSession(Map<String, dynamic> body, {int? trainerId}) async {
     final headers = await _authHeaders();
     final baseUrl = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions';
-    final uri = Uri.parse(trainerId > 0 ? '$baseUrl?trainerId=$trainerId' : baseUrl);
+    final uri = Uri.parse(trainerId != null ? '$baseUrl?trainerId=$trainerId' : baseUrl);
 
     try {
       final response = await _client.post(
