@@ -1,14 +1,3 @@
-// =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/screens/trainer_services_screen.dart
-//
-// DESIGN: Images 10-11 — Services screen (More tab).
-//
-// Shows PT services list with category filter tabs.
-// "+ New Service" button and FAB open the Create PT Service dialog.
-//
-// TODO: Wire to real backend PT services endpoints when implemented.
-// =============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,6 +17,7 @@ class TrainerServicesScreen extends StatefulWidget {
 class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
   String _activeFilter = 'All';
   late final PtServiceBloc _bloc;
+  List<PtServiceModel> _cachedServices = [];
 
   @override
   void initState() {
@@ -69,7 +59,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: ElevatedButton.icon(
-              onPressed: () => _CreateServiceDialog.show(
+              onPressed: () => _ServiceDialog.show(
                 context,
                 bloc:     _bloc,
                 tenantId: widget.tenantId,
@@ -104,47 +94,110 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
                     .map((f) => _FilterChip(
                           label: f,
                           selected: _activeFilter == f,
-                          onTap: () =>
-                              setState(() => _activeFilter = f),
+                          onTap: () => setState(() => _activeFilter = f),
                         ))
                     .toList(),
               ),
             ),
           ),
 
-          // Service list
-
           Expanded(
             child: BlocConsumer<PtServiceBloc, PtServiceState>(
               bloc: _bloc,
               listener: (ctx, state) {
+                if (state is PtServiceLoaded) {
+                  setState(() => _cachedServices = state.services);
+                }
                 if (state is PtServiceMutated) {
                   ScaffoldMessenger.of(ctx).showSnackBar(
-                    const SnackBar(content: Text('✅ Service saved.'), backgroundColor: Color(0xFF22C55E)),
+                    const SnackBar(
+                      content: Text('✅ Service saved.'),
+                      backgroundColor: Color(0xFF22C55E),
+                    ),
                   );
                   _bloc.add(LoadServices(widget.tenantId));
                 }
-              },
-              builder: (ctx, state) {
-                if (state is PtServiceLoading) return const Center(child: CircularProgressIndicator());
-                if (state is PtServiceLoaded) {
-                  final filtered = _activeFilter == 'All'
-                      ? state.services
-                      : state.services.where((s) => s.description.contains(_activeFilter)).toList();
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filtered.length,
-                    itemBuilder: (_, i) => _ServiceCard(service: filtered[i]),
+                if (state is PtServiceError) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${state.message}'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 }
-                return const SizedBox.shrink();
+              },
+              builder: (ctx, state) {
+                // Spinner only on first load
+                if ((state is PtServiceInitial ||
+                        state is PtServiceLoading) &&
+                    _cachedServices.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state is PtServiceError && _cachedServices.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline,
+                            color: Color(0xFFEF4444), size: 48),
+                        const SizedBox(height: 12),
+                        Text(
+                          state.message,
+                          textAlign: TextAlign.center,
+                          style:
+                              const TextStyle(color: Color(0xFF6B7280)),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () =>
+                              _bloc.add(LoadServices(widget.tenantId)),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final all = state is PtServiceLoaded
+                    ? state.services
+                    : _cachedServices;
+
+                final filtered = _activeFilter == 'All'
+                    ? all
+                    : all
+                        .where((s) => (s.description)
+                            .toLowerCase()
+                            .contains(_activeFilter.toLowerCase()))
+                        .toList();
+
+                if (filtered.isEmpty) {
+                  return Center(
+                    child: Text(
+                      all.isEmpty
+                          ? 'No services yet.'
+                          : 'No services in "$_activeFilter".',
+                      style: const TextStyle(color: Color(0xFF6B7280)),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filtered.length,
+                  itemBuilder: (_, i) => _ServiceCard(
+                    service: filtered[i],
+                    bloc:    _bloc,
+                    tenantId: widget.tenantId,
+                  ),
+                );
               },
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _CreateServiceDialog.show(
+        onPressed: () => _ServiceDialog.show(
           context,
           bloc:     _bloc,
           tenantId: widget.tenantId,
@@ -156,7 +209,6 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
     );
   }
 }
-
 
 // ── Filter chip ───────────────────────────────────────────────────────────────
 
@@ -177,8 +229,7 @@ class _FilterChip extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: selected
               ? const Color(0xFF4F46E5)
@@ -202,7 +253,15 @@ class _FilterChip extends StatelessWidget {
 
 class _ServiceCard extends StatelessWidget {
   final PtServiceModel service;
-  const _ServiceCard({super.key, required this.service});
+  final PtServiceBloc bloc;
+  final int tenantId;
+
+  const _ServiceCard({
+    super.key,
+    required this.service,
+    required this.bloc,
+    required this.tenantId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +285,6 @@ class _ServiceCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                // Icon badge
                 Container(
                   width: 42,
                   height: 42,
@@ -238,8 +296,6 @@ class _ServiceCard extends StatelessWidget {
                       color: Colors.white, size: 22),
                 ),
                 const SizedBox(width: 12),
-
-                // Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,8 +311,8 @@ class _ServiceCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         service.description,
-                        style: TextStyle(
-                            fontSize: 12, color: Colors.grey[500]),
+                        style:
+                            TextStyle(fontSize: 12, color: Colors.grey[500]),
                       ),
                     ],
                   ),
@@ -273,8 +329,7 @@ class _ServiceCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${service.durationMinutes} min',
-                  style:
-                      TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 const SizedBox(width: 16),
                 Text(
@@ -309,7 +364,12 @@ class _ServiceCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () => _ServiceDialog.show(
+                  context,
+                  bloc:           bloc,
+                  tenantId:       tenantId,
+                  initialService: service,
+                ),
                 icon: const Icon(Icons.edit_outlined, size: 16),
                 label: const Text('Edit Service'),
                 style: OutlinedButton.styleFrom(
@@ -317,8 +377,7 @@ class _ServiceCard extends StatelessWidget {
                   side: const BorderSide(color: Color(0xFFE5E7EB)),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                 ),
               ),
             ),
@@ -329,39 +388,59 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
-// ── Create Service dialog ─────────────────────────────────────────────────────
+// ── Create / Edit Service dialog ──────────────────────────────────────────────
 
-class _CreateServiceDialog extends StatefulWidget {
+class _ServiceDialog extends StatefulWidget {
   final PtServiceBloc bloc;
   final int tenantId;
+  final PtServiceModel? initialService;
 
-  const _CreateServiceDialog({
+  const _ServiceDialog({
     required this.bloc,
     required this.tenantId,
+    this.initialService,
   });
 
   static Future<void> show(
     BuildContext context, {
     required PtServiceBloc bloc,
     required int tenantId,
+    PtServiceModel? initialService,
   }) {
     return showDialog(
       context: context,
-      builder: (_) => _CreateServiceDialog(bloc: bloc, tenantId: tenantId),
+      builder: (_) => _ServiceDialog(
+        bloc:           bloc,
+        tenantId:       tenantId,
+        initialService: initialService,
+      ),
     );
   }
 
   @override
-  State<_CreateServiceDialog> createState() => _CreateServiceDialogState();
+  State<_ServiceDialog> createState() => _ServiceDialogState();
 }
 
-class _CreateServiceDialogState
-    extends State<_CreateServiceDialog> {
-  final _nameCtrl = TextEditingController();
-  final _categoryCtrl = TextEditingController();
-  final _durationCtrl = TextEditingController(text: '60');
-  final _priceCtrl = TextEditingController(text: '50');
+class _ServiceDialogState extends State<_ServiceDialog> {
+  final _nameCtrl        = TextEditingController();
+  final _categoryCtrl    = TextEditingController();
+  final _durationCtrl    = TextEditingController(text: '60');
+  final _priceCtrl       = TextEditingController(text: '50');
   final _descriptionCtrl = TextEditingController();
+
+  bool get _isEditing => widget.initialService != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final svc = widget.initialService;
+    if (svc != null) {
+      _nameCtrl.text        = svc.name;
+      _descriptionCtrl.text = svc.description;
+      _durationCtrl.text    = '${svc.durationMinutes}';
+      _priceCtrl.text       = svc.price.toStringAsFixed(0);
+    }
+  }
 
   @override
   void dispose() {
@@ -375,25 +454,27 @@ class _CreateServiceDialogState
 
   void _submit() {
     if (_nameCtrl.text.trim().isEmpty) return;
-    widget.bloc.add(CreateService(
-      tenantId: widget.tenantId,
-      data: {
-        'name': _nameCtrl.text.trim(),
-        'description': _descriptionCtrl.text.trim(),
-        'category': _categoryCtrl.text.trim(),
-        'durationMinutes': int.tryParse(_durationCtrl.text) ?? 60,
-        'price': double.tryParse(_priceCtrl.text) ?? 50,
-        'isActive': true,
-      },
-    ));
+    final data = {
+      'name':            _nameCtrl.text.trim(),
+      'description':     _descriptionCtrl.text.trim(),
+      'category':        _categoryCtrl.text.trim(),
+      'durationMinutes': int.tryParse(_durationCtrl.text) ?? 60,
+      'price':           double.tryParse(_priceCtrl.text) ?? 50,
+      'isActive':        true,
+    };
+
+    if (_isEditing) {
+      widget.bloc.add(UpdateService(id: widget.initialService!.serviceId, data: data));
+    } else {
+      widget.bloc.add(CreateService(tenantId: widget.tenantId, data: data));
+    }
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -403,9 +484,9 @@ class _CreateServiceDialogState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Create PT Service',
-                  style: TextStyle(
+                Text(
+                  _isEditing ? 'Edit PT Service' : 'Create PT Service',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1A1A2E),
@@ -413,8 +494,7 @@ class _CreateServiceDialogState
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.close,
-                      color: Color(0xFF9CA3AF)),
+                  child: const Icon(Icons.close, color: Color(0xFF9CA3AF)),
                 ),
               ],
             ),
@@ -493,8 +573,7 @@ class _CreateServiceDialogState
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     child: const Text('Cancel'),
                   ),
@@ -503,17 +582,15 @@ class _CreateServiceDialogState
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _submit,
-                    icon: const Icon(Icons.check_circle_outline,
-                        size: 18),
-                    label: const Text('Create Service'),
+                    icon: const Icon(Icons.check_circle_outline, size: 18),
+                    label: Text(_isEditing ? 'Save Changes' : 'Create Service'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4F46E5),
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
@@ -556,10 +633,8 @@ InputDecoration _sdec(String hint) {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide:
-          const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
+      borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
     ),
-    contentPadding: const EdgeInsets.symmetric(
-        horizontal: 14, vertical: 12),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
   );
 }

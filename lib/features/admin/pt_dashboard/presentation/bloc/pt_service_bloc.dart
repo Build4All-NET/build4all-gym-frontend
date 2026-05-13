@@ -9,6 +9,11 @@ class CreateService extends PtServiceEvent {
   final Map<String, dynamic> data;
   CreateService({required this.tenantId, required this.data});
 }
+class UpdateService extends PtServiceEvent {
+  final int id;
+  final Map<String, dynamic> data;
+  UpdateService({required this.id, required this.data});
+}
 
 abstract class PtServiceState {}
 class PtServiceInitial extends PtServiceState {}
@@ -26,6 +31,7 @@ class PtServiceBloc extends Bloc<PtServiceEvent, PtServiceState> {
   PtServiceBloc(this._svc) : super(PtServiceInitial()) {
     on<LoadServices>(_onLoad);
     on<CreateService>(_onCreate);
+    on<UpdateService>(_onUpdate);
   }
 
   Future<void> _onLoad(LoadServices e, Emitter<PtServiceState> emit) async {
@@ -40,6 +46,15 @@ class PtServiceBloc extends Bloc<PtServiceEvent, PtServiceState> {
   Future<void> _onCreate(CreateService e, Emitter<PtServiceState> emit) async {
     try {
       await _svc.createService(e.tenantId, e.data);
+      emit(PtServiceMutated());
+    } catch (err) {
+      emit(PtServiceError(err.toString()));
+    }
+  }
+
+  Future<void> _onUpdate(UpdateService e, Emitter<PtServiceState> emit) async {
+    try {
+      await _svc.updateService(e.id, e.data);
       emit(PtServiceMutated());
     } catch (err) {
       emit(PtServiceError(err.toString()));

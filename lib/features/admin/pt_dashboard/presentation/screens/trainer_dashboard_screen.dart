@@ -801,7 +801,8 @@ class _QuickActionsSection extends StatelessWidget {
         iconColor: Color.lerp(c.primary, c.label, 0.3)!,
         onTap: () => BookSessionSheet.show(
           context,
-          branchId:     branchId, // ✅ FIX 7 — real branchId
+          branchId:     branchId,
+          tenantId:     context.read<AdminProfileCubit>().state.branchId ?? 1,
           selectedDate: DateTime.now(),
         ),
       ),

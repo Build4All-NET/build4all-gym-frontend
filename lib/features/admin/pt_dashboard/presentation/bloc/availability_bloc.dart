@@ -9,10 +9,20 @@ class LoadAvailability extends AvailabilityEvent {
   LoadAvailability({required this.trainerId, required this.branchId});
 }
 class AddSlot extends AvailabilityEvent {
-  final int trainerId; final int branchId;
-  final int weekday; final String startTime; final String endTime;
-  AddSlot({required this.trainerId, required this.branchId,
-    required this.weekday, required this.startTime, required this.endTime});
+  final int trainerId;
+  final int branchId;
+  final int weekday;
+  final String startTime;
+  final String endTime;
+  final bool recurring;
+  AddSlot({
+    required this.trainerId,
+    required this.branchId,
+    required this.weekday,
+    required this.startTime,
+    required this.endTime,
+    this.recurring = true,
+  });
 }
 class DeleteSlot extends AvailabilityEvent {
   final int availabilityId;
@@ -51,8 +61,13 @@ class AvailabilityBloc extends Bloc<AvailabilityEvent, AvailabilityState> {
   Future<void> _onAdd(AddSlot e, Emitter<AvailabilityState> emit) async {
     try {
       await _svc.createSlot(
-          trainerId: e.trainerId, branchId: e.branchId,
-          weekday: e.weekday, startTime: e.startTime, endTime: e.endTime);
+        trainerId: e.trainerId,
+        branchId:  e.branchId,
+        weekday:   e.weekday,
+        startTime: e.startTime,
+        endTime:   e.endTime,
+        recurring: e.recurring,
+      );
       emit(AvailabilityMutated());
     } catch (err) {
       emit(AvailabilityError(err.toString()));

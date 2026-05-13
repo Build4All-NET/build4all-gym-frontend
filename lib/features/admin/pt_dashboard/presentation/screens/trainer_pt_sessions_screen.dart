@@ -23,6 +23,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../bloc/trainer_pt_sessions_event.dart';
 import '../bloc/trainer_pt_sessions_state.dart';
@@ -73,6 +74,7 @@ class _SessionsView extends StatelessWidget {
                   onPressed: () => BookSessionSheet.show(
                     context,
                     branchId:    context.read<TrainerPtSessionsBloc>().currentBranchId,
+                    tenantId:    context.read<AdminProfileCubit>().state.branchId ?? 1,
                     selectedDate: date,
                   ),
                   icon: const Icon(Icons.add, size: 18),
