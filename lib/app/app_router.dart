@@ -1,9 +1,10 @@
 import 'package:build4allgym/features/admin/members/presentation/bloc/admin_members_bloc.dart';
+import 'package:build4allgym/features/admin/pt_dashboard/data/services/pt_package_service.dart';
 import 'package:build4allgym/features/admin/staff/data/repositories/admin_staff_repository_impl.dart';
 import 'package:build4allgym/features/admin/staff/data/services/admin_staff_service.dart';
 import 'package:build4allgym/features/admin/staff/domain/usecases/update_staff_usecase.dart';
 import 'package:build4allgym/features/admin/staff/presentation/screens/admin_staff_screen.dart';
-import 'package:dio/src/dio.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
@@ -42,6 +43,14 @@ import '../features/admin/plans/data/services/admin_plans_remote_service.dart';
 import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart' hide GetBranchesUseCase;
 import '../features/admin/plans/presentation/bloc/admin_plans/admin_plans_bloc.dart';
 import '../features/admin/plans/presentation/screens/admin_plans_screen.dart';
+import '../features/admin/pt_dashboard/data/repositories/trainer_pt_sessions_repository_impl.dart';
+import '../features/admin/pt_dashboard/data/services/availability_service.dart';
+import '../features/admin/pt_dashboard/data/services/pt_service_service.dart';
+import '../features/admin/pt_dashboard/data/services/trainer_pt_sessions_service.dart';
+import '../features/admin/pt_dashboard/domain/usecases/trainer_pt_sessions_usecases.dart';
+import '../features/admin/pt_dashboard/presentation/bloc/availability_bloc.dart';
+import '../features/admin/pt_dashboard/presentation/bloc/pt_package_bloc.dart';
+import '../features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_bloc.dart';
 import '../features/admin/staff/domain/usecases/create_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/get_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/remove_staff_usecase.dart';
@@ -480,10 +489,66 @@ class AppRouter {
     // ── Admin: PT Sessions ─────────────────────────────────────────────────
 
       case adminPtSessions:
+
+        final sessionsService = TrainerPtSessionsService();
+
+        final sessionsRepository =
+        TrainerPtSessionsRepositoryImpl(
+          service: sessionsService,
+        );
+
+        final availabilityService = AvailabilityHttpService();
+
+        final ptPackageService = PtPackageService();
+
+        final ptServiceService = PtServiceService();
+
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            BlocProvider(
-              create: (_) => BranchCubit()..loadBranches(),
+            MultiBlocProvider(
+              providers: [
+
+                BlocProvider(
+                  create: (_) => BranchCubit()..loadBranches(),
+                ),
+
+                BlocProvider(
+                  create: (_) => TrainerPtSessionsBloc(
+                    getSessions: GetTrainerPtSessionsUseCase(
+                      sessionsRepository,
+                    ),
+                    getStats: GetTrainerPtSessionStatsUseCase(
+                      sessionsRepository,
+                    ),
+                    createSession: CreateTrainerPtSessionUseCase(
+                      sessionsRepository,
+                    ),
+                    // cancelSession: CancelTrainerPtSessionUseCase(
+                    //   sessionsRepository,
+                    // ),
+                    updateStatus: UpdateTrainerUseCase(sessionsRepository),
+                  ),
+                ),
+
+                BlocProvider(
+                  create: (_) => AvailabilityBloc(
+                    service: availabilityService,
+                  ),
+                ),
+
+                BlocProvider(
+                  create: (_) => PtPackageBloc(
+                    service: ptPackageService,
+                  ),
+                ),
+
+                BlocProvider(
+                  create: (_) => PtServicesBloc(
+                    service: ptServiceService,
+                  ),
+                ),
+
+              ],
               child: const TrainerMainScreen(),
             ),
           ),

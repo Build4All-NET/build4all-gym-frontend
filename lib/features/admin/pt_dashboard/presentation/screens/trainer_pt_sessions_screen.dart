@@ -1,21 +1,11 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/screens/trainer_pt_sessions_screen.dart
+// FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_pt_sessions_screen.dart
 //
-// DESIGN: Image 12 — Sessions tab.
-//
-// Layout:
-//   ┌─────────────────────────────────┐
-//   │  AppBar: "Sessions" + Book btn  │
-//   ├─────────────────────────────────┤
-//   │  ← Sunday, May 10, 2026  →     │  date navigator
-//   ├─────────────────────────────────┤
-//   │  [ Today ] [ Upcoming ] [Done]  │  segmented tab filter
-//   ├─────────────────────────────────┤
-//   │  SessionCardWidget list         │
-//   └─────────────────────────────────┘
-//
-// NOTE: This screen does NOT create its own BlocProvider.
-//       It reads the TrainerPtSessionsBloc provided by TrainerMainScreen.
+// FIX SUMMARY:
+//   1. Screen now receives branchId, trainerId, isAdmin, trainers as params.
+//   2. BookSessionSheet receives trainerId so admin can book for any trainer.
+//   3. Admin sees a "Booked by <trainer>" chip on each session card.
+//   4. No more reliance on bloc.currentBranchId which could be 0 at render time.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -23,8 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
-import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../bloc/trainer_pt_sessions_event.dart';
 import '../bloc/trainer_pt_sessions_state.dart';
@@ -32,28 +22,44 @@ import '../widgets/session_card_widget.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerPtSessionsScreen extends StatelessWidget {
+  final int  branchId;
+  final int  trainerId;
   final bool isAdmin;
   final List<AdminTrainerCardModel> trainers;
 
   const TrainerPtSessionsScreen({
     super.key,
-    this.isAdmin = false,
-    this.trainers = const [],
+    required this.branchId,
+    required this.trainerId,
+    required this.isAdmin,
+    required this.trainers,
   });
 
   @override
   Widget build(BuildContext context) {
-    return _SessionsView(isAdmin: isAdmin, trainers: trainers);
+    return _SessionsView(
+      branchId:  branchId,
+      trainerId: trainerId,
+      isAdmin:   isAdmin,
+      trainers:  trainers,
+    );
   }
 }
 
 // ── Main view ─────────────────────────────────────────────────────────────────
 
 class _SessionsView extends StatelessWidget {
+  final int  branchId;
+  final int  trainerId;
   final bool isAdmin;
   final List<AdminTrainerCardModel> trainers;
 
-  const _SessionsView({required this.isAdmin, required this.trainers});
+  const _SessionsView({
+    required this.branchId,
+    required this.trainerId,
+    required this.isAdmin,
+    required this.trainers,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +90,16 @@ class _SessionsView extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => BookSessionSheet.show(
                     context,
-                    branchId:     context.read<TrainerPtSessionsBloc>().currentBranchId,
-                    tenantId:     context.read<AdminProfileCubit>().state.branchId ?? 1,
-                    selectedDate: date,
+                    branchId:     branchId,
+                    tenantId:     context
+                        .read<AdminProfileCubit>()
+                        .state
+                        .branchId ??
+                        1,
+                    trainerId:    trainerId,  // ← always pass explicit trainerId
                     isAdmin:      isAdmin,
                     trainers:     trainers,
+                    selectedDate: date,
                   ),
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text(
@@ -137,7 +148,7 @@ class _SessionsView extends StatelessWidget {
           }
         },
         buildWhen: (prev, curr) =>
-            curr is PtSessionsLoading ||
+        curr is PtSessionsLoading ||
             curr is PtSessionsLoaded ||
             curr is PtSessionsError ||
             curr is PtSessionsInitial,
@@ -152,17 +163,16 @@ class _SessionsView extends StatelessWidget {
             return _ErrorView(
               message: state.message,
               onRetry: () {
-                final bloc = context.read<TrainerPtSessionsBloc>();
-                bloc.add(PtSessionsStarted(
-                  branchId:  bloc.currentBranchId,
-                  trainerId: bloc.currentTrainerId,
+                context.read<TrainerPtSessionsBloc>().add(PtSessionsStarted(
+                  branchId:  branchId,
+                  trainerId: trainerId,
                 ));
               },
             );
           }
 
           if (state is PtSessionsLoaded) {
-            return _LoadedBody(state: state);
+            return _LoadedBody(state: state, isAdmin: isAdmin, trainers: trainers);
           }
 
           return const SizedBox.shrink();
@@ -173,16 +183,11 @@ class _SessionsView extends StatelessWidget {
 
   String _successMsg(String actionType) {
     switch (actionType) {
-      case 'completed':
-        return '✅ Session marked as completed.';
-      case 'cancelled':
-        return 'Session cancelled.';
-      case 'no_show':
-        return 'Session marked as no-show.';
-      case 'created':
-        return '✅ Session booked successfully.';
-      default:
-        return 'Session updated.';
+      case 'completed': return '✅ Session marked as completed.';
+      case 'cancelled': return 'Session cancelled.';
+      case 'no_show':   return 'Session marked as no-show.';
+      case 'created':   return '✅ Session booked successfully.';
+      default:          return 'Session updated.';
     }
   }
 }
@@ -191,7 +196,14 @@ class _SessionsView extends StatelessWidget {
 
 class _LoadedBody extends StatelessWidget {
   final PtSessionsLoaded state;
-  const _LoadedBody({required this.state});
+  final bool isAdmin;
+  final List<AdminTrainerCardModel> trainers;
+
+  const _LoadedBody({
+    required this.state,
+    required this.isAdmin,
+    required this.trainers,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -208,12 +220,14 @@ class _LoadedBody extends StatelessWidget {
           child: state.filteredSessions.isEmpty
               ? _EmptyState(tabIndex: state.selectedTabIndex)
               : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: state.filteredSessions.length,
-                  itemBuilder: (_, i) => SessionCardWidget(
-                    session: state.filteredSessions[i],
-                  ),
-                ),
+            padding: const EdgeInsets.all(16),
+            itemCount: state.filteredSessions.length,
+            itemBuilder: (_, i) => SessionCardWidget(
+              session:  state.filteredSessions[i],
+              isAdmin:  isAdmin,
+              trainers: trainers,
+            ),
+          ),
         ),
       ],
     );
@@ -235,10 +249,10 @@ class _DateNavigator extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => context.read<TrainerPtSessionsBloc>().add(
-                  PtSessionsDateChanged(
-                    date: selectedDate.subtract(const Duration(days: 1)),
-                  ),
-                ),
+              PtSessionsDateChanged(
+                date: selectedDate.subtract(const Duration(days: 1)),
+              ),
+            ),
             icon: const Icon(Icons.chevron_left_rounded,
                 size: 28, color: Color(0xFF4B5563)),
           ),
@@ -262,10 +276,10 @@ class _DateNavigator extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => context.read<TrainerPtSessionsBloc>().add(
-                  PtSessionsDateChanged(
-                    date: selectedDate.add(const Duration(days: 1)),
-                  ),
-                ),
+              PtSessionsDateChanged(
+                date: selectedDate.add(const Duration(days: 1)),
+              ),
+            ),
             icon: const Icon(Icons.chevron_right_rounded,
                 size: 28, color: Color(0xFF4B5563)),
           ),
@@ -283,10 +297,7 @@ class _TabFilter extends StatelessWidget {
 
   static const _tabs = ['Today', 'Upcoming', 'Completed'];
 
-  const _TabFilter({
-    required this.selectedIndex,
-    required this.onTap,
-  });
+  const _TabFilter({required this.selectedIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -313,12 +324,12 @@ class _TabFilter extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: selected
                         ? [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ]
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ]
                         : [],
                   ),
                   child: Text(
@@ -327,7 +338,7 @@ class _TabFilter extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight:
-                          selected ? FontWeight.w600 : FontWeight.w400,
+                      selected ? FontWeight.w600 : FontWeight.w400,
                       color: selected
                           ? const Color(0xFF4F46E5)
                           : Colors.grey[500],
@@ -356,7 +367,6 @@ class _EmptyState extends StatelessWidget {
       'No upcoming sessions.',
       'No completed sessions yet.',
     ];
-
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
