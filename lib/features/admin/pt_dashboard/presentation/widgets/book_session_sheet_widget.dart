@@ -168,7 +168,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
         branchId:   widget.branchId,
         trainerId:  _assignedTrainerId, // ← correct trainer
         userId:     userId,
-        serviceId:  _selectedService?.id,
+        serviceId:  _selectedService?.serviceId,
         startTime:  _toDateTime(_startTime!),
         endTime:    _toDateTime(_endTime!),
         notes:      _notesCtrl.text.trim().isEmpty
@@ -217,7 +217,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: cs.onSurface,
+                      color: cs.surface,
                     ),
                   ),
                   const Spacer(),

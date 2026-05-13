@@ -1,11 +1,11 @@
 // =============================================================================
 // FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_pt_sessions_screen.dart
 //
-// FIX SUMMARY:
-//   1. Screen now receives branchId, trainerId, isAdmin, trainers as params.
-//   2. BookSessionSheet receives trainerId so admin can book for any trainer.
-//   3. Admin sees a "Booked by <trainer>" chip on each session card.
-//   4. No more reliance on bloc.currentBranchId which could be 0 at render time.
+// CHANGES:
+//   1. SessionCardWidget now receives isAdmin param so it can show trainer badge.
+//   2. Retry event passes trainerNames for admin all-trainers mode.
+//   3. Admin: the session list already contains ALL trainers' sessions (the bloc
+//      fetches per-trainer and merges). No separate fetching needed here.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -17,13 +17,12 @@ import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../bloc/trainer_pt_sessions_event.dart';
-import '../bloc/trainer_pt_sessions_state.dart';
 import '../widgets/session_card_widget.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerPtSessionsScreen extends StatelessWidget {
   final int  branchId;
-  final int  trainerId;
+  final int  trainerId;   // 0 for admin all-trainers mode
   final bool isAdmin;
   final List<AdminTrainerCardModel> trainers;
 
@@ -71,12 +70,12 @@ class _SessionsView extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Sessions',
-          style: TextStyle(
-            color: Color(0xFF1A1A2E),
+        title: Text(
+          isAdmin ? 'All Sessions' : 'Sessions',
+          style: const TextStyle(
+            color:      Color(0xFF1A1A2E),
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize:   20,
           ),
         ),
         actions: [
@@ -91,29 +90,27 @@ class _SessionsView extends StatelessWidget {
                   onPressed: () => BookSessionSheet.show(
                     context,
                     branchId:     branchId,
-                    tenantId:     context
+                    tenantId: context
                         .read<AdminProfileCubit>()
                         .state
-                        .branchId ??
-                        1,
-                    trainerId:    trainerId,  // ← always pass explicit trainerId
+                        .branchId ?? 1,
+                    // For trainer: their own ID; for admin: first trainer or 0
+                    trainerId:    (isAdmin && trainers.isNotEmpty)
+                        ? trainers.first.trainerId
+                        : trainerId,
                     isAdmin:      isAdmin,
                     trainers:     trainers,
                     selectedDate: date,
                   ),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text(
-                    'Book Session',
-                    style: TextStyle(fontSize: 13),
-                  ),
+                  icon:  const Icon(Icons.add, size: 18),
+                  label: const Text('Book Session', style: TextStyle(fontSize: 13)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cs.primary,
                     foregroundColor: Colors.white,
-                    elevation: 0,
+                    elevation:  0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ),
@@ -127,9 +124,9 @@ class _SessionsView extends StatelessWidget {
           if (state is PtSessionActionSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(_successMsg(state.actionType)),
+                content:         Text(_successMsg(state.actionType)),
                 backgroundColor: const Color(0xFF22C55E),
-                behavior: SnackBarBehavior.floating,
+                behavior:        SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -138,9 +135,9 @@ class _SessionsView extends StatelessWidget {
           if (state is PtSessionActionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content:         Text(state.message),
                 backgroundColor: const Color(0xFFEF4444),
-                behavior: SnackBarBehavior.floating,
+                behavior:        SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
@@ -149,14 +146,12 @@ class _SessionsView extends StatelessWidget {
         },
         buildWhen: (prev, curr) =>
         curr is PtSessionsLoading ||
-            curr is PtSessionsLoaded ||
-            curr is PtSessionsError ||
+            curr is PtSessionsLoaded  ||
+            curr is PtSessionsError   ||
             curr is PtSessionsInitial,
         builder: (context, state) {
           if (state is PtSessionsLoading || state is PtSessionsInitial) {
-            return Center(
-              child: CircularProgressIndicator(color: cs.primary),
-            );
+            return Center(child: CircularProgressIndicator(color: cs.primary));
           }
 
           if (state is PtSessionsError) {
@@ -164,15 +159,22 @@ class _SessionsView extends StatelessWidget {
               message: state.message,
               onRetry: () {
                 context.read<TrainerPtSessionsBloc>().add(PtSessionsStarted(
-                  branchId:  branchId,
-                  trainerId: trainerId,
+                  branchId:     branchId,
+                  trainerId:    trainerId,
+                  trainerNames: isAdmin
+                      ? { for (final t in trainers) t.trainerId: t.fullName }
+                      : const {},
                 ));
               },
             );
           }
 
           if (state is PtSessionsLoaded) {
-            return _LoadedBody(state: state, isAdmin: isAdmin, trainers: trainers);
+            return _LoadedBody(
+              state:    state,
+              isAdmin:  isAdmin,
+              trainers: trainers,
+            );
           }
 
           return const SizedBox.shrink();
@@ -220,12 +222,11 @@ class _LoadedBody extends StatelessWidget {
           child: state.filteredSessions.isEmpty
               ? _EmptyState(tabIndex: state.selectedTabIndex)
               : ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding:   const EdgeInsets.all(16),
             itemCount: state.filteredSessions.length,
             itemBuilder: (_, i) => SessionCardWidget(
-              session:  state.filteredSessions[i],
-              isAdmin:  isAdmin,
-              trainers: trainers,
+              session: state.filteredSessions[i],
+              isAdmin: isAdmin,
             ),
           ),
         ),
@@ -243,15 +244,14 @@ class _DateNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color:   Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Row(
         children: [
           IconButton(
             onPressed: () => context.read<TrainerPtSessionsBloc>().add(
               PtSessionsDateChanged(
-                date: selectedDate.subtract(const Duration(days: 1)),
-              ),
+                  date: selectedDate.subtract(const Duration(days: 1))),
             ),
             icon: const Icon(Icons.chevron_left_rounded,
                 size: 28, color: Color(0xFF4B5563)),
@@ -259,26 +259,19 @@ class _DateNavigator extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Text(
-                  DateFormat('EEEE').format(selectedDate),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                Text(
-                  DateFormat('MMM d, yyyy').format(selectedDate),
-                  style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-                ),
+                Text(DateFormat('EEEE').format(selectedDate),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A1A2E))),
+                Text(DateFormat('MMM d, yyyy').format(selectedDate),
+                    style: TextStyle(fontSize: 13, color: Colors.grey[500])),
               ],
             ),
           ),
           IconButton(
             onPressed: () => context.read<TrainerPtSessionsBloc>().add(
               PtSessionsDateChanged(
-                date: selectedDate.add(const Duration(days: 1)),
-              ),
+                  date: selectedDate.add(const Duration(days: 1))),
             ),
             icon: const Icon(Icons.chevron_right_rounded,
                 size: 28, color: Color(0xFF4B5563)),
@@ -292,9 +285,8 @@ class _DateNavigator extends StatelessWidget {
 // ── Segmented tab filter ──────────────────────────────────────────────────────
 
 class _TabFilter extends StatelessWidget {
-  final int selectedIndex;
+  final int             selectedIndex;
   final ValueChanged<int> onTap;
-
   static const _tabs = ['Today', 'Upcoming', 'Completed'];
 
   const _TabFilter({required this.selectedIndex, required this.onTap});
@@ -302,11 +294,11 @@ class _TabFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color:   Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F6),
+          color:        const Color(0xFFF3F4F6),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -317,29 +309,25 @@ class _TabFilter extends StatelessWidget {
                 onTap: () => onTap(i),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.all(4),
+                  margin:  const EdgeInsets.all(4),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     color: selected ? Colors.white : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: selected
-                        ? [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        ? [BoxShadow(
+                        color:     Colors.black.withOpacity(0.08),
                         blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ]
+                        offset:    const Offset(0, 1))]
                         : [],
                   ),
                   child: Text(
                     _tabs[i],
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 13,
-                      fontWeight:
-                      selected ? FontWeight.w600 : FontWeight.w400,
-                      color: selected
+                      fontSize:   13,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                      color:      selected
                           ? const Color(0xFF4F46E5)
                           : Colors.grey[500],
                     ),
@@ -371,13 +359,10 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.calendar_today_outlined,
-              size: 56, color: Colors.grey[300]),
+          Icon(Icons.calendar_today_outlined, size: 56, color: Colors.grey[300]),
           const SizedBox(height: 12),
-          Text(
-            messages[tabIndex.clamp(0, 2)],
-            style: TextStyle(fontSize: 15, color: Colors.grey[400]),
-          ),
+          Text(messages[tabIndex.clamp(0, 2)],
+              style: TextStyle(fontSize: 15, color: Colors.grey[400])),
         ],
       ),
     );
@@ -387,7 +372,7 @@ class _EmptyState extends StatelessWidget {
 // ── Error view ────────────────────────────────────────────────────────────────
 
 class _ErrorView extends StatelessWidget {
-  final String message;
+  final String       message;
   final VoidCallback onRetry;
   const _ErrorView({required this.message, required this.onRetry});
 
@@ -399,11 +384,9 @@ class _ErrorView extends StatelessWidget {
         children: [
           Icon(Icons.error_outline, size: 56, color: Colors.red[300]),
           const SizedBox(height: 12),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Color(0xFF4B5563)),
-          ),
+          Text(message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Color(0xFF4B5563))),
           const SizedBox(height: 16),
           TextButton(onPressed: onRetry, child: const Text('Retry')),
         ],

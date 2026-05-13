@@ -1,8 +1,10 @@
 // =============================================================================
 // FILE: lib/features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_event.dart
 //
-// FIX: PtSessionCreateRequested now carries trainerId so admin can create
-//      sessions for any trainer (not just the JWT user).
+// UPDATED:
+//   1. Stable Equatable props
+//   2. Better documentation
+//   3. Cleaner formatting
 // =============================================================================
 
 import 'package:equatable/equatable.dart';
@@ -14,45 +16,86 @@ abstract class TrainerPtSessionsEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// ── Initial load ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Initial load
+// ─────────────────────────────────────────────────────────────────────────────
 
 class PtSessionsStarted extends TrainerPtSessionsEvent {
+
   final int branchId;
+
+  /// Trainer self-view:
+  ///   trainerId = trainer's userId
+  ///
+  /// Admin all-trainers mode:
+  ///   trainerId = 0
   final int trainerId;
 
-  const PtSessionsStarted({required this.branchId, required this.trainerId});
+  /// Used only in admin all-trainers mode
+  ///
+  /// Key   = trainerId
+  /// Value = trainer display name
+  final Map<int, String> trainerNames;
+
+  const PtSessionsStarted({
+    required this.branchId,
+    required this.trainerId,
+    this.trainerNames = const {},
+  });
 
   @override
-  List<Object?> get props => [branchId, trainerId];
+  List<Object?> get props => [
+    branchId,
+    trainerId,
+    trainerNames,
+  ];
 }
 
-// ── Date navigation ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Date changed
+// ─────────────────────────────────────────────────────────────────────────────
 
 class PtSessionsDateChanged extends TrainerPtSessionsEvent {
+
   final DateTime date;
 
-  const PtSessionsDateChanged({required this.date});
+  const PtSessionsDateChanged({
+    required this.date,
+  });
 
   @override
   List<Object?> get props => [date];
 }
 
-// ── Tab filter ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Tab changed
+// ─────────────────────────────────────────────────────────────────────────────
 
 class PtSessionsTabChanged extends TrainerPtSessionsEvent {
-  /// 0 = Today, 1 = Upcoming, 2 = Completed
+
+  /// 0 = Today
+  /// 1 = Upcoming
+  /// 2 = Completed
   final int tabIndex;
 
-  const PtSessionsTabChanged({required this.tabIndex});
+  const PtSessionsTabChanged({
+    required this.tabIndex,
+  });
 
   @override
   List<Object?> get props => [tabIndex];
 }
 
-// ── Status update ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Session status update
+// ─────────────────────────────────────────────────────────────────────────────
 
-class PtSessionStatusUpdateRequested extends TrainerPtSessionsEvent {
-  final int    sessionId;
+class PtSessionStatusUpdateRequested
+    extends TrainerPtSessionsEvent {
+
+  final int sessionId;
+
+  /// completed / cancelled / no_show / etc
   final String status;
 
   const PtSessionStatusUpdateRequested({
@@ -61,22 +104,36 @@ class PtSessionStatusUpdateRequested extends TrainerPtSessionsEvent {
   });
 
   @override
-  List<Object?> get props => [sessionId, status];
+  List<Object?> get props => [
+    sessionId,
+    status,
+  ];
 }
 
-// ── Create session ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Create session
+// ─────────────────────────────────────────────────────────────────────────────
 
-class PtSessionCreateRequested extends TrainerPtSessionsEvent {
-  final int      branchId;
-  /// The trainer this session belongs to.
-  /// Admin passes the selected trainerId; trainer passes their own ID.
-  final int      trainerId;
-  final int      userId;
-  final int?     serviceId;
-  final int?     memberPtPackageId;
+class PtSessionCreateRequested
+    extends TrainerPtSessionsEvent {
+
+  final int branchId;
+
+  /// Trainer owning the session
+  final int trainerId;
+
+  /// Member/User ID
+  final int userId;
+
+  final int? serviceId;
+
+  final int? memberPtPackageId;
+
   final DateTime startTime;
+
   final DateTime endTime;
-  final String?  notes;
+
+  final String? notes;
 
   const PtSessionCreateRequested({
     required this.branchId,

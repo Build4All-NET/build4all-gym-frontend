@@ -1,14 +1,15 @@
 // =============================================================================
 // FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart
 //
-// FIX SUMMARY:
-//   1. Dashboard loading-forever bug — _trainerId=0 gate now waits for role.
-//      If role is not loaded yet we show a spinner, not an error.
-//   2. Admin sees ALL trainers via picker bar; trainer auto-uses own ID.
-//   3. All sub-screens (sessions, packages, schedule, services) receive
-//      isAdmin + trainers list so they can behave differently per role.
-//   4. TrainerPtSessionsScreen now receives branchId + trainerId directly
-//      instead of reading them from a partially-initialised bloc.
+// CHANGES:
+//   1. Removed _TrainerPickerBar — admin now sees ALL trainers' data merged;
+//      no single-trainer selection is needed.
+//   2. Admin mode: _trainerId stays 0; bloc is started with trainerNames map
+//      so it fetches sessions for every trainer in parallel.
+//   3. Dashboard loading-forever fix: _buildBody no longer blocks on
+//      _trainerId != 0 for admin; it renders once trainers are loaded.
+//   4. isAdmin + trainers + trainerId passed to TrainerDashboardScreen so its
+//      Quick Actions can open BookSessionSheet with all required params.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../../../admin/trainers/data/services/admin_trainers_service.dart';
+import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 
 import '../../data/repositories/trainer_pt_sessions_repository_impl.dart';
@@ -43,10 +45,12 @@ class TrainerMainScreen extends StatefulWidget {
 class _TrainerMainScreenState extends State<TrainerMainScreen> {
   late int _currentIndex;
   int? _selectedBranchId;
-  int  _tenantId  = 1;
-  int  _trainerId = 0;
-  bool _isAdmin   = false;
-  bool _roleLoaded = false; // ← NEW: track whether role has been decoded
+  int  _tenantId   = 1;
+  int  _trainerId  = 0;   // stays 0 for admin (all-trainers mode)
+  bool _isAdmin    = false;
+  bool _roleLoaded = false;
+  AdminTokenStore token = AdminTokenStore();
+  bool _profileSynced = false;
 
   List<AdminTrainerCardModel> _trainers      = [];
   bool    _loadingTrainers = false;
@@ -54,6 +58,9 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
   late TrainerPtSessionsBloc _sessionsBloc;
   bool _blocInitialized = false;
+
+  int _trainerRequestId = 0;
+  late final requestId = ++_trainerRequestId;
 
   @override
   void initState() {
@@ -75,32 +82,35 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       );
       _blocInitialized = true;
     }
-    _syncTrainerFromProfile(context.read<AdminProfileCubit>().state);
+    if (!_profileSynced) {
+      _profileSynced = true;
+      _syncTrainerFromProfile(
+        context.read<AdminProfileCubit>().state,
+      );
+    }
   }
 
   // ── Sync role + trainerId from profile ──────────────────────────────────────
 
   void _syncTrainerFromProfile(AdminProfile profile) {
-    // Role not decoded yet — BlocListener will call us again when it arrives.
     if (profile.role.isEmpty) return;
 
-    final tenantId = profile.branchId ?? 1;
+    final tenantId = token.getTenantId();
     final isAdmin  = profile.isAdminRole;
 
-    // Role has been decoded at least once.
-    if (!_roleLoaded) {
-      setState(() { _roleLoaded = true; });
-    }
+    if (!_roleLoaded) setState(() => _roleLoaded = true);
 
     if (_tenantId != tenantId || _isAdmin != isAdmin) {
+      final tenantIdRaw = token.getTenantId();
+      final parsedTenantId = int.tryParse(tenantIdRaw.toString()) ?? 1;
+
       setState(() {
-        _tenantId = tenantId;
-        _isAdmin  = isAdmin;
-      });
-    }
+        _tenantId = parsedTenantId;
+        _isAdmin = isAdmin;
+      });    }
 
     if (profile.isTrainerRole) {
-      // TRAINER: use own userId directly.
+      // TRAINER: use own userId
       final newId = profile.userId ?? 0;
       if (newId != 0 && _trainerId != newId) {
         setState(() => _trainerId = newId);
@@ -110,7 +120,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
         ));
       }
     } else if (profile.isAdminRole && _trainers.isEmpty && !_loadingTrainers) {
-      // ADMIN/OWNER: load trainer list to populate the picker.
+      // ADMIN/OWNER: load trainer list, then start bloc in all-trainers mode
       _loadTrainersForAdmin();
     }
   }
@@ -123,14 +133,13 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
   int _effectiveBranchId(BuildContext context) {
     if (_selectedBranchId != null) return _selectedBranchId!;
-    final branchState = context.read<BranchCubit>().state;
-    if (branchState is BranchLoaded && branchState.branches.isNotEmpty) {
-      return branchState.branches.first.id;
-    }
+    final s = context.read<BranchCubit>().state;
+    if (s is BranchLoaded && s.branches.isNotEmpty) return s.branches.first.id;
     return 1;
   }
 
   Future<void> _loadTrainersForAdmin() async {
+    final currentRequest = ++_trainerRequestId;
     if (!mounted) return;
     setState(() { _loadingTrainers = true; _trainersError = null; });
     try {
@@ -140,17 +149,17 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       setState(() {
         _trainers        = response.trainers;
         _loadingTrainers = false;
-        // Auto-select first trainer for the bloc.
-        if (_trainers.isNotEmpty && _trainerId == 0) {
-          _trainerId = _trainers.first.trainerId;
-        }
+        // _trainerId stays 0 — admin sees ALL trainers merged
       });
-      if (_trainerId != 0) {
-        _sessionsBloc.add(PtSessionsStarted(
-          branchId:  _effectiveBranchId(context),
-          trainerId: _trainerId,
-        ));
-      }
+        _sessionsBloc.add(
+          PtSessionsStarted(
+            branchId: _effectiveBranchId(context),
+            trainerId: 0,
+            trainerNames: {
+              for (final t in _trainers) t.trainerId: t.fullName,
+            },
+          ),
+        );
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -166,29 +175,24 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   }
 
   void _onBranchChanged(int? branchId) {
+    if (!mounted || requestId != _trainerRequestId) return;
     setState(() {
       _selectedBranchId = branchId;
       if (_isAdmin) {
         _trainers      = [];
-        _trainerId     = 0;
         _trainersError = null;
+        // _trainerId stays 0
       }
     });
     if (_isAdmin) {
       _loadTrainersForAdmin();
     } else if (_trainerId != 0) {
-      final effectiveId = branchId ?? _effectiveBranchId(context);
+      final id = branchId ?? _effectiveBranchId(context);
       _sessionsBloc.add(PtSessionsStarted(
-          branchId: effectiveId, trainerId: _trainerId));
+        branchId:  id,
+        trainerId: _trainerId,
+      ));
     }
-  }
-
-  void _onTrainerChanged(int trainerId) {
-    setState(() => _trainerId = trainerId);
-    _sessionsBloc.add(PtSessionsStarted(
-      branchId:  _effectiveBranchId(context),
-      trainerId: trainerId,
-    ));
   }
 
   static const _navItems = <_NavItem>[
@@ -202,7 +206,6 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   @override
   Widget build(BuildContext context) {
     final effectiveBranchId = _effectiveBranchId(context);
-
     return BlocListener<AdminProfileCubit, AdminProfile>(
       listenWhen: (prev, curr) =>
       prev.role != curr.role || prev.userId != curr.userId,
@@ -215,39 +218,37 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   }
 
   Widget _buildBody(int effectiveBranchId) {
-    // Role not decoded yet → show spinner (prevents false "loading trainers" loop)
+    // Role not yet decoded → show spinner
     if (!_roleLoaded) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // Admin: trainers still loading
-    if (_isAdmin && _loadingTrainers && _trainerId == 0) {
+    // Admin: trainers still loading → spinner
+    if (_isAdmin && _loadingTrainers) {
       return _buildResolving();
     }
 
-    // Trainer with no ID yet
+    // Admin: trainer load failed → error with retry
+    if (_isAdmin && _trainersError != null && _trainers.isEmpty) {
+      return _buildResolving();
+    }
+
+    // Trainer: own userId not resolved yet → spinner
     if (!_isAdmin && _trainerId == 0) {
       return _buildResolving();
     }
 
-    // Error state (admin failed to load trainers)
-    if (_trainersError != null && _trainerId == 0) {
-      return _buildResolving();
-    }
-
     return _MainShell(
-      currentIndex:     _currentIndex,
-      onTabSwitch:      _switchTab,
-      navItems:         _navItems,
-      tenantId:         _tenantId,
-      branchId:         effectiveBranchId,
-      trainerId:        _trainerId,
-      isAdmin:          _isAdmin,
-      trainers:         _trainers,
-      onBranchChanged:  _onBranchChanged,
-      onTrainerChanged: _onTrainerChanged,
+      currentIndex:    _currentIndex,
+      onTabSwitch:     _switchTab,
+      navItems:        _navItems,
+      tenantId:        _tenantId,
+      branchId:        effectiveBranchId,
+      // trainerId = 0 for admin (all-trainers); own ID for trainer
+      trainerId:       _trainerId,
+      isAdmin:         _isAdmin,
+      trainers:        _trainers,
+      onBranchChanged: _onBranchChanged,
     );
   }
 
@@ -266,8 +267,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
                 Text(
                   _trainersError!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 15, color: Color(0xFF6B7280)),
+                  style: const TextStyle(fontSize: 15, color: Color(0xFF6B7280)),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
@@ -287,25 +287,22 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
         ),
       );
     }
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
 
 class _MainShell extends StatelessWidget {
-  final int                         currentIndex;
-  final ValueChanged<int>           onTabSwitch;
-  final List<_NavItem>              navItems;
-  final int                         tenantId;
-  final int                         branchId;
-  final int                         trainerId;
-  final bool                        isAdmin;
-  final List<AdminTrainerCardModel>  trainers;
-  final ValueChanged<int?>          onBranchChanged;
-  final ValueChanged<int>           onTrainerChanged;
+  final int                        currentIndex;
+  final ValueChanged<int>          onTabSwitch;
+  final List<_NavItem>             navItems;
+  final int                        tenantId;
+  final int                        branchId;
+  final int                        trainerId;
+  final bool                       isAdmin;
+  final List<AdminTrainerCardModel> trainers;
+  final ValueChanged<int?>         onBranchChanged;
 
   const _MainShell({
     required this.currentIndex,
@@ -317,29 +314,32 @@ class _MainShell extends StatelessWidget {
     required this.isAdmin,
     required this.trainers,
     required this.onBranchChanged,
-    required this.onTrainerChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
 
-    // ValueKey rebuilds (and reloads) a tab when trainerId or branchId changes.
+    // ValueKey rebuilds a tab when branchId changes (not on trainer selection
+    // because admin always shows all trainers — no per-trainer rebuild needed).
     final bodies = <Widget>[
       TrainerDashboardScreen(
-        key:             ValueKey('dashboard_${branchId}_$trainerId'),
+        key:             ValueKey('dashboard_$branchId'),
         onTabSwitch:     onTabSwitch,
         onBranchChanged: onBranchChanged,
+        isAdmin:         isAdmin,
+        trainers:        trainers,
+        trainerId:       trainerId,
       ),
       TrainerPtSessionsScreen(
-        key:       ValueKey('sessions_${branchId}_$trainerId'),
+        key:       ValueKey('sessions_$branchId'),
         branchId:  branchId,
         trainerId: trainerId,
         isAdmin:   isAdmin,
         trainers:  trainers,
       ),
       TrainerPackagesScreen(
-        key:       ValueKey('packages_${branchId}_$trainerId'),
+        key:       ValueKey('packages_$branchId'),
         tenantId:  tenantId,
         branchId:  branchId,
         trainerId: trainerId,
@@ -347,7 +347,7 @@ class _MainShell extends StatelessWidget {
         trainers:  trainers,
       ),
       TrainerScheduleScreen(
-        key:       ValueKey('schedule_${branchId}_$trainerId'),
+        key:       ValueKey('schedule_$branchId'),
         branchId:  branchId,
         trainerId: trainerId,
         isAdmin:   isAdmin,
@@ -361,24 +361,9 @@ class _MainShell extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: cs.background,
-      body: Column(
-        children: [
-          // Trainer picker bar — only for admin/owner when trainers loaded.
-          if (isAdmin && trainers.isNotEmpty)
-            _TrainerPickerBar(
-              trainers:          trainers,
-              selectedTrainerId: trainerId,
-              onChanged:         onTrainerChanged,
-            ),
-          if (isAdmin && trainers.isEmpty)
-            const _TrainerPickerLoading(),
-          Expanded(
-            child: IndexedStack(
-              index: currentIndex,
-              children: bodies,
-            ),
-          ),
-        ],
+      body: IndexedStack(
+        index:    currentIndex,
+        children: bodies,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -429,97 +414,6 @@ class _MainShell extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ── Trainer picker bar (admin/owner only) ─────────────────────────────────────
-
-class _TrainerPickerBar extends StatelessWidget {
-  final List<AdminTrainerCardModel> trainers;
-  final int                         selectedTrainerId;
-  final ValueChanged<int>           onChanged;
-
-  const _TrainerPickerBar({
-    required this.trainers,
-    required this.selectedTrainerId,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final selected = trainers.any((t) => t.trainerId == selectedTrainerId)
-        ? selectedTrainerId
-        : trainers.first.trainerId;
-
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.person_outline_rounded,
-              size: 18, color: Color(0xFF4F46E5)),
-          const SizedBox(width: 8),
-          const Text(
-            'Viewing Trainer:',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-              color: Color(0xFF374151),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                value: selected,
-                isExpanded: true,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1A1A2E),
-                ),
-                items: trainers
-                    .map((t) => DropdownMenuItem(
-                  value: t.trainerId,
-                  child: Text(t.fullName,
-                      overflow: TextOverflow.ellipsis),
-                ))
-                    .toList(),
-                onChanged: (v) {
-                  if (v != null) onChanged(v);
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TrainerPickerLoading extends StatelessWidget {
-  const _TrainerPickerLoading();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          const SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'Loading trainers…',
-            style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-          ),
-        ],
       ),
     );
   }

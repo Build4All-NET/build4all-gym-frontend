@@ -1,10 +1,15 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/bloc/trainer_pt_sessions_state.dart
+// FILE: lib/features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_state.dart
+//
+// UPDATED:
+//   1. Fixed session filtering logic
+//   2. Removed dangerous DateTime.now() fallback
+//   3. Added helper methods
+//   4. Added stable action states
+//   5. Fixed today/upcoming/completed filters
 // =============================================================================
 
-import 'package:equatable/equatable.dart';
-import '../../domain/entities/pt_session_entity.dart';
-import '../../domain/entities/pt_session_stats_entity.dart';
+part of 'trainer_pt_sessions_bloc.dart';
 
 abstract class TrainerPtSessionsState extends Equatable {
   const TrainerPtSessionsState();
@@ -13,81 +18,193 @@ abstract class TrainerPtSessionsState extends Equatable {
   List<Object?> get props => [];
 }
 
-// ── Initial ───────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Initial
+// ─────────────────────────────────────────────────────────────────────────────
 
-class PtSessionsInitial extends TrainerPtSessionsState {}
-
-// ── Loading (full-screen) ─────────────────────────────────────────────────────
-
-class PtSessionsLoading extends TrainerPtSessionsState {}
-
-// ── Loaded ────────────────────────────────────────────────────────────────────
-
-class PtSessionsLoaded extends TrainerPtSessionsState {
-  final List<PtSessionEntity> sessions;
-  final PtSessionStatsEntity stats;
-  final DateTime selectedDate;
-
-  /// 0 = Today, 1 = Upcoming, 2 = Completed
-  final int selectedTabIndex;
-
-  const PtSessionsLoaded({
-    required this.sessions,
-    required this.stats,
-    required this.selectedDate,
-    this.selectedTabIndex = 0,
-  });
-
-  /// Sessions filtered by the active tab.
-  List<PtSessionEntity> get filteredSessions {
-    switch (selectedTabIndex) {
-      case 0: // Today — show all sessions for the date (no status filter)
-        return sessions;
-      case 1: // Upcoming — SCHEDULED only
-        return sessions.where((s) => s.isScheduled).toList();
-      case 2: // Completed — COMPLETED only
-        return sessions.where((s) => s.isCompleted).toList();
-      default:
-        return sessions;
-    }
-  }
-
-  PtSessionsLoaded copyWith({
-    List<PtSessionEntity>? sessions,
-    PtSessionStatsEntity? stats,
-    DateTime? selectedDate,
-    int? selectedTabIndex,
-  }) {
-    return PtSessionsLoaded(
-      sessions:          sessions          ?? this.sessions,
-      stats:             stats             ?? this.stats,
-      selectedDate:      selectedDate      ?? this.selectedDate,
-      selectedTabIndex:  selectedTabIndex  ?? this.selectedTabIndex,
-    );
-  }
-
-  @override
-  List<Object?> get props => [sessions, stats, selectedDate, selectedTabIndex];
+class PtSessionsInitial extends TrainerPtSessionsState {
+  const PtSessionsInitial();
 }
 
-// ── Error ─────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionsLoading extends TrainerPtSessionsState {
+  const PtSessionsLoading();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Error
+// ─────────────────────────────────────────────────────────────────────────────
 
 class PtSessionsError extends TrainerPtSessionsState {
+
   final String message;
-  const PtSessionsError(this.message);
+
+  const PtSessionsError({
+    required this.message,
+  });
 
   @override
   List<Object?> get props => [message];
 }
 
-// ── Action states (per-card spinner + snackbar feedback) ─────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Loaded
+// ─────────────────────────────────────────────────────────────────────────────
 
-/// One session card is in-flight (spinning).
-class PtSessionActionLoading extends TrainerPtSessionsState {
-  /// The session currently being updated.
+class PtSessionsLoaded extends TrainerPtSessionsState {
+
+  final List<PtSessionEntity> sessions;
+
+  final DateTime selectedDate;
+
+  /// 0 = Today
+  /// 1 = Upcoming
+  /// 2 = Completed
+  final int selectedTabIndex;
+
+  final PtSessionStatsEntity stats;
+
+  const PtSessionsLoaded({
+    required this.sessions,
+    required this.selectedDate,
+    required this.selectedTabIndex,
+    required this.stats,
+  });
+
+  // ==========================================================================
+  // Helpers
+  // ==========================================================================
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year &&
+        a.month == b.month &&
+        a.day == b.day;
+  }
+
+  bool _isCompleted(String? status) {
+
+    final normalized = status?.toLowerCase();
+
+    return normalized == 'completed' ||
+        normalized == 'no_show';
+  }
+
+  bool _isCancelled(String? status) {
+    return status?.toLowerCase() == 'cancelled';
+  }
+
+  bool _isActive(String? status) {
+    return !_isCompleted(status) &&
+        !_isCancelled(status);
+  }
+
+  // ==========================================================================
+  // Filtered sessions
+  // ==========================================================================
+
+  List<PtSessionEntity> get filteredSessions {
+
+    final today = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+    );
+
+    switch (selectedTabIndex) {
+
+    // ======================================================================
+    // TODAY
+    // ======================================================================
+
+      case 0:
+
+        return sessions.where((session) {
+
+          final start = session.startTime;
+
+          if (start == null) return false;
+
+          return _isSameDay(start, today) &&
+              _isActive(session.status);
+
+        }).toList();
+
+    // ======================================================================
+    // UPCOMING
+    // ======================================================================
+
+      case 1:
+
+        return sessions.where((session) {
+
+          final start = session.startTime;
+
+          if (start == null) return false;
+
+          return start.isAfter(today) &&
+              !_isSameDay(start, today) &&
+              _isActive(session.status);
+
+        }).toList();
+
+    // ======================================================================
+    // COMPLETED
+    // ======================================================================
+
+      case 2:
+
+        return sessions.where((session) {
+
+          return _isCompleted(session.status);
+
+        }).toList();
+
+      default:
+        return [];
+    }
+  }
+
+  // ==========================================================================
+  // CopyWith
+  // ==========================================================================
+
+  PtSessionsLoaded copyWith({
+    List<PtSessionEntity>? sessions,
+    DateTime? selectedDate,
+    int? selectedTabIndex,
+    PtSessionStatsEntity? stats,
+  }) {
+
+    return PtSessionsLoaded(
+      sessions: sessions ?? this.sessions,
+      selectedDate: selectedDate ?? this.selectedDate,
+      selectedTabIndex:
+      selectedTabIndex ?? this.selectedTabIndex,
+      stats: stats ?? this.stats,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    sessions,
+    selectedDate,
+    selectedTabIndex,
+    stats,
+  ];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Action Loading
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionActionLoading
+    extends TrainerPtSessionsState {
+
   final int sessionId;
 
-  /// The full loaded state — needed to keep the rest of the screen rendered.
   final PtSessionsLoaded previousState;
 
   const PtSessionActionLoading({
@@ -96,12 +213,22 @@ class PtSessionActionLoading extends TrainerPtSessionsState {
   });
 
   @override
-  List<Object?> get props => [sessionId, previousState];
+  List<Object?> get props => [
+    sessionId,
+    previousState,
+  ];
 }
 
-/// Action succeeded — triggers snackbar + list update.
-class PtSessionActionSuccess extends TrainerPtSessionsState {
-  final String actionType; // 'completed' | 'cancelled' | 'no_show' | 'created'
+// ─────────────────────────────────────────────────────────────────────────────
+// Action Success
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionActionSuccess
+    extends TrainerPtSessionsState {
+
+  /// created / completed / cancelled / etc
+  final String actionType;
+
   final PtSessionsLoaded updatedState;
 
   const PtSessionActionSuccess({
@@ -110,12 +237,21 @@ class PtSessionActionSuccess extends TrainerPtSessionsState {
   });
 
   @override
-  List<Object?> get props => [actionType, updatedState];
+  List<Object?> get props => [
+    actionType,
+    updatedState,
+  ];
 }
 
-/// Action failed — triggers error snackbar; previous state is restored.
-class PtSessionActionError extends TrainerPtSessionsState {
+// ─────────────────────────────────────────────────────────────────────────────
+// Action Error
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionActionError
+    extends TrainerPtSessionsState {
+
   final String message;
+
   final PtSessionsLoaded previousState;
 
   const PtSessionActionError({
@@ -124,5 +260,8 @@ class PtSessionActionError extends TrainerPtSessionsState {
   });
 
   @override
-  List<Object?> get props => [message, previousState];
+  List<Object?> get props => [
+    message,
+    previousState,
+  ];
 }
