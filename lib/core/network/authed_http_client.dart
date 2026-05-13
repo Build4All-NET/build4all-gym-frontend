@@ -50,11 +50,22 @@ class AuthedHttpClient extends http.BaseClient {
       final payload = base64Url.normalize(parts[1]);
       final map = jsonDecode(utf8.decode(base64Url.decode(payload)));
       if (map is! Map) return false;
-      final role = (map['role'] ?? '').toString().toUpperCase().trim();
-      return role == 'OWNER' ||
-          role == 'SUPER_ADMIN' ||
-          role == 'MANAGER' ||
-          role == 'ADMIN';
+
+      // Backend JWT stores roles as a List: ["ROLE_ADMIN"], ["ROLE_TRAINER"], etc.
+      String roleStr = '';
+      final roles = map['roles'];
+      if (roles is List && roles.isNotEmpty) {
+        roleStr = roles.first.toString().toUpperCase().trim();
+      } else {
+        // Fallback: singular 'role' field
+        roleStr = (map['role'] ?? '').toString().toUpperCase().trim();
+      }
+      if (roleStr.startsWith('ROLE_')) roleStr = roleStr.substring(5);
+
+      return roleStr == 'OWNER' ||
+          roleStr == 'SUPER_ADMIN' ||
+          roleStr == 'MANAGER' ||
+          roleStr == 'ADMIN';
     } catch (_) {
       return false;
     }

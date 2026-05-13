@@ -1,23 +1,6 @@
-// =============================================================================
-// FILE: lib/features/trainer/pt_sessions/presentation/screens/trainer_packages_screen.dart
-//
-// DESIGN: Images 3-7 — Packages tab + Create PT Package wizard (4 steps).
-//
-// This screen is navigated to from:
-//   1. Bottom nav "Packages" tab
-//   2. Dashboard quick action "Create Package"
-//
-// The "+ New Package" button opens a 4-step wizard dialog:
-//   Step 1 – Basic Info:      Package Name, Package Type, Linked PT Service
-//   Step 2 – Training Rules:  Total Sessions, Min/Max Days/Week, Validity
-//   Step 3 – Pricing:         Regular Price, Sale Price (optional)
-//   Step 4 – Preview summary
-//
-// TODO: Wire to real backend endpoints when PT Package backend is implemented.
-//       Currently uses stub data for the package list.
-// =============================================================================
-
 import 'package:build4allgym/features/admin/pt_dashboard/data/models/pt_package_model.dart';
+import 'package:build4allgym/features/admin/pt_dashboard/data/models/pt_service_model.dart';
+import 'package:build4allgym/features/admin/pt_dashboard/data/services/pt_service_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,6 +25,7 @@ class TrainerPackagesScreen extends StatefulWidget {
 
 class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   late final PtPackageBloc _bloc;
+  List<PtPackageModel> _cachedPackages = [];
 
   @override
   void initState() {
@@ -114,9 +98,15 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
       body: BlocConsumer<PtPackageBloc, PtPackageState>(
         bloc: _bloc,
         listener: (context, state) {
+          if (state is PtPackageLoaded) {
+            setState(() => _cachedPackages = state.packages);
+          }
           if (state is PtPackageMutated) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('✅ Package saved.'), backgroundColor: Color(0xFF22C55E)),
+              const SnackBar(
+                content: Text('✅ Package saved.'),
+                backgroundColor: Color(0xFF22C55E),
+              ),
             );
             _bloc.add(LoadPackages(
               trainerId: widget.trainerId,
@@ -126,20 +116,72 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
           }
           if (state is PtPackageError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${state.message}'), backgroundColor: Colors.red),
+              SnackBar(
+                content: Text('Error: ${state.message}'),
+                backgroundColor: Colors.red,
+              ),
             );
           }
         },
         builder: (context, state) {
-          if (state is PtPackageLoading) return const Center(child: CircularProgressIndicator());
-          if (state is PtPackageLoaded) {
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.packages.length,
-              itemBuilder: (_, i) => _PackageCard(pkg: state.packages[i], bloc: _bloc),
+          // Show spinner only on initial load with no cached data
+          if ((state is PtPackageInitial ||
+                  state is PtPackageLoading ||
+                  state is PtPackageMutating ||
+                  state is PtPackageMutated) &&
+              _cachedPackages.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is PtPackageError && _cachedPackages.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline,
+                      color: Color(0xFFEF4444), size: 48),
+                  const SizedBox(height: 12),
+                  Text(
+                    state.message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Color(0xFF6B7280)),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _bloc.add(LoadPackages(
+                      trainerId: widget.trainerId,
+                      tenantId:  widget.tenantId,
+                      branchId:  widget.branchId,
+                    )),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
             );
           }
-          return const SizedBox.shrink();
+
+          // Use live data when loaded, fall back to cache otherwise
+          final packages =
+              state is PtPackageLoaded ? state.packages : _cachedPackages;
+
+          if (packages.isEmpty) {
+            return const Center(
+              child: Text('No packages yet.',
+                  style: TextStyle(color: Color(0xFF6B7280))),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: packages.length,
+            itemBuilder: (_, i) => _PackageCard(
+              pkg:       packages[i],
+              bloc:      _bloc,
+              trainerId: widget.trainerId,
+              tenantId:  widget.tenantId,
+              branchId:  widget.branchId,
+            ),
+          );
         },
       ),
     );
@@ -151,7 +193,18 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
 class _PackageCard extends StatelessWidget {
   final PtPackageModel pkg;
   final PtPackageBloc bloc;
-  const _PackageCard({super.key, required this.pkg, required this.bloc});
+  final int trainerId;
+  final int tenantId;
+  final int branchId;
+
+  const _PackageCard({
+    super.key,
+    required this.pkg,
+    required this.bloc,
+    required this.trainerId,
+    required this.tenantId,
+    required this.branchId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -346,13 +399,19 @@ class _PackageCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () => _CreatePackageDialog.show(
+                      context,
+                      bloc:           bloc,
+                      trainerId:      trainerId,
+                      tenantId:       tenantId,
+                      branchId:       branchId,
+                      initialPackage: pkg,
+                    ),
                     icon: const Icon(Icons.edit_outlined, size: 16),
                     label: const Text('Edit Package'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF4F46E5),
-                      side: const BorderSide(
-                          color: Color(0xFFE5E7EB)),
+                      side: const BorderSide(color: Color(0xFFE5E7EB)),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
@@ -412,19 +471,21 @@ class _StatChip extends StatelessWidget {
   }
 }
 
-// ── Create Package 4-step dialog ──────────────────────────────────────────────
+// ── Create / Edit Package 4-step dialog ───────────────────────────────────────
 
 class _CreatePackageDialog extends StatefulWidget {
   final PtPackageBloc bloc;
   final int trainerId;
   final int tenantId;
   final int branchId;
+  final PtPackageModel? initialPackage;
 
   const _CreatePackageDialog({
     required this.bloc,
     required this.trainerId,
     required this.tenantId,
     required this.branchId,
+    this.initialPackage,
   });
 
   static Future<void> show(
@@ -433,15 +494,17 @@ class _CreatePackageDialog extends StatefulWidget {
     required int trainerId,
     required int tenantId,
     required int branchId,
+    PtPackageModel? initialPackage,
   }) {
     return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => _CreatePackageDialog(
-        bloc: bloc,
-        trainerId: trainerId,
-        tenantId: tenantId,
-        branchId: branchId,
+        bloc:           bloc,
+        trainerId:      trainerId,
+        tenantId:       tenantId,
+        branchId:       branchId,
+        initialPackage: initialPackage,
       ),
     );
   }
@@ -456,7 +519,11 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
   // Step 1 fields
   final _nameCtrl = TextEditingController();
   String? _packageType;
-  String? _linkedService;
+  int? _selectedServiceId;
+
+  // Services for Step 1 dropdown
+  List<PtServiceModel> _services = [];
+  bool _servicesLoading = true;
 
   // Step 2 fields
   final _totalSessionsCtrl = TextEditingController();
@@ -467,6 +534,36 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
   // Step 3 fields
   final _regularPriceCtrl = TextEditingController();
   final _salePriceCtrl = TextEditingController();
+
+  bool get _isEditing => widget.initialPackage != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final pkg = widget.initialPackage;
+    if (pkg != null) {
+      _nameCtrl.text = pkg.name;
+      _packageType = pkg.packageType;
+      _totalSessionsCtrl.text = '${pkg.numberOfSessions}';
+      _minDaysCtrl.text = '${pkg.minDaysPerWeek}';
+      _maxDaysCtrl.text = '${pkg.maxDaysPerWeek}';
+      _validityCtrl.text = '${pkg.daysAvailable}';
+      _regularPriceCtrl.text = pkg.price.toStringAsFixed(0);
+      if (pkg.salePrice != null) {
+        _salePriceCtrl.text = pkg.salePrice!.toStringAsFixed(0);
+      }
+    }
+    _loadServices();
+  }
+
+  Future<void> _loadServices() async {
+    try {
+      final svcs = await PtServiceService().getServices(widget.tenantId);
+      if (mounted) setState(() { _services = svcs; _servicesLoading = false; });
+    } catch (_) {
+      if (mounted) setState(() => _servicesLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -490,32 +587,37 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
 
   void _submit() {
     if (_nameCtrl.text.trim().isEmpty) return;
-    widget.bloc.add(CreatePackage(
-      trainerId: widget.trainerId,
-      tenantId: widget.tenantId,
-      branchId: widget.branchId,
-      data: {
-        'name': _nameCtrl.text.trim(),
-        'packageType': _packageType ?? 'CUSTOM',
-        if (_linkedService != null) 'ptServiceId': int.tryParse(_linkedService!),
-        'numberOfSessions': int.tryParse(_totalSessionsCtrl.text) ?? 0,
-        'daysAvailable': int.tryParse(_validityCtrl.text) ?? 0,
-        'minDaysPerWeek': int.tryParse(_minDaysCtrl.text) ?? 1,
-        'maxDaysPerWeek': int.tryParse(_maxDaysCtrl.text) ?? 2,
-        'price': double.tryParse(_regularPriceCtrl.text) ?? 0,
-        if (_salePriceCtrl.text.isNotEmpty)
-          'salePrice': double.tryParse(_salePriceCtrl.text),
-        'active': true,
-      },
-    ));
+    final data = {
+      'name': _nameCtrl.text.trim(),
+      'packageType': _packageType ?? 'CUSTOM',
+      if (_selectedServiceId != null) 'ptServiceId': _selectedServiceId,
+      'numberOfSessions': int.tryParse(_totalSessionsCtrl.text) ?? 0,
+      'daysAvailable': int.tryParse(_validityCtrl.text) ?? 0,
+      'minDaysPerWeek': int.tryParse(_minDaysCtrl.text) ?? 1,
+      'maxDaysPerWeek': int.tryParse(_maxDaysCtrl.text) ?? 2,
+      'price': double.tryParse(_regularPriceCtrl.text) ?? 0,
+      if (_salePriceCtrl.text.isNotEmpty)
+        'salePrice': double.tryParse(_salePriceCtrl.text),
+      'active': true,
+    };
+
+    if (_isEditing) {
+      widget.bloc.add(UpdatePackage(id: widget.initialPackage!.id, data: data));
+    } else {
+      widget.bloc.add(CreatePackage(
+        trainerId: widget.trainerId,
+        tenantId:  widget.tenantId,
+        branchId:  widget.branchId,
+        data:      data,
+      ));
+    }
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -531,9 +633,9 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
             ),
             const SizedBox(height: 4),
 
-            const Text(
-              'Create PT Package',
-              style: TextStyle(
+            Text(
+              _isEditing ? 'Edit PT Package' : 'Create PT Package',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1A1A2E),
@@ -542,12 +644,10 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
 
             const SizedBox(height: 20),
 
-            // Step indicator
             _StepIndicator(currentStep: _step),
 
             const SizedBox(height: 24),
 
-            // Step content
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: _buildStep(),
@@ -555,7 +655,6 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
 
             const SizedBox(height: 24),
 
-            // Navigation buttons
             Row(
               children: [
                 if (_step > 0)
@@ -565,8 +664,7 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       child: const Text('Back'),
                     ),
@@ -577,12 +675,12 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
                   child: ElevatedButton.icon(
                     onPressed: _step == 3 ? _submit : _next,
                     icon: _step == 3
-                        ? const Icon(Icons.check_circle_outline,
-                            size: 18)
-                        : const Icon(Icons.arrow_forward_rounded,
-                            size: 18),
+                        ? const Icon(Icons.check_circle_outline, size: 18)
+                        : const Icon(Icons.arrow_forward_rounded, size: 18),
                     label: Text(
-                      _step == 3 ? 'Create Package' : 'Continue',
+                      _step == 3
+                          ? (_isEditing ? 'Save Changes' : 'Create Package')
+                          : 'Continue',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w600),
                     ),
@@ -594,8 +692,7 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
@@ -612,35 +709,37 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
       case 0:
         return _Step1BasicInfo(
           key: const ValueKey(0),
-          nameCtrl: _nameCtrl,
-          packageType: _packageType,
-          linkedService: _linkedService,
-          onTypeChanged: (v) => setState(() => _packageType = v),
-          onServiceChanged: (v) => setState(() => _linkedService = v),
+          nameCtrl:          _nameCtrl,
+          packageType:       _packageType,
+          selectedServiceId: _selectedServiceId,
+          services:          _services,
+          servicesLoading:   _servicesLoading,
+          onTypeChanged:     (v) => setState(() => _packageType = v),
+          onServiceChanged:  (v) => setState(() => _selectedServiceId = v),
         );
       case 1:
         return _Step2TrainingRules(
           key: const ValueKey(1),
           totalSessionsCtrl: _totalSessionsCtrl,
-          minDaysCtrl: _minDaysCtrl,
-          maxDaysCtrl: _maxDaysCtrl,
-          validityCtrl: _validityCtrl,
+          minDaysCtrl:       _minDaysCtrl,
+          maxDaysCtrl:       _maxDaysCtrl,
+          validityCtrl:      _validityCtrl,
         );
       case 2:
         return _Step3Pricing(
           key: const ValueKey(2),
           regularPriceCtrl: _regularPriceCtrl,
-          salePriceCtrl: _salePriceCtrl,
+          salePriceCtrl:    _salePriceCtrl,
         );
       case 3:
         return _Step4Preview(
           key: const ValueKey(3),
-          name: _nameCtrl.text,
+          name:     _nameCtrl.text,
           sessions: _totalSessionsCtrl.text,
-          minDays: _minDaysCtrl.text,
-          maxDays: _maxDaysCtrl.text,
+          minDays:  _minDaysCtrl.text,
+          maxDays:  _maxDaysCtrl.text,
           validity: _validityCtrl.text,
-          price: _regularPriceCtrl.text,
+          price:    _regularPriceCtrl.text,
         );
       default:
         return const SizedBox.shrink();
@@ -652,12 +751,7 @@ class _CreatePackageDialogState extends State<_CreatePackageDialog> {
 
 class _StepIndicator extends StatelessWidget {
   final int currentStep;
-  static const _labels = [
-    'Basic\nInfo',
-    'Training\nRules',
-    'Pricing',
-    'Preview',
-  ];
+  static const _labels = ['Basic\nInfo', 'Training\nRules', 'Pricing', 'Preview'];
 
   const _StepIndicator({required this.currentStep});
 
@@ -665,7 +759,7 @@ class _StepIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: List.generate(4, (i) {
-        final done = i < currentStep;
+        final done   = i < currentStep;
         final active = i == currentStep;
 
         return Expanded(
@@ -685,14 +779,11 @@ class _StepIndicator extends StatelessWidget {
                       ),
                       child: Center(
                         child: done
-                            ? const Icon(Icons.check,
-                                size: 16, color: Colors.white)
+                            ? const Icon(Icons.check, size: 16, color: Colors.white)
                             : Text(
                                 '${i + 1}',
                                 style: TextStyle(
-                                  color: active
-                                      ? Colors.white
-                                      : Colors.grey[500],
+                                  color: active ? Colors.white : Colors.grey[500],
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
                                 ),
@@ -705,12 +796,8 @@ class _StepIndicator extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 10,
-                        color: active
-                            ? const Color(0xFF4F46E5)
-                            : Colors.grey[400],
-                        fontWeight: active
-                            ? FontWeight.w600
-                            : FontWeight.normal,
+                        color: active ? const Color(0xFF4F46E5) : Colors.grey[400],
+                        fontWeight: active ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -739,15 +826,19 @@ class _StepIndicator extends StatelessWidget {
 class _Step1BasicInfo extends StatelessWidget {
   final TextEditingController nameCtrl;
   final String? packageType;
-  final String? linkedService;
+  final int? selectedServiceId;
+  final List<PtServiceModel> services;
+  final bool servicesLoading;
   final ValueChanged<String?> onTypeChanged;
-  final ValueChanged<String?> onServiceChanged;
+  final ValueChanged<int?> onServiceChanged;
 
   const _Step1BasicInfo({
     super.key,
     required this.nameCtrl,
     required this.packageType,
-    required this.linkedService,
+    required this.selectedServiceId,
+    required this.services,
+    required this.servicesLoading,
     required this.onTypeChanged,
     required this.onServiceChanged,
   });
@@ -775,23 +866,48 @@ class _Step1BasicInfo extends StatelessWidget {
             DropdownMenuItem(value: 'strength', child: Text('Strength Building')),
             DropdownMenuItem(value: 'cardio', child: Text('Cardio')),
             DropdownMenuItem(value: 'general', child: Text('General Fitness')),
+            DropdownMenuItem(value: 'CUSTOM', child: Text('Custom')),
           ],
           onChanged: onTypeChanged,
         ),
         const SizedBox(height: 16),
         const _Label('Linked PT Service'),
         const SizedBox(height: 6),
-        DropdownButtonFormField<String>(
-          value: linkedService,
-          hint: const Text('Select service'),
-          decoration: _dec(null),
-          items: const [
-            DropdownMenuItem(value: '1', child: Text('Personal Training')),
-            DropdownMenuItem(value: '2', child: Text('Strength Training')),
-            DropdownMenuItem(value: '3', child: Text('Weight Loss Program')),
-          ],
-          onChanged: onServiceChanged,
-        ),
+        servicesLoading
+            ? Container(
+                height: 48,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    const SizedBox(width: 10),
+                    Text('Loading services…',
+                        style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+                  ],
+                ),
+              )
+            : DropdownButtonFormField<int>(
+                value: selectedServiceId,
+                hint: const Text('Select service (optional)'),
+                decoration: _dec(null),
+                items: services
+                    .map((s) => DropdownMenuItem<int>(
+                          value: s.serviceId,
+                          child: Text(s.name),
+                        ))
+                    .toList(),
+                onChanged: onServiceChanged,
+              ),
       ],
     );
   }
@@ -951,7 +1067,7 @@ class _Step4Preview extends StatelessWidget {
             ),
           ),
           const Divider(height: 20),
-          _Row('Name:', name.isEmpty ? 'N/A' : name),
+          _Row('Name:',     name.isEmpty ? 'N/A' : name),
           _Row('Sessions:', sessions.isEmpty ? 'N/A' : sessions),
           _Row(
             'Frequency:',
@@ -959,9 +1075,7 @@ class _Step4Preview extends StatelessWidget {
                 ? '?-? days/week'
                 : '$minDays-$maxDays days/week',
           ),
-          _Row(
-              'Validity:',
-              validity.isEmpty ? 'N/A days' : '$validity days'),
+          _Row('Validity:', validity.isEmpty ? 'N/A days' : '$validity days'),
           _Row(
             'Price:',
             price.isEmpty ? '\$0' : '\$$price',
@@ -988,8 +1102,7 @@ class _Row extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(
-                  fontSize: 13, color: Colors.grey[600])),
+              style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           Text(
             value,
             style: TextStyle(
@@ -1039,10 +1152,8 @@ InputDecoration _dec(String? hint) {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide:
-          const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
+      borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
     ),
-    contentPadding: const EdgeInsets.symmetric(
-        horizontal: 14, vertical: 12),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
   );
 }

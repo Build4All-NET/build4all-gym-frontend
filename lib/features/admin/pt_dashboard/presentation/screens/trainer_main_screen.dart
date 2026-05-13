@@ -34,6 +34,8 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   int  _trainerId = 0;
   bool _isAdmin   = false;
   List<AdminTrainerCardModel> _trainers = [];
+  bool _loadingTrainers = false;
+  String? _trainersError;
 
   late TrainerPtSessionsBloc _sessionsBloc;
   bool _blocInitialized = false;
@@ -79,14 +81,14 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     if (profile.isTrainerRole && _trainerId == 0) {
       final newId = profile.userId ?? 0;
-      setState(() => _trainerId = newId);
       if (newId != 0) {
+        setState(() => _trainerId = newId);
         _sessionsBloc.add(PtSessionsStarted(
           branchId:  _effectiveBranchId(context),
           trainerId: newId,
         ));
       }
-    } else if (profile.isAdminRole && _trainers.isEmpty && _trainerId == 0) {
+    } else if (profile.isAdminRole && _trainers.isEmpty && _trainerId == 0 && !_loadingTrainers) {
       _loadTrainersForAdmin();
     }
   }
@@ -107,12 +109,15 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   }
 
   Future<void> _loadTrainersForAdmin() async {
+    if (!mounted) return;
+    setState(() { _loadingTrainers = true; _trainersError = null; });
     try {
       final branchId = _effectiveBranchId(context);
       final response = await AdminTrainersService().getTrainers(branchId: branchId);
       if (!mounted) return;
       setState(() {
         _trainers = response.trainers;
+        _loadingTrainers = false;
         if (_trainers.isNotEmpty && _trainerId == 0) {
           _trainerId = _trainers.first.trainerId;
         }
@@ -123,8 +128,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
           trainerId: _trainerId,
         ));
       }
-    } catch (_) {
-      // Trainer picker will remain empty; admin can retry by switching branch.
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loadingTrainers = false;
+        _trainersError = 'Could not load trainers. Please check your connection and retry.';
+      });
     }
   }
 
@@ -137,12 +146,14 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     setState(() {
       _selectedBranchId = branchId;
       if (_isAdmin) {
-        _trainers  = [];
-        _trainerId = 0;
-        _loadTrainersForAdmin(); // fires PtSessionsStarted once new trainers load
+        _trainers      = [];
+        _trainerId     = 0;
+        _trainersError = null;
       }
     });
-    if (!_isAdmin && _trainerId != 0) {
+    if (_isAdmin) {
+      _loadTrainersForAdmin();
+    } else if (_trainerId != 0) {
       final effectiveId = branchId ?? _effectiveBranchId(context);
       _sessionsBloc.add(PtSessionsStarted(branchId: effectiveId, trainerId: _trainerId));
     }
@@ -169,24 +180,65 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final effectiveBranchId = _effectiveBranchId(context);
 
     return BlocListener<AdminProfileCubit, AdminProfile>(
-      // Fire when profile finishes loading (role goes from '' to real value).
       listenWhen: (prev, curr) => prev.role != curr.role || prev.userId != curr.userId,
       listener:   (_, profile) => _syncTrainerFromProfile(profile),
       child: BlocProvider.value(
-      value: _sessionsBloc,
-      child: _MainShell(
-        currentIndex:     _currentIndex,
-        onTabSwitch:      _switchTab,
-        navItems:         _navItems,
-        tenantId:         _tenantId,
-        branchId:         effectiveBranchId,
-        trainerId:        _trainerId,
-        isAdmin:          _isAdmin,
-        trainers:         _trainers,
-        onBranchChanged:  _onBranchChanged,
-        onTrainerChanged: _onTrainerChanged,
+        value: _sessionsBloc,
+        child: _trainerId == 0
+            ? _buildResolving()
+            : _MainShell(
+                currentIndex:     _currentIndex,
+                onTabSwitch:      _switchTab,
+                navItems:         _navItems,
+                tenantId:         _tenantId,
+                branchId:         effectiveBranchId,
+                trainerId:        _trainerId,
+                isAdmin:          _isAdmin,
+                trainers:         _trainers,
+                onBranchChanged:  _onBranchChanged,
+                onTrainerChanged: _onTrainerChanged,
+              ),
       ),
-    ),
+    );
+  }
+
+  Widget _buildResolving() {
+    if (_trainersError != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.people_outline_rounded,
+                    size: 56, color: Color(0xFFEF4444)),
+                const SizedBox(height: 16),
+                Text(
+                  _trainersError!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 15, color: Color(0xFF6B7280)),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: _loadTrainersForAdmin,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Retry'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
@@ -260,6 +312,7 @@ class _MainShell extends StatelessWidget {
           if (isAdmin && trainers.isEmpty)
             const _TrainerPickerLoading(),
           Expanded(
+            key: const ValueKey('main-stack'),
             child: IndexedStack(
               index: currentIndex,
               children: bodies,

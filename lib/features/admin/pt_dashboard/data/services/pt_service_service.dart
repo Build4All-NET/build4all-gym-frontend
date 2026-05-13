@@ -46,6 +46,23 @@ class PtServiceService {
     }
   }
 
+  Future<PtServiceModel> updateService(int id, Map<String, dynamic> body) async {
+    final headers = await _headers();
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/services/$id');
+    try {
+      final r = await _client.put(uri, headers: headers, body: jsonEncode(body));
+      debugPrint('UPDATE SERVICE: ${r.statusCode}');
+      if (r.statusCode == 200) {
+        return PtServiceModel.fromJson(
+            jsonDecode(utf8.decode(r.bodyBytes)) as Map<String, dynamic>);
+      }
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   Future<PtServiceModel> createService(int tenantId, Map<String, dynamic> body) async {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/services');

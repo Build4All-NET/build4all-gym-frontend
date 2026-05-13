@@ -1,14 +1,5 @@
 // =============================================================================
 // FILE: lib/features/trainer/pt_sessions/presentation/widgets/book_session_sheet_widget.dart
-//
-// Bottom sheet triggered by the "+ Book Session" button in the sessions screen.
-// Fields:
-//   - Member ID (userId) — required (TODO: replace with member search picker)
-//   - Service ID — optional
-//   - Date (pre-filled with selected date)
-//   - Start time — required
-//   - End time — required
-//   - Notes — optional
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -16,22 +7,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../data/models/pt_service_model.dart';
+import '../../data/services/pt_service_service.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../bloc/trainer_pt_sessions_event.dart';
 
 class BookSessionSheet extends StatefulWidget {
   final int branchId;
+  final int tenantId;
   final DateTime selectedDate;
 
   const BookSessionSheet({
     super.key,
     required this.branchId,
+    required this.tenantId,
     required this.selectedDate,
   });
 
   static Future<void> show(
     BuildContext context, {
     required int branchId,
+    required int tenantId,
     required DateTime selectedDate,
   }) {
     return showModalBottomSheet(
@@ -42,6 +38,7 @@ class BookSessionSheet extends StatefulWidget {
         value: context.read<TrainerPtSessionsBloc>(),
         child: BookSessionSheet(
           branchId: branchId,
+          tenantId: tenantId,
           selectedDate: selectedDate,
         ),
       ),
@@ -54,20 +51,54 @@ class BookSessionSheet extends StatefulWidget {
 
 class _BookSessionSheetState extends State<BookSessionSheet> {
   final _formKey = GlobalKey<FormState>();
-
   final _memberIdCtrl = TextEditingController();
-  final _serviceIdCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
 
+  late DateTime _selectedDate;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
+
+  List<PtServiceModel> _services = [];
+  bool _servicesLoading = false;
+  PtServiceModel? _selectedService;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.selectedDate;
+    _loadServices();
+  }
 
   @override
   void dispose() {
     _memberIdCtrl.dispose();
-    _serviceIdCtrl.dispose();
     _notesCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadServices() async {
+    setState(() => _servicesLoading = true);
+    try {
+      final list = await PtServiceService().getServices(widget.tenantId);
+      if (mounted) {
+        setState(() {
+          _services = list.where((s) => s.isActive == true).toList();
+          _servicesLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _servicesLoading = false);
+    }
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null) setState(() => _selectedDate = picked);
   }
 
   Future<void> _pickTime(bool isStart) async {
@@ -89,9 +120,9 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
   DateTime _combine(TimeOfDay time) {
     return DateTime(
-      widget.selectedDate.year,
-      widget.selectedDate.month,
-      widget.selectedDate.day,
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
       time.hour,
       time.minute,
     );
@@ -118,7 +149,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
           PtSessionCreateRequested(
             branchId:  widget.branchId,
             userId:    userId,
-            serviceId: int.tryParse(_serviceIdCtrl.text.trim()),
+            serviceId: _selectedService?.serviceId,
             startTime: _combine(_startTime!),
             endTime:   _combine(_endTime!),
             notes:     _notesCtrl.text.trim().isEmpty
@@ -132,8 +163,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-    final cs = tokens.colors;
+    final cs = context.read<ThemeCubit>().state.tokens.colors;
     final bottomPad = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
@@ -149,7 +179,6 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle bar
               Center(
                 child: Container(
                   width: 40,
@@ -170,17 +199,44 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                   color: Color(0xFF1A1A2E),
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                DateFormat('EEEE, MMM d, yyyy').format(widget.selectedDate),
-                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              const SizedBox(height: 12),
+
+              // Tappable date row
+              _FieldLabel('Date'),
+              const SizedBox(height: 6),
+              GestureDetector(
+                onTap: _pickDate,
+                child: Container(
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[200]!),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today_rounded,
+                          size: 18, color: Colors.grey[500]),
+                      const SizedBox(width: 10),
+                      Text(
+                        DateFormat('EEEE, MMM d, yyyy').format(_selectedDate),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF1A1A2E),
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(Icons.edit_calendar_outlined,
+                          size: 16, color: Colors.grey[400]),
+                    ],
+                  ),
+                ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // Member ID field
-              // TODO: Replace with a member search picker once the member
-              // lookup endpoint is available.
               _FieldLabel('Member ID'),
               const SizedBox(height: 6),
               TextFormField(
@@ -195,14 +251,54 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
               const SizedBox(height: 16),
 
-              // Service ID (optional)
-              _FieldLabel('Service ID (optional)'),
+              // Service dropdown
+              _FieldLabel('Service (optional)'),
               const SizedBox(height: 6),
-              TextFormField(
-                controller: _serviceIdCtrl,
-                keyboardType: TextInputType.number,
-                decoration: _inputDecoration('e.g., 3'),
-              ),
+              _servicesLoading
+                  ? Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF9FAFB),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          const SizedBox(width: 12),
+                          Text('Loading services…',
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[400])),
+                        ],
+                      ),
+                    )
+                  : DropdownButtonFormField<PtServiceModel?>(
+                      value: _selectedService,
+                      decoration: _inputDecoration('No service selected'),
+                      isExpanded: true,
+                      items: [
+                        const DropdownMenuItem<PtServiceModel?>(
+                          value: null,
+                          child: Text('— None —',
+                              style: TextStyle(color: Color(0xFF9CA3AF))),
+                        ),
+                        ..._services.map(
+                          (s) => DropdownMenuItem<PtServiceModel?>(
+                            value: s,
+                            child: Text(
+                              '${s.name} (${s.durationMinutes} min)',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: (v) => setState(() => _selectedService = v),
+                    ),
 
               const SizedBox(height: 16),
 
@@ -256,7 +352,6 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
               const SizedBox(height: 28),
 
-              // Submit button
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -265,8 +360,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                   icon: const Icon(Icons.check_circle_outline),
                   label: const Text(
                     'Book Session',
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cs.primary,
@@ -300,11 +394,10 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide:
-            const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
+        borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
       ),
-      contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16, vertical: 14),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 }
@@ -357,9 +450,7 @@ class _TimePicker extends StatelessWidget {
                 size: 18, color: Colors.grey[400]),
             const SizedBox(width: 8),
             Text(
-              time != null
-                  ? time!.format(context)
-                  : hint,
+              time != null ? time!.format(context) : hint,
               style: TextStyle(
                 fontSize: 14,
                 color: time != null

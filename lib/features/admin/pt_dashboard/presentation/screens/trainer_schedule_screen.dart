@@ -111,8 +111,32 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
           }
         },
         builder: (ctx, state) {
-          if (state is AvailabilityLoading) {
+          if (state is AvailabilityLoading || state is AvailabilityInitial) {
             return const Center(child: CircularProgressIndicator());
+          }
+          if (state is AvailabilityError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, color: Color(0xFFEF4444), size: 48),
+                  const SizedBox(height: 12),
+                  Text(
+                    state.message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Color(0xFF6B7280)),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _bloc.add(LoadAvailability(
+                      trainerId: widget.trainerId,
+                      branchId:  widget.branchId,
+                    )),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
           }
           if (state is AvailabilityLoaded) {
             final slots = state.slots;
@@ -334,10 +358,11 @@ class _AddAvailabilityDialogState extends State<_AddAvailabilityDialog> {
     if (_selectedDay == null || _startTime == null || _endTime == null) return;
     widget.bloc.add(AddSlot(
       trainerId: widget.trainerId,
-      branchId: widget.branchId,
-      weekday: _dayNumbers[_selectedDay]!,
+      branchId:  widget.branchId,
+      weekday:   _dayNumbers[_selectedDay]!,
       startTime: _formatTime(_startTime!),
-      endTime: _formatTime(_endTime!),
+      endTime:   _formatTime(_endTime!),
+      recurring: _recurring,
     ));
     Navigator.pop(context);
   }
