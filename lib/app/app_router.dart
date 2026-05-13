@@ -489,71 +489,14 @@ class AppRouter {
     // ── Admin: PT Sessions ─────────────────────────────────────────────────
 
       case adminPtSessions:
-
-        final sessionsService = TrainerPtSessionsService();
-
-        final sessionsRepository =
-        TrainerPtSessionsRepositoryImpl(
-          service: sessionsService,
-        );
-
-        final availabilityService = AvailabilityHttpService();
-
-        final ptPackageService = PtPackageService();
-
-        final ptServiceService = PtServiceService();
-
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            MultiBlocProvider(
-              providers: [
-
-                BlocProvider(
-                  create: (_) => BranchCubit()..loadBranches(),
-                ),
-
-                BlocProvider(
-                  create: (_) => TrainerPtSessionsBloc(
-                    getSessions: GetTrainerPtSessionsUseCase(
-                      sessionsRepository,
-                    ),
-                    getStats: GetTrainerPtSessionStatsUseCase(
-                      sessionsRepository,
-                    ),
-                    createSession: CreateTrainerPtSessionUseCase(
-                      sessionsRepository,
-                    ),
-                    // cancelSession: CancelTrainerPtSessionUseCase(
-                    //   sessionsRepository,
-                    // ),
-                    updateStatus: UpdateTrainerUseCase(sessionsRepository),
-                  ),
-                ),
-
-                BlocProvider(
-                  create: (_) => AvailabilityBloc(
-                    service: availabilityService,
-                  ),
-                ),
-
-                BlocProvider(
-                  create: (_) => PtPackageBloc(
-                    service: ptPackageService,
-                  ),
-                ),
-
-                BlocProvider(
-                  create: (_) => PtServicesBloc(
-                    service: ptServiceService,
-                  ),
-                ),
-
-              ],
+            BlocProvider(
+              create: (_) => BranchCubit()..loadBranches(),
               child: const TrainerMainScreen(),
             ),
           ),
         );
-
     // ── Admin: Training Videos ─────────────────────────────────────────────
 
       case adminTrainingVideos:
