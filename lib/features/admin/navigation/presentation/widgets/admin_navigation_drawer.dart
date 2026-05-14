@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
 
+import '../../../../../features/auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../config/admin_drawer_config.dart';
 import '../../config/navigation_item.dart';
 import '../cubit/drawer_cubit.dart';
@@ -11,53 +12,13 @@ import '../cubit/drawer_state.dart';
 import 'admin_drawer_header_widget.dart';
 import 'admin_drawer_item_widget.dart';
 
-/// The Admin Navigation Drawer — matches Figma design exactly.
-///
-/// Structure:
-/// ┌──────────────────────────────┐
-/// │  AdminDrawerHeaderWidget     │  ← Gym row + User card (primary bg)
-/// ├──────────────────────────────┤
-/// │  CORE OWNER          (label) │  ┐
-/// │    Dashboard                 │  │
-/// │    Members                   │  │
-/// │    ...                       │  │ Scrollable
-/// │  OPERATIONS / RECEPTION      │  │ ListView
-/// │    Check-ins                 │  │
-/// │    Payments                  │  │
-/// │    ...                       │  │
-/// │  TRAINING / PT               │  │
-/// │    PT Sessions               │  │
-/// │    Training Videos           │  ┘
-/// ├──────────────────────────────┤
-/// │  Settings                    │  ┐ Fixed bottom
-/// │  Log Out            (red)    │  ┘
-/// └──────────────────────────────┘
-///
-/// Usage:
-/// ```dart
-/// Scaffold(
-///   drawer: AdminNavigationDrawer(
-///     gymName: 'Build4All Gym',
-///     branchName: 'Downtown',
-///     adminName: 'Mounir',
-///     adminEmail: 'mounir@gym.com',
-///   ),
-/// )
-/// ```
 class AdminNavigationDrawer extends StatelessWidget {
-  final String gymName;
-  final String branchName;
-  final String adminName;
-  final String adminEmail;
+  final String  gymName;
+  final String  branchName;
+  final String  adminName;
+  final String  adminEmail;
   final String? avatarUrl;
-
-  /// The id of the currently active screen — must match a [NavigationItem.id]
-  /// in [adminDrawerConfig]. Each admin screen passes its own id so the
-  /// drawer always highlights the correct item when opened.
-  ///
-  /// Example: AdminDashboardScreen passes 'dashboard',
-  ///          AdminPlansScreen passes 'plans', etc.
-  final String initialActiveId;
+  final String  initialActiveId;
 
   const AdminNavigationDrawer({
     super.key,
@@ -74,23 +35,23 @@ class AdminNavigationDrawer extends StatelessWidget {
     return BlocProvider<DrawerCubit>(
       create: (_) => DrawerCubit(initialActiveId: initialActiveId),
       child: _DrawerBody(
-        gymName: gymName,
+        gymName:    gymName,
         branchName: branchName,
-        adminName: adminName,
+        adminName:  adminName,
         adminEmail: adminEmail,
-        avatarUrl: avatarUrl,
+        avatarUrl:  avatarUrl,
       ),
     );
   }
 }
 
-// ─── Internal body — separate widget so BlocBuilder can access DrawerCubit ───
+// ─── Internal body ────────────────────────────────────────────────────────────
 
 class _DrawerBody extends StatelessWidget {
-  final String gymName;
-  final String branchName;
-  final String adminName;
-  final String adminEmail;
+  final String  gymName;
+  final String  branchName;
+  final String  adminName;
+  final String  adminEmail;
   final String? avatarUrl;
 
   const _DrawerBody({
@@ -103,54 +64,62 @@ class _DrawerBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme   = Theme.of(context);
+    final profile = context.watch<AdminProfileCubit>().state;
+    debugPrint('🎯 Drawer → role: ${profile.role}, gymRole: ${profile.gymRole}, isTrainer: ${profile.isTrainerRole}'); // ← ADD
+
+    // ── Filter sections by gym role ──────────────────────────────────────────
+    // TRAINER   → only TRAINING / PT
+    // RECEPTION → only OPERATIONS / RECEPTION
+    // Everyone else (ADMIN, OWNER, MANAGER) → all sections
+    final visibleSections = adminDrawerSections.where((section) {
+      if (profile.isTrainerRole)   return section.labelKey == 'sectionTrainingPt';
+      if (profile.isReceptionRole) return section.labelKey == 'sectionOperationsReception';
+      return true;
+    }).toList();
 
     return Drawer(
       width: 255,
       backgroundColor: theme.colorScheme.surface,
-      // Remove default Material elevation shadow — matches the flat design
       elevation: 8,
       child: BlocBuilder<DrawerCubit, DrawerState>(
         builder: (context, state) {
           return Column(
             children: [
-              // ── HEADER ────────────────────────────────────────────────
+              // ── HEADER ─────────────────────────────────────────────────────
               AdminDrawerHeaderWidget(
-                gymName: gymName,
+                gymName:    gymName,
                 branchName: branchName,
-                adminName: adminName,
+                adminName:  adminName,
                 adminEmail: adminEmail,
-                avatarUrl: avatarUrl,
-                onClose: () => Navigator.of(context).pop(),
+                avatarUrl:  avatarUrl,
+                onClose:    () => Navigator.of(context).pop(),
                 onProfileTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).pushNamed('/admin/settings');
                 },
               ),
 
-              // ── SCROLLABLE NAV SECTIONS ───────────────────────────────
+              // ── SCROLLABLE NAV SECTIONS ─────────────────────────────────────
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   children: [
-                    for (final section in adminDrawerSections) ...[
-                      // Section label (e.g. "CORE OWNER")
+                    for (final section in visibleSections) ...[
                       if (section.labelKey != null)
                         _SectionLabel(labelKey: section.labelKey!),
-
-                      // Section items
                       for (final item in section.items)
                         AdminDrawerItemWidget(
-                          item: item,
+                          item:     item,
                           isActive: state.activeItemId == item.id,
-                          onTap: () => _navigate(context, item),
+                          onTap:    () => _navigate(context, item),
                         ),
                     ],
                   ],
                 ),
               ),
 
-              // ── FIXED BOTTOM (Settings + Logout) ─────────────────────
+              // ── FIXED BOTTOM (Settings + Logout) ───────────────────────────
               const Divider(height: 1, thickness: 1),
               SafeArea(
                 top: false,
@@ -158,9 +127,9 @@ class _DrawerBody extends StatelessWidget {
                   children: [
                     for (final item in adminDrawerBottomItems)
                       AdminDrawerItemWidget(
-                        item: item,
+                        item:     item,
                         isActive: state.activeItemId == item.id,
-                        onTap: () => item.isDestructive
+                        onTap:    () => item.isDestructive
                             ? _confirmLogout(context)
                             : _navigate(context, item),
                       ),
@@ -177,18 +146,18 @@ class _DrawerBody extends StatelessWidget {
 
   void _navigate(BuildContext context, NavigationItem item) {
     context.read<DrawerCubit>().selectItem(item.id);
-    Navigator.of(context).pop(); // close drawer
+    Navigator.of(context).pop();
     Navigator.of(context).pushReplacementNamed(item.route);
   }
 
   void _confirmLogout(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    Navigator.of(context).pop(); // close drawer first
+    Navigator.of(context).pop();
 
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.logoutConfirmTitle),
+        title:   Text(l10n.logoutConfirmTitle),
         content: Text(l10n.logoutConfirmMessage),
         actions: [
           TextButton(
@@ -198,9 +167,7 @@ class _DrawerBody extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              // TODO: context.read<AuthBloc>().add(LogoutRequested());
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (_) => false);
+              Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
             },
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
@@ -217,34 +184,30 @@ class _DrawerBody extends StatelessWidget {
 
 class _SectionLabel extends StatelessWidget {
   final String labelKey;
-
   const _SectionLabel({required this.labelKey});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n  = AppLocalizations.of(context)!;
+
+    final label = switch (labelKey) {
+      'sectionCoreOwner'           => l10n.sectionCoreOwner,
+      'sectionOperationsReception' => l10n.sectionOperationsReception,
+      'sectionTrainingPt'          => l10n.sectionTrainingPt,
+      _                            => labelKey,
+    };
 
     return Padding(
-      // Top padding larger to separate from previous section
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 6),
       child: Text(
-        _resolveLabel(l10n, labelKey),
+        label,
         style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.40),
-          fontWeight: FontWeight.w600,
+          color:         theme.colorScheme.onSurface.withOpacity(0.40),
+          fontWeight:    FontWeight.w600,
           letterSpacing: 0.8,
         ),
       ),
     );
-  }
-
-  String _resolveLabel(AppLocalizations l10n, String key) {
-    switch (key) {
-      case 'sectionCoreOwner':             return l10n.sectionCoreOwner;
-      case 'sectionOperationsReception':   return l10n.sectionOperationsReception;
-      case 'sectionTrainingPt':            return l10n.sectionTrainingPt;
-      default:                             return key;
-    }
   }
 }

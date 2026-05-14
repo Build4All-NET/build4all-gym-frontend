@@ -32,6 +32,7 @@ class GymTrainersService {
     );
     final response = await _client.post(
       uri,
+      headers: {'Content-Type': 'application/json'},  // ← add this
       body: jsonEncode({'role': 'MEMBER'}),
     );
     if (response.statusCode != 200) {
