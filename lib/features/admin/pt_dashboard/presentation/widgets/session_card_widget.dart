@@ -2,9 +2,9 @@
 // FILE: lib/features/admin/pt_dashboard/presentation/widgets/session_card_widget.dart
 //
 // CHANGES:
-//   1. Added isAdmin param (defaults to false) — shows a trainer badge when true
+//   1. Added isAdmin param (defaults to false) - shows a trainer badge when true
 //      and session.trainerName is set.
-//   2. Compile error fixed — previously called with isAdmin+trainers but widget
+//   2. Fixed compile error - previously called with isAdmin+trainers but widget
 //      didn't declare them; now properly declared.
 // =============================================================================
 

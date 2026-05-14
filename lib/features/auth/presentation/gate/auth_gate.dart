@@ -16,6 +16,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/app_router.dart';
 import '../admin_profile/admin_profile_cubit.dart';
 
 class AuthGate extends StatefulWidget {
@@ -409,7 +410,7 @@ class _AuthGateState extends State<AuthGate> {
       ),
     );
 
-    Navigator.of(context).pushNamedAndRemoveUntil('/user', (_) => false);
+    Navigator.pushReplacementNamed(context, AppRouter.roleCheck);
   }
 
   /// Set admin token globally, start realtime, navigate to admin dashboard.

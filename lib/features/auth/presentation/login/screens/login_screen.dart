@@ -56,7 +56,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   // ─── navigation helpers ─────────────────────────────────────────────────────
 
   void _goHome() {
-    Navigator.of(context).pushNamedAndRemoveUntil('/user', (_) => false);
+    Navigator.pushReplacementNamed(context, AppRouter.roleCheck); // ← CORRECT
   }
 
   void _goAdmin() {

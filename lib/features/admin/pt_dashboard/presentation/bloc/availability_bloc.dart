@@ -1,14 +1,35 @@
+// =============================================================================
+// FILE: lib/features/admin/pt_dashboard/presentation/bloc/availability_bloc.dart
+//
+// FIX SUMMARY:
+//   1. Uses proper events/states with Equatable
+//   2. Supports null trainerId for admin all-trainers mode
+//   3. Proper error handling
+// =============================================================================
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+
 import '../../data/services/availability_service.dart';
 import '../../data/models/availability_model.dart';
 
-abstract class AvailabilityEvent {}
+// ── Events ──────────────────────────────────────────────────────────────────
+
+abstract class AvailabilityEvent extends Equatable {
+  const AvailabilityEvent();
+  @override
+  List<Object?> get props => [];
+}
+
 class LoadAvailability extends AvailabilityEvent {
   final int? trainerId; // null = all trainers (admin/owner)
   final int branchId;
-  LoadAvailability({this.trainerId, required this.branchId});
+  const LoadAvailability({this.trainerId, required this.branchId});
+
+  @override
+  List<Object?> get props => [trainerId, branchId];
 }
+
 class AddSlot extends AvailabilityEvent {
   final int trainerId;
   final int branchId;
@@ -16,7 +37,7 @@ class AddSlot extends AvailabilityEvent {
   final String startTime;
   final String endTime;
   final bool recurring;
-  AddSlot({
+  const AddSlot({
     required this.trainerId,
     required this.branchId,
     required this.weekday,
@@ -24,36 +45,71 @@ class AddSlot extends AvailabilityEvent {
     required this.endTime,
     this.recurring = true,
   });
-}
-class DeleteSlot extends AvailabilityEvent {
-  final int availabilityId;
-  DeleteSlot(this.availabilityId);
+
+  @override
+  List<Object?> get props => [trainerId, branchId, weekday, startTime, endTime, recurring];
 }
 
-abstract class AvailabilityState {}
-class AvailabilityInitial extends AvailabilityState {}
-class AvailabilityLoading extends AvailabilityState {}
+class DeleteSlot extends AvailabilityEvent {
+  final int availabilityId;
+  const DeleteSlot(this.availabilityId);
+
+  @override
+  List<Object?> get props => [availabilityId];
+}
+
+// ── States ───────────────────────────────────────────────────────────────────
+
+abstract class AvailabilityState extends Equatable {
+  const AvailabilityState();
+  @override
+  List<Object?> get props => [];
+}
+
+class AvailabilityInitial extends AvailabilityState {
+  const AvailabilityInitial();
+}
+
+class AvailabilityLoading extends AvailabilityState {
+  const AvailabilityLoading();
+}
+
 class AvailabilityLoaded extends AvailabilityState {
   final List<AvailabilityModel> slots;
-  AvailabilityLoaded(this.slots);
+  const AvailabilityLoaded(this.slots);
+
+  @override
+  List<Object?> get props => [slots];
 }
-class AvailabilityError extends AvailabilityState { final String message; AvailabilityError(this.message); }
-class AvailabilityMutated extends AvailabilityState {}
+
+class AvailabilityError extends AvailabilityState {
+  final String message;
+  const AvailabilityError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class AvailabilityMutated extends AvailabilityState {
+  const AvailabilityMutated();
+}
+
+// ── BLoC ─────────────────────────────────────────────────────────────────────
 
 class AvailabilityBloc extends Bloc<AvailabilityEvent, AvailabilityState> {
   final AvailabilityHttpService _svc;
 
-  AvailabilityBloc(this._svc) : super(AvailabilityInitial()) {
+  AvailabilityBloc(this._svc) : super(const AvailabilityInitial()) {
     on<LoadAvailability>(_onLoad);
     on<AddSlot>(_onAdd);
     on<DeleteSlot>(_onDelete);
   }
 
   Future<void> _onLoad(LoadAvailability e, Emitter<AvailabilityState> emit) async {
-    emit(AvailabilityLoading());
+    emit(const AvailabilityLoading());
     try {
-      emit(AvailabilityLoaded(
-          await _svc.getSlots(trainerId: e.trainerId, branchId: e.branchId)));
+      final slots = await _svc.getSlots(trainerId: e.trainerId, branchId: e.branchId);
+      emit(AvailabilityLoaded(slots));
     } catch (err) {
       emit(AvailabilityError(err.toString()));
     }
@@ -69,7 +125,7 @@ class AvailabilityBloc extends Bloc<AvailabilityEvent, AvailabilityState> {
         endTime:   e.endTime,
         recurring: e.recurring,
       );
-      emit(AvailabilityMutated());
+      emit(const AvailabilityMutated());
     } catch (err) {
       emit(AvailabilityError(err.toString()));
     }
@@ -78,7 +134,7 @@ class AvailabilityBloc extends Bloc<AvailabilityEvent, AvailabilityState> {
   Future<void> _onDelete(DeleteSlot e, Emitter<AvailabilityState> emit) async {
     try {
       await _svc.deleteSlot(e.availabilityId);
-      emit(AvailabilityMutated());
+      emit(const AvailabilityMutated());
     } catch (err) {
       emit(AvailabilityError(err.toString()));
     }

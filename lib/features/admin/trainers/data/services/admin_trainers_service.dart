@@ -144,4 +144,39 @@ class AdminTrainersService {
       throw NetworkException();
     }
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+// PATCH for: lib/features/admin/trainers/data/services/admin_trainers_service.dart
+//
+// ADD this method at the bottom of the AdminTrainersService class,
+// just before the closing brace.
+//
+// It calls POST /api/admin/members/{userId}/gym-role
+// — the endpoint we already built in AdminMemberRoleController.java.
+// ─────────────────────────────────────────────────────────────────────────────
+
+  // ── POST /api/admin/members/{userId}/gym-role ─────────────────────────────
+  /// Assigns (or revokes) a gym-specific role for an existing member.
+  ///
+  /// [userId] — the member's userId (from MemberCardModel.userId)
+  /// [role]   — "TRAINER", "RECEPTION", or "MEMBER" (MEMBER = revoke)
+  Future<void> assignGymRole(int userId, String role) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/admin/members/$userId/gym-role',
+    );
+    try {
+      final r = await _client.post(
+        uri,
+        headers: headers,
+        body: jsonEncode({'role': role}),
+      );
+      _handleStatus(r);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
 }

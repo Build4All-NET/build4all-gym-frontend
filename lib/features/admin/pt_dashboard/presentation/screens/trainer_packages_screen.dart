@@ -6,18 +6,16 @@
 //   2. ADMIN: fetches packages for ALL trainers and shows a "By <Trainer>"
 //      badge on each card. "New Package" dialog lets admin assign to any trainer.
 //   3. TRAINER: fetches only their own packages. No trainer picker shown.
-//   4. Loading-forever bug fixed — _cachedPackages shows stale data while
-//      re-loading after mutation (no more blank flash).
+//   4. Loading-forever bug fixed - uses cached data while reloading.
+//   5. Proper error handling with retry.
 // =============================================================================
 
-import 'package:build4allgym/features/admin/pt_dashboard/data/models/pt_package_model.dart';
-import 'package:build4allgym/features/admin/pt_dashboard/data/models/pt_service_model.dart';
-import 'package:build4allgym/features/admin/pt_dashboard/data/services/pt_service_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
+import '../../data/models/pt_package_model.dart';
 import '../../data/services/pt_package_service.dart';
 import '../bloc/pt_package_bloc.dart';
 
@@ -25,8 +23,8 @@ import '../bloc/pt_package_bloc.dart';
 
 class _PackageWithTrainer {
   final PtPackageModel         package;
-  final AdminTrainerCardModel  trainer;
-  _PackageWithTrainer({required this.package, required this.trainer});
+  final AdminTrainerCardModel? trainer;
+  _PackageWithTrainer({required this.package, this.trainer});
 }
 
 // =============================================================================
@@ -54,12 +52,12 @@ class TrainerPackagesScreen extends StatefulWidget {
 class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   final PtPackageService _svc = PtPackageService();
 
-  /// Merged list for admin (all trainers' packages).
-  List<_PackageWithTrainer> _allPackages   = [];
-  bool    _loading = false;
-  String? _error;
+  // Admin-mode: merged list for all trainers
+  List<_PackageWithTrainer> _allPackages = [];
+  bool    _adminLoading = false;
+  String? _adminError;
 
-  // Single-trainer bloc for non-admin
+  // Trainer-mode: single bloc
   PtPackageBloc?      _trainerBloc;
   List<PtPackageModel> _cachedPackages = [];
 
@@ -79,6 +77,23 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant TrainerPackagesScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload if branch changed
+    if (oldWidget.branchId != widget.branchId) {
+      if (widget.isAdmin) {
+        _loadAllPackages();
+      } else {
+        _trainerBloc?.add(LoadPackages(
+          trainerId: widget.trainerId,
+          tenantId:  widget.tenantId,
+          branchId:  widget.branchId,
+        ));
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _trainerBloc?.close();
     super.dispose();
@@ -88,7 +103,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
 
   Future<void> _loadAllPackages() async {
     if (!mounted) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() { _adminLoading = true; _adminError = null; });
     try {
       final List<_PackageWithTrainer> merged = [];
       for (final trainer in widget.trainers) {
@@ -102,10 +117,10 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
         }
       }
       if (!mounted) return;
-      setState(() { _allPackages = merged; _loading = false; });
+      setState(() { _allPackages = merged; _adminLoading = false; });
     } catch (e) {
       if (!mounted) return;
-      setState(() { _loading = false; _error = e.toString(); });
+      setState(() { _adminLoading = false; _adminError = e.toString(); });
     }
   }
 
@@ -120,9 +135,9 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Packages',
-          style: TextStyle(
+        title: Text(
+          widget.isAdmin ? 'All Packages' : 'Packages',
+          style: const TextStyle(
             color: Color(0xFF1A1A2E),
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -156,10 +171,10 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   // ── ADMIN body ───────────────────────────────────────────────────────────
 
   Widget _buildAdminBody(dynamic cs) {
-    if (_loading) {
+    if (_adminLoading && _allPackages.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (_error != null) {
+    if (_adminError != null && _allPackages.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -167,7 +182,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
             const Icon(Icons.error_outline,
                 color: Color(0xFFEF4444), size: 48),
             const SizedBox(height: 12),
-            Text(_error!,
+            Text(_adminError!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Color(0xFF6B7280))),
             const SizedBox(height: 16),
@@ -192,8 +207,8 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
         final item = _allPackages[i];
         return _PackageCard(
           pkg:          item.package,
-          trainerName:  item.trainer.fullName,  // ← show trainer badge
-          onEdit:       () => _showEditDialog(context, item.package, item.trainer.trainerId),
+          trainerName:  item.trainer?.fullName,  // show trainer badge
+          onEdit:       () => _showEditDialog(context, item.package, item.trainer?.trainerId ?? widget.trainerId),
           onDeactivate: () => _deactivatePackage(item.package.id),
         );
       },
@@ -232,6 +247,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
         }
       },
       builder: (context, state) {
+        // Show cached data while loading after mutation
         if ((state is PtPackageInitial ||
             state is PtPackageLoading ||
             state is PtPackageMutating ||
@@ -276,7 +292,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
           itemCount: packages.length,
           itemBuilder: (_, i) => _PackageCard(
             pkg:          packages[i],
-            trainerName:  null,   // trainer sees own packages — no badge needed
+            trainerName:  null,   // trainer sees own packages - no badge needed
             onEdit:       () => _showEditDialog(
                 context, packages[i], widget.trainerId),
             onDeactivate: () {
@@ -450,7 +466,7 @@ class _PackageCard extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                      // Trainer badge — only for admin view
+                      // Trainer badge - only for admin view
                       if (trainerName != null) ...[
                         const SizedBox(height: 4),
                         Container(
