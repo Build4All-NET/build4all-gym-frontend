@@ -138,6 +138,8 @@ class TrainerPtSessionsService {
         headers: headers,
         body: jsonEncode(body),
       );
+      final data = jsonDecode(response.body);
+      debugPrint(body.toString());
       debugPrint('CREATE SESSION STATUS: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {

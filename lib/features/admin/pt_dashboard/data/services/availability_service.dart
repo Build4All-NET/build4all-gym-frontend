@@ -41,9 +41,21 @@ class AvailabilityHttpService {
     try {
       final r = await _client.get(uri, headers: headers);
       debugPrint('GET AVAILABILITY: ${r.statusCode}');
+
       if (r.statusCode == 200) {
+        print(r.body); // raw response
+
         final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
-        return list.map((e) => AvailabilityModel.fromJson(e as Map<String, dynamic>)).toList();
+
+        print(list); // decoded list
+
+        final data = list
+            .map((e) => AvailabilityModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+
+        print(data); // mapped objects
+
+        return data;
       }
       _handleError(r);
     } catch (e) {

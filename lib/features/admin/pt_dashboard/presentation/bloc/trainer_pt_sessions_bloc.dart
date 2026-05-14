@@ -9,6 +9,7 @@
 //   5. Fixed error state emission
 //   6. Improved session update merge logic
 //   7. Added stable sorting for null start times
+//   8. Fixed all-trainers mode to properly merge sessions and stats
 // =============================================================================
 
 import 'package:build4allgym/features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_event.dart';

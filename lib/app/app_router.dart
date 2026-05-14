@@ -55,7 +55,11 @@ import '../features/admin/staff/domain/usecases/create_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/get_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/remove_staff_usecase.dart';
 import '../features/admin/staff/presentation/bloc/admin_staff_bloc.dart';
+import '../features/admin/trainers/data/repositories/GymTrainersRepositoryImpl.dart';
+import '../features/admin/trainers/data/services/GymTrainersService.dart';
+import '../features/admin/trainers/domain/usecases/GetGymTrainersUseCase.dart';
 import '../features/admin/trainers/domain/usecases/get_trainer_detail_usecase.dart';
+import '../features/admin/trainers/presentation/bloc/GymTrainersCubit.dart';
 import '../features/admin/trainers/presentation/bloc/admin_trainers_event.dart';
 import '../features/admin/training_videos/data/repositories/training_video_repository_impl.dart';
 import '../features/admin/training_videos/data/services/training_video_remote_datasource.dart';
@@ -83,6 +87,7 @@ import '../features/admin/dashboard/presentation/bloc/admin_dashboard_bloc.dart'
 import '../features/admin/dashboard/presentation/bloc/admin_dashboard_event.dart';
 import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart';
 
+import '../features/gym_profile/presentation/screens/role_check_screen.dart';
 import '../features/shell/presentation/screens/main_shell.dart';
 import '../features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart';
 
@@ -139,6 +144,7 @@ class AppRouter {
   // ─── Role roots ────────────────────────────────────────────────────────────
   static const String admin = '/admin';
   static const String user  = '/user';
+  static const String roleCheck = '/role-check';
 
   // ─── Admin: Core Owner ─────────────────────────────────────────────────────
   static const String adminDashboard  = '/admin/dashboard';
@@ -218,6 +224,12 @@ class AppRouter {
               child: const ForgotPasswordEmailScreen(),
             );
           },
+        );
+
+    // ── Role Check (post-login bridge) ─────────────────────────────────────────
+      case roleCheck:
+        return MaterialPageRoute(
+          builder: (_) => const RoleCheckScreen(),
         );
 
     // ── Member shell ───────────────────────────────────────────────────────
@@ -351,26 +363,21 @@ class AppRouter {
     // ── Admin: Trainers ────────────────────────────────────────────────────
 
       case adminTrainers:
-        final service    = AdminTrainersService();
-        final repository = AdminTrainersRepositoryImpl(service);
+        final gymTrainersRepo = GymTrainersRepositoryImpl(GymTrainersService());
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
-                BlocProvider(
-                  create: (_) => AdminTrainersBloc(
-                    getTrainers:      GetTrainersUseCases(repository),
-                    getFormOptions:   GetTrainerFormOptionsUseCase(repository),
-                    createTrainer:    CreateTrainerUseCase(repository),
-                    updateTrainer:    UpdateTrainerUseCase(repository),
-                    blockTrainer:     BlockTrainerUseCase(repository),
-                    getTrainerDetail: GetTrainerDetailUseCase(repository),
-                  )..add(const TrainersStarted()),
-                ),
-              ],
-              child: const AdminTrainersScreen(),
-            ),
+    MultiBlocProvider(
+    providers: [
+    BlocProvider
+      (create: (_) => BranchCubit()..loadBranches()),
+            BlocProvider(
+              create: (_) => GymTrainersCubit(
+                getTrainers:    GetGymTrainersUseCase(gymTrainersRepo),
+                removeTrainer:  RemoveGymTrainerUseCase(gymTrainersRepo),
+              )..load(),
+            )
+              ],  child: const AdminGymTrainersScreen(),
+    ),
           ),
         );
 
@@ -505,14 +512,21 @@ class AppRouter {
         );
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            BlocProvider(
-              create: (_) => TrainingVideosBloc(
-                getTrainingVideosUseCase:   GetTrainingVideosUseCase(videosRepo),
-                getVideoCategoriesUseCase:  GetVideoCategoriesUseCase(videosRepo),
-                createTrainingVideoUseCase: CreateTrainingVideoUseCase(videosRepo),
-                getTrainersUseCase:         GetTrainersUseCase(videosRepo),
-                createCategoryUseCase:      CreateCategoryUseCase(videosRepo),
-              )..add(LoadTrainingVideos()),
+            MultiBlocProvider(                          // ← was BlocProvider
+              providers: [
+                BlocProvider(                           // ← ADD THIS
+                  create: (_) => BranchCubit()..loadBranches(),
+                ),
+                BlocProvider(
+                  create: (_) => TrainingVideosBloc(
+                    getTrainingVideosUseCase:   GetTrainingVideosUseCase(videosRepo),
+                    getVideoCategoriesUseCase:  GetVideoCategoriesUseCase(videosRepo),
+                    createTrainingVideoUseCase: CreateTrainingVideoUseCase(videosRepo),
+                    getTrainersUseCase:         GetTrainersUseCase(videosRepo),
+                    createCategoryUseCase:      CreateCategoryUseCase(videosRepo),
+                  )..add(LoadTrainingVideos()),
+                ),
+              ],
               child: const TrainingVideosListPage(),
             ),
           ),

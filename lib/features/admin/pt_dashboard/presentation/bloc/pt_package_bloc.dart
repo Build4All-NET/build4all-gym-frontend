@@ -1,16 +1,34 @@
+// =============================================================================
+// FILE: lib/features/admin/pt_dashboard/presentation/bloc/pt_package_bloc.dart
+//
+// FIX SUMMARY:
+//   1. Uses proper events/states with Equatable
+//   2. Supports null trainerId for admin all-trainers mode
+//   3. Proper error handling
+// =============================================================================
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+
 import '../../data/services/pt_package_service.dart';
 import '../../data/models/pt_package_model.dart';
 
 // ── Events ──────────────────────────────────────────────────────────────────
 
-abstract class PtPackageEvent {}
+abstract class PtPackageEvent extends Equatable {
+  const PtPackageEvent();
+  @override
+  List<Object?> get props => [];
+}
 
 class LoadPackages extends PtPackageEvent {
   final int? trainerId; // null = all trainers (admin/owner)
   final int tenantId;
   final int branchId;
-  LoadPackages({this.trainerId, required this.tenantId, required this.branchId});
+  const LoadPackages({this.trainerId, required this.tenantId, required this.branchId});
+
+  @override
+  List<Object?> get props => [trainerId, tenantId, branchId];
 }
 
 class CreatePackage extends PtPackageEvent {
@@ -18,42 +36,75 @@ class CreatePackage extends PtPackageEvent {
   final int tenantId;
   final int branchId;
   final Map<String, dynamic> data;
-  CreatePackage({required this.trainerId, required this.tenantId, required this.branchId, required this.data});
+  const CreatePackage({required this.trainerId, required this.tenantId, required this.branchId, required this.data});
+
+  @override
+  List<Object?> get props => [trainerId, tenantId, branchId, data];
 }
 
 class UpdatePackage extends PtPackageEvent {
   final int id;
   final Map<String, dynamic> data;
-  UpdatePackage({required this.id, required this.data});
+  const UpdatePackage({required this.id, required this.data});
+
+  @override
+  List<Object?> get props => [id, data];
 }
 
 class DeactivatePackage extends PtPackageEvent {
   final int id;
-  DeactivatePackage(this.id);
+  const DeactivatePackage(this.id);
+
+  @override
+  List<Object?> get props => [id];
 }
 
 // ── States ───────────────────────────────────────────────────────────────────
 
-abstract class PtPackageState {}
-class PtPackageInitial extends PtPackageState {}
-class PtPackageLoading extends PtPackageState {}
+abstract class PtPackageState extends Equatable {
+  const PtPackageState();
+  @override
+  List<Object?> get props => [];
+}
+
+class PtPackageInitial extends PtPackageState {
+  const PtPackageInitial();
+}
+
+class PtPackageLoading extends PtPackageState {
+  const PtPackageLoading();
+}
+
 class PtPackageLoaded extends PtPackageState {
   final List<PtPackageModel> packages;
-  PtPackageLoaded(this.packages);
+  const PtPackageLoaded(this.packages);
+
+  @override
+  List<Object?> get props => [packages];
 }
+
 class PtPackageError extends PtPackageState {
   final String message;
-  PtPackageError(this.message);
+  const PtPackageError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }
-class PtPackageMutating extends PtPackageState {}   // shows spinner on button
-class PtPackageMutated extends PtPackageState {}    // triggers reload + snackbar
+
+class PtPackageMutating extends PtPackageState {
+  const PtPackageMutating();
+}
+
+class PtPackageMutated extends PtPackageState {
+  const PtPackageMutated();
+}
 
 // ── BLoC ─────────────────────────────────────────────────────────────────────
 
 class PtPackageBloc extends Bloc<PtPackageEvent, PtPackageState> {
   final PtPackageService _service;
 
-  PtPackageBloc(this._service) : super(PtPackageInitial()) {
+  PtPackageBloc(this._service) : super(const PtPackageInitial()) {
     on<LoadPackages>(_onLoad);
     on<CreatePackage>(_onCreate);
     on<UpdatePackage>(_onUpdate);
@@ -61,7 +112,7 @@ class PtPackageBloc extends Bloc<PtPackageEvent, PtPackageState> {
   }
 
   Future<void> _onLoad(LoadPackages e, Emitter<PtPackageState> emit) async {
-    emit(PtPackageLoading());
+    emit(const PtPackageLoading());
     try {
       final packages = await _service.getPackages(
           trainerId: e.trainerId, tenantId: e.tenantId, branchId: e.branchId);
@@ -72,31 +123,31 @@ class PtPackageBloc extends Bloc<PtPackageEvent, PtPackageState> {
   }
 
   Future<void> _onCreate(CreatePackage e, Emitter<PtPackageState> emit) async {
-    emit(PtPackageMutating());
+    emit(const PtPackageMutating());
     try {
       await _service.createPackage(
           trainerId: e.trainerId, tenantId: e.tenantId, branchId: e.branchId, body: e.data);
-      emit(PtPackageMutated());
+      emit(const PtPackageMutated());
     } catch (err) {
       emit(PtPackageError(err.toString()));
     }
   }
 
   Future<void> _onUpdate(UpdatePackage e, Emitter<PtPackageState> emit) async {
-    emit(PtPackageMutating());
+    emit(const PtPackageMutating());
     try {
       await _service.updatePackage(e.id, e.data);
-      emit(PtPackageMutated());
+      emit(const PtPackageMutated());
     } catch (err) {
       emit(PtPackageError(err.toString()));
     }
   }
 
   Future<void> _onDeactivate(DeactivatePackage e, Emitter<PtPackageState> emit) async {
-    emit(PtPackageMutating());
+    emit(const PtPackageMutating());
     try {
       await _service.deactivatePackage(e.id);
-      emit(PtPackageMutated());
+      emit(const PtPackageMutated());
     } catch (err) {
       emit(PtPackageError(err.toString()));
     }

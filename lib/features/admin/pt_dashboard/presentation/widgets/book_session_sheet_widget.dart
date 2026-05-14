@@ -6,6 +6,7 @@
 //   2. Admin sees a "Assign to Trainer" dropdown at the top.
 //   3. Trainer role: trainerId is fixed to their own ID (no picker shown).
 //   4. Correct trainerId is sent in PtSessionCreateRequested.
+//   5. Uses proper tenantId from AdminTokenStore.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ import '../bloc/trainer_pt_sessions_event.dart';
 class BookSessionSheet extends StatefulWidget {
   final int    branchId;
   final int    tenantId;
-  final int    trainerId;   // ← explicit, never 0
+  final int    trainerId;   // explicit, never 0
   final bool   isAdmin;
   final List<AdminTrainerCardModel> trainers;
   final DateTime selectedDate;
@@ -166,7 +167,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
     context.read<TrainerPtSessionsBloc>().add(
       PtSessionCreateRequested(
         branchId:   widget.branchId,
-        trainerId:  _assignedTrainerId, // ← correct trainer
+        trainerId:  _assignedTrainerId, // correct trainer
         userId:     userId,
         serviceId:  _selectedService?.serviceId,
         startTime:  _toDateTime(_startTime!),
@@ -217,7 +218,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: cs.surface,
+                      color: cs.label,
                     ),
                   ),
                   const Spacer(),

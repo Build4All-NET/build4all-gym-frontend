@@ -1,300 +1,349 @@
-// FILE: lib/features/admin/trainers/presentation/screens/admin_trainers_screen.dart
+// FILE: lib/features/admin/trainers/presentation/screens/admin_gym_trainers_screen.dart
+//
+// Replaces AdminTrainersScreen entirely.
+// Shows members who were promoted to Trainer via gym_user_roles.
+// FAB opens MemberPickerForTrainerSheet to add more.
+// Remove button on each card revokes the role.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
-import '../../domain/entities/AdminTrainerDetailEntity.dart';
-import '../../domain/entities/trainer_form_options_entity.dart';
-import '../bloc/admin_trainers_bloc.dart';
-import '../bloc/admin_trainers_event.dart';
-import '../bloc/admin_trainers_state.dart';
-import '../widgets/add_edit_trainer_bottom_sheet.dart';
-import '../widgets/trainer_card_widget.dart';
-import '../widgets/trainer_search_filter_bar_widget.dart';
+import '../../domain/entities/GymTrainerEntity.dart';
+import '../bloc/GymTrainersCubit.dart';
+import '../bloc/GymTrainersState.dart';
+import '../widgets/member_picker_for_trainer_sheet.dart';
 
-class AdminTrainersScreen extends StatefulWidget {
-  const AdminTrainersScreen({super.key});
+class AdminGymTrainersScreen extends StatefulWidget {
+  const AdminGymTrainersScreen({super.key});
 
   @override
-  State<AdminTrainersScreen> createState() => _AdminTrainersScreenState();
+  State<AdminGymTrainersScreen> createState() => _AdminGymTrainersScreenState();
 }
 
-class _AdminTrainersScreenState extends State<AdminTrainersScreen> {
-  TrainerFormOptionsEntity? _cachedOptions;
-  int? _pendingEditTrainerId;
-  TrainersLoaded? _lastLoadedState;
-  int? _selectedBranchId;
-
+class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bloc = context.read<AdminTrainersBloc>();
-      bloc.add(const TrainersStarted());
-      bloc.add(const TrainerFormOptionsRequested());
-    });
-  }
-
-  void _showLoadingDialog() {
-    showDialog(
-      context:           context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+    WidgetsBinding.instance.addPostFrameCallback(
+          (_) => context.read<GymTrainersCubit>().load(),
     );
   }
 
-  void _closeDialogIfOpen() {
-    if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-  }
+  // ── Remove with confirmation ───────────────────────────────────────────────
 
-  void _openAddSheet() {
-    final options = _cachedOptions;
-    if (options == null) {
-      context.read<AdminTrainersBloc>().add(
-        const TrainerFormOptionsRequested(),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content:  Text('Loading trainer form options...'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    AddEditTrainerBottomSheet.show(
-      context,
-      options:  options,
-      onCreate: (request) => context
-          .read<AdminTrainersBloc>()
-          .add(TrainerCreateRequested(request)),
-      onUpdate: (_, __) {},
-    );
-  }
-
-  void _requestEditTrainer(int trainerId) {
-    if (_cachedOptions == null) {
-      context.read<AdminTrainersBloc>().add(
-        const TrainerFormOptionsRequested(),
-      );
-    }
-    _pendingEditTrainerId = trainerId;
-    _showLoadingDialog();
-    context.read<AdminTrainersBloc>().add(TrainerDetailRequested(trainerId));
-  }
-
-  void _openEditSheet(AdminTrainerDetailEntity detail) {
-    final options   = _cachedOptions;
-    final trainerId = _pendingEditTrainerId;
-    if (options == null || trainerId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content:  Text('Trainer form options are not ready yet'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    AddEditTrainerBottomSheet.show(
-      context,
-      trainerId: trainerId,
-      options:   options,
-      detail:    detail,
-      onCreate:  (_) {},
-      onUpdate:  (id, request) => context
-          .read<AdminTrainersBloc>()
-          .add(TrainerUpdateRequested(id, request)),
-    );
-  }
-
-  Widget _buildTrainersList(BuildContext context, TrainersLoaded loadedState) {
-    final c = context.read<ThemeCubit>().state.tokens.colors;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Text(
-            '${loadedState.total} Trainer${loadedState.total == 1 ? '' : 's'}',
-            style: TextStyle(
-                fontSize:   13,
-                fontWeight: FontWeight.w600,
-                color:      c.muted),
+  Future<void> _confirmRemove(GymTrainerEntity trainer) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final c = context.read<ThemeCubit>().state.tokens.colors;
+        return AlertDialog(
+          backgroundColor: c.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text('Remove Trainer Role',
+              style: TextStyle(color: c.primary, fontWeight: FontWeight.bold)),
+          content: Text(
+            '${trainer.fullName} will lose the Trainer role and see the Member dashboard on next login.',
+            style: TextStyle(color: c.error),
           ),
-        ),
-        Expanded(
-          child: loadedState.trainers.isEmpty
-              ? Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.sports_outlined,
-                    size: 48, color: c.border.withOpacity(0.5)),
-                const SizedBox(height: 12),
-                Text('No trainers found',
-                    style: TextStyle(color: c.muted, fontSize: 14)),
-              ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text('Cancel', style: TextStyle(color: c.error)),
             ),
-          )
-              : ListView.builder(
-            padding:    const EdgeInsets.fromLTRB(16, 0, 16, 80),
-            itemCount:  loadedState.trainers.length,
-            itemBuilder: (context, index) {
-              final trainer = loadedState.trainers[index];
-              return TrainerCardWidget(
-                trainer:   trainer,
-                isLoading: false,
-                onEditTap: () =>
-                    _requestEditTrainer(trainer.trainerId),
-              );
-            },
-          ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade600,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('Remove',
+                  style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed == true && mounted) {
+      context.read<GymTrainersCubit>().removeTrainer(trainer.userId);
+    }
+  }
+
+  // ── Build ──────────────────────────────────────────────────────────────────
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens  = context.watch<ThemeCubit>().state.tokens;
+    final c       = tokens.colors;
+    final profile = context.watch<AdminProfileCubit>().state;
+
+    return Scaffold(
+      backgroundColor: c.background,
+      drawer: AdminNavigationDrawer(
+        gymName:         profile.gymName,
+        branchName:      profile.branchName,
+        adminName:       profile.adminName,
+        adminEmail:      profile.adminEmail,
+        avatarUrl:       profile.avatarUrl,
+        initialActiveId: 'trainers',
+      ),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: SafeArea(
+          bottom: false,
+          child: AdminAppBar(title: 'Trainers'),
         ),
-      ],
+      ),
+
+      // ── FAB — open member picker ─────────────────────────────────────────
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => MemberPickerForTrainerSheet.show(
+          context,
+          onAssigned: () => context.read<GymTrainersCubit>().reload(),
+        ),
+        backgroundColor: c.primary,
+        icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
+        label: const Text('Add Trainer',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+      ),
+
+      body: BlocConsumer<GymTrainersCubit, GymTrainersState>(
+        listener: (context, state) {
+          if (state is GymTrainerRemoveError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red.shade700,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          // ── Loading ──────────────────────────────────────────────────────
+          if (state is GymTrainersLoading) {
+            return Center(child: CircularProgressIndicator(color: c.primary));
+          }
+
+          // ── Error ────────────────────────────────────────────────────────
+          if (state is GymTrainersError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.wifi_off_rounded, color: c.error, size: 48),
+                  const SizedBox(height: 12),
+                  Text('Could not load trainers',
+                      style: TextStyle(color: c.primary, fontSize: 16)),
+                  const SizedBox(height: 4),
+                  Text(state.message,
+                      style: TextStyle(color: c.error, fontSize: 12),
+                      textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => context.read<GymTrainersCubit>().load(),
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('Retry'),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: c.primary,
+                        foregroundColor: Colors.white),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // ── Resolve list from any loaded state ────────────────────────────
+          final trainers = _resolveList(state);
+          final removingId = state is GymTrainerRemoving
+              ? state.removingUserId
+              : null;
+
+          // ── Empty ────────────────────────────────────────────────────────
+          if (trainers.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.sports_outlined,
+                      color: c.error, size: 56),
+                  const SizedBox(height: 16),
+                  Text('No Trainers Yet',
+                      style: TextStyle(
+                          color: c.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Tap "Add Trainer" to promote a member\nto the Trainer role.',
+                    style: TextStyle(color: c.error, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // ── List ─────────────────────────────────────────────────────────
+          return RefreshIndicator(
+            color: c.primary,
+            onRefresh: () => context.read<GymTrainersCubit>().reload(),
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+              itemCount: trainers.length,
+              itemBuilder: (_, i) => _TrainerCard(
+                trainer:    trainers[i],
+                isRemoving: removingId == trainers[i].userId,
+                onRemove:   () => _confirmRemove(trainers[i]),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  void _onBranchChanged(int? branchId) {
-    setState(() => _selectedBranchId = branchId);
-    context.read<AdminTrainersBloc>().add(const TrainersStarted());
+  List<GymTrainerEntity> _resolveList(GymTrainersState state) {
+    if (state is GymTrainersLoaded)      return state.trainers;
+    if (state is GymTrainerRemoving)     return state.trainers;
+    if (state is GymTrainerRemoveError)  return state.trainers;
+    return [];
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Trainer Card Widget
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _TrainerCard extends StatelessWidget {
+  final GymTrainerEntity trainer;
+  final bool             isRemoving;
+  final VoidCallback     onRemove;
+
+  const _TrainerCard({
+    required this.trainer,
+    required this.isRemoving,
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
 
-    final profile = context.watch<AdminProfileCubit>().state;
+    // Format assignedAt date if parseable
+    String assignedLabel = '';
+    try {
+      final dt = DateTime.parse(trainer.assignedAt);
+      assignedLabel = 'Trainer since ${DateFormat('MMM d, yyyy').format(dt)}';
+    } catch (_) {
+      assignedLabel = 'Trainer';
+    }
 
-    return Scaffold(
-      drawer:  AdminNavigationDrawer(
-        gymName:    profile.gymName,
-        branchName: profile.branchName,
-        adminName:  profile.adminName,
-        adminEmail: profile.adminEmail,
-        avatarUrl:  profile.avatarUrl,
-        initialActiveId: 'trainers',
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: BorderRadius.circular(tokens.card.radius),
+        border: Border.all(color: c.border.withOpacity(0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      backgroundColor: c.background,
-      body: SafeArea(
-        child: BlocConsumer<AdminTrainersBloc, AdminTrainersState>(
-          listener: (context, state) {
-            if (state is TrainersLoaded) _lastLoadedState = state;
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // ── Avatar ─────────────────────────────────────────────────────
+            CircleAvatar(
+              radius: 26,
+              backgroundColor: c.primary.withOpacity(0.15),
+              child: Text(
+                trainer.initials,
+                style: TextStyle(
+                    color: c.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
+            ),
+            const SizedBox(width: 14),
 
-            if (state is TrainerFormOptionsLoaded) {
-              _cachedOptions = state.options;
-            }
-
-            if (state is TrainerDetailLoaded) {
-              _closeDialogIfOpen();
-              _openEditSheet(state.detail);
-            }
-
-            if (state is TrainerDetailError) {
-              _closeDialogIfOpen();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:         Text(state.message),
-                  backgroundColor: c.danger,
-                  behavior:        SnackBarBehavior.floating,
-                ),
-              );
-            }
-
-            if (state is TrainerActionSuccess) {
-              final messages = {
-                'created':   'Trainer added successfully ✓',
-                'updated':   'Trainer updated ✓',
-                'blocked':   'Trainer blocked',
-                'unblocked': 'Trainer unblocked ✓',
-              };
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(messages[state.actionType] ?? 'Done'),
-                  backgroundColor: state.actionType == 'blocked'
-                      ? Color.lerp(c.danger, c.primary, 0.5)
-                      : c.success,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-
-              context.read<AdminTrainersBloc>().add(const TrainersReload());
-            }
-
-            if (state is TrainerActionError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:         Text(state.message),
-                  backgroundColor: c.danger,
-                  behavior:        SnackBarBehavior.floating,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            final loadedState =
-            state is TrainersLoaded ? state : _lastLoadedState;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AdminAppBar(
-                  title:             'Trainers / PT',
-                  selectedBranchId:  _selectedBranchId,
-                  onBranchChanged:   _onBranchChanged,
-                  onAddTap:          _openAddSheet,
-                  notificationCount: 0,
-                ),
-
-                const TrainerSearchFilterBarWidget(),
-                const SizedBox(height: 4),
-
-                if (state is TrainersLoading && loadedState == null)
-                  Expanded(
-                      child: Center(
-                          child: CircularProgressIndicator(
-                              color: c.primary)))
-                else if (state is TrainersError && loadedState == null)
-                  Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.error_outline,
-                              size: 48, color: c.danger),
-                          const SizedBox(height: 12),
-                          Text(state.message,
-                              style: TextStyle(color: c.danger)),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => context
-                                .read<AdminTrainersBloc>()
-                                .add(const TrainersStarted()),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: c.primary,
-                              foregroundColor: c.onPrimary,
-                            ),
-                            child: const Text('Retry'),
-                          ),
-                        ],
-                      ),
+            // ── Info ────────────────────────────────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(trainer.fullName,
+                      style: TextStyle(
+                          color: c.primary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15)),
+                  const SizedBox(height: 3),
+                  if (trainer.phone.isNotEmpty)
+                    Row(
+                      children: [
+                        Icon(Icons.phone_outlined, color: c.error, size: 13),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(trainer.phone,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: c.error, fontSize: 12)),
+                        ),
+                      ],
                     ),
-                  )
-                else if (loadedState != null)
-                    Expanded(
-                        child: _buildTrainersList(context, loadedState))
-                  else
-                    const Expanded(child: SizedBox.shrink()),
-              ],
-            );
-          },
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today_outlined, color: c.error, size: 13),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(assignedLabel,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: c.error, fontSize: 12)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Trainer badge ────────────────────────────────────────────────
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                color: c.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text('TRAINER',
+                  style: TextStyle(
+                      color: c.primary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5)),
+            ),
+
+            // ── Remove button ─────────────────────────────────────────────
+            isRemoving
+                ? const SizedBox(
+              width: 24, height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+                : IconButton(
+              icon: Icon(Icons.person_remove_outlined,
+                  color: Colors.red.shade400, size: 22),
+              tooltip: 'Remove Trainer Role',
+              onPressed: onRemove,
+            ),
+          ],
         ),
       ),
     );

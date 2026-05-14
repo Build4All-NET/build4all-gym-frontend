@@ -2,11 +2,10 @@
 // FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_dashboard_screen.dart
 //
 // CHANGES:
-//   1. Accepts isAdmin, trainers, trainerId params so Quick Actions can open
-//      BookSessionSheet with correct trainer assignment.
-//   2. BlocBuilder now handles PtSessionsLoading / PtSessionsInitial / PtSessionsError
-//      states properly — no more "stuck on loading forever" or silent empty screen.
-//   3. BookSessionSheet.show call in Quick Actions passes all required params.
+//   1. Fixed loading forever - BlocBuilder now handles ALL states properly
+//   2. Quick Actions pass correct params to BookSessionSheet
+//   3. Uses effective branchId from profile instead of hardcoded 1
+//   4. Trainer badge shown on sessions for admin view
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -25,13 +24,12 @@ import '../../domain/entities/pt_session_entity.dart';
 import '../../domain/entities/pt_session_stats_entity.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
 import '../widgets/book_session_sheet_widget.dart';
-
+import '../bloc/trainer_pt_sessions_event.dart';
 class TrainerDashboardScreen extends StatelessWidget {
   final ValueChanged<int>  onTabSwitch;
   final ValueChanged<int?> onBranchChanged;
   final bool               isAdmin;
   final List<AdminTrainerCardModel> trainers;
-  /// 0 for admin all-trainers mode; trainer's own userId otherwise.
   final int                trainerId;
 
   const TrainerDashboardScreen({
@@ -48,7 +46,7 @@ class TrainerDashboardScreen extends StatelessWidget {
     final tokens  = context.read<ThemeCubit>().state.tokens;
     final c       = tokens.colors;
     final profile = context.watch<AdminProfileCubit>().state;
-    AdminTokenStore token = AdminTokenStore();
+
     return Scaffold(
       drawer: AdminNavigationDrawer(
         gymName:         profile.gymName,
@@ -118,49 +116,91 @@ class TrainerDashboardScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(color: c.muted, fontSize: 14),
                     ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        final bloc = context.read<TrainerPtSessionsBloc>();
+                        final currentState = bloc.state;
+                        if (currentState is PtSessionsLoaded) {
+                          bloc.add(PtSessionsStarted(
+                            branchId: currentState.selectedDate.day == DateTime.now().day
+                                ? (context.read<AdminProfileCubit>().state.branchId ?? 1)
+                                : 1,
+                            trainerId: isAdmin ? 0 : trainerId,
+                            trainerNames: isAdmin
+                                ? {for (final t in trainers) t.trainerId: t.fullName}
+                                : const {},
+                          ));
+                        }
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
                   ],
                 ),
               ),
             );
           }
 
-          // ── Loaded ───────────────────────────────────────────────────────
-          final sessions = state is PtSessionsLoaded
-              ? state.sessions
-              : <PtSessionEntity>[];
-          final stats = state is PtSessionsLoaded
-              ? state.stats
-              : PtSessionStatsEntity.empty;
+          // ── Action loading/success/error states - show previous data ─────
+          if (state is PtSessionActionLoading ||
+              state is PtSessionActionSuccess ||
+              state is PtSessionActionError) {
+            // Extract the loaded state from action states
+            PtSessionsLoaded? loadedState;
+            if (state is PtSessionActionLoading) loadedState = state.previousState;
+            if (state is PtSessionActionSuccess) loadedState = state.updatedState;
+            if (state is PtSessionActionError) loadedState = state.previousState;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _StatCardsGrid(stats: stats, tokens: tokens),
-                const SizedBox(height: 24),
-                _TodayScheduleSection(sessions: sessions, tokens: tokens, isAdmin: isAdmin),
-                const SizedBox(height: 24),
-                _QuickActionsSection(
-                  onTabSwitch: onTabSwitch,
-                  tokens:     tokens,
-                  isAdmin:    isAdmin,
-                  trainers:   trainers,
-                  trainerId:  trainerId,
-                  branchId: 1, //// TODO: CHange this branch ID
-                ),
-                const SizedBox(height: 24),
-                _UpcomingClientsSection(sessions: sessions, tokens: tokens),
-              ],
-            ),
-          );
+            if (loadedState != null) {
+              return _buildContent(context, loadedState, c, tokens);
+            }
+            return Center(child: CircularProgressIndicator(color: c.primary));
+          }
+
+          // ── Loaded ───────────────────────────────────────────────────────
+          if (state is PtSessionsLoaded) {
+            return _buildContent(context, state, c, tokens);
+          }
+
+          // Fallback - should not reach here
+          return const SizedBox.shrink();
         },
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, PtSessionsLoaded state, dynamic c, AppThemeTokens tokens) {
+    final sessions = state.sessions;
+    final stats = state.stats;
+    final effectiveBranchId = context.read<AdminProfileCubit>().state.branchId ?? 1;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _StatCardsGrid(stats: stats, tokens: tokens),
+          const SizedBox(height: 24),
+          _TodayScheduleSection(sessions: sessions, tokens: tokens, isAdmin: isAdmin),
+          const SizedBox(height: 24),
+          _QuickActionsSection(
+            onTabSwitch: onTabSwitch,
+            tokens:     tokens,
+            isAdmin:    isAdmin,
+            trainers:   trainers,
+            trainerId:  trainerId,
+            branchId:   effectiveBranchId,
+          ),
+          const SizedBox(height: 24),
+          _UpcomingClientsSection(sessions: sessions, tokens: tokens, isAdmin: isAdmin),
+        ],
       ),
     );
   }
 }
 
-// ── Stat cards 2×2 grid ────────────────────────────────────────────────────────
+// ── Stat cards 2x2 grid ────────────────────────────────────────────────────────
 
 class _StatCardsGrid extends StatelessWidget {
   final PtSessionStatsEntity stats;
@@ -264,8 +304,15 @@ class _TodayScheduleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+
     final active = sessions
-        .where((s) => !s.isCompleted && !s.isCancelled)
+        .where((s) =>
+    s.startTime.isAfter(todayStart.subtract(const Duration(seconds: 1))) &&
+        s.startTime.isBefore(todayEnd) &&
+        !s.isCompleted && !s.isCancelled)
         .take(3)
         .toList();
 
@@ -470,15 +517,15 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
-// ── Quick Actions 2×2 grid ─────────────────────────────────────────────────────
-AdminTokenStore token = AdminTokenStore();
+// ── Quick Actions 2x2 grid ─────────────────────────────────────────────────────
+
 class _QuickActionsSection extends StatelessWidget {
   final ValueChanged<int>          onTabSwitch;
   final AppThemeTokens             tokens;
   final bool                       isAdmin;
   final List<AdminTrainerCardModel> trainers;
   final int                        trainerId;
-  final int branchId;
+  final int                        branchId;
 
   const _QuickActionsSection({
     required this.onTabSwitch,
@@ -492,6 +539,7 @@ class _QuickActionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final tokenStore = AdminTokenStore();
 
     // For admin: default trainer for BookSessionSheet = first trainer in list
     // For trainer: use their own trainerId
@@ -526,16 +574,19 @@ class _QuickActionsSection extends StatelessWidget {
         label: 'Create Session',
         bg:        Color.lerp(c.primary, c.label, 0.3)!.withOpacity(0.1),
         iconColor: Color.lerp(c.primary, c.label, 0.3)!,
-        onTap: () => BookSessionSheet.show(
-          context,
-          branchId:     branchId,
-          tenantId:     int.parse(token.getTenantId() as String),
-          // FIX: pass real trainerId + isAdmin + trainers so the sheet works
-          trainerId:    defaultTrainerIdForSheet,
-          isAdmin:      isAdmin,
-          trainers:     trainers,
-          selectedDate: DateTime.now(),
-        ),
+        onTap: () {
+          final tenantIdStr = tokenStore.getTenantId();
+          final tenantId = int.tryParse(tenantIdStr.toString()) ?? 1;
+          BookSessionSheet.show(
+            context,
+            branchId:     branchId,
+            tenantId:     tenantId,
+            trainerId:    defaultTrainerIdForSheet,
+            isAdmin:      isAdmin,
+            trainers:     trainers,
+            selectedDate: DateTime.now(),
+          );
+        },
       ),
     ];
 
@@ -621,7 +672,8 @@ class _QACard extends StatelessWidget {
 class _UpcomingClientsSection extends StatelessWidget {
   final List<PtSessionEntity> sessions;
   final AppThemeTokens         tokens;
-  const _UpcomingClientsSection({required this.sessions, required this.tokens});
+  final bool                   isAdmin;
+  const _UpcomingClientsSection({required this.sessions, required this.tokens, required this.isAdmin});
 
   static const _avatarColors = [
     Color(0xFF8B5CF6), Color(0xFF06B6D4), Color(0xFFEC4899),
@@ -675,7 +727,7 @@ class _UpcomingClientsSection extends StatelessWidget {
           )
         else
           SizedBox(
-            height: 176,
+            height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount:       upcoming.length,
@@ -683,7 +735,7 @@ class _UpcomingClientsSection extends StatelessWidget {
                 final session     = upcoming[i];
                 final avatarColor = _colorFor(session.initials);
                 return Container(
-                  width:   158,
+                  width:   170,
                   margin:  const EdgeInsets.only(right: 12),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -726,7 +778,9 @@ class _UpcomingClientsSection extends StatelessWidget {
                           maxLines:  1,
                           overflow:  TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 11, color: c.muted)),
-                      if (session.trainerName != null &&
+                      // Trainer badge for admin
+                      if (isAdmin &&
+                          session.trainerName != null &&
                           session.trainerName!.isNotEmpty)
                         Container(
                           padding: const EdgeInsets.symmetric(

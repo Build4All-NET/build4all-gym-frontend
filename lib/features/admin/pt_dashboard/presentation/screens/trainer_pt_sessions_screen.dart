@@ -6,6 +6,7 @@
 //   2. Retry event passes trainerNames for admin all-trainers mode.
 //   3. Admin: the session list already contains ALL trainers' sessions (the bloc
 //      fetches per-trainer and merges). No separate fetching needed here.
+//   4. Fixed BookSessionSheet to use proper tenantId from token store.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../bloc/trainer_pt_sessions_bloc.dart';
@@ -63,6 +65,7 @@ class _SessionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
+    final tokenStore = AdminTokenStore();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
@@ -87,21 +90,21 @@ class _SessionsView extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: ElevatedButton.icon(
-                  onPressed: () => BookSessionSheet.show(
-                    context,
-                    branchId:     branchId,
-                    tenantId: context
-                        .read<AdminProfileCubit>()
-                        .state
-                        .branchId ?? 1,
-                    // For trainer: their own ID; for admin: first trainer or 0
-                    trainerId:    (isAdmin && trainers.isNotEmpty)
-                        ? trainers.first.trainerId
-                        : trainerId,
-                    isAdmin:      isAdmin,
-                    trainers:     trainers,
-                    selectedDate: date,
-                  ),
+                  onPressed: () {
+                    final tenantIdStr = tokenStore.getTenantId();
+                    final tenantId = int.tryParse(tenantIdStr.toString()) ?? 1;
+                    BookSessionSheet.show(
+                      context,
+                      branchId:     branchId,
+                      tenantId:     tenantId,
+                      trainerId:    (isAdmin && trainers.isNotEmpty)
+                          ? trainers.first.trainerId
+                          : trainerId,
+                      isAdmin:      isAdmin,
+                      trainers:     trainers,
+                      selectedDate: date,
+                    );
+                  },
                   icon:  const Icon(Icons.add, size: 18),
                   label: const Text('Book Session', style: TextStyle(fontSize: 13)),
                   style: ElevatedButton.styleFrom(
@@ -148,7 +151,10 @@ class _SessionsView extends StatelessWidget {
         curr is PtSessionsLoading ||
             curr is PtSessionsLoaded  ||
             curr is PtSessionsError   ||
-            curr is PtSessionsInitial,
+            curr is PtSessionsInitial ||
+            curr is PtSessionActionLoading ||
+            curr is PtSessionActionSuccess ||
+            curr is PtSessionActionError,
         builder: (context, state) {
           if (state is PtSessionsLoading || state is PtSessionsInitial) {
             return Center(child: CircularProgressIndicator(color: cs.primary));
@@ -169,9 +175,16 @@ class _SessionsView extends StatelessWidget {
             );
           }
 
-          if (state is PtSessionsLoaded) {
+          // Handle action states by extracting the loaded state
+          PtSessionsLoaded? loadedState;
+          if (state is PtSessionsLoaded) loadedState = state;
+          if (state is PtSessionActionLoading) loadedState = state.previousState;
+          if (state is PtSessionActionSuccess) loadedState = state.updatedState;
+          if (state is PtSessionActionError) loadedState = state.previousState;
+
+          if (loadedState != null) {
             return _LoadedBody(
-              state:    state,
+              state:    loadedState,
               isAdmin:  isAdmin,
               trainers: trainers,
             );

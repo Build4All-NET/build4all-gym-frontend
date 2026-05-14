@@ -1,3 +1,10 @@
+// =============================================================================
+// FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_services_screen.dart
+//
+// Services are tenant-wide, not trainer-specific, so no admin/trainer split needed.
+// Both roles see the same services list.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -92,10 +99,10 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
               child: Row(
                 children: ['All', 'General', 'Specialized', 'Elite']
                     .map((f) => _FilterChip(
-                          label: f,
-                          selected: _activeFilter == f,
-                          onTap: () => setState(() => _activeFilter = f),
-                        ))
+                  label: f,
+                  selected: _activeFilter == f,
+                  onTap: () => setState(() => _activeFilter = f),
+                ))
                     .toList(),
               ),
             ),
@@ -129,7 +136,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
               builder: (ctx, state) {
                 // Spinner only on first load
                 if ((state is PtServiceInitial ||
-                        state is PtServiceLoading) &&
+                    state is PtServiceLoading) &&
                     _cachedServices.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -146,7 +153,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
                           state.message,
                           textAlign: TextAlign.center,
                           style:
-                              const TextStyle(color: Color(0xFF6B7280)),
+                          const TextStyle(color: Color(0xFF6B7280)),
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
@@ -166,10 +173,10 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
                 final filtered = _activeFilter == 'All'
                     ? all
                     : all
-                        .where((s) => (s.description)
-                            .toLowerCase()
-                            .contains(_activeFilter.toLowerCase()))
-                        .toList();
+                    .where((s) => (s.description)
+                    .toLowerCase()
+                    .contains(_activeFilter.toLowerCase()))
+                    .toList();
 
                 if (filtered.isEmpty) {
                   return Center(
@@ -312,7 +319,7 @@ class _ServiceCard extends StatelessWidget {
                       Text(
                         service.description,
                         style:
-                            TextStyle(fontSize: 12, color: Colors.grey[500]),
+                        TextStyle(fontSize: 12, color: Colors.grey[500]),
                       ),
                     ],
                   ),
@@ -402,11 +409,11 @@ class _ServiceDialog extends StatefulWidget {
   });
 
   static Future<void> show(
-    BuildContext context, {
-    required PtServiceBloc bloc,
-    required int tenantId,
-    PtServiceModel? initialService,
-  }) {
+      BuildContext context, {
+        required PtServiceBloc bloc,
+        required int tenantId,
+        PtServiceModel? initialService,
+      }) {
     return showDialog(
       context: context,
       builder: (_) => _ServiceDialog(
