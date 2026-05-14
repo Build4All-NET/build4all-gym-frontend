@@ -1,148 +1,211 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// lib/features/member/settings/presentation/cubit/member_settings_state.dart
 // lib/features/member/settings/presentation/cubit/member_settings_cubit.dart
 //
 // PURPOSE:
-//   Member-side settings cubit. Same pattern as AdminSettingsCubit but simpler:
-//   NO business rules (those are admin/owner only),
-//   NO 2FA toggle (members don't manage 2FA through our app).
+//   State management hub for MemberSettingsScreen.
 //
-//   Fields: isDirty, selectedThemeMode, pendingLocale, isBiometricEnabled.
+// RESPONSIBILITIES:
+//   • Load language/theme settings from backend.
+//   • Load biometric preference from FlutterSecureStorage.
+//   • Track dirty changes.
+//   • Save language/theme to backend.
+//   • Save biometric preference locally.
+//
+// SAME STRUCTURE AS ADMIN:
+//   AdminSettingsCubit uses constructor-injected use cases,
+//   FlutterSecureStorage, _loadInitialData(), dirty tracking,
+//   and saveSettings() returning true/false.
+//   MemberSettingsCubit follows the same pattern.
 // ─────────────────────────────────────────────────────────────────────────────
-
-// ══════════════════════════════════════════════════════════════════════════════
-// PART 1: MemberSettingsState
-// ══════════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-// ── State ─────────────────────────────────────────────────────────────────────
-
-enum MemberSettingsStatus { loading, loaded, saving, saved, error }
-
-class MemberSettingsState {
-  final bool isDirty;
-  final MemberSettingsStatus status;
-  final String? errorMessage;
-
-  /// Pending theme mode — applied to ThemeCubit only when "Save Changes" is tapped.
-  final ThemeMode selectedThemeMode;
-
-  /// Pending locale — null = system default. Applied to LocaleCubit on Save.
-  final Locale? pendingLocale;
-
-  /// Biometric toggle — persisted to FlutterSecureStorage on Save.
-  final bool isBiometricEnabled;
-
-  const MemberSettingsState({
-    required this.isDirty,
-    required this.status,
-    this.errorMessage,
-    required this.selectedThemeMode,
-    this.pendingLocale,
-    required this.isBiometricEnabled,
-  });
-
-  factory MemberSettingsState.initial() => const MemberSettingsState(
-    isDirty: false,
-    status: MemberSettingsStatus.loading,
-    selectedThemeMode: ThemeMode.system,
-    pendingLocale: null,
-    isBiometricEnabled: false,
-  );
-
-  MemberSettingsState copyWith({
-    bool? isDirty,
-    MemberSettingsStatus? status,
-    String? errorMessage,
-    ThemeMode? selectedThemeMode,
-    Object? pendingLocale = _sentinel,
-    bool? isBiometricEnabled,
-  }) {
-    return MemberSettingsState(
-      isDirty: isDirty ?? this.isDirty,
-      status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
-      selectedThemeMode: selectedThemeMode ?? this.selectedThemeMode,
-      pendingLocale: identical(pendingLocale, _sentinel)
-          ? this.pendingLocale
-          : pendingLocale as Locale?,
-      isBiometricEnabled: isBiometricEnabled ?? this.isBiometricEnabled,
-    );
-  }
-}
-
-const _sentinel = Object();
-
-// ══════════════════════════════════════════════════════════════════════════════
-// PART 2: MemberSettingsCubit
-// ══════════════════════════════════════════════════════════════════════════════
+import '../../domain/entities/member_settings_entity.dart';
+import '../../domain/usecases/get_member_settings_usecase.dart';
+import 'member_settings_state.dart';
 
 class MemberSettingsCubit extends Cubit<MemberSettingsState> {
-  static const _biometricKey = 'biometric_enabled';
+  // ── Dependencies ────────────────────────────────────────────────────────────
+
+  final GetMemberSettingsUseCase _getSettings;
+  final UpdateMemberSettingsUseCase _saveSettings;
   final FlutterSecureStorage _secureStorage;
 
-  MemberSettingsCubit({FlutterSecureStorage? secureStorage})
-      : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+  /// Key used to persist biometric preference locally.
+  static const _biometricKey = 'biometric_enabled';
+
+  MemberSettingsCubit({
+    required GetMemberSettingsUseCase getSettings,
+    required UpdateMemberSettingsUseCase saveSettings,
+    FlutterSecureStorage? secureStorage,
+  })  : _getSettings = getSettings,
+        _saveSettings = saveSettings,
+        _secureStorage = secureStorage ?? const FlutterSecureStorage(),
         super(MemberSettingsState.initial()) {
+    // Load backend + local settings when the cubit is created.
     _loadInitialData();
   }
 
   // ── Initialization ──────────────────────────────────────────────────────────
 
+  /// Loads member settings from backend and biometric preference from secure storage.
   Future<void> _loadInitialData() async {
     emit(state.copyWith(status: MemberSettingsStatus.loading));
+
     try {
-      // Load biometric flag from secure storage
-      final raw = await _secureStorage.read(key: _biometricKey);
+      final results = await Future.wait([
+        _getSettings(),                          // GET /api/member/settings
+        _secureStorage.read(key: _biometricKey), // local secure storage
+      ]);
+
+      final settings = results[0] as MemberSettingsEntity;
+      final biometricRaw = results[1] as String?;
+      final isBiometric = biometricRaw == 'true';
+
       emit(state.copyWith(
         status: MemberSettingsStatus.loaded,
-        isBiometricEnabled: raw == 'true',
+        selectedThemeMode: _themeModeFromBackend(settings.themeMode),
+        pendingLocale: _localeFromBackend(settings.languageCode),
+        isBiometricEnabled: isBiometric,
         isDirty: false,
       ));
     } catch (e) {
       emit(state.copyWith(
-          status: MemberSettingsStatus.error, errorMessage: e.toString()));
+        status: MemberSettingsStatus.error,
+        errorMessage: e.toString(),
+      ));
     }
   }
 
-  // ── Setters (each marks dirty) ──────────────────────────────────────────────
+  /// Public retry method for the screen.
+  Future<void> reload() async {
+    await _loadInitialData();
+  }
 
-  /// Called by AppearanceSectionWidget — stores pending mode.
+  // ── Appearance setter ───────────────────────────────────────────────────────
+
+  /// Called when the user changes the theme option.
+  /// This only updates pending state and marks the screen dirty.
   void setThemeMode(ThemeMode mode) {
-    emit(state.copyWith(selectedThemeMode: mode, isDirty: true));
+    emit(state.copyWith(selectedThemeMode: mode));
+    _markDirty();
   }
 
-  /// Called by LanguageSectionWidget — stores pending locale.
+  // ── Language setter ─────────────────────────────────────────────────────────
+
+  /// Called when the user selects a language.
+  /// null means system/default language.
   void setPendingLocale(Locale? locale) {
-    emit(state.copyWith(pendingLocale: locale, isDirty: true));
+    emit(state.copyWith(pendingLocale: locale));
+    _markDirty();
   }
 
-  /// Called by the biometric toggle row.
+  // ── Account & Security setter ───────────────────────────────────────────────
+
+  /// Called when the user toggles biometric login.
   void setBiometricEnabled(bool value) {
-    emit(state.copyWith(isBiometricEnabled: value, isDirty: true));
+    emit(state.copyWith(isBiometricEnabled: value));
+    _markDirty();
   }
 
-  // ── Save ────────────────────────────────────────────────────────────────────
+  // ── Save all settings ───────────────────────────────────────────────────────
 
-  /// Persists biometric flag to secure storage.
-  /// ThemeCubit and LocaleCubit are updated by the SCREEN after this resolves.
+  /// Saves all dirty member settings.
+  ///
+  /// Operations:
+  ///   1. PUT /api/member/settings
+  ///   2. Save biometric flag locally
+  ///
+  /// ThemeCubit and LocaleCubit are updated by the screen after success.
   Future<bool> saveSettings() async {
     if (!state.isDirty) return true;
-    emit(state.copyWith(status: MemberSettingsStatus.saving));
+
+
+
     try {
+      final settings = MemberSettingsEntity(
+        languageCode: _languageCodeToBackend(state.pendingLocale),
+        themeMode: _themeModeToBackend(state.selectedThemeMode),
+      );
+
+      // 1. Persist language/theme to backend.
+      await _saveSettings(settings);
+
+      // 2. Persist biometric preference locally.
       await _secureStorage.write(
         key: _biometricKey,
         value: state.isBiometricEnabled.toString(),
       );
-      emit(state.copyWith(status: MemberSettingsStatus.saved, isDirty: false));
+
+      emit(state.copyWith(
+        status: MemberSettingsStatus.loaded,
+        isDirty: false,
+      ));
       return true;
     } catch (e) {
       emit(state.copyWith(
-          status: MemberSettingsStatus.error, errorMessage: e.toString()));
+        status: MemberSettingsStatus.error,
+        errorMessage: e.toString(),
+      ));
+
       return false;
     }
+  }
+
+  // ── Private helpers ─────────────────────────────────────────────────────────
+
+  /// Sets isDirty = true.
+  void _markDirty() {
+    if (!state.isDirty) {
+      emit(state.copyWith(isDirty: true));
+    }
+  }
+
+  /// Converts backend theme string to Flutter ThemeMode.
+  ThemeMode _themeModeFromBackend(String value) {
+    switch (value) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  /// Converts Flutter ThemeMode to backend theme string.
+  String _themeModeToBackend(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return 'light';
+      case ThemeMode.dark:
+        return 'dark';
+      case ThemeMode.system:
+        return 'system';
+    }
+  }
+
+  /// Converts backend languageCode to Flutter Locale.
+  ///
+  /// Backend values:
+  ///   "en", "fr", "ar", "system"
+  ///
+  /// null means system/default locale in the Flutter app.
+  Locale? _localeFromBackend(String value) {
+    if (value.trim().isEmpty || value == 'system') {
+      return null;
+    }
+
+    return Locale(value);
+  }
+
+  /// Converts Flutter Locale to backend languageCode.
+  ///
+  /// If locale is null, send "system".
+  String _languageCodeToBackend(Locale? locale) {
+    return locale?.languageCode ?? 'system';
   }
 }

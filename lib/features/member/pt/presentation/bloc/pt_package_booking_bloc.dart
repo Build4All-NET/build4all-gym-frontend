@@ -5,7 +5,7 @@ import '../../domain/usecases/get_weekly_available_slots_usecase.dart';
 
 import 'pt_package_booking_event.dart';
 import 'pt_package_booking_state.dart';
-
+import '../../domain/entities/time_slot_entity.dart';
 /// Bloc for the PT package booking flow.
 ///
 /// New flow:
@@ -121,13 +121,8 @@ class PtPackageBookingBloc
       ),
     );
 
-    final updatedSlotsByDay = Map<String, List<dynamic>>.from(
+    final updatedSlotsByDay = Map<String, List<TimeSlotEntity>>.from(
       current.weeklySlotsByDay,
-    ).map(
-          (key, value) => MapEntry(
-        key,
-        current.weeklySlotsByDay[key] ?? const [],
-      ),
     );
 
     final updatedLoadingDays = Set<String>.from(current.loadingSlotDays);
@@ -147,7 +142,7 @@ class PtPackageBookingBloc
       emit(
         current.copyWith(
           weeklySchedule: updatedSchedule,
-          weeklySlotsByDay: updatedSlotsByDay.cast(),
+          weeklySlotsByDay: updatedSlotsByDay,
           loadingSlotDays: updatedLoadingDays,
           slotErrorsByDay: updatedErrorsByDay,
         ),
@@ -225,7 +220,9 @@ class PtPackageBookingBloc
       ..remove(day);
 
     final nextErrorsByDay = Map<String, String>.from(latest.slotErrorsByDay);
-    final nextSlotsByDay = Map<String, dynamic>.from(latest.weeklySlotsByDay);
+    final nextSlotsByDay = Map<String, List<TimeSlotEntity>>.from(
+      latest.weeklySlotsByDay,
+    );
 
     if (result.failure != null || result.data == null) {
       nextErrorsByDay[day] = result.failure?.message ?? 'ptWeeklySlotsFailed';
@@ -233,7 +230,7 @@ class PtPackageBookingBloc
 
       emit(
         latest.copyWith(
-          weeklySlotsByDay: nextSlotsByDay.cast(),
+          weeklySlotsByDay: nextSlotsByDay,
           loadingSlotDays: nextLoadingDays,
           slotErrorsByDay: nextErrorsByDay,
         ),
@@ -247,7 +244,7 @@ class PtPackageBookingBloc
 
     emit(
       latest.copyWith(
-        weeklySlotsByDay: nextSlotsByDay.cast(),
+        weeklySlotsByDay: nextSlotsByDay,
         loadingSlotDays: nextLoadingDays,
         slotErrorsByDay: nextErrorsByDay,
       ),

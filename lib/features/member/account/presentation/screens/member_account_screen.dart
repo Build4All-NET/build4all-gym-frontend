@@ -23,6 +23,7 @@ import 'package:build4allgym/features/member/account/presentation/widgets/referr
 import 'package:build4allgym/features/member/account/presentation/widgets/account_personal_info_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/widgets/account_menu_section_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/screens/member_edit_profile_screen.dart';
+import 'package:build4allgym/app/app_router.dart';
 class MemberAccountScreen extends StatefulWidget {
   final MemberAccountBloc bloc;
 
@@ -334,7 +335,9 @@ class _AccountBody extends StatelessWidget {
                     AccountMenuItem(
                       icon: Icons.settings_rounded,
                       label: l10n.accountSettings,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pushNamed(AppRouter.userSettings);
+                      },
                     ),
                     AccountMenuItem(
                       icon: Icons.help_outline_rounded,

@@ -129,6 +129,19 @@ import '../features/admin/training_videos/domain/usecases/get_video_categories_u
 import '../features/admin/training_videos/domain/usecases/create_training_video_use_case.dart';
 import '../features/admin/training_videos/domain/usecases/GetTrainersUseCase.dart';
 
+// ── Admin Settings imports ───────────────────────────────────────────────────
+import '../features/admin/settings/data/repositories/admin_settings_repository_impl.dart';
+import '../features/admin/settings/data/services/admin_settings_remote_service.dart';
+import '../features/admin/settings/domain/usecases/get_admin_settings_usecase.dart';
+import '../features/admin/settings/presentation/cubit/admin_settings_cubit.dart';
+import '../features/admin/settings/presentation/screens/admin_settings_screen.dart';
+
+// ── Member Settings imports ──────────────────────────────────────────────────
+import '../features/member/settings/data/repositories/member_settings_repository_impl.dart';
+import '../features/member/settings/data/services/member_settings_remote_service.dart';
+import '../features/member/settings/domain/usecases/get_member_settings_usecase.dart';
+import '../features/member/settings/presentation/cubit/member_settings_cubit.dart';
+import '../features/member/settings/presentation/screens/member_settings_screen.dart';
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login          = '/login';
@@ -229,11 +242,19 @@ class AppRouter {
 
 
 
+
     // ── User: Settings ────────────────────────────────────────────────────
       case userSettings:
+        final repo = MemberSettingsRepositoryImpl(
+          MemberSettingsRemoteService(),
+        );
+
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => MemberSettingsCubit(),
+            create: (_) => MemberSettingsCubit(
+              getSettings: GetMemberSettingsUseCase(repo),
+              saveSettings: UpdateMemberSettingsUseCase(repo),
+            ),
             child: const MemberSettingsScreen(),
           ),
         );

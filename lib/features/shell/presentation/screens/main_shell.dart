@@ -64,9 +64,17 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
+  late final List<Widget> _cachedPages;
+
   @override
   void initState() {
     super.initState();
+
+    // Build tab pages once.
+    // This prevents MemberAccountScreen and its blocs from being recreated
+    // whenever theme/locale changes rebuild MainShell.
+    _cachedPages = _buildPages();
+
     _startRealtime();
   }
 
@@ -121,13 +129,11 @@ class _MainShellState extends State<MainShell> {
   }
 
   Widget _buildBottomNavShell() {
-    final pages = _pages();
-
     return Scaffold(
       body: Column(
         children: [
           const ConnectionBanner(),
-          Expanded(child: pages[_currentIndex]),
+          Expanded(child: _cachedPages[_currentIndex]),
         ],
       ),
       bottomNavigationBar: MemberBottomNavBar(
@@ -138,7 +144,7 @@ class _MainShellState extends State<MainShell> {
   }
 
   Widget _buildDrawerShell(c) {
-    final pages = _pages();
+
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -221,13 +227,13 @@ class _MainShellState extends State<MainShell> {
       body: Column(
         children: [
           const ConnectionBanner(),
-          Expanded(child: pages[_currentIndex]),
+          Expanded(child: _cachedPages[_currentIndex]),
         ],
       ),
     );
   }
 
-  List<Widget> _pages() => [
+  List<Widget> _buildPages() => [
     BlocProvider<MemberHomeBloc>(
       create: (_) {
         final datasource = MemberHomeRemoteDatasource(
