@@ -37,9 +37,27 @@ class TrainerBookingSelectionChanged extends TrainerBookingEvent {
   });
 }
 
-/// Fired when the user taps "تأكيد الحجز".
+/// Fired when the user taps normal booking confirm.
 ///
-/// The Bloc will only continue if both date and slot are selected.
+/// This should be used only when the selected slot is available
+/// and not full.
 class TrainerBookingConfirmRequested extends TrainerBookingEvent {
   const TrainerBookingConfirmRequested();
+}
+
+/// Fired when the user taps "Request this time".
+///
+/// Used when:
+/// - selected slot is full
+/// - selected slot is unavailable
+/// - member still wants to ask the PT
+///
+/// Backend will create a REQUESTED session,
+/// not a confirmed SCHEDULED session.
+class TrainerBookingRequestRequested extends TrainerBookingEvent {
+  final String? notes;
+
+  const TrainerBookingRequestRequested({
+    this.notes,
+  });
 }

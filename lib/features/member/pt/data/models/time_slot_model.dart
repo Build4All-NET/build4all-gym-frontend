@@ -6,11 +6,19 @@ class TimeSlotModel {
   final String endTime;
   final bool available;
 
+  // Number of confirmed members already booked in this slot.
+  final int bookedCount;
+
+  // Maximum members allowed in this slot.
+  final int maxMembers;
+
   const TimeSlotModel({
     this.id,
     required this.startTime,
     required this.endTime,
     required this.available,
+    this.bookedCount = 0,
+    this.maxMembers = 1,
   });
 
   factory TimeSlotModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +40,15 @@ class TimeSlotModel {
       available: json['available'] as bool? ??
           json['isAvailable'] as bool? ??
           true,
+
+      // New backend value:
+      // how many accepted/confirmed members already booked this slot.
+      bookedCount: (json['bookedCount'] as num?)?.toInt() ?? 0,
+
+      // New backend value:
+      // maximum members allowed in this slot.
+      // Default is 1 for old backend responses.
+      maxMembers: (json['maxMembers'] as num?)?.toInt() ?? 1,
     );
   }
 
@@ -41,6 +58,8 @@ class TimeSlotModel {
       startTime: startTime,
       endTime: endTime,
       available: available,
+      bookedCount: bookedCount,
+      maxMembers: maxMembers,
     );
   }
 }

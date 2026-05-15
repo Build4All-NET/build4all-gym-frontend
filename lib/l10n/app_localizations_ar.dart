@@ -1295,4 +1295,80 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfileCodeRequired => 'رمز التحقق مطلوب.';
+
+  @override
+  String get ptBookingRequestSuccess => 'تم إرسال الطلب إلى المدرب. بانتظار الموافقة.';
+
+  @override
+  String get ptBookingRequestThisTime => 'طلب هذا الوقت';
+
+  @override
+  String get ptBookingBookSession => 'حجز الجلسة';
+
+  @override
+  String get ptBookingRequestNote => 'طلب العضو وقت تدريب غير متاح أو ممتلئ';
+
+  @override
+  String get ptBookingFullOrUnavailable => 'هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.';
+
+  @override
+  String get ptBookingFailed => 'تعذر تأكيد الحجز.';
+
+  @override
+  String get ptBookingRequestFailed => 'تعذر إرسال الطلب.';
+
+  @override
+  String get memberQrTitle => 'رمز الدخول';
+
+  @override
+  String get memberQrSubtitle => 'امسح الرمز عند الدخول للنادي';
+
+  @override
+  String get memberQrActiveMembership => 'عضوية نشطة';
+
+  @override
+  String get memberQrInactiveMembership => 'عضوية غير نشطة';
+
+  @override
+  String get memberQrMemberCodeLabel => 'رقم العضوية';
+
+  @override
+  String get memberQrPackageFallback => 'لا توجد باقة';
+
+  @override
+  String get memberQrValidUntil => 'صالح حتى';
+
+  @override
+  String get memberQrExpiresSoon => 'سينتهي الرمز قريباً';
+
+  @override
+  String get memberQrRecentVisits => 'آخر الزيارات';
+
+  @override
+  String get memberQrNoRecentVisits => 'لا توجد زيارات سابقة';
+
+  @override
+  String get memberQrDurationLabel => 'المدة';
+
+  @override
+  String get memberQrToday => 'اليوم';
+
+  @override
+  String get memberQrYesterday => 'أمس';
+
+  @override
+  String memberQrMinute(int count) {
+    return '$count دقيقة';
+  }
+
+  @override
+  String memberQrHour(String count) {
+    return '$count ساعة';
+  }
+
+  @override
+  String get memberQrLoadError => 'تعذر تحميل رمز الدخول';
+
+  @override
+  String get memberQrRetry => 'إعادة المحاولة';
 }

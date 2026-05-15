@@ -2590,6 +2590,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verification code is required.'**
   String get editProfileCodeRequired;
+
+  /// No description provided for @ptBookingRequestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to PT. Waiting for approval.'**
+  String get ptBookingRequestSuccess;
+
+  /// No description provided for @ptBookingRequestThisTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Request this time'**
+  String get ptBookingRequestThisTime;
+
+  /// No description provided for @ptBookingBookSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Book session'**
+  String get ptBookingBookSession;
+
+  /// No description provided for @ptBookingRequestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Member requested unavailable/full PT time'**
+  String get ptBookingRequestNote;
+
+  /// No description provided for @ptBookingFullOrUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This slot is full or unavailable. Send a request instead.'**
+  String get ptBookingFullOrUnavailable;
+
+  /// No description provided for @ptBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to confirm booking.'**
+  String get ptBookingFailed;
+
+  /// No description provided for @ptBookingRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to send request.'**
+  String get ptBookingRequestFailed;
+
+  /// No description provided for @memberQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry QR Code'**
+  String get memberQrTitle;
+
+  /// No description provided for @memberQrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this code at the gym entrance'**
+  String get memberQrSubtitle;
+
+  /// No description provided for @memberQrActiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Active membership'**
+  String get memberQrActiveMembership;
+
+  /// No description provided for @memberQrInactiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive membership'**
+  String get memberQrInactiveMembership;
+
+  /// No description provided for @memberQrMemberCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Member code'**
+  String get memberQrMemberCodeLabel;
+
+  /// No description provided for @memberQrPackageFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'No package'**
+  String get memberQrPackageFallback;
+
+  /// No description provided for @memberQrValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get memberQrValidUntil;
+
+  /// No description provided for @memberQrExpiresSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'QR expires soon'**
+  String get memberQrExpiresSoon;
+
+  /// No description provided for @memberQrRecentVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent visits'**
+  String get memberQrRecentVisits;
+
+  /// No description provided for @memberQrNoRecentVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous visits'**
+  String get memberQrNoRecentVisits;
+
+  /// No description provided for @memberQrDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get memberQrDurationLabel;
+
+  /// No description provided for @memberQrToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get memberQrToday;
+
+  /// No description provided for @memberQrYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get memberQrYesterday;
+
+  /// No description provided for @memberQrMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min'**
+  String memberQrMinute(int count);
+
+  /// No description provided for @memberQrHour.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h'**
+  String memberQrHour(String count);
+
+  /// No description provided for @memberQrLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load QR data'**
+  String get memberQrLoadError;
+
+  /// No description provided for @memberQrRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get memberQrRetry;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

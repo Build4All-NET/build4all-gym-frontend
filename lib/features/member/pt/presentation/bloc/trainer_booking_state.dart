@@ -33,6 +33,35 @@ class TrainerBookingLoaded extends TrainerBookingState {
   /// True only when user selected both required booking inputs.
   bool get canConfirm => selectedDate != null && selectedSlot != null;
 
+  /// True when selected slot can be booked directly.
+  ///
+  /// Normal booking should use:
+  /// POST /api/pt-sessions
+  bool get canBookNormally {
+    final slot = selectedSlot;
+
+    if (selectedDate == null || slot == null) {
+      return false;
+    }
+
+    return slot.available && !slot.full;
+  }
+
+  /// True when selected slot cannot be booked directly,
+  /// but user can send request to PT.
+  ///
+  /// Request booking should use:
+  /// POST /api/pt-sessions/request
+  bool get canRequest {
+    final slot = selectedSlot;
+
+    if (selectedDate == null || slot == null) {
+      return false;
+    }
+
+    return !slot.available || slot.full;
+  }
+
   /// Creates a new state while keeping old values by default.
   ///
   /// clearSelectedDate / clearSelectedSlot are needed because normal copyWith
@@ -54,10 +83,23 @@ class TrainerBookingLoaded extends TrainerBookingState {
   }
 }
 
-/// State emitted while the POST booking request is running.
+/// State emitted while a booking/request API call is running.
 ///
 /// The UI listens to this state and shows CircularProgressIndicator.
-class TrainerBookingConfirmed extends TrainerBookingLoaded {
+class TrainerBookingSubmitting extends TrainerBookingLoaded {
+  const TrainerBookingSubmitting({
+    required super.trainerId,
+    required super.selectedDate,
+    required super.selectedSlot,
+  });
+}
+
+/// Compatibility state.
+///
+/// Your old Bloc used TrainerBookingConfirmed as the loading state.
+/// Keep this class so older UI checks do not break.
+/// New code should prefer TrainerBookingSubmitting.
+class TrainerBookingConfirmed extends TrainerBookingSubmitting {
   const TrainerBookingConfirmed({
     required super.trainerId,
     required super.selectedDate,
@@ -65,7 +107,10 @@ class TrainerBookingConfirmed extends TrainerBookingLoaded {
   });
 }
 
-/// State emitted when the booking API succeeds.
+/// State emitted when the normal booking API succeeds.
+///
+/// Backend status:
+/// SCHEDULED
 ///
 /// The UI listens to this state and:
 /// - pops the screen
@@ -81,7 +126,26 @@ class TrainerBookingSuccess extends TrainerBookingLoaded {
   });
 }
 
-/// State emitted when the booking API fails.
+/// State emitted when the request booking API succeeds.
+///
+/// Backend status:
+/// REQUESTED
+///
+/// The UI listens to this state and:
+/// - keeps or pops the screen depending on UX
+/// - shows "Request sent to PT" SnackBar
+class TrainerBookingRequestSuccess extends TrainerBookingLoaded {
+  final PtBookingResponseEntity booking;
+
+  const TrainerBookingRequestSuccess({
+    required super.trainerId,
+    required super.selectedDate,
+    required super.selectedSlot,
+    required this.booking,
+  });
+}
+
+/// State emitted when the booking/request API fails.
 ///
 /// The UI listens to this state and:
 /// - shows error SnackBar

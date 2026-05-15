@@ -847,7 +847,47 @@
   "editProfileVerificationCode": "رمز التحقق",
   "editProfileResend": "إعادة الإرسال",
   "editProfileVerify": "تحقق",
-  "editProfileCodeRequired": "رمز التحقق مطلوب."
+  "editProfileCodeRequired": "رمز التحقق مطلوب.",
+
+    "ptBookingSuccess": "تم تأكيد الحجز بنجاح.",
+    "ptBookingRequestSuccess": "تم إرسال الطلب إلى المدرب. بانتظار الموافقة.",
+    "ptBookingRequestThisTime": "طلب هذا الوقت",
+    "ptBookingBookSession": "حجز الجلسة",
+    "ptBookingRequestNote": "طلب العضو وقت تدريب غير متاح أو ممتلئ",
+    "ptBookingFullOrUnavailable": "هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.",
+    "ptBookingFailed": "تعذر تأكيد الحجز.",
+    "ptBookingRequestFailed": "تعذر إرسال الطلب.",
+  "memberQrTitle": "رمز الدخول",
+  "memberQrSubtitle": "امسح الرمز عند الدخول للنادي",
+  "memberQrActiveMembership": "عضوية نشطة",
+  "memberQrInactiveMembership": "عضوية غير نشطة",
+  "memberQrMemberCodeLabel": "رقم العضوية",
+  "memberQrPackageFallback": "لا توجد باقة",
+  "memberQrValidUntil": "صالح حتى",
+  "memberQrExpiresSoon": "سينتهي الرمز قريباً",
+  "memberQrRecentVisits": "آخر الزيارات",
+  "memberQrNoRecentVisits": "لا توجد زيارات سابقة",
+  "memberQrDurationLabel": "المدة",
+  "memberQrToday": "اليوم",
+  "memberQrYesterday": "أمس",
+  "memberQrMinute": "{count} دقيقة",
+  "@memberQrMinute": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memberQrHour": "{count} ساعة",
+  "@memberQrHour": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "memberQrLoadError": "تعذر تحميل رمز الدخول",
+  "memberQrRetry": "إعادة المحاولة"
 
 }
 
