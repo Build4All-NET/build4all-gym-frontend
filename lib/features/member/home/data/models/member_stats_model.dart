@@ -1,5 +1,5 @@
 class MemberStatsModel {
-  // Number of booked sessions shown in the UI
+  // Number of booked services shown in the UI
   final int sessionsCount;
 
   // Number of kilograms lost

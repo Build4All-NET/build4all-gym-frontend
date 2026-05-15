@@ -4,11 +4,13 @@
 // CHANGES:
 //   1. SessionCardWidget now receives isAdmin param so it can show trainer badge.
 //   2. Retry event passes trainerNames for admin all-trainers mode.
-//   3. Admin: the session list already contains ALL trainers' sessions (the bloc
+//   3. Admin: the session list already contains ALL trainers' services (the bloc
 //      fetches per-trainer and merges). No separate fetching needed here.
 //   4. Fixed BookSessionSheet to use proper tenantId from token store.
 // =============================================================================
 
+import 'package:build4allgym/features/member/sessions/presentation/bloc/sessions_bloc.dart';
+import 'package:build4allgym/features/member/sessions/presentation/bloc/sessions_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -17,8 +19,8 @@ import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
-import '../bloc/trainer_pt_sessions_bloc.dart';
-import '../bloc/trainer_pt_sessions_event.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_event.dart';
 import '../widgets/session_card_widget.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
@@ -364,9 +366,9 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const messages = [
-      'No sessions scheduled for today.',
-      'No upcoming sessions.',
-      'No completed sessions yet.',
+      'No services scheduled for today.',
+      'No upcoming services.',
+      'No completed services yet.',
     ];
     return Center(
       child: Column(

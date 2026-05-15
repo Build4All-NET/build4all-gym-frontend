@@ -26,7 +26,6 @@ import 'package:build4allgym/features/member/home/domain/usecases/log_weight_use
 import 'package:build4allgym/features/member/home/presentation/bloc/member_home_bloc.dart';
 
 import 'package:build4allgym/features/member/plans/presentation/screens/member_plans_screen.dart';
-import 'package:build4allgym/features/member/sessions/presentation/screens/sessions_page.dart';
 
 import 'package:build4allgym/l10n/app_localizations.dart';
 
@@ -48,6 +47,7 @@ import '../../../member/sessions/domain/usecases/get_filter_options_usecase.dart
 import '../../../member/sessions/domain/usecases/get_sessions_usecase.dart';
 import '../../../member/sessions/data/services/sessions_service.dart';
 import '../../../member/sessions/domain/usecases/get_session_detail_use_case.dart';
+import '../../../member/sessions/presentation/screens/sessions_page.dart';
 
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;

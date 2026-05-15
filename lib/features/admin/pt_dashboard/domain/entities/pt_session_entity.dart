@@ -40,7 +40,7 @@ class PtSessionEntity {
   /// 1-based index within the package. Shows "Session 3 of 16".
   final int? sessionIndex;
 
-  /// Total sessions in the linked package (not returned by backend; fetched separately).
+  /// Total services in the linked package (not returned by backend; fetched separately).
   final int? totalPackageSessions;
 
   final DateTime startTime;

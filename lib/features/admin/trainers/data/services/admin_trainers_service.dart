@@ -37,7 +37,7 @@ class AdminTrainersService {
     throw ServerException(message: 'HTTP ${r.statusCode}: ${r.body}');
   }
 
-  // ── GET /api/admin/trainers ───────────────────────────────────────────────
+  // ── GET /api/admin/gym-trainers ───────────────────────────────────────────────
   Future<AdminTrainerListResponseModel> getTrainers({
     int?    branchId,
     String? search,
@@ -50,14 +50,18 @@ class AdminTrainersService {
     if (specialtyFilter != null && specialtyFilter.isNotEmpty)
       params['specialty'] = specialtyFilter;
 
-    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/trainers')
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/gym-trainers')
         .replace(queryParameters: params.isEmpty ? null : params);
 
     try {
       final r = await _client.get(uri, headers: headers);
+      print('🔍 getTrainers status: ${r.statusCode} body: ${r.body}'); // ← here
+
       _handleStatus(r);
       return AdminTrainerListResponseModel.fromJson(jsonDecode(r.body));
     } catch (e) {
+      print('❌ getTrainers exception: ${e.runtimeType} — $e'); // ← not e.statusCode
+
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
       throw NetworkException();
     }

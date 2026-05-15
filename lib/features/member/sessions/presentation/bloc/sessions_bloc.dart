@@ -193,7 +193,7 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
         ),
       );
     } catch (_) {
-      emit(const SessionsError('Failed to load sessions'));
+      emit(const SessionsError('Failed to load services'));
     }
   }
 }

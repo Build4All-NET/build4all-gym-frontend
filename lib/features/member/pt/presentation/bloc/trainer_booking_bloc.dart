@@ -88,7 +88,7 @@ class TrainerBookingBloc
     );
 
     // Call domain usecase.
-    // This eventually calls POST /api/pt-sessions.
+    // This eventually calls POST /api/pt-services.
     final result = await _createBookingUseCase(
       trainerId: current.trainerId,
       startTime: _normalizeSlotDateTime(selectedDate, selectedSlot.startTime),
