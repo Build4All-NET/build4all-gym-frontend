@@ -6,22 +6,21 @@ import 'package:build4allgym/core/network/apt_fetch.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
 import 'package:http/http.dart' as http;
 
-class AdminPaymentSettingsService {
-  final AptFetch _fetch;
-  final AuthTokenStore _tokenStore;
+import '../../../../../core/network/authed_http_client.dart';
+import '../../../../auth/data/services/admin_token_store.dart';
 
-  AdminPaymentSettingsService({
-    AptFetch? fetch,
-    required AuthTokenStore tokenStore,
-  })  : _fetch = fetch ?? AptFetch(),
-        _tokenStore = tokenStore;
+class AdminPaymentSettingsService {
+  final _client = AuthedHttpClient();
+  final AdminTokenStore _tokenStore;
+
+  AdminPaymentSettingsService({required AuthTokenStore tokenStore}) :_tokenStore = const AdminTokenStore();
 
   String get _base => Env.apiProjectBaseUrl;
 
   // GET /api/admin/payment-settings
   Future<List<Map<String, dynamic>>> getPaymentMethods() async {
     final token = await _tokenStore.getToken();
-    final response = await _fetch.get(
+    final response = await _client.get(
       Uri.parse('$_base/api/admin/payment-settings'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -36,7 +35,7 @@ class AdminPaymentSettingsService {
     required Map<String, dynamic> configValues,
   }) async {
     final token = await _tokenStore.getToken();
-    await _fetch.put(
+    await _client.put(
       Uri.parse('$_base/api/admin/payment-settings/$methodName'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -49,7 +48,7 @@ class AdminPaymentSettingsService {
   // POST /api/admin/payment-settings/{methodName}/test
   Future<Map<String, dynamic>> testConnection(String methodName) async {
     final token = await _tokenStore.getToken();
-    final response = await _fetch.post(
+    final response = await _client.post(
       Uri.parse('$_base/api/admin/payment-settings/$methodName/test'),
       headers: {'Authorization': 'Bearer $token'},
     );

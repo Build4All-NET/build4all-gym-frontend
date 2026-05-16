@@ -751,13 +751,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get memberSessionsLoading => 'Loading services...';
+  String get memberSessionsLoading => 'Loading sessions...';
 
   @override
-  String get memberSessionsEmpty => 'No services available';
+  String get memberSessionsEmpty => 'No sessions available';
 
   @override
-  String get memberSessionsError => 'Failed to load services';
+  String get memberSessionsError => 'Failed to load sessions';
 
   @override
   String get memberSessionsFilterTitle => 'Filter classes';
@@ -1117,7 +1117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptPackageNoPackages => 'No packages available right now';
 
   @override
-  String get ptPackageSessions => 'services';
+  String get ptPackageSessions => 'sessions';
 
   @override
   String get ptPackageDays => 'days';
@@ -1141,7 +1141,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptPackageSelectedTime => 'Selected time';
 
   @override
-  String get ptPackageMaxSessionsReached => 'You cannot select more days than the package services';
+  String get ptPackageMaxSessionsReached => 'You cannot select more days than the package sessions';
 
   @override
   String ptPackageDaysPerWeekRange(int min, int max) {

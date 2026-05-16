@@ -152,7 +152,7 @@ class _PaymentMethodTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: tokens.colors.card,
+        color: tokens.colors.primary,
         borderRadius: BorderRadius.circular(tokens.card.radius),
         boxShadow: [
           BoxShadow(

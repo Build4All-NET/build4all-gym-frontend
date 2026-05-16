@@ -40,7 +40,6 @@ import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 
 import '../../domain/entities/plan_detail_entity.dart';
-import '../../../plans/data/services/checkout_service.dart'; // existing service
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CHECKOUT SCREEN
@@ -632,11 +631,11 @@ class _CashPendingScreen extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: tokens.colors.warning.withOpacity(0.15),
+                  color: tokens.colors.error.withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.hourglass_top_rounded,
-                    color: tokens.colors.warning, size: 40),
+                    color: tokens.colors.error, size: 40),
               ),
               const SizedBox(height: 20),
               Text('Cash Request Submitted',
@@ -792,7 +791,7 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: tokens.colors.card,
+        color: tokens.colors.primary,
         borderRadius: BorderRadius.circular(tokens.card.radius),
         boxShadow: [
           BoxShadow(
