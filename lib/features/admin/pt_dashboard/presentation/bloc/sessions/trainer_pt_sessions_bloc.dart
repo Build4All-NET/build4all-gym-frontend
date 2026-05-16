@@ -12,13 +12,13 @@
 //   8. Fixed all-trainers mode to properly merge sessions and stats
 // =============================================================================
 
-import 'package:build4allgym/features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_event.dart';
+import 'package:build4allgym/features/admin/pt_dashboard/presentation/bloc/sessions/trainer_pt_sessions_event.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/entities/pt_session_entity.dart';
-import '../../domain/entities/pt_session_stats_entity.dart';
-import '../../domain/usecases/trainer_pt_sessions_usecases.dart';
+import '../../../domain/entities/pt_session_entity.dart';
+import '../../../domain/entities/pt_session_stats_entity.dart';
+import '../../../domain/usecases/trainer_pt_sessions_usecases.dart';
 
 part 'trainer_pt_sessions_state.dart';
 

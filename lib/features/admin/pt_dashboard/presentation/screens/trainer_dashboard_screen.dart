@@ -5,7 +5,7 @@
 //   1. Fixed loading forever - BlocBuilder now handles ALL states properly
 //   2. Quick Actions pass correct params to BookSessionSheet
 //   3. Uses effective branchId from profile instead of hardcoded 1
-//   4. Trainer badge shown on sessions for admin view
+//   4. Trainer badge shown on services for admin view
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -22,9 +22,10 @@ import '../../../../admin/navigation/presentation/widgets/admin_navigation_drawe
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../domain/entities/pt_session_entity.dart';
 import '../../domain/entities/pt_session_stats_entity.dart';
-import '../bloc/trainer_pt_sessions_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_event.dart';
 import '../widgets/book_session_sheet_widget.dart';
-import '../bloc/trainer_pt_sessions_event.dart';
+
 class TrainerDashboardScreen extends StatelessWidget {
   final ValueChanged<int>  onTabSwitch;
   final ValueChanged<int?> onBranchChanged;
@@ -333,7 +334,7 @@ class _TodayScheduleSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Center(
-              child: Text('No sessions scheduled for today.',
+              child: Text('No services scheduled for today.',
                   style: TextStyle(color: c.muted, fontSize: 14)),
             ),
           )

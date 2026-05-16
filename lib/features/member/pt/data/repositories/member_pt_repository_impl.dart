@@ -274,6 +274,7 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   // POST /api/pt-sessions
   //
   // This creates a confirmed booking when the slot is available.
+  // POST /api/pt-services
   // ─────────────────────────────────────────────────────────────
 
   @override

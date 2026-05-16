@@ -1538,19 +1538,19 @@ abstract class AppLocalizations {
   /// No description provided for @memberSessionsLoading.
   ///
   /// In en, this message translates to:
-  /// **'Loading sessions...'**
+  /// **'Loading services...'**
   String get memberSessionsLoading;
 
   /// No description provided for @memberSessionsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No sessions available'**
+  /// **'No services available'**
   String get memberSessionsEmpty;
 
   /// No description provided for @memberSessionsError.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load sessions'**
+  /// **'Failed to load services'**
   String get memberSessionsError;
 
   /// No description provided for @memberSessionsFilterTitle.
@@ -2246,7 +2246,7 @@ abstract class AppLocalizations {
   /// No description provided for @ptPackageSessions.
   ///
   /// In en, this message translates to:
-  /// **'sessions'**
+  /// **'services'**
   String get ptPackageSessions;
 
   /// No description provided for @ptPackageDays.
@@ -2294,7 +2294,7 @@ abstract class AppLocalizations {
   /// No description provided for @ptPackageMaxSessionsReached.
   ///
   /// In en, this message translates to:
-  /// **'You cannot select more days than the package sessions'**
+  /// **'You cannot select more days than the package services'**
   String get ptPackageMaxSessionsReached;
 
   /// No description provided for @ptPackageDaysPerWeekRange.

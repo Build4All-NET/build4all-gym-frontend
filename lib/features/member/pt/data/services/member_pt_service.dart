@@ -450,7 +450,7 @@ class MemberPtService {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // POST /api/pt-sessions
+  // POST /api/pt-services
   //
   // Old single-session booking flow.
   // Keep it for now because MemberPtRepositoryImpl still uses it.
@@ -462,7 +462,7 @@ class MemberPtService {
       ) async {
     final headers = await _authHeaders();
 
-    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-sessions');
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-services');
 
     try {
       final response = await _client.post(

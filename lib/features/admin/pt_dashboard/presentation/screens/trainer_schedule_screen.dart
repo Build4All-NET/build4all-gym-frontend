@@ -1,35 +1,32 @@
 // =============================================================================
 // FILE: lib/features/admin/pt_dashboard/presentation/screens/trainer_schedule_screen.dart
 //
-// FIX SUMMARY:
-//   1. Screen receives isAdmin + trainers list.
-//   2. ADMIN: loads availability for ALL trainers combined; shows trainer badge
-//      on each slot. "Add Slot" dialog lets admin choose which trainer.
-//   3. TRAINER: loads only own slots; no trainer picker shown.
-//   4. Fixed loading states and error handling.
+// CHANGES vs previous version:
+//   - _AddSlotDialog now shows a Date picker when `recurring = false`.
+//     That date is passed as `specificDate` in AvailabilitySlotCreateRequested
+//     so it reaches the backend and is stored in
+//     trainer_availability.specific_date (nullable date column in DB).
+//   - _showAddDialog passes the picked specificDate to the BLoC event.
+//   - onSubmit callback signature extended with `specificDate` param.
 // =============================================================================
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
-import '../../data/models/availability_model.dart';
-import '../../data/services/availability_service.dart';
-import '../bloc/availability_bloc.dart';
+import '../../domain/entities/availability_entity.dart';
+import '../bloc/availability/availability_bloc.dart';
 
-// ── Internal model: slot + trainer name ────────────────────────────────────
-
-class _SlotWithTrainer {
-  final AvailabilityModel      slot;
-  final AdminTrainerCardModel  trainer;
-  _SlotWithTrainer({required this.slot, required this.trainer});
-}
-
-// =============================================================================
+const _weekdays = [
+  'Monday', 'Tuesday', 'Wednesday',
+  'Thursday', 'Friday', 'Saturday', 'Sunday',
+];
 
 class TrainerScheduleScreen extends StatefulWidget {
   final int  branchId;
+  /// 0 = admin/owner (all-trainers mode)
   final int  trainerId;
   final bool isAdmin;
   final List<AdminTrainerCardModel> trainers;
@@ -43,654 +40,324 @@ class TrainerScheduleScreen extends StatefulWidget {
   });
 
   @override
-  State<TrainerScheduleScreen> createState() => _TrainerScheduleScreenState();
+  State<TrainerScheduleScreen> createState() =>
+      _TrainerScheduleScreenState();
 }
 
 class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
-  final _svc = AvailabilityHttpService();
-
-  // Trainer-mode: single bloc
-  AvailabilityBloc? _bloc;
-
-  // Admin-mode: merged list
-  List<_SlotWithTrainer> _allSlots = [];
-  bool    _adminLoading = false;
-  String? _adminError;
+  late final AvailabilityBloc _bloc;
 
   @override
   void initState() {
     super.initState();
-    if (widget.isAdmin) {
-      _loadAllSlots();
-    } else {
-      _bloc = AvailabilityBloc(_svc)
-        ..add(LoadAvailability(
-          trainerId: widget.trainerId,
-          branchId:  widget.branchId,
-        ));
-    }
+    _bloc = context.read<AvailabilityBloc>();
+    _load();
   }
 
-  @override
-  void didUpdateWidget(covariant TrainerScheduleScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.branchId != widget.branchId) {
-      if (widget.isAdmin) {
-        _loadAllSlots();
-      } else {
-        _bloc?.add(LoadAvailability(
-          trainerId: widget.trainerId,
-          branchId:  widget.branchId,
-        ));
-      }
-    }
+  void _load() {
+    _bloc.add(AvailabilitySlotsLoadRequested(
+      trainerId: widget.isAdmin ? null : widget.trainerId,
+      branchId:  widget.branchId,
+    ));
   }
 
-  @override
-  void dispose() {
-    _bloc?.close();
-    super.dispose();
-  }
-
-  // ── Admin: fetch slots for every trainer ────────────────────────────────
-
-  Future<void> _loadAllSlots() async {
-    if (!mounted) return;
-    setState(() { _adminLoading = true; _adminError = null; });
+  String _trainerName(int trainerId) {
     try {
-      final List<_SlotWithTrainer> merged = [];
-      for (final trainer in widget.trainers) {
-        final slots = await _svc.getSlots(
-          trainerId: trainer.trainerId,
-          branchId:  widget.branchId,
-        );
-        for (final s in slots) {
-          merged.add(_SlotWithTrainer(slot: s, trainer: trainer));
-        }
-      }
-      if (!mounted) return;
-      setState(() { _allSlots = merged; _adminLoading = false; });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() { _adminLoading = false; _adminError = e.toString(); });
-    }
-  }
-
-  Future<void> _deleteSlot(int id) async {
-    try {
-      await _svc.deleteSlot(id);
-      if (widget.isAdmin) {
-        _loadAllSlots();
-      } else {
-        _bloc!.add(DeleteSlot(id));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
+      return widget.trainers
+          .firstWhere((t) => t.trainerId == trainerId)
+          .fullName;
+    } catch (_) {
+      return 'Trainer #$trainerId';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
-    final cs     = tokens.colors;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: Text(
-          widget.isAdmin ? 'All Availability' : 'Availability',
-          style: const TextStyle(
-            color: Color(0xFF1A1A2E),
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: ElevatedButton.icon(
-              onPressed: () => _AddAvailabilityDialog.show(
-                context,
-                svc:             _svc,
-                bloc:            _bloc,
-                isAdmin:         widget.isAdmin,
-                trainers:        widget.trainers,
-                defaultTrainerId: widget.trainerId,
-                branchId:        widget.branchId,
-                onAdded:         () {
-                  if (widget.isAdmin) {
-                    _loadAllSlots();
-                  } else {
-                    _bloc!.add(LoadAvailability(
-                      trainerId: widget.trainerId,
-                      branchId:  widget.branchId,
-                    ));
-                  }
-                },
-              ),
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Slot', style: TextStyle(fontSize: 13)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 8),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
+    return BlocConsumer<AvailabilityBloc, AvailabilityState>(
+      listener: (ctx, state) {
+        if (state is AvailabilityMutationSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+        if (state is AvailabilityError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: tokens.colors.error,
             ),
+          );
+        }
+      },
+      builder: (ctx, state) {
+        return Scaffold(
+          backgroundColor: tokens.colors.background,
+          appBar: AppBar(
+            title: Text(
+              widget.isAdmin ? 'All Schedules' : 'My Availability',
+              style: TextStyle(color: tokens.colors.label),
+            ),
+            backgroundColor: tokens.colors.surface,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.add, color: tokens.colors.primary),
+                onPressed: () => _showAddDialog(context, tokens),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: widget.isAdmin
-          ? _buildAdminBody()
-          : _buildTrainerBody(cs),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _AddAvailabilityDialog.show(
-          context,
-          svc:             _svc,
-          bloc:            _bloc,
-          isAdmin:         widget.isAdmin,
-          trainers:        widget.trainers,
-          defaultTrainerId: widget.trainerId,
-          branchId:        widget.branchId,
-          onAdded:         () {
-            if (widget.isAdmin) {
-              _loadAllSlots();
-            } else {
-              _bloc!.add(LoadAvailability(
-                trainerId: widget.trainerId,
-                branchId:  widget.branchId,
-              ));
-            }
-          },
-        ),
-        backgroundColor: cs.primary,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        child: const Icon(Icons.add),
-      ),
+          body: _buildBody(state, tokens),
+        );
+      },
     );
   }
 
-  // ── Admin body ────────────────────────────────────────────────────────────
-
-  Widget _buildAdminBody() {
-    if (_adminLoading && _allSlots.isEmpty) {
+  Widget _buildBody(AvailabilityState state, dynamic tokens) {
+    if (state is AvailabilityLoading || state is AvailabilityMutating) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (_adminError != null && _allSlots.isEmpty) {
+
+    if (state is AvailabilityError) {
       return Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline,
-                color: Color(0xFFEF4444), size: 48),
+            Text(state.message),
             const SizedBox(height: 12),
-            Text(_adminError!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Color(0xFF6B7280))),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadAllSlots,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: _load, child: const Text('Retry')),
           ],
         ),
       );
     }
-    if (_allSlots.isEmpty) {
-      return const Center(
-        child: Text('No availability set yet.',
-            style: TextStyle(color: Color(0xFF6B7280))),
-      );
+
+    final slots = state is AvailabilityLoaded
+        ? state.slots
+        : <AvailabilityEntity>[];
+
+    if (slots.isEmpty) {
+      return const Center(child: Text('No availability slots found.'));
     }
 
-    // Group by day name
-    const dayOrder = [
-      'Monday', 'Tuesday', 'Wednesday',
-      'Thursday', 'Friday', 'Saturday', 'Sunday',
-    ];
-    final grouped = <String, List<_SlotWithTrainer>>{};
-    for (final item in _allSlots) {
-      grouped.putIfAbsent(item.slot.dayName, () => []).add(item);
+    // Group slots by weekday
+    final Map<int, List<AvailabilityEntity>> grouped = {};
+    for (final slot in slots) {
+      grouped.putIfAbsent(slot.weekday, () => []).add(slot);
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: dayOrder
-          .where((d) => grouped.containsKey(d))
-          .map((day) => _AdminDaySection(
-        day:      day,
-        items:    grouped[day]!,
-        onDelete: (id) => _deleteSlot(id),
-      ))
-          .toList(),
-    );
-  }
+    final sortedWeekdays = grouped.keys.toList()..sort();
 
-  // ── Trainer body (bloc-based) ─────────────────────────────────────────────
+    return RefreshIndicator(
+      onRefresh: () async => _load(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: sortedWeekdays.length,
+        itemBuilder: (_, i) {
+          final day      = sortedWeekdays[i];
+          final daySlots = grouped[day]!;
+          final dayName  = day >= 1 && day <= 7
+              ? _weekdays[day - 1]
+              : 'Day $day';
 
-  Widget _buildTrainerBody(dynamic cs) {
-    return BlocConsumer<AvailabilityBloc, AvailabilityState>(
-      bloc: _bloc,
-      listener: (ctx, state) {
-        if (state is AvailabilityMutated) {
-          _bloc!.add(LoadAvailability(
-            trainerId: widget.trainerId,
-            branchId:  widget.branchId,
-          ));
-        }
-        if (state is AvailabilityError) {
-          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-              content: Text('Error: ${state.message}'),
-              backgroundColor: Colors.red));
-        }
-      },
-      builder: (ctx, state) {
-        if (state is AvailabilityLoading || state is AvailabilityInitial) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state is AvailabilityError) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline,
-                    color: Color(0xFFEF4444), size: 48),
-                const SizedBox(height: 12),
-                Text(state.message,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Color(0xFF6B7280))),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _bloc!.add(LoadAvailability(
-                    trainerId: widget.trainerId,
-                    branchId:  widget.branchId,
-                  )),
-                  child: const Text('Retry'),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8, top: 4),
+                child: Text(
+                  dayName,
+                  style: TextStyle(
+                    color: tokens.colors.label,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
                 ),
-              ],
-            ),
+              ),
+              ...daySlots.map((slot) => _SlotCard(
+                slot:        slot,
+                trainerName: _trainerName(slot.trainerId),
+                showBadge:   widget.isAdmin,
+                onDelete:    () {
+                  _bloc.add(AvailabilitySlotDeleteRequested(
+                      slot.availabilityId));
+                },
+              )),
+              const SizedBox(height: 8),
+            ],
           );
-        }
-        if (state is AvailabilityLoaded) {
-          final slots = state.slots;
-          if (slots.isEmpty) {
-            return const Center(
-              child: Text('No availability set yet.',
-                  style: TextStyle(color: Color(0xFF6B7280))),
-            );
-          }
-          const dayOrder = [
-            'Monday', 'Tuesday', 'Wednesday',
-            'Thursday', 'Friday', 'Saturday', 'Sunday',
-          ];
-          final grouped = <String, List<AvailabilityModel>>{};
-          for (final s in slots) {
-            grouped.putIfAbsent(s.dayName, () => []).add(s);
-          }
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: dayOrder
-                .where((d) => grouped.containsKey(d))
-                .map((day) => _TrainerDaySection(
-              day:      day,
-              slots:    grouped[day]!,
-              onDelete: (id) => _bloc!.add(DeleteSlot(id)),
-            ))
-                .toList(),
-          );
-        }
-        return const SizedBox.shrink();
-      },
+        },
+      ),
+    );
+  }
+
+  // ── Add-slot dialog ───────────────────────────────────────────────────────
+
+  void _showAddDialog(BuildContext context, dynamic tokens) {
+    showDialog(
+      context: context,
+      builder: (_) => _AddSlotDialog(
+        isAdmin:          widget.isAdmin,
+        trainers:         widget.trainers,
+        defaultTrainerId: widget.trainerId,
+        onSubmit: ({
+          required int      trainerId,
+          required int      weekday,
+          required String   startTime,
+          required String   endTime,
+          required bool     recurring,
+          DateTime?         specificDate,   // ← NEW
+        }) {
+          _bloc.add(AvailabilitySlotCreateRequested(
+            trainerId:    trainerId,
+            branchId:     widget.branchId,
+            weekday:      weekday,
+            startTime:    startTime,
+            endTime:      endTime,
+            recurring:    recurring,
+            specificDate: specificDate,     // ← forwarded to BLoC
+          ));
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
 
-// ── Admin day section (shows trainer badge) ───────────────────────────────────
+// ── Slot card ─────────────────────────────────────────────────────────────────
 
-class _AdminDaySection extends StatelessWidget {
-  final String                  day;
-  final List<_SlotWithTrainer>  items;
-  final ValueChanged<int>       onDelete;
+class _SlotCard extends StatelessWidget {
+  final AvailabilityEntity slot;
+  final String trainerName;
+  final bool showBadge;
+  final VoidCallback onDelete;
 
-  const _AdminDaySection({
-    required this.day,
-    required this.items,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8, top: 4),
-          child: Text(
-            day,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A2E),
-            ),
-          ),
-        ),
-        ...items.map((item) => _SlotRow(
-          slot:        item.slot,
-          trainerName: item.trainer.fullName,
-          onDelete:    () => onDelete(item.slot.availabilityId),
-        )),
-        const SizedBox(height: 12),
-      ],
-    );
-  }
-}
-
-// ── Trainer day section (no badge) ────────────────────────────────────────────
-
-class _TrainerDaySection extends StatelessWidget {
-  final String                  day;
-  final List<AvailabilityModel> slots;
-  final ValueChanged<int>       onDelete;
-
-  const _TrainerDaySection({
-    required this.day,
-    required this.slots,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8, top: 4),
-          child: Text(
-            day,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1A2E),
-            ),
-          ),
-        ),
-        ...slots.map((s) => _SlotRow(
-          slot:        s,
-          trainerName: null,
-          onDelete:    () => onDelete(s.availabilityId),
-        )),
-        const SizedBox(height: 12),
-      ],
-    );
-  }
-}
-
-// ── Slot row ──────────────────────────────────────────────────────────────────
-
-class _SlotRow extends StatelessWidget {
-  final AvailabilityModel slot;
-  final String?           trainerName; // null = trainer view, no badge
-  final VoidCallback      onDelete;
-
-  const _SlotRow({
-    super.key,
+  const _SlotCard({
     required this.slot,
     required this.trainerName,
+    required this.showBadge,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final tokens = context.read<ThemeCubit>().state.tokens;
+
+    String subtitle;
+    if (showBadge) {
+      subtitle = 'By $trainerName';
+    } else if (slot.isRecurring) {
+      subtitle = 'Recurring weekly';
+    } else if (slot.specificDate != null) {
+      subtitle = 'One-time: ${DateFormat('EEE, MMM d, yyyy').format(slot.specificDate!)}';
+    } else {
+      subtitle = 'One-time';
+    }
+
+    return Card(
+      color: tokens.colors.surface,
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(tokens.card.radius),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: const Color(0xFF4F46E5).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.access_time_rounded,
-                size: 18, color: Color(0xFF4F46E5)),
+      child: ListTile(
+        leading: Icon(Icons.schedule, color: tokens.colors.primary),
+        title: Text(
+          '${slot.startTime} – ${slot.endTime}',
+          style: TextStyle(color: tokens.colors.label, fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            color: showBadge ? tokens.colors.primary : tokens.colors.muted,
+            fontSize: 12,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${slot.startDisplay} – ${slot.endDisplay}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                    color: Color(0xFF1A1A2E),
-                  ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete_outline, color: tokens.colors.danger),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('Delete Slot'),
+              content: Text('Remove ${slot.startTime}–${slot.endTime} slot?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
                 ),
-                if (slot.recurring)
-                  Text(
-                    'Recurring weekly',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                  ),
-                // Trainer badge for admin view
-                if (trainerName != null) ...[
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F46E5).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.person_outline,
-                            size: 12, color: Color(0xFF4F46E5)),
-                        const SizedBox(width: 4),
-                        Text(
-                          trainerName!,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF4F46E5),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                TextButton(
+                  onPressed: () {
+                    onDelete();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Delete',
+                      style: TextStyle(color: Colors.red)),
+                ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: onDelete,
-            icon: const Icon(Icons.delete_outline,
-                size: 20, color: Color(0xFFEF4444)),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-// ── Add Availability Dialog ───────────────────────────────────────────────────
-class _AddAvailabilityDialog extends StatefulWidget {
-  final AvailabilityHttpService svc;
-  final AvailabilityBloc? bloc;
+// ── Add slot dialog ───────────────────────────────────────────────────────────
+
+class _AddSlotDialog extends StatefulWidget {
   final bool isAdmin;
   final List<AdminTrainerCardModel> trainers;
   final int defaultTrainerId;
-  final int branchId;
-  final VoidCallback onAdded;
 
-  const _AddAvailabilityDialog({
-    required this.svc,
-    required this.bloc,
+  /// Callback extended with `specificDate` (nullable).
+  /// Required when `recurring = false` — maps to
+  /// trainer_availability.specific_date in the DB.
+  final void Function({
+  required int    trainerId,
+  required int    weekday,
+  required String startTime,
+  required String endTime,
+  required bool   recurring,
+  DateTime?       specificDate,
+  }) onSubmit;
+
+  const _AddSlotDialog({
     required this.isAdmin,
     required this.trainers,
     required this.defaultTrainerId,
-    required this.branchId,
-    required this.onAdded,
+    required this.onSubmit,
   });
 
-  static Future<void> show(
-      BuildContext context, {
-        required AvailabilityHttpService svc,
-        required AvailabilityBloc? bloc,
-        required bool isAdmin,
-        required List<AdminTrainerCardModel> trainers,
-        required int defaultTrainerId,
-        required int branchId,
-        required VoidCallback onAdded,
-      }) {
-    return showDialog(
-      context: context,
-      builder: (_) => _AddAvailabilityDialog(
-        svc: svc,
-        bloc: bloc,
-        isAdmin: isAdmin,
-        trainers: trainers,
-        defaultTrainerId: defaultTrainerId,
-        branchId: branchId,
-        onAdded: onAdded,
-      ),
-    );
-  }
-
   @override
-  State<_AddAvailabilityDialog> createState() =>
-      _AddAvailabilityDialogState();
+  State<_AddSlotDialog> createState() => _AddSlotDialogState();
 }
 
-class _AddAvailabilityDialogState extends State<_AddAvailabilityDialog> {
-  static const _days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
-
-  String? _selectedDay;
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
-
-  bool _recurring = true;
-  bool _saving = false;
-
-  int? _selectedTrainerId;
+class _AddSlotDialogState extends State<_AddSlotDialog> {
+  int?      _selectedTrainerId;
+  int       _selectedWeekday = 1;
+  String    _startTime = '09:00';
+  String    _endTime   = '10:00';
+  bool      _recurring = true;
+  DateTime? _specificDate;           // ← NEW: only used when !_recurring
 
   @override
   void initState() {
     super.initState();
+    _selectedTrainerId =
+    widget.defaultTrainerId != 0 ? widget.defaultTrainerId : null;
+  }
 
-    /// FIXED HERE
-    /// Only assign if trainer exists in dropdown items
-    final trainerExists = widget.trainers.any(
-          (t) => t.trainerId == widget.defaultTrainerId,
+  // ── Date picker for one-time slots ─────────────────────────────────────────
+
+  Future<void> _pickSpecificDate() async {
+    final now    = DateTime.now();
+    final picked = await showDatePicker(
+      context:     context,
+      initialDate: _specificDate ?? now,
+      firstDate:   now,
+      lastDate:    now.add(const Duration(days: 365)),
     );
-
-    if (trainerExists) {
-      _selectedTrainerId = widget.defaultTrainerId;
-    } else if (widget.trainers.isNotEmpty) {
-      _selectedTrainerId = widget.trainers.first.trainerId;
-    } else {
-      _selectedTrainerId = null;
-    }
-  }
-
-  Future<void> _pickTime(bool isStart) async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: isStart
-          ? const TimeOfDay(hour: 9, minute: 0)
-          : const TimeOfDay(hour: 17, minute: 0),
-    );
-
-    if (picked == null) return;
-
-    setState(() {
-      if (isStart) {
-        _startTime = picked;
-      } else {
-        _endTime = picked;
-      }
-    });
-  }
-
-  String _fmt(TimeOfDay t) {
-    return '${t.hour.toString().padLeft(2, '0')}:'
-        '${t.minute.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> _save() async {
-    if (_selectedDay == null ||
-        _startTime == null ||
-        _endTime == null ||
-        _selectedTrainerId == null) {
-      return;
-    }
-
-    setState(() => _saving = true);
-
-    try {
-      final weekday = _days.indexOf(_selectedDay!) + 1;
-
-      await widget.svc.createSlot(
-        trainerId: _selectedTrainerId!,
-        branchId: widget.branchId,
-        weekday: weekday,
-        startTime: _fmt(_startTime!),
-        endTime: _fmt(_endTime!),
-        recurring: _recurring,
-      );
-
-      if (mounted) {
-        Navigator.of(context).pop();
-        widget.onAdded();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _saving = false);
-      }
-    }
+    if (picked != null) setState(() => _specificDate = picked);
   }
 
   @override
@@ -701,98 +368,90 @@ class _AddAvailabilityDialogState extends State<_AddAvailabilityDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
+            // ── Trainer picker (admin only) ─────────────────────────────────
+            if (widget.isAdmin && widget.trainers.isNotEmpty)
               DropdownButtonFormField<int>(
                 value: _selectedTrainerId,
-                decoration: const InputDecoration(
-                  labelText: 'Assign to Trainer',
-                ),
-
-                /// FIXED HERE
-                /// Prevent duplicate trainer IDs
-                items: widget.trainers
-                    .map(
-                      (t) => DropdownMenuItem<int>(
+                hint: const Text('Assign to Trainer'),
+                items: widget.trainers.map((t) {
+                  return DropdownMenuItem(
                     value: t.trainerId,
                     child: Text(t.fullName),
-                  ),
-                )
-                    .toList(),
-
-                onChanged: (v) {
-                  setState(() {
-                    _selectedTrainerId = v;
-                  });
-                },
+                  );
+                }).toList(),
+                onChanged: (v) =>
+                    setState(() => _selectedTrainerId = v),
               ),
-
-              const SizedBox(height: 12),
-            ],
-
-            DropdownButtonFormField<String>(
-              value: _selectedDay,
-              decoration: const InputDecoration(
-                labelText: 'Day of Week',
-              ),
-              items: _days
-                  .map(
-                    (d) => DropdownMenuItem<String>(
-                  value: d,
-                  child: Text(d),
-                ),
-              )
-                  .toList(),
-              onChanged: (v) {
-                setState(() {
-                  _selectedDay = v;
-                });
-              },
-            ),
-
             const SizedBox(height: 12),
 
-            Row(
-              children: [
-                Expanded(
-                  child: ListTile(
-                    title: const Text(
-                      'Start',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    subtitle: Text(
-                      _startTime == null
-                          ? 'Tap to pick'
-                          : _startTime!.format(context),
-                    ),
-                    onTap: () => _pickTime(true),
-                  ),
-                ),
-                Expanded(
-                  child: ListTile(
-                    title: const Text(
-                      'End',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    subtitle: Text(
-                      _endTime == null
-                          ? 'Tap to pick'
-                          : _endTime!.format(context),
-                    ),
-                    onTap: () => _pickTime(false),
-                  ),
-                ),
-              ],
+            // ── Weekday ─────────────────────────────────────────────────────
+            DropdownButtonFormField<int>(
+              value: _selectedWeekday,
+              decoration: const InputDecoration(labelText: 'Day of Week'),
+              items: List.generate(7, (i) {
+                return DropdownMenuItem(
+                  value: i + 1,
+                  child: Text(_weekdays[i]),
+                );
+              }),
+              onChanged: (v) =>
+                  setState(() => _selectedWeekday = v ?? 1),
+            ),
+            const SizedBox(height: 12),
+
+            // ── Start / End time ────────────────────────────────────────────
+            _TimePicker(
+              label:   'Start Time',
+              initial: _startTime,
+              onChange: (v) => setState(() => _startTime = v),
+            ),
+            const SizedBox(height: 8),
+            _TimePicker(
+              label:   'End Time',
+              initial: _endTime,
+              onChange: (v) => setState(() => _endTime = v),
+            ),
+            const SizedBox(height: 8),
+
+            // ── Recurring toggle ────────────────────────────────────────────
+            SwitchListTile(
+              title: const Text('Recurring (weekly)'),
+              value: _recurring,
+              onChanged: (v) => setState(() {
+                _recurring = v;
+                if (v) _specificDate = null; // clear when toggling back
+              }),
             ),
 
-            SwitchListTile(
-              title: const Text('Recurring weekly'),
-              value: _recurring,
-              onChanged: (v) {
-                setState(() {
-                  _recurring = v;
-                });
-              },
-            ),
+            // ── Specific date picker (one-time only) ────────────────────────
+            // Shown when recurring = false.
+            // Maps to trainer_availability.specific_date in the DB.
+            if (!_recurring) ...[
+              const SizedBox(height: 4),
+              InkWell(
+                onTap: _pickSpecificDate,
+                borderRadius: BorderRadius.circular(8),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Specific Date *',
+                    suffixIcon: const Icon(Icons.calendar_today, size: 18),
+                    errorText: _specificDate == null
+                        ? 'Required for one-time slots'
+                        : null,
+                  ),
+                  child: Text(
+                    _specificDate == null
+                        ? 'Pick a date'
+                        : DateFormat('EEE, MMM d, yyyy').format(_specificDate!),
+                    style: TextStyle(
+                      color: _specificDate == null
+                          ? Colors.grey[500]
+                          : Colors.black87,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -802,31 +461,79 @@ class _AddAvailabilityDialogState extends State<_AddAvailabilityDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: (_selectedDay == null ||
-              _startTime == null ||
-              _endTime == null ||
-              _selectedTrainerId == null ||
-              _saving)
-              ? null
-              : _save,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF4F46E5),
-          ),
-          child: _saving
-              ? const SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.white,
-            ),
-          )
-              : const Text(
-            'Add',
-            style: TextStyle(color: Colors.white),
-          ),
+          onPressed: () {
+            final trainerId =
+                _selectedTrainerId ?? widget.defaultTrainerId;
+            if (trainerId == 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please select a trainer.')),
+              );
+              return;
+            }
+            // Validate: specificDate required for one-time slots
+            if (!_recurring && _specificDate == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text(
+                        'Please pick a specific date for one-time slots.')),
+              );
+              return;
+            }
+            widget.onSubmit(
+              trainerId:    trainerId,
+              weekday:      _selectedWeekday,
+              startTime:    _startTime,
+              endTime:      _endTime,
+              recurring:    _recurring,
+              specificDate: _recurring ? null : _specificDate,
+            );
+          },
+          child: const Text('Add'),
         ),
       ],
+    );
+  }
+}
+
+// ── Time picker helper widget ─────────────────────────────────────────────────
+
+class _TimePicker extends StatelessWidget {
+  final String label;
+  final String initial;
+  final void Function(String) onChange;
+
+  const _TimePicker({
+    required this.label,
+    required this.initial,
+    required this.onChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final parts  = initial.split(':');
+        final picked = await showTimePicker(
+          context:     context,
+          initialTime: TimeOfDay(
+            hour:   int.tryParse(parts[0]) ?? 9,
+            minute: int.tryParse(parts[1]) ?? 0,
+          ),
+        );
+        if (picked != null) {
+          onChange(
+            '${picked.hour.toString().padLeft(2, '0')}:'
+                '${picked.minute.toString().padLeft(2, '0')}',
+          );
+        }
+      },
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          suffixIcon: const Icon(Icons.access_time),
+        ),
+        child: Text(initial),
+      ),
     );
   }
 }

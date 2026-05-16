@@ -39,7 +39,7 @@ class PtSessionStatsModel {
 // =============================================================================
 // FILE: create_session_request_model.dart
 //
-// Request body for POST /api/trainer/pt-sessions.
+// Request body for POST /api/trainer/pt-services.
 // Maps to CreateTrainerPtSessionRequest (backend).
 //
 // Example JSON:
@@ -89,7 +89,7 @@ class CreateSessionRequestModel {
 // =============================================================================
 // FILE: update_session_status_request_model.dart
 //
-// Request body for PATCH /api/trainer/pt-sessions/{id}/status.
+// Request body for PATCH /api/trainer/pt-services/{id}/status.
 // Maps to UpdateTrainerPtSessionStatusRequest (backend).
 //
 // Example JSON: { "status": "COMPLETED" }

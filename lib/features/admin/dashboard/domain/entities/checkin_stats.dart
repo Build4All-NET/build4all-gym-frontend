@@ -34,7 +34,7 @@ class CheckinStats {
   // Shown as "+12%" badge on the Attendance card.
   final double attendanceGrowth;
 
-  // ── PT sessions scheduled in the FUTURE with status=SCHEDULED ────
+  // ── PT services scheduled in the FUTURE with status=SCHEDULED ────
   // Shown in "Upcoming PT" large card. Example: 15
   // Gives the owner a heads-up on upcoming trainer load.
   final int upcomingPTSessions;

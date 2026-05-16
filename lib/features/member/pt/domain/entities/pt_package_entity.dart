@@ -20,8 +20,8 @@ class PtPackageEntity {
   /// Do not use this for booking logic.
   final String packageType;
 
-  /// Total number of sessions in this package.
-  /// Example: 16 sessions.
+  /// Total number of services in this package.
+  /// Example: 16 services.
   final int numberOfSessions;
 
   /// Package validity duration in days.

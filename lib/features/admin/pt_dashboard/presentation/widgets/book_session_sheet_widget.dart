@@ -1,12 +1,13 @@
 // =============================================================================
 // FILE: lib/features/admin/pt_dashboard/presentation/widgets/book_session_sheet_widget.dart
 //
-// FIX SUMMARY:
-//   1. Sheet now accepts trainerId, isAdmin, trainers params.
-//   2. Admin sees a "Assign to Trainer" dropdown at the top.
-//   3. Trainer role: trainerId is fixed to their own ID (no picker shown).
-//   4. Correct trainerId is sent in PtSessionCreateRequested.
-//   5. Uses proper tenantId from AdminTokenStore.
+// CHANGES vs previous version:
+//   - Added optional `memberPtPackageId` int input field.
+//     DB column: pt_sessions.member_pt_package_id (bigint, nullable,
+//     FK → member_pt_packages.member_pt_package_id).
+//     When provided, the backend links this session to the member's PT package,
+//     decrementing their remaining_sessions counter and setting session_index.
+//   - PtSessionCreateRequested now includes memberPtPackageId from the field.
 // =============================================================================
 
 import 'package:flutter/material.dart';
@@ -17,8 +18,8 @@ import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../data/models/pt_service_model.dart';
 import '../../data/services/pt_service_service.dart';
-import '../bloc/trainer_pt_sessions_bloc.dart';
-import '../bloc/trainer_pt_sessions_event.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_event.dart';
 
 class BookSessionSheet extends StatefulWidget {
   final int    branchId;
@@ -70,9 +71,10 @@ class BookSessionSheet extends StatefulWidget {
 }
 
 class _BookSessionSheetState extends State<BookSessionSheet> {
-  final _formKey       = GlobalKey<FormState>();
-  final _memberIdCtrl  = TextEditingController();
-  final _notesCtrl     = TextEditingController();
+  final _formKey              = GlobalKey<FormState>();
+  final _memberIdCtrl         = TextEditingController();
+  final _memberPackageIdCtrl  = TextEditingController(); // ← NEW
+  final _notesCtrl            = TextEditingController();
 
   late DateTime _selectedDate;
   TimeOfDay? _startTime;
@@ -82,20 +84,20 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
   bool                 _servicesLoading = false;
   PtServiceModel?      _selectedService;
 
-  // For admin: which trainer is this session assigned to
   late int _assignedTrainerId;
 
   @override
   void initState() {
     super.initState();
     _selectedDate      = widget.selectedDate;
-    _assignedTrainerId = widget.trainerId; // default to currently viewed trainer
+    _assignedTrainerId = widget.trainerId;
     _loadServices();
   }
 
   @override
   void dispose() {
     _memberIdCtrl.dispose();
+    _memberPackageIdCtrl.dispose();
     _notesCtrl.dispose();
     super.dispose();
   }
@@ -103,7 +105,8 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
   Future<void> _loadServices() async {
     setState(() => _servicesLoading = true);
     try {
-      final list = await PtServiceService().getServices(widget.tenantId);
+      final list = await PtServiceService()
+          .getServices(tenantId: widget.tenantId);
       if (mounted) {
         setState(() {
           _services        = list.where((s) => s.isActive == true).toList();
@@ -117,17 +120,17 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
-      context: context,
+      context:     context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-      lastDate:  DateTime.now().add(const Duration(days: 365)),
+      firstDate:   DateTime.now().subtract(const Duration(days: 365)),
+      lastDate:    DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) setState(() => _selectedDate = picked);
   }
 
   Future<void> _pickTime(bool isStart) async {
     final picked = await showTimePicker(
-      context: context,
+      context:     context,
       initialTime: isStart
           ? const TimeOfDay(hour: 9, minute: 0)
           : const TimeOfDay(hour: 10, minute: 0),
@@ -164,15 +167,21 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
       return;
     }
 
+    // Parse optional memberPtPackageId
+    final packageIdText = _memberPackageIdCtrl.text.trim();
+    final memberPtPackageId =
+        packageIdText.isNotEmpty ? int.tryParse(packageIdText) : null;
+
     context.read<TrainerPtSessionsBloc>().add(
       PtSessionCreateRequested(
-        branchId:   widget.branchId,
-        trainerId:  _assignedTrainerId, // correct trainer
-        userId:     userId,
-        serviceId:  _selectedService?.serviceId,
-        startTime:  _toDateTime(_startTime!),
-        endTime:    _toDateTime(_endTime!),
-        notes:      _notesCtrl.text.trim().isEmpty
+        branchId:          widget.branchId,
+        trainerId:         _assignedTrainerId,
+        userId:            userId,
+        serviceId:         _selectedService?.serviceId,
+        memberPtPackageId: memberPtPackageId, // ← forwarded to BLoC
+        startTime:         _toDateTime(_startTime!),
+        endTime:           _toDateTime(_endTime!),
+        notes:             _notesCtrl.text.trim().isEmpty
             ? null
             : _notesCtrl.text.trim(),
       ),
@@ -186,9 +195,9 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.85,
+      initialChildSize: 0.92,
       minChildSize: 0.5,
-      maxChildSize: 0.95,
+      maxChildSize: 0.97,
       builder: (_, scrollCtrl) => Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -239,17 +248,11 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Admin-only: Assign to Trainer ──────────────────────
+                      // ── Admin-only: Assign to Trainer ────────────────────
                       if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
                         _label('Assign to Trainer'),
                         const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                        _dropdownBox(
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(
                               value: _assignedTrainerId,
@@ -261,9 +264,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                               ))
                                   .toList(),
                               onChanged: (v) {
-                                if (v != null) {
-                                  setState(() => _assignedTrainerId = v);
-                                }
+                                if (v != null) setState(() => _assignedTrainerId = v);
                               },
                             ),
                           ),
@@ -271,21 +272,51 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                         const SizedBox(height: 16),
                       ],
 
-                      // ── Member ID ──────────────────────────────────────────
-                      _label('Member ID'),
+                      // ── Member ID (required) ─────────────────────────────
+                      _label('Member ID *'),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: _memberIdCtrl,
                         keyboardType: TextInputType.number,
                         decoration: _inputDec('Enter member user ID'),
                         validator: (v) =>
-                        (v == null || v.trim().isEmpty || int.tryParse(v.trim()) == null)
+                        (v == null ||
+                            v.trim().isEmpty ||
+                            int.tryParse(v.trim()) == null)
                             ? 'Enter a valid member ID'
                             : null,
                       ),
                       const SizedBox(height: 16),
 
-                      // ── Date ───────────────────────────────────────────────
+                      // ── Member PT Package ID (optional) ──────────────────
+                      // Providing this links the session to the member's
+                      // pt package (member_pt_packages) so the backend can
+                      // track remaining_sessions / session_index automatically.
+                      // DB: pt_sessions.member_pt_package_id (FK, nullable).
+                      _label('Member Package ID (optional)'),
+                      const SizedBox(height: 4),
+                      Text(
+                        'If the member has a PT package, enter its ID to link this session.',
+                        style: TextStyle(
+                            color: Colors.grey[500], fontSize: 12),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _memberPackageIdCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: _inputDec(
+                            'Enter member_pt_package_id (leave blank if none)'),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return null; // optional
+                          if (int.tryParse(v.trim()) == null) {
+                            return 'Enter a valid number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // ── Date ─────────────────────────────────────────────
                       _label('Date'),
                       const SizedBox(height: 8),
                       InkWell(
@@ -314,109 +345,23 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                       ),
                       const SizedBox(height: 16),
 
-                      // ── Start / End time ───────────────────────────────────
+                      // ── Start / End time ─────────────────────────────────
                       Row(
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _label('Start Time'),
-                                const SizedBox(height: 8),
-                                InkWell(
-                                  onTap: () => _pickTime(true),
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 14),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey[300]!),
-                                      borderRadius:
-                                      BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time,
-                                            size: 18, color: cs.primary),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          _startTime == null
-                                              ? 'Pick time'
-                                              : _startTime!.format(context),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: _startTime == null
-                                                ? Colors.grey[400]
-                                                : Colors.black87,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          Expanded(child: _timePicker('Start Time', _startTime, () => _pickTime(true), cs)),
                           const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _label('End Time'),
-                                const SizedBox(height: 8),
-                                InkWell(
-                                  onTap: () => _pickTime(false),
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 14),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey[300]!),
-                                      borderRadius:
-                                      BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.access_time,
-                                            size: 18, color: cs.primary),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          _endTime == null
-                                              ? 'Pick time'
-                                              : _endTime!.format(context),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: _endTime == null
-                                                ? Colors.grey[400]
-                                                : Colors.black87,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          Expanded(child: _timePicker('End Time', _endTime, () => _pickTime(false), cs)),
                         ],
                       ),
                       const SizedBox(height: 16),
 
-                      // ── Service ────────────────────────────────────────────
+                      // ── Service ──────────────────────────────────────────
                       _label('Service (optional)'),
                       const SizedBox(height: 8),
                       if (_servicesLoading)
                         const Center(child: CircularProgressIndicator())
                       else
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                        _dropdownBox(
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<PtServiceModel?>(
                               value: _selectedService,
@@ -439,7 +384,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                         ),
                       const SizedBox(height: 16),
 
-                      // ── Notes ──────────────────────────────────────────────
+                      // ── Notes ────────────────────────────────────────────
                       _label('Notes (optional)'),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -450,7 +395,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                       ),
                       const SizedBox(height: 28),
 
-                      // ── Submit ─────────────────────────────────────────────
+                      // ── Submit ───────────────────────────────────────────
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -465,7 +410,8 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                           child: const Text(
                             'Book Session',
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -479,6 +425,57 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
       ),
     );
   }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  Widget _timePicker(
+    String label,
+    TimeOfDay? time,
+    VoidCallback onTap,
+    dynamic cs,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label(label),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.access_time, size: 18, color: cs.primary),
+                const SizedBox(width: 6),
+                Text(
+                  time == null ? 'Pick time' : time.format(context),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: time == null ? Colors.grey[400] : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _dropdownBox({required Widget child}) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey[300]!),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: child,
+  );
 
   Widget _label(String text) => Text(
     text,
@@ -504,8 +501,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide:
-      const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
+      borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 1.5),
     ),
   );
 }

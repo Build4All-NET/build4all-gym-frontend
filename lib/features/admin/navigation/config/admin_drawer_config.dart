@@ -83,7 +83,7 @@ const _trainingItems = [
     id: 'pt_sessions',
     iconData: Icons.fitness_center_outlined,
     labelKey: 'navPtSessions',
-    route: '/admin/pt-sessions',
+    route: '/admin/pt-services',
   ),
   NavigationItem(
     id: 'training_videos',

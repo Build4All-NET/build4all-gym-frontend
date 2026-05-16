@@ -14,8 +14,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../domain/entities/pt_session_entity.dart';
-import '../bloc/trainer_pt_sessions_bloc.dart';
-import '../bloc/trainer_pt_sessions_event.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_event.dart';
 
 class SessionCardWidget extends StatelessWidget {
   final PtSessionEntity session;
