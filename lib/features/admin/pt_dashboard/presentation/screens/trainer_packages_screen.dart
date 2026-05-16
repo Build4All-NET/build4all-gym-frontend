@@ -60,6 +60,7 @@ class TrainerPackagesScreen extends StatefulWidget {
 
 class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   late final PtPackageBloc _bloc;
+  bool _showDeactivated = false;
 
   @override
   void initState() {
@@ -74,6 +75,19 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
       tenantId:  widget.tenantId,
       branchId:  widget.branchId,
     ));
+  }
+
+  void _loadInactive() {
+    _bloc.add(PtInactivePackagesLoadRequested(
+      trainerId: widget.isAdmin ? null : widget.trainerId,
+      tenantId:  widget.tenantId,
+      branchId:  widget.branchId,
+    ));
+  }
+
+  void _toggleDeactivated(bool value) {
+    setState(() => _showDeactivated = value);
+    if (value) _loadInactive();
   }
 
   String _trainerName(int trainerId) {
@@ -149,26 +163,97 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
 
     final packages =
         state is PtPackageLoaded ? state.packages : <PtPackageEntity>[];
-
-    if (packages.isEmpty) {
-      return const Center(child: Text('No packages found.'));
-    }
+    final inactivePackages =
+        state is PtPackageLoaded ? state.inactivePackages : <PtPackageEntity>[];
 
     return RefreshIndicator(
-      onRefresh: () async => _load(),
-      child: ListView.separated(
+      onRefresh: () async {
+        _load();
+        if (_showDeactivated) _loadInactive();
+      },
+      child: ListView(
         padding: const EdgeInsets.all(16),
-        itemCount: packages.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (_, i) => _PackageCard(
-          package:     packages[i] as PtPackageEntity,
-          trainerName: _trainerName(
-            (packages[i] as PtPackageEntity).trainerId,
+        children: [
+          // ── Toggle row ────────────────────────────────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Show Deactivated',
+                style: TextStyle(color: tokens.colors.body, fontSize: 14),
+              ),
+              Switch(
+                value: _showDeactivated,
+                onChanged: _toggleDeactivated,
+                activeColor: tokens.colors.primary,
+              ),
+            ],
           ),
-          showBadge:   widget.isAdmin,
-          onEdit:      (pkg) => _showEditDialog(context, pkg, tokens),
-          onDeactivate:(pkg) => _confirmDeactivate(context, pkg),
-        ),
+          const SizedBox(height: 4),
+
+          // ── Active packages ───────────────────────────────────────────────
+          if (packages.isEmpty && !_showDeactivated)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: Center(
+                child: Text(
+                  'No packages found.',
+                  style: TextStyle(color: tokens.colors.muted),
+                ),
+              ),
+            ),
+          ...packages.map(
+            (pkg) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _PackageCard(
+                package:     pkg,
+                trainerName: _trainerName(pkg.trainerId),
+                showBadge:   widget.isAdmin,
+                onEdit:      (p) => _showEditDialog(context, p, tokens),
+                onDeactivate:(p) => _confirmDeactivate(context, p),
+                onReactivate: null,
+              ),
+            ),
+          ),
+
+          // ── Deactivated section ───────────────────────────────────────────
+          if (_showDeactivated) ...[
+            const SizedBox(height: 8),
+            Divider(color: tokens.colors.border),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'Deactivated Packages',
+                style: TextStyle(
+                  color: tokens.colors.muted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            if (inactivePackages.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  'No deactivated packages.',
+                  style: TextStyle(color: tokens.colors.muted, fontSize: 13),
+                ),
+              ),
+            ...inactivePackages.map(
+              (pkg) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _PackageCard(
+                  package:     pkg,
+                  trainerName: _trainerName(pkg.trainerId),
+                  showBadge:   widget.isAdmin,
+                  onEdit:      null,
+                  onDeactivate: null,
+                  onReactivate: (p) => _confirmReactivate(context, p),
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -243,6 +328,32 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
       ),
     );
   }
+
+  void _confirmReactivate(BuildContext context, PtPackageEntity pkg) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Reactivate Package'),
+        content: Text('Reactivate "${pkg.name}"? It will become visible to members again.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _bloc.add(PtPackageUpdateRequested(
+                packageId: pkg.id,
+                body: {'isActive': true},
+              ));
+              Navigator.pop(context);
+            },
+            child: const Text('Reactivate'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // ── Package card ───────────────────────────────────────────────────────────────
@@ -251,8 +362,9 @@ class _PackageCard extends StatelessWidget {
   final PtPackageEntity package;
   final String trainerName;
   final bool showBadge;
-  final void Function(PtPackageEntity) onEdit;
-  final void Function(PtPackageEntity) onDeactivate;
+  final void Function(PtPackageEntity)? onEdit;
+  final void Function(PtPackageEntity)? onDeactivate;
+  final void Function(PtPackageEntity)? onReactivate;
 
   const _PackageCard({
     required this.package,
@@ -260,6 +372,7 @@ class _PackageCard extends StatelessWidget {
     required this.showBadge,
     required this.onEdit,
     required this.onDeactivate,
+    required this.onReactivate,
   });
 
   @override
@@ -361,19 +474,30 @@ class _PackageCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton.icon(
-                  onPressed: () => onEdit(package),
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Edit'),
-                ),
-                const SizedBox(width: 4),
-                TextButton.icon(
-                  onPressed: () => onDeactivate(package),
-                  icon: Icon(Icons.delete_outline,
-                      size: 16, color: tokens.colors.danger),
-                  label: Text('Deactivate',
-                      style: TextStyle(color: tokens.colors.danger)),
-                ),
+                if (onEdit != null)
+                  TextButton.icon(
+                    onPressed: () => onEdit!(package),
+                    icon: const Icon(Icons.edit, size: 16),
+                    label: const Text('Edit'),
+                  ),
+                if (onDeactivate != null) ...[
+                  const SizedBox(width: 4),
+                  TextButton.icon(
+                    onPressed: () => onDeactivate!(package),
+                    icon: Icon(Icons.delete_outline,
+                        size: 16, color: tokens.colors.danger),
+                    label: Text('Deactivate',
+                        style: TextStyle(color: tokens.colors.danger)),
+                  ),
+                ],
+                if (onReactivate != null)
+                  TextButton.icon(
+                    onPressed: () => onReactivate!(package),
+                    icon: Icon(Icons.refresh_rounded,
+                        size: 16, color: tokens.colors.primary),
+                    label: Text('Reactivate',
+                        style: TextStyle(color: tokens.colors.primary)),
+                  ),
               ],
             ),
           ],
@@ -479,7 +603,13 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
     _salePrice     = TextEditingController(
         text: p?.salePrice != null ? '${p!.salePrice}' : '');
 
-    _selectedTrainerId = widget.defaultTrainerId != 0
+    // Only pre-select the trainer if they still exist in the active list.
+    // A deleted trainer's ID won't be in the items list, which causes a
+    // Flutter assertion error on the DropdownButtonFormField.
+    final trainerStillActive = widget.trainers.any(
+      (t) => t.trainerId == widget.defaultTrainerId,
+    );
+    _selectedTrainerId = (widget.defaultTrainerId != 0 && trainerStillActive)
         ? widget.defaultTrainerId
         : null;
     _packageType = (p?.packageType.isNotEmpty == true &&

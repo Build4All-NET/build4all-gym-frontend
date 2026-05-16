@@ -384,8 +384,12 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
         text: s != null ? '${s.durationMinutes}' : '60');
     _price       = TextEditingController(
         text: s != null ? '${s.price}' : '');
+    final trainerStillActive =
+        widget.trainers.any((t) => t.trainerId == widget.defaultTrainerId);
     _selectedTrainerId =
-    widget.defaultTrainerId != 0 ? widget.defaultTrainerId : null;
+        (widget.defaultTrainerId != 0 && trainerStillActive)
+            ? widget.defaultTrainerId
+            : null;
     _isActive = s?.isActive ?? true;
   }
 

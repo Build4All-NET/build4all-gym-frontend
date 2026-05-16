@@ -110,7 +110,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     final tenantIdRaw = _token.getTenantId();
     final parsedTenantId = int.tryParse(tenantIdRaw.toString()) ?? 1;
-    final isAdmin  = true;
+    final isAdmin  = profile.isAdminRole;
     final isTrainer = profile.isTrainerRole;
 
     // FIX #2: Always set _roleLoaded = true here so loading stops
@@ -228,7 +228,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final effectiveBranchId = _effectiveBranchId(context);
     return BlocListener<AdminProfileCubit, AdminProfile>(
       listenWhen: (prev, curr) =>
-      prev.role != curr.role || prev.userId != curr.userId || prev.branchId != curr.branchId,
+      prev.role != curr.role || prev.userId != curr.userId || prev.branchId != curr.branchId || prev.gymRole != curr.gymRole,
       listener: (_, profile) => _syncTrainerFromProfile(profile),
       child: BlocProvider.value(
         value: _sessionsBloc,
@@ -401,10 +401,11 @@ class _MainShell extends StatelessWidget {
       // Packages tab
       BlocProvider(
         create: (_) => PtPackageBloc(
-          getPackages:      GetPtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          createPackage:    CreatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          updatePackage:    UpdatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          deactivatePackage: DeactivatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          getPackages:         GetPtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          getInactivePackages: GetInactivePtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          createPackage:       CreatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          updatePackage:       UpdatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          deactivatePackage:   DeactivatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
         ),
         child: TrainerPackagesScreen(
           tenantId:  tenantId,

@@ -34,6 +34,13 @@ abstract class PtPackageRepository {
       Map<String, dynamic> body,
       );
 
+  // ── READ INACTIVE ─────────────────────────────────────────────────────────
+  Future<({List<PtPackageEntity>? data, Failure? failure})> getInactivePackages({
+    int? trainerId,
+    required int tenantId,
+    required int branchId,
+  });
+
   // ── DELETE (deactivate) ───────────────────────────────────────────────────
   Future<({bool success, Failure? failure})> deactivatePackage(int id);
 }

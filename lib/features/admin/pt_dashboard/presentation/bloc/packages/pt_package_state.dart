@@ -23,11 +23,15 @@ class PtPackageMutating extends PtPackageState {
 
 class PtPackageLoaded extends PtPackageState {
   final List<PtPackageEntity> packages;
+  final List<PtPackageEntity> inactivePackages;
 
-  const PtPackageLoaded(this.packages);
+  const PtPackageLoaded(this.packages, {this.inactivePackages = const []});
+
+  PtPackageLoaded withInactive(List<PtPackageEntity> inactive) =>
+      PtPackageLoaded(packages, inactivePackages: inactive);
 
   @override
-  List<Object?> get props => [packages];
+  List<Object?> get props => [packages, inactivePackages];
 }
 
 class PtPackageMutationSuccess extends PtPackageState {

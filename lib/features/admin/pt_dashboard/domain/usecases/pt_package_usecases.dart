@@ -62,7 +62,25 @@ class UpdatePtPackageUseCase {
       _repository.updatePackage(id, body);
 }
 
-// ── 4. Deactivate (soft-delete) package ─────────────────────────────────────
+// ── 4. Get inactive packages ─────────────────────────────────────────────────
+
+class GetInactivePtPackagesUseCase {
+  final PtPackageRepository _repository;
+  const GetInactivePtPackagesUseCase(this._repository);
+
+  Future<({List<PtPackageEntity>? data, Failure? failure})> call({
+    int? trainerId,
+    required int tenantId,
+    required int branchId,
+  }) =>
+      _repository.getInactivePackages(
+        trainerId: trainerId,
+        tenantId: tenantId,
+        branchId: branchId,
+      );
+}
+
+// ── 5. Deactivate (soft-delete) package ─────────────────────────────────────
 
 class DeactivatePtPackageUseCase {
   final PtPackageRepository _repository;

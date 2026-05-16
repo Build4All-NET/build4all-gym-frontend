@@ -70,3 +70,19 @@ class PtPackageDeactivateRequested extends PtPackageEvent {
   @override
   List<Object?> get props => [packageId];
 }
+
+/// Load inactive (deactivated) packages so the user can see and reactivate them.
+class PtInactivePackagesLoadRequested extends PtPackageEvent {
+  final int? trainerId;
+  final int tenantId;
+  final int branchId;
+
+  const PtInactivePackagesLoadRequested({
+    this.trainerId,
+    required this.tenantId,
+    required this.branchId,
+  });
+
+  @override
+  List<Object?> get props => [trainerId, tenantId, branchId];
+}
