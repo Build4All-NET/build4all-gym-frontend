@@ -11,6 +11,8 @@ class SessionCardEntity {
   final int totalCapacity;
   final String? memberBookingStatus;
   final int? imageFileId;
+  final int? branchId;
+  final String? branchName;
 
   const SessionCardEntity({
     required this.sessionId,
@@ -25,5 +27,7 @@ class SessionCardEntity {
     required this.totalCapacity,
     this.memberBookingStatus,
     this.imageFileId,
+    this.branchId,
+    this.branchName,
   });
 }

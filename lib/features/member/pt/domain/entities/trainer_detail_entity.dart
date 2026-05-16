@@ -1,9 +1,6 @@
 import 'trainer_video_entity.dart';
 import 'pt_package_entity.dart';
 
-/// Domain entity for trainer detail.
-///
-/// Used by the UI. No JSON parsing here.
 class TrainerDetailEntity {
   final int id;
   final String fullName;
@@ -17,8 +14,8 @@ class TrainerDetailEntity {
   final List<String> certifications;
   final List<TrainerVideoEntity> assignedVideos;
   final int? branchId;
+  final String? branchName;
 
-  /// New Figma design needs trainer packages.
   final List<PtPackageEntity> packages;
 
   const TrainerDetailEntity({
@@ -34,6 +31,7 @@ class TrainerDetailEntity {
     required this.certifications,
     required this.assignedVideos,
     this.branchId,
+    this.branchName,
     required this.packages,
   });
 
@@ -50,6 +48,7 @@ class TrainerDetailEntity {
     List<String>? certifications,
     List<TrainerVideoEntity>? assignedVideos,
     int? branchId,
+    String? branchName,
     List<PtPackageEntity>? packages,
   }) {
     return TrainerDetailEntity(
@@ -65,6 +64,7 @@ class TrainerDetailEntity {
       certifications: certifications ?? this.certifications,
       assignedVideos: assignedVideos ?? this.assignedVideos,
       branchId: branchId ?? this.branchId,
+      branchName: branchName ?? this.branchName,
       packages: packages ?? this.packages,
     );
   }

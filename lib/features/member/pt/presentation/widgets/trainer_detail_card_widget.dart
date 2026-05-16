@@ -102,18 +102,32 @@ class TrainerDetailCardWidget extends StatelessWidget {
                         ),
                       ),
 
-                      if (trainer.specialty != null &&
-                          trainer.specialty!.trim().isNotEmpty) ...[
+                      if (trainer.branchName != null &&
+                          trainer.branchName!.trim().isNotEmpty) ...[
                         SizedBox(height: tokens.spacing.xs),
-                        Text(
-                          trainer.specialty!,
-                          textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: tokens.typography.bodySmall.copyWith(
-                            color: tokens.colors.muted,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                          children: [
+                            Icon(
+                              Icons.location_on_rounded,
+                              size: 15.0,
+                              color: tokens.colors.primary,
+                            ),
+                            SizedBox(width: tokens.spacing.xs),
+                            Flexible(
+                              child: Text(
+                                trainer.branchName!,
+                                textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: tokens.typography.bodySmall.copyWith(
+                                  color: tokens.colors.body,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
 

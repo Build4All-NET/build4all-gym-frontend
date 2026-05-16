@@ -2,6 +2,10 @@ class TrainerCardEntity {
   final int trainerId;
   final String fullName;
   final String? profileFileId;
+
+  final int? branchId;
+  final String? branchName;
+
   final List<String> specialties;
   final List<String> certifications;
   final double pricePerSession;
@@ -15,6 +19,8 @@ class TrainerCardEntity {
     required this.trainerId,
     required this.fullName,
     this.profileFileId,
+    this.branchId,
+    this.branchName,
     required this.specialties,
     required this.certifications,
     required this.pricePerSession,
@@ -29,6 +35,8 @@ class TrainerCardEntity {
     int? trainerId,
     String? fullName,
     String? profileFileId,
+    int? branchId,
+    String? branchName,
     List<String>? specialties,
     List<String>? certifications,
     double? pricePerSession,
@@ -42,6 +50,8 @@ class TrainerCardEntity {
       trainerId: trainerId ?? this.trainerId,
       fullName: fullName ?? this.fullName,
       profileFileId: profileFileId ?? this.profileFileId,
+      branchId: branchId ?? this.branchId,
+      branchName: branchName ?? this.branchName,
       specialties: specialties ?? this.specialties,
       certifications: certifications ?? this.certifications,
       pricePerSession: pricePerSession ?? this.pricePerSession,

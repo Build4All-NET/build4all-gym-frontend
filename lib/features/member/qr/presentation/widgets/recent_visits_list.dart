@@ -9,12 +9,10 @@ import 'visit_record_tile.dart';
 
 /// Recent visits card shown below the QR card.
 ///
-/// Data source:
-/// MemberQrLoaded.recentVisits
-///
-/// No static data.
-/// No hardcoded UI strings.
-/// No hardcoded Colors.*.
+/// Design unchanged.
+/// Only title alignment changes:
+/// - English -> left
+/// - Arabic  -> right
 class RecentVisitsList extends StatelessWidget {
   final List<VisitRecord> visits;
 
@@ -27,6 +25,8 @@ class RecentVisitsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Container(
       width: double.infinity,
@@ -50,39 +50,44 @@ class RecentVisitsList extends StatelessWidget {
             : null,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment:
+        isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.memberQrRecentVisits,
-            textAlign: TextAlign.end,
-            style: tokens.typography.titleMedium.copyWith(
-              color: tokens.colors.label,
-              fontWeight: FontWeight.w800,
+          Align(
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            child: Text(
+              l10n.memberQrRecentVisits,
+              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              style: tokens.typography.titleMedium.copyWith(
+                color: tokens.colors.label,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
 
           SizedBox(height: tokens.spacing.md),
 
           if (visits.isEmpty)
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: tokens.spacing.lg,
-              ),
-              child: Text(
-                l10n.memberQrNoRecentVisits,
-                textAlign: TextAlign.center,
-                style: tokens.typography.bodyMedium.copyWith(
-                  color: tokens.colors.muted,
-                  fontWeight: FontWeight.w500,
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: tokens.spacing.lg,
+                ),
+                child: Text(
+                  l10n.memberQrNoRecentVisits,
+                  textAlign: TextAlign.center,
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: tokens.colors.muted,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             )
           else
             ...List.generate(visits.length, (index) {
-              final visit = visits[index];
-
               return VisitRecordTile(
-                visit: visit,
+                visit: visits[index],
                 showDivider: index != visits.length - 1,
               );
             }),
