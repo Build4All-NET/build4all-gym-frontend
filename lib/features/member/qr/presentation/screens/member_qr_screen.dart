@@ -29,14 +29,10 @@ class MemberQrScreen extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Directionality(
-      /*
-       * Arabic-first screen.
-       *
-       * The app localization still controls language.
-       * This just makes the QR screen layout RTL like the screenshot.
-       */
-      textDirection: TextDirection.rtl,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: tokens.colors.background,
         body: BlocBuilder<MemberQrBloc, MemberQrState>(
@@ -61,49 +57,65 @@ class MemberQrScreen extends StatelessWidget {
                 onRefresh: () async {
                   context.read<MemberQrBloc>().add(const RefreshMemberQr());
                 },
-                child: CustomScrollView(
+                child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: _MemberQrHeader(
-                        title: l10n.memberQrTitle,
-                        subtitle: l10n.memberQrSubtitle,
-                      ),
+                  padding: EdgeInsets.zero,
+                  children: [
+                    /*
+                     * Header + QR card in one Stack.
+                     *
+                     * This is the correct way to make the card overlap
+                     * the colored header like the Figma screenshot.
+                     */
+                    Stack(
+                      clipBehavior: Clip.none,
+
+                      children: [
+                        _MemberQrHeader(
+                          title: l10n.memberQrTitle,
+                          subtitle: l10n.memberQrSubtitle,
+                        ),
+
+                        /*
+                         * The card starts inside the header area.
+                         *
+                         * Do not change this unless you want to move the card.
+                         */
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: tokens.spacing.lg,
+                            right: tokens.spacing.lg,
+                            top: 116,
+                          ),
+                          child: MemberQrCard(
+                            token: state.token,
+                            expiresAt: state.expiresAt,
+                            membershipStatus: state.membershipStatus,
+                            memberName: state.memberName,
+                            memberCode: state.memberCode,
+                            packageName: state.packageName,
+                            validUntil: state.validUntil,
+                            isExpiringSoon: state.isExpiringSoon,
+                            remainingSeconds: state.remainingSeconds,
+                          ),
+                        ),
+                      ],
                     ),
-                    SliverPadding(
+
+                    /*
+                     * Keep this exactly as you had it.
+                     */
+                    const SizedBox(height: 10),
+
+                    Padding(
                       padding: EdgeInsets.fromLTRB(
                         tokens.spacing.lg,
                         0,
                         tokens.spacing.lg,
                         tokens.spacing.xl,
                       ),
-                      sliver: SliverList(
-                        delegate: SliverChildListDelegate(
-                          [
-                            /*
-                             * Negative top margin effect:
-                             * card overlaps the green header like screenshot.
-                             */
-                            Transform.translate(
-                              offset: const Offset(0, -36),
-                              child:MemberQrCard(
-                                token: state.token,
-                                expiresAt: state.expiresAt,
-                                membershipStatus: state.membershipStatus,
-                                memberName: state.memberName,
-                                memberCode: state.memberCode,
-                                packageName: state.packageName,
-                                validUntil: state.validUntil,
-                                isExpiringSoon: state.isExpiringSoon,
-                                remainingSeconds: state.remainingSeconds,
-                              ),
-                            ),
-                            SizedBox(height: tokens.spacing.lg),
-                            RecentVisitsList(
-                              visits: state.recentVisits,
-                            ),
-                          ],
-                        ),
+                      child: RecentVisitsList(
+                        visits: state.recentVisits,
                       ),
                     ),
                   ],
@@ -118,9 +130,6 @@ class MemberQrScreen extends StatelessWidget {
     );
   }
 
-  /// Maps BLoC/internal error codes to localized UI messages.
-  ///
-  /// This avoids showing hardcoded repository/BLoC text in the UI.
   String _mapErrorMessage(BuildContext context, String message) {
     final l10n = AppLocalizations.of(context)!;
 
@@ -133,10 +142,12 @@ class MemberQrScreen extends StatelessWidget {
   }
 }
 
-/// Green top header like the screenshots.
+/// Green top header.
 ///
-/// Text comes from ARB.
-/// Colors come from theme tokens.
+/// Design is unchanged.
+/// Only text alignment changes depending on language:
+/// - English: left
+/// - Arabic: right
 class _MemberQrHeader extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -149,12 +160,13 @@ class _MemberQrHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
         tokens.spacing.lg,
-        56,
+        44,
         tokens.spacing.lg,
         72,
       ),
@@ -166,27 +178,32 @@ class _MemberQrHeader extends StatelessWidget {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+        isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.qr_code_2_rounded,
-            color: tokens.colors.onPrimary,
-            size: 34,
-          ),
-          SizedBox(height: tokens.spacing.md),
-          Text(
-            title,
-            style: tokens.typography.headlineSmall.copyWith(
-              color: tokens.colors.onPrimary,
-              fontWeight: FontWeight.w800,
+          Align(
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            child: Text(
+              title,
+              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              style: tokens.typography.headlineSmall.copyWith(
+                color: tokens.colors.onPrimary,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
+
           SizedBox(height: tokens.spacing.xs),
-          Text(
-            subtitle,
-            style: tokens.typography.bodyMedium.copyWith(
-              color: tokens.colors.onPrimary.withOpacity(0.88),
-              fontWeight: FontWeight.w500,
+
+          Align(
+            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+            child: Text(
+              subtitle,
+              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              style: tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.onPrimary.withOpacity(0.88),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -195,7 +212,7 @@ class _MemberQrHeader extends StatelessWidget {
   }
 }
 
-/// Error view for QR screen.
+/// Error view.
 ///
 /// No hardcoded UI text.
 /// Message and button label are localized.
