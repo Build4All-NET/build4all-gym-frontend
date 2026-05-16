@@ -47,8 +47,16 @@ import '../../../member/sessions/domain/usecases/get_filter_options_usecase.dart
 import '../../../member/sessions/domain/usecases/get_sessions_usecase.dart';
 import '../../../member/sessions/data/services/sessions_service.dart';
 import '../../../member/sessions/domain/usecases/get_session_detail_use_case.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../member/sessions/presentation/screens/sessions_page.dart';
 
+import '../../../member/qr/data/repositories/member_qr_repository_impl.dart';
+import '../../../member/qr/data/services/member_qr_service.dart';
+import '../../../member/qr/domain/usecases/get_member_qr_use_case.dart';
+import '../../../member/qr/domain/usecases/refresh_member_qr_use_case.dart';
+import '../../../member/qr/presentation/bloc/member_qr_bloc.dart';
+import '../../../member/qr/presentation/bloc/member_qr_event.dart';
+import '../../../member/qr/presentation/screens/member_qr_screen.dart';
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;
 
@@ -322,7 +330,30 @@ class _QrTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('QR'));
+    /*
+     * Same project style:
+     * dependencies are created near the screen using BlocProvider.
+     *
+     * Chain:
+     * Service -> RepositoryImpl -> UseCases -> Bloc -> Screen
+     */
+    final service = MemberQrService();
+
+    final repository = MemberQrRepositoryImpl(
+      service: service,
+    );
+
+    return BlocProvider(
+      create: (_) => MemberQrBloc(
+        getMemberQrUseCase: GetMemberQrUseCase(
+          repository: repository,
+        ),
+        refreshMemberQrUseCase: RefreshMemberQrUseCase(
+          repository: repository,
+        ),
+      )..add(const LoadMemberQr()),
+      child: const MemberQrScreen(),
+    );
   }
 }
 

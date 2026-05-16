@@ -1295,4 +1295,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfileCodeRequired => 'Verification code is required.';
+
+  @override
+  String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
+
+  @override
+  String get ptBookingRequestThisTime => 'Request this time';
+
+  @override
+  String get ptBookingBookSession => 'Book session';
+
+  @override
+  String get ptBookingRequestNote => 'Member requested unavailable/full PT time';
+
+  @override
+  String get ptBookingFullOrUnavailable => 'This slot is full or unavailable. Send a request instead.';
+
+  @override
+  String get ptBookingFailed => 'Unable to confirm booking.';
+
+  @override
+  String get ptBookingRequestFailed => 'Unable to send request.';
+
+  @override
+  String get memberQrTitle => 'Entry QR Code';
+
+  @override
+  String get memberQrSubtitle => 'Scan this code at the gym entrance';
+
+  @override
+  String get memberQrActiveMembership => 'Active membership';
+
+  @override
+  String get memberQrInactiveMembership => 'Inactive membership';
+
+  @override
+  String get memberQrMemberCodeLabel => 'Member code';
+
+  @override
+  String get memberQrPackageFallback => 'No package';
+
+  @override
+  String get memberQrValidUntil => 'Valid until';
+
+  @override
+  String get memberQrExpiresSoon => 'QR expires soon';
+
+  @override
+  String get memberQrRecentVisits => 'Recent visits';
+
+  @override
+  String get memberQrNoRecentVisits => 'No previous visits';
+
+  @override
+  String get memberQrDurationLabel => 'Duration';
+
+  @override
+  String get memberQrToday => 'Today';
+
+  @override
+  String get memberQrYesterday => 'Yesterday';
+
+  @override
+  String memberQrMinute(int count) {
+    return '$count min';
+  }
+
+  @override
+  String memberQrHour(String count) {
+    return '$count h';
+  }
+
+  @override
+  String get memberQrLoadError => 'Could not load QR data';
+
+  @override
+  String get memberQrRetry => 'Retry';
 }

@@ -6,9 +6,10 @@ import '../../domain/usecases/get_weekly_available_slots_usecase.dart';
 import 'pt_package_booking_event.dart';
 import 'pt_package_booking_state.dart';
 import '../../domain/entities/time_slot_entity.dart';
+
 /// Bloc for the PT package booking flow.
 ///
-/// New flow:
+/// Flow:
 /// - trainerId
 /// - selectedPackage
 /// - weeklySchedule
@@ -254,7 +255,12 @@ class PtPackageBookingBloc
   /// User selected a time for a specific weekday.
   ///
   /// Day must already be selected.
-  /// Time must come from the available slots UI.
+  /// Time must come from the backend slots.
+  ///
+  /// Important:
+  /// Even if the UI disables full slots, we also protect here.
+  /// This prevents invalid selection if another widget/event triggers
+  /// PtPackageTimeSelected manually.
   void _onTimeSelected(
       PtPackageTimeSelected event,
       Emitter<PtPackageBookingState> emit,
@@ -268,6 +274,29 @@ class PtPackageBookingBloc
 
     if (!_isValidWeekday(day)) return;
     if (time.isEmpty) return;
+
+    final slotsForDay = current.availableSlotsForDay(day);
+
+    /// Find the backend slot matching this selected HH:mm time.
+    final selectedSlot = slotsForDay
+        .where((slot) => _formatSlotTime(slot) == time)
+        .cast<TimeSlotEntity?>()
+        .firstWhere(
+          (slot) => slot != null,
+      orElse: () => null,
+    );
+
+    /// Do not allow selecting a time that does not exist in backend slots.
+    if (selectedSlot == null) return;
+
+    /// Do not allow selecting full/unavailable slots.
+    ///
+    /// slot.available comes from backend.
+    /// slot.full is computed in TimeSlotEntity:
+    /// bookedCount >= maxMembers
+    if (!selectedSlot.available || selectedSlot.full) {
+      return;
+    }
 
     final updatedSchedule = List<Map<String, dynamic>>.from(
       current.weeklySchedule.map(
@@ -356,6 +385,33 @@ class PtPackageBookingBloc
         booking: result.data!,
       ),
     );
+  }
+
+  /// Extracts HH:mm from backend slot startTime.
+  ///
+  /// Backend may return:
+  /// "2026-05-09T09:00:00"
+  ///
+  /// We compare it with event.time:
+  /// "09:00"
+  String _formatSlotTime(TimeSlotEntity slot) {
+    final rawStartTime = slot.startTime.toString();
+
+    try {
+      final parsed = DateTime.parse(rawStartTime);
+
+      final hour = parsed.hour.toString().padLeft(2, '0');
+      final minute = parsed.minute.toString().padLeft(2, '0');
+
+      return '$hour:$minute';
+    } catch (_) {
+      /// Fallback if startTime is already "09:00"
+      if (rawStartTime.length >= 5) {
+        return rawStartTime.substring(0, 5);
+      }
+
+      return rawStartTime;
+    }
   }
 
   /// Stable weekday codes accepted by backend.
