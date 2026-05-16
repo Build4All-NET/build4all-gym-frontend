@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
-import 'package:build4allgym/features/member/sessions/presentation/screens/sessions_page.dart';
 import '../../domain/entities/member_home.dart';
 import '../../domain/entities/member_stats.dart';
 import '../../domain/entities/membership_card.dart';

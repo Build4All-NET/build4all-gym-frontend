@@ -18,12 +18,25 @@ import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../../../admin/trainers/data/services/admin_trainers_service.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
-
+import '../../data/repositories/availability_repository_impl.dart';
+import '../../data/repositories/pt_service_repository_impl.dart';
+import '../../data/services/availability_service.dart';
+import '../../data/services/pt_service_service.dart';
+import '../../domain/repositories/trainer_pt_sessions_repository.dart';
+import '../../domain/usecases/availability_usecases.dart';
+import '../../domain/usecases/pt_service_usecases.dart';
+import '../bloc/availability/availability_bloc.dart';
+import '../bloc/services/pt_service_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
+import '../../data/repositories/pt_package_repository_impl.dart';
 import '../../data/repositories/trainer_pt_sessions_repository_impl.dart';
+import '../../data/services/pt_package_service.dart';
 import '../../data/services/trainer_pt_sessions_service.dart';
+import '../../domain/usecases/pt_package_usecases.dart';
 import '../../domain/usecases/trainer_pt_sessions_usecases.dart';
-import '../bloc/trainer_pt_sessions_bloc.dart';
-import '../bloc/trainer_pt_sessions_event.dart';
+import '../bloc/packages/pt_package_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_event.dart';
 
 import 'trainer_dashboard_screen.dart';
 import 'trainer_packages_screen.dart';
@@ -97,7 +110,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     final tenantIdRaw = _token.getTenantId();
     final parsedTenantId = int.tryParse(tenantIdRaw.toString()) ?? 1;
-    final isAdmin  = true;
+    final isAdmin  = profile.isAdminRole;
     final isTrainer = profile.isTrainerRole;
 
     // FIX #2: Always set _roleLoaded = true here so loading stops
@@ -140,10 +153,8 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   }
 
   int _effectiveBranchId(BuildContext context) {
-    // if (_selectedBranchId != null) return _selectedBranchId!;
-    // final s = context.read<BranchCubit>().state;
-    // if (s is BranchLoaded && s.branches.isNotEmpty) return s.branches.first.id;
-    return 1;
+    if (_selectedBranchId != null) return _selectedBranchId!;
+    return context.read<AdminProfileCubit>().state.branchId ?? 1;
   }
 
   Future<void> _loadTrainersForAdmin() async {
@@ -170,6 +181,8 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       );
     } catch (e) {
       if (!mounted || currentRequest != _trainerRequestId) return;
+      print('❌ _loadTrainersForAdmin error: $e'); // ADD THIS
+
       setState(() {
         _loadingTrainers = false;
         _trainersError   = 'Could not load trainers. Please check your connection and retry.';
@@ -215,7 +228,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final effectiveBranchId = _effectiveBranchId(context);
     return BlocListener<AdminProfileCubit, AdminProfile>(
       listenWhen: (prev, curr) =>
-      prev.role != curr.role || prev.userId != curr.userId || prev.branchId != curr.branchId,
+      prev.role != curr.role || prev.userId != curr.userId || prev.branchId != curr.branchId || prev.gymRole != curr.gymRole,
       listener: (_, profile) => _syncTrainerFromProfile(profile),
       child: BlocProvider.value(
         value: _sessionsBloc,
@@ -375,6 +388,8 @@ class _MainShell extends StatelessWidget {
         trainers:        trainers,
         trainerId:       trainerId,
       ),
+
+      // Sessions tab — uses the shared _sessionsBloc already provided above via BlocProvider.value
       TrainerPtSessionsScreen(
         key:       ValueKey('sessions_${branchId}_${isAdmin ? 0 : trainerId}'),
         branchId:  branchId,
@@ -382,24 +397,56 @@ class _MainShell extends StatelessWidget {
         isAdmin:   isAdmin,
         trainers:  trainers,
       ),
-      TrainerPackagesScreen(
-        key:       ValueKey('packages_${branchId}_${isAdmin ? 0 : trainerId}'),
-        tenantId:  tenantId,
-        branchId:  branchId,
-        trainerId: trainerId,
-        isAdmin:   isAdmin,
-        trainers:  trainers,
+
+      // Packages tab
+      BlocProvider(
+        create: (_) => PtPackageBloc(
+          getPackages:         GetPtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          getInactivePackages: GetInactivePtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          createPackage:       CreatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          updatePackage:       UpdatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          deactivatePackage:   DeactivatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+        ),
+        child: TrainerPackagesScreen(
+          tenantId:  tenantId,
+          branchId:  branchId,
+          trainerId: trainerId,
+          isAdmin:   isAdmin,
+          trainers:  trainers,
+        ),
       ),
-      TrainerScheduleScreen(
-        key:       ValueKey('schedule_${branchId}_${isAdmin ? 0 : trainerId}'),
-        branchId:  branchId,
-        trainerId: trainerId,
-        isAdmin:   isAdmin,
-        trainers:  trainers,
+
+      // Schedule tab
+      BlocProvider(
+        create: (_) => AvailabilityBloc(
+          getSlots:    GetAvailabilitySlotsUseCase(AvailabilityRepositoryImpl(service: AvailabilityHttpService())),
+          createSlot:  CreateAvailabilitySlotUseCase(AvailabilityRepositoryImpl(service: AvailabilityHttpService())),
+          deleteSlot:  DeleteAvailabilitySlotUseCase(AvailabilityRepositoryImpl(service: AvailabilityHttpService())),
+        ),
+        child: TrainerScheduleScreen(
+          key:       ValueKey('schedule_${branchId}_${isAdmin ? 0 : trainerId}'),
+          branchId:  branchId,
+          trainerId: trainerId,
+          isAdmin:   isAdmin,
+          trainers:  trainers,
+        ),
       ),
-      TrainerServicesScreen(
-        key:      ValueKey('services_${branchId}'),
-        tenantId: tenantId,
+
+      // Services tab
+      BlocProvider(
+        create: (_) => PtServiceBloc(
+          getServices:    GetPtServicesUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+          createService:  CreatePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+          updateService:  UpdatePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+          deleteService:  DeletePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+        ),
+        child: TrainerServicesScreen(
+          key:       ValueKey('services_${branchId}'),
+          tenantId:  tenantId,
+          trainerId: trainerId,
+          isAdmin:   isAdmin,
+          trainers:  trainers,
+        ),
       ),
     ];
 

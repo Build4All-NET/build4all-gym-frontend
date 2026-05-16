@@ -48,9 +48,6 @@ import '../features/admin/pt_dashboard/data/services/availability_service.dart';
 import '../features/admin/pt_dashboard/data/services/pt_service_service.dart';
 import '../features/admin/pt_dashboard/data/services/trainer_pt_sessions_service.dart';
 import '../features/admin/pt_dashboard/domain/usecases/trainer_pt_sessions_usecases.dart';
-import '../features/admin/pt_dashboard/presentation/bloc/availability_bloc.dart';
-import '../features/admin/pt_dashboard/presentation/bloc/pt_package_bloc.dart';
-import '../features/admin/pt_dashboard/presentation/bloc/trainer_pt_sessions_bloc.dart';
 import '../features/admin/staff/domain/usecases/create_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/get_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/remove_staff_usecase.dart';
@@ -176,7 +173,7 @@ class AppRouter {
   static const String adminNotifications = '/admin/notifications';
 
   // ─── Admin: Training / PT ─────────────────────────────────────────────────
-  static const String adminPtSessions     = '/admin/pt-sessions';
+  static const String adminPtSessions     = '/admin/pt-services';
   static const String adminTrainingVideos = '/admin/training-videos';
 
   // ─── Admin: Settings ──────────────────────────────────────────────────────

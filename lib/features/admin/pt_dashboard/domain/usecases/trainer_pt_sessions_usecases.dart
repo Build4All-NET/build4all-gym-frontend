@@ -2,7 +2,7 @@
 // FILE: lib/features/trainer/pt_sessions/domain/usecases/trainer_pt_sessions_usecases.dart
 // LAYER: Domain
 //
-// All use cases for the trainer PT sessions feature, co-located in one file
+// All use cases for the trainer PT services feature, co-located in one file
 // to match the admin/plans pattern used in this project.
 // =============================================================================
 
@@ -11,7 +11,7 @@ import '../entities/pt_session_entity.dart';
 import '../entities/pt_session_stats_entity.dart';
 import '../repositories/trainer_pt_sessions_repository.dart';
 
-// ── 1. Get sessions by date ──────────────────────────────────────────────────
+// ── 1. Get services by date ──────────────────────────────────────────────────
 
 class GetSessionsByDateUseCase {
   final TrainerPtSessionsRepository _repository;

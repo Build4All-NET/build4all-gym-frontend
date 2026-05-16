@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(flutter analyze *)",
-      "Bash(Select-Object -First 80 FullName)"
+      "Bash(Select-Object -First 80 FullName)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Directory -Name)"
     ]
   }
 }

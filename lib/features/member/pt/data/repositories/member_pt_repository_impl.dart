@@ -278,7 +278,7 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   // ─────────────────────────────────────────────────────────────
   // Create old single PT booking
   //
-  // POST /api/pt-sessions
+  // POST /api/pt-services
   // ─────────────────────────────────────────────────────────────
 
   @override

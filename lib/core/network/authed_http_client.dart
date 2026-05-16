@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
 import 'package:build4allgym/core/network/auth_refresh_coordinator.dart';
+import 'package:build4allgym/core/network/globals.dart' as g;
 
 /// A drop-in http.Client replacement that:
 ///   1. Injects the current access token on every request.
@@ -71,8 +72,17 @@ class AuthedHttpClient extends http.BaseClient {
     }
   }
 
-  // ── Get the best available stored token (admin first, then user) ───────────
+  // ── Get the best available token ──────────────────────────────────────────
+  // Prefers the in-memory runtime token (always the current session's token,
+  // set synchronously before navigation). Falls back to persisted stores only
+  // on cold-start when the runtime token hasn't been loaded yet.
   Future<String> _storedToken() async {
+    final runtime = g.readAuthToken().trim();
+    if (runtime.isNotEmpty) {
+      return runtime.toLowerCase().startsWith('bearer ')
+          ? runtime.substring(7).trim()
+          : runtime;
+    }
     final admin = (await _adminStore.getToken())?.trim() ?? '';
     if (admin.isNotEmpty) return admin;
     return (await _userStore.getToken())?.trim() ?? '';

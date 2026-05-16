@@ -11,21 +11,21 @@ import '../entities/pt_session_stats_entity.dart';
 import '../../../../../core/error/failures.dart';
 
 abstract class TrainerPtSessionsRepository {
-  /// GET /api/trainer/pt-sessions?branchId=&date=[&trainerId=]
+  /// GET /api/trainer/pt-services?branchId=&date=[&trainerId=]
   Future<({List<PtSessionEntity>? data, Failure? failure})> getSessionsByDate({
     required int branchId,
     int? trainerId,
     required DateTime date,
   });
 
-  /// GET /api/trainer/pt-sessions/stats?branchId=&date=[&trainerId=]
+  /// GET /api/trainer/pt-services/stats?branchId=&date=[&trainerId=]
   Future<({PtSessionStatsEntity? data, Failure? failure})> getStatsByDate({
     required int branchId,
     int? trainerId,
     required DateTime date,
   });
 
-  /// POST /api/trainer/pt-sessions[?trainerId=]
+  /// POST /api/trainer/pt-services[?trainerId=]
   Future<({PtSessionEntity? data, Failure? failure})> createSession({
     required int branchId,
     int? trainerId,
@@ -37,7 +37,7 @@ abstract class TrainerPtSessionsRepository {
     String? notes,
   });
 
-  /// PATCH /api/trainer/pt-sessions/{id}/status
+  /// PATCH /api/trainer/pt-services/{id}/status
   Future<({PtSessionEntity? data, Failure? failure})> updateStatus({
     required int sessionId,
     required String status, // COMPLETED | CANCELLED | NO_SHOW

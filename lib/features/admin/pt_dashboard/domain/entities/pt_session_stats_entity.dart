@@ -12,7 +12,7 @@
 // =============================================================================
 
 class PtSessionStatsEntity {
-  /// Total sessions regardless of status for the selected date.
+  /// Total services regardless of status for the selected date.
   final int total;
 
   /// Sessions with status = COMPLETED.
