@@ -16,6 +16,8 @@ class SessionDetailEntity {
   final String description;
   final List<String> benefits;
   final List<String> equipment;
+  final int? branchId;
+  final String? branchName;
 
   const SessionDetailEntity({
     required this.sessionId,
@@ -34,6 +36,8 @@ class SessionDetailEntity {
     this.memberBookingStatus,
     required this.description,
     required this.benefits,
+    this.branchId,
+    this.branchName,
     required this.equipment,
   });
 }

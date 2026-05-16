@@ -12,6 +12,8 @@ class TrainerCardModel {
   final double avgRating;
   final bool isFavorited;
   final bool isOnline;
+  final int? branchId;
+  final String? branchName;
 
   const TrainerCardModel({
     required this.trainerId,
@@ -25,6 +27,8 @@ class TrainerCardModel {
     required this.avgRating,
     required this.isFavorited,
     required this.isOnline,
+    this.branchId,
+    this.branchName,
   });
 
   factory TrainerCardModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +58,10 @@ class TrainerCardModel {
       json['favorited'] as bool? ?? json['isFavorited'] as bool? ?? false,
 
       isOnline: json['online'] as bool? ?? json['isOnline'] as bool? ?? false,
+      branchId: json['branchId'] == null
+          ? null
+          : (json['branchId'] as num).toInt(),
+      branchName: json['branchName'] as String?,
     );
   }
 
@@ -70,6 +78,8 @@ class TrainerCardModel {
       'avgRating': avgRating,
       'isFavorited': isFavorited,
       'isOnline': isOnline,
+      'branchId': branchId,
+      'branchName': branchName,
     };
   }
 
@@ -86,6 +96,9 @@ class TrainerCardModel {
       avgRating: avgRating,
       isFavorited: isFavorited,
       isOnline: isOnline,
+      branchId: branchId,
+      branchName: branchName,
+
     );
   }
 }

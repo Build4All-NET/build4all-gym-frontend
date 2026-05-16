@@ -11,6 +11,8 @@ class SessionDetailModel {
   final DateTime startTime;
   final DateTime endTime;
   final String roomName;
+  final int? branchId;
+  final String? branchName;
   final int availableSeats;
   final String? memberBookingStatus;
   final String? description;
@@ -30,6 +32,8 @@ class SessionDetailModel {
     required this.startTime,
     required this.endTime,
     required this.roomName,
+    this.branchId,
+    this.branchName,
     required this.availableSeats,
     this.memberBookingStatus,
     this.description,
@@ -56,6 +60,10 @@ class SessionDetailModel {
       availableSeats: (json['availableSeats'] as num).toInt(),
       memberBookingStatus: json['memberBookingStatus'] as String?,
       description: json['description'] as String?,
+      branchId: json['branchId'] == null
+          ? null
+          : (json['branchId'] as num).toInt(),
+      branchName: json['branchName'] as String?,
       benefits: List<String>.from(json['benefits'] ?? []),
       equipment: List<String>.from(json['equipment'] ?? []),
     );
@@ -75,6 +83,8 @@ class SessionDetailModel {
       'startTime': startTime.toIso8601String(),
       'endTime': endTime.toIso8601String(),
       'roomName': roomName,
+      'branchId': branchId,
+      'branchName': branchName,
       'availableSeats': availableSeats,
       'memberBookingStatus': memberBookingStatus,
       'description': description,

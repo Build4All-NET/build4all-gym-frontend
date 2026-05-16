@@ -2,13 +2,6 @@ import '../../domain/entities/trainer_detail_entity.dart';
 import 'trainer_video_model.dart';
 import 'pt_package_model.dart';
 
-/// API model for trainer detail.
-///
-/// This parses:
-/// - trainer profile
-/// - certifications
-/// - assigned videos
-/// - PT packages
 class TrainerDetailModel {
   final int id;
   final String fullName;
@@ -22,8 +15,8 @@ class TrainerDetailModel {
   final List<String> certifications;
   final List<TrainerVideoModel> assignedVideos;
   final int? branchId;
+  final String? branchName;
 
-  /// New backend field.
   final List<PtPackageModel> packages;
 
   const TrainerDetailModel({
@@ -39,6 +32,7 @@ class TrainerDetailModel {
     required this.certifications,
     required this.assignedVideos,
     this.branchId,
+    this.branchName,
     required this.packages,
   });
 
@@ -58,9 +52,7 @@ class TrainerDetailModel {
       isFavorite: json['isFavorite'] as bool? ??
           json['favorite'] as bool? ??
           false,
-
       certifications: List<String>.from(json['certifications'] ?? []),
-
       assignedVideos: videosJson is List
           ? videosJson
           .map(
@@ -70,11 +62,10 @@ class TrainerDetailModel {
       )
           .toList()
           : const [],
-
       branchId: json['branchId'] != null
           ? (json['branchId'] as num).toInt()
           : null,
-
+      branchName: json['branchName'] as String?,
       packages: packagesJson is List
           ? packagesJson
           .map(
@@ -101,6 +92,7 @@ class TrainerDetailModel {
       'certifications': certifications,
       'assignedVideos': assignedVideos.map((video) => video.toJson()).toList(),
       'branchId': branchId,
+      'branchName': branchName,
       'packages': packages.map((ptPackage) => ptPackage.toJson()).toList(),
     };
   }
@@ -119,6 +111,7 @@ class TrainerDetailModel {
       certifications: certifications,
       assignedVideos: assignedVideos.map((video) => video.toEntity()).toList(),
       branchId: branchId,
+      branchName: branchName,
       packages: packages.map((ptPackage) => ptPackage.toEntity()).toList(),
     );
   }
