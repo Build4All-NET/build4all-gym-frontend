@@ -1,21 +1,17 @@
-// =============================================================================
-// FILE: quick_actions_widget.dart
-// PATH: lib/features/admin/members/presentation/widgets/quick_actions_widget.dart
-// TASK: GA-272
-// =============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// import 'package:url_launcher/url_launcher.dart'; // add url_launcher: ^6.3.0
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/member_detail_entity.dart';
 import '../bloc/admin_members_bloc.dart';
+import 'attendance_history_bottom_sheet.dart';
 
 class QuickActionsWidget extends StatelessWidget {
   const QuickActionsWidget({super.key, required this.member});
 
   final MemberDetailEntity member;
+
+  bool get _hasPhone => member.phone?.isNotEmpty == true;
 
   @override
   Widget build(BuildContext context) {
@@ -34,50 +30,56 @@ class QuickActionsWidget extends StatelessWidget {
           Text(
             'Quick Actions',
             style: TextStyle(
-              color: cs.onSurface,
-              fontSize: 16,
+              color:      cs.onSurface,
+              fontSize:   16,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 16),
-          // 2×3 grid
           GridView.count(
-            crossAxisCount: 3,
-            shrinkWrap:     true,
-            physics:        const NeverScrollableScrollPhysics(),
+            crossAxisCount:   3,
+            shrinkWrap:       true,
+            physics:          const NeverScrollableScrollPhysics(),
             crossAxisSpacing: 12,
             mainAxisSpacing:  12,
             childAspectRatio: 1.1,
             children: [
               _ActionButton(
-                icon:    Icons.phone_outlined,
-                label:   'Call',
-                color:   cs.primary,
-                onTap:   () => _launchPhone(context, member.phone),
+                icon:     Icons.phone_outlined,
+                label:    'Call',
+                color:    cs.primary,
+                disabled: !_hasPhone,
+                onTap:    () => _launchPhone(context),
               ),
               _ActionButton(
-                icon:    Icons.chat_bubble_outline,
-                label:   'WhatsApp',
-                color:   const Color(0xFF25D366),
-                onTap:   () => _launchWhatsApp(context, member.phone),
+                icon:     Icons.chat_bubble_outline,
+                label:    'WhatsApp',
+                color:    const Color(0xFF25D366),
+                disabled: !_hasPhone,
+                onTap:    () => _launchWhatsApp(context),
               ),
               _ActionButton(
-                icon:    Icons.sms_outlined,
-                label:   'SMS',
-                color:   cs.tertiary,
-                onTap:   () => _launchSms(context, member.phone),
+                icon:     Icons.sms_outlined,
+                label:    'SMS',
+                color:    cs.tertiary,
+                disabled: !_hasPhone,
+                onTap:    () => _launchSms(context),
               ),
               _ActionButton(
-                icon:    Icons.person_outline,
-                label:   'Attendance',
-                color:   cs.primary,
-                onTap:   () => _showComingSoon(context, 'Attendance'),
+                icon:  Icons.calendar_today_outlined,
+                label: 'Attendance',
+                color: cs.primary,
+                onTap: () => AttendanceHistoryBottomSheet.show(
+                  context,
+                  userId:     member.userId,
+                  memberName: member.fullName ?? 'Member',
+                ),
               ),
               _ActionButton(
-                icon:    Icons.refresh_rounded,
-                label:   'Renew',
-                color:   const Color(0xFFF97316),
-                onTap:   () => _showComingSoon(context, 'Renew Plan'),
+                icon:  Icons.refresh_rounded,
+                label: 'Renew',
+                color: const Color(0xFFF97316),
+                onTap: () => _showComingSoon(context, 'Renew Plan'),
               ),
               _ActionButton(
                 icon:  member.isBlocked
@@ -98,30 +100,32 @@ class QuickActionsWidget extends StatelessWidget {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Launchers — url_launcher stubs until package is added
-  // ---------------------------------------------------------------------------
-
-  Future<void> _launchPhone(BuildContext context, String? phone) async {
-    if (phone == null || phone.isEmpty) return;
-    // final uri = Uri.parse('tel:$phone');
-    // if (await canLaunchUrl(uri)) await launchUrl(uri);
-    _showComingSoon(context, 'Call ($phone)');
+  Future<void> _launchPhone(BuildContext context) async {
+    final uri = Uri.parse('tel:${member.phone}');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else if (context.mounted) {
+      _showError(context, 'Could not open dialler');
+    }
   }
 
-  Future<void> _launchWhatsApp(BuildContext context, String? phone) async {
-    if (phone == null || phone.isEmpty) return;
-    final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
-    // final uri = Uri.parse('https://wa.me/$digits');
-    // if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
-    _showComingSoon(context, 'WhatsApp: wa.me/$digits');
+  Future<void> _launchWhatsApp(BuildContext context) async {
+    final digits = member.phone!.replaceAll(RegExp(r'[^\d+]'), '');
+    final uri    = Uri.parse('https://wa.me/$digits');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (context.mounted) {
+      _showError(context, 'WhatsApp is not installed');
+    }
   }
 
-  Future<void> _launchSms(BuildContext context, String? phone) async {
-    if (phone == null || phone.isEmpty) return;
-    // final uri = Uri.parse('sms:$phone');
-    // if (await canLaunchUrl(uri)) await launchUrl(uri);
-    _showComingSoon(context, 'SMS ($phone)');
+  Future<void> _launchSms(BuildContext context) async {
+    final uri = Uri.parse('sms:${member.phone}');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else if (context.mounted) {
+      _showError(context, 'Could not open SMS app');
+    }
   }
 
   void _showBlockDialog(BuildContext context, AdminMembersBloc bloc) {
@@ -165,54 +169,64 @@ class QuickActionsWidget extends StatelessWidget {
 
   void _showComingSoon(BuildContext context, String feature) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('$feature — coming soon'),
+      content:         Text('$feature — coming soon'),
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      duration: const Duration(seconds: 1),
+      duration:        const Duration(seconds: 1),
+    ));
+  }
+
+  void _showError(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content:         Text(msg),
+      backgroundColor: Theme.of(context).colorScheme.error,
     ));
   }
 }
 
-// ---------------------------------------------------------------------------
-// Single action button — dark rounded square with icon + label
-// ---------------------------------------------------------------------------
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
+    this.disabled = false,
   });
 
-  final IconData    icon;
-  final String      label;
-  final Color       color;
+  final IconData     icon;
+  final String       label;
+  final Color        color;
   final VoidCallback onTap;
+  final bool         disabled;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final cs             = Theme.of(context).colorScheme;
+    final effectiveColor = disabled ? cs.onSurface.withOpacity(0.25) : color;
 
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 26),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color:    cs.onSurface.withOpacity(0.7),
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
+      onTap: disabled ? null : onTap,
+      child: Opacity(
+        opacity: disabled ? 0.5 : 1.0,
+        child: Container(
+          decoration: BoxDecoration(
+            color:        cs.surface,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: effectiveColor, size: 26),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color:      cs.onSurface.withOpacity(0.7),
+                  fontSize:   11,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

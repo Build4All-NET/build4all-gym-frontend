@@ -22,6 +22,7 @@ import '../../domain/usecases/create_class_usecase.dart';
 import '../../domain/usecases/get_class_form_options_usecase.dart';
 import '../../domain/usecases/get_classes_by_date_usecase.dart';
 import '../../domain/usecases/get_session_bookings_usecase.dart';
+import '../../domain/usecases/reactivate_class_usecase.dart';
 import '../../domain/usecases/update_class_usecase.dart';
 import 'admin_classes_event.dart';
 import 'admin_classes_state.dart';
@@ -33,6 +34,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
   final CreateClassUseCase           _createClass;
   final UpdateClassUseCase           _updateClass;
   final CancelClassUseCase           _cancelClass;
+  final ReactivateClassUseCase       _reactivateClass;
   final GetSessionBookingsUseCase    _getSessionBookings;
 
   // The date the admin is currently viewing — persisted across events
@@ -45,12 +47,14 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     required CreateClassUseCase           createClass,
     required UpdateClassUseCase           updateClass,
     required CancelClassUseCase           cancelClass,
+    required ReactivateClassUseCase       reactivateClass,
     required GetSessionBookingsUseCase    getSessionBookings,
   })  : _getClassesByDate    = getClassesByDate,
         _getClassFormOptions  = getClassFormOptions,
         _createClass          = createClass,
         _updateClass          = updateClass,
         _cancelClass          = cancelClass,
+        _reactivateClass      = reactivateClass,
         _getSessionBookings   = getSessionBookings,
         super(ClassesInitial()) {
 
@@ -60,6 +64,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     on<ClassCreateRequested>(_onClassCreateRequested);
     on<ClassUpdateRequested>(_onClassUpdateRequested);
     on<ClassCancelRequested>(_onClassCancelRequested);
+    on<ClassReactivateRequested>(_onClassReactivateRequested);
     on<SessionBookingsRequested>(_onSessionBookingsRequested);
   }
 
@@ -146,6 +151,19 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
       await _cancelClass(
           event.sessionId, CancelClassRequestModel(cancelReason: event.cancelReason));
       emit(ClassActionSuccess(event.sessionId, 'cancelled'));
+      add(ClassesStarted(_selectedDate));
+    } catch (e) {
+      emit(ClassActionError(event.sessionId, e.toString()));
+    }
+  }
+
+  // ── ClassReactivateRequested ────────────────────────────────────────────
+  Future<void> _onClassReactivateRequested(
+      ClassReactivateRequested event, Emitter<AdminClassesState> emit) async {
+    emit(ClassActionLoading(event.sessionId));
+    try {
+      await _reactivateClass(event.sessionId);
+      emit(ClassActionSuccess(event.sessionId, 'reactivated'));
       add(ClassesStarted(_selectedDate));
     } catch (e) {
       emit(ClassActionError(event.sessionId, e.toString()));

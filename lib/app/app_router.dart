@@ -25,6 +25,7 @@ import '../features/admin/classes/domain/usecases/create_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_class_form_options_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_classes_by_date_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
+import '../features/admin/classes/domain/usecases/reactivate_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
 import '../features/admin/classes/presentation/bloc/admin_classes_bloc.dart';
 import '../features/admin/classes/presentation/bloc/admin_classes_event.dart';
@@ -33,6 +34,7 @@ import '../features/admin/members/data/services/admin_members_service.dart';
 import '../features/admin/members/domain/usecases/block_member_use_case.dart';
 import '../features/admin/members/domain/usecases/bulk_delete_members_use_case.dart';
 import '../features/admin/members/domain/usecases/delete_member_use_case.dart';
+import '../features/admin/members/domain/usecases/get_member_attendance_use_case.dart';
 import '../features/admin/members/domain/usecases/get_member_detail_use_case.dart';
 import '../features/admin/members/domain/usecases/get_members_use_case.dart';
 import '../features/admin/members/domain/usecases/unblock_member_use_case.dart';
@@ -343,13 +345,14 @@ class AppRouter {
               branchName: branchName,
               address:    address,
               bloc: AdminMembersBloc(
-                branchId:                branchId,
-                getMembersUseCase:       GetMembersUseCase(repository),
-                getMemberDetailUseCase:  GetMemberDetailUseCase(repository),
-                blockMemberUseCase:      BlockMemberUseCase(repository),
-                unblockMemberUseCase:    UnblockMemberUseCase(repository),
-                deleteMemberUseCase:     DeleteMemberUseCase(repository),
-                bulkDeleteMembersUseCase: BulkDeleteMembersUseCase(repository),
+                branchId:                  branchId,
+                getMembersUseCase:         GetMembersUseCase(repository),
+                getMemberDetailUseCase:    GetMemberDetailUseCase(repository),
+                getMemberAttendanceUseCase: GetMemberAttendanceUseCase(repository),
+                blockMemberUseCase:        BlockMemberUseCase(repository),
+                unblockMemberUseCase:      UnblockMemberUseCase(repository),
+                deleteMemberUseCase:       DeleteMemberUseCase(repository),
+                bulkDeleteMembersUseCase:  BulkDeleteMembersUseCase(repository),
               ),
             ),
           ),
@@ -494,6 +497,7 @@ class AppRouter {
                     createClass:         CreateClassUseCase(classesRepo),
                     updateClass:         UpdateClassUseCase(classesRepo),
                     cancelClass:         CancelClassUseCase(classesRepo),
+                    reactivateClass:     ReactivateClassUseCase(classesRepo),
                     getSessionBookings:  GetSessionBookingsUseCase(classesRepo),
                   )..add(ClassesStarted(DateTime.now())),
                 ),

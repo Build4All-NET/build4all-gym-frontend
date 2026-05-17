@@ -86,6 +86,16 @@ class ClassCancelRequested extends AdminClassesEvent {
   List<Object?> get props => [sessionId, cancelReason];
 }
 
+// ── ClassReactivateRequested ───────────────────────────────────────────────
+// Dispatched after the admin confirms the reactivate confirmation dialog.
+class ClassReactivateRequested extends AdminClassesEvent {
+  final int sessionId;
+  const ClassReactivateRequested(this.sessionId);
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
 // ── SessionBookingsRequested ───────────────────────────────────────────────
 // Dispatched when the Bookings action button is tapped on a ClassCardWidget.
 // Opens the SessionBookingsBottomSheet and loads the bookings list inside it.

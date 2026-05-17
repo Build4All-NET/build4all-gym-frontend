@@ -18,11 +18,12 @@ import '../bloc/admin_classes_state.dart';
 class AddEditClassBottomSheet extends StatefulWidget {
   final int? sessionId;
   final AdminClassCardEntity? existing;
+  final DateTime? existingDate;
 
-  const AddEditClassBottomSheet({super.key, this.sessionId, this.existing});
+  const AddEditClassBottomSheet({super.key, this.sessionId, this.existing, this.existingDate});
 
   static void show(BuildContext context,
-      {int? sessionId, AdminClassCardEntity? existing}) {
+      {int? sessionId, AdminClassCardEntity? existing, DateTime? existingDate}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -30,7 +31,7 @@ class AddEditClassBottomSheet extends StatefulWidget {
       builder: (_) => BlocProvider.value(
         value: context.read<AdminClassesBloc>(),
         child: AddEditClassBottomSheet(
-            sessionId: sessionId, existing: existing),
+            sessionId: sessionId, existing: existing, existingDate: existingDate),
       ),
     );
   }
@@ -57,6 +58,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   TimeOfDay? _selectedTime;
 
   final List<ClassFormOptionItemEntity> _newTypes = [];
+  bool _optionsInitialized = false;
 
   bool get _isEditMode => widget.sessionId != null;
 
@@ -72,11 +74,69 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     _roomNameCtrl = TextEditingController(text: e?.roomName ?? '');
     _notesCtrl = TextEditingController();
 
+    if (_isEditMode) {
+      _selectedDate = widget.existingDate;
+      _selectedTime = _parseTimeOfDay(e?.startTime);
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bloc = context.read<AdminClassesBloc>();
       if (bloc.state is! ClassFormOptionsLoaded) {
         bloc.add(const ClassFormOptionsRequested());
       }
+    });
+  }
+
+  TimeOfDay? _parseTimeOfDay(String? timeStr) {
+    if (timeStr == null || timeStr.isEmpty) return null;
+    try {
+      // Handles "7:00 AM", "2:30 PM", "14:30", etc.
+      final upper = timeStr.trim().toUpperCase();
+      final hasPeriod = upper.endsWith('AM') || upper.endsWith('PM');
+      if (hasPeriod) {
+        final parts = upper.split(' ');
+        final timeParts = parts[0].split(':');
+        var hour = int.parse(timeParts[0]);
+        final minute = int.parse(timeParts[1]);
+        if (parts[1] == 'PM' && hour != 12) hour += 12;
+        if (parts[1] == 'AM' && hour == 12) hour = 0;
+        return TimeOfDay(hour: hour, minute: minute);
+      } else {
+        final timeParts = upper.split(':');
+        return TimeOfDay(
+            hour: int.parse(timeParts[0]),
+            minute: int.parse(timeParts[1]));
+      }
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _initDropdownsFromOptions(ClassFormOptionsEntity options) {
+    if (_optionsInitialized || !_isEditMode) return;
+    final e = widget.existing;
+    if (e == null) return;
+
+    final allTypes = [
+      ...options.classTypes,
+      ..._newTypes.where((n) => !options.classTypes.any((t) => t.id == n.id)),
+    ];
+
+    ClassFormOptionItemEntity? findByName(
+        List<ClassFormOptionItemEntity> items, String? name) {
+      if (name == null) return null;
+      try {
+        return items.firstWhere((i) => i.name == name);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    setState(() {
+      _optionsInitialized = true;
+      _selectedType    = findByName(allTypes, e.typeName);
+      _selectedTrainer = findByName(options.trainers, e.trainerName);
+      _selectedBranch  = findByName(options.branches, e.branchName);
     });
   }
 
@@ -270,13 +330,37 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final initial = _selectedDate != null && _selectedDate!.isAfter(today)
+        ? _selectedDate!
+        : today;
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 30)),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: initial,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 365)),
     );
-    if (picked != null) setState(() => _selectedDate = picked);
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+      // If the previously chosen time is now in the past (date changed to today),
+      // clear it so the user has to re-pick a valid time.
+      if (_selectedTime != null) {
+        final now2 = DateTime.now();
+        final combined = DateTime(
+            picked.year, picked.month, picked.day,
+            _selectedTime!.hour, _selectedTime!.minute);
+        if (combined.isBefore(now2)) {
+          setState(() => _selectedTime = null);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Previously selected time is now in the past — please re-select'),
+              duration: Duration(seconds: 3),
+            ));
+          }
+        }
+      }
+    }
   }
 
   Future<void> _pickTime() async {
@@ -284,7 +368,29 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
     );
-    if (picked != null) setState(() => _selectedTime = picked);
+    if (picked == null) return;
+
+    // If the chosen date is today, reject times already in the past.
+    final now = DateTime.now();
+    final isToday = _selectedDate != null &&
+        _selectedDate!.year == now.year &&
+        _selectedDate!.month == now.month &&
+        _selectedDate!.day == now.day;
+
+    if (isToday) {
+      final combined = DateTime(
+          now.year, now.month, now.day, picked.hour, picked.minute);
+      if (combined.isBefore(now)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Time cannot be in the past'),
+          ));
+        }
+        return;
+      }
+    }
+
+    setState(() => _selectedTime = picked);
   }
 
   void _onSave() {
@@ -294,6 +400,17 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           const SnackBar(content: Text('Please select date and time')));
       return;
     }
+
+    // Guard: combined date+time must not be in the past.
+    final combined = DateTime(
+        _selectedDate!.year, _selectedDate!.month, _selectedDate!.day,
+        _selectedTime!.hour, _selectedTime!.minute);
+    if (combined.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Class date and time cannot be in the past')));
+      return;
+    }
+
     if (_selectedType == null ||
         _selectedTrainer == null ||
         _selectedBranch == null) {
@@ -356,7 +473,9 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final mq = MediaQuery.of(context);
+    final bottomInset = mq.viewInsets.bottom;
+    final navBarHeight = mq.viewPadding.bottom;
 
     return BlocListener<AdminClassesBloc, AdminClassesState>(
       listener: (context, state) {},
@@ -367,7 +486,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: EdgeInsets.only(
-            left: 20, right: 20, top: 20, bottom: bottomInset + 20),
+            left: 20, right: 20, top: 20, bottom: bottomInset + navBarHeight + 20),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -427,6 +546,8 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                               color: cs.primary));
                     }
                     if (state is ClassFormOptionsLoaded) {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                          (_) => _initDropdownsFromOptions(state.options));
                       final options = state.options;
                       final allTypes = [
                         ...options.classTypes,
@@ -741,7 +862,14 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     required String hint,
     required void Function(ClassFormOptionItemEntity?) onChanged,
   }) {
-    final safeValue = items.any((i) => i.id == value?.id) ? value : null;
+    ClassFormOptionItemEntity? safeValue;
+    if (value != null) {
+      try {
+        safeValue = items.firstWhere((i) => i.id == value.id);
+      } catch (_) {
+        safeValue = null;
+      }
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
