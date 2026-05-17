@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/AppBar/data/models/branch_option_model.dart';
-import '../../../../admin/AppBar/presentation/branch_cubit.dart';
+import '../../../../admin/AppBar/data/services/admin_branches_service.dart';
 import '../../data/services/admin_trainers_service.dart';
 
 class ConfigureTrainerSheet extends StatefulWidget {
@@ -29,13 +29,10 @@ class ConfigureTrainerSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: context.read<BranchCubit>(),
-        child: ConfigureTrainerSheet(
-          userId:       userId,
-          trainerName:  trainerName,
-          onConfigured: onConfigured,
-        ),
+      builder: (_) => ConfigureTrainerSheet(
+        userId:       userId,
+        trainerName:  trainerName,
+        onConfigured: onConfigured,
       ),
     );
   }
@@ -45,15 +42,24 @@ class ConfigureTrainerSheet extends StatefulWidget {
 }
 
 class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
-  final _service            = AdminTrainersService();
-  final _yearsController    = TextEditingController();
-  final _notesController    = TextEditingController();
-  final _specialtyController = TextEditingController();
+  final _trainersService  = AdminTrainersService();
+  final _branchesService  = AdminBranchesService();
+  final _yearsController      = TextEditingController();
+  final _notesController      = TextEditingController();
+  final _specialtyController  = TextEditingController();
 
-  Set<int>     _selectedBranchIds = {};
-  List<String> _specialties       = [];
-  bool         _submitting        = false;
-  String?      _error;
+  List<BranchOptionModel> _branches        = [];
+  Set<int>                _selectedBranches = {};
+  List<String>            _specialties     = [];
+  bool                    _loadingBranches = true;
+  bool                    _submitting      = false;
+  String?                 _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBranches();
+  }
 
   @override
   void dispose() {
@@ -61,6 +67,15 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
     _notesController.dispose();
     _specialtyController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadBranches() async {
+    try {
+      final branches = await _branchesService.getBranches();
+      if (mounted) setState(() { _branches = branches; _loadingBranches = false; });
+    } catch (_) {
+      if (mounted) setState(() => _loadingBranches = false);
+    }
   }
 
   void _addSpecialty() {
@@ -71,22 +86,21 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
   }
 
   Future<void> _submit() async {
-    if (_selectedBranchIds.isEmpty) {
+    if (_selectedBranches.isEmpty) {
       setState(() => _error = 'Select at least one branch.');
       return;
     }
     setState(() { _submitting = true; _error = null; });
 
     final years = int.tryParse(_yearsController.text.trim());
+    final notes = _notesController.text.trim();
 
     try {
-      await _service.configureTrainer(widget.userId, {
-        'branchIds':            _selectedBranchIds.toList(),
+      await _trainersService.configureTrainer(widget.userId, {
+        'branchIds':            _selectedBranches.toList(),
         'specialties':          _specialties,
         'yearsOfExperience':    years,
-        'notes':                _notesController.text.trim().isEmpty
-                                    ? null
-                                    : _notesController.text.trim(),
+        'notes':                notes.isEmpty ? null : notes,
         'availabilitySchedule': [],
       });
       if (!mounted) return;
@@ -118,7 +132,6 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       ),
       child: Column(
         children: [
-          // ── Handle ────────────────────────────────────────────────────────
           const SizedBox(height: 10),
           Container(
             width: 40, height: 4,
@@ -170,7 +183,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                   style: TextStyle(color: c.error ?? Colors.red, fontSize: 12)),
             ),
 
-          // ── Scrollable body ───────────────────────────────────────────────
+          // ── Body ──────────────────────────────────────────────────────────
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(20, 8, 20, mq.padding.bottom + 16),
@@ -180,18 +193,12 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                   // ── Branch selection ─────────────────────────────────────
                   _sectionLabel('Branches *', c),
                   const SizedBox(height: 8),
-                  BlocBuilder<BranchCubit, BranchState>(
-                    builder: (_, state) {
-                      if (state is BranchLoading) {
-                        return CircularProgressIndicator(color: c.primary);
-                      }
-                      if (state is BranchLoaded) {
-                        return _branchChips(state.branches, c);
-                      }
-                      return Text('Could not load branches.',
-                          style: TextStyle(color: c.onPrimary, fontSize: 13));
-                    },
-                  ),
+                  _loadingBranches
+                      ? Center(child: CircularProgressIndicator(color: c.primary))
+                      : _branches.isEmpty
+                          ? Text('No branches found.',
+                              style: TextStyle(color: c.onPrimary, fontSize: 13))
+                          : _branchChips(c),
                   const SizedBox(height: 20),
 
                   // ── Specialties ──────────────────────────────────────────
@@ -216,7 +223,9 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                     Wrap(
                       spacing: 6,
                       runSpacing: 6,
-                      children: _specialties.map((s) => _specialtyChip(s, c)).toList(),
+                      children: _specialties
+                          .map((s) => _specialtyChip(s, c))
+                          .toList(),
                     ),
                   ],
                   const SizedBox(height: 20),
@@ -233,7 +242,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ── Notes / Bio ──────────────────────────────────────────
+                  // ── Notes ────────────────────────────────────────────────
                   _sectionLabel('Bio / Notes (optional)', c),
                   const SizedBox(height: 8),
                   _textField(
@@ -256,7 +265,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                             borderRadius: BorderRadius.circular(12)),
                       ),
                       child: _submitting
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 20, height: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
@@ -278,21 +287,17 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
     );
   }
 
-  Widget _branchChips(List<BranchOptionModel> branches, dynamic c) {
+  Widget _branchChips(dynamic c) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: branches.map((b) {
-        final selected = _selectedBranchIds.contains(b.id);
+      children: _branches.map((b) {
+        final selected = _selectedBranches.contains(b.id);
         return FilterChip(
           label: Text(b.name),
           selected: selected,
           onSelected: (_) => setState(() {
-            if (selected) {
-              _selectedBranchIds.remove(b.id);
-            } else {
-              _selectedBranchIds.add(b.id);
-            }
+            selected ? _selectedBranches.remove(b.id) : _selectedBranches.add(b.id);
           }),
           selectedColor: c.primary.withOpacity(0.2),
           checkmarkColor: c.primary,
@@ -303,9 +308,9 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
           ),
           backgroundColor: c.background,
           side: BorderSide(
-            color: selected ? c.primary : c.border.withOpacity(0.3),
-          ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              color: selected ? c.primary : c.border.withOpacity(0.3)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20)),
         );
       }).toList(),
     );
@@ -323,14 +328,9 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
     );
   }
 
-  Widget _sectionLabel(String text, dynamic c) {
-    return Text(text,
-        style: TextStyle(
-          color: c.primary,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ));
-  }
+  Widget _sectionLabel(String text, dynamic c) => Text(text,
+      style: TextStyle(
+          color: c.primary, fontWeight: FontWeight.w600, fontSize: 14));
 
   Widget _textField({
     required TextEditingController controller,
@@ -342,29 +342,30 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
     void Function(String)? onSubmitted,
   }) {
     return TextField(
-      controller:       controller,
-      keyboardType:     keyboardType,
-      inputFormatters:  inputFormatters,
-      maxLines:         maxLines,
-      onSubmitted:      onSubmitted,
-      style:            TextStyle(color: c.primary),
+      controller:      controller,
+      keyboardType:    keyboardType,
+      inputFormatters: inputFormatters,
+      maxLines:        maxLines,
+      onSubmitted:     onSubmitted,
+      style:           TextStyle(color: c.primary),
       decoration: InputDecoration(
-        hintText:     hint,
-        hintStyle:    TextStyle(color: c.onPrimary),
-        filled:       true,
-        fillColor:    c.background,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        hintText:  hint,
+        hintStyle: TextStyle(color: c.onPrimary),
+        filled:    true,
+        fillColor: c.background,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:   BorderSide(color: c.border.withOpacity(0.2)),
+          borderSide: BorderSide(color: c.border.withOpacity(0.2)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:   BorderSide(color: c.border.withOpacity(0.2)),
+          borderSide: BorderSide(color: c.border.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:   BorderSide(color: c.primary),
+          borderSide: BorderSide(color: c.primary),
         ),
       ),
     );
@@ -376,9 +377,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       child: Container(
         width: 44, height: 44,
         decoration: BoxDecoration(
-          color: c.primary,
-          borderRadius: BorderRadius.circular(12),
-        ),
+            color: c.primary, borderRadius: BorderRadius.circular(12)),
         child: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
       ),
     );

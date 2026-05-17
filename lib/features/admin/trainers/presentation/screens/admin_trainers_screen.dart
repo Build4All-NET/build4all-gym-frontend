@@ -16,6 +16,7 @@ import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../domain/entities/GymTrainerEntity.dart';
 import '../bloc/GymTrainersCubit.dart';
 import '../bloc/GymTrainersState.dart';
+import '../widgets/configure_trainer_sheet.dart';
 import '../widgets/member_picker_for_trainer_sheet.dart';
 
 class AdminGymTrainersScreen extends StatefulWidget {
@@ -104,7 +105,12 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => MemberPickerForTrainerSheet.show(
           context,
-          onAssigned: () => context.read<GymTrainersCubit>().reload(),
+          onAssigned: (userId, name) => ConfigureTrainerSheet.show(
+            context,
+            userId:       userId,
+            trainerName:  name,
+            onConfigured: () => context.read<GymTrainersCubit>().reload(),
+          ),
         ),
         backgroundColor: c.primary,
         icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
