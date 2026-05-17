@@ -7,102 +7,73 @@
 // Shown on the start screen (before the owner types anything).
 // Tapping a chip dispatches AiSuggestionTapped to the BLoC.
 // =============================================================================
+// =============================================================================
+// FILE: ai_hero_banner_widget.dart
+// =============================================================================
+// The purple gradient banner at the top of the AI assistant screen.
+// All strings are now localised via AppLocalizations.
+// =============================================================================
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 
-import '../../../../../l10n/app_localizations.dart';
-
-import '../../domain/entities/suggested_question_entity.dart';
-import '../bloc/ai_assistant_bloc.dart';
-
-class SuggestedQuestionsWidget extends StatelessWidget {
-  final List<SuggestedQuestionEntity> suggestions;
-
-  const SuggestedQuestionsWidget({
-    super.key,
-    required this.suggestions,
-  });
+class AiHeroBannerWidget extends StatelessWidget {
+  const AiHeroBannerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (suggestions.isEmpty) return const SizedBox.shrink();
-
     final l10n = AppLocalizations.of(context)!;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-
-        // ─────────────────────────────────────────────
-        // HEADER
-        // ─────────────────────────────────────────────
-        Text(
-          l10n.suggestedQuestions,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-
-        const SizedBox(height: 12),
-
-        // ─────────────────────────────────────────────
-        // LIST OF CHIPS
-        // ─────────────────────────────────────────────
-        Column(
-          children: suggestions.map((s) {
-            return _SuggestionChip(question: s.question);
-          }).toList(),
-        ),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SINGLE CHIP
-// ─────────────────────────────────────────────────────────────────────────────
-class _SuggestionChip extends StatelessWidget {
-  final String question;
-
-  const _SuggestionChip({
-    required this.question,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.read<AiAssistantBloc>().add(
-          AiSuggestionTapped(question),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
-        child: Text(
-          question,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            child: const Icon(Icons.smart_toy_outlined,
+                color: Colors.white, size: 28),
           ),
-        ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.aiHeroBannerTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.aiHeroBannerSubtitle,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.aiHeroBannerBody,
+                  style: const TextStyle(color: Colors.white60, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

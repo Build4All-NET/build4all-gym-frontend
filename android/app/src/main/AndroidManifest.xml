@@ -1,4 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA"/>
+       <!-- url_launcher for tel: URIs -->
+      <queries>
+         <intent>
+           <action android:name="android.intent.action.DIAL" />
+         </intent>
+       </queries>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="${APP_NAME}"

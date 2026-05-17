@@ -1,16 +1,13 @@
 // =============================================================================
 // FILE: ai_assistant_screen.dart
-// PATH: lib/features/owner/ai_assistant/presentation/screens/ai_assistant_screen.dart
-// LAYER: Presentation Layer → Screens
 // =============================================================================
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 
 import '../../../../admin/AppBar/presentation/admin_app_bar.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
-import '../../../../../l10n/app_localizations.dart';
-
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../domain/entities/ai_message_entity.dart';
 import '../../domain/entities/ai_stat_card_entity.dart';
@@ -41,9 +38,14 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
   void _submit(List<AiMessageEntity> history) {
     final query = _controller.text.trim();
     if (query.isEmpty) return;
+    final l10n = AppLocalizations.of(context)!;
     _controller.clear();
     context.read<AiAssistantBloc>().add(
-      AiQuerySubmitted(query: query, conversationHistory: history),
+      AiQuerySubmitted(
+        query:                query,
+        conversationHistory:  history,
+        errorFallbackMessage: l10n.aiErrorOffline,
+      ),
     );
   }
 
@@ -61,8 +63,8 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n    = AppLocalizations.of(context)!;
     final profile = context.watch<AdminProfileCubit>().state;
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       drawer: AdminNavigationDrawer(
@@ -76,18 +78,16 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── Shared AppBar (handles drawer open + branch pill + bell) ────
             AdminAppBar(
-              title: l10n.aiAssistantTitle,
+              title: l10n.aiAppBarTitle,
               actions: [
-                // Reset button — only visible during an active conversation
                 BlocBuilder<AiAssistantBloc, AiAssistantState>(
                   builder: (context, state) {
                     final inChat = state is AiAssistantQuerying ||
                         state is AiAssistantAnswered;
                     if (!inChat) return const SizedBox.shrink();
                     return IconButton(
-                      tooltip: l10n.newConversation,
+                      tooltip: l10n.aiNewConversationTooltip,
                       icon: Icon(
                         Icons.refresh_outlined,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -102,7 +102,6 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               ],
             ),
 
-            // ── BLoC-driven body + fixed input bar ───────────────────────
             Expanded(
               child: BlocConsumer<AiAssistantBloc, AiAssistantState>(
                 listener: (context, state) {
@@ -117,11 +116,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
 
                   return Column(
                     children: [
-                      Expanded(child: _buildBody(context, state)),
+                      Expanded(child: _buildBody(context, state, l10n)),
                       _InputBar(
                         controller: _controller,
                         isLoading:  isLoading,
                         onSubmit:   () => _submit(history),
+                        hint:       l10n.aiInputHint,
                       ),
                     ],
                   );
@@ -134,19 +134,17 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     );
   }
 
-  // ── State → widget mapping ─────────────────────────────────────────────────
-  Widget _buildBody(BuildContext context, AiAssistantState state) {
+  Widget _buildBody(BuildContext context, AiAssistantState state, AppLocalizations l10n) {
     if (state is AiAssistantInitial || state is AiAssistantLoading) {
       return Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
       );
     }
 
     if (state is AiAssistantError) {
       return _ErrorView(
-        message: state.message,
+        message:    state.message,
+        retryLabel: l10n.aiRetryButton,
         onRetry: () =>
             context.read<AiAssistantBloc>().add(const AiAssistantStarted()),
       );
@@ -158,21 +156,23 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
 
     if (state is AiAssistantQuerying) {
       return _ChatView(
-        messages:   state.conversation.messages,
-        statCards:  const [],
-        followUps:  const [],
-        isLoading:  true,
-        scrollCtrl: _scrollCtrl,
+        messages:       state.conversation.messages,
+        statCards:      const [],
+        followUps:      const [],
+        isLoading:      true,
+        scrollCtrl:     _scrollCtrl,
+        followUpHeader: l10n.aiFollowUpHeader,
       );
     }
 
     if (state is AiAssistantAnswered) {
       return _ChatView(
-        messages:   state.conversation.messages,
-        statCards:  state.statCards,
-        followUps:  state.suggestedFollowUps,
-        isLoading:  false,
-        scrollCtrl: _scrollCtrl,
+        messages:       state.conversation.messages,
+        statCards:      state.statCards,
+        followUps:      state.suggestedFollowUps,
+        isLoading:      false,
+        scrollCtrl:     _scrollCtrl,
+        followUpHeader: l10n.aiFollowUpHeader,
       );
     }
 
@@ -187,7 +187,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
 }
 
 // =============================================================================
-// _StartScreen — hero + suggested questions + recent queries
+// _StartScreen
 // =============================================================================
 class _StartScreen extends StatelessWidget {
   final AiAssistantReady state;
@@ -197,7 +197,7 @@ class _StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final cs   = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
@@ -214,7 +214,7 @@ class _StartScreen extends StatelessWidget {
           if (state.recentQueries.isNotEmpty) ...[
             const SizedBox(height: 28),
             Text(
-              l10n.recentQueries,
+              l10n.aiRecentQueriesHeader,
               style: TextStyle(
                 fontSize:   16,
                 fontWeight: FontWeight.bold,
@@ -225,9 +225,13 @@ class _StartScreen extends StatelessWidget {
             ...state.recentQueries.map(
                   (q) => _RecentQueryRow(
                 queryText: q.queryText,
-                onTap: () => context
-                    .read<AiAssistantBloc>()
-                    .add(AiHistoryItemTapped(q.queryText)),
+                viewLabel: l10n.aiRecentQueryViewLabel,
+                onTap: () => context.read<AiAssistantBloc>().add(
+                  AiHistoryItemTapped(
+                    q.queryText,
+                    errorFallbackMessage: l10n.aiErrorOffline,
+                  ),
+                ),
               ),
             ),
           ],
@@ -244,15 +248,18 @@ class _StartScreen extends StatelessWidget {
 // =============================================================================
 class _RecentQueryRow extends StatelessWidget {
   final String       queryText;
+  final String       viewLabel;
   final VoidCallback onTap;
 
-  const _RecentQueryRow({required this.queryText, required this.onTap});
+  const _RecentQueryRow({
+    required this.queryText,
+    required this.viewLabel,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -268,7 +275,7 @@ class _RecentQueryRow extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              l10n.view,
+              viewLabel,
               style: TextStyle(
                 color:      cs.onSurfaceVariant,
                 fontSize:   13,
@@ -283,7 +290,7 @@ class _RecentQueryRow extends StatelessWidget {
 }
 
 // =============================================================================
-// _ChatView — chat bubbles + stat cards + follow-up chips
+// _ChatView
 // =============================================================================
 class _ChatView extends StatelessWidget {
   final List<AiMessageEntity>  messages;
@@ -291,6 +298,7 @@ class _ChatView extends StatelessWidget {
   final List<String>           followUps;
   final bool                   isLoading;
   final ScrollController       scrollCtrl;
+  final String                 followUpHeader;
 
   const _ChatView({
     required this.messages,
@@ -298,11 +306,12 @@ class _ChatView extends StatelessWidget {
     required this.followUps,
     required this.isLoading,
     required this.scrollCtrl,
+    required this.followUpHeader,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final cs   = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
     return ListView(
@@ -332,11 +341,11 @@ class _ChatView extends StatelessWidget {
         if (followUps.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            l10n.youMightAlsoAsk,
+            followUpHeader,
             style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
           ),
           const SizedBox(height: 8),
-          ...followUps.map((q) => _FollowUpChip(question: q)),
+          ...followUps.map((q) => _FollowUpChip(question: q, l10n: l10n)),
         ],
 
         const SizedBox(height: 8),
@@ -346,7 +355,7 @@ class _ChatView extends StatelessWidget {
 }
 
 // =============================================================================
-// _TypingIndicator — animated dots while AI is thinking
+// _TypingIndicator
 // =============================================================================
 class _TypingIndicator extends StatefulWidget {
   const _TypingIndicator();
@@ -385,8 +394,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
           CircleAvatar(
             radius:          16,
             backgroundColor: cs.primary,
-            child: const Icon(Icons.smart_toy_outlined,
-                color: Colors.white, size: 18),
+            child: const Icon(Icons.smart_toy_outlined, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 10),
           Container(
@@ -409,10 +417,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
                     padding: const EdgeInsets.symmetric(horizontal: 3),
                     child: Opacity(
                       opacity: opacity,
-                      child: CircleAvatar(
-                        radius:          4,
-                        backgroundColor: cs.onSurfaceVariant,
-                      ),
+                      child: CircleAvatar(radius: 4, backgroundColor: cs.onSurfaceVariant),
                     ),
                   );
                 }),
@@ -429,16 +434,18 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 // _FollowUpChip
 // =============================================================================
 class _FollowUpChip extends StatelessWidget {
-  final String question;
+  final String           question;
+  final AppLocalizations l10n;
 
-  const _FollowUpChip({required this.question});
+  const _FollowUpChip({required this.question, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return GestureDetector(
-      onTap: () =>
-          context.read<AiAssistantBloc>().add(AiSuggestionTapped(question)),
+      onTap: () => context.read<AiAssistantBloc>().add(
+        AiSuggestionTapped(question, errorFallbackMessage: l10n.aiErrorOffline),
+      ),
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 8),
@@ -458,23 +465,24 @@ class _FollowUpChip extends StatelessWidget {
 }
 
 // =============================================================================
-// _InputBar — fixed at the bottom of the screen
+// _InputBar
 // =============================================================================
 class _InputBar extends StatelessWidget {
   final TextEditingController controller;
   final bool                  isLoading;
   final VoidCallback          onSubmit;
+  final String                hint;
 
   const _InputBar({
     required this.controller,
     required this.isLoading,
     required this.onSubmit,
+    required this.hint,
   });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -493,7 +501,7 @@ class _InputBar extends StatelessWidget {
               textInputAction: TextInputAction.send,
               style:           TextStyle(color: cs.onSurface, fontSize: 14),
               decoration: InputDecoration(
-                hintText:  l10n.askQuestionAboutGym,
+                hintText:  hint,
                 hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
                 filled:    true,
                 fillColor: cs.surfaceVariant,
@@ -505,8 +513,7 @@ class _InputBar extends StatelessWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide:
-                  BorderSide(color: cs.outline.withOpacity(0.5), width: 0.8),
+                  borderSide: BorderSide(color: cs.outline.withOpacity(0.5), width: 0.8),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -519,8 +526,7 @@ class _InputBar extends StatelessWidget {
           const SizedBox(width: 10),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width:  44,
-            height: 44,
+            width: 44, height: 44,
             decoration: BoxDecoration(
               color:  isLoading ? cs.surfaceVariant : cs.primary,
               shape:  BoxShape.circle,
@@ -528,16 +534,12 @@ class _InputBar extends StatelessWidget {
             child: isLoading
                 ? Padding(
               padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                color:       cs.primary,
-                strokeWidth: 2,
-              ),
+              child: CircularProgressIndicator(color: cs.primary, strokeWidth: 2),
             )
                 : IconButton(
               onPressed: onSubmit,
               padding:   EdgeInsets.zero,
-              icon: Icon(Icons.send_rounded,
-                  color: cs.onPrimary, size: 20),
+              icon: Icon(Icons.send_rounded, color: cs.onPrimary, size: 20),
             ),
           ),
         ],
@@ -551,15 +553,18 @@ class _InputBar extends StatelessWidget {
 // =============================================================================
 class _ErrorView extends StatelessWidget {
   final String       message;
+  final String       retryLabel;
   final VoidCallback onRetry;
 
-  const _ErrorView({required this.message, required this.onRetry});
+  const _ErrorView({
+    required this.message,
+    required this.retryLabel,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -579,12 +584,10 @@ class _ErrorView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: cs.primary,
                 foregroundColor: cs.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
               icon:  const Icon(Icons.refresh),
-              label: Text(l10n.retry),
+              label: Text(retryLabel),
             ),
           ],
         ),
