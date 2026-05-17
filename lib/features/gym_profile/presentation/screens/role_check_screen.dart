@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/app/app_router.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
+import '../../../member/account/data/services/member_profile_service.dart';
+import '../../../member/account/presentation/widgets/profile_completion_dialog.dart';
 import '../../data/repositories/gym_profile_repository_impl.dart';
 import '../../data/services/gym_profile_service.dart';
 import '../../domain/usecases/get_gym_profile_usecase.dart';
@@ -70,15 +72,36 @@ class _RoleCheckBody extends StatelessWidget {
     final isReception = gymRoles.contains('RECEPTION');
 
     if (isTrainer && !isReception) {
-      // Trainer-only: bottom-tab trainer shell (no drawer needed)
       Navigator.pushReplacementNamed(context, AppRouter.adminPtSessions);
     } else if (isReception) {
-      // Reception-only OR TRAINER+RECEPTION: land on the classes/operations screen.
-      // The AdminNavigationDrawer shows Operations/Reception (and Training/PT when
-      // the user also has TRAINER), so they can navigate from there.
       Navigator.pushReplacementNamed(context, AppRouter.adminClasses);
     } else {
-      Navigator.pushReplacementNamed(context, AppRouter.user);
+      // Member — check profile completeness before entering the shell.
+      _checkMemberProfile(context);
+    }
+  }
+
+  Future<void> _checkMemberProfile(BuildContext context) async {
+    try {
+      final status = await MemberProfileService().getProfileStatus();
+      final complete = status['complete'] as bool? ?? false;
+      if (!context.mounted) return;
+      if (!complete) {
+        // Show blocking dialog; navigate to shell only after it's submitted.
+        await ProfileCompletionDialog.show(
+          context,
+          existing: status,
+          onCompleted: () =>
+              Navigator.pushReplacementNamed(context, AppRouter.user),
+        );
+      } else {
+        Navigator.pushReplacementNamed(context, AppRouter.user);
+      }
+    } catch (_) {
+      // Network/auth error — let the member in anyway, they can fill later.
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, AppRouter.user);
+      }
     }
   }
 }
