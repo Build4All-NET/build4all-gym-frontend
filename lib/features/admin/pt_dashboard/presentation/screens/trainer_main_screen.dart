@@ -110,8 +110,14 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     final tenantIdRaw = _token.getTenantId();
     final parsedTenantId = int.tryParse(tenantIdRaw.toString()) ?? 1;
-    final isAdmin  = profile.isAdminRole;
-    final isTrainer = profile.isTrainerRole;
+    final isAdmin     = profile.isAdminRole;
+    final isTrainer   = profile.isTrainerRole;
+    final isReception = profile.isReceptionRole;
+
+    // TRAINER always takes priority: even if the user is also a reception staff
+    // member or has an admin JWT role, they should see only their own data.
+    // RECEPTION-only (no TRAINER) → admin/all-trainers view.
+    final effectiveIsAdmin = !isTrainer && (isAdmin || isReception);
 
     // FIX #2: Always set _roleLoaded = true here so loading stops
     if (!_roleLoaded) {
@@ -120,11 +126,11 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     setState(() {
       _tenantId = parsedTenantId;
-      _isAdmin = isAdmin;
+      _isAdmin  = effectiveIsAdmin;
     });
 
-    if (isTrainer && !isAdmin) {
-      // TRAINER: use own userId
+    if (isTrainer) {
+      // TRAINER: use own userId (never load the admin trainer list)
       final newId = profile.userId ?? 0;
 
       // FIX #3: Always set trainerId, even if 0
@@ -140,7 +146,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
           trainerId: newId,
         ));
       }
-    } else if (isAdmin && _trainers.isEmpty && !_loadingTrainers) {
+    } else if (effectiveIsAdmin && _trainers.isEmpty && !_loadingTrainers) {
       // ADMIN/OWNER: load trainer list, then start bloc in all-trainers mode
       _loadTrainersForAdmin();
     }
@@ -215,13 +221,6 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     }
   }
 
-  static const _navItems = <_NavItem>[
-    _NavItem(icon: Icons.grid_view_rounded,      label: 'Dashboard'),
-    _NavItem(icon: Icons.calendar_today_rounded, label: 'Sessions'),
-    _NavItem(icon: Icons.inventory_2_outlined,   label: 'Packages'),
-    _NavItem(icon: Icons.schedule_rounded,       label: 'Schedule'),
-    _NavItem(icon: Icons.people_outline_rounded, label: 'More'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +261,6 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     return _MainShell(
       currentIndex:    _currentIndex,
       onTabSwitch:     _switchTab,
-      navItems:        _navItems,
       tenantId:        _tenantId,
       branchId:        effectiveBranchId,
       trainerId:       _trainerId,
@@ -356,7 +354,6 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 class _MainShell extends StatelessWidget {
   final int                        currentIndex;
   final ValueChanged<int>          onTabSwitch;
-  final List<_NavItem>             navItems;
   final int                        tenantId;
   final int                        branchId;
   final int                        trainerId;
@@ -367,7 +364,6 @@ class _MainShell extends StatelessWidget {
   const _MainShell({
     required this.currentIndex,
     required this.onTabSwitch,
-    required this.navItems,
     required this.tenantId,
     required this.branchId,
     required this.trainerId,
@@ -379,6 +375,15 @@ class _MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
+
+    const navItems = <_NavItem>[
+      _NavItem(icon: Icons.grid_view_rounded,      label: 'Dashboard'),
+      _NavItem(icon: Icons.calendar_today_rounded, label: 'Sessions'),
+      _NavItem(icon: Icons.inventory_2_outlined,   label: 'Packages'),
+      _NavItem(icon: Icons.schedule_rounded,       label: 'Schedule'),
+      _NavItem(icon: Icons.people_outline_rounded, label: 'More'),
+    ];
+
     final bodies = <Widget>[
       TrainerDashboardScreen(
         key:             ValueKey('dashboard_${branchId}_${isAdmin ? 0 : trainerId}'),
@@ -389,7 +394,6 @@ class _MainShell extends StatelessWidget {
         trainerId:       trainerId,
       ),
 
-      // Sessions tab — uses the shared _sessionsBloc already provided above via BlocProvider.value
       TrainerPtSessionsScreen(
         key:       ValueKey('sessions_${branchId}_${isAdmin ? 0 : trainerId}'),
         branchId:  branchId,
@@ -398,7 +402,6 @@ class _MainShell extends StatelessWidget {
         trainers:  trainers,
       ),
 
-      // Packages tab
       BlocProvider(
         create: (_) => PtPackageBloc(
           getPackages:         GetPtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
@@ -416,7 +419,6 @@ class _MainShell extends StatelessWidget {
         ),
       ),
 
-      // Schedule tab
       BlocProvider(
         create: (_) => AvailabilityBloc(
           getSlots:    GetAvailabilitySlotsUseCase(AvailabilityRepositoryImpl(service: AvailabilityHttpService())),
@@ -432,7 +434,6 @@ class _MainShell extends StatelessWidget {
         ),
       ),
 
-      // Services tab
       BlocProvider(
         create: (_) => PtServiceBloc(
           getServices:    GetPtServicesUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
@@ -441,13 +442,14 @@ class _MainShell extends StatelessWidget {
           deleteService:  DeletePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
         ),
         child: TrainerServicesScreen(
-          key:       ValueKey('services_${branchId}'),
+          key:       ValueKey('services_${branchId}_${isAdmin ? 0 : trainerId}'),
           tenantId:  tenantId,
           trainerId: trainerId,
           isAdmin:   isAdmin,
           trainers:  trainers,
         ),
       ),
+
     ];
 
     return Scaffold(

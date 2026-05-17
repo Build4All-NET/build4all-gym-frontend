@@ -159,11 +159,22 @@ class AdminTrainersService {
 // — the endpoint we already built in AdminMemberRoleController.java.
 // ─────────────────────────────────────────────────────────────────────────────
 
+  // ── POST /api/admin/members/{userId}/trainer-config ──────────────────────
+  Future<void> configureTrainer(int userId, Map<String, dynamic> body) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/admin/members/$userId/trainer-config',
+    );
+    try {
+      final r = await _client.post(uri, headers: headers, body: jsonEncode(body));
+      _handleStatus(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── POST /api/admin/members/{userId}/gym-role ─────────────────────────────
-  /// Assigns (or revokes) a gym-specific role for an existing member.
-  ///
-  /// [userId] — the member's userId (from MemberCardModel.userId)
-  /// [role]   — "TRAINER", "RECEPTION", or "MEMBER" (MEMBER = revoke)
   Future<void> assignGymRole(int userId, String role) async {
     final headers = await _headers();
     final uri = Uri.parse(

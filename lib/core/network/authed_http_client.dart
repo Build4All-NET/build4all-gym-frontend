@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
+import 'package:build4allgym/core/utils/jwt_utils.dart';
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
 import 'package:build4allgym/core/network/auth_refresh_coordinator.dart';
@@ -107,8 +108,15 @@ class AuthedHttpClient extends http.BaseClient {
     final Uint8List bodySnapshot =
         request is http.Request ? request.bodyBytes : Uint8List(0);
 
-    // Inject current stored token.
-    final raw = await _storedToken();
+    // Get stored token; proactively refresh if already expired.
+    String raw = await _storedToken();
+    if (raw.isNotEmpty && !_isAuthPath(request.url) && JwtUtils.isExpired(raw)) {
+      final proactive = await _tryRefresh(raw);
+      if (proactive != null && proactive.isNotEmpty) {
+        raw = proactive;
+      }
+    }
+
     if (raw.isNotEmpty) {
       request.headers['Authorization'] = 'Bearer $raw';
     }
@@ -123,7 +131,7 @@ class AuthedHttpClient extends http.BaseClient {
     // Drain original response to free the connection before retrying.
     await response.stream.drain<void>().catchError((_) {});
 
-    // Try to refresh.
+    // Try to refresh (reactive fallback for race conditions).
     final newToken = await _tryRefresh(raw);
     if (newToken == null || newToken.isEmpty) {
       // Refresh failed — return synthetic 401 so the service can throw.

@@ -40,10 +40,10 @@ class _RoleCheckBody extends StatelessWidget {
     return BlocListener<GymProfileCubit, GymProfileState>(
       listener: (context, state) {
         if (state is GymProfileLoaded) {
-          _routeByRole(context, state.entity.gymRole);
+          _routeByRoles(context, state.entity.gymRoles);
         }
         if (state is GymProfileError) {
-          _routeByRole(context, 'MEMBER'); // safe fallback
+          _routeByRoles(context, []); // safe fallback → member shell
         }
       },
       child: Scaffold(
@@ -65,19 +65,20 @@ class _RoleCheckBody extends StatelessWidget {
     );
   }
 
-  void _routeByRole(BuildContext context, String gymRole) {
-    switch (gymRole) {
-      case 'TRAINER':
-      // Trainer shell already exists at this route
-        Navigator.pushReplacementNamed(context, AppRouter.adminPtSessions);
-        break;
-      case 'RECEPTION':
-      // No reception shell yet — falls back to member for now
-        Navigator.pushReplacementNamed(context, AppRouter.adminStaff);
-        break;
-      default:
-        Navigator.pushReplacementNamed(context, AppRouter.user);
-        break;
+  void _routeByRoles(BuildContext context, List<String> gymRoles) {
+    final isTrainer   = gymRoles.contains('TRAINER');
+    final isReception = gymRoles.contains('RECEPTION');
+
+    if (isTrainer && !isReception) {
+      // Trainer-only: bottom-tab trainer shell (no drawer needed)
+      Navigator.pushReplacementNamed(context, AppRouter.adminPtSessions);
+    } else if (isReception) {
+      // Reception-only OR TRAINER+RECEPTION: land on the classes/operations screen.
+      // The AdminNavigationDrawer shows Operations/Reception (and Training/PT when
+      // the user also has TRAINER), so they can navigate from there.
+      Navigator.pushReplacementNamed(context, AppRouter.adminClasses);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRouter.user);
     }
   }
 }

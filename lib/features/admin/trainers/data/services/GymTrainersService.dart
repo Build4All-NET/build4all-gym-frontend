@@ -28,12 +28,12 @@ class GymTrainersService {
   /// POST /api/admin/members/{userId}/gym-role  with role=MEMBER → revokes trainer role
   Future<void> removeGymTrainer(int userId) async {
     final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/admin/members/$userId/gym-role',
+      '${Env.apiProjectBaseUrl}/api/admin/members/$userId/gym-role/remove',
     );
     final response = await _client.post(
       uri,
-      headers: {'Content-Type': 'application/json'},  // ← add this
-      body: jsonEncode({'role': 'MEMBER'}),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'role': 'TRAINER'}),
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to remove trainer role: ${response.statusCode}');

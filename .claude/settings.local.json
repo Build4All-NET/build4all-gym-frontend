@@ -3,7 +3,26 @@
     "allow": [
       "Bash(flutter analyze *)",
       "Bash(Select-Object -First 80 FullName)",
-      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Directory -Name)"
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Directory -Name)",
+      "Bash(xargs grep -l \"trainer/pt-services\\\\|TrainerPtSession\\\\|trainer.*pt.*session\")",
+      "Bash(xargs grep -l -i \"trainer\\\\|pt\")",
+      "Bash(xargs grep -l -i \"reception\")",
+      "Bash(xargs grep -l -i \"classes\\\\|pt_session\\\\|pt-session\")",
+      "Bash(xargs grep -l \"RECEPTION\\\\|reception\")",
+      "Bash(xargs grep -l \"admin/login\\\\|adminLogin\\\\|AdminLogin\")",
+      "Bash(xargs grep -l \"login/front\\\\|loginFront\\\\|admin.*login\")",
+      "Bash(xargs grep -l \"front\")",
+      "Bash(xargs grep -rn \"login/front\")",
+      "Bash(xargs grep -l \"admin.*front\\\\|front.*admin\\\\|/front\\\\|RECEPTION\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(xargs grep -l \"POST.*trainers\\\\|createTrainer\\\\|@PostMapping\")",
+      "Bash(xargs grep -l \"@RestController\\\\|@PostMapping\\\\|@GetMapping\")",
+      "Bash(xargs grep -l \"AdminTrainersService\")",
+      "Bash(xargs grep -l \"Trainer\")",
+      "Bash(xargs grep -l \"CreateTrainerRequestModel\\\\|UpdateTrainerRequestModel\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\\\\lib\\\\features\\\\admin\" -Recurse)",
+      "Bash(Select-Object FullName)"
     ]
   }
 }

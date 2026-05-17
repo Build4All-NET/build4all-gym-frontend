@@ -13,7 +13,6 @@
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:build4allgym/core/network/authed_http_client.dart';
 import 'package:intl/intl.dart';
@@ -31,17 +30,10 @@ class TrainerPtSessionsService {
   final _client = AuthedHttpClient();
   static final _dateFmt = DateFormat('yyyy-MM-dd');
 
-  // ── Auth headers ─────────────────────────────────────────────────────────
-  final _tokenStore = const AdminTokenStore();
-
-
-  Future<Map<String, String>> _authHeaders() async {
-    final token = await _tokenStore.getToken();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-  }
+  // ── Base headers (Authorization injected by AuthedHttpClient) ─────────────
+  Map<String, String> _authHeaders() => const {
+    'Content-Type': 'application/json',
+  };
 
   // ── Response body decoder ─────────────────────────────────────────────────
 
@@ -65,8 +57,8 @@ class TrainerPtSessionsService {
     int? trainerId,
     required DateTime date,
   }) async {
-    final headers = await _authHeaders();
-    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-services'
+    final headers = _authHeaders();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions'
         '?branchId=$branchId&date=${_dateFmt.format(date)}';
     final uri = Uri.parse(
       trainerId != null ? '$base&trainerId=$trainerId' : base,
@@ -99,8 +91,8 @@ class TrainerPtSessionsService {
     int? trainerId,
     required DateTime date,
   }) async {
-    final headers = await _authHeaders();
-    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-services/stats'
+    final headers = _authHeaders();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/stats'
         '?branchId=$branchId&date=${_dateFmt.format(date)}';
     final uri = Uri.parse(
       trainerId != null ? '$base&trainerId=$trainerId' : base,
@@ -128,8 +120,8 @@ class TrainerPtSessionsService {
   // ── POST create session ───────────────────────────────────────────────────
 
   Future<PtSessionModel> createSession(Map<String, dynamic> body, {int? trainerId}) async {
-    final headers = await _authHeaders();
-    final baseUrl = '${Env.apiProjectBaseUrl}/api/trainer/pt-services';
+    final headers = _authHeaders();
+    final baseUrl = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions';
     final uri = Uri.parse(trainerId != null ? '$baseUrl?trainerId=$trainerId' : baseUrl);
 
     try {
@@ -161,9 +153,9 @@ class TrainerPtSessionsService {
   // ── PATCH update status ───────────────────────────────────────────────────
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {
-    final headers = await _authHeaders();
+    final headers = _authHeaders();
     final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/trainer/pt-services/$sessionId/status',
+      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/status',
     );
 
     try {

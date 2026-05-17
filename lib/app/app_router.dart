@@ -1,9 +1,8 @@
 import 'package:build4allgym/features/admin/members/presentation/bloc/admin_members_bloc.dart';
 import 'package:build4allgym/features/admin/pt_dashboard/data/services/pt_package_service.dart';
-import 'package:build4allgym/features/admin/staff/data/repositories/admin_staff_repository_impl.dart';
-import 'package:build4allgym/features/admin/staff/data/services/admin_staff_service.dart';
-import 'package:build4allgym/features/admin/staff/domain/usecases/update_staff_usecase.dart';
-import 'package:build4allgym/features/admin/staff/presentation/screens/admin_staff_screen.dart';
+import 'package:build4allgym/features/admin/staff/data/repositories/gym_reception_repository_impl.dart';
+import 'package:build4allgym/features/admin/staff/data/services/gym_reception_service.dart';
+import 'package:build4allgym/features/admin/staff/presentation/screens/admin_gym_reception_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
@@ -48,6 +47,8 @@ import '../features/admin/pt_dashboard/data/services/availability_service.dart';
 import '../features/admin/pt_dashboard/data/services/pt_service_service.dart';
 import '../features/admin/pt_dashboard/data/services/trainer_pt_sessions_service.dart';
 import '../features/admin/pt_dashboard/domain/usecases/trainer_pt_sessions_usecases.dart';
+import '../features/admin/staff/domain/usecases/gym_reception_usecases.dart';
+import '../features/admin/staff/presentation/bloc/gym_reception_cubit.dart';
 import '../features/admin/staff/domain/usecases/create_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/get_staff_usecase.dart';
 import '../features/admin/staff/domain/usecases/remove_staff_usecase.dart';
@@ -107,15 +108,6 @@ import '../features/admin/trainers/domain/usecases/update_trainer_usecase.dart';
 import '../features/admin/trainers/domain/usecases/block_trainer_usecase.dart';
 import '../features/admin/trainers/presentation/bloc/admin_trainers_bloc.dart';
 import '../features/admin/trainers/presentation/screens/admin_trainers_screen.dart';
-
-
-import '../features/admin/settings/data/repositories/admin_settings_repository_impl.dart';
-import '../features/admin/settings/data/services/admin_settings_remote_service.dart';
-import '../features/admin/settings/domain/usecases/get_admin_settings_usecase.dart';
-import '../features/admin/settings/presentation/cubit/admin_settings_cubit.dart';
-import '../features/admin/settings/presentation/screens/admin_settings_screen.dart';
-import '../features/member/settings/presentation/cubit/member_settings_cubit.dart';
-import '../features/member/settings/presentation/screens/member_settings_screen.dart';
 
 
 // ── Branches imports ──────────────────────────────────────────────────────────
@@ -402,11 +394,20 @@ class AppRouter {
     // ── Admin: Staff ───────────────────────────────────────────────────────
 
       case adminStaff:
+        final gymReceptionRepo = GymReceptionRepositoryImpl(GymReceptionService());
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            BlocProvider(
-              create: (_) => BranchCubit()..loadBranches(),
-              child: const AdminStaffScreen(),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => GymReceptionCubit(
+                    getReception:    GetGymReceptionUseCase(gymReceptionRepo),
+                    removeReception: RemoveGymReceptionUseCase(gymReceptionRepo),
+                  )..load(),
+                ),
+              ],
+              child: const AdminGymReceptionScreen(),
             ),
           ),
         );
