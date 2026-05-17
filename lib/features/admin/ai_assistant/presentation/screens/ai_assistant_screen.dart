@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../admin/AppBar/presentation/admin_app_bar.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../domain/entities/ai_message_entity.dart';
@@ -61,6 +62,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
   @override
   Widget build(BuildContext context) {
     final profile = context.watch<AdminProfileCubit>().state;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       drawer: AdminNavigationDrawer(
@@ -76,7 +78,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
           children: [
             // ── Shared AppBar (handles drawer open + branch pill + bell) ────
             AdminAppBar(
-              title: 'AI Assistant',
+              title: l10n.aiAssistantTitle,
               actions: [
                 // Reset button — only visible during an active conversation
                 BlocBuilder<AiAssistantBloc, AiAssistantState>(
@@ -85,7 +87,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                         state is AiAssistantAnswered;
                     if (!inChat) return const SizedBox.shrink();
                     return IconButton(
-                      tooltip: 'New conversation',
+                      tooltip: l10n.newConversation,
                       icon: Icon(
                         Icons.refresh_outlined,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -196,6 +198,7 @@ class _StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       controller: scrollCtrl,
@@ -211,7 +214,7 @@ class _StartScreen extends StatelessWidget {
           if (state.recentQueries.isNotEmpty) ...[
             const SizedBox(height: 28),
             Text(
-              'Recent Queries',
+              l10n.recentQueries,
               style: TextStyle(
                 fontSize:   16,
                 fontWeight: FontWeight.bold,
@@ -248,6 +251,8 @@ class _RecentQueryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -263,7 +268,7 @@ class _RecentQueryRow extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              'View',
+              l10n.view,
               style: TextStyle(
                 color:      cs.onSurfaceVariant,
                 fontSize:   13,
@@ -298,6 +303,7 @@ class _ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return ListView(
       controller: scrollCtrl,
@@ -326,7 +332,7 @@ class _ChatView extends StatelessWidget {
         if (followUps.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            'You might also ask:',
+            l10n.youMightAlsoAsk,
             style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
           ),
           const SizedBox(height: 8),
@@ -468,6 +474,7 @@ class _InputBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -486,7 +493,7 @@ class _InputBar extends StatelessWidget {
               textInputAction: TextInputAction.send,
               style:           TextStyle(color: cs.onSurface, fontSize: 14),
               decoration: InputDecoration(
-                hintText:  'Ask a question about your gym...',
+                hintText:  l10n.askQuestionAboutGym,
                 hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
                 filled:    true,
                 fillColor: cs.surfaceVariant,
@@ -551,6 +558,8 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -575,7 +584,7 @@ class _ErrorView extends StatelessWidget {
                 ),
               ),
               icon:  const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
