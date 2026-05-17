@@ -17,7 +17,7 @@ class SessionsService {
     String? branchId,
   }) async {
     final response = await _dio.get(
-      '/api/member/services',
+      '/api/member/sessions',
       queryParameters: {
         'date': date.toIso8601String().split('T').first,
         if (classTypeId != null) 'classTypeId': classTypeId,
@@ -32,14 +32,14 @@ class SessionsService {
   }
 
   Future<FilterOptionsModel> getFilterOptions() async {
-    final response = await _dio.get('/api/member/services/filter-options');
+    final response = await _dio.get('/api/member/sessions/filter-options');
 
     return FilterOptionsModel.fromJson(response.data);
   }
 
   Future<BookSessionModel> bookSession(int sessionId) async {
     final response = await _dio.post(
-      '/api/member/services/$sessionId/book',
+      '/api/member/sessions/$sessionId/book',
     );
 
     return BookSessionModel.fromJson(response.data);
@@ -47,12 +47,13 @@ class SessionsService {
 
   Future<void> cancelBooking(int bookingId) async {
     await _dio.delete(
-      '/api/member/services/bookings/$bookingId',
+      '/api/member/sessions/bookings/$bookingId',
     );
   }
+
   Future<SessionDetailModel> getSessionDetail(int sessionId) async {
     try {
-      final response = await _dio.get('/api/member/services/$sessionId');
+      final response = await _dio.get('/api/member/sessions/$sessionId');
 
       print('SESSION DETAIL STATUS: ${response.statusCode}');
       print('SESSION DETAIL DATA: ${response.data}');

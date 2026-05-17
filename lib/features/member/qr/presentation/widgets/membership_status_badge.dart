@@ -4,18 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
-/// Small membership status badge shown at the top of the QR card.
-///
-/// No hardcoded UI text.
-/// Text comes from ARB through AppLocalizations.
+/// Small access status badge shown at the top of the QR card.
 ///
 /// Backend status examples:
+/// - SESSION
 /// - ACTIVE
 /// - EXPIRED
 /// - CANCELLED
 /// - FROZEN
 /// - PENDING
 /// - NO_MEMBERSHIP
+/// - NO_ACTIVE_ACCESS
 class MembershipStatusBadge extends StatelessWidget {
   final String membershipStatus;
 
@@ -29,11 +28,29 @@ class MembershipStatusBadge extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
-    final isActive = membershipStatus.toUpperCase().trim() == 'ACTIVE';
+    final status = membershipStatus.toUpperCase().trim();
 
-    final badgeColor = isActive ? tokens.colors.success : tokens.colors.error;
+    /*
+     * Valid access cases:
+     * - ACTIVE: normal gym membership
+     * - SESSION: booked class/session today
+     */
+    final hasAccess = status == 'ACTIVE' || status == 'SESSION';
 
-    final label = isActive
+    final badgeColor = hasAccess ? tokens.colors.success : tokens.colors.error;
+
+    final icon = hasAccess
+        ? Icons.check_circle_outline_rounded
+        : Icons.error_outline_rounded;
+
+    /*
+     * We reuse existing localized strings to avoid ARB changes now.
+     *
+     * SESSION should be shown as valid access.
+     * Later, you can add a specific ARB key:
+     * memberQrSessionAccess = "Session access"
+     */
+    final label = hasAccess
         ? l10n.memberQrActiveMembership
         : l10n.memberQrInactiveMembership;
 
@@ -50,9 +67,7 @@ class MembershipStatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isActive
-                ? Icons.check_circle_outline_rounded
-                : Icons.error_outline_rounded,
+            icon,
             size: 18,
             color: badgeColor,
           ),

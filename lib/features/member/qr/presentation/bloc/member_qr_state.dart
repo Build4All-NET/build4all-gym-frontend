@@ -3,12 +3,6 @@ import 'package:equatable/equatable.dart';
 import '../../domain/entities/visit_record.dart';
 
 /// Base class for all member QR states.
-///
-/// The UI listens to this state and decides what to show:
-/// - initial
-/// - loading
-/// - loaded QR screen
-/// - error
 abstract class MemberQrState extends Equatable {
   const MemberQrState();
 
@@ -22,8 +16,6 @@ class MemberQrInitial extends MemberQrState {
 }
 
 /// Loading state.
-///
-/// Used when the screen opens and QR data is being loaded.
 class MemberQrLoading extends MemberQrState {
   const MemberQrLoading();
 }
@@ -35,50 +27,75 @@ class MemberQrLoading extends MemberQrState {
 /// Data comes from:
 /// GET /api/member/qr
 class MemberQrLoaded extends MemberQrState {
-  /// Secure UUID token.
-  ///
-  /// Later, the QR widget will use this:
-  /// QrImageView(data: token)
+  /// Secure UUID token used by QrImageView(data: token).
   final String token;
 
   /// Token expiration timestamp.
-  ///
-  /// Used by the BLoC timer to auto-refresh the QR.
   final DateTime expiresAt;
 
-  /// Membership status.
+  /// Backend status.
   ///
   /// Examples:
-  /// ACTIVE
-  /// EXPIRED
-  /// CANCELLED
-  /// FROZEN
-  /// PENDING
-  /// NO_MEMBERSHIP
+  /// SESSION, ACTIVE, EXPIRED, CANCELLED, FROZEN,
+  /// PENDING, NO_MEMBERSHIP, NO_ACTIVE_ACCESS
   final String membershipStatus;
 
   /// Member full name from backend.
-  ///
-  /// Comes from users.full_name.
   final String memberName;
 
   /// Member code.
-  ///
-  /// Example:
-  /// GYM-2024-1234
   final String memberCode;
 
-  /// Package name.
+  /// Old compatible field.
   ///
-  /// Example:
-  /// الباقة الذهبية
+  /// If accessType = SESSION:
+  /// - session/class name
+  ///
+  /// If accessType = MEMBERSHIP:
+  /// - membership package name
   final String packageName;
 
-  /// Membership valid-until date.
+  /// Old compatible field.
   ///
-  /// Example:
-  /// 2026-07-15
+  /// If accessType = SESSION:
+  /// - session date
+  ///
+  /// If accessType = MEMBERSHIP:
+  /// - membership end date
   final String validUntil;
+
+  /// New clean display type.
+  ///
+  /// Values:
+  /// SESSION, MEMBERSHIP, NONE
+  final String accessType;
+
+  /// Main title shown in the card.
+  ///
+  /// Examples:
+  /// Boxing, Gold Package, No active access
+  final String accessTitle;
+
+  /// Subtitle under the title.
+  ///
+  /// Examples:
+  /// Session with Ahmad, Active membership
+  final String accessSubtitle;
+
+  /// Branch name for session.
+  ///
+  /// Empty for membership/no access.
+  final String accessBranchName;
+
+  /// Session start time.
+  ///
+  /// Null for membership/no access.
+  final DateTime? accessStartTime;
+
+  /// Session end time.
+  ///
+  /// Null for membership/no access.
+  final DateTime? accessEndTime;
 
   /// Last 10 visits.
   final List<VisitRecord> recentVisits;
@@ -91,21 +108,22 @@ class MemberQrLoaded extends MemberQrState {
     required this.memberCode,
     required this.packageName,
     required this.validUntil,
+    required this.accessType,
+    required this.accessTitle,
+    required this.accessSubtitle,
+    required this.accessBranchName,
+    required this.accessStartTime,
+    required this.accessEndTime,
     required this.recentVisits,
   });
 
   /// True when QR token expires in less than 60 seconds.
-  ///
-  /// Later, the UI uses this to show a small warning/countdown.
   bool get isExpiringSoon {
     final remainingSeconds = expiresAt.difference(DateTime.now()).inSeconds;
     return remainingSeconds <= 60 && remainingSeconds > 0;
   }
 
   /// Remaining seconds before token expiration.
-  ///
-  /// Example:
-  /// 45 means the token expires in 45 seconds.
   int get remainingSeconds {
     final seconds = expiresAt.difference(DateTime.now()).inSeconds;
     return seconds < 0 ? 0 : seconds;
@@ -120,13 +138,17 @@ class MemberQrLoaded extends MemberQrState {
     memberCode,
     packageName,
     validUntil,
+    accessType,
+    accessTitle,
+    accessSubtitle,
+    accessBranchName,
+    accessStartTime,
+    accessEndTime,
     recentVisits,
   ];
 }
 
 /// Error state.
-///
-/// Used if loading or refreshing fails.
 class MemberQrError extends MemberQrState {
   final String message;
 
