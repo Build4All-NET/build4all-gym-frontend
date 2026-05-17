@@ -106,9 +106,6 @@ class MemberQrBloc extends Bloc<MemberQrEvent, MemberQrState> {
     _emitLoadedAndScheduleRefresh(data, emit);
   }
 
-  /// Converts domain entity into loaded state.
-  ///
-  /// Then schedules the next automatic refresh using expiresAt.
   void _emitLoadedAndScheduleRefresh(
       MemberQrData data,
       Emitter<MemberQrState> emit,
@@ -122,6 +119,25 @@ class MemberQrBloc extends Bloc<MemberQrEvent, MemberQrState> {
         memberCode: data.memberCode,
         packageName: data.packageName,
         validUntil: data.validUntil,
+
+        /*
+       * New backend display fields.
+       *
+       * These allow the UI to show:
+       * - session name
+       * - trainer
+       * - branch
+       * - start/end time
+       *
+       * If there is no session, backend sends membership or none data.
+       */
+        accessType: data.accessType,
+        accessTitle: data.accessTitle,
+        accessSubtitle: data.accessSubtitle,
+        accessBranchName: data.accessBranchName,
+        accessStartTime: data.accessStartTime,
+        accessEndTime: data.accessEndTime,
+
         recentVisits: data.recentVisits,
       ),
     );

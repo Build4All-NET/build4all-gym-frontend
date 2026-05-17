@@ -4,20 +4,13 @@ import 'visit_record.dart';
 
 /// Domain entity for the full member QR screen data.
 ///
-/// This matches what our backend returns from:
+/// This matches what backend returns from:
 /// GET /api/member/qr
 ///
-/// Backend response example:
-/// {
-///   "token": "550e8400-e29b-41d4-a716-446655440000",
-///   "expiresAt": "2026-05-15T12:35:00",
-///   "membershipStatus": "ACTIVE",
-///   "memberName": "Ahmad Ali",
-///   "memberCode": "GYM-2024-1234",
-///   "packageName": "الباقة الذهبية",
-///   "validUntil": "2026-07-15",
-///   "recentVisits": []
-/// }
+/// Display priority is decided by backend:
+/// 1. SESSION
+/// 2. MEMBERSHIP
+/// 3. NONE
 class MemberQrData extends Equatable {
   /// Secure UUID token used by the QR widget.
   final String token;
@@ -25,31 +18,69 @@ class MemberQrData extends Equatable {
   /// QR token expiration date/time.
   final DateTime expiresAt;
 
-  /// Membership status from backend.
+  /// Backend status.
   ///
   /// Examples:
-  /// ACTIVE, EXPIRED, CANCELLED, FROZEN, PENDING, NO_MEMBERSHIP
+  /// SESSION, ACTIVE, EXPIRED, CANCELLED, FROZEN,
+  /// PENDING, NO_MEMBERSHIP, NO_ACTIVE_ACCESS
   final String membershipStatus;
 
   /// Member full name from backend.
-  ///
-  /// Comes from users.full_name.
   final String memberName;
 
-  /// Member code from backend.
-  ///
-  /// Example:
-  /// GYM-2024-1234
+  /// Member code.
   final String memberCode;
 
-  /// Membership package name from membership_plans.name.
+  /// Old compatible field.
+  ///
+  /// If accessType = SESSION:
+  /// - session/class name
+  ///
+  /// If accessType = MEMBERSHIP:
+  /// - membership package name
   final String packageName;
 
-  /// Membership end date.
+  /// Old compatible field.
   ///
-  /// Kept as String because backend sends a date-only value:
-  /// 2026-07-15
+  /// If accessType = SESSION:
+  /// - session date
+  ///
+  /// If accessType = MEMBERSHIP:
+  /// - membership end date
   final String validUntil;
+
+  /// New clean frontend display type.
+  ///
+  /// Values:
+  /// SESSION, MEMBERSHIP, NONE
+  final String accessType;
+
+  /// Main title for card.
+  ///
+  /// Examples:
+  /// Boxing, Gold Package, No active access
+  final String accessTitle;
+
+  /// Subtitle for card.
+  ///
+  /// Examples:
+  /// Session with Ahmad, Active membership
+  final String accessSubtitle;
+
+  /// Branch name for session.
+  ///
+  /// Null/empty for membership.
+  final String accessBranchName;
+
+  /// Session start time.
+  ///
+  /// Null for membership or no access.
+  final DateTime? accessStartTime;
+
+  /// Session end time.
+  ///
+  /// Null for membership or no access.
+  final DateTime? accessEndTime;
 
   /// Last 10 visit records.
   final List<VisitRecord> recentVisits;
@@ -62,6 +93,12 @@ class MemberQrData extends Equatable {
     required this.memberCode,
     required this.packageName,
     required this.validUntil,
+    required this.accessType,
+    required this.accessTitle,
+    required this.accessSubtitle,
+    required this.accessBranchName,
+    required this.accessStartTime,
+    required this.accessEndTime,
     required this.recentVisits,
   });
 
@@ -74,6 +111,12 @@ class MemberQrData extends Equatable {
     memberCode,
     packageName,
     validUntil,
+    accessType,
+    accessTitle,
+    accessSubtitle,
+    accessBranchName,
+    accessStartTime,
+    accessEndTime,
     recentVisits,
   ];
 }

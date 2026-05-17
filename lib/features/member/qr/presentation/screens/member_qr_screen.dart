@@ -95,6 +95,27 @@ class MemberQrScreen extends StatelessWidget {
                             memberCode: state.memberCode,
                             packageName: state.packageName,
                             validUntil: state.validUntil,
+
+                            /*
+   * New backend display fields.
+   *
+   * If accessType = SESSION:
+   * - accessTitle = class/session name
+   * - accessSubtitle = Session with trainer
+   * - accessBranchName = branch name
+   * - accessStartTime/accessEndTime = session time
+   *
+   * If accessType = MEMBERSHIP:
+   * - accessTitle = package name
+   * - accessSubtitle = Active membership
+   */
+                            accessType: state.accessType,
+                            accessTitle: state.accessTitle,
+                            accessSubtitle: state.accessSubtitle,
+                            accessBranchName: state.accessBranchName,
+                            accessStartTime: state.accessStartTime,
+                            accessEndTime: state.accessEndTime,
+
                             isExpiringSoon: state.isExpiringSoon,
                             remainingSeconds: state.remainingSeconds,
                           ),

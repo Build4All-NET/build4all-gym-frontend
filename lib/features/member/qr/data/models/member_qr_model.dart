@@ -9,8 +9,6 @@ import '../../domain/entities/visit_record.dart';
 ///   "checkoutTime": "2026-05-15T20:00:00",
 ///   "durationMinutes": 120
 /// }
-///
-/// This model belongs to the data layer because it knows JSON.
 class VisitRecordModel {
   final DateTime checkinTime;
   final DateTime? checkoutTime;
@@ -46,35 +44,69 @@ class VisitRecordModel {
 /// API model for:
 /// GET /api/member/qr
 ///
-/// Backend JSON example:
-/// {
-///   "token": "uuid-string",
-///   "expiresAt": "2026-05-15T12:35:00",
-///   "membershipStatus": "ACTIVE",
-///   "memberName": "Ahmad Ali",
-///   "memberCode": "GYM-2024-1234",
-///   "packageName": "الباقة الذهبية",
-///   "validUntil": "2026-07-15",
-///   "recentVisits": []
-/// }
-///
-/// Important:
-/// This file parses API JSON only.
-/// The BLoC should not depend directly on this model.
+/// This model parses JSON only.
+/// The BLoC should use MemberQrData, not this model directly.
 class MemberQrModel {
   final String token;
   final DateTime expiresAt;
   final String membershipStatus;
 
   /// Member full name from backend.
-  ///
-  /// Comes from:
-  /// users.full_name
   final String memberName;
 
   final String memberCode;
+
+  /// Old compatible field.
+  ///
+  /// If accessType = SESSION:
+  /// - session/class name
+  ///
+  /// If accessType = MEMBERSHIP:
+  /// - membership plan name
   final String packageName;
+
+  /// Old compatible field.
+  ///
+  /// If accessType = SESSION:
+  /// - session date
+  ///
+  /// If accessType = MEMBERSHIP:
+  /// - membership end date
   final String validUntil;
+
+  /// New backend field.
+  ///
+  /// Possible values:
+  /// SESSION, MEMBERSHIP, NONE
+  final String accessType;
+
+  /// Main title shown in the QR card.
+  ///
+  /// Examples:
+  /// Boxing, Gold Package, No active access
+  final String accessTitle;
+
+  /// Subtitle shown under title.
+  ///
+  /// Examples:
+  /// Session with Ahmad, Active membership
+  final String accessSubtitle;
+
+  /// Branch name for session.
+  ///
+  /// Empty for membership/no access.
+  final String accessBranchName;
+
+  /// Session start time.
+  ///
+  /// Null for membership/no access.
+  final DateTime? accessStartTime;
+
+  /// Session end time.
+  ///
+  /// Null for membership/no access.
+  final DateTime? accessEndTime;
+
   final List<VisitRecordModel> recentVisits;
 
   const MemberQrModel({
@@ -85,6 +117,12 @@ class MemberQrModel {
     required this.memberCode,
     required this.packageName,
     required this.validUntil,
+    required this.accessType,
+    required this.accessTitle,
+    required this.accessSubtitle,
+    required this.accessBranchName,
+    required this.accessStartTime,
+    required this.accessEndTime,
     required this.recentVisits,
   });
 
@@ -100,6 +138,21 @@ class MemberQrModel {
       memberCode: (json['memberCode'] as String?) ?? '',
       packageName: (json['packageName'] as String?) ?? '',
       validUntil: (json['validUntil'] as String?) ?? '',
+
+      /// New fields from backend.
+      accessType: (json['accessType'] as String?) ?? 'NONE',
+      accessTitle: (json['accessTitle'] as String?) ?? '',
+      accessSubtitle: (json['accessSubtitle'] as String?) ?? '',
+      accessBranchName: (json['accessBranchName'] as String?) ?? '',
+
+      accessStartTime: json['accessStartTime'] == null
+          ? null
+          : DateTime.parse(json['accessStartTime'] as String),
+
+      accessEndTime: json['accessEndTime'] == null
+          ? null
+          : DateTime.parse(json['accessEndTime'] as String),
+
       recentVisits: visitsJson is List
           ? visitsJson
           .whereType<Map<String, dynamic>>()
@@ -119,6 +172,12 @@ class MemberQrModel {
       memberCode: memberCode,
       packageName: packageName,
       validUntil: validUntil,
+      accessType: accessType,
+      accessTitle: accessTitle,
+      accessSubtitle: accessSubtitle,
+      accessBranchName: accessBranchName,
+      accessStartTime: accessStartTime,
+      accessEndTime: accessEndTime,
       recentVisits: recentVisits.map((visit) => visit.toEntity()).toList(),
     );
   }

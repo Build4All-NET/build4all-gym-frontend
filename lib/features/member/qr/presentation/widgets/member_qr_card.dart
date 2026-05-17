@@ -9,26 +9,29 @@ import 'membership_status_badge.dart';
 
 /// Main QR card shown under the green header.
 ///
-/// Data comes from MemberQrLoaded:
-/// - token
-/// - membershipStatus
-/// - memberName
-/// - memberCode
-/// - packageName
-/// - validUntil
-/// - remainingSeconds
-///
-/// No static member data.
-/// No hardcoded UI strings.
-/// No hardcoded Colors.*.
+/// Backend display priority:
+/// 1. SESSION
+/// 2. MEMBERSHIP
+/// 3. NONE
 class MemberQrCard extends StatelessWidget {
   final String token;
   final DateTime expiresAt;
   final String membershipStatus;
   final String memberName;
   final String memberCode;
+
+  /// Old compatible fields.
   final String packageName;
   final String validUntil;
+
+  /// New backend display fields.
+  final String accessType;
+  final String accessTitle;
+  final String accessSubtitle;
+  final String accessBranchName;
+  final DateTime? accessStartTime;
+  final DateTime? accessEndTime;
+
   final bool isExpiringSoon;
   final int remainingSeconds;
 
@@ -41,6 +44,12 @@ class MemberQrCard extends StatelessWidget {
     required this.memberCode,
     required this.packageName,
     required this.validUntil,
+    required this.accessType,
+    required this.accessTitle,
+    required this.accessSubtitle,
+    required this.accessBranchName,
+    required this.accessStartTime,
+    required this.accessEndTime,
     required this.isExpiringSoon,
     required this.remainingSeconds,
   });
@@ -50,12 +59,18 @@ class MemberQrCard extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
-    final shownPackageName =
-    packageName.trim().isEmpty ? l10n.memberQrPackageFallback : packageName;
-
     final shownMemberName = memberName.trim().isEmpty ? '-' : memberName;
-
     final shownMemberCode = memberCode.trim().isEmpty ? '-' : memberCode;
+
+    final normalizedAccessType = accessType.trim().toUpperCase();
+
+    final shownTitle = accessTitle.trim().isNotEmpty
+        ? accessTitle
+        : packageName.trim().isNotEmpty
+        ? packageName
+        : l10n.memberQrPackageFallback;
+
+    final shownSubtitle = accessSubtitle.trim();
 
     return Container(
       width: double.infinity,
@@ -125,9 +140,6 @@ class MemberQrCard extends StatelessWidget {
 
           /*
            * Real dynamic member name from backend.
-           *
-           * Comes from:
-           * GET /api/member/qr -> memberName
            */
           Text(
             shownMemberName,
@@ -152,10 +164,13 @@ class MemberQrCard extends StatelessWidget {
           SizedBox(height: tokens.spacing.md),
 
           /*
-           * Package chip.
+           * Access chip.
            *
-           * Your theme has no warning/gold token.
-           * So we use primary with opacity instead of hardcoded gold.
+           * If accessType = SESSION:
+           * - title is the session/class name
+           *
+           * If accessType = MEMBERSHIP:
+           * - title is the package name
            */
           Container(
             padding: EdgeInsets.symmetric(
@@ -167,7 +182,8 @@ class MemberQrCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(
-              shownPackageName,
+              shownTitle,
+              textAlign: TextAlign.center,
               style: tokens.typography.bodySmall.copyWith(
                 color: tokens.colors.primary,
                 fontWeight: FontWeight.w700,
@@ -175,43 +191,30 @@ class MemberQrCard extends StatelessWidget {
             ),
           ),
 
+          if (shownSubtitle.isNotEmpty) ...[
+            SizedBox(height: tokens.spacing.sm),
+            Text(
+              shownSubtitle,
+              textAlign: TextAlign.center,
+              style: tokens.typography.bodySmall.copyWith(
+                color: tokens.colors.body,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+
           SizedBox(height: tokens.spacing.lg),
 
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: tokens.spacing.lg,
-              vertical: tokens.spacing.md,
+          if (normalizedAccessType == 'SESSION')
+            _SessionInfoBox(
+              branchName: accessBranchName,
+              startTime: accessStartTime,
+              endTime: accessEndTime,
+            )
+          else
+            _MembershipInfoBox(
+              validUntil: validUntil,
             ),
-            decoration: BoxDecoration(
-              color: tokens.colors.background,
-              borderRadius: BorderRadius.circular(tokens.card.radius),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.schedule_rounded,
-                  color: tokens.colors.muted,
-                  size: 22,
-                ),
-                SizedBox(width: tokens.spacing.sm),
-                Text(
-                  l10n.memberQrValidUntil,
-                  style: tokens.typography.bodyMedium.copyWith(
-                    color: tokens.colors.body,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  validUntil.trim().isEmpty ? '-' : validUntil,
-                  style: tokens.typography.bodyMedium.copyWith(
-                    color: tokens.colors.label,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
 
           if (isExpiringSoon) ...[
             SizedBox(height: tokens.spacing.md),
@@ -247,5 +250,144 @@ class MemberQrCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Shows membership date info.
+class _MembershipInfoBox extends StatelessWidget {
+  final String validUntil;
+
+  const _MembershipInfoBox({
+    required this.validUntil,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: tokens.spacing.lg,
+        vertical: tokens.spacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: tokens.colors.background,
+        borderRadius: BorderRadius.circular(tokens.card.radius),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.schedule_rounded,
+            color: tokens.colors.muted,
+            size: 22,
+          ),
+          SizedBox(width: tokens.spacing.sm),
+          Text(
+            l10n.memberQrValidUntil,
+            style: tokens.typography.bodyMedium.copyWith(
+              color: tokens.colors.body,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            validUntil.trim().isEmpty ? '-' : validUntil,
+            style: tokens.typography.bodyMedium.copyWith(
+              color: tokens.colors.label,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shows session branch and time.
+class _SessionInfoBox extends StatelessWidget {
+  final String branchName;
+  final DateTime? startTime;
+  final DateTime? endTime;
+
+  const _SessionInfoBox({
+    required this.branchName,
+    required this.startTime,
+    required this.endTime,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: tokens.spacing.lg,
+        vertical: tokens.spacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: tokens.colors.background,
+        borderRadius: BorderRadius.circular(tokens.card.radius),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                color: tokens.colors.muted,
+                size: 22,
+              ),
+              SizedBox(width: tokens.spacing.sm),
+              Expanded(
+                child: Text(
+                  branchName.trim().isEmpty ? '-' : branchName,
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: tokens.colors.label,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: tokens.spacing.sm),
+          Row(
+            children: [
+              Icon(
+                Icons.schedule_rounded,
+                color: tokens.colors.muted,
+                size: 22,
+              ),
+              SizedBox(width: tokens.spacing.sm),
+              Expanded(
+                child: Text(
+                  _formatTimeRange(startTime, endTime),
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: tokens.colors.label,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTimeRange(DateTime? start, DateTime? end) {
+    if (start == null || end == null) {
+      return '-';
+    }
+
+    return '${_formatTime(start)} - ${_formatTime(end)}';
+  }
+
+  String _formatTime(DateTime value) {
+    final hour = value.hour.toString().padLeft(2, '0');
+    final minute = value.minute.toString().padLeft(2, '0');
+
+    return '$hour:$minute';
   }
 }
