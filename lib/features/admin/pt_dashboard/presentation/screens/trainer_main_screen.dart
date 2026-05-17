@@ -35,6 +35,7 @@ import '../../data/services/trainer_pt_sessions_service.dart';
 import '../../domain/usecases/pt_package_usecases.dart';
 import '../../domain/usecases/trainer_pt_sessions_usecases.dart';
 import '../bloc/packages/pt_package_bloc.dart';
+import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
 
 import 'trainer_dashboard_screen.dart';
