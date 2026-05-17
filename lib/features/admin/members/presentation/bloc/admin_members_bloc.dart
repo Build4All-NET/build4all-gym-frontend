@@ -6,11 +6,13 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/entities/member_attendance_item_entity.dart';
 import '../../domain/entities/member_card_entity.dart';
 import '../../domain/entities/member_detail_entity.dart';
 import '../../domain/usecases/block_member_use_case.dart';
 import '../../domain/usecases/bulk_delete_members_use_case.dart';
 import '../../domain/usecases/delete_member_use_case.dart';
+import '../../domain/usecases/get_member_attendance_use_case.dart';
 import '../../domain/usecases/get_member_detail_use_case.dart';
 import '../../domain/usecases/get_members_use_case.dart';
 import '../../domain/usecases/unblock_member_use_case.dart';
@@ -19,12 +21,13 @@ part 'admin_members_event.dart';
 part 'admin_members_state.dart';
 
 class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
-  final GetMembersUseCase        getMembersUseCase;
-  final GetMemberDetailUseCase   getMemberDetailUseCase;  // GA-270
-  final BlockMemberUseCase       blockMemberUseCase;
-  final UnblockMemberUseCase     unblockMemberUseCase;
-  final DeleteMemberUseCase      deleteMemberUseCase;
-  final BulkDeleteMembersUseCase bulkDeleteMembersUseCase;
+  final GetMembersUseCase           getMembersUseCase;
+  final GetMemberDetailUseCase      getMemberDetailUseCase;
+  final GetMemberAttendanceUseCase  getMemberAttendanceUseCase;
+  final BlockMemberUseCase          blockMemberUseCase;
+  final UnblockMemberUseCase        unblockMemberUseCase;
+  final DeleteMemberUseCase         deleteMemberUseCase;
+  final BulkDeleteMembersUseCase    bulkDeleteMembersUseCase;
   final int branchId;
 
   MembersActiveFilters _activeFilters = const MembersActiveFilters();
@@ -32,6 +35,7 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
   AdminMembersBloc({
     required this.getMembersUseCase,
     required this.getMemberDetailUseCase,
+    required this.getMemberAttendanceUseCase,
     required this.blockMemberUseCase,
     required this.unblockMemberUseCase,
     required this.deleteMemberUseCase,
@@ -43,7 +47,8 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
     on<MembersStatusFilterChanged>(_onStatusFilterChanged);
     on<MembersSortChanged>(_onSortChanged);
     on<MembersGenderFilterChanged>(_onGenderFilterChanged);
-    on<MemberDetailRequested>(_onMemberDetailRequested);  // GA-270
+    on<MemberDetailRequested>(_onMemberDetailRequested);
+    on<MemberAttendanceRequested>(_onMemberAttendanceRequested);
     on<MemberBlockRequested>(_onBlockRequested);
     on<MemberUnblockRequested>(_onUnblockRequested);
     on<MemberDeleteRequested>(_onDeleteRequested);
@@ -146,6 +151,17 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
       emit(MemberDetailLoaded(member));
     } catch (e) {
       emit(MemberDetailError(e.toString()));
+    }
+  }
+
+  Future<void> _onMemberAttendanceRequested(
+      MemberAttendanceRequested event, Emitter<AdminMembersState> emit) async {
+    emit(MemberAttendanceLoading(event.userId));
+    try {
+      final items = await getMemberAttendanceUseCase(event.userId);
+      emit(MemberAttendanceLoaded(event.userId, items));
+    } catch (e) {
+      emit(MemberAttendanceError(e.toString()));
     }
   }
 

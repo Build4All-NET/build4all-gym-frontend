@@ -73,17 +73,21 @@ class AuthRefreshCoordinator {
           ? Map<String, dynamic>.from(res.data as Map)
           : <String, dynamic>{};
 
-      final newAccess = (data['token'] ?? '').toString().trim();
+      final newAccess =
+          (data['token'] ?? data['accessToken'] ?? '').toString().trim();
       final newRefresh = (data['refreshToken'] ?? '').toString().trim();
 
-      if (newAccess.isEmpty || newRefresh.isEmpty) {
+      if (newAccess.isEmpty) {
         throw Exception('BAD_REFRESH_RESPONSE');
       }
+
+      // Keep the old refresh token if the backend doesn't rotate it.
+      final refreshToStore = newRefresh.isNotEmpty ? newRefresh : refresh;
 
       await _userStore.saveToken(
         token: newAccess,
         wasInactive: false,
-        refreshToken: newRefresh,
+        refreshToken: refreshToStore,
         tenantId: tenantId,
       );
 
@@ -118,19 +122,23 @@ class AuthRefreshCoordinator {
           ? Map<String, dynamic>.from(res.data as Map)
           : <String, dynamic>{};
 
-      final newAccess = (data['token'] ?? '').toString().trim();
+      final newAccess =
+          (data['token'] ?? data['accessToken'] ?? '').toString().trim();
       final newRefresh = (data['refreshToken'] ?? '').toString().trim();
 
-      if (newAccess.isEmpty || newRefresh.isEmpty) {
+      if (newAccess.isEmpty) {
         throw Exception('BAD_REFRESH_RESPONSE');
       }
+
+      // Keep the old refresh token if the backend doesn't rotate it.
+      final refreshToStore = newRefresh.isNotEmpty ? newRefresh : refresh;
 
       final role = (await _adminStore.getRole()) ?? '';
 
       await _adminStore.save(
         token: newAccess,
         role: role,
-        refreshToken: newRefresh,
+        refreshToken: refreshToStore,
         tenantId: tenantId,
       );
 

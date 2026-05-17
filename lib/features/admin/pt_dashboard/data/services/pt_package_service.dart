@@ -100,6 +100,32 @@ class PtPackageService {
     }
   }
 
+  Future<List<PtPackageModel>> getInactivePackages({
+    int? trainerId,
+    required int tenantId,
+    required int branchId,
+  }) async {
+    final headers = await _headers();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/packages/inactive'
+        '?tenantId=$tenantId&branchId=$branchId';
+    final uri = Uri.parse(
+      trainerId != null ? '$base&trainerId=$trainerId' : base,
+    );
+    try {
+      final r = await _client.get(uri, headers: headers);
+      if (r.statusCode == 200) {
+        final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
+        return list
+            .map((e) => PtPackageModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   Future<void> deactivatePackage(int id) async {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/packages/$id');

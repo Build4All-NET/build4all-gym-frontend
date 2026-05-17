@@ -50,6 +50,7 @@ class SessionsService {
       '/api/member/sessions/bookings/$bookingId',
     );
   }
+
   Future<SessionDetailModel> getSessionDetail(int sessionId) async {
     try {
       final response = await _dio.get('/api/member/sessions/$sessionId');

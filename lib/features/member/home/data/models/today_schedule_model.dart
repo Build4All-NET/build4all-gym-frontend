@@ -31,7 +31,7 @@ import 'schedule_item_model.dart';
 // schedule.items → List<ScheduleItemModel>
 
 class TodayScheduleModel {
-  // List of schedule items (classes or PT sessions)
+  // List of schedule items (classes or PT services)
   final List<ScheduleItemModel> items;
 
   // Creates a typed TodayScheduleModel object

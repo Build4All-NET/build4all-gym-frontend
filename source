@@ -1,0 +1,7 @@
+      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
+     3922    3902    3922      15140  cons2     197609 03:47:58 /usr/bin/PS
+     3902       1    3902      25188  cons2     197609 03:47:35 /usr/bin/bash
+     2022       1    2022       5220  cons0     197609   May 13 /usr/bin/bash
+     2069       1    2069      17068  cons1     197609   May 13 /usr/bin/bash
+I    3770       1    3769       5096  cons1     197609 16:44:33 /usr/bin/less
+     3769    2069    3769      12140  cons1     197609 16:44:33 /mingw64/bin/git

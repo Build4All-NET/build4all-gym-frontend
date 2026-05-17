@@ -37,6 +37,8 @@ class SessionsRepositoryImpl implements SessionsRepository {
       totalCapacity: m.totalCapacity,
       memberBookingStatus: m.memberBookingStatus,
       imageFileId: m.imageFileId,
+      branchId: m.branchId,
+      branchName: m.branchName,
     )).toList();
   }
 
@@ -87,6 +89,8 @@ class SessionsRepositoryImpl implements SessionsRepository {
         startTime: model.startTime,
         endTime: model.endTime,
         roomName: model.roomName,
+        branchId: model.branchId,
+        branchName: model.branchName,
         availableSeats: model.availableSeats,
         memberBookingStatus: model.memberBookingStatus,
         description: model.description ?? 'No description available',

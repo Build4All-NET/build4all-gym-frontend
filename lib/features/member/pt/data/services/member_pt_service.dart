@@ -450,7 +450,7 @@ class MemberPtService {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // POST /api/pt-sessions
+  // POST /api/pt-services
   //
   // Old single-session booking flow.
   // Keep it for now because MemberPtRepositoryImpl still uses it.
@@ -462,7 +462,7 @@ class MemberPtService {
       ) async {
     final headers = await _authHeaders();
 
-    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-sessions');
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-services');
 
     try {
       final response = await _client.post(
@@ -494,6 +494,68 @@ class MemberPtService {
     } catch (e, stackTrace) {
       debugPrint('PT BOOKING ERROR: $e');
       debugPrint('PT BOOKING STACK: $stackTrace');
+
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) {
+        rethrow;
+      }
+
+      throw NetworkException();
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // POST /api/pt-sessions/request
+  //
+  // New request flow.
+  //
+  // Used when:
+  // - the slot is full
+  // - the slot is unavailable
+  // - member still wants to ask the PT
+  //
+  // Backend creates a PT session with status REQUESTED.
+  // This is not a confirmed booking yet.
+  // ─────────────────────────────────────────────────────────────
+
+  Future<PtBookingResponseModel> requestBooking(
+      PtBookingRequestModel request,
+      ) async {
+    final headers = await _authHeaders();
+
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-sessions/request');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: headers,
+        body: jsonEncode(request.toJson()),
+      );
+
+      final decodedBody = _decodeBody(response);
+
+      debugPrint('PT BOOKING REQUEST STATUS: ${response.statusCode}');
+      debugPrint('PT BOOKING REQUEST BODY: $decodedBody');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return PtBookingResponseModel.fromJson(
+          jsonDecode(decodedBody) as Map<String, dynamic>,
+        );
+      }
+
+      if (response.statusCode == 401) {
+        throw UnauthorizedException();
+      }
+
+      if (response.statusCode == 403) {
+        throw ForbiddenException();
+      }
+
+      throw ServerException(message: decodedBody);
+    } catch (e, stackTrace) {
+      debugPrint('PT BOOKING REQUEST ERROR: $e');
+      debugPrint('PT BOOKING REQUEST STACK: $stackTrace');
 
       if (e is UnauthorizedException ||
           e is ForbiddenException ||

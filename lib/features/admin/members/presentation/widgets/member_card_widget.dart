@@ -1,9 +1,11 @@
 import 'package:build4allgym/app/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/member_card_entity.dart';
 import '../bloc/admin_members_bloc.dart';
+import 'attendance_history_bottom_sheet.dart';
 
 class MemberCardWidget extends StatelessWidget {
   final MemberCardEntity member;
@@ -175,17 +177,24 @@ class MemberCardWidget extends StatelessWidget {
       children: [
         // WhatsApp — semantic green, intentional
         _ActionIcon(
-          icon: Icons.chat_bubble_outline,
-          color: const Color(0xFF25D366),
-          tooltip: 'WhatsApp',
-          onTap: () => _launchWhatsApp(context),
+          icon:     Icons.chat_bubble_outline,
+          color:    member.phone.isNotEmpty
+              ? const Color(0xFF25D366)
+              : cs.onSurface.withOpacity(0.25),
+          tooltip:  'WhatsApp',
+          disabled: member.phone.isEmpty,
+          onTap:    () => _launchWhatsApp(context),
         ),
         // Attendance
         _ActionIcon(
-          icon: Icons.person_outline,
-          color: cs.primary,
+          icon:    Icons.calendar_today_outlined,
+          color:   cs.primary,
           tooltip: 'Attendance',
-          onTap: () => _showComingSoon(context, 'Attendance'),
+          onTap:   () => AttendanceHistoryBottomSheet.show(
+            context,
+            userId:     member.userId,
+            memberName: member.fullName,
+          ),
         ),
         // Renew
         _ActionIcon(
@@ -222,17 +231,15 @@ class MemberCardWidget extends StatelessWidget {
   }
 
   Future<void> _launchWhatsApp(BuildContext context) async {
-    final digits = member.phone.replaceAll(RegExp(r'[^\d]'), '');
-    // Uncomment after adding url_launcher:
-    // final uri = Uri.parse('https://wa.me/$digits');
-    // if (await canLaunchUrl(uri)) {
-    //   await launchUrl(uri, mode: LaunchMode.externalApplication);
-    // }
-    if (context.mounted) {
+    if (member.phone.isEmpty) return;
+    final digits = member.phone.replaceAll(RegExp(r'[^\d+]'), '');
+    final uri    = Uri.parse('https://wa.me/$digits');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('WhatsApp: wa.me/$digits'),
-        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-        duration: const Duration(seconds: 2),
+        content:         const Text('WhatsApp is not installed'),
+        backgroundColor: Theme.of(context).colorScheme.error,
       ));
     }
   }
@@ -375,24 +382,32 @@ class _InfoValue extends StatelessWidget {
 }
 
 class _ActionIcon extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String tooltip;
+  final IconData     icon;
+  final Color        color;
+  final String       tooltip;
   final VoidCallback onTap;
+  final bool         disabled;
+
   const _ActionIcon({
-    required this.icon, required this.color,
-    required this.tooltip, required this.onTap,
+    required this.icon,
+    required this.color,
+    required this.tooltip,
+    required this.onTap,
+    this.disabled = false,
   });
 
   @override
   Widget build(BuildContext context) => Tooltip(
     message: tooltip,
     child: InkWell(
-      onTap: onTap,
+      onTap: disabled ? null : onTap,
       borderRadius: BorderRadius.circular(20),
       child: Padding(
         padding: const EdgeInsets.all(6),
-        child: Icon(icon, color: color, size: 22),
+        child: Opacity(
+          opacity: disabled ? 0.4 : 1.0,
+          child: Icon(icon, color: color, size: 22),
+        ),
       ),
     ),
   );

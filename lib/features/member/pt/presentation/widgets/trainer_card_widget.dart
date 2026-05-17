@@ -83,13 +83,41 @@ class TrainerCardWidget extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           trainer.specialties.join('، '),
-                          textAlign:
-                          isRtl ? TextAlign.right : TextAlign.left,
+                          textAlign: isRtl ? TextAlign.right : TextAlign.left,
                           style: tokens.typography.bodySmall.copyWith(
                             color: tokens.colors.muted,
                             fontSize: 13,
                           ),
                         ),
+
+                        if (trainer.branchName != null && trainer.branchName!.trim().isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                            children: [
+                              Icon(
+                                Icons.location_on_rounded,
+                                size: 14,
+                                color: tokens.colors.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  trainer.branchName!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                                  style: tokens.typography.bodySmall.copyWith(
+                                    color: tokens.colors.body,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

@@ -3,17 +3,16 @@
 // LAYER: Data — HTTP calls only, no domain logic
 //
 // Endpoints:
-//   GET    /api/trainer/pt-sessions?branchId=&date=       → session list
-//   GET    /api/trainer/pt-sessions/stats?branchId=&date= → stats cards
-//   POST   /api/trainer/pt-sessions                       → create session
-//   PATCH  /api/trainer/pt-sessions/{id}/status           → update status
+//   GET    /api/trainer/pt-services?branchId=&date=       → session list
+//   GET    /api/trainer/pt-services/stats?branchId=&date= → stats cards
+//   POST   /api/trainer/pt-services                       → create session
+//   PATCH  /api/trainer/pt-services/{id}/status           → update status
 //
 // Auth: JWT from FlutterSecureStorage via _authHeaders().
 // =============================================================================
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:build4allgym/core/network/authed_http_client.dart';
 import 'package:intl/intl.dart';
@@ -31,17 +30,10 @@ class TrainerPtSessionsService {
   final _client = AuthedHttpClient();
   static final _dateFmt = DateFormat('yyyy-MM-dd');
 
-  // ── Auth headers ─────────────────────────────────────────────────────────
-  final _tokenStore = const AdminTokenStore();
-
-
-  Future<Map<String, String>> _authHeaders() async {
-    final token = await _tokenStore.getToken();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-  }
+  // ── Base headers (Authorization injected by AuthedHttpClient) ─────────────
+  Map<String, String> _authHeaders() => const {
+    'Content-Type': 'application/json',
+  };
 
   // ── Response body decoder ─────────────────────────────────────────────────
 
@@ -58,14 +50,14 @@ class TrainerPtSessionsService {
     throw ServerException(message: body);
   }
 
-  // ── GET sessions by date ──────────────────────────────────────────────────
+  // ── GET services by date ──────────────────────────────────────────────────
 
   Future<List<PtSessionModel>> getSessionsByDate({
     required int branchId,
     int? trainerId,
     required DateTime date,
   }) async {
-    final headers = await _authHeaders();
+    final headers = _authHeaders();
     final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions'
         '?branchId=$branchId&date=${_dateFmt.format(date)}';
     final uri = Uri.parse(
@@ -99,7 +91,7 @@ class TrainerPtSessionsService {
     int? trainerId,
     required DateTime date,
   }) async {
-    final headers = await _authHeaders();
+    final headers = _authHeaders();
     final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/stats'
         '?branchId=$branchId&date=${_dateFmt.format(date)}';
     final uri = Uri.parse(
@@ -128,7 +120,7 @@ class TrainerPtSessionsService {
   // ── POST create session ───────────────────────────────────────────────────
 
   Future<PtSessionModel> createSession(Map<String, dynamic> body, {int? trainerId}) async {
-    final headers = await _authHeaders();
+    final headers = _authHeaders();
     final baseUrl = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions';
     final uri = Uri.parse(trainerId != null ? '$baseUrl?trainerId=$trainerId' : baseUrl);
 
@@ -161,7 +153,7 @@ class TrainerPtSessionsService {
   // ── PATCH update status ───────────────────────────────────────────────────
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {
-    final headers = await _authHeaders();
+    final headers = _authHeaders();
     final uri = Uri.parse(
       '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/status',
     );

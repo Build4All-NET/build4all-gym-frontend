@@ -182,7 +182,6 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   // ─────────────────────────────────────────────────────────────
   // Date-based slots
   //
-  // Old single-session flow:
   // GET /api/trainers/{trainerId}/slots?date=YYYY-MM-DD
   // ─────────────────────────────────────────────────────────────
 
@@ -227,13 +226,7 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   // ─────────────────────────────────────────────────────────────
   // Weekly slots
   //
-  // New package booking flow:
   // GET /api/member/trainers/{trainerId}/weekly-slots?day=MONDAY
-  //
-  // Important:
-  // - no date
-  // - day is stable backend code
-  // - returned slots come from trainer/PT availability
   // ─────────────────────────────────────────────────────────────
 
   @override
@@ -276,9 +269,12 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // Create old single PT booking
+  // Create normal PT booking
   //
   // POST /api/pt-sessions
+  //
+  // This creates a confirmed booking when the slot is available.
+  // POST /api/pt-services
   // ─────────────────────────────────────────────────────────────
 
   @override
@@ -326,20 +322,62 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   }
 
   // ─────────────────────────────────────────────────────────────
+  // Request PT booking
+  //
+  // POST /api/pt-sessions/request
+  //
+  // This is used when the member wants to ask for a full/unavailable time.
+  // Backend creates status REQUESTED, not SCHEDULED.
+  // ─────────────────────────────────────────────────────────────
+
+  @override
+  Future<({PtBookingResponseEntity? data, Failure? failure})> requestBooking({
+    required int trainerId,
+    required String startTime,
+    required String endTime,
+    String? notes,
+  }) async {
+    try {
+      final model = await _service.requestBooking(
+        PtBookingRequestModel(
+          trainerId: trainerId,
+          startTime: startTime,
+          endTime: endTime,
+          notes: notes,
+        ),
+      );
+
+      return (
+      data: model.toEntity(),
+      failure: null,
+      );
+    } on UnauthorizedException {
+      return (
+      data: null,
+      failure: const AuthFailure('Session expired. Please log in again.'),
+      );
+    } on ForbiddenException {
+      return (
+      data: null,
+      failure: const AuthFailure('Access denied.'),
+      );
+    } on ServerException catch (e) {
+      return (
+      data: null,
+      failure: ServerFailure(e.message),
+      );
+    } on NetworkException {
+      return (
+      data: null,
+      failure: const NetworkFailure('No internet connection.'),
+      );
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
   // Create PT package booking
   //
   // POST /api/member/pt-package-bookings
-  //
-  // Backend request:
-  // {
-  //   "packageId": 1,
-  //   "weeklySchedule": [
-  //     {
-  //       "day": "MONDAY",
-  //       "time": "09:00"
-  //     }
-  //   ]
-  // }
   // ─────────────────────────────────────────────────────────────
 
   @override

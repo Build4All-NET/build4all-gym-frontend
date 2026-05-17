@@ -5,6 +5,7 @@
 // TASK: GA-269 — added getMemberDetail()
 // =============================================================================
 
+import '../entities/member_attendance_item_entity.dart';
 import '../entities/member_card_entity.dart';
 import '../entities/member_detail_entity.dart';
 import '../entities/member_list_result_entity.dart';
@@ -21,8 +22,9 @@ abstract class AdminMembersRepository {
     int size,
   });
 
-  // GA-269: added
   Future<MemberDetailEntity> getMemberDetail(int userId);
+
+  Future<List<MemberAttendanceItemEntity>> getMemberAttendance(int userId);
 
   Future<void> blockMember(int userId, String reason);
 

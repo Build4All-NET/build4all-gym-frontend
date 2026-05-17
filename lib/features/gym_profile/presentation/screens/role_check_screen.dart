@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/app/app_router.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
+import '../../../member/account/data/services/member_profile_service.dart';
+import '../../../member/account/presentation/widgets/profile_completion_dialog.dart';
 import '../../data/repositories/gym_profile_repository_impl.dart';
 import '../../data/services/gym_profile_service.dart';
 import '../../domain/usecases/get_gym_profile_usecase.dart';
@@ -40,10 +42,10 @@ class _RoleCheckBody extends StatelessWidget {
     return BlocListener<GymProfileCubit, GymProfileState>(
       listener: (context, state) {
         if (state is GymProfileLoaded) {
-          _routeByRole(context, state.entity.gymRole);
+          _routeByRoles(context, state.entity.gymRoles);
         }
         if (state is GymProfileError) {
-          _routeByRole(context, 'MEMBER'); // safe fallback
+          _routeByRoles(context, []); // safe fallback → member shell
         }
       },
       child: Scaffold(
@@ -65,19 +67,41 @@ class _RoleCheckBody extends StatelessWidget {
     );
   }
 
-  void _routeByRole(BuildContext context, String gymRole) {
-    switch (gymRole) {
-      case 'TRAINER':
-      // Trainer shell already exists at this route
-        Navigator.pushReplacementNamed(context, AppRouter.adminPtSessions);
-        break;
-      case 'RECEPTION':
-      // No reception shell yet — falls back to member for now
-        Navigator.pushReplacementNamed(context, AppRouter.adminStaff);
-        break;
-      default:
+  void _routeByRoles(BuildContext context, List<String> gymRoles) {
+    final isTrainer   = gymRoles.contains('TRAINER');
+    final isReception = gymRoles.contains('RECEPTION');
+
+    if (isTrainer && !isReception) {
+      Navigator.pushReplacementNamed(context, AppRouter.adminPtSessions);
+    } else if (isReception) {
+      Navigator.pushReplacementNamed(context, AppRouter.adminClasses);
+    } else {
+      // Member — check profile completeness before entering the shell.
+      _checkMemberProfile(context);
+    }
+  }
+
+  Future<void> _checkMemberProfile(BuildContext context) async {
+    try {
+      final status = await MemberProfileService().getProfileStatus();
+      final complete = status['complete'] as bool? ?? false;
+      if (!context.mounted) return;
+      if (!complete) {
+        // Show blocking dialog; navigate to shell only after it's submitted.
+        await ProfileCompletionDialog.show(
+          context,
+          existing: status,
+          onCompleted: () =>
+              Navigator.pushReplacementNamed(context, AppRouter.user),
+        );
+      } else {
         Navigator.pushReplacementNamed(context, AppRouter.user);
-        break;
+      }
+    } catch (_) {
+      // Network/auth error — let the member in anyway, they can fill later.
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, AppRouter.user);
+      }
     }
   }
 }

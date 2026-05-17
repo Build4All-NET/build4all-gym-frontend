@@ -109,6 +109,16 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
     }
   }
 
+  // ── reactivateClass ────────────────────────────────────────────────────────
+  @override
+  Future<void> reactivateClass(int sessionId) async {
+    try {
+      await _service.reactivateClass(sessionId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // ── getSessionBookings ─────────────────────────────────────────────────────
   @override
   Future<List<SessionBookingItemEntity>> getSessionBookings(

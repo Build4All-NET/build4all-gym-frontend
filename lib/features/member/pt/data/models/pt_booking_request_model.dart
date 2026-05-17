@@ -1,4 +1,4 @@
-/// Request body sent to POST /api/pt-sessions.
+/// Request body sent to POST /api/pt-services.
 ///
 /// This model belongs to the data layer because it knows the exact JSON
 /// expected by the backend.

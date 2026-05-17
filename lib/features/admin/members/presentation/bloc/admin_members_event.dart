@@ -62,3 +62,8 @@ class MembersBulkDeleteRequested extends AdminMembersEvent {
   final List<int> userIds;
   const MembersBulkDeleteRequested(this.userIds);
 }
+
+class MemberAttendanceRequested extends AdminMembersEvent {
+  final int userId;
+  const MemberAttendanceRequested(this.userId);
+}

@@ -138,22 +138,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get validation_codeRequired => 'رمز التحقق مطلوب';
 
   @override
-  String get validation_invalidCode => 'الرمز غير صالح أو منتهي الصلاحية';
+  String get validation_invalidCode => 'الرمز غير صحيح أو منتهي الصلاحية';
 
   @override
-  String get validation_emailAlreadyExists => 'البريد الإلكتروني مستخدم مسبقاً';
+  String get validation_emailAlreadyExists => 'البريد الإلكتروني مسجل مسبقاً';
 
   @override
-  String get validation_phoneAlreadyExists => 'رقم الهاتف مستخدم مسبقاً';
-
-  @override
-  String get validation_passwordNoLetter => 'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
-
-  @override
-  String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
-
-  @override
-  String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
+  String get validation_phoneAlreadyExists => 'رقم الهاتف مسجل مسبقاً';
 
   @override
   String get general_cancel => 'إلغاء';
@@ -165,40 +156,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get general_optional => 'اختياري';
 
   @override
-  String get general_retry => 'إعادة المحاولة';
-
-  @override
-  String get general_save => 'حفظ';
-
-  @override
-  String get general_edit => 'تعديل';
-
-  @override
-  String get general_delete => 'حذف';
-
-  @override
-  String get general_back => 'رجوع';
-
-  @override
-  String get general_done => 'تم';
-
-  @override
-  String get general_required => 'مطلوب';
-
-  @override
-  String get general_active => 'نشط';
-
-  @override
-  String get general_inactive => 'غير نشط';
-
-  @override
-  String get general_search => 'بحث';
-
-  @override
-  String get general_noPhone => 'لا يوجد هاتف';
-
-  @override
-  String get error_somethingWentWrong => 'حدث خطأ ما. يرجى المحاولة مجدداً.';
+  String get error_somethingWentWrong => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
 
   @override
   String get error_serverError => 'خطأ في الخادم. يرجى المحاولة لاحقاً.';
@@ -213,10 +171,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get connection_issue => 'مشكلة في الاتصال';
 
   @override
-  String get connection_timeout => 'انتهت مهلة الطلب. يرجى المحاولة مجدداً.';
+  String get connection_timeout => 'انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.';
 
   @override
-  String get authGateContinueAs => 'المتابعة كـ';
+  String get authGateContinueAs => 'تابع كـ';
 
   @override
   String get authGateRoleAdminOwner => 'مدير / مالك';
@@ -234,7 +192,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appAccessTitleUnavailable => 'التطبيق غير متاح';
 
   @override
-  String get appAccessMessageDeleted => 'تم حذف هذا التطبيق ولم يعد متاحاً.';
+  String get appAccessMessageDeleted => 'هذا التطبيق تم حذفه ولم يعد متاحاً.';
 
   @override
   String get appAccessMessageExpired => 'انتهى اشتراك هذا التطبيق. يرجى التواصل مع الدعم.';
@@ -243,7 +201,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appAccessMessageUnavailable => 'هذا التطبيق غير متاح حالياً. يرجى المحاولة لاحقاً.';
 
   @override
-  String get appAccessRetry => 'إعادة المحاولة';
+  String get appAccessRetry => 'حاول مجدداً';
 
   @override
   String get common_or => 'أو';
@@ -258,7 +216,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword_sendCode => 'إرسال الرمز';
 
   @override
-  String get forgotPassword_spamTip => 'تلميح: تحقق من مجلد البريد غير المرغوب فيه 👀';
+  String get forgotPassword_spamTip => 'تلميح: تحقق من مجلد البريد غير الهام أيضاً 👀';
 
   @override
   String get forgotPassword_verifyTitle => 'أدخل رمز التحقق';
@@ -281,7 +239,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword_newPasswordTitle => 'تعيين كلمة مرور جديدة';
 
   @override
-  String get forgotPassword_newPasswordSubtitle => 'اجعلها قوية — ستشكر نفسك لاحقاً.';
+  String get forgotPassword_newPasswordSubtitle => 'اجعلها قوية — نسختك المستقبلية ستشكرك.';
 
   @override
   String get forgotPassword_newPassword => 'كلمة المرور الجديدة';
@@ -302,30 +260,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword_otpScreenSubtitle => 'أدخل الرمز المرسل إلى بريدك الإلكتروني أو هاتفك';
 
   @override
-  String get forgotPassword_checkSms => 'تحقق من رسائلك النصية';
+  String get forgotPassword_checkSms => 'تحقق من الرسائل النصية';
 
   @override
   String get forgotPassword_checkEmail => 'تحقق من بريدك الإلكتروني';
 
   @override
-  String get forgotPassword_checkEmailOrSms => 'تحقق من بريدك الإلكتروني أو رسائلك النصية';
+  String get forgotPassword_checkEmailOrSms => 'تحقق من بريدك الإلكتروني أو الرسائل';
 
   @override
   String forgotPassword_codeExpiresIn(int seconds) {
-    return 'ينتهي الرمز خلال $secondsث';
+    return 'ينتهي الرمز خلال $seconds ثانية';
   }
 
   @override
   String get forgotPassword_codeExpired => 'انتهت صلاحية الرمز';
 
   @override
-  String get forgotPassword_verifyCode => 'التحقق من الرمز';
+  String get forgotPassword_verifyCode => 'تحقق من الرمز';
 
   @override
   String get forgotPassword_didntReceiveCode => 'لم تستلم الرمز؟';
 
   @override
-  String get forgotPassword_emailOrPhone => 'البريد الإلكتروني أو الهاتف';
+  String get forgotPassword_emailOrPhone => 'البريد الإلكتروني أو رقم الهاتف';
 
   @override
   String get forgotPassword_emailOrPhoneHint => 'أدخل بريدك الإلكتروني أو رقم هاتفك';
@@ -334,7 +292,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword_fieldRequired => 'هذا الحقل مطلوب';
 
   @override
-  String get forgotPassword_invalidEmailOrPhone => 'بريد إلكتروني أو رقم هاتف غير صالح';
+  String get forgotPassword_invalidEmailOrPhone => 'البريد الإلكتروني أو رقم الهاتف غير صالح';
 
   @override
   String get forgotPassword_sendOtp => 'إرسال رمز التحقق';
@@ -347,6 +305,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPassword_passwordResetSuccess => 'تم إعادة تعيين كلمة المرور بنجاح';
+
+  @override
+  String get validation_passwordNoLetter => 'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
+
+  @override
+  String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
 
   @override
   String get signup_title => 'إنشاء حساب جديد';
@@ -379,26 +346,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signup_termsAgreement => 'بالمتابعة، أنت توافق على شروط الخدمة وسياسة الخصوصية';
 
   @override
-  String get signup_alreadyVerifiedResume => 'الحساب محقق بالفعل. جارٍ إكمال ملفك الشخصي.';
-
-  @override
-  String get signup_success => 'تم التسجيل بنجاح. يمكنك الآن تسجيل الدخول.';
+  String get signup_alreadyVerifiedResume => 'تم التحقق من الحساب مسبقاً. جارٍ استكمال ملفك الشخصي.';
 
   @override
   String get otp_title => 'تأكيد الحساب';
 
   @override
-  String get otp_subtitle => 'أدخل رمز التحقق المرسل';
+  String get otp_subtitle => 'أدخل رمز التحقق المُرسل';
 
   @override
   String get otp_step2Label => 'التحقق من الهوية';
 
   @override
-  String get otp_sentTo => 'أُرسل إلى';
+  String get otp_sentTo => 'تم الإرسال إلى';
 
   @override
   String otp_enterDigits(int count) {
-    return 'أدخل رمز التحقق المكوّن من $count أرقام';
+    return 'أدخل رمز التحقق المكون من $count أرقام';
   }
 
   @override
@@ -420,10 +384,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otp_enterAllDigits => 'يرجى إدخال جميع الأرقام';
 
   @override
-  String get otp_backToSignup => 'العودة إلى التسجيل';
+  String get otp_backToSignup => 'العودة للتسجيل';
 
   @override
-  String get otp_debugTip => 'للاختبار استخدم الرمز 1234';
+  String get otp_debugTip => 'للتجربة استخدم الرمز 1234';
 
   @override
   String get completeProfile_title => 'أكمل ملفك الشخصي';
@@ -432,16 +396,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeProfile_subtitle => 'أخبرنا المزيد عنك';
 
   @override
-  String get completeProfile_lastStepTitle => 'الخطوة الأخيرة!';
+  String get completeProfile_lastStepTitle => 'آخر خطوة!';
 
   @override
-  String get completeProfile_lastStepSubtitle => 'اختر اسم مستخدم فريداً';
+  String get completeProfile_lastStepSubtitle => 'اختر اسم مستخدم فريد';
 
   @override
   String get completeProfile_stepLabel => 'المعلومات الشخصية';
 
   @override
-  String get completeProfile_nameInstruction => 'نحتاج اسمك لتخصيص تجربتك';
+  String get completeProfile_nameInstruction => 'نحتاج إلى معرفة اسمك لتخصيص تجربتك';
 
   @override
   String get completeProfile_firstName => 'الاسم الأول';
@@ -456,13 +420,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeProfile_lastName => 'اسم العائلة';
 
   @override
-  String get completeProfile_lastNameHint => 'أدخل اسم عائلتك';
+  String get completeProfile_lastNameHint => 'أدخل اسم العائلة';
 
   @override
   String get completeProfile_continueButton => 'متابعة';
 
   @override
-  String get completeProfile_usernameInstruction => 'سيظهر اسم المستخدم في ملفك الشخصي';
+  String get completeProfile_usernameInstruction => 'اسمك المستخدم سيظهر في ملفك الشخصي';
 
   @override
   String get completeProfile_username => 'اسم المستخدم';
@@ -474,10 +438,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeProfile_usernameTooShort => 'يجب أن يكون 3 أحرف على الأقل';
 
   @override
-  String get completeProfile_usernameInvalid => 'يُسمح بالحروف والأرقام و _ و . فقط';
+  String get completeProfile_usernameInvalid => 'أحرف وأرقام و _ و . فقط';
 
   @override
-  String get completeProfile_usernameTaken => 'اسم المستخدم هذا محجوز مسبقاً';
+  String get completeProfile_usernameTaken => 'اسم المستخدم هذا محجوز بالفعل';
 
   @override
   String get completeProfile_profileType => 'نوع الملف الشخصي';
@@ -486,49 +450,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeProfile_publicTitle => 'حساب عام';
 
   @override
-  String get completeProfile_publicDescription => 'يمكن لأي شخص عرض ملفك ونشاطك';
+  String get completeProfile_publicDescription => 'يمكن لأي شخص رؤية ملفك الشخصي ونشاطك';
 
   @override
   String get completeProfile_privateTitle => 'حساب خاص';
 
   @override
-  String get completeProfile_privateDescription => 'أنت فقط يمكنه رؤية معلوماتك ونشاطك';
+  String get completeProfile_privateDescription => 'فقط أنت يمكنك رؤية معلوماتك ونشاطك';
 
   @override
-  String get completeProfile_settingsNote => 'يمكنك تغيير هذه الإعدادات لاحقاً من ملفك الشخصي';
+  String get completeProfile_settingsNote => 'يمكنك تغيير هذه الإعدادات لاحقاً من الملف الشخصي';
 
   @override
-  String get completeProfile_finishButton => 'إنهاء والبدء';
+  String get completeProfile_finishButton => 'إنهاء وبدء الاستخدام';
 
   @override
-  String get completeProfile_backButton => 'رجوع';
+  String get completeProfile_backButton => 'العودة';
 
   @override
-  String get home_welcome => 'مرحباً';
+  String get home_welcome => 'مرحباً بك';
 
   @override
-  String get home_weightUpdated => 'تم تحديث وزنك بنجاح ✅';
+  String get home_weightUpdated => 'تم تحديث وزنك بنجاح';
 
   @override
-  String get home_noData => 'لا توجد بيانات متاحة';
+  String get home_noData => 'لا توجد بيانات';
 
   @override
-  String get home_sessions => 'الجلسات';
+  String get home_sessions => 'حصة';
 
   @override
-  String get home_kgLost => 'كغ مفقودة';
+  String get home_kgLost => 'كجم فقدان';
 
   @override
-  String get home_workouts => 'التمارين';
+  String get home_workouts => 'تمرين';
 
   @override
   String get home_minutes => 'دقيقة';
 
   @override
-  String get home_quickActions => 'الإجراءات السريعة';
+  String get home_quickActions => 'إجراءات سريعة';
 
   @override
-  String get home_bookClass => 'احجز فصلاً';
+  String get home_bookClass => 'حجز حصة';
 
   @override
   String get home_myProgress => 'تقدمي';
@@ -540,7 +504,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_support => 'الدعم';
 
   @override
-  String get home_updateWeight => 'تحديث وزنك';
+  String get home_updateWeight => 'حدّث وزنك';
 
   @override
   String get home_save => 'حفظ';
@@ -564,7 +528,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_expiresOn => 'تنتهي في';
 
   @override
-  String get home_renewNow => 'جدد الآن';
+  String get home_renewNow => 'تجديد الآن';
 
   @override
   String get memberBottomNavHome => 'الرئيسية';
@@ -576,7 +540,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberBottomNavQr => 'QR';
 
   @override
-  String get memberBottomNavClasses => 'الفصول';
+  String get memberBottomNavClasses => 'الحصص';
 
   @override
   String get memberBottomNavAccount => 'حسابي';
@@ -592,7 +556,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String memberHomeWithTrainer(Object trainerName) {
-    return 'مع المدرب $trainerName';
+    return 'مع $trainerName';
   }
 
   @override
@@ -601,46 +565,49 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get memberHomeNoScheduleToday => 'لا توجد فصول اليوم — استمتع بيوم الراحة! 💪';
+  String get memberHomeNoScheduleToday => 'لا توجد حصص اليوم — استمتع بيوم راحة! 💪';
 
   @override
-  String get home_quoteOfTheDay => 'اقتباس اليوم';
+  String get home_quoteOfTheDay => 'مقولة اليوم';
 
   @override
-  String get home_progressTracking => 'تتبع التقدم';
+  String get home_progressTracking => 'متابعة التقدم';
 
   @override
-  String get home_weightTrackerSubtitle => 'كيف كانت أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك.';
+  String get home_weightTrackerSubtitle => 'كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك';
 
   @override
-  String get home_updateWeightNow => 'تحديث وزني';
+  String get home_updateWeightNow => 'تحديث وزني الآن';
 
   @override
-  String get home_bookTrainer => 'احجز مدرباً';
+  String get home_bookTrainer => 'حجز مدرب';
 
   @override
-  String get home_checkInCode => 'رمز تسجيل الحضور';
+  String get home_checkInCode => 'رمز الدخول';
 
   @override
-  String get home_paymentHistory => 'سجل المدفوعات';
+  String get home_paymentHistory => 'سجل الدفعات';
 
   @override
-  String get mostPopular => 'الأكثر شعبية';
+  String get signup_success => 'تم التسجيل بنجاح يمكنك تسجيل الدخول الان';
 
   @override
-  String get selectThisPlan => 'اختر هذه الخطة';
+  String get mostPopular => 'الأكثر شيوعاً';
+
+  @override
+  String get selectThisPlan => 'اختيار هذه الخطة';
 
   @override
   String get renew => 'تجديد';
 
   @override
-  String get planTypeGym => 'صالة';
+  String get planTypeGym => 'جيم';
 
   @override
-  String get planTypeClasses => 'فصول';
+  String get planTypeClasses => 'حصص';
 
   @override
-  String get planTypeMixed => 'مختلطة';
+  String get planTypeMixed => 'مختلط';
 
   @override
   String get billingMonthly => 'شهري';
@@ -652,21 +619,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get billingWeekly => 'أسبوعي';
 
   @override
-  String get membershipStatusActive => 'نشطة';
+  String get membershipStatusActive => 'نشط';
 
   @override
-  String get membershipStatusFrozen => 'مجمدة';
+  String get membershipStatusFrozen => 'مجمّد';
 
   @override
-  String get membershipStatusExpired => 'منتهية';
+  String get membershipStatusExpired => 'منتهي';
 
   @override
-  String remainingDays(int days) {
+  String remainingDays(Object days) {
     return 'متبقي $days يوم';
   }
 
   @override
-  String membershipEndsAt(String date) {
+  String membershipEndsAt(Object date) {
     return 'تنتهي في $date';
   }
 
@@ -674,10 +641,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberPlansTitle => 'خطط العضوية';
 
   @override
-  String get memberPlansSubtitle => 'اختر الخطة التي تناسب أهدافك';
+  String get memberPlansSubtitle => 'اختر الخطة المناسبة لك';
 
   @override
-  String get memberPlansEmpty => 'لا توجد خطط متاحة الآن';
+  String get memberPlansEmpty => 'لا توجد خطط متاحة';
 
   @override
   String get retry => 'إعادة المحاولة';
@@ -686,10 +653,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get back => 'رجوع';
 
   @override
-  String get checkoutComingSoon => 'قريباً — الدفع قيد التطوير';
+  String get checkoutComingSoon => 'الدفع قريباً';
 
   @override
-  String get planDuration => 'المدة';
+  String get planDuration => 'مدة الخطة';
 
   @override
   String get visitLimit => 'حد الزيارات';
@@ -701,24 +668,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get freezeDays => 'أيام التجميد';
 
   @override
-  String get planFeatures => 'المميزات';
+  String get planFeatures => 'مميزات الخطة';
 
   @override
-  String get couponCode => 'رمز الكوبون';
+  String get couponCode => 'رمز الخصم';
 
   @override
-  String get enterCouponCode => 'أدخل رمز الكوبون';
+  String get enterCouponCode => 'أدخل رمز الخصم';
 
   @override
   String get apply => 'تطبيق';
 
   @override
-  String couponAppliedFinalPrice(String price) {
-    return '✓ تم تطبيق الكوبون — السعر النهائي: $price \$';
+  String couponAppliedFinalPrice(Object price) {
+    return 'السعر النهائي: $price';
   }
 
   @override
-  String get selectedPlan => 'الخطة المحددة';
+  String get selectedPlan => 'الخطة المختارة';
 
   @override
   String get baseAmount => 'المبلغ الأساسي';
@@ -763,10 +730,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberSessionsBookNow => 'احجز الآن';
 
   @override
-  String get memberSessionsTitle => 'الفصول الرياضية';
+  String get memberSessionsTitle => 'الحصص الرياضية';
 
   @override
-  String get memberSessionsSubtitle => 'احجز مقعدك في فصلك المفضل';
+  String get memberSessionsSubtitle => 'احجز مكانك في الحصة المفضلة';
 
   @override
   String memberSessionsRoom(String roomName) {
@@ -784,19 +751,19 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get memberSessionsLoading => 'جارٍ تحميل الجلسات...';
+  String get memberSessionsLoading => 'جارٍ تحميل الحصص...';
 
   @override
-  String get memberSessionsEmpty => 'لا توجد جلسات متاحة';
+  String get memberSessionsEmpty => 'لا توجد حصص متاحة';
 
   @override
-  String get memberSessionsError => 'فشل تحميل الجلسات';
+  String get memberSessionsError => 'تعذر تحميل الحصص';
 
   @override
-  String get memberSessionsFilterTitle => 'تصفية الفصول';
+  String get memberSessionsFilterTitle => 'تصفية الحصص';
 
   @override
-  String get memberSessionsFilterClassType => 'نوع الفصل';
+  String get memberSessionsFilterClassType => 'نوع الحصة';
 
   @override
   String get memberSessionsFilterTrainer => 'المدرب';
@@ -820,15 +787,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sessionDetailSeatsLabel => 'المقاعد';
 
   @override
-  String sessionDetailSeatsRemaining(int count) {
-    return 'متبقي $count';
+  String sessionDetailSeatsRemaining(Object count) {
+    return '$count متبقي';
   }
 
   @override
-  String get sessionDetailLocationLabel => 'الموقع';
+  String get sessionDetailLocationLabel => 'المكان';
 
   @override
-  String get sessionDetailAboutTitle => 'عن الفصل';
+  String get sessionDetailAboutTitle => 'عن الحصة';
 
   @override
   String get sessionDetailBenefitsTitle => 'الفوائد';
@@ -840,7 +807,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sessionDetailBookNow => 'احجز الآن';
 
   @override
-  String get sessionDetailAlreadyBooked => 'محجوز مسبقاً';
+  String get sessionDetailAlreadyBooked => 'تم الحجز';
 
   @override
   String get sessionDetailWaitlisted => 'في قائمة الانتظار';
@@ -897,7 +864,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navPayments => 'المدفوعات';
 
   @override
-  String get navClasses => 'الفصول';
+  String get navClasses => 'الحصص';
 
   @override
   String get navAiAssistant => 'المساعد الذكي';
@@ -912,10 +879,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logoutConfirmTitle => 'تسجيل الخروج؟';
 
   @override
-  String get logoutConfirmMessage => 'هل أنت متأكد من تسجيل الخروج؟';
+  String get logoutConfirmMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
 
   @override
-  String get sectionCoreOwner => 'المالك الأساسي';
+  String get sectionCoreOwner => 'القسم الرئيسي';
 
   @override
   String get sectionOperationsReception => 'العمليات / الاستقبال';
@@ -939,7 +906,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navCheckins => 'تسجيل الحضور';
 
   @override
-  String get navClassesPt => 'الفصول والتدريب';
+  String get navClassesPt => 'الحصص والتدريب';
 
   @override
   String get navNotifications => 'الإشعارات';
@@ -948,7 +915,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navPtSessions => 'جلسات PT';
 
   @override
-  String get navTrainingVideos => 'مقاطع التدريب';
+  String get navTrainingVideos => 'فيديوهات التدريب';
 
   @override
   String get accountProfileUpdateSuccess => 'تم تحديث الملف الشخصي بنجاح';
@@ -957,7 +924,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountStatExercises => 'التمارين';
 
   @override
-  String get accountStatSessions => 'الجلسات';
+  String get accountStatSessions => 'الحصص';
 
   @override
   String get accountStatAchievements => 'الإنجازات';
@@ -969,19 +936,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountLoyaltyPoints => 'نقاط الولاء';
 
   @override
-  String get accountReferralTitle => 'رمز الإحالة الخاص بك';
+  String get accountReferralTitle => 'كود الإحالة الخاص بك';
 
   @override
-  String get accountReferralSubtitle => 'شارك واكسب مكافآت';
+  String get accountReferralSubtitle => 'شارك واحصل على مكافآت';
 
   @override
-  String get accountReferralCodeLabel => 'رمزك';
+  String get accountReferralCodeLabel => 'الكود الخاص بك';
 
   @override
-  String get accountReferralCopied => 'تم نسخ الرمز';
+  String get accountReferralCopied => 'تم نسخ الكود';
 
   @override
-  String get accountReferralShare => 'مشاركة الرمز';
+  String get accountReferralShare => 'مشاركة الكود';
 
   @override
   String get accountPersonalInfo => 'المعلومات الشخصية';
@@ -990,7 +957,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountEmail => 'البريد الإلكتروني';
 
   @override
-  String get accountPhone => 'الهاتف';
+  String get accountPhone => 'رقم الجوال';
 
   @override
   String get accountDateOfBirth => 'تاريخ الميلاد';
@@ -1023,7 +990,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountHelpSupport => 'المساعدة والدعم';
 
   @override
-  String get appVersion => 'الإصدار';
+  String get appVersion => 'النسخة';
 
   @override
   String get ptAll => 'الكل';
@@ -1056,7 +1023,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ptScreenSubtitle => 'اختر المدرب المناسب لأهدافك';
 
   @override
-  String get ptBookSession => 'احجز جلسة';
+  String get ptBookSession => 'حجز جلسة';
 
   @override
   String get ptNoTrainers => 'لا يوجد مدربون متاحون';
@@ -1073,35 +1040,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ptBookingChooseTime => 'اختر الوقت';
 
   @override
-  String get ptBookingNoSlotsForDate => 'لا توجد مواعيد متاحة لهذا التاريخ.';
+  String get ptBookingNoSlotsForDate => 'لا توجد أوقات متاحة لهذا التاريخ.';
 
   @override
   String get ptDetailSession => 'جلسة';
 
   @override
-  String get ptTrainingVideosTitle => 'مقاطع التدريب';
+  String get ptTrainingVideosTitle => 'فيديوهات تدريبية';
 
   @override
-  String get ptTrainingVideosEmpty => 'لا توجد مقاطع تدريبية بعد.';
+  String get ptTrainingVideosEmpty => 'لا توجد فيديوهات تدريبية بعد.';
 
   @override
-  String get ptTrainingVideosMissingUrl => 'رابط الفيديو مفقود.';
+  String get ptTrainingVideosMissingUrl => 'رابط الفيديو غير موجود.';
 
   @override
   String get ptTrainingVideosOpenError => 'تعذر فتح هذا الفيديو.';
 
   @override
-  String get ptTrainerDetailsNotFound => 'تفاصيل المدرب غير موجودة.';
+  String get ptTrainerDetailsNotFound => 'لم يتم العثور على تفاصيل المدرب.';
 
   @override
-  String get ptFavoriteUpdateFailed => 'فشل تحديث المفضلة.';
+  String get ptFavoriteUpdateFailed => 'تعذر تحديث المفضلة.';
 
   @override
   String get ptConfirmBooking => 'تأكيد الحجز';
 
   @override
   String ptBookingSelected(String date, String time) {
-    return 'تم اختيار الحجز: $date في $time';
+    return 'تم اختيار الحجز: $date الساعة $time';
   }
 
   @override
@@ -1147,7 +1114,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ptPackageBookingFailed => 'تعذر تأكيد حجز الباقة.';
 
   @override
-  String get ptPackageNoPackages => 'لا توجد باقات متاحة الآن';
+  String get ptPackageNoPackages => 'لا توجد باقات متاحة حالياً';
 
   @override
   String get ptPackageSessions => 'جلسات';
@@ -1162,33 +1129,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ptPackageOriginalPrice => 'السعر الأصلي';
 
   @override
-  String get ptPackageSalePrice => 'سعر العرض';
+  String get ptPackageSalePrice => 'سعر الخصم';
 
   @override
-  String get ptPackageSelectedPackage => 'الباقة المحددة';
+  String get ptPackageSelectedPackage => 'الباقة المختارة';
 
   @override
-  String get ptPackageSelectedDays => 'الأيام المحددة';
+  String get ptPackageSelectedDays => 'الأيام المختارة';
 
   @override
-  String get ptPackageSelectedTime => 'الوقت المحدد';
+  String get ptPackageSelectedTime => 'الوقت المختار';
 
   @override
-  String get ptPackageMaxSessionsReached => 'لا يمكنك اختيار أيام أكثر من جلسات الباقة';
+  String get ptPackageMaxSessionsReached => 'لا يمكنك اختيار أيام أكثر من عدد جلسات الباقة';
 
   @override
   String ptPackageDaysPerWeekRange(int min, int max) {
-    return 'اختر من $min إلى $max يوم في الأسبوع';
+    return 'Choose $min to $max days per week';
   }
 
   @override
   String ptPackageDaysPerWeekExact(int count) {
-    return 'اختر $count يوم/أيام في الأسبوع';
+    return 'Choose $count day(s) per week';
   }
 
   @override
   String ptPackageMaxDaysReached(int max) {
-    return 'لا يمكنك اختيار أكثر من $max يوم في الأسبوع';
+    return 'You cannot select more than $max days per week';
   }
 
   @override
@@ -1201,7 +1168,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfileTitle => 'تعديل الملف الشخصي';
 
   @override
-  String get editProfileSubtitle => 'تحديث معلوماتك الشخصية';
+  String get editProfileSubtitle => 'قم بتحديث معلوماتك الشخصية';
 
   @override
   String get editProfileFullName => 'الاسم الكامل';
@@ -1270,7 +1237,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfileNewPassword => 'كلمة المرور الجديدة';
 
   @override
-  String get editProfileRequired => 'مطلوب.';
+  String get editProfileRequired => 'هذا الحقل مطلوب.';
 
   @override
   String get editProfileUsernameRequired => 'اسم المستخدم مطلوب.';
@@ -1294,25 +1261,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfilePasswordTooShort => 'يجب أن تكون كلمة المرور الجديدة 6 أحرف على الأقل.';
 
   @override
-  String get editProfilePasswordSameAsCurrent => 'يجب أن تختلف كلمة المرور الجديدة عن الحالية.';
+  String get editProfilePasswordSameAsCurrent => 'يجب أن تكون كلمة المرور الجديدة مختلفة عن الحالية.';
 
   @override
-  String get editProfileInvalidOwnerProject => 'معرف رابط مشروع المالك غير صالح.';
+  String get editProfileInvalidOwnerProject => 'معرّف التطبيق غير صالح.';
 
   @override
-  String get editProfileEmailVerified => 'تم التحقق من البريد الإلكتروني بنجاح.';
+  String get editProfileEmailVerified => 'تم تأكيد البريد الإلكتروني بنجاح.';
 
   @override
   String get editProfilePasswordUpdated => 'تم تحديث كلمة المرور بنجاح.';
 
   @override
-  String get editProfileOnlyLetters => 'يُسمح بالحروف والمسافات فقط.';
+  String get editProfileOnlyLetters => 'يسمح فقط بالأحرف والمسافات.';
 
   @override
-  String get editProfileVerifyNewEmail => 'تحقق من البريد الإلكتروني الجديد';
+  String get editProfileVerifyNewEmail => 'تأكيد البريد الإلكتروني الجديد';
 
   @override
-  String get editProfileVerifyPasswordChange => 'تحقق من تغيير كلمة المرور';
+  String get editProfileVerifyPasswordChange => 'تأكيد تغيير كلمة المرور';
 
   @override
   String get editProfileCodeSentTo => 'تم إرسال الرمز إلى';
@@ -1330,1563 +1297,78 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfileCodeRequired => 'رمز التحقق مطلوب.';
 
   @override
-  String get admin_allBranches => 'جميع الفروع';
+  String get ptBookingRequestSuccess => 'تم إرسال الطلب إلى المدرب. بانتظار الموافقة.';
 
   @override
-  String get admin_aiTitle => 'المساعد الذكي';
+  String get ptBookingRequestThisTime => 'طلب هذا الوقت';
 
   @override
-  String get admin_aiNewConversation => 'محادثة جديدة';
+  String get ptBookingBookSession => 'حجز الجلسة';
 
   @override
-  String get admin_aiRecentQueries => 'الاستفسارات الأخيرة';
+  String get ptBookingRequestNote => 'طلب العضو وقت تدريب غير متاح أو ممتلئ';
 
   @override
-  String get admin_aiView => 'عرض';
+  String get ptBookingFullOrUnavailable => 'هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.';
 
   @override
-  String get admin_aiYouMightAlsoAsk => 'قد تسأل أيضاً:';
+  String get ptBookingFailed => 'تعذر تأكيد الحجز.';
 
   @override
-  String get admin_aiInputHint => 'اسأل سؤالاً عن صالتك...';
+  String get ptBookingRequestFailed => 'تعذر إرسال الطلب.';
 
   @override
-  String get admin_aiRetry => 'إعادة المحاولة';
+  String get memberQrTitle => 'رمز الدخول';
 
   @override
-  String get admin_aiHeroBannerTitle => 'مساعد التحليلات الذكي';
+  String get memberQrSubtitle => 'امسح الرمز عند الدخول للنادي';
 
   @override
-  String get admin_aiHeroBannerSubtitle => 'اسألني أي شيء عن صالتك';
+  String get memberQrActiveMembership => 'عضوية نشطة';
 
   @override
-  String get admin_aiHeroBannerDesc => 'احصل على تحليلات ورؤى وتوصيات فورية بناءً على بيانات صالتك.';
+  String get memberQrInactiveMembership => 'عضوية غير نشطة';
 
   @override
-  String get admin_aiSuggestedQuestions => 'أسئلة مقترحة';
+  String get memberQrMemberCodeLabel => 'رقم العضوية';
 
   @override
-  String get admin_aiQueryFailed => 'عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مجدداً.';
+  String get memberQrPackageFallback => 'لا توجد باقة';
 
   @override
-  String get admin_branchesTitle => 'الفروع';
+  String get memberQrValidUntil => 'صالح حتى';
 
   @override
-  String get admin_addBranchTitle => 'إضافة فرع';
+  String get memberQrExpiresSoon => 'سينتهي الرمز قريباً';
 
   @override
-  String get admin_branchCreatedSuccess => 'تم إنشاء الفرع بنجاح';
+  String get memberQrRecentVisits => 'آخر الزيارات';
 
   @override
-  String get admin_branchBasicInfo => 'المعلومات الأساسية';
+  String get memberQrNoRecentVisits => 'لا توجد زيارات سابقة';
 
   @override
-  String get admin_branchName => 'اسم الفرع';
+  String get memberQrDurationLabel => 'المدة';
 
   @override
-  String get admin_branchNameRequired => 'اسم الفرع مطلوب';
+  String get memberQrToday => 'اليوم';
 
   @override
-  String get admin_branchCity => 'المدينة / الموقع';
+  String get memberQrYesterday => 'أمس';
 
   @override
-  String get admin_branchCityRequired => 'المدينة مطلوبة';
-
-  @override
-  String get admin_branchContactInfo => 'معلومات التواصل';
-
-  @override
-  String get admin_branchPhone => 'الهاتف';
-
-  @override
-  String get admin_branchPhoneRequired => 'الهاتف مطلوب';
-
-  @override
-  String get admin_branchEmail => 'البريد الإلكتروني';
-
-  @override
-  String get admin_branchEmailRequired => 'البريد الإلكتروني مطلوب';
-
-  @override
-  String get admin_branchEmailInvalid => 'أدخل بريداً إلكترونياً صحيحاً';
-
-  @override
-  String get admin_branchAddress => 'العنوان';
-
-  @override
-  String get admin_branchAddressRequired => 'العنوان مطلوب';
-
-  @override
-  String get admin_branchOperatingHours => 'ساعات العمل';
-
-  @override
-  String get admin_branchOpeningTime => 'وقت الفتح';
-
-  @override
-  String get admin_branchClosingTime => 'وقت الإغلاق';
-
-  @override
-  String get admin_branchTimeError => 'يجب أن يكون وقت الإغلاق بعد وقت الفتح';
-
-  @override
-  String get admin_branchStatus => 'الحالة';
-
-  @override
-  String get admin_branchActive => 'نشط';
-
-  @override
-  String get admin_branchInactive => 'غير نشط';
-
-  @override
-  String get admin_branchCreate => 'إنشاء الفرع';
-
-  @override
-  String get admin_branchOpeningRequired => 'يرجى تحديد وقت الفتح';
-
-  @override
-  String get admin_branchClosingRequired => 'يرجى تحديد وقت الإغلاق';
-
-  @override
-  String get admin_branchDetailTitle => 'تفاصيل الفرع';
-
-  @override
-  String get admin_branchMembers => 'الأعضاء';
-
-  @override
-  String get admin_branchTrainers => 'المدربون';
-
-  @override
-  String get admin_branchStaff => 'الموظفون';
-
-  @override
-  String get admin_branchMonthlyRevenue => 'الإيراد الشهري';
-
-  @override
-  String get admin_branchActiveStat => 'الفروع النشطة';
-
-  @override
-  String get admin_branchTotalMembers => 'إجمالي الأعضاء';
-
-  @override
-  String get admin_branchSearchHint => 'البحث باسم الفرع أو الموقع.';
-
-  @override
-  String get admin_branchAllStatus => 'جميع الحالات';
-
-  @override
-  String get admin_branchNoFound => 'لم يتم العثور على فروع';
-
-  @override
-  String get admin_branchRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_classesTitle => 'الفصول';
-
-  @override
-  String get admin_classTodayLabel => 'فصول اليوم';
-
-  @override
-  String get admin_classCancelTitle => 'إلغاء الفصل';
-
-  @override
-  String get admin_classCancelConfirm => 'هل أنت متأكد من إلغاء هذا الفصل؟ سيتم إشعار جميع الأعضاء المحجوزين.';
-
-  @override
-  String get admin_classKeep => 'الإبقاء على الفصل';
-
-  @override
-  String get admin_classYesCancel => 'نعم، إلغاء';
-
-  @override
-  String get admin_classCreatedSuccess => 'تم إنشاء الفصل بنجاح';
-
-  @override
-  String get admin_classUpdatedSuccess => 'تم تحديث الفصل بنجاح';
-
-  @override
-  String get admin_classCancelledSuccess => 'تم إلغاء الفصل';
-
-  @override
-  String get admin_classDone => 'تم';
-
-  @override
-  String get admin_classRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_classNoneToday => 'لا توجد فصول مجدولة لهذا اليوم';
-
-  @override
-  String get admin_classNewTypeLabel => 'نوع فصل جديد';
-
-  @override
-  String get admin_classNameField => 'الاسم *';
-
-  @override
-  String get admin_classRequired => 'مطلوب';
-
-  @override
-  String get admin_classDurationField => 'المدة (بالدقائق) *';
-
-  @override
-  String get admin_classMustBeNumber => 'يجب أن يكون رقماً';
-
-  @override
-  String get admin_classDifficulty => 'مستوى الصعوبة';
-
-  @override
-  String get admin_classBeginner => 'مبتدئ';
-
-  @override
-  String get admin_classIntermediate => 'متوسط';
-
-  @override
-  String get admin_classAdvanced => 'متقدم';
-
-  @override
-  String get admin_classPrice => 'السعر';
-
-  @override
-  String get admin_classCancel => 'إلغاء';
-
-  @override
-  String get admin_classFailedCreate => 'فشل إنشاء نوع الفصل';
-
-  @override
-  String get admin_classCreate => 'إنشاء';
-
-  @override
-  String get admin_classSelectDatetime => 'يرجى تحديد التاريخ والوقت';
-
-  @override
-  String get admin_classFillRequired => 'يرجى ملء جميع الحقول المطلوبة';
-
-  @override
-  String get admin_classEditTitle => 'تعديل الفصل';
-
-  @override
-  String get admin_classAddTitle => 'إضافة فصل جديد';
-
-  @override
-  String get admin_classNameLabel => 'اسم الفصل *';
-
-  @override
-  String get admin_classTypeActivity => 'النوع / النشاط *';
-
-  @override
-  String get admin_classNewType => 'نوع جديد';
-
-  @override
-  String get admin_classSelectType => 'اختر النوع';
-
-  @override
-  String get admin_classTrainer => 'المدرب *';
-
-  @override
-  String get admin_classSelectTrainer => 'اختر المدرب';
-
-  @override
-  String get admin_classBranch => 'الفرع *';
-
-  @override
-  String get admin_classSelectBranch => 'اختر الفرع';
-
-  @override
-  String get admin_classDate => 'التاريخ *';
-
-  @override
-  String get admin_classTime => 'الوقت *';
-
-  @override
-  String get admin_classCapacity => 'السعة *';
-
-  @override
-  String get admin_classMaxParticipants => 'الحد الأقصى للمشاركين';
-
-  @override
-  String get admin_classRoomName => 'اسم القاعة';
-
-  @override
-  String get admin_classNotesDesc => 'ملاحظات / وصف';
-
-  @override
-  String get admin_classSave => 'حفظ الفصل';
-
-  @override
-  String get admin_classNearlyFull => 'شبه ممتلئ';
-
-  @override
-  String get admin_classBookings => 'الحجوزات';
-
-  @override
-  String get admin_classEdit => 'تعديل';
-
-  @override
-  String get admin_classToday => 'اليوم';
-
-  @override
-  String get admin_sessionBookingsTitle => 'حجوزات الجلسة';
-
-  @override
-  String get admin_sessionNoBookings => 'لا توجد حجوزات بعد';
-
-  @override
-  String get admin_sessionBooked => 'محجوز';
-
-  @override
-  String get admin_dashboardTitle => 'لوحة التحكم';
-
-  @override
-  String get admin_dashboardToday => 'اليوم';
-
-  @override
-  String get admin_dashboardThisWeek => 'هذا الأسبوع';
-
-  @override
-  String get admin_dashboardThisMonth => 'هذا الشهر';
-
-  @override
-  String get admin_dashboardCustom => 'مخصص';
-
-  @override
-  String get admin_dashboardTimePeriod => 'الفترة الزمنية';
-
-  @override
-  String get admin_dashboardRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_dashboardComingSoon => 'قريباً';
-
-  @override
-  String get admin_dashboardActiveMembers => 'الأعضاء النشطون';
-
-  @override
-  String get admin_dashboardDueSoon => 'مستحق قريباً';
-
-  @override
-  String get admin_dashboardPendingRenewals => 'التجديدات المعلقة';
-
-  @override
-  String get admin_dashboardLiveNow => 'مباشر الآن';
-
-  @override
-  String get admin_dashboardTodayCheckins => 'تسجيلات حضور اليوم';
-
-  @override
-  String get admin_dashboardSessions => 'الجلسات';
-
-  @override
-  String get admin_dashboardUpcomingPt => 'جلسات PT القادمة';
-
-  @override
-  String get admin_dashboardQuickActions => 'الإجراءات السريعة';
-
-  @override
-  String get admin_dashboardAddMember => 'إضافة عضو';
-
-  @override
-  String get admin_dashboardRecordPayment => 'تسجيل دفعة';
-
-  @override
-  String get admin_dashboardAddPlan => 'إضافة خطة';
-
-  @override
-  String get admin_dashboardSendAnnouncement => 'إرسال إعلان';
-
-  @override
-  String get admin_dashboardRecentActivity => 'النشاط الأخير';
-
-  @override
-  String get admin_dashboardViewAll => 'عرض الكل';
-
-  @override
-  String get admin_dashboardNoActivity => 'لا يوجد نشاط حديث';
-
-  @override
-  String get admin_dashboardAttendance => 'الحضور';
-
-  @override
-  String get admin_dashboardPaymentsCollected => 'المدفوعات المحصّلة';
-
-  @override
-  String get admin_dashboardExpiringPlans => 'الخطط المنتهية';
-
-  @override
-  String get admin_dashboardNext7Days => 'الـ 7 أيام القادمة';
-
-  @override
-  String get admin_dashboardTotalMembersLabel => 'إجمالي الأعضاء';
-
-  @override
-  String get admin_dashboardTotalPlans => 'إجمالي الخطط';
-
-  @override
-  String get admin_dashboardCanceled => 'الملغاة';
-
-  @override
-  String get admin_dashboardLast7Days => 'آخر 7 أيام';
-
-  @override
-  String get admin_dashboardChurnRate => 'معدل الإلغاء';
-
-  @override
-  String get admin_dashboardMonthlyRevenue => 'الإيراد الشهري';
-
-  @override
-  String get admin_membersTitle => 'الأعضاء';
-
-  @override
-  String get admin_memberDetailTitle => 'تفاصيل العضو';
-
-  @override
-  String get admin_memberNoFound => 'لم يتم العثور على أعضاء.';
-
-  @override
-  String get admin_memberRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_memberPlan => 'الخطة';
-
-  @override
-  String get admin_memberDueAmount => 'المبلغ المستحق';
-
-  @override
-  String get admin_memberExpiry => 'تاريخ الانتهاء';
-
-  @override
-  String get admin_memberBranch => 'الفرع';
-
-  @override
-  String get admin_memberWhatsApp => 'واتساب';
-
-  @override
-  String get admin_memberAttendance => 'الحضور';
-
-  @override
-  String get admin_memberRenew => 'تجديد';
-
-  @override
-  String get admin_memberPlanRenewal => 'تجديد الخطة';
-
-  @override
-  String get admin_memberUnblock => 'إلغاء الحظر';
-
-  @override
-  String get admin_memberBlock => 'حظر';
-
-  @override
-  String get admin_memberDelete => 'حذف';
-
-  @override
-  String get admin_memberEdit => 'تعديل';
-
-  @override
-  String get admin_memberEditTitle => 'تعديل العضو';
-
-  @override
-  String get admin_memberBlockTitle => 'حظر العضو';
-
-  @override
-  String get admin_memberBlockReasonHint => 'أدخل سبب الحظر';
-
-  @override
-  String get admin_memberDeleteTitle => 'حذف العضو';
-
-  @override
-  String admin_memberDeleteConfirm(String name) {
-    return 'هل تريد حذف $name نهائياً؟ لا يمكن التراجع عن هذا الإجراء.';
+  String memberQrMinute(int count) {
+    return '$count دقيقة';
   }
 
   @override
-  String get admin_memberCancel => 'إلغاء';
-
-  @override
-  String get admin_memberActive => 'نشط';
-
-  @override
-  String get admin_memberPending => 'معلق';
-
-  @override
-  String get admin_memberBlocked => 'محظور';
-
-  @override
-  String get admin_memberNoPlan => 'بلا خطة';
-
-  @override
-  String get admin_memberInactive => 'غير نشط';
-
-  @override
-  String get admin_memberAllStatus => 'جميع الحالات';
-
-  @override
-  String get admin_memberNewest => 'الأحدث';
-
-  @override
-  String get admin_memberOldest => 'الأقدم';
-
-  @override
-  String get admin_memberAlphabetical => 'أبجدي';
-
-  @override
-  String get admin_memberAllGender => 'جميع الأجناس';
-
-  @override
-  String get admin_memberMale => 'ذكر';
-
-  @override
-  String get admin_memberFemale => 'أنثى';
-
-  @override
-  String get admin_memberOther => 'آخر';
-
-  @override
-  String get admin_memberSearchHint => 'البحث بالاسم أو الهاتف أو رمز العضو';
-
-  @override
-  String get admin_membershipPackageTitle => 'باقة العضوية';
-
-  @override
-  String get admin_memberPlanName => 'اسم الخطة';
-
-  @override
-  String get admin_memberTotalAmount => 'المبلغ الإجمالي';
-
-  @override
-  String get admin_memberDiscount => 'الخصم';
-
-  @override
-  String get admin_memberPurchaseDate => 'تاريخ الشراء';
-
-  @override
-  String get admin_memberPaidAmount => 'المبلغ المدفوع';
-
-  @override
-  String get admin_memberDueAmountLabel => 'المبلغ المستحق';
-
-  @override
-  String get admin_memberRemainingDays => 'الأيام المتبقية';
-
-  @override
-  String get admin_memberQuickActions => 'الإجراءات السريعة';
-
-  @override
-  String get admin_memberCall => 'اتصال';
-
-  @override
-  String get admin_memberSms => 'رسالة نصية';
-
-  @override
-  String get admin_memberRenewPlan => 'تجديد الخطة';
-
-  @override
-  String get admin_plansTitle => 'الخطط';
-
-  @override
-  String get admin_plansDeleteTitle => 'حذف الخطة';
-
-  @override
-  String get admin_plansDeleteConfirm => 'هل أنت متأكد من حذف هذه الخطة؟';
-
-  @override
-  String get admin_plansCancel => 'إلغاء';
-
-  @override
-  String get admin_plansDelete => 'حذف';
-
-  @override
-  String get admin_plansRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_plansAllTypes => 'جميع الأنواع';
-
-  @override
-  String get admin_plansSearch => 'البحث في الخطط...';
-
-  @override
-  String get admin_plansNoFound => 'لم يتم العثور على خطط';
-
-  @override
-  String get admin_planActive => 'نشطة';
-
-  @override
-  String get admin_planInactive => 'غير نشطة';
-
-  @override
-  String get admin_planPrice => 'السعر';
-
-  @override
-  String get admin_planDurationLabel => 'المدة';
-
-  @override
-  String get admin_planMembersLabel => 'الأعضاء';
-
-  @override
-  String get admin_planVisitLimitLabel => 'حد الزيارات';
-
-  @override
-  String get admin_planUnlimitedLabel => 'غير محدود';
-
-  @override
-  String get admin_planAvailableAt => 'متاح في:';
-
-  @override
-  String get admin_planEdit => 'تعديل';
-
-  @override
-  String get admin_planDeleting => 'جارٍ الحذف...';
-
-  @override
-  String get admin_planDeleteLabel => 'حذف';
-
-  @override
-  String get admin_planOneTime => 'مرة واحدة';
-
-  @override
-  String get admin_planEditTitle => 'تعديل الخطة';
-
-  @override
-  String get admin_planAddTitle => 'إضافة خطة جديدة';
-
-  @override
-  String get admin_planNameField => 'اسم الخطة *';
-
-  @override
-  String get admin_planTypeField => 'النوع / النشاط *';
-
-  @override
-  String get admin_planSelectType => 'اختر النوع';
-
-  @override
-  String get admin_planPriceField => 'السعر *';
-
-  @override
-  String get admin_planDurationField => 'المدة *';
-
-  @override
-  String get admin_planSelectDuration => 'اختر المدة';
-
-  @override
-  String get admin_planDescription => 'الوصف';
-
-  @override
-  String get admin_planOptionalDesc => 'وصف اختياري';
-
-  @override
-  String get admin_planPromotion => 'العرض الترويجي';
-
-  @override
-  String get admin_planStatus => 'الحالة *';
-
-  @override
-  String get admin_planSelectStatus => 'اختر الحالة';
-
-  @override
-  String get admin_planAvailableBranches => 'الفروع المتاحة *';
-
-  @override
-  String get admin_planSelectBranch => 'اختر الفرع';
-
-  @override
-  String get admin_planMultiSelectNote => 'ملاحظة: دعم التحديد المتعدد قريباً';
-
-  @override
-  String get admin_planSaveChanges => 'حفظ التغييرات';
-
-  @override
-  String get admin_planCreateLabel => 'إنشاء الخطة';
-
-  @override
-  String get admin_planRequired => 'مطلوب';
-
-  @override
-  String get admin_planEnterValidNumber => 'أدخل رقماً صحيحاً';
-
-  @override
-  String get admin_planTotalPlans => 'إجمالي الخطط';
-
-  @override
-  String get admin_planTotalMembersLabel => 'الأعضاء';
-
-  @override
-  String get admin_planActiveCount => 'نشطة';
-
-  @override
-  String get admin_planCreatedSuccess => 'تم إنشاء الخطة بنجاح';
-
-  @override
-  String get admin_planUpdatedSuccess => 'تم تحديث الخطة بنجاح';
-
-  @override
-  String get admin_trainerDashboardTitle => 'لوحة تحكم المدرب';
-
-  @override
-  String get admin_trainerTodaySessions => 'جلسات اليوم';
-
-  @override
-  String get admin_trainerCompleted => 'مكتملة';
-
-  @override
-  String get admin_trainerUpcoming => 'القادمة';
-
-  @override
-  String get admin_trainerCancelledNoShow => 'ملغاة / غياب';
-
-  @override
-  String get admin_trainerTodaySchedule => 'جدول اليوم';
-
-  @override
-  String get admin_trainerNoSessionsToday => 'لا توجد جلسات مجدولة اليوم.';
-
-  @override
-  String get admin_trainerPtSession => 'جلسة PT';
-
-  @override
-  String get admin_trainerCheckIn => 'تسجيل الحضور';
-
-  @override
-  String get admin_trainerComplete => 'إتمام';
-
-  @override
-  String get admin_trainerCreatePackage => 'إنشاء باقة';
-
-  @override
-  String get admin_trainerAddAvailability => 'إضافة توفر';
-
-  @override
-  String get admin_trainerAddPtService => 'إضافة خدمة PT';
-
-  @override
-  String get admin_trainerCreateSession => 'إنشاء جلسة';
-
-  @override
-  String get admin_trainerQuickActionsTitle => 'الإجراءات السريعة';
-
-  @override
-  String get admin_trainerUpcomingClients => 'العملاء القادمون';
-
-  @override
-  String get admin_trainerViewAll => 'عرض الكل';
-
-  @override
-  String get admin_trainerNoUpcomingClients => 'لا يوجد عملاء قادمون.';
-
-  @override
-  String get admin_trainerMainDashboard => 'لوحة التحكم';
-
-  @override
-  String get admin_trainerMainSessions => 'الجلسات';
-
-  @override
-  String get admin_trainerMainPackages => 'الباقات';
-
-  @override
-  String get admin_trainerMainSchedule => 'الجدول';
-
-  @override
-  String get admin_trainerMainMore => 'المزيد';
-
-  @override
-  String get admin_trainerLoading => 'جارٍ تحميل المدربين…';
-
-  @override
-  String get admin_packagesTitle => 'الباقات';
-
-  @override
-  String get admin_packagesNew => 'باقة جديدة';
-
-  @override
-  String get admin_packagesActive => 'نشطة';
-
-  @override
-  String get admin_packagesSessions => 'جلسات';
-
-  @override
-  String get admin_packagesDaysWeek => 'أيام/أسبوع';
-
-  @override
-  String get admin_packagesDays => 'أيام';
-
-  @override
-  String get admin_packagesEditTitle => 'تعديل الباقة';
-
-  @override
-  String get admin_packagesCreateTitle => 'إنشاء باقة PT';
-
-  @override
-  String get admin_packagesBack => 'رجوع';
-
-  @override
-  String get admin_packagesCreate => 'إنشاء الباقة';
-
-  @override
-  String get admin_packagesContinue => 'متابعة';
-
-  @override
-  String get admin_packagesBasicInfo => 'معلومات\nأساسية';
-
-  @override
-  String get admin_packagesTrainingRules => 'قواعد\nالتدريب';
-
-  @override
-  String get admin_packagesPricing => 'التسعير';
-
-  @override
-  String get admin_packagesPreview => 'معاينة';
-
-  @override
-  String get admin_packagesName => 'اسم الباقة';
-
-  @override
-  String get admin_packagesType => 'نوع الباقة';
-
-  @override
-  String get admin_packagesSelectType => 'اختر النوع';
-
-  @override
-  String get admin_packagesWeightLoss => 'إنقاص الوزن';
-
-  @override
-  String get admin_packagesStrength => 'بناء القوة';
-
-  @override
-  String get admin_packagesCardio => 'كارديو';
-
-  @override
-  String get admin_packagesGeneral => 'اللياقة العامة';
-
-  @override
-  String get admin_packagesLinkedService => 'خدمة PT المرتبطة';
-
-  @override
-  String get admin_packagesSelectService => 'اختر الخدمة';
-
-  @override
-  String get admin_packagesPersonalTraining => 'التدريب الشخصي';
-
-  @override
-  String get admin_packagesStrengthTraining => 'تدريب القوة';
-
-  @override
-  String get admin_packagesWeightLossProgram => 'برنامج إنقاص الوزن';
-
-  @override
-  String get admin_packagesTotalSessions => 'إجمالي الجلسات';
-
-  @override
-  String get admin_packagesMinDays => 'الحد الأدنى للأيام/أسبوع';
-
-  @override
-  String get admin_packagesMaxDays => 'الحد الأقصى للأيام/أسبوع';
-
-  @override
-  String get admin_packagesValidity => 'الصلاحية (بالأيام)';
-
-  @override
-  String get admin_packagesRegularPrice => 'السعر الاعتيادي (\$)';
-
-  @override
-  String get admin_packagesSalePrice => 'سعر العرض (\$) - اختياري';
-
-  @override
-  String get admin_packagesSummary => 'ملخص الباقة';
-
-  @override
-  String get admin_packagesNameLabel => 'الاسم:';
-
-  @override
-  String get admin_packagesSessionsLabel => 'الجلسات:';
-
-  @override
-  String get admin_packagesFrequency => 'التكرار:';
-
-  @override
-  String get admin_packagesValidityLabel => 'الصلاحية:';
-
-  @override
-  String get admin_packagesNaDays => 'غير محدد';
-
-  @override
-  String get admin_packagesPriceLabel => 'السعر:';
-
-  @override
-  String get admin_sessionsTitle => 'الجلسات';
-
-  @override
-  String get admin_sessionsBook => 'حجز جلسة';
-
-  @override
-  String get admin_sessionCancelled => 'تم إلغاء الجلسة.';
-
-  @override
-  String get admin_sessionNoShow => 'تم تسجيل الجلسة كغياب.';
-
-  @override
-  String get admin_sessionUpdated => 'تم تحديث الجلسة.';
-
-  @override
-  String get admin_sessionFilterToday => 'اليوم';
-
-  @override
-  String get admin_sessionFilterUpcoming => 'القادمة';
-
-  @override
-  String get admin_sessionFilterCompleted => 'المكتملة';
-
-  @override
-  String get admin_sessionNoSessionsToday => 'لا توجد جلسات مجدولة اليوم.';
-
-  @override
-  String get admin_sessionNoUpcoming => 'لا توجد جلسات قادمة.';
-
-  @override
-  String get admin_sessionNoCompleted => 'لا توجد جلسات مكتملة بعد.';
-
-  @override
-  String get admin_sessionRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_sessionCardPt => 'جلسة PT';
-
-  @override
-  String get admin_sessionCardComplete => 'إتمام';
-
-  @override
-  String get admin_sessionCardCancel => 'إلغاء';
-
-  @override
-  String get admin_sessionCardCancelTitle => 'إلغاء الجلسة';
-
-  @override
-  String get admin_sessionCardCancelConfirm => 'هل أنت متأكد من إلغاء هذه الجلسة؟';
-
-  @override
-  String get admin_sessionCardKeep => 'إبقاء';
-
-  @override
-  String get admin_sessionCardProgress => 'تقدم الجلسة';
-
-  @override
-  String get admin_scheduleTitle => 'التوفر';
-
-  @override
-  String get admin_scheduleAddSlot => 'إضافة موعد';
-
-  @override
-  String get admin_scheduleNoAvailability => 'لم يتم تحديد توفر بعد.';
-
-  @override
-  String get admin_scheduleMonday => 'الإثنين';
-
-  @override
-  String get admin_scheduleTuesday => 'الثلاثاء';
-
-  @override
-  String get admin_scheduleWednesday => 'الأربعاء';
-
-  @override
-  String get admin_scheduleThursday => 'الخميس';
-
-  @override
-  String get admin_scheduleFriday => 'الجمعة';
-
-  @override
-  String get admin_scheduleSaturday => 'السبت';
-
-  @override
-  String get admin_scheduleSunday => 'الأحد';
-
-  @override
-  String get admin_scheduleRecurring => 'أسبوعي متكرر';
-
-  @override
-  String get admin_scheduleAddAvailability => 'إضافة توفر';
-
-  @override
-  String get admin_scheduleDayOfWeek => 'يوم الأسبوع';
-
-  @override
-  String get admin_scheduleSelectDay => 'اختر اليوم';
-
-  @override
-  String get admin_scheduleStartTime => 'وقت البداية';
-
-  @override
-  String get admin_scheduleEndTime => 'وقت النهاية';
-
-  @override
-  String get admin_scheduleRecurringWeekly => 'تكرار أسبوعي';
-
-  @override
-  String get admin_scheduleRepeatHint => 'تكرار هذا الموعد كل أسبوع';
-
-  @override
-  String get admin_scheduleCancel => 'إلغاء';
-
-  @override
-  String get admin_servicesTitle => 'الخدمات';
-
-  @override
-  String get admin_servicesNew => 'خدمة جديدة';
-
-  @override
-  String get admin_servicesGeneral => 'عامة';
-
-  @override
-  String get admin_servicesSpecialized => 'متخصصة';
-
-  @override
-  String get admin_servicesElite => 'نخبة';
-
-  @override
-  String get admin_servicesActive => 'نشطة';
-
-  @override
-  String get admin_servicesEditTitle => 'تعديل الخدمة';
-
-  @override
-  String get admin_servicesCreateTitle => 'إنشاء خدمة PT';
-
-  @override
-  String get admin_servicesName => 'اسم الخدمة';
-
-  @override
-  String get admin_servicesCategory => 'الفئة';
-
-  @override
-  String get admin_servicesDuration => 'المدة (دقيقة)';
-
-  @override
-  String get admin_servicesPrice => 'السعر (\$)';
-
-  @override
-  String get admin_servicesDescription => 'الوصف';
-
-  @override
-  String get admin_servicesDescHint => 'صف الخدمة...';
-
-  @override
-  String get admin_servicesCancel => 'إلغاء';
-
-  @override
-  String get admin_servicesCreate => 'إنشاء الخدمة';
-
-  @override
-  String get admin_bookSessionTitle => 'حجز جلسة';
-
-  @override
-  String get admin_bookSelectTime => 'يرجى تحديد وقت البداية والنهاية.';
-
-  @override
-  String get admin_bookInvalidMember => 'معرف العضو غير صالح.';
-
-  @override
-  String get admin_bookMemberId => 'معرف العضو';
-
-  @override
-  String get admin_bookMemberIdHint => 'أدخل معرفاً صحيحاً للعضو';
-
-  @override
-  String get admin_bookServiceId => 'معرف الخدمة (اختياري)';
-
-  @override
-  String get admin_bookStartTime => 'وقت البداية';
-
-  @override
-  String get admin_bookEndTime => 'وقت النهاية';
-
-  @override
-  String get admin_bookNotes => 'ملاحظات (اختياري)';
-
-  @override
-  String get admin_settingsTitle => 'الإعدادات';
-
-  @override
-  String get admin_settingsUnsaved => 'غير محفوظ';
-
-  @override
-  String get admin_settingsSearch => 'البحث في الإعدادات...';
-
-  @override
-  String get admin_settingsSaved => 'تم حفظ الإعدادات بنجاح';
-
-  @override
-  String get admin_settingsSaveFailed => 'فشل حفظ الإعدادات';
-
-  @override
-  String get admin_settingsSaving => 'جارٍ الحفظ...';
-
-  @override
-  String get admin_settingsSave => 'حفظ التغييرات';
-
-  @override
-  String get admin_settingsLegal => 'القانونية والسياسات';
-
-  @override
-  String get admin_settingsLegalReview => 'راجع سياساتنا';
-
-  @override
-  String get admin_settingsAccountSecurity => 'الحساب والأمان';
-
-  @override
-  String get admin_settingsAccountSecuritySub => 'إدارة أمان حسابك';
-
-  @override
-  String get admin_settingsChangePassword => 'تغيير كلمة المرور';
-
-  @override
-  String get admin_settingsChangePasswordSub => 'تحديث كلمة مرور حسابك';
-
-  @override
-  String get admin_settingsBiometric => 'تسجيل الدخول بالبيومترية';
-
-  @override
-  String get admin_settingsBiometricSub => 'استخدم بصمة الإصبع أو التعرف على الوجه';
-
-  @override
-  String get admin_settings2fa => 'المصادقة الثنائية';
-
-  @override
-  String get admin_settings2faSub => 'أضف طبقة أمان إضافية';
-
-  @override
-  String get admin_settingsBusinessRules => 'قواعد العمل';
-
-  @override
-  String get admin_settingsAdminOnly => 'للمدير فقط';
-
-  @override
-  String get admin_settingsBusinessRulesSub => 'ضبط منطق العضوية والفصول';
-
-  @override
-  String get admin_settingsSubscriptionRules => 'قواعد الاشتراك';
-
-  @override
-  String get admin_settingsRule1Title => 'السماح بالاشتراك في الفصول بدون عضوية';
-
-  @override
-  String get admin_settingsRule1Sub => 'يمكن للمستخدمين الانضمام إلى الفصول بدون شراء خطة';
-
-  @override
-  String get admin_settingsRule2Title => 'اشتراط العضوية للاشتراك في الفصول';
-
-  @override
-  String get admin_settingsRule2Sub => 'يجب أن يكون للمستخدمين عضوية نشطة للاشتراك في الفصول';
-
-  @override
-  String get admin_settingsRule3Title => 'السماح بالعضوية بدون الانتساب لفصل';
-
-  @override
-  String get admin_settingsRule3Sub => 'يمكن للأعضاء شراء خطط بدون الانتساب لأي فصل';
-
-  @override
-  String get admin_settingsRule4Title => 'السماح بكليهما باستقلالية';
-
-  @override
-  String get admin_settingsRule4Sub => 'يمكن شراء العضويات والفصول بشكل منفصل';
-
-  @override
-  String get admin_settingsOwnerOnly => 'المالك فقط يمكنه تغيير قواعد العمل';
-
-  @override
-  String get admin_settingsDangerZone => 'المنطقة الخطرة';
-
-  @override
-  String get admin_settingsDangerSub => 'إجراءات لا رجعة فيها';
-
-  @override
-  String get admin_settingsLogOut => 'تسجيل الخروج';
-
-  @override
-  String get admin_settingsDeleteAccount => 'حذف الحساب';
-
-  @override
-  String get admin_settingsLogOutTitle => 'تسجيل الخروج';
-
-  @override
-  String get admin_settingsLogOutConfirm => 'هل أنت متأكد من تسجيل الخروج؟';
-
-  @override
-  String get admin_settingsCancel => 'إلغاء';
-
-  @override
-  String get admin_settingsDeleteTitle => 'حذف الحساب';
-
-  @override
-  String get admin_settingsDeleteMsg1 => 'سيؤدي هذا إلى حذف حسابك نهائياً. ';
-
-  @override
-  String get admin_settingsDeleteMsg2 => 'لا يمكن التراجع عن هذا الإجراء.';
-
-  @override
-  String admin_settingsDeleteFailed(String error) {
-    return 'فشل حذف الحساب: $error';
+  String memberQrHour(String count) {
+    return '$count ساعة';
   }
 
   @override
-  String get admin_staffTitle => 'الموظفون';
+  String get memberQrLoadError => 'تعذر تحميل رمز الدخول';
 
   @override
-  String get admin_staffRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_staffNoFound => 'لم يتم العثور على موظفين.';
-
-  @override
-  String get admin_staffAdded => 'تمت إضافة الموظف بنجاح';
-
-  @override
-  String get admin_staffUpdated => 'تم تحديث بيانات الموظف بنجاح';
-
-  @override
-  String get admin_staffRemoved => 'تمت إزالة الموظف بنجاح';
-
-  @override
-  String get admin_staffDone => 'تمت العملية بنجاح';
-
-  @override
-  String get admin_staffReception => 'استقبال';
-
-  @override
-  String get admin_staffAdmin => 'مدير';
-
-  @override
-  String get admin_staffAssistant => 'مساعد';
-
-  @override
-  String get admin_staffEditTitle => 'تعديل بيانات الموظف';
-
-  @override
-  String get admin_staffAddTitle => 'إضافة موظف جديد';
-
-  @override
-  String get admin_staffAddDesc => 'أدخل البيانات لإضافة موظف استقبال\nجديد إلى صالتك';
-
-  @override
-  String get admin_staffPersonalInfo => 'المعلومات الشخصية';
-
-  @override
-  String get admin_staffFullName => 'الاسم الكامل';
-
-  @override
-  String get admin_staffFullNameHint => 'أدخل الاسم الكامل';
-
-  @override
-  String get admin_staffFullNameRequired => 'الاسم الكامل مطلوب';
-
-  @override
-  String get admin_staffEmail => 'البريد الإلكتروني';
-
-  @override
-  String get admin_staffEmailRequired => 'البريد الإلكتروني مطلوب';
-
-  @override
-  String get admin_staffEmailInvalid => 'أدخل عنوان بريد إلكتروني صحيحاً';
-
-  @override
-  String get admin_staffPhone => 'رقم الهاتف';
-
-  @override
-  String get admin_staffPhoneRequired => 'رقم الهاتف مطلوب';
-
-  @override
-  String get admin_staffRole => 'الدور';
-
-  @override
-  String get admin_staffSelectRole => 'اختر الدور';
-
-  @override
-  String get admin_staffRoleRequired => 'الدور مطلوب';
-
-  @override
-  String get admin_staffBranchAssignment => 'تعيين الفرع';
-
-  @override
-  String get admin_staffSelectBranch => 'اختر الفرع';
-
-  @override
-  String get admin_staffBranchRequired => 'الفرع مطلوب';
-
-  @override
-  String get admin_staffPassword => 'كلمة المرور';
-
-  @override
-  String get admin_staffPasswordHint => 'توليد تلقائي أو إدخال يدوي';
-
-  @override
-  String get admin_staffPasswordNote => 'اتركه فارغاً لتوليد كلمة مرور آمنة تلقائياً';
-
-  @override
-  String get admin_staffCancel => 'إلغاء';
-
-  @override
-  String get admin_staffSaveChanges => 'حفظ التغييرات';
-
-  @override
-  String get admin_staffAddMember => 'إضافة موظف';
-
-  @override
-  String get admin_staffEditProfile => 'تعديل الملف الشخصي';
-
-  @override
-  String get admin_staffRemove => 'إزالة';
-
-  @override
-  String get admin_staffRemoveTitle => 'إزالة الموظف';
-
-  @override
-  String admin_staffRemoveConfirm(String name) {
-    return 'هل أنت متأكد من إزالة $name? ';
-  }
-
-  @override
-  String get admin_staffCannotUndo => 'لا يمكن التراجع عن هذا الإجراء.';
-
-  @override
-  String get admin_staffTotalLabel => 'إجمالي الموظفين';
-
-  @override
-  String get admin_staffActiveLabel => 'نشطون';
-
-  @override
-  String get admin_staffSearchHint => 'البحث عن موظف بالاسم';
-
-  @override
-  String get admin_trainersTitle => 'المدربون / PT';
-
-  @override
-  String get admin_trainersLoading => 'جارٍ تحميل بيانات المدربين...';
-
-  @override
-  String get admin_trainersFormNotReady => 'خيارات نموذج المدرب غير جاهزة بعد';
-
-  @override
-  String get admin_trainersNoFound => 'لم يتم العثور على مدربين';
-
-  @override
-  String get admin_trainerAdded => 'تمت إضافة المدرب بنجاح ✓';
-
-  @override
-  String get admin_trainerUpdatedSuccess => 'تم تحديث المدرب ✓';
-
-  @override
-  String get admin_trainerBlockedSuccess => 'تم حظر المدرب';
-
-  @override
-  String get admin_trainerUnblockedSuccess => 'تم إلغاء حظر المدرب ✓';
-
-  @override
-  String get admin_trainerActionDone => 'تم';
-
-  @override
-  String get admin_trainersRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_trainerSelectBranch => 'يرجى اختيار فرع';
-
-  @override
-  String get admin_trainerEditTitle => 'تعديل المدرب';
-
-  @override
-  String get admin_trainerAddTitle => 'إضافة مدرب جديد';
-
-  @override
-  String get admin_trainerFullName => 'الاسم الكامل *';
-
-  @override
-  String get admin_trainerFullNameHint => 'أدخل الاسم الكامل';
-
-  @override
-  String get admin_trainerRequired => 'مطلوب';
-
-  @override
-  String get admin_trainerEmail => 'البريد الإلكتروني';
-
-  @override
-  String get admin_trainerEmailInvalid => 'بريد إلكتروني غير صالح';
-
-  @override
-  String get admin_trainerPhone => 'رقم الهاتف';
-
-  @override
-  String get admin_trainerPassword => 'كلمة المرور *';
-
-  @override
-  String get admin_trainerMinChars => '6 أحرف على الأقل';
-
-  @override
-  String get admin_trainerSpecialties => 'التخصصات';
-
-  @override
-  String get admin_trainerBranchAssignment => 'تعيين الفرع *';
-
-  @override
-  String get admin_trainerSelectBranchHint => 'اختر الفرع';
-
-  @override
-  String get admin_trainerExperience => 'سنوات الخبرة';
-
-  @override
-  String get admin_trainerNotesBio => 'ملاحظات / سيرة ذاتية';
-
-  @override
-  String get admin_trainerNotesBioHint => 'سيرة ذاتية أو ملاحظات اختيارية';
-
-  @override
-  String get admin_trainerAvailability => 'جدول التوفر';
-
-  @override
-  String get admin_trainerAddSlot => 'إضافة موعد';
-
-  @override
-  String get admin_trainerNoSlots => 'لا توجد مواعيد توفر بعد.';
-
-  @override
-  String get admin_trainerCancel => 'إلغاء';
-
-  @override
-  String get admin_trainerSaveChanges => 'حفظ التغييرات';
-
-  @override
-  String get admin_trainerSave => 'حفظ المدرب';
-
-  @override
-  String get admin_trainerSpecialtyHint => 'اكتب تخصصاً واضغط + أو Enter للإضافة';
-
-  @override
-  String get admin_trainerUnblockConfirm => 'سيتمكن من تسجيل الدخول مجدداً.';
-
-  @override
-  String get admin_trainerBlockConfirm => 'لن يتمكن من تسجيل الدخول.';
-
-  @override
-  String get admin_trainerUnblockTitle => 'إلغاء الحظر';
-
-  @override
-  String get admin_trainerBlockTitle => 'حظر';
-
-  @override
-  String get admin_trainerCancelAction => 'إلغاء';
-
-  @override
-  String get admin_trainerBlockedStatus => 'محظور';
-
-  @override
-  String get admin_trainerActiveStatus => 'نشط';
-
-  @override
-  String get admin_trainerScheduleLabel => 'الجدول';
-
-  @override
-  String get admin_trainerEditLabel => 'تعديل';
-
-  @override
-  String get admin_trainerSearchHint => 'البحث بالاسم أو التخصص';
-
-  @override
-  String get admin_videoNewCategory => 'فئة جديدة';
-
-  @override
-  String get admin_videoCategoryName => 'اسم الفئة';
-
-  @override
-  String get admin_videoCancel => 'إلغاء';
-
-  @override
-  String get admin_videoSelectCategory => 'يرجى اختيار أو إنشاء فئة';
-
-  @override
-  String get admin_videoDurationInvalid => 'يجب أن تكون المدة أكبر من صفر';
-
-  @override
-  String get admin_videoAdded => 'تمت إضافة الفيديو بنجاح';
-
-  @override
-  String admin_videoCategoryCreated(String name) {
-    return 'تم إنشاء الفئة \"$name\" وتحديدها';
-  }
-
-  @override
-  String admin_videoFailed(String message) {
-    return 'فشل: $message';
-  }
-
-  @override
-  String get admin_videoAddTitle => 'إضافة مقطع تدريبي';
-
-  @override
-  String get admin_videoTitleField => 'العنوان *';
-
-  @override
-  String get admin_videoTitleRequired => 'العنوان مطلوب';
-
-  @override
-  String get admin_videoDescriptionField => 'الوصف (اختياري)';
-
-  @override
-  String get admin_videoCategoryField => 'الفئة *';
-
-  @override
-  String get admin_videoSelectCategoryHint => 'اختر فئة';
-
-  @override
-  String get admin_videoSelectCategoryRequired => 'يرجى اختيار فئة';
-
-  @override
-  String get admin_videoAddNewCategory => 'إضافة فئة جديدة';
-
-  @override
-  String get admin_videoAssignTrainer => 'تعيين إلى مدرب *';
-
-  @override
-  String get admin_videoSelectTrainer => 'اختر مدرباً';
-
-  @override
-  String get admin_videoTrainerRequired => 'يرجى تعيين مدرب';
-
-  @override
-  String get admin_videoPickFromPhone => 'اختيار فيديو من الهاتف';
-
-  @override
-  String get admin_videoDurationField => 'المدة *';
-
-  @override
-  String get admin_videoMinutes => 'دقائق';
-
-  @override
-  String get admin_videoRequired => 'مطلوب';
-
-  @override
-  String get admin_videoInvalid => 'غير صالح';
-
-  @override
-  String get admin_videoSeconds => 'ثوان';
-
-  @override
-  String get admin_videoPublished => 'منشور';
-
-  @override
-  String get admin_videoVisibleToMembers => 'مرئي للأعضاء فوراً';
-
-  @override
-  String get admin_videoAdd => 'إضافة الفيديو';
-
-  @override
-  String get admin_videoListTitle => 'مقاطع التدريب';
-
-  @override
-  String get admin_videoRetry => 'إعادة المحاولة';
-
-  @override
-  String get admin_videoTotalVideos => 'إجمالي المقاطع';
-
-  @override
-  String get admin_videoTotalViews => 'إجمالي المشاهدات';
-
-  @override
-  String get admin_videoNoVideos => 'لم يتم العثور على مقاطع.';
-
-  @override
-  String get admin_videoAllCategories => 'جميع الفئات';
-
-  @override
-  String get admin_videoCategory => 'الفئة';
+  String get memberQrRetry => 'إعادة المحاولة';
 }

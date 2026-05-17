@@ -45,9 +45,10 @@ class SessionInfoGridWidget extends StatelessWidget {
         value: l10n.sessionDetailSeatsRemaining(session.availableSeats),
       ),
       _GridItem(
+
         icon: Icons.location_on_rounded,
         label: l10n.sessionDetailLocationLabel,
-        value: session.roomName,
+        value: _locationText(session),
       ),
     ];
 
@@ -111,7 +112,24 @@ class SessionInfoGridWidget extends StatelessWidget {
     }
   }
 }
+String _locationText(SessionDetailEntity session) {
+  final branch = session.branchName?.trim();
+  final room = session.roomName.trim();
 
+  if (branch != null && branch.isNotEmpty && room.isNotEmpty) {
+    return '$branch · $room';
+  }
+
+  if (branch != null && branch.isNotEmpty) {
+    return branch;
+  }
+
+  if (room.isNotEmpty) {
+    return room;
+  }
+
+  return '-';
+}
 class _GridItem {
   final IconData icon;
   final String label;

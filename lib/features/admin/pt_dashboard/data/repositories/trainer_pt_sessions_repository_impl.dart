@@ -20,7 +20,7 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
     required TrainerPtSessionsService service,
   }) : _service = service;
 
-  // ── Get sessions by date ────────────────────────────────────────────────────
+  // ── Get services by date ────────────────────────────────────────────────────
 
   @override
   Future<({List<PtSessionEntity>? data, Failure? failure})> getSessionsByDate({

@@ -147,15 +147,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validation_phoneAlreadyExists => 'Phone number already exists';
 
   @override
-  String get validation_passwordNoLetter => 'Password must contain at least one letter';
-
-  @override
-  String get validation_passwordNoNumber => 'Password must contain at least one number';
-
-  @override
-  String get validation_confirmPasswordRequired => 'Please confirm your password';
-
-  @override
   String get general_cancel => 'Cancel';
 
   @override
@@ -163,39 +154,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get general_optional => 'Optional';
-
-  @override
-  String get general_retry => 'Retry';
-
-  @override
-  String get general_save => 'Save';
-
-  @override
-  String get general_edit => 'Edit';
-
-  @override
-  String get general_delete => 'Delete';
-
-  @override
-  String get general_back => 'Back';
-
-  @override
-  String get general_done => 'Done';
-
-  @override
-  String get general_required => 'Required';
-
-  @override
-  String get general_active => 'Active';
-
-  @override
-  String get general_inactive => 'Inactive';
-
-  @override
-  String get general_search => 'Search';
-
-  @override
-  String get general_noPhone => 'No phone';
 
   @override
   String get error_somethingWentWrong => 'Something went wrong. Please try again.';
@@ -349,6 +307,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword_passwordResetSuccess => 'Password reset successfully';
 
   @override
+  String get validation_passwordNoLetter => 'Password must contain at least one letter';
+
+  @override
+  String get validation_passwordNoNumber => 'Password must contain at least one number';
+
+  @override
+  String get validation_confirmPasswordRequired => 'Please confirm your password';
+
+  @override
   String get signup_title => 'Create New Account';
 
   @override
@@ -380,9 +347,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signup_alreadyVerifiedResume => 'Account already verified. Completing your profile.';
-
-  @override
-  String get signup_success => 'Successfully registered. You can now login.';
 
   @override
   String get otp_title => 'Confirm Account';
@@ -625,6 +589,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_paymentHistory => 'Payment History';
 
   @override
+  String get signup_success => 'Successfully registered. You can now login.';
+
+  @override
   String get mostPopular => 'Most Popular';
 
   @override
@@ -661,23 +628,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get membershipStatusExpired => 'Expired';
 
   @override
-  String remainingDays(int days) {
+  String remainingDays(Object days) {
     return '$days days remaining';
   }
 
   @override
-  String membershipEndsAt(String date) {
-    return 'Ends on $date';
+  String membershipEndsAt(Object date) {
+    return 'Ends at $date';
   }
 
   @override
   String get memberPlansTitle => 'Membership Plans';
 
   @override
-  String get memberPlansSubtitle => 'Choose the plan that fits your goals';
+  String get memberPlansSubtitle => 'Choose the best plan for you';
 
   @override
-  String get memberPlansEmpty => 'No plans available right now';
+  String get memberPlansEmpty => 'No plans available';
 
   @override
   String get retry => 'Retry';
@@ -686,25 +653,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String get checkoutComingSoon => 'Coming soon — checkout is under development';
+  String get checkoutComingSoon => 'Checkout coming soon';
 
   @override
-  String get planDuration => 'Duration';
+  String get planDuration => 'Plan Duration';
 
   @override
-  String get visitLimit => 'Visit limit';
+  String get visitLimit => 'Visit Limit';
 
   @override
   String get unlimited => 'Unlimited';
 
   @override
-  String get freezeDays => 'Freeze days';
+  String get freezeDays => 'Freeze Days';
 
   @override
-  String get planFeatures => 'Features';
+  String get planFeatures => 'Plan Features';
 
   @override
-  String get couponCode => 'Coupon code';
+  String get couponCode => 'Coupon Code';
 
   @override
   String get enterCouponCode => 'Enter coupon code';
@@ -713,8 +680,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apply => 'Apply';
 
   @override
-  String couponAppliedFinalPrice(String price) {
-    return '✓ Coupon applied — final price: $price \$';
+  String couponAppliedFinalPrice(Object price) {
+    return 'Final price: $price';
   }
 
   @override
@@ -784,13 +751,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get memberSessionsLoading => 'Loading sessions...';
+  String get memberSessionsLoading => 'Loading services...';
 
   @override
-  String get memberSessionsEmpty => 'No sessions available';
+  String get memberSessionsEmpty => 'No services available';
 
   @override
-  String get memberSessionsError => 'Failed to load sessions';
+  String get memberSessionsError => 'Failed to load services';
 
   @override
   String get memberSessionsFilterTitle => 'Filter classes';
@@ -820,7 +787,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionDetailSeatsLabel => 'Seats';
 
   @override
-  String sessionDetailSeatsRemaining(int count) {
+  String sessionDetailSeatsRemaining(Object count) {
     return '$count remaining';
   }
 
@@ -1150,7 +1117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptPackageNoPackages => 'No packages available right now';
 
   @override
-  String get ptPackageSessions => 'sessions';
+  String get ptPackageSessions => 'services';
 
   @override
   String get ptPackageDays => 'days';
@@ -1174,7 +1141,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptPackageSelectedTime => 'Selected time';
 
   @override
-  String get ptPackageMaxSessionsReached => 'You cannot select more days than the package sessions';
+  String get ptPackageMaxSessionsReached => 'You cannot select more days than the package services';
 
   @override
   String ptPackageDaysPerWeekRange(int min, int max) {
@@ -1330,1563 +1297,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfileCodeRequired => 'Verification code is required.';
 
   @override
-  String get admin_allBranches => 'All Branches';
+  String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
 
   @override
-  String get admin_aiTitle => 'AI Assistant';
+  String get ptBookingRequestThisTime => 'Request this time';
 
   @override
-  String get admin_aiNewConversation => 'New conversation';
+  String get ptBookingBookSession => 'Book session';
 
   @override
-  String get admin_aiRecentQueries => 'Recent Queries';
+  String get ptBookingRequestNote => 'Member requested unavailable/full PT time';
 
   @override
-  String get admin_aiView => 'View';
+  String get ptBookingFullOrUnavailable => 'This slot is full or unavailable. Send a request instead.';
 
   @override
-  String get admin_aiYouMightAlsoAsk => 'You might also ask:';
+  String get ptBookingFailed => 'Unable to confirm booking.';
 
   @override
-  String get admin_aiInputHint => 'Ask a question about your gym...';
+  String get ptBookingRequestFailed => 'Unable to send request.';
 
   @override
-  String get admin_aiRetry => 'Retry';
+  String get memberQrTitle => 'Entry QR Code';
 
   @override
-  String get admin_aiHeroBannerTitle => 'AI Insights Assistant';
+  String get memberQrSubtitle => 'Scan this code at the gym entrance';
 
   @override
-  String get admin_aiHeroBannerSubtitle => 'Ask me anything about your gym';
+  String get memberQrActiveMembership => 'Active membership';
 
   @override
-  String get admin_aiHeroBannerDesc => 'Get instant analytics, insights, and\nrecommendations based on your gym\'s data.';
+  String get memberQrInactiveMembership => 'Inactive membership';
 
   @override
-  String get admin_aiSuggestedQuestions => 'Suggested Questions';
+  String get memberQrMemberCodeLabel => 'Member code';
 
   @override
-  String get admin_aiQueryFailed => 'Sorry, I could not process your request. Please try again.';
+  String get memberQrPackageFallback => 'No package';
 
   @override
-  String get admin_branchesTitle => 'Branches';
+  String get memberQrValidUntil => 'Valid until';
 
   @override
-  String get admin_addBranchTitle => 'Add Branch';
+  String get memberQrExpiresSoon => 'QR expires soon';
 
   @override
-  String get admin_branchCreatedSuccess => 'Branch created successfully';
+  String get memberQrRecentVisits => 'Recent visits';
 
   @override
-  String get admin_branchBasicInfo => 'Basic Information';
+  String get memberQrNoRecentVisits => 'No previous visits';
 
   @override
-  String get admin_branchName => 'Branch Name';
+  String get memberQrDurationLabel => 'Duration';
 
   @override
-  String get admin_branchNameRequired => 'Branch name is required';
+  String get memberQrToday => 'Today';
 
   @override
-  String get admin_branchCity => 'City / Location';
+  String get memberQrYesterday => 'Yesterday';
 
   @override
-  String get admin_branchCityRequired => 'City is required';
-
-  @override
-  String get admin_branchContactInfo => 'Contact Information';
-
-  @override
-  String get admin_branchPhone => 'Phone';
-
-  @override
-  String get admin_branchPhoneRequired => 'Phone is required';
-
-  @override
-  String get admin_branchEmail => 'Email';
-
-  @override
-  String get admin_branchEmailRequired => 'Email is required';
-
-  @override
-  String get admin_branchEmailInvalid => 'Enter a valid email';
-
-  @override
-  String get admin_branchAddress => 'Address';
-
-  @override
-  String get admin_branchAddressRequired => 'Address is required';
-
-  @override
-  String get admin_branchOperatingHours => 'Operating Hours';
-
-  @override
-  String get admin_branchOpeningTime => 'Opening Time';
-
-  @override
-  String get admin_branchClosingTime => 'Closing Time';
-
-  @override
-  String get admin_branchTimeError => 'Closing time must be after opening time';
-
-  @override
-  String get admin_branchStatus => 'Status';
-
-  @override
-  String get admin_branchActive => 'Active';
-
-  @override
-  String get admin_branchInactive => 'Inactive';
-
-  @override
-  String get admin_branchCreate => 'Create Branch';
-
-  @override
-  String get admin_branchOpeningRequired => 'Please select an opening time';
-
-  @override
-  String get admin_branchClosingRequired => 'Please select a closing time';
-
-  @override
-  String get admin_branchDetailTitle => 'Branch Detail';
-
-  @override
-  String get admin_branchMembers => 'Members';
-
-  @override
-  String get admin_branchTrainers => 'Trainers';
-
-  @override
-  String get admin_branchStaff => 'Staff';
-
-  @override
-  String get admin_branchMonthlyRevenue => 'Monthly Revenue';
-
-  @override
-  String get admin_branchActiveStat => 'Active Branches';
-
-  @override
-  String get admin_branchTotalMembers => 'Total Members';
-
-  @override
-  String get admin_branchSearchHint => 'Search by branch name or location.';
-
-  @override
-  String get admin_branchAllStatus => 'All Status';
-
-  @override
-  String get admin_branchNoFound => 'No branches found';
-
-  @override
-  String get admin_branchRetry => 'Retry';
-
-  @override
-  String get admin_classesTitle => 'Classes';
-
-  @override
-  String get admin_classTodayLabel => 'Today\'s Classes';
-
-  @override
-  String get admin_classCancelTitle => 'Cancel Class';
-
-  @override
-  String get admin_classCancelConfirm => 'Are you sure you want to cancel this class? All booked members will be notified.';
-
-  @override
-  String get admin_classKeep => 'Keep Class';
-
-  @override
-  String get admin_classYesCancel => 'Yes, Cancel';
-
-  @override
-  String get admin_classCreatedSuccess => 'Class created successfully';
-
-  @override
-  String get admin_classUpdatedSuccess => 'Class updated successfully';
-
-  @override
-  String get admin_classCancelledSuccess => 'Class cancelled';
-
-  @override
-  String get admin_classDone => 'Done';
-
-  @override
-  String get admin_classRetry => 'Retry';
-
-  @override
-  String get admin_classNoneToday => 'No classes scheduled for this day';
-
-  @override
-  String get admin_classNewTypeLabel => 'New Class Type';
-
-  @override
-  String get admin_classNameField => 'Name *';
-
-  @override
-  String get admin_classRequired => 'Required';
-
-  @override
-  String get admin_classDurationField => 'Duration (minutes) *';
-
-  @override
-  String get admin_classMustBeNumber => 'Must be a number';
-
-  @override
-  String get admin_classDifficulty => 'Difficulty Level';
-
-  @override
-  String get admin_classBeginner => 'Beginner';
-
-  @override
-  String get admin_classIntermediate => 'Intermediate';
-
-  @override
-  String get admin_classAdvanced => 'Advanced';
-
-  @override
-  String get admin_classPrice => 'Price';
-
-  @override
-  String get admin_classCancel => 'Cancel';
-
-  @override
-  String get admin_classFailedCreate => 'Failed to create class type';
-
-  @override
-  String get admin_classCreate => 'Create';
-
-  @override
-  String get admin_classSelectDatetime => 'Please select date and time';
-
-  @override
-  String get admin_classFillRequired => 'Please fill all required fields';
-
-  @override
-  String get admin_classEditTitle => 'Edit Class';
-
-  @override
-  String get admin_classAddTitle => 'Add New Class';
-
-  @override
-  String get admin_classNameLabel => 'Class Name *';
-
-  @override
-  String get admin_classTypeActivity => 'Type / Activity *';
-
-  @override
-  String get admin_classNewType => 'New Type';
-
-  @override
-  String get admin_classSelectType => 'Select type';
-
-  @override
-  String get admin_classTrainer => 'Trainer *';
-
-  @override
-  String get admin_classSelectTrainer => 'Select trainer';
-
-  @override
-  String get admin_classBranch => 'Branch *';
-
-  @override
-  String get admin_classSelectBranch => 'Select branch';
-
-  @override
-  String get admin_classDate => 'Date *';
-
-  @override
-  String get admin_classTime => 'Time *';
-
-  @override
-  String get admin_classCapacity => 'Capacity *';
-
-  @override
-  String get admin_classMaxParticipants => 'Maximum participants';
-
-  @override
-  String get admin_classRoomName => 'Room Name';
-
-  @override
-  String get admin_classNotesDesc => 'Notes / Description';
-
-  @override
-  String get admin_classSave => 'Save Class';
-
-  @override
-  String get admin_classNearlyFull => 'Nearly Full';
-
-  @override
-  String get admin_classBookings => 'Bookings';
-
-  @override
-  String get admin_classEdit => 'Edit';
-
-  @override
-  String get admin_classToday => 'Today';
-
-  @override
-  String get admin_sessionBookingsTitle => 'Session Bookings';
-
-  @override
-  String get admin_sessionNoBookings => 'No bookings yet';
-
-  @override
-  String get admin_sessionBooked => 'Booked';
-
-  @override
-  String get admin_dashboardTitle => 'Dashboard';
-
-  @override
-  String get admin_dashboardToday => 'Today';
-
-  @override
-  String get admin_dashboardThisWeek => 'This Week';
-
-  @override
-  String get admin_dashboardThisMonth => 'This Month';
-
-  @override
-  String get admin_dashboardCustom => 'Custom';
-
-  @override
-  String get admin_dashboardTimePeriod => 'Time Period';
-
-  @override
-  String get admin_dashboardRetry => 'Retry';
-
-  @override
-  String get admin_dashboardComingSoon => 'Coming soon';
-
-  @override
-  String get admin_dashboardActiveMembers => 'Active Members';
-
-  @override
-  String get admin_dashboardDueSoon => 'Due soon';
-
-  @override
-  String get admin_dashboardPendingRenewals => 'Pending Renewals';
-
-  @override
-  String get admin_dashboardLiveNow => 'Live now';
-
-  @override
-  String get admin_dashboardTodayCheckins => 'Today\'s Check-ins';
-
-  @override
-  String get admin_dashboardSessions => 'Sessions';
-
-  @override
-  String get admin_dashboardUpcomingPt => 'Upcoming PT';
-
-  @override
-  String get admin_dashboardQuickActions => 'Quick Actions';
-
-  @override
-  String get admin_dashboardAddMember => 'Add Member';
-
-  @override
-  String get admin_dashboardRecordPayment => 'Record Payment';
-
-  @override
-  String get admin_dashboardAddPlan => 'Add Plan';
-
-  @override
-  String get admin_dashboardSendAnnouncement => 'Send Announcement';
-
-  @override
-  String get admin_dashboardRecentActivity => 'Recent Activity';
-
-  @override
-  String get admin_dashboardViewAll => 'View all';
-
-  @override
-  String get admin_dashboardNoActivity => 'No recent activity';
-
-  @override
-  String get admin_dashboardAttendance => 'Attendance';
-
-  @override
-  String get admin_dashboardPaymentsCollected => 'Payments Collected';
-
-  @override
-  String get admin_dashboardExpiringPlans => 'Expiring Plans';
-
-  @override
-  String get admin_dashboardNext7Days => 'Next 7 days';
-
-  @override
-  String get admin_dashboardTotalMembersLabel => 'Total Members';
-
-  @override
-  String get admin_dashboardTotalPlans => 'Total Plans';
-
-  @override
-  String get admin_dashboardCanceled => 'Canceled';
-
-  @override
-  String get admin_dashboardLast7Days => 'Last 7 days';
-
-  @override
-  String get admin_dashboardChurnRate => 'Churn Rate';
-
-  @override
-  String get admin_dashboardMonthlyRevenue => 'Monthly Revenue';
-
-  @override
-  String get admin_membersTitle => 'Members';
-
-  @override
-  String get admin_memberDetailTitle => 'Member Detail';
-
-  @override
-  String get admin_memberNoFound => 'No members found.';
-
-  @override
-  String get admin_memberRetry => 'Retry';
-
-  @override
-  String get admin_memberPlan => 'Plan';
-
-  @override
-  String get admin_memberDueAmount => 'Due Amount';
-
-  @override
-  String get admin_memberExpiry => 'Expiry';
-
-  @override
-  String get admin_memberBranch => 'Branch';
-
-  @override
-  String get admin_memberWhatsApp => 'WhatsApp';
-
-  @override
-  String get admin_memberAttendance => 'Attendance';
-
-  @override
-  String get admin_memberRenew => 'Renew';
-
-  @override
-  String get admin_memberPlanRenewal => 'Plan Renewal';
-
-  @override
-  String get admin_memberUnblock => 'Unblock';
-
-  @override
-  String get admin_memberBlock => 'Block';
-
-  @override
-  String get admin_memberDelete => 'Delete';
-
-  @override
-  String get admin_memberEdit => 'Edit';
-
-  @override
-  String get admin_memberEditTitle => 'Edit Member';
-
-  @override
-  String get admin_memberBlockTitle => 'Block Member';
-
-  @override
-  String get admin_memberBlockReasonHint => 'Enter reason for blocking';
-
-  @override
-  String get admin_memberDeleteTitle => 'Delete Member';
-
-  @override
-  String admin_memberDeleteConfirm(String name) {
-    return 'Permanently delete $name? This cannot be undone.';
+  String memberQrMinute(int count) {
+    return '$count min';
   }
 
   @override
-  String get admin_memberCancel => 'Cancel';
-
-  @override
-  String get admin_memberActive => 'Active';
-
-  @override
-  String get admin_memberPending => 'Pending';
-
-  @override
-  String get admin_memberBlocked => 'Blocked';
-
-  @override
-  String get admin_memberNoPlan => 'No Plan';
-
-  @override
-  String get admin_memberInactive => 'Inactive';
-
-  @override
-  String get admin_memberAllStatus => 'All Status';
-
-  @override
-  String get admin_memberNewest => 'Newest';
-
-  @override
-  String get admin_memberOldest => 'Oldest';
-
-  @override
-  String get admin_memberAlphabetical => 'Alphabetical';
-
-  @override
-  String get admin_memberAllGender => 'All Gender';
-
-  @override
-  String get admin_memberMale => 'Male';
-
-  @override
-  String get admin_memberFemale => 'Female';
-
-  @override
-  String get admin_memberOther => 'Other';
-
-  @override
-  String get admin_memberSearchHint => 'Search by Name, Phone, Member Code';
-
-  @override
-  String get admin_membershipPackageTitle => 'Membership Package';
-
-  @override
-  String get admin_memberPlanName => 'Plan Name';
-
-  @override
-  String get admin_memberTotalAmount => 'Total Amount';
-
-  @override
-  String get admin_memberDiscount => 'Discount';
-
-  @override
-  String get admin_memberPurchaseDate => 'Purchase Date';
-
-  @override
-  String get admin_memberPaidAmount => 'Paid Amount';
-
-  @override
-  String get admin_memberDueAmountLabel => 'Due Amount';
-
-  @override
-  String get admin_memberRemainingDays => 'Remaining Days';
-
-  @override
-  String get admin_memberQuickActions => 'Quick Actions';
-
-  @override
-  String get admin_memberCall => 'Call';
-
-  @override
-  String get admin_memberSms => 'SMS';
-
-  @override
-  String get admin_memberRenewPlan => 'Renew Plan';
-
-  @override
-  String get admin_plansTitle => 'Plans';
-
-  @override
-  String get admin_plansDeleteTitle => 'Delete Plan';
-
-  @override
-  String get admin_plansDeleteConfirm => 'Are you sure you want to delete this plan?';
-
-  @override
-  String get admin_plansCancel => 'Cancel';
-
-  @override
-  String get admin_plansDelete => 'Delete';
-
-  @override
-  String get admin_plansRetry => 'Retry';
-
-  @override
-  String get admin_plansAllTypes => 'All Types';
-
-  @override
-  String get admin_plansSearch => 'Search plans...';
-
-  @override
-  String get admin_plansNoFound => 'No plans found';
-
-  @override
-  String get admin_planActive => 'Active';
-
-  @override
-  String get admin_planInactive => 'Inactive';
-
-  @override
-  String get admin_planPrice => 'Price';
-
-  @override
-  String get admin_planDurationLabel => 'Duration';
-
-  @override
-  String get admin_planMembersLabel => 'Members';
-
-  @override
-  String get admin_planVisitLimitLabel => 'Visit Limit';
-
-  @override
-  String get admin_planUnlimitedLabel => 'Unlimited';
-
-  @override
-  String get admin_planAvailableAt => 'Available at:';
-
-  @override
-  String get admin_planEdit => 'Edit';
-
-  @override
-  String get admin_planDeleting => 'Deleting...';
-
-  @override
-  String get admin_planDeleteLabel => 'Delete';
-
-  @override
-  String get admin_planOneTime => 'One time';
-
-  @override
-  String get admin_planEditTitle => 'Edit Plan';
-
-  @override
-  String get admin_planAddTitle => 'Add New Plan';
-
-  @override
-  String get admin_planNameField => 'Plan Name *';
-
-  @override
-  String get admin_planTypeField => 'Type / Activity *';
-
-  @override
-  String get admin_planSelectType => 'Select type';
-
-  @override
-  String get admin_planPriceField => 'Price *';
-
-  @override
-  String get admin_planDurationField => 'Duration *';
-
-  @override
-  String get admin_planSelectDuration => 'Select duration';
-
-  @override
-  String get admin_planDescription => 'Description';
-
-  @override
-  String get admin_planOptionalDesc => 'Optional description';
-
-  @override
-  String get admin_planPromotion => 'Promotion';
-
-  @override
-  String get admin_planStatus => 'Status *';
-
-  @override
-  String get admin_planSelectStatus => 'Select status';
-
-  @override
-  String get admin_planAvailableBranches => 'Available Branches *';
-
-  @override
-  String get admin_planSelectBranch => 'Select branch';
-
-  @override
-  String get admin_planMultiSelectNote => 'Note: Multi-select support coming soon';
-
-  @override
-  String get admin_planSaveChanges => 'Save Changes';
-
-  @override
-  String get admin_planCreateLabel => 'Create Plan';
-
-  @override
-  String get admin_planRequired => 'Required';
-
-  @override
-  String get admin_planEnterValidNumber => 'Enter a valid number';
-
-  @override
-  String get admin_planTotalPlans => 'Total Plans';
-
-  @override
-  String get admin_planTotalMembersLabel => 'Members';
-
-  @override
-  String get admin_planActiveCount => 'Active';
-
-  @override
-  String get admin_planCreatedSuccess => 'Plan created successfully';
-
-  @override
-  String get admin_planUpdatedSuccess => 'Plan updated successfully';
-
-  @override
-  String get admin_trainerDashboardTitle => 'Trainer Dashboard';
-
-  @override
-  String get admin_trainerTodaySessions => 'Today Sessions';
-
-  @override
-  String get admin_trainerCompleted => 'Completed';
-
-  @override
-  String get admin_trainerUpcoming => 'Upcoming';
-
-  @override
-  String get admin_trainerCancelledNoShow => 'Cancelled / No-Show';
-
-  @override
-  String get admin_trainerTodaySchedule => 'Today\'s Schedule';
-
-  @override
-  String get admin_trainerNoSessionsToday => 'No sessions scheduled for today.';
-
-  @override
-  String get admin_trainerPtSession => 'PT Session';
-
-  @override
-  String get admin_trainerCheckIn => 'Check In';
-
-  @override
-  String get admin_trainerComplete => 'Complete';
-
-  @override
-  String get admin_trainerCreatePackage => 'Create Package';
-
-  @override
-  String get admin_trainerAddAvailability => 'Add Availability';
-
-  @override
-  String get admin_trainerAddPtService => 'Add PT Service';
-
-  @override
-  String get admin_trainerCreateSession => 'Create Session';
-
-  @override
-  String get admin_trainerQuickActionsTitle => 'Quick Actions';
-
-  @override
-  String get admin_trainerUpcomingClients => 'Upcoming Clients';
-
-  @override
-  String get admin_trainerViewAll => 'View All';
-
-  @override
-  String get admin_trainerNoUpcomingClients => 'No upcoming clients.';
-
-  @override
-  String get admin_trainerMainDashboard => 'Dashboard';
-
-  @override
-  String get admin_trainerMainSessions => 'Sessions';
-
-  @override
-  String get admin_trainerMainPackages => 'Packages';
-
-  @override
-  String get admin_trainerMainSchedule => 'Schedule';
-
-  @override
-  String get admin_trainerMainMore => 'More';
-
-  @override
-  String get admin_trainerLoading => 'Loading trainers…';
-
-  @override
-  String get admin_packagesTitle => 'Packages';
-
-  @override
-  String get admin_packagesNew => 'New Package';
-
-  @override
-  String get admin_packagesActive => 'Active';
-
-  @override
-  String get admin_packagesSessions => 'Sessions';
-
-  @override
-  String get admin_packagesDaysWeek => 'Days/Week';
-
-  @override
-  String get admin_packagesDays => 'Days';
-
-  @override
-  String get admin_packagesEditTitle => 'Edit Package';
-
-  @override
-  String get admin_packagesCreateTitle => 'Create PT Package';
-
-  @override
-  String get admin_packagesBack => 'Back';
-
-  @override
-  String get admin_packagesCreate => 'Create Package';
-
-  @override
-  String get admin_packagesContinue => 'Continue';
-
-  @override
-  String get admin_packagesBasicInfo => 'Basic\nInfo';
-
-  @override
-  String get admin_packagesTrainingRules => 'Training\nRules';
-
-  @override
-  String get admin_packagesPricing => 'Pricing';
-
-  @override
-  String get admin_packagesPreview => 'Preview';
-
-  @override
-  String get admin_packagesName => 'Package Name';
-
-  @override
-  String get admin_packagesType => 'Package Type';
-
-  @override
-  String get admin_packagesSelectType => 'Select type';
-
-  @override
-  String get admin_packagesWeightLoss => 'Weight Loss';
-
-  @override
-  String get admin_packagesStrength => 'Strength Building';
-
-  @override
-  String get admin_packagesCardio => 'Cardio';
-
-  @override
-  String get admin_packagesGeneral => 'General Fitness';
-
-  @override
-  String get admin_packagesLinkedService => 'Linked PT Service';
-
-  @override
-  String get admin_packagesSelectService => 'Select service';
-
-  @override
-  String get admin_packagesPersonalTraining => 'Personal Training';
-
-  @override
-  String get admin_packagesStrengthTraining => 'Strength Training';
-
-  @override
-  String get admin_packagesWeightLossProgram => 'Weight Loss Program';
-
-  @override
-  String get admin_packagesTotalSessions => 'Total Sessions';
-
-  @override
-  String get admin_packagesMinDays => 'Min Days/Week';
-
-  @override
-  String get admin_packagesMaxDays => 'Max Days/Week';
-
-  @override
-  String get admin_packagesValidity => 'Validity (Days)';
-
-  @override
-  String get admin_packagesRegularPrice => 'Regular Price (\$)';
-
-  @override
-  String get admin_packagesSalePrice => 'Sale Price (\$) - Optional';
-
-  @override
-  String get admin_packagesSummary => 'Package Summary';
-
-  @override
-  String get admin_packagesNameLabel => 'Name:';
-
-  @override
-  String get admin_packagesSessionsLabel => 'Sessions:';
-
-  @override
-  String get admin_packagesFrequency => 'Frequency:';
-
-  @override
-  String get admin_packagesValidityLabel => 'Validity:';
-
-  @override
-  String get admin_packagesNaDays => 'N/A days';
-
-  @override
-  String get admin_packagesPriceLabel => 'Price:';
-
-  @override
-  String get admin_sessionsTitle => 'Sessions';
-
-  @override
-  String get admin_sessionsBook => 'Book Session';
-
-  @override
-  String get admin_sessionCancelled => 'Session cancelled.';
-
-  @override
-  String get admin_sessionNoShow => 'Session marked as no-show.';
-
-  @override
-  String get admin_sessionUpdated => 'Session updated.';
-
-  @override
-  String get admin_sessionFilterToday => 'Today';
-
-  @override
-  String get admin_sessionFilterUpcoming => 'Upcoming';
-
-  @override
-  String get admin_sessionFilterCompleted => 'Completed';
-
-  @override
-  String get admin_sessionNoSessionsToday => 'No sessions scheduled for today.';
-
-  @override
-  String get admin_sessionNoUpcoming => 'No upcoming sessions.';
-
-  @override
-  String get admin_sessionNoCompleted => 'No completed sessions yet.';
-
-  @override
-  String get admin_sessionRetry => 'Retry';
-
-  @override
-  String get admin_sessionCardPt => 'PT Session';
-
-  @override
-  String get admin_sessionCardComplete => 'Complete';
-
-  @override
-  String get admin_sessionCardCancel => 'Cancel';
-
-  @override
-  String get admin_sessionCardCancelTitle => 'Cancel Session';
-
-  @override
-  String get admin_sessionCardCancelConfirm => 'Are you sure you want to cancel this session?';
-
-  @override
-  String get admin_sessionCardKeep => 'Keep';
-
-  @override
-  String get admin_sessionCardProgress => 'Session Progress';
-
-  @override
-  String get admin_scheduleTitle => 'Availability';
-
-  @override
-  String get admin_scheduleAddSlot => 'Add Slot';
-
-  @override
-  String get admin_scheduleNoAvailability => 'No availability set yet.';
-
-  @override
-  String get admin_scheduleMonday => 'Monday';
-
-  @override
-  String get admin_scheduleTuesday => 'Tuesday';
-
-  @override
-  String get admin_scheduleWednesday => 'Wednesday';
-
-  @override
-  String get admin_scheduleThursday => 'Thursday';
-
-  @override
-  String get admin_scheduleFriday => 'Friday';
-
-  @override
-  String get admin_scheduleSaturday => 'Saturday';
-
-  @override
-  String get admin_scheduleSunday => 'Sunday';
-
-  @override
-  String get admin_scheduleRecurring => 'Recurring weekly';
-
-  @override
-  String get admin_scheduleAddAvailability => 'Add Availability';
-
-  @override
-  String get admin_scheduleDayOfWeek => 'Day of Week';
-
-  @override
-  String get admin_scheduleSelectDay => 'Select day';
-
-  @override
-  String get admin_scheduleStartTime => 'Start Time';
-
-  @override
-  String get admin_scheduleEndTime => 'End Time';
-
-  @override
-  String get admin_scheduleRecurringWeekly => 'Recurring Weekly';
-
-  @override
-  String get admin_scheduleRepeatHint => 'Repeat this slot every week';
-
-  @override
-  String get admin_scheduleCancel => 'Cancel';
-
-  @override
-  String get admin_servicesTitle => 'Services';
-
-  @override
-  String get admin_servicesNew => 'New Service';
-
-  @override
-  String get admin_servicesGeneral => 'General';
-
-  @override
-  String get admin_servicesSpecialized => 'Specialized';
-
-  @override
-  String get admin_servicesElite => 'Elite';
-
-  @override
-  String get admin_servicesActive => 'Active';
-
-  @override
-  String get admin_servicesEditTitle => 'Edit Service';
-
-  @override
-  String get admin_servicesCreateTitle => 'Create PT Service';
-
-  @override
-  String get admin_servicesName => 'Service Name';
-
-  @override
-  String get admin_servicesCategory => 'Category';
-
-  @override
-  String get admin_servicesDuration => 'Duration (min)';
-
-  @override
-  String get admin_servicesPrice => 'Price (\$)';
-
-  @override
-  String get admin_servicesDescription => 'Description';
-
-  @override
-  String get admin_servicesDescHint => 'Describe the service...';
-
-  @override
-  String get admin_servicesCancel => 'Cancel';
-
-  @override
-  String get admin_servicesCreate => 'Create Service';
-
-  @override
-  String get admin_bookSessionTitle => 'Book Session';
-
-  @override
-  String get admin_bookSelectTime => 'Please select start and end time.';
-
-  @override
-  String get admin_bookInvalidMember => 'Invalid Member ID.';
-
-  @override
-  String get admin_bookMemberId => 'Member ID';
-
-  @override
-  String get admin_bookMemberIdHint => 'Enter a valid member ID';
-
-  @override
-  String get admin_bookServiceId => 'Service ID (optional)';
-
-  @override
-  String get admin_bookStartTime => 'Start Time';
-
-  @override
-  String get admin_bookEndTime => 'End Time';
-
-  @override
-  String get admin_bookNotes => 'Notes (optional)';
-
-  @override
-  String get admin_settingsTitle => 'Settings';
-
-  @override
-  String get admin_settingsUnsaved => 'Unsaved';
-
-  @override
-  String get admin_settingsSearch => 'Search settings...';
-
-  @override
-  String get admin_settingsSaved => 'Settings saved successfully';
-
-  @override
-  String get admin_settingsSaveFailed => 'Failed to save settings';
-
-  @override
-  String get admin_settingsSaving => 'Saving...';
-
-  @override
-  String get admin_settingsSave => 'Save Changes';
-
-  @override
-  String get admin_settingsLegal => 'Legal & Policies';
-
-  @override
-  String get admin_settingsLegalReview => 'Review our policies';
-
-  @override
-  String get admin_settingsAccountSecurity => 'Account & Security';
-
-  @override
-  String get admin_settingsAccountSecuritySub => 'Manage your account security';
-
-  @override
-  String get admin_settingsChangePassword => 'Change Password';
-
-  @override
-  String get admin_settingsChangePasswordSub => 'Update your account password';
-
-  @override
-  String get admin_settingsBiometric => 'Biometric Login';
-
-  @override
-  String get admin_settingsBiometricSub => 'Use fingerprint or face ID';
-
-  @override
-  String get admin_settings2fa => 'Two-Factor Authentication';
-
-  @override
-  String get admin_settings2faSub => 'Add an extra layer of security';
-
-  @override
-  String get admin_settingsBusinessRules => 'Business Rules';
-
-  @override
-  String get admin_settingsAdminOnly => 'Admin Only';
-
-  @override
-  String get admin_settingsBusinessRulesSub => 'Configure membership & class logic';
-
-  @override
-  String get admin_settingsSubscriptionRules => 'Subscription Rules';
-
-  @override
-  String get admin_settingsRule1Title => 'Allow class subscription without membership';
-
-  @override
-  String get admin_settingsRule1Sub => 'Users can join classes without buying a plan';
-
-  @override
-  String get admin_settingsRule2Title => 'Require membership for class subscription';
-
-  @override
-  String get admin_settingsRule2Sub => 'Users must have an active membership to subscribe to classes';
-
-  @override
-  String get admin_settingsRule3Title => 'Allow membership without class enrollment';
-
-  @override
-  String get admin_settingsRule3Sub => 'Members can purchase plans without enrolling in any class';
-
-  @override
-  String get admin_settingsRule4Title => 'Allow both independently';
-
-  @override
-  String get admin_settingsRule4Sub => 'Memberships and classes can be purchased separately';
-
-  @override
-  String get admin_settingsOwnerOnly => 'Only the owner can change business rules';
-
-  @override
-  String get admin_settingsDangerZone => 'Danger Zone';
-
-  @override
-  String get admin_settingsDangerSub => 'Irreversible actions';
-
-  @override
-  String get admin_settingsLogOut => 'Log Out';
-
-  @override
-  String get admin_settingsDeleteAccount => 'Delete Account';
-
-  @override
-  String get admin_settingsLogOutTitle => 'Log Out';
-
-  @override
-  String get admin_settingsLogOutConfirm => 'Are you sure you want to log out?';
-
-  @override
-  String get admin_settingsCancel => 'Cancel';
-
-  @override
-  String get admin_settingsDeleteTitle => 'Delete Account';
-
-  @override
-  String get admin_settingsDeleteMsg1 => 'This will permanently delete your account. ';
-
-  @override
-  String get admin_settingsDeleteMsg2 => 'This action cannot be undone.';
-
-  @override
-  String admin_settingsDeleteFailed(String error) {
-    return 'Failed to delete account: $error';
+  String memberQrHour(String count) {
+    return '$count h';
   }
 
   @override
-  String get admin_staffTitle => 'Staff';
+  String get memberQrLoadError => 'Could not load QR data';
 
   @override
-  String get admin_staffRetry => 'Retry';
-
-  @override
-  String get admin_staffNoFound => 'No staff members found.';
-
-  @override
-  String get admin_staffAdded => 'Staff member added successfully';
-
-  @override
-  String get admin_staffUpdated => 'Staff member updated successfully';
-
-  @override
-  String get admin_staffRemoved => 'Staff member removed successfully';
-
-  @override
-  String get admin_staffDone => 'Action completed successfully';
-
-  @override
-  String get admin_staffReception => 'Reception';
-
-  @override
-  String get admin_staffAdmin => 'Admin';
-
-  @override
-  String get admin_staffAssistant => 'Assistant';
-
-  @override
-  String get admin_staffEditTitle => 'Edit Staff Member';
-
-  @override
-  String get admin_staffAddTitle => 'Add New Staff Member';
-
-  @override
-  String get admin_staffAddDesc => 'Fill in the details to add a new\nreception staff member to your gym';
-
-  @override
-  String get admin_staffPersonalInfo => 'Personal Information';
-
-  @override
-  String get admin_staffFullName => 'Full Name';
-
-  @override
-  String get admin_staffFullNameHint => 'Enter full name';
-
-  @override
-  String get admin_staffFullNameRequired => 'Full name is required';
-
-  @override
-  String get admin_staffEmail => 'Email Address';
-
-  @override
-  String get admin_staffEmailRequired => 'Email is required';
-
-  @override
-  String get admin_staffEmailInvalid => 'Enter a valid email address';
-
-  @override
-  String get admin_staffPhone => 'Phone Number';
-
-  @override
-  String get admin_staffPhoneRequired => 'Phone number is required';
-
-  @override
-  String get admin_staffRole => 'Role';
-
-  @override
-  String get admin_staffSelectRole => 'Select role';
-
-  @override
-  String get admin_staffRoleRequired => 'Role is required';
-
-  @override
-  String get admin_staffBranchAssignment => 'Branch Assignment';
-
-  @override
-  String get admin_staffSelectBranch => 'Select branch';
-
-  @override
-  String get admin_staffBranchRequired => 'Branch is required';
-
-  @override
-  String get admin_staffPassword => 'Password';
-
-  @override
-  String get admin_staffPasswordHint => 'Auto-generate or enter';
-
-  @override
-  String get admin_staffPasswordNote => 'Leave empty to auto-generate a secure password';
-
-  @override
-  String get admin_staffCancel => 'Cancel';
-
-  @override
-  String get admin_staffSaveChanges => 'Save Changes';
-
-  @override
-  String get admin_staffAddMember => 'Add Staff Member';
-
-  @override
-  String get admin_staffEditProfile => 'Edit Profile';
-
-  @override
-  String get admin_staffRemove => 'Remove';
-
-  @override
-  String get admin_staffRemoveTitle => 'Remove Staff Member';
-
-  @override
-  String admin_staffRemoveConfirm(String name) {
-    return 'Are you sure you want to remove $name? ';
-  }
-
-  @override
-  String get admin_staffCannotUndo => 'This action cannot be undone.';
-
-  @override
-  String get admin_staffTotalLabel => 'Total Staff';
-
-  @override
-  String get admin_staffActiveLabel => 'Active';
-
-  @override
-  String get admin_staffSearchHint => 'Search staff by name';
-
-  @override
-  String get admin_trainersTitle => 'Trainers / PT';
-
-  @override
-  String get admin_trainersLoading => 'Loading trainer form options...';
-
-  @override
-  String get admin_trainersFormNotReady => 'Trainer form options are not ready yet';
-
-  @override
-  String get admin_trainersNoFound => 'No trainers found';
-
-  @override
-  String get admin_trainerAdded => 'Trainer added successfully ✓';
-
-  @override
-  String get admin_trainerUpdatedSuccess => 'Trainer updated ✓';
-
-  @override
-  String get admin_trainerBlockedSuccess => 'Trainer blocked';
-
-  @override
-  String get admin_trainerUnblockedSuccess => 'Trainer unblocked ✓';
-
-  @override
-  String get admin_trainerActionDone => 'Done';
-
-  @override
-  String get admin_trainersRetry => 'Retry';
-
-  @override
-  String get admin_trainerSelectBranch => 'Please select a branch';
-
-  @override
-  String get admin_trainerEditTitle => 'Edit Trainer';
-
-  @override
-  String get admin_trainerAddTitle => 'Add New Trainer';
-
-  @override
-  String get admin_trainerFullName => 'Full Name *';
-
-  @override
-  String get admin_trainerFullNameHint => 'Enter full name';
-
-  @override
-  String get admin_trainerRequired => 'Required';
-
-  @override
-  String get admin_trainerEmail => 'Email';
-
-  @override
-  String get admin_trainerEmailInvalid => 'Invalid email';
-
-  @override
-  String get admin_trainerPhone => 'Phone Number';
-
-  @override
-  String get admin_trainerPassword => 'Password *';
-
-  @override
-  String get admin_trainerMinChars => 'Min 6 characters';
-
-  @override
-  String get admin_trainerSpecialties => 'Specialties';
-
-  @override
-  String get admin_trainerBranchAssignment => 'Branch Assignment *';
-
-  @override
-  String get admin_trainerSelectBranchHint => 'Select branch';
-
-  @override
-  String get admin_trainerExperience => 'Years of Experience';
-
-  @override
-  String get admin_trainerNotesBio => 'Notes / Bio';
-
-  @override
-  String get admin_trainerNotesBioHint => 'Optional bio or notes';
-
-  @override
-  String get admin_trainerAvailability => 'Availability Schedule';
-
-  @override
-  String get admin_trainerAddSlot => 'Add Slot';
-
-  @override
-  String get admin_trainerNoSlots => 'No availability slots yet.';
-
-  @override
-  String get admin_trainerCancel => 'Cancel';
-
-  @override
-  String get admin_trainerSaveChanges => 'Save Changes';
-
-  @override
-  String get admin_trainerSave => 'Save Trainer';
-
-  @override
-  String get admin_trainerSpecialtyHint => 'Type a specialty and press + or Enter to add';
-
-  @override
-  String get admin_trainerUnblockConfirm => 'They will be able to log in again.';
-
-  @override
-  String get admin_trainerBlockConfirm => 'They will not be able to log in.';
-
-  @override
-  String get admin_trainerUnblockTitle => 'Unblock';
-
-  @override
-  String get admin_trainerBlockTitle => 'Block';
-
-  @override
-  String get admin_trainerCancelAction => 'Cancel';
-
-  @override
-  String get admin_trainerBlockedStatus => 'Blocked';
-
-  @override
-  String get admin_trainerActiveStatus => 'Active';
-
-  @override
-  String get admin_trainerScheduleLabel => 'Schedule';
-
-  @override
-  String get admin_trainerEditLabel => 'Edit';
-
-  @override
-  String get admin_trainerSearchHint => 'Search by name or specialty';
-
-  @override
-  String get admin_videoNewCategory => 'New Category';
-
-  @override
-  String get admin_videoCategoryName => 'Category name';
-
-  @override
-  String get admin_videoCancel => 'Cancel';
-
-  @override
-  String get admin_videoSelectCategory => 'Please select or create a category';
-
-  @override
-  String get admin_videoDurationInvalid => 'Duration must be greater than 0';
-
-  @override
-  String get admin_videoAdded => 'Video added successfully';
-
-  @override
-  String admin_videoCategoryCreated(String name) {
-    return 'Category \"$name\" created and selected';
-  }
-
-  @override
-  String admin_videoFailed(String message) {
-    return 'Failed: $message';
-  }
-
-  @override
-  String get admin_videoAddTitle => 'Add Training Video';
-
-  @override
-  String get admin_videoTitleField => 'Title *';
-
-  @override
-  String get admin_videoTitleRequired => 'Title is required';
-
-  @override
-  String get admin_videoDescriptionField => 'Description (optional)';
-
-  @override
-  String get admin_videoCategoryField => 'Category *';
-
-  @override
-  String get admin_videoSelectCategoryHint => 'Select a category';
-
-  @override
-  String get admin_videoSelectCategoryRequired => 'Please select a category';
-
-  @override
-  String get admin_videoAddNewCategory => 'Add new category';
-
-  @override
-  String get admin_videoAssignTrainer => 'Assign to Trainer *';
-
-  @override
-  String get admin_videoSelectTrainer => 'Select a trainer';
-
-  @override
-  String get admin_videoTrainerRequired => 'Please assign a trainer';
-
-  @override
-  String get admin_videoPickFromPhone => 'Pick Video From Phone';
-
-  @override
-  String get admin_videoDurationField => 'Duration *';
-
-  @override
-  String get admin_videoMinutes => 'Minutes';
-
-  @override
-  String get admin_videoRequired => 'Required';
-
-  @override
-  String get admin_videoInvalid => 'Invalid';
-
-  @override
-  String get admin_videoSeconds => 'Seconds';
-
-  @override
-  String get admin_videoPublished => 'Published';
-
-  @override
-  String get admin_videoVisibleToMembers => 'Visible to members immediately';
-
-  @override
-  String get admin_videoAdd => 'Add Video';
-
-  @override
-  String get admin_videoListTitle => 'Training Videos';
-
-  @override
-  String get admin_videoRetry => 'Retry';
-
-  @override
-  String get admin_videoTotalVideos => 'Total Videos';
-
-  @override
-  String get admin_videoTotalViews => 'Total Views';
-
-  @override
-  String get admin_videoNoVideos => 'No videos found.';
-
-  @override
-  String get admin_videoAllCategories => 'All Categories';
-
-  @override
-  String get admin_videoCategory => 'Category';
+  String get memberQrRetry => 'Retry';
 }

@@ -1,48 +1,29 @@
-// FILE: lib/features/gym_profile/domain/entities/gym_profile_entity.dart
-//
-// LAYER: Domain — Entity
-//
-// PURPOSE:
-//   Pure Dart object. Knows nothing about JSON, HTTP, or Flutter UI.
-//   This is what the BLoC, use cases, and UI widgets work with.
-//
-// HOW IT FITS:
-//   Backend JSON → GymProfileModel (data) → .toEntity() → GymProfileEntity (domain)
-//                                                                ↓
-//                                                     GetGymProfileUseCase
-//                                                                ↓
-//                                                     GymProfileCubit
-//                                                                ↓
-//                                                     RoleCheckScreen
-
 class GymProfileEntity {
   final int    userId;
-  final String gymRole;   // "TRAINER" | "RECEPTION" | "MEMBER"
+  final String gymRole;
   final String fullName;
+  final List<String> gymRoles;
 
   const GymProfileEntity({
     required this.userId,
     required this.gymRole,
     required this.fullName,
+    this.gymRoles = const [],
   });
 
-  // ── Role helpers ───────────────────────────────────────────────────────────
-  // The screen uses these instead of comparing raw strings.
-
-  bool get isTrainer   => gymRole == 'TRAINER';
-  bool get isReception => gymRole == 'RECEPTION';
-  bool get isMember    => gymRole == 'MEMBER';
-
-  // ── Safe fallback ──────────────────────────────────────────────────────────
-  // Used when the network call fails — we don't block the user, just show member.
+  bool get isTrainer   => gymRoles.contains('TRAINER');
+  bool get isReception => gymRoles.contains('RECEPTION');
+  bool get isMember    => gymRoles.isEmpty;
+  bool get hasMultipleRoles => gymRoles.length > 1;
 
   static const empty = GymProfileEntity(
     userId:   0,
     gymRole:  'MEMBER',
     fullName: '',
+    gymRoles: [],
   );
 
   @override
   String toString() =>
-      'GymProfileEntity(userId: $userId, gymRole: $gymRole, fullName: $fullName)';
+      'GymProfileEntity(userId: $userId, gymRole: $gymRole, gymRoles: $gymRoles, fullName: $fullName)';
 }

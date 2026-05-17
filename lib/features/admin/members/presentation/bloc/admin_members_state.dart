@@ -76,6 +76,24 @@ class MemberDetailError extends AdminMembersState {
   const MemberDetailError(this.message);
 }
 
+// ── Attendance states ─────────────────────────────────────────────────────────
+
+class MemberAttendanceLoading extends AdminMembersState {
+  final int userId;
+  const MemberAttendanceLoading(this.userId);
+}
+
+class MemberAttendanceLoaded extends AdminMembersState {
+  final int userId;
+  final List<MemberAttendanceItemEntity> items;
+  const MemberAttendanceLoaded(this.userId, this.items);
+}
+
+class MemberAttendanceError extends AdminMembersState {
+  final String message;
+  const MemberAttendanceError(this.message);
+}
+
 // ── Per-card action states ────────────────────────────────────────────────────
 
 class MemberActionLoading extends AdminMembersState {

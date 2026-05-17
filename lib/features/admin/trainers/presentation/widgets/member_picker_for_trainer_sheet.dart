@@ -36,14 +36,15 @@ import '../../data/services/admin_trainers_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MemberPickerForTrainerSheet extends StatefulWidget {
-  final VoidCallback onAssigned;
+  /// Called after role assignment succeeds, with the assigned member's info.
+  final void Function(int userId, String name) onAssigned;
 
   const MemberPickerForTrainerSheet({super.key, required this.onAssigned});
 
   // ── Static show helper ─────────────────────────────────────────────────────
   static Future<void> show(
       BuildContext context, {
-        required VoidCallback onAssigned,
+        required void Function(int userId, String name) onAssigned,
       }) {
     return showModalBottomSheet(
       context: context,
@@ -143,17 +144,8 @@ class _MemberPickerForTrainerSheetState
     try {
       await _trainersService.assignGymRole(member.userId, 'TRAINER');
       if (!mounted) return;
-      Navigator.pop(context);             // close sheet
-      widget.onAssigned();                // tell parent to reload
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${member.fullName} is now a Trainer. They\'ll see the trainer dashboard on next login.',
-          ),
-          backgroundColor: Colors.green.shade700,
-          duration: const Duration(seconds: 4),
-        ),
-      );
+      Navigator.pop(context);
+      widget.onAssigned(member.userId, member.fullName);
     } catch (e) {
       if (mounted) {
         setState(() {

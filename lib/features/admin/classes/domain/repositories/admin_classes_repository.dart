@@ -36,4 +36,7 @@ abstract class AdminClassesRepository {
 
   // Returns all non-cancelled bookings for a session
   Future<List<SessionBookingItemEntity>> getSessionBookings(int sessionId);
+
+  // Reactivates a cancelled session back to SCHEDULED
+  Future<void> reactivateClass(int sessionId);
 }

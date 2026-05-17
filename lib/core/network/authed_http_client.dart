@@ -3,9 +3,11 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
+import 'package:build4allgym/core/utils/jwt_utils.dart';
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
 import 'package:build4allgym/core/network/auth_refresh_coordinator.dart';
+import 'package:build4allgym/core/network/globals.dart' as g;
 
 /// A drop-in http.Client replacement that:
 ///   1. Injects the current access token on every request.
@@ -71,8 +73,17 @@ class AuthedHttpClient extends http.BaseClient {
     }
   }
 
-  // ── Get the best available stored token (admin first, then user) ───────────
+  // ── Get the best available token ──────────────────────────────────────────
+  // Prefers the in-memory runtime token (always the current session's token,
+  // set synchronously before navigation). Falls back to persisted stores only
+  // on cold-start when the runtime token hasn't been loaded yet.
   Future<String> _storedToken() async {
+    final runtime = g.readAuthToken().trim();
+    if (runtime.isNotEmpty) {
+      return runtime.toLowerCase().startsWith('bearer ')
+          ? runtime.substring(7).trim()
+          : runtime;
+    }
     final admin = (await _adminStore.getToken())?.trim() ?? '';
     if (admin.isNotEmpty) return admin;
     return (await _userStore.getToken())?.trim() ?? '';
@@ -97,8 +108,15 @@ class AuthedHttpClient extends http.BaseClient {
     final Uint8List bodySnapshot =
         request is http.Request ? request.bodyBytes : Uint8List(0);
 
-    // Inject current stored token.
-    final raw = await _storedToken();
+    // Get stored token; proactively refresh if already expired.
+    String raw = await _storedToken();
+    if (raw.isNotEmpty && !_isAuthPath(request.url) && JwtUtils.isExpired(raw)) {
+      final proactive = await _tryRefresh(raw);
+      if (proactive != null && proactive.isNotEmpty) {
+        raw = proactive;
+      }
+    }
+
     if (raw.isNotEmpty) {
       request.headers['Authorization'] = 'Bearer $raw';
     }
@@ -113,7 +131,7 @@ class AuthedHttpClient extends http.BaseClient {
     // Drain original response to free the connection before retrying.
     await response.stream.drain<void>().catchError((_) {});
 
-    // Try to refresh.
+    // Try to refresh (reactive fallback for race conditions).
     final newToken = await _tryRefresh(raw);
     if (newToken == null || newToken.isEmpty) {
       // Refresh failed — return synthetic 401 so the service can throw.

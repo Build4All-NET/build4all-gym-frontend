@@ -28,9 +28,12 @@ class AdminBranchesService {
 
   Future<Map<String, String>> _headers() async {
     final token = await _tokenStore.getToken();
-    if (token == null || token.trim().isEmpty) throw UnauthorizedException();
+    // Do not throw here when token is absent — AuthedHttpClient injects the
+    // best available token (runtime global → admin store → user store).
+    // If the backend still returns 401, _handleStatus will throw correctly.
     return {
-      'Authorization':           'Bearer $token',
+      if (token != null && token.trim().isNotEmpty)
+        'Authorization': 'Bearer $token',
       'Content-Type':            'application/json',
       'X-Owner-Project-Link-Id': Env.ownerProjectLinkId,
     };

@@ -1,8 +1,17 @@
-﻿
+// =============================================================================
+// FILE: lib/features/admin/pt_dashboard/data/services/availability_service.dart
+//
+// CHANGES vs previous version:
+//   - createSlot() now accepts optional `specificDate` (DateTime?) parameter.
+//     When provided it is serialised as "specificDate": "yyyy-MM-dd" in the
+//     JSON body so the backend can store it in trainer_availability.specific_date.
+//     The field is only sent when non-null (recurring = false case).
+// =============================================================================
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
@@ -15,9 +24,10 @@ import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/availability_model.dart';
 
 class AvailabilityHttpService {
-  final _client = AuthedHttpClient();
+  final _client     = AuthedHttpClient();
   final _tokenStore = const AdminTokenStore();
 
+  static final _dateFmt = DateFormat('yyyy-MM-dd');
 
   Future<Map<String, String>> _headers() async {
     final token = await _tokenStore.getToken();
@@ -30,32 +40,24 @@ class AvailabilityHttpService {
     throw ServerException(message: utf8.decode(r.bodyBytes));
   }
 
+  // ── GET ───────────────────────────────────────────────────────────────────
+
   Future<List<AvailabilityModel>> getSlots({
     int? trainerId,
     required int branchId,
   }) async {
     final headers = await _headers();
     final base = '${Env.apiProjectBaseUrl}/api/trainer/availability?branchId=$branchId';
-    final uri = Uri.parse(
+    final uri  = Uri.parse(
         trainerId != null ? '$base&trainerId=$trainerId' : base);
     try {
       final r = await _client.get(uri, headers: headers);
       debugPrint('GET AVAILABILITY: ${r.statusCode}');
-
       if (r.statusCode == 200) {
-        print(r.body); // raw response
-
         final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
-
-        print(list); // decoded list
-
-        final data = list
+        return list
             .map((e) => AvailabilityModel.fromJson(e as Map<String, dynamic>))
             .toList();
-
-        print(data); // mapped objects
-
-        return data;
       }
       _handleError(r);
     } catch (e) {
@@ -64,6 +66,17 @@ class AvailabilityHttpService {
     }
   }
 
+  // ── POST ──────────────────────────────────────────────────────────────────
+  //
+  // Body fields (all mapped from DB trainer_availability columns):
+  //   trainerId    → trainer_id
+  //   branchId     → branch_id
+  //   weekday      → weekday        (1=Mon … 7=Sun)
+  //   startTime    → start_time     ("HH:mm")
+  //   endTime      → end_time       ("HH:mm")
+  //   recurring    → is_recurring
+  //   specificDate → specific_date  (only when recurring = false)
+
   Future<AvailabilityModel> createSlot({
     required int trainerId,
     required int branchId,
@@ -71,18 +84,25 @@ class AvailabilityHttpService {
     required String startTime, // "HH:mm"
     required String endTime,
     bool recurring = true,
+    DateTime? specificDate,    // ← NEW: only non-null when recurring=false
   }) async {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/trainer/availability');
+
+    final body = <String, dynamic>{
+      'trainerId': trainerId,
+      'branchId':  branchId,
+      'weekday':   weekday,
+      'startTime': startTime,
+      'endTime':   endTime,
+      'recurring': recurring,
+      // Only include specificDate when non-null (non-recurring slot)
+      if (!recurring && specificDate != null)
+        'specificDate': _dateFmt.format(specificDate),
+    };
+
     try {
-      final r = await _client.post(uri, headers: headers, body: jsonEncode({
-        'trainerId': trainerId,
-        'branchId': branchId,
-        'weekday': weekday,
-        'startTime': startTime,
-        'endTime': endTime,
-        'recurring': recurring,
-      }));
+      final r = await _client.post(uri, headers: headers, body: jsonEncode(body));
       debugPrint('CREATE AVAILABILITY: ${r.statusCode}');
       if (r.statusCode == 200 || r.statusCode == 201) {
         return AvailabilityModel.fromJson(
@@ -94,6 +114,8 @@ class AvailabilityHttpService {
       throw NetworkException();
     }
   }
+
+  // ── DELETE ────────────────────────────────────────────────────────────────
 
   Future<void> deleteSlot(int availabilityId) async {
     final headers = await _headers();
