@@ -1371,4 +1371,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberQrRetry => 'إعادة المحاولة';
+
+  @override
+  String get accountMyInfo => 'معلوماتي';
+
+  @override
+  String get myInfoTitle => 'معلوماتي';
+
+  @override
+  String get myInfoSubtitle => 'حدّث معلومات ملفك الرياضي';
+
+  @override
+  String get myInfoPreferredBranch => 'الفرع المفضل';
+
+  @override
+  String get myInfoSelectBranch => 'اختر الفرع';
+
+  @override
+  String get myInfoGender => 'الجنس';
+
+  @override
+  String get myInfoGenderMale => 'ذكر';
+
+  @override
+  String get myInfoGenderFemale => 'أنثى';
+
+  @override
+  String get myInfoGenderOther => 'آخر';
+
+  @override
+  String get myInfoGenderPreferNotToSay => 'أفضل عدم الإجابة';
+
+  @override
+  String get myInfoDateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get myInfoSelectDateOfBirth => 'اختر تاريخ الميلاد';
+
+  @override
+  String get myInfoHeightCm => 'الطول (سم)';
+
+  @override
+  String get myInfoWeightKg => 'الوزن (كغ)';
+
+  @override
+  String get myInfoEmergencyContactName => 'اسم جهة الاتصال للطوارئ';
+
+  @override
+  String get myInfoEmergencyContactPhone => 'رقم جهة الاتصال للطوارئ';
+
+  @override
+  String get myInfoFullNameHint => 'الاسم الكامل';
+
+  @override
+  String get myInfoPhoneNumberHint => 'رقم الهاتف';
+
+  @override
+  String get myInfoSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get myInfoUpdatedSuccessfully => 'تم تحديث معلوماتي بنجاح';
+
+  @override
+  String get myInfoLoadError => 'فشل تحميل معلوماتك. حاول مرة أخرى.';
+
+  @override
+  String get myInfoSaveError => 'فشل حفظ معلوماتك. حاول مرة أخرى.';
+
+  @override
+  String get myInfoRequiredError => 'الفرع المفضل والجنس وتاريخ الميلاد مطلوبة.';
 }

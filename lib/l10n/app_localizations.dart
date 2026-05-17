@@ -1538,19 +1538,19 @@ abstract class AppLocalizations {
   /// No description provided for @memberSessionsLoading.
   ///
   /// In en, this message translates to:
-  /// **'Loading services...'**
+  /// **'Loading sessions...'**
   String get memberSessionsLoading;
 
   /// No description provided for @memberSessionsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No services available'**
+  /// **'No sessions available'**
   String get memberSessionsEmpty;
 
   /// No description provided for @memberSessionsError.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load services'**
+  /// **'Failed to load sessions'**
   String get memberSessionsError;
 
   /// No description provided for @memberSessionsFilterTitle.
@@ -2246,7 +2246,7 @@ abstract class AppLocalizations {
   /// No description provided for @ptPackageSessions.
   ///
   /// In en, this message translates to:
-  /// **'services'**
+  /// **'sessions'**
   String get ptPackageSessions;
 
   /// No description provided for @ptPackageDays.
@@ -2294,7 +2294,7 @@ abstract class AppLocalizations {
   /// No description provided for @ptPackageMaxSessionsReached.
   ///
   /// In en, this message translates to:
-  /// **'You cannot select more days than the package services'**
+  /// **'You cannot select more days than the package sessions'**
   String get ptPackageMaxSessionsReached;
 
   /// No description provided for @ptPackageDaysPerWeekRange.
@@ -2734,6 +2734,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get memberQrRetry;
+
+  /// No description provided for @accountMyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'My Info'**
+  String get accountMyInfo;
+
+  /// No description provided for @myInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Info'**
+  String get myInfoTitle;
+
+  /// No description provided for @myInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your gym profile information'**
+  String get myInfoSubtitle;
+
+  /// No description provided for @myInfoPreferredBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred Branch'**
+  String get myInfoPreferredBranch;
+
+  /// No description provided for @myInfoSelectBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Select branch'**
+  String get myInfoSelectBranch;
+
+  /// No description provided for @myInfoGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get myInfoGender;
+
+  /// No description provided for @myInfoGenderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get myInfoGenderMale;
+
+  /// No description provided for @myInfoGenderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get myInfoGenderFemale;
+
+  /// No description provided for @myInfoGenderOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get myInfoGenderOther;
+
+  /// No description provided for @myInfoGenderPreferNotToSay.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer not to say'**
+  String get myInfoGenderPreferNotToSay;
+
+  /// No description provided for @myInfoDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get myInfoDateOfBirth;
+
+  /// No description provided for @myInfoSelectDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date of birth'**
+  String get myInfoSelectDateOfBirth;
+
+  /// No description provided for @myInfoHeightCm.
+  ///
+  /// In en, this message translates to:
+  /// **'Height (cm)'**
+  String get myInfoHeightCm;
+
+  /// No description provided for @myInfoWeightKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (kg)'**
+  String get myInfoWeightKg;
+
+  /// No description provided for @myInfoEmergencyContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contact Name'**
+  String get myInfoEmergencyContactName;
+
+  /// No description provided for @myInfoEmergencyContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contact Phone'**
+  String get myInfoEmergencyContactPhone;
+
+  /// No description provided for @myInfoFullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get myInfoFullNameHint;
+
+  /// No description provided for @myInfoPhoneNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get myInfoPhoneNumberHint;
+
+  /// No description provided for @myInfoSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get myInfoSaveChanges;
+
+  /// No description provided for @myInfoUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'My Info updated successfully'**
+  String get myInfoUpdatedSuccessfully;
+
+  /// No description provided for @myInfoLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load your info. Please try again.'**
+  String get myInfoLoadError;
+
+  /// No description provided for @myInfoSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save your info. Please try again.'**
+  String get myInfoSaveError;
+
+  /// No description provided for @myInfoRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred branch, gender and date of birth are required.'**
+  String get myInfoRequiredError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

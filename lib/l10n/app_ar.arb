@@ -887,7 +887,30 @@
     }
   },
   "memberQrLoadError": "تعذر تحميل رمز الدخول",
-  "memberQrRetry": "إعادة المحاولة"
+  "memberQrRetry": "إعادة المحاولة",
+  "accountMyInfo": "معلوماتي",
+  "myInfoTitle": "معلوماتي",
+  "myInfoSubtitle": "حدّث معلومات ملفك الرياضي",
+  "myInfoPreferredBranch": "الفرع المفضل",
+  "myInfoSelectBranch": "اختر الفرع",
+  "myInfoGender": "الجنس",
+  "myInfoGenderMale": "ذكر",
+  "myInfoGenderFemale": "أنثى",
+  "myInfoGenderOther": "آخر",
+  "myInfoGenderPreferNotToSay": "أفضل عدم الإجابة",
+  "myInfoDateOfBirth": "تاريخ الميلاد",
+  "myInfoSelectDateOfBirth": "اختر تاريخ الميلاد",
+  "myInfoHeightCm": "الطول (سم)",
+  "myInfoWeightKg": "الوزن (كغ)",
+  "myInfoEmergencyContactName": "اسم جهة الاتصال للطوارئ",
+  "myInfoEmergencyContactPhone": "رقم جهة الاتصال للطوارئ",
+  "myInfoFullNameHint": "الاسم الكامل",
+  "myInfoPhoneNumberHint": "رقم الهاتف",
+  "myInfoSaveChanges": "حفظ التغييرات",
+  "myInfoUpdatedSuccessfully": "تم تحديث معلوماتي بنجاح",
+  "myInfoLoadError": "فشل تحميل معلوماتك. حاول مرة أخرى.",
+  "myInfoSaveError": "فشل حفظ معلوماتك. حاول مرة أخرى.",
+  "myInfoRequiredError": "الفرع المفضل والجنس وتاريخ الميلاد مطلوبة."
 
 }
 
