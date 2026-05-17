@@ -56,7 +56,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   // ─── navigation helpers ─────────────────────────────────────────────────────
 
   void _goHome() {
-    Navigator.of(context).pushNamedAndRemoveUntil('/user', (_) => false);
+    Navigator.pushReplacementNamed(context, AppRouter.roleCheck); // ← CORRECT
   }
 
   void _goAdmin() {
@@ -91,6 +91,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       listener: (ctx, state) async {
         switch (state.status) {
           case AuthStatus.authenticated:
+            if (!mounted) return;
+
             if (state.role == 'admin') {
               _goAdmin();
             } else {
@@ -98,10 +100,31 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             }
             break;
 
+          case AuthStatus.roleChoice:
+            if (!mounted) return;
+
+            final selectedRole = await _showRoleChoiceDialog(context);
+
+            if (!mounted) return;
+
+            if (selectedRole == null) {
+              // User dismissed the dialog. Keep them on login screen.
+              return;
+            }
+
+            context.read<AuthBloc>().add(AuthRoleChosen(selectedRole));
+            break;
+
           case AuthStatus.failure:
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
-                content: Text(_resolveError(state.errorCode, state.errorMessage, l)),
+                content: Text(
+                  _resolveError(
+                    state.errorCode,
+                    state.errorMessage,
+                    l,
+                  ),
+                ),
                 backgroundColor: c.error,
               ),
             );
@@ -582,7 +605,104 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       ),
     );
   }
+  /// Shows the role choice dialog when the same credentials are valid as:
+  /// - Admin / Owner
+  /// - Regular User
+  ///
+  /// Returns:
+  /// - 'admin'
+  /// - 'user'
+  /// - null if dismissed
+  Future<String?> _showRoleChoiceDialog(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final c = tokens.colors;
 
+    return showModalBottomSheet<String>(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 55),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 38),
+              decoration: BoxDecoration(
+                color: c.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: c.border.withOpacity(0.45),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  Text(
+                    l.authGateContinueAs,
+                    style: TextStyle(
+                      color: c.label,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  ListTile(
+                    leading: Icon(
+                      Icons.verified_user_outlined,
+                      color: c.primary,
+                    ),
+                    title: Text(
+                      l.authGateRoleAdminOwner,
+                      style: TextStyle(
+                        color: c.label,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    onTap: () => Navigator.pop(sheetContext, 'admin'),
+                  ),
+
+                  Divider(
+                    height: 1,
+                    color: c.border.withOpacity(0.25),
+                  ),
+
+                  ListTile(
+                    leading: Icon(
+                      Icons.person_outline,
+                      color: c.primary,
+                    ),
+                    title: Text(
+                      l.authGateRoleUser,
+                      style: TextStyle(
+                        color: c.label,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    onTap: () => Navigator.pop(sheetContext, 'user'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
   // ─── Error resolver ──────────────────────────────────────────────────────────
 
   String _resolveError(String? code, String? msg, AppLocalizations l) {

@@ -3,7 +3,7 @@
 //
 // PURPOSE:
 //   The brain of the admin classes feature. Receives events from the UI,
-//   calls use cases, emits states back to the UI.
+//   calls usecases, emits states back to the UI.
 //
 // FLOW PER EVENT:
 //   1. UI dispatches event (e.g. ClassesStarted)
@@ -27,7 +27,7 @@ import 'admin_classes_event.dart';
 import 'admin_classes_state.dart';
 class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
 
-  // All 6 use cases injected via constructor
+  // All 6 usecases injected via constructor
   final GetClassesByDateUseCase      _getClassesByDate;
   final GetClassFormOptionsUseCase   _getClassFormOptions;
   final CreateClassUseCase           _createClass;
@@ -161,8 +161,13 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     try {
       final bookings = await _getSessionBookings(event.sessionId);
       emit(SessionBookingsLoaded(event.sessionId, bookings));
-    } catch (e) {
-      emit(ClassActionError(event.sessionId, e.toString()));
+    } catch (e, stack) {
+      print('❌ SessionBookings error: $e');
+      print(stack);
+      emit(SessionBookingsError(
+        sessionId: event.sessionId,
+        message:   e.toString(), // show real error on screen too
+      ));
     }
   }
 

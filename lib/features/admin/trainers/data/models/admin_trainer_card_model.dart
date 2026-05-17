@@ -6,7 +6,7 @@ class AdminTrainerCardModel {
   final int     trainerId;
   final String  fullName;
   final String? email;  // ← ADD
-  final String? phone;
+  final String? phone;          // ← must be String?
   final String? profileFileId;       // nullable — avatar
   final List<String> specialties;
   final double  avgRating;
@@ -29,7 +29,7 @@ class AdminTrainerCardModel {
 
   factory AdminTrainerCardModel.fromJson(Map<String, dynamic> json) =>
       AdminTrainerCardModel(
-        trainerId:           json['trainerId']           as int,
+        trainerId:           json['userId']           as int,
         fullName:            json['fullName']            as String,
         email:               json['email']               as String?,  // ← ADD
         phone:               json['phone']               as String?,  // ← ADD

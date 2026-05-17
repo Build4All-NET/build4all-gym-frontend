@@ -11,8 +11,8 @@ import '../../domain/entities/admin_branch_option_entity.dart';
 import '../../domain/usecases/admin_plans_usecases.dart';
 import '../../data/services/admin_plans_remote_service.dart';
 import '../../data/repositories/admin_plans_repository_impl.dart';
-import '../../data/models/createplanrequestmodel.dart';
-import '../../data/models/updateplanrequestmodel.dart';
+import '../../data/models/CreatePlanRequestModel.dart';
+import '../../data/models/UpdatePlanRequestModel.dart';
 import '../bloc/plan_form/plan_form_bloc.dart';
 
 class PlanFormBottomSheet {

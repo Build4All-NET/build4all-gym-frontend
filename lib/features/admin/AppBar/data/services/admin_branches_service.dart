@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/shared/data/services/admin_branches_service.dart
 //
 // CHANGE: GET /api/admin/branches  →  GET /api/admin/branches/options
@@ -13,6 +13,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -20,15 +21,19 @@ import '../../../../auth/data/services/admin_token_store.dart';
 import '../models/branch_option_model.dart';
 
 class AdminBranchesService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   AdminBranchesService() : _tokenStore = const AdminTokenStore();
 
   Future<Map<String, String>> _headers() async {
     final token = await _tokenStore.getToken();
-    if (token == null || token.trim().isEmpty) throw UnauthorizedException();
+    // Do not throw here when token is absent — AuthedHttpClient injects the
+    // best available token (runtime global → admin store → user store).
+    // If the backend still returns 401, _handleStatus will throw correctly.
     return {
-      'Authorization':           'Bearer $token',
+      if (token != null && token.trim().isNotEmpty)
+        'Authorization': 'Bearer $token',
       'Content-Type':            'application/json',
       'X-Owner-Project-Link-Id': Env.ownerProjectLinkId,
     };
@@ -53,7 +58,7 @@ class AdminBranchesService {
         '${Env.apiProjectBaseUrl}/api/admin/branches/options');
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
 
       final rawList = jsonDecode(response.body) as List<dynamic>;

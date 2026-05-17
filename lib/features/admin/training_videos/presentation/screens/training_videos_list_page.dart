@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/training_videos_bloc.dart';
 import '../bloc/training_videos_event.dart';
 import '../bloc/training_videos_state.dart';
@@ -12,11 +14,11 @@ class TrainingVideosListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => context.read<TrainingVideosBloc>()
-        ..add(LoadTrainingVideos()),
-      child: const _TrainingVideosListView(),
-    );
+    // The BLoC is already provided by the router (app_router.dart) and
+    // LoadTrainingVideos() is already dispatched there. Do NOT wrap again
+    // with BlocProvider here — that would double-dispatch and risk
+    // closing the shared BLoC on dispose.
+    return const _TrainingVideosListView();
   }
 }
 
@@ -25,10 +27,20 @@ class _TrainingVideosListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.watch<AdminProfileCubit>().state;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Training Videos'),
         centerTitle: false,
+      ),
+      drawer: AdminNavigationDrawer(
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
+        initialActiveId: 'training_videos',
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push(
@@ -137,7 +149,15 @@ class _LoadedBody extends StatelessWidget {
         else
           SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (context, index) => VideoCard(video: state.videos[index]),
+                  (context, index) {
+                final video = state.videos[index];
+                // Look up category name from the loaded categories list
+                final categoryName = state.categories
+                    .where((c) => c.categoryId == video.categoryId)
+                    .map((c) => c.name)
+                    .firstOrNull;
+                return VideoCard(video: video, categoryName: categoryName);
+              },
               childCount: state.videos.length,
             ),
           ),

@@ -1032,4 +1032,343 @@ class AppLocalizationsAr extends AppLocalizations {
   String accountMemberSince(String date) {
     return 'عضو منذ $date';
   }
+
+  @override
+  String get ptBookingChooseDate => 'اختر التاريخ';
+
+  @override
+  String get ptBookingChooseTime => 'اختر الوقت';
+
+  @override
+  String get ptBookingNoSlotsForDate => 'لا توجد أوقات متاحة لهذا التاريخ.';
+
+  @override
+  String get ptDetailSession => 'جلسة';
+
+  @override
+  String get ptTrainingVideosTitle => 'فيديوهات تدريبية';
+
+  @override
+  String get ptTrainingVideosEmpty => 'لا توجد فيديوهات تدريبية بعد.';
+
+  @override
+  String get ptTrainingVideosMissingUrl => 'رابط الفيديو غير موجود.';
+
+  @override
+  String get ptTrainingVideosOpenError => 'تعذر فتح هذا الفيديو.';
+
+  @override
+  String get ptTrainerDetailsNotFound => 'لم يتم العثور على تفاصيل المدرب.';
+
+  @override
+  String get ptFavoriteUpdateFailed => 'تعذر تحديث المفضلة.';
+
+  @override
+  String get ptConfirmBooking => 'تأكيد الحجز';
+
+  @override
+  String ptBookingSelected(String date, String time) {
+    return 'تم اختيار الحجز: $date الساعة $time';
+  }
+
+  @override
+  String get ptBookingSummary => 'ملخص الحجز';
+
+  @override
+  String get ptBookingTrainer => 'المدرب:';
+
+  @override
+  String get ptBookingDate => 'التاريخ:';
+
+  @override
+  String get ptBookingTime => 'الوقت:';
+
+  @override
+  String get ptBookingTotalAmount => 'المبلغ الإجمالي:';
+
+  @override
+  String get ptBookingSuccess => 'تم تأكيد الحجز بنجاح.';
+
+  @override
+  String get ptSlotAlreadyBooked => 'لقد حجزت هذا الموعد مسبقاً.';
+
+  @override
+  String get ptPackageChoosePackage => 'اختر الباقة';
+
+  @override
+  String get ptPackageChooseDays => 'اختر الأيام';
+
+  @override
+  String get ptPackageChooseTime => 'اختر الوقت';
+
+  @override
+  String get ptPackageBookingSummary => 'ملخص الحجز';
+
+  @override
+  String get ptPackageConfirmBooking => 'تأكيد الحجز';
+
+  @override
+  String get ptPackageBookingSuccess => 'تم تأكيد حجز الباقة بنجاح.';
+
+  @override
+  String get ptPackageBookingFailed => 'تعذر تأكيد حجز الباقة.';
+
+  @override
+  String get ptPackageNoPackages => 'لا توجد باقات متاحة حالياً';
+
+  @override
+  String get ptPackageSessions => 'جلسات';
+
+  @override
+  String get ptPackageDays => 'أيام';
+
+  @override
+  String get ptPackageFinalPrice => 'السعر النهائي';
+
+  @override
+  String get ptPackageOriginalPrice => 'السعر الأصلي';
+
+  @override
+  String get ptPackageSalePrice => 'سعر الخصم';
+
+  @override
+  String get ptPackageSelectedPackage => 'الباقة المختارة';
+
+  @override
+  String get ptPackageSelectedDays => 'الأيام المختارة';
+
+  @override
+  String get ptPackageSelectedTime => 'الوقت المختار';
+
+  @override
+  String get ptPackageMaxSessionsReached => 'لا يمكنك اختيار أيام أكثر من عدد جلسات الباقة';
+
+  @override
+  String ptPackageDaysPerWeekRange(int min, int max) {
+    return 'Choose $min to $max days per week';
+  }
+
+  @override
+  String ptPackageDaysPerWeekExact(int count) {
+    return 'Choose $count day(s) per week';
+  }
+
+  @override
+  String ptPackageMaxDaysReached(int max) {
+    return 'You cannot select more than $max days per week';
+  }
+
+  @override
+  String get ptPackageNoAvailableSlots => 'لا توجد أوقات متاحة';
+
+  @override
+  String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
+
+  @override
+  String get editProfileTitle => 'تعديل الملف الشخصي';
+
+  @override
+  String get editProfileSubtitle => 'قم بتحديث معلوماتك الشخصية';
+
+  @override
+  String get editProfileFullName => 'الاسم الكامل';
+
+  @override
+  String get editProfileEmail => 'البريد الإلكتروني';
+
+  @override
+  String get editProfilePhone => 'رقم الهاتف';
+
+  @override
+  String get editProfileDateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get editProfileAddress => 'العنوان';
+
+  @override
+  String get editProfileGender => 'الجنس';
+
+  @override
+  String get editProfileMale => 'ذكر';
+
+  @override
+  String get editProfileFemale => 'أنثى';
+
+  @override
+  String get editProfileSave => 'حفظ التغييرات';
+
+  @override
+  String get editProfileCancel => 'إلغاء';
+
+  @override
+  String get editProfileNameRequired => 'الاسم مطلوب';
+
+  @override
+  String get editProfileEmailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get editProfileInvalidEmail => 'البريد الإلكتروني غير صالح';
+
+  @override
+  String get accountGender => 'الجنس';
+
+  @override
+  String get accountGenderMale => 'ذكر';
+
+  @override
+  String get accountGenderFemale => 'أنثى';
+
+  @override
+  String get editProfileFirstName => 'الاسم الأول';
+
+  @override
+  String get editProfileLastName => 'اسم العائلة';
+
+  @override
+  String get editProfileUsername => 'اسم المستخدم';
+
+  @override
+  String get editProfileChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get editProfileCurrentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get editProfileNewPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get editProfileRequired => 'هذا الحقل مطلوب.';
+
+  @override
+  String get editProfileUsernameRequired => 'اسم المستخدم مطلوب.';
+
+  @override
+  String get editProfileEmailRequiredMessage => 'البريد الإلكتروني مطلوب.';
+
+  @override
+  String get editProfileInvalidEmailMessage => 'البريد الإلكتروني غير صالح.';
+
+  @override
+  String get editProfilePhoneRequired => 'رقم الهاتف مطلوب.';
+
+  @override
+  String get editProfileCurrentPasswordRequired => 'كلمة المرور الحالية مطلوبة.';
+
+  @override
+  String get editProfileNewPasswordRequired => 'كلمة المرور الجديدة مطلوبة.';
+
+  @override
+  String get editProfilePasswordTooShort => 'يجب أن تكون كلمة المرور الجديدة 6 أحرف على الأقل.';
+
+  @override
+  String get editProfilePasswordSameAsCurrent => 'يجب أن تكون كلمة المرور الجديدة مختلفة عن الحالية.';
+
+  @override
+  String get editProfileInvalidOwnerProject => 'معرّف التطبيق غير صالح.';
+
+  @override
+  String get editProfileEmailVerified => 'تم تأكيد البريد الإلكتروني بنجاح.';
+
+  @override
+  String get editProfilePasswordUpdated => 'تم تحديث كلمة المرور بنجاح.';
+
+  @override
+  String get editProfileOnlyLetters => 'يسمح فقط بالأحرف والمسافات.';
+
+  @override
+  String get editProfileVerifyNewEmail => 'تأكيد البريد الإلكتروني الجديد';
+
+  @override
+  String get editProfileVerifyPasswordChange => 'تأكيد تغيير كلمة المرور';
+
+  @override
+  String get editProfileCodeSentTo => 'تم إرسال الرمز إلى';
+
+  @override
+  String get editProfileVerificationCode => 'رمز التحقق';
+
+  @override
+  String get editProfileResend => 'إعادة الإرسال';
+
+  @override
+  String get editProfileVerify => 'تحقق';
+
+  @override
+  String get editProfileCodeRequired => 'رمز التحقق مطلوب.';
+
+  @override
+  String get ptBookingRequestSuccess => 'تم إرسال الطلب إلى المدرب. بانتظار الموافقة.';
+
+  @override
+  String get ptBookingRequestThisTime => 'طلب هذا الوقت';
+
+  @override
+  String get ptBookingBookSession => 'حجز الجلسة';
+
+  @override
+  String get ptBookingRequestNote => 'طلب العضو وقت تدريب غير متاح أو ممتلئ';
+
+  @override
+  String get ptBookingFullOrUnavailable => 'هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.';
+
+  @override
+  String get ptBookingFailed => 'تعذر تأكيد الحجز.';
+
+  @override
+  String get ptBookingRequestFailed => 'تعذر إرسال الطلب.';
+
+  @override
+  String get memberQrTitle => 'رمز الدخول';
+
+  @override
+  String get memberQrSubtitle => 'امسح الرمز عند الدخول للنادي';
+
+  @override
+  String get memberQrActiveMembership => 'عضوية نشطة';
+
+  @override
+  String get memberQrInactiveMembership => 'عضوية غير نشطة';
+
+  @override
+  String get memberQrMemberCodeLabel => 'رقم العضوية';
+
+  @override
+  String get memberQrPackageFallback => 'لا توجد باقة';
+
+  @override
+  String get memberQrValidUntil => 'صالح حتى';
+
+  @override
+  String get memberQrExpiresSoon => 'سينتهي الرمز قريباً';
+
+  @override
+  String get memberQrRecentVisits => 'آخر الزيارات';
+
+  @override
+  String get memberQrNoRecentVisits => 'لا توجد زيارات سابقة';
+
+  @override
+  String get memberQrDurationLabel => 'المدة';
+
+  @override
+  String get memberQrToday => 'اليوم';
+
+  @override
+  String get memberQrYesterday => 'أمس';
+
+  @override
+  String memberQrMinute(int count) {
+    return '$count دقيقة';
+  }
+
+  @override
+  String memberQrHour(String count) {
+    return '$count ساعة';
+  }
+
+  @override
+  String get memberQrLoadError => 'تعذر تحميل رمز الدخول';
+
+  @override
+  String get memberQrRetry => 'إعادة المحاولة';
 }

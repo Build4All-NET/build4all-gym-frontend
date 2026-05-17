@@ -4,7 +4,7 @@
 // Abstract contract. The domain layer depends on this interface — never on
 // the impl. Dependency inversion: high-level policy, low-level detail.
 //
-// The use cases accept models from the data layer for request payloads because
+// The usecases accept models from the data layer for request payloads because
 // those models carry the toJson() logic that the service needs. If you want
 // pure domain, introduce request domain objects — for now the team uses models
 // as the request payload (same pattern as the rest of the project).

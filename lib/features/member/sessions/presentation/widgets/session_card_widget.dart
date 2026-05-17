@@ -141,10 +141,7 @@ class SessionCardWidget extends StatelessWidget {
                           const SizedBox(width: 3),
                           Flexible(
                             child: Text(
-                              session.roomName == null ||
-                                  session.roomName!.isEmpty
-                                  ? '-'
-                                  : session.roomName!,
+                              _locationText(session),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: tokens.typography.bodySmall.copyWith(
@@ -265,6 +262,24 @@ class SessionCardWidget extends StatelessWidget {
       child:
       Icon(Icons.fitness_center, color: tokens.colors.primary, size: 34),
     );
+  }
+  String _locationText(SessionCardEntity session) {
+    final branch = session.branchName?.trim();
+    final room = session.roomName?.trim();
+
+    if (branch != null && branch.isNotEmpty && room != null && room.isNotEmpty) {
+      return '$branch · $room';
+    }
+
+    if (branch != null && branch.isNotEmpty) {
+      return branch;
+    }
+
+    if (room != null && room.isNotEmpty) {
+      return room;
+    }
+
+    return '-';
   }
 
   Color _difficultyColor(BuildContext context, String level) {

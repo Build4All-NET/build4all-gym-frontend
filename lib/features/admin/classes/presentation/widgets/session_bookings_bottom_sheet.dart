@@ -86,18 +86,23 @@ class SessionBookingsBottomSheet extends StatelessWidget {
           Divider(height: 1, color: c.border.withOpacity(0.15)),
 
           // ── Body ─────────────────────────────────────────────────────────
+          // session_bookings_bottom_sheet.dart  ── Body section only
+
           Expanded(
             child: BlocBuilder<AdminClassesBloc, AdminClassesState>(
+              // ✅ Only rebuild for booking states that belong to THIS session
+              buildWhen: (previous, current) =>
+              (current is SessionBookingsLoading && current.sessionId == sessionId) ||
+                  (current is SessionBookingsLoaded  && current.sessionId == sessionId) ||
+                  (current is SessionBookingsError   && current.sessionId == sessionId),
               builder: (context, state) {
 
-                if (state is SessionBookingsLoading &&
-                    state.sessionId == sessionId) {
+                if (state is SessionBookingsLoading) {
                   return Center(
                       child: CircularProgressIndicator(color: c.primary));
                 }
 
-                if (state is SessionBookingsLoaded &&
-                    state.sessionId == sessionId) {
+                if (state is SessionBookingsLoaded) {
                   final bookings = state.bookings;
 
                   return Column(
@@ -114,22 +119,19 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       Expanded(
                         child: bookings.isEmpty
                             ? Center(
-                          child: Text(
-                            'No bookings yet',
-                            style: TextStyle(color: c.muted, fontSize: 15),
-                          ),
+                          child: Text('No bookings yet',
+                              style: TextStyle(color: c.muted, fontSize: 15)),
                         )
                             : ListView.separated(
                           padding:          EdgeInsets.zero,
                           itemCount:        bookings.length,
                           separatorBuilder: (_, __) => Divider(
-                              height:  1,
-                              indent:  72,
-                              color:   c.border.withOpacity(0.15)),
+                              height: 1,
+                              indent: 72,
+                              color:  c.border.withOpacity(0.15)),
                           itemBuilder: (context, index) =>
                               _MemberRow(booking: bookings[index]),
                         ),
@@ -138,7 +140,16 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                   );
                 }
 
-                return const SizedBox.shrink();
+                // SessionBookingsError or initial state before first event lands
+                if (state is SessionBookingsError) {
+                  return Center(
+                    child: Text(state.message,
+                        style: TextStyle(color: c.danger, fontSize: 14)),
+                  );
+                }
+
+                return Center(
+                    child: CircularProgressIndicator(color: c.primary)); // safe fallback
               },
             ),
           ),
@@ -210,7 +221,7 @@ class _MemberRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  booking.phone,
+                  booking.phone?.isNotEmpty == true ? booking.phone! : 'No phone',
                   style: TextStyle(fontSize: 12, color: c.muted),
                 ),
               ],

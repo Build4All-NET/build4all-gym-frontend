@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../screens/trainer_detail_screen.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/trainer_card_entity.dart';
@@ -83,13 +83,41 @@ class TrainerCardWidget extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           trainer.specialties.join('، '),
-                          textAlign:
-                          isRtl ? TextAlign.right : TextAlign.left,
+                          textAlign: isRtl ? TextAlign.right : TextAlign.left,
                           style: tokens.typography.bodySmall.copyWith(
                             color: tokens.colors.muted,
                             fontSize: 13,
                           ),
                         ),
+
+                        if (trainer.branchName != null && trainer.branchName!.trim().isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                            children: [
+                              Icon(
+                                Icons.location_on_rounded,
+                                size: 14,
+                                color: tokens.colors.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  trainer.branchName!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                                  style: tokens.typography.bodySmall.copyWith(
+                                    color: tokens.colors.body,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -158,8 +186,18 @@ class TrainerCardWidget extends StatelessWidget {
                 width: double.infinity,
                 height: tokens.button.height,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to PT booking screen
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => TrainerDetailScreen(
+                          trainerId: trainer.trainerId,
+                        ),
+                      ),
+                    );
+
+                    if (!context.mounted) return;
+
+                    context.read<MemberPtBloc>().add(const TrainersStarted());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: tokens.colors.primary,

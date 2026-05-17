@@ -3,8 +3,8 @@ import '../../domain/entities/admin_plan_list_item_entity.dart';
 import '../../domain/entities/admin_branch_option_entity.dart';
 import '../../domain/repositories/admin_plans_repository.dart';
 import '../services/admin_plans_remote_service.dart';
-import '../models/createplanrequestmodel.dart';
-import '../models/updateplanrequestmodel.dart';
+import '../models/CreatePlanRequestModel.dart';
+import '../models/UpdatePlanRequestModel.dart';
 
 class AdminPlansRepositoryImpl implements AdminPlansRepository {
   final AdminPlansRemoteDatasource remoteDatasource;

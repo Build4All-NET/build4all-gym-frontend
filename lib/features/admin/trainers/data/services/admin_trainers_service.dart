@@ -1,8 +1,9 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/trainers/data/services/admin_trainers_service.dart
 // ─────────────────────────────────────────────────────────────────────────────
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
@@ -14,6 +15,7 @@ import '../models/trainer_form_options_model.dart';
 import '../models/update_trainer_request_model.dart';
 
 class AdminTrainersService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   AdminTrainersService() : _tokenStore = const AdminTokenStore();
@@ -35,7 +37,7 @@ class AdminTrainersService {
     throw ServerException(message: 'HTTP ${r.statusCode}: ${r.body}');
   }
 
-  // ── GET /api/admin/trainers ───────────────────────────────────────────────
+  // ── GET /api/admin/gym-trainers ───────────────────────────────────────────────
   Future<AdminTrainerListResponseModel> getTrainers({
     int?    branchId,
     String? search,
@@ -48,14 +50,18 @@ class AdminTrainersService {
     if (specialtyFilter != null && specialtyFilter.isNotEmpty)
       params['specialty'] = specialtyFilter;
 
-    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/trainers')
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/gym-trainers')
         .replace(queryParameters: params.isEmpty ? null : params);
 
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
+      print('🔍 getTrainers status: ${r.statusCode} body: ${r.body}'); // ← here
+
       _handleStatus(r);
       return AdminTrainerListResponseModel.fromJson(jsonDecode(r.body));
     } catch (e) {
+      print('❌ getTrainers exception: ${e.runtimeType} — $e'); // ← not e.statusCode
+
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
       throw NetworkException();
     }
@@ -66,7 +72,7 @@ class AdminTrainersService {
     final headers = await _headers();
     final uri     = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/trainers/form-options');
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       _handleStatus(r);
       return TrainerFormOptionsModel.fromJson(
           jsonDecode(r.body) as Map<String, dynamic>);
@@ -81,7 +87,7 @@ class AdminTrainersService {
     final headers = await _headers();
     final uri     = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/trainers');
     try {
-      final r = await http.post(uri,
+      final r = await _client.post(uri,
           headers: headers, body: jsonEncode(request.toJson()));
       _handleStatus(r);
       final json = jsonDecode(r.body) as Map<String, dynamic>;
@@ -98,7 +104,7 @@ class AdminTrainersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/trainers/$trainerId');
     try {
-      final r = await http.put(uri,
+      final r = await _client.put(uri,
           headers: headers, body: jsonEncode(request.toJson()));
       _handleStatus(r);
     } catch (e) {
@@ -113,7 +119,7 @@ class AdminTrainersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/trainers/$trainerId/block');
     try {
-      final r = await http.patch(uri, headers: headers);
+      final r = await _client.patch(uri, headers: headers);
       _handleStatus(r);
       // BE returns new status as { "status": "BLOCKED" } or "ACTIVE"
       final json = jsonDecode(r.body) as Map<String, dynamic>;
@@ -132,12 +138,58 @@ class AdminTrainersService {
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/trainers/$trainerId/detail');
     try {
-      final r = await http.get(uri, headers: headers);
+      final r = await _client.get(uri, headers: headers);
       _handleStatus(r);
       return AdminTrainerDetailModel.fromJson(
           jsonDecode(r.body) as Map<String, dynamic>);
     } catch (e) {
       if (e is UnauthorizedException || e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+// PATCH for: lib/features/admin/trainers/data/services/admin_trainers_service.dart
+//
+// ADD this method at the bottom of the AdminTrainersService class,
+// just before the closing brace.
+//
+// It calls POST /api/admin/members/{userId}/gym-role
+// — the endpoint we already built in AdminMemberRoleController.java.
+// ─────────────────────────────────────────────────────────────────────────────
+
+  // ── POST /api/admin/members/{userId}/trainer-config ──────────────────────
+  Future<void> configureTrainer(int userId, Map<String, dynamic> body) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/admin/members/$userId/trainer-config',
+    );
+    try {
+      final r = await _client.post(uri, headers: headers, body: jsonEncode(body));
+      _handleStatus(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── POST /api/admin/members/{userId}/gym-role ─────────────────────────────
+  Future<void> assignGymRole(int userId, String role) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/admin/members/$userId/gym-role',
+    );
+    try {
+      final r = await _client.post(
+        uri,
+        headers: headers,
+        body: jsonEncode({'role': role}),
+      );
+      _handleStatus(r);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
           e is ServerException) rethrow;
       throw NetworkException();
     }

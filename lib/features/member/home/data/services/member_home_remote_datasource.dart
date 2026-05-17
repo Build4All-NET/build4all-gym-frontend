@@ -9,7 +9,8 @@ import 'package:build4allgym/core/exceptions/network_exception.dart';
 import 'package:build4allgym/core/exceptions/server_exception.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:build4allgym/core/network/authed_http_client.dart';
+import 'package:flutter/foundation.dart';
 import '../models/body_metric_model.dart';
 import '../models/member_home_model.dart';
 
@@ -64,7 +65,7 @@ class MemberHomeRemoteDatasource {
   MemberHomeRemoteDatasource({
     http.Client? client,
     required AuthTokenStore tokenStore,
-  })  : _client = client ?? http.Client(),
+  })  : _client = client ?? AuthedHttpClient(),
         _tokenStore = tokenStore;
 
   // Base URL is read from environment config.
@@ -87,7 +88,11 @@ class MemberHomeRemoteDatasource {
         'Content-Type': 'application/json',
       },
     );
-
+// DEBUG: print the real backend response.
+// This tells us if the backend returns 200, 401, 403, 500, or bad data.
+    debugPrint('[MemberHome] GET /api/member/home');
+    debugPrint('[MemberHome] Status code: ${response.statusCode}');
+    debugPrint('[MemberHome] Body: ${response.body}');
     final decoded = _safeJson(response.body);
 
     if (response.statusCode >= 400) {

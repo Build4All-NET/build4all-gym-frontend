@@ -6,7 +6,7 @@
 //   This one says "send a reset OTP to this email".
 //
 // WHY HAVE A USE CASE AT ALL:
-//   The BLoC could call the repositories directly, but use cases let you add
+//   The BLoC could call the repositories directly, but usecases let you add
 //   business logic (e.g. email validation, rate limiting) in one place without
 //   touching the BLoC or the repositories.
 //

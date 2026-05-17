@@ -801,5 +801,157 @@
         "type": "String"
       }
     }
-  }
+  },
+  "ptBookingChooseDate": "Choose Date",
+  "ptBookingChooseTime": "Choose Time",
+  "ptBookingNoSlotsForDate": "No available slots for this date.",
+  "ptDetailSession": "session",
+  "ptTrainingVideosTitle": "Training Videos",
+  "ptTrainingVideosEmpty": "No training videos yet.",
+  "ptTrainingVideosMissingUrl": "Video URL is missing.",
+  "ptTrainingVideosOpenError": "Could not open this video.",
+  "ptTrainerDetailsNotFound": "Trainer details not found.",
+  "ptFavoriteUpdateFailed": "Failed to update favorite.",
+  "ptConfirmBooking": "Confirm Booking",
+  "ptBookingSelected": "Booking selected: {date} at {time}",
+  "@ptBookingSelected": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+    "ptBookingSummary": "Booking summary",
+    "ptBookingTrainer": "Trainer:",
+    "ptBookingDate": "Date:",
+    "ptBookingTime": "Time:",
+    "ptBookingTotalAmount": "Total amount:",
+    "ptBookingSuccess": "Booking confirmed successfully.",
+    "ptSlotAlreadyBooked": "You already booked this time slot.",
+    "ptPackageChoosePackage": "Choose package",
+    "ptPackageChooseDays": "Choose days",
+    "ptPackageChooseTime": "Choose time",
+    "ptPackageBookingSummary": "Booking summary",
+    "ptPackageConfirmBooking": "Confirm booking",
+    "ptPackageBookingSuccess": "Package booking confirmed successfully.",
+    "ptPackageBookingFailed": "Could not confirm package booking.",
+    "ptPackageNoPackages": "No packages available right now",
+    "ptPackageSessions": "sessions",
+    "ptPackageDays": "days",
+    "ptPackageFinalPrice": "Final price",
+    "ptPackageOriginalPrice": "Original price",
+    "ptPackageSalePrice": "Sale price",
+    "ptPackageSelectedPackage": "Selected package",
+    "ptPackageSelectedDays": "Selected days",
+    "ptPackageSelectedTime": "Selected time",
+    "ptPackageMaxSessionsReached": "You cannot select more days than the package sessions",
+
+    "ptPackageDaysPerWeekRange": "Choose {min} to {max} days per week",
+    "@ptPackageDaysPerWeekRange": {
+      "placeholders": {
+        "min": { "type": "int" },
+        "max": { "type": "int" }
+      }
+    },
+
+    "ptPackageDaysPerWeekExact": "Choose {count} day(s) per week",
+    "@ptPackageDaysPerWeekExact": {
+      "placeholders": {
+        "count": { "type": "int" }
+      }
+    },
+
+    "ptPackageMaxDaysReached": "You cannot select more than {max} days per week",
+    "@ptPackageMaxDaysReached": {
+      "placeholders": {
+        "max": { "type": "int" }
+      }
+    },
+    "ptPackageNoAvailableSlots": "No available times",
+    "ptWeeklySlotsFailed": "Could not load available times",
+    "editProfileTitle": "Edit Profile",
+    "editProfileSubtitle": "Update your personal information",
+    "editProfileFullName": "Full Name",
+    "editProfileEmail": "Email",
+    "editProfilePhone": "Phone Number",
+    "editProfileDateOfBirth": "Date of Birth",
+    "editProfileAddress": "Address",
+    "editProfileGender": "Gender",
+    "editProfileMale": "Male",
+    "editProfileFemale": "Female",
+    "editProfileSave": "Save Changes",
+    "editProfileCancel": "Cancel",
+    "editProfileNameRequired": "Name is required",
+    "editProfileEmailRequired": "Email is required",
+    "editProfileInvalidEmail": "Invalid email address",
+    "accountGender": "Gender",
+    "accountGenderMale": "Male",
+    "accountGenderFemale": "Female",
+    "editProfileFirstName": "First Name",
+    "editProfileLastName": "Last Name",
+    "editProfileUsername": "Username",
+    "editProfileChangePassword": "Change Password",
+    "editProfileCurrentPassword": "Current Password",
+    "editProfileNewPassword": "New Password",
+
+    "editProfileRequired": "Required.",
+    "editProfileUsernameRequired": "Username is required.",
+    "editProfileEmailRequiredMessage": "Email is required.",
+    "editProfileInvalidEmailMessage": "Invalid email address.",
+    "editProfilePhoneRequired": "Phone number is required.",
+    "editProfileCurrentPasswordRequired": "Current password is required.",
+    "editProfileNewPasswordRequired": "New password is required.",
+    "editProfilePasswordTooShort": "New password must be at least 6 characters.",
+    "editProfilePasswordSameAsCurrent": "New password must be different from current password.",
+    "editProfileInvalidOwnerProject": "Invalid owner project link id.",
+    "editProfileEmailVerified": "Email verified successfully.",
+    "editProfilePasswordUpdated": "Password updated successfully.",
+    "editProfileOnlyLetters": "Only letters and spaces are allowed.",
+    "editProfileVerifyNewEmail": "Verify new email",
+    "editProfileVerifyPasswordChange": "Verify password change",
+    "editProfileCodeSentTo": "Code sent to",
+    "editProfileVerificationCode": "Verification code",
+    "editProfileResend": "Resend",
+    "editProfileVerify": "Verify",
+    "editProfileCodeRequired": "Verification code is required.",
+
+      "ptBookingSuccess": "Booking confirmed successfully.",
+      "ptBookingRequestSuccess": "Request sent to PT. Waiting for approval.",
+      "ptBookingRequestThisTime": "Request this time",
+      "ptBookingBookSession": "Book session",
+      "ptBookingRequestNote": "Member requested unavailable/full PT time",
+      "ptBookingFullOrUnavailable": "This slot is full or unavailable. Send a request instead.",
+      "ptBookingFailed": "Unable to confirm booking.",
+      "ptBookingRequestFailed": "Unable to send request.",
+  "memberQrTitle": "Entry QR Code",
+  "memberQrSubtitle": "Scan this code at the gym entrance",
+  "memberQrActiveMembership": "Active membership",
+  "memberQrInactiveMembership": "Inactive membership",
+  "memberQrMemberCodeLabel": "Member code",
+  "memberQrPackageFallback": "No package",
+  "memberQrValidUntil": "Valid until",
+  "memberQrExpiresSoon": "QR expires soon",
+  "memberQrRecentVisits": "Recent visits",
+  "memberQrNoRecentVisits": "No previous visits",
+  "memberQrDurationLabel": "Duration",
+  "memberQrToday": "Today",
+  "memberQrYesterday": "Yesterday",
+  "memberQrMinute": "{count} min",
+  "@memberQrMinute": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memberQrHour": "{count} h",
+  "@memberQrHour": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "memberQrLoadError": "Could not load QR data",
+  "memberQrRetry": "Retry"
+
 }

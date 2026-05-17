@@ -1538,19 +1538,19 @@ abstract class AppLocalizations {
   /// No description provided for @memberSessionsLoading.
   ///
   /// In en, this message translates to:
-  /// **'Loading sessions...'**
+  /// **'Loading services...'**
   String get memberSessionsLoading;
 
   /// No description provided for @memberSessionsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No sessions available'**
+  /// **'No services available'**
   String get memberSessionsEmpty;
 
   /// No description provided for @memberSessionsError.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load sessions'**
+  /// **'Failed to load services'**
   String get memberSessionsError;
 
   /// No description provided for @memberSessionsFilterTitle.
@@ -2080,6 +2080,660 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Member since {date}'**
   String accountMemberSince(String date);
+
+  /// No description provided for @ptBookingChooseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Date'**
+  String get ptBookingChooseDate;
+
+  /// No description provided for @ptBookingChooseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Time'**
+  String get ptBookingChooseTime;
+
+  /// No description provided for @ptBookingNoSlotsForDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No available slots for this date.'**
+  String get ptBookingNoSlotsForDate;
+
+  /// No description provided for @ptDetailSession.
+  ///
+  /// In en, this message translates to:
+  /// **'session'**
+  String get ptDetailSession;
+
+  /// No description provided for @ptTrainingVideosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training Videos'**
+  String get ptTrainingVideosTitle;
+
+  /// No description provided for @ptTrainingVideosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No training videos yet.'**
+  String get ptTrainingVideosEmpty;
+
+  /// No description provided for @ptTrainingVideosMissingUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Video URL is missing.'**
+  String get ptTrainingVideosMissingUrl;
+
+  /// No description provided for @ptTrainingVideosOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this video.'**
+  String get ptTrainingVideosOpenError;
+
+  /// No description provided for @ptTrainerDetailsNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer details not found.'**
+  String get ptTrainerDetailsNotFound;
+
+  /// No description provided for @ptFavoriteUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update favorite.'**
+  String get ptFavoriteUpdateFailed;
+
+  /// No description provided for @ptConfirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Booking'**
+  String get ptConfirmBooking;
+
+  /// No description provided for @ptBookingSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking selected: {date} at {time}'**
+  String ptBookingSelected(String date, String time);
+
+  /// No description provided for @ptBookingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking summary'**
+  String get ptBookingSummary;
+
+  /// No description provided for @ptBookingTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer:'**
+  String get ptBookingTrainer;
+
+  /// No description provided for @ptBookingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date:'**
+  String get ptBookingDate;
+
+  /// No description provided for @ptBookingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time:'**
+  String get ptBookingTime;
+
+  /// No description provided for @ptBookingTotalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total amount:'**
+  String get ptBookingTotalAmount;
+
+  /// No description provided for @ptBookingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed successfully.'**
+  String get ptBookingSuccess;
+
+  /// No description provided for @ptSlotAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'You already booked this time slot.'**
+  String get ptSlotAlreadyBooked;
+
+  /// No description provided for @ptPackageChoosePackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose package'**
+  String get ptPackageChoosePackage;
+
+  /// No description provided for @ptPackageChooseDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose days'**
+  String get ptPackageChooseDays;
+
+  /// No description provided for @ptPackageChooseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose time'**
+  String get ptPackageChooseTime;
+
+  /// No description provided for @ptPackageBookingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking summary'**
+  String get ptPackageBookingSummary;
+
+  /// No description provided for @ptPackageConfirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm booking'**
+  String get ptPackageConfirmBooking;
+
+  /// No description provided for @ptPackageBookingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Package booking confirmed successfully.'**
+  String get ptPackageBookingSuccess;
+
+  /// No description provided for @ptPackageBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not confirm package booking.'**
+  String get ptPackageBookingFailed;
+
+  /// No description provided for @ptPackageNoPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No packages available right now'**
+  String get ptPackageNoPackages;
+
+  /// No description provided for @ptPackageSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'services'**
+  String get ptPackageSessions;
+
+  /// No description provided for @ptPackageDays.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get ptPackageDays;
+
+  /// No description provided for @ptPackageFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price'**
+  String get ptPackageFinalPrice;
+
+  /// No description provided for @ptPackageOriginalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Original price'**
+  String get ptPackageOriginalPrice;
+
+  /// No description provided for @ptPackageSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get ptPackageSalePrice;
+
+  /// No description provided for @ptPackageSelectedPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected package'**
+  String get ptPackageSelectedPackage;
+
+  /// No description provided for @ptPackageSelectedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected days'**
+  String get ptPackageSelectedDays;
+
+  /// No description provided for @ptPackageSelectedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected time'**
+  String get ptPackageSelectedTime;
+
+  /// No description provided for @ptPackageMaxSessionsReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot select more days than the package services'**
+  String get ptPackageMaxSessionsReached;
+
+  /// No description provided for @ptPackageDaysPerWeekRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {min} to {max} days per week'**
+  String ptPackageDaysPerWeekRange(int min, int max);
+
+  /// No description provided for @ptPackageDaysPerWeekExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {count} day(s) per week'**
+  String ptPackageDaysPerWeekExact(int count);
+
+  /// No description provided for @ptPackageMaxDaysReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot select more than {max} days per week'**
+  String ptPackageMaxDaysReached(int max);
+
+  /// No description provided for @ptPackageNoAvailableSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No available times'**
+  String get ptPackageNoAvailableSlots;
+
+  /// No description provided for @ptWeeklySlotsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load available times'**
+  String get ptWeeklySlotsFailed;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @editProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your personal information'**
+  String get editProfileSubtitle;
+
+  /// No description provided for @editProfileFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get editProfileFullName;
+
+  /// No description provided for @editProfileEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get editProfileEmail;
+
+  /// No description provided for @editProfilePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get editProfilePhone;
+
+  /// No description provided for @editProfileDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get editProfileDateOfBirth;
+
+  /// No description provided for @editProfileAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get editProfileAddress;
+
+  /// No description provided for @editProfileGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get editProfileGender;
+
+  /// No description provided for @editProfileMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get editProfileMale;
+
+  /// No description provided for @editProfileFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get editProfileFemale;
+
+  /// No description provided for @editProfileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get editProfileSave;
+
+  /// No description provided for @editProfileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get editProfileCancel;
+
+  /// No description provided for @editProfileNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get editProfileNameRequired;
+
+  /// No description provided for @editProfileEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get editProfileEmailRequired;
+
+  /// No description provided for @editProfileInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get editProfileInvalidEmail;
+
+  /// No description provided for @accountGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get accountGender;
+
+  /// No description provided for @accountGenderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get accountGenderMale;
+
+  /// No description provided for @accountGenderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get accountGenderFemale;
+
+  /// No description provided for @editProfileFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get editProfileFirstName;
+
+  /// No description provided for @editProfileLastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get editProfileLastName;
+
+  /// No description provided for @editProfileUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get editProfileUsername;
+
+  /// No description provided for @editProfileChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get editProfileChangePassword;
+
+  /// No description provided for @editProfileCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get editProfileCurrentPassword;
+
+  /// No description provided for @editProfileNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get editProfileNewPassword;
+
+  /// No description provided for @editProfileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required.'**
+  String get editProfileRequired;
+
+  /// No description provided for @editProfileUsernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required.'**
+  String get editProfileUsernameRequired;
+
+  /// No description provided for @editProfileEmailRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required.'**
+  String get editProfileEmailRequiredMessage;
+
+  /// No description provided for @editProfileInvalidEmailMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address.'**
+  String get editProfileInvalidEmailMessage;
+
+  /// No description provided for @editProfilePhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required.'**
+  String get editProfilePhoneRequired;
+
+  /// No description provided for @editProfileCurrentPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password is required.'**
+  String get editProfileCurrentPasswordRequired;
+
+  /// No description provided for @editProfileNewPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'New password is required.'**
+  String get editProfileNewPasswordRequired;
+
+  /// No description provided for @editProfilePasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'New password must be at least 6 characters.'**
+  String get editProfilePasswordTooShort;
+
+  /// No description provided for @editProfilePasswordSameAsCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'New password must be different from current password.'**
+  String get editProfilePasswordSameAsCurrent;
+
+  /// No description provided for @editProfileInvalidOwnerProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid owner project link id.'**
+  String get editProfileInvalidOwnerProject;
+
+  /// No description provided for @editProfileEmailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verified successfully.'**
+  String get editProfileEmailVerified;
+
+  /// No description provided for @editProfilePasswordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated successfully.'**
+  String get editProfilePasswordUpdated;
+
+  /// No description provided for @editProfileOnlyLetters.
+  ///
+  /// In en, this message translates to:
+  /// **'Only letters and spaces are allowed.'**
+  String get editProfileOnlyLetters;
+
+  /// No description provided for @editProfileVerifyNewEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify new email'**
+  String get editProfileVerifyNewEmail;
+
+  /// No description provided for @editProfileVerifyPasswordChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify password change'**
+  String get editProfileVerifyPasswordChange;
+
+  /// No description provided for @editProfileCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Code sent to'**
+  String get editProfileCodeSentTo;
+
+  /// No description provided for @editProfileVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code'**
+  String get editProfileVerificationCode;
+
+  /// No description provided for @editProfileResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get editProfileResend;
+
+  /// No description provided for @editProfileVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get editProfileVerify;
+
+  /// No description provided for @editProfileCodeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code is required.'**
+  String get editProfileCodeRequired;
+
+  /// No description provided for @ptBookingRequestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to PT. Waiting for approval.'**
+  String get ptBookingRequestSuccess;
+
+  /// No description provided for @ptBookingRequestThisTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Request this time'**
+  String get ptBookingRequestThisTime;
+
+  /// No description provided for @ptBookingBookSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Book session'**
+  String get ptBookingBookSession;
+
+  /// No description provided for @ptBookingRequestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Member requested unavailable/full PT time'**
+  String get ptBookingRequestNote;
+
+  /// No description provided for @ptBookingFullOrUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This slot is full or unavailable. Send a request instead.'**
+  String get ptBookingFullOrUnavailable;
+
+  /// No description provided for @ptBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to confirm booking.'**
+  String get ptBookingFailed;
+
+  /// No description provided for @ptBookingRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to send request.'**
+  String get ptBookingRequestFailed;
+
+  /// No description provided for @memberQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry QR Code'**
+  String get memberQrTitle;
+
+  /// No description provided for @memberQrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this code at the gym entrance'**
+  String get memberQrSubtitle;
+
+  /// No description provided for @memberQrActiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Active membership'**
+  String get memberQrActiveMembership;
+
+  /// No description provided for @memberQrInactiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive membership'**
+  String get memberQrInactiveMembership;
+
+  /// No description provided for @memberQrMemberCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Member code'**
+  String get memberQrMemberCodeLabel;
+
+  /// No description provided for @memberQrPackageFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'No package'**
+  String get memberQrPackageFallback;
+
+  /// No description provided for @memberQrValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get memberQrValidUntil;
+
+  /// No description provided for @memberQrExpiresSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'QR expires soon'**
+  String get memberQrExpiresSoon;
+
+  /// No description provided for @memberQrRecentVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent visits'**
+  String get memberQrRecentVisits;
+
+  /// No description provided for @memberQrNoRecentVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous visits'**
+  String get memberQrNoRecentVisits;
+
+  /// No description provided for @memberQrDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get memberQrDurationLabel;
+
+  /// No description provided for @memberQrToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get memberQrToday;
+
+  /// No description provided for @memberQrYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get memberQrYesterday;
+
+  /// No description provided for @memberQrMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min'**
+  String memberQrMinute(int count);
+
+  /// No description provided for @memberQrHour.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h'**
+  String memberQrHour(String count);
+
+  /// No description provided for @memberQrLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load QR data'**
+  String get memberQrLoadError;
+
+  /// No description provided for @memberQrRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get memberQrRetry;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

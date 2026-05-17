@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
+import '../../../AppBar/presentation/branch_cubit.dart';
 import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
 import '../bloc/admin_dashboard_state.dart';
@@ -22,7 +24,11 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+  // ── Time period filter ─────────────────────────────────────────────────────
+  // The display labels shown in the DropdownButton.
   final List<String> _periodOptions = ['Today', 'This Week', 'This Month', 'Custom'];
+
+  // Maps each display label to the API query-param value the BLoC sends.
   final Map<String, String> _periodMap = {
     'Today':      'today',
     'This Week':  'week',
@@ -31,23 +37,28 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   };
   String _selectedPeriodLabel = 'Today';
 
-  final List<String> _branchOptions = ['All Branches', 'Mumbai Central', 'Andheri West'];
-  String _selectedBranch = 'Mumbai Central';
+  // ── Branch filter ──────────────────────────────────────────────────────────
+  //    We track only the selected branch ID (null = "All Branches").
+  //    The actual list of branches is loaded by BranchCubit from the backend
+  //    endpoint GET /api/admin/branches/options and rendered via BlocBuilder
+  //    inside _buildAppBar(). This is the same pattern AdminAppBar uses.
+  int? _selectedBranchId; // null → "All Branches"
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-    final c      = tokens.colors;
-    final sp     = tokens.spacing;
-    final card   = tokens.card;
+    final tokens  = context.read<ThemeCubit>().state.tokens;
+    final c       = tokens.colors;
+    final sp      = tokens.spacing;
+    final card    = tokens.card;
+    final profile = context.watch<AdminProfileCubit>().state;
 
     return Scaffold(
-      drawer: const AdminNavigationDrawer(
-        gymName:         'Build4All Gym',
-        branchName:      'Downtown',
-        adminName:       'Mounir',
-        adminEmail:      'mounir@gym.com',
-        avatarUrl:       null,
+      drawer: AdminNavigationDrawer(
+        gymName:         profile.gymName,
+        branchName:      profile.branchName,
+        adminName:       profile.adminName,
+        adminEmail:      profile.adminEmail,
+        avatarUrl:       profile.avatarUrl,
         initialActiveId: 'dashboard',
       ),
       backgroundColor: c.background,
@@ -63,12 +74,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
+  // ── AppBar ─────────────────────────────────────────────────────────────────
   Widget _buildAppBar(BuildContext context, dynamic c, dynamic sp, dynamic card) {
     return Container(
       color:   c.surface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
+          // Hamburger menu opens the AdminNavigationDrawer
           Builder(
             builder: (context) => IconButton(
               icon:      Icon(Icons.menu_rounded, color: c.label),
@@ -78,73 +91,80 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
           const SizedBox(width: 10),
 
-          // Branch selector pill
+          // ── Branch selector pill ─────────────────────────────────────────
+          // ✅ FIX 3 (continued) — BlocBuilder reads from BranchCubit.
+          //    BranchCubit is provided by MultiBlocProvider in app_router.dart
+          //    for this route
+          //    While loading → shows a spinner pill.
+          //    On error / initial → shows an ellipsis pill.
+          //    On loaded → shows a PopupMenuButton with real branch names from backend.
           Expanded(
-            child: PopupMenuButton<String>(
-              offset: const Offset(0, 44),
-              shape:  RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(card.radius)),
-              color:     c.surface,
-              elevation: 8,
-              onSelected: (value) => setState(() => _selectedBranch = value),
-              itemBuilder: (context) => _branchOptions
-                  .map((branch) => PopupMenuItem<String>(
-                value: branch,
-                child: Row(
-                  children: [
-                    Icon(
-                      branch == 'All Branches'
-                          ? Icons.business_rounded
-                          : Icons.location_on_rounded,
-                      size:  16,
-                      color: c.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      branch,
-                      style: TextStyle(
-                        fontSize:   13,
-                        fontWeight: _selectedBranch == branch
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: c.body,
+            child: BlocBuilder<BranchCubit, BranchState>(
+              builder: (context, branchState) {
+                // While branches are loading from backend
+                if (branchState is BranchLoading || branchState is BranchInitial) {
+                  return _branchPillPlaceholder(c, isLoading: true);
+                }
+
+                // If branch fetch failed — show static "All Branches" pill
+                if (branchState is! BranchLoaded) {
+                  return _branchPillPlaceholder(c, isLoading: false);
+                }
+
+                // Branches loaded → build real popup menu
+                final branches = (branchState as BranchLoaded).branches;
+
+                // Derive the display name from the selected branch ID
+                // null _selectedBranchId → "All Branches"
+                final selectedName = _selectedBranchId == null
+                    ? 'All Branches'
+                    : branches
+                    .where((b) => b.id == _selectedBranchId)
+                    .map((b) => b.name)
+                    .firstOrNull ?? 'All Branches';
+
+                return PopupMenuButton<int?>(
+                  offset: const Offset(0, 44),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(card.radius)),
+                  color:     c.surface,
+                  elevation: 8,
+                  // When a branch is picked, update state.
+                  // The BLoC doesn't filter by branch yet (backend API doesn't
+                  // accept branchId on this endpoint); selection is stored for
+                  // display only and future branch-aware filtering.
+                  onSelected: (int? id) =>
+                      setState(() => _selectedBranchId = id),
+                  itemBuilder: (context) => [
+                    // First item is always "All Branches" (id = null)
+                    PopupMenuItem<int?>(
+                      value: null,
+                      child: _branchMenuItem(
+                        context,
+                        c:          c,
+                        icon:       Icons.business_rounded,
+                        name:       'All Branches',
+                        isSelected: _selectedBranchId == null,
                       ),
                     ),
-                    const Spacer(),
-                    if (_selectedBranch == branch)
-                      Icon(Icons.check_rounded, size: 16, color: c.primary),
-                  ],
-                ),
-              ))
-                  .toList(),
-              child: Container(
-                padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                decoration: BoxDecoration(
-                  color:        c.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.location_on_rounded, size: 14, color: c.primary),
-                    const SizedBox(width: 5),
-                    Flexible(
-                      child: Text(
-                        _selectedBranch,
-                        style: TextStyle(
-                          fontSize:   13,
-                          fontWeight: FontWeight.w600,
-                          color:      c.primary,
+                    // One item per branch returned by backend
+                    ...branches.map(
+                          (b) => PopupMenuItem<int?>(
+                        value: b.id,
+                        child: _branchMenuItem(
+                          context,
+                          c:          c,
+                          icon:       Icons.location_on_rounded,
+                          name:       b.name,
+                          isSelected: b.id == _selectedBranchId,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 3),
-                    Icon(Icons.keyboard_arrow_down_rounded,
-                        size: 16, color: c.primary),
                   ],
-                ),
-              ),
+                  // The pill itself (always visible, tapping opens the popup)
+                  child: _branchPill(c, selectedName),
+                );
+              },
             ),
           ),
 
@@ -158,7 +178,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           const Spacer(),
 
-          // Notification bell
+          // ── Notification bell ──────────────────────────────────────────────
           Stack(
             children: [
               Container(
@@ -197,7 +217,93 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  Widget _buildPeriodSelector(BuildContext context, dynamic c, dynamic sp, dynamic card) {
+  // ── Branch pill helper (the collapsed button shown in the app bar) ──────────
+  Widget _branchPill(dynamic c, String label) {
+    return Container(
+      padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color:        c.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.location_on_rounded, size: 14, color: c.primary),
+          const SizedBox(width: 5),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize:   13,
+                fontWeight: FontWeight.w600,
+                color:      c.primary,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 3),
+          Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: c.primary),
+        ],
+      ),
+    );
+  }
+
+  // ── Placeholder pill shown while BranchCubit is loading or errored ─────────
+  Widget _branchPillPlaceholder(dynamic c, {required bool isLoading}) {
+    return Container(
+      padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color:        c.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: isLoading
+          ? SizedBox(
+        width:  14,
+        height: 14,
+        child:  CircularProgressIndicator(
+          strokeWidth: 1.5,
+          color:       c.primary,
+        ),
+      )
+          : Text('—',
+          style: TextStyle(
+            fontSize:   13,
+            fontWeight: FontWeight.w600,
+            color:      c.primary,
+          )),
+    );
+  }
+
+  // ── Single popup menu row (icon + name + optional checkmark) ───────────────
+  Widget _branchMenuItem(
+      BuildContext context, {
+        required dynamic c,
+        required IconData icon,
+        required String name,
+        required bool isSelected,
+      }) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: c.primary),
+        const SizedBox(width: 10),
+        Text(
+          name,
+          style: TextStyle(
+            fontSize:   13,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            color:      c.body,
+          ),
+        ),
+        const Spacer(),
+        if (isSelected)
+          Icon(Icons.check_rounded, size: 16, color: c.primary),
+      ],
+    );
+  }
+
+  // ── Period selector row (Today / This Week / This Month / Custom) ──────────
+  Widget _buildPeriodSelector(
+      BuildContext context, dynamic c, dynamic sp, dynamic card) {
     return Container(
       color:   c.surface,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -234,6 +340,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 onChanged: (value) {
                   if (value == null) return;
                   setState(() => _selectedPeriodLabel = value);
+                  // Tell the BLoC to re-fetch with the new period
                   context.read<AdminDashboardBloc>().add(
                     AdminDashboardPeriodChanged(period: _periodMap[value]!),
                   );
@@ -246,14 +353,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
+  // ── Main body — delegates to BlocBuilder ───────────────────────────────────
   Widget _buildBody(BuildContext context, dynamic c, dynamic sp) {
     return BlocBuilder<AdminDashboardBloc, AdminDashboardState>(
       builder: (context, state) {
+        // ── Loading ──
         if (state is AdminDashboardLoading) {
           return Center(
               child: CircularProgressIndicator(color: c.primary));
         }
 
+        // ── Error with retry button ──
         if (state is AdminDashboardError) {
           return Center(
             child: Padding(
@@ -274,7 +384,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   const SizedBox(height: 16),
                   Text(
                     state.message,
-                    style: TextStyle(color: c.body, fontSize: 14),
+                    style:     TextStyle(color: c.body, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -298,6 +408,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           );
         }
 
+        // ── Loaded — render all dashboard sections ──
         if (state is AdminDashboardLoaded) {
           return RefreshIndicator(
             color:     c.primary,
@@ -312,12 +423,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 4 large cards: Active Members, Pending Renewals,
+                  // Today's Check-ins, Upcoming PT
                   LargeStatCardsGrid(data: state.data),
                   const SizedBox(height: 14),
+
+                  // 4 small metric cards: Attendance, Payments Collected,
+                  // Expiring Plans, Total Members
                   SmallMetricCardsGrid(data: state.data),
                   const SizedBox(height: 14),
+
+                  // Text rows: Total Plans, Canceled, Churn Rate, Monthly Revenue
                   TextMetricRows(data: state.data),
                   const SizedBox(height: 20),
+
+                  // Quick Actions: Add Member, Record Payment, Add Plan,
+                  // Send Announcement
                   QuickActionsSection(
                     onAddMember: () => ScaffoldMessenger.of(context)
                         .showSnackBar(const SnackBar(content: Text('Coming soon'))),
@@ -329,6 +450,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         .showSnackBar(const SnackBar(content: Text('Coming soon'))),
                   ),
                   const SizedBox(height: 20),
+
+                  // Recent Activity feed — last 10 events from backend
                   RecentActivityFeed(
                       activities: state.data.recentActivity.activities),
                 ],
@@ -337,6 +460,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           );
         }
 
+        // AdminDashboardInitial — very brief, BLoC fires LoadRequested immediately
         return const SizedBox.shrink();
       },
     );

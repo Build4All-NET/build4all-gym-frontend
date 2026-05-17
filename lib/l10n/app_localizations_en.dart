@@ -751,13 +751,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get memberSessionsLoading => 'Loading sessions...';
+  String get memberSessionsLoading => 'Loading services...';
 
   @override
-  String get memberSessionsEmpty => 'No sessions available';
+  String get memberSessionsEmpty => 'No services available';
 
   @override
-  String get memberSessionsError => 'Failed to load sessions';
+  String get memberSessionsError => 'Failed to load services';
 
   @override
   String get memberSessionsFilterTitle => 'Filter classes';
@@ -1032,4 +1032,343 @@ class AppLocalizationsEn extends AppLocalizations {
   String accountMemberSince(String date) {
     return 'Member since $date';
   }
+
+  @override
+  String get ptBookingChooseDate => 'Choose Date';
+
+  @override
+  String get ptBookingChooseTime => 'Choose Time';
+
+  @override
+  String get ptBookingNoSlotsForDate => 'No available slots for this date.';
+
+  @override
+  String get ptDetailSession => 'session';
+
+  @override
+  String get ptTrainingVideosTitle => 'Training Videos';
+
+  @override
+  String get ptTrainingVideosEmpty => 'No training videos yet.';
+
+  @override
+  String get ptTrainingVideosMissingUrl => 'Video URL is missing.';
+
+  @override
+  String get ptTrainingVideosOpenError => 'Could not open this video.';
+
+  @override
+  String get ptTrainerDetailsNotFound => 'Trainer details not found.';
+
+  @override
+  String get ptFavoriteUpdateFailed => 'Failed to update favorite.';
+
+  @override
+  String get ptConfirmBooking => 'Confirm Booking';
+
+  @override
+  String ptBookingSelected(String date, String time) {
+    return 'Booking selected: $date at $time';
+  }
+
+  @override
+  String get ptBookingSummary => 'Booking summary';
+
+  @override
+  String get ptBookingTrainer => 'Trainer:';
+
+  @override
+  String get ptBookingDate => 'Date:';
+
+  @override
+  String get ptBookingTime => 'Time:';
+
+  @override
+  String get ptBookingTotalAmount => 'Total amount:';
+
+  @override
+  String get ptBookingSuccess => 'Booking confirmed successfully.';
+
+  @override
+  String get ptSlotAlreadyBooked => 'You already booked this time slot.';
+
+  @override
+  String get ptPackageChoosePackage => 'Choose package';
+
+  @override
+  String get ptPackageChooseDays => 'Choose days';
+
+  @override
+  String get ptPackageChooseTime => 'Choose time';
+
+  @override
+  String get ptPackageBookingSummary => 'Booking summary';
+
+  @override
+  String get ptPackageConfirmBooking => 'Confirm booking';
+
+  @override
+  String get ptPackageBookingSuccess => 'Package booking confirmed successfully.';
+
+  @override
+  String get ptPackageBookingFailed => 'Could not confirm package booking.';
+
+  @override
+  String get ptPackageNoPackages => 'No packages available right now';
+
+  @override
+  String get ptPackageSessions => 'services';
+
+  @override
+  String get ptPackageDays => 'days';
+
+  @override
+  String get ptPackageFinalPrice => 'Final price';
+
+  @override
+  String get ptPackageOriginalPrice => 'Original price';
+
+  @override
+  String get ptPackageSalePrice => 'Sale price';
+
+  @override
+  String get ptPackageSelectedPackage => 'Selected package';
+
+  @override
+  String get ptPackageSelectedDays => 'Selected days';
+
+  @override
+  String get ptPackageSelectedTime => 'Selected time';
+
+  @override
+  String get ptPackageMaxSessionsReached => 'You cannot select more days than the package services';
+
+  @override
+  String ptPackageDaysPerWeekRange(int min, int max) {
+    return 'Choose $min to $max days per week';
+  }
+
+  @override
+  String ptPackageDaysPerWeekExact(int count) {
+    return 'Choose $count day(s) per week';
+  }
+
+  @override
+  String ptPackageMaxDaysReached(int max) {
+    return 'You cannot select more than $max days per week';
+  }
+
+  @override
+  String get ptPackageNoAvailableSlots => 'No available times';
+
+  @override
+  String get ptWeeklySlotsFailed => 'Could not load available times';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
+
+  @override
+  String get editProfileSubtitle => 'Update your personal information';
+
+  @override
+  String get editProfileFullName => 'Full Name';
+
+  @override
+  String get editProfileEmail => 'Email';
+
+  @override
+  String get editProfilePhone => 'Phone Number';
+
+  @override
+  String get editProfileDateOfBirth => 'Date of Birth';
+
+  @override
+  String get editProfileAddress => 'Address';
+
+  @override
+  String get editProfileGender => 'Gender';
+
+  @override
+  String get editProfileMale => 'Male';
+
+  @override
+  String get editProfileFemale => 'Female';
+
+  @override
+  String get editProfileSave => 'Save Changes';
+
+  @override
+  String get editProfileCancel => 'Cancel';
+
+  @override
+  String get editProfileNameRequired => 'Name is required';
+
+  @override
+  String get editProfileEmailRequired => 'Email is required';
+
+  @override
+  String get editProfileInvalidEmail => 'Invalid email address';
+
+  @override
+  String get accountGender => 'Gender';
+
+  @override
+  String get accountGenderMale => 'Male';
+
+  @override
+  String get accountGenderFemale => 'Female';
+
+  @override
+  String get editProfileFirstName => 'First Name';
+
+  @override
+  String get editProfileLastName => 'Last Name';
+
+  @override
+  String get editProfileUsername => 'Username';
+
+  @override
+  String get editProfileChangePassword => 'Change Password';
+
+  @override
+  String get editProfileCurrentPassword => 'Current Password';
+
+  @override
+  String get editProfileNewPassword => 'New Password';
+
+  @override
+  String get editProfileRequired => 'Required.';
+
+  @override
+  String get editProfileUsernameRequired => 'Username is required.';
+
+  @override
+  String get editProfileEmailRequiredMessage => 'Email is required.';
+
+  @override
+  String get editProfileInvalidEmailMessage => 'Invalid email address.';
+
+  @override
+  String get editProfilePhoneRequired => 'Phone number is required.';
+
+  @override
+  String get editProfileCurrentPasswordRequired => 'Current password is required.';
+
+  @override
+  String get editProfileNewPasswordRequired => 'New password is required.';
+
+  @override
+  String get editProfilePasswordTooShort => 'New password must be at least 6 characters.';
+
+  @override
+  String get editProfilePasswordSameAsCurrent => 'New password must be different from current password.';
+
+  @override
+  String get editProfileInvalidOwnerProject => 'Invalid owner project link id.';
+
+  @override
+  String get editProfileEmailVerified => 'Email verified successfully.';
+
+  @override
+  String get editProfilePasswordUpdated => 'Password updated successfully.';
+
+  @override
+  String get editProfileOnlyLetters => 'Only letters and spaces are allowed.';
+
+  @override
+  String get editProfileVerifyNewEmail => 'Verify new email';
+
+  @override
+  String get editProfileVerifyPasswordChange => 'Verify password change';
+
+  @override
+  String get editProfileCodeSentTo => 'Code sent to';
+
+  @override
+  String get editProfileVerificationCode => 'Verification code';
+
+  @override
+  String get editProfileResend => 'Resend';
+
+  @override
+  String get editProfileVerify => 'Verify';
+
+  @override
+  String get editProfileCodeRequired => 'Verification code is required.';
+
+  @override
+  String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
+
+  @override
+  String get ptBookingRequestThisTime => 'Request this time';
+
+  @override
+  String get ptBookingBookSession => 'Book session';
+
+  @override
+  String get ptBookingRequestNote => 'Member requested unavailable/full PT time';
+
+  @override
+  String get ptBookingFullOrUnavailable => 'This slot is full or unavailable. Send a request instead.';
+
+  @override
+  String get ptBookingFailed => 'Unable to confirm booking.';
+
+  @override
+  String get ptBookingRequestFailed => 'Unable to send request.';
+
+  @override
+  String get memberQrTitle => 'Entry QR Code';
+
+  @override
+  String get memberQrSubtitle => 'Scan this code at the gym entrance';
+
+  @override
+  String get memberQrActiveMembership => 'Active membership';
+
+  @override
+  String get memberQrInactiveMembership => 'Inactive membership';
+
+  @override
+  String get memberQrMemberCodeLabel => 'Member code';
+
+  @override
+  String get memberQrPackageFallback => 'No package';
+
+  @override
+  String get memberQrValidUntil => 'Valid until';
+
+  @override
+  String get memberQrExpiresSoon => 'QR expires soon';
+
+  @override
+  String get memberQrRecentVisits => 'Recent visits';
+
+  @override
+  String get memberQrNoRecentVisits => 'No previous visits';
+
+  @override
+  String get memberQrDurationLabel => 'Duration';
+
+  @override
+  String get memberQrToday => 'Today';
+
+  @override
+  String get memberQrYesterday => 'Yesterday';
+
+  @override
+  String memberQrMinute(int count) {
+    return '$count min';
+  }
+
+  @override
+  String memberQrHour(String count) {
+    return '$count h';
+  }
+
+  @override
+  String get memberQrLoadError => 'Could not load QR data';
+
+  @override
+  String get memberQrRetry => 'Retry';
 }

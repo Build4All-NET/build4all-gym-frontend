@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_classes_bloc.dart';
@@ -98,13 +99,15 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
+    final profile = context.watch<AdminProfileCubit>().state;
+
     return Scaffold(
-      drawer: const AdminNavigationDrawer(
-        gymName:         'Build4All Gym',
-        branchName:      'Downtown',
-        adminName:       'Mounir',
-        adminEmail:      'mounir@gym.com',
-        avatarUrl:       null,
+      drawer:  AdminNavigationDrawer(
+        gymName:    profile.gymName,
+        branchName: profile.branchName,
+        adminName:  profile.adminName,
+        adminEmail: profile.adminEmail,
+        avatarUrl:  profile.avatarUrl,
         initialActiveId: 'classes_pt',
       ),
       backgroundColor: cs.background,               // ← was Color(0xFFF5F6FA)

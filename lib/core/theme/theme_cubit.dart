@@ -8,11 +8,13 @@ import '../runtime/runtime_config_service.dart';
 import 'remote_theme_dto.dart';
 import 'app_theme_tokens.dart';
 import 'app_theme_builder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeState {
   final ThemeData themeData;
   final AppThemeTokens tokens;
   final bool isLoaded;
+  final ThemeMode selectedThemeMode; // default: ThemeMode.system
 
   final String menuType; // "bottom", "drawer", etc.
 
@@ -21,6 +23,7 @@ class ThemeState {
     required this.tokens,
     required this.isLoaded,
     required this.menuType,
+    required this.selectedThemeMode,
   });
 
   ThemeState copyWith({
@@ -28,12 +31,14 @@ class ThemeState {
     AppThemeTokens? tokens,
     bool? isLoaded,
     String? menuType,
+    ThemeMode? selectedThemeMode,
   }) {
     return ThemeState(
       themeData: themeData ?? this.themeData,
       tokens: tokens ?? this.tokens,
       isLoaded: isLoaded ?? this.isLoaded,
       menuType: menuType ?? this.menuType,
+        selectedThemeMode:selectedThemeMode ?? this.selectedThemeMode,
     );
   }
 
@@ -44,6 +49,7 @@ class ThemeState {
       tokens: tokens,
       isLoaded: false,
       menuType: 'bottom', // default
+      selectedThemeMode: ThemeMode.system,
     );
   }
 }
@@ -58,38 +64,42 @@ class ThemeCubit extends Cubit<ThemeState> {
   }
 
   Future<void> loadTheme() async {
-    // 1) Try compile-time theme first (CI baked)
+    // ── Always load the saved theme mode first ────────────────────────────────
+    final prefs = await SharedPreferences.getInstance();
+    final savedModeName = prefs.getString('settings_theme_mode');
+    if (savedModeName != null) {
+      final savedMode = ThemeMode.values.firstWhere(
+            (m) => m.name == savedModeName,
+        orElse: () => ThemeMode.system,
+      );
+      emit(state.copyWith(selectedThemeMode: savedMode));
+    }
+
+    // ── Then apply the visual theme from env or runtime ───────────────────────
     final envB64 = Env.themeJsonB64.trim();
     if (envB64.isNotEmpty) {
       _applyThemeFromB64(envB64, source: 'ENV');
       emit(state.copyWith(isLoaded: true));
-      return;
+      return;  // safe to return now — ThemeMode is already loaded above
     }
 
-    // 2) No env theme => try runtime config from backend
     try {
       final apiBaseUrl = Env.apiBaseUrl.trim();
       final linkId = Env.ownerProjectLinkId.trim();
-
       if (apiBaseUrl.isEmpty || linkId.isEmpty) {
-        // nothing we can do
         emit(state.copyWith(isLoaded: true));
         return;
       }
-
       final cfg = await _runtimeService.fetchByLinkId(
         apiBaseUrl: apiBaseUrl,
         linkId: linkId,
       );
-
       final runtimeB64 = (cfg['THEME_JSON_B64'] ?? '').toString().trim();
       if (runtimeB64.isNotEmpty) {
         _applyThemeFromB64(runtimeB64, source: 'RUNTIME');
       }
-
       emit(state.copyWith(isLoaded: true));
     } catch (e) {
-      // ignore: avoid_print
       print('Theme runtime load failed: $e');
       emit(state.copyWith(isLoaded: true));
     }
@@ -114,6 +124,11 @@ class ThemeCubit extends Cubit<ThemeState> {
     } catch (e) {
       print('Theme apply failed ($source): $e');
     }
+  }
+  Future<void> setThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('settings_theme_mode', mode.name);
+    emit(state.copyWith(selectedThemeMode: mode));
   }
 
 }

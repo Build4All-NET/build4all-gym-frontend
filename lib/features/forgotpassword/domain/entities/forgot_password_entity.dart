@@ -3,7 +3,7 @@
 //
 // PURPOSE:
 //   Pure domain entity — the single result type that flows from the repositories
-//   up through use cases to the BLoC. Contains ONLY what the app logic needs;
+//   up through usecases to the BLoC. Contains ONLY what the app logic needs;
 //   no JSON, no HTTP, no Flutter imports.
 //
 // WHY SO SIMPLE:
@@ -14,7 +14,7 @@
 // RELATIONSHIPS:
 //   ◀ Returned by: ForgotPasswordRepository (all 3 methods)
 //   ◀ Produced by: ForgotPasswordRepositoryImpl (converts ForgotMessageResponse)
-//   ◀ Consumed by: SendResetCode, VerifyResetCode, UpdatePassword use cases
+//   ◀ Consumed by: SendResetCode, VerifyResetCode, UpdatePassword usecases
 //   ◀ Used in:     ForgotPasswordBloc → stored as state.successMessage
 // ─────────────────────────────────────────────────────────────────────────────
 

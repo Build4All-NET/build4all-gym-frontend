@@ -7,25 +7,44 @@ abstract class MemberAccountEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// Dispatched on screen init to load all account data.
+// Dispatched on screen init to load Gym-owned member account data.
 class MemberAccountStarted extends MemberAccountEvent {
   const MemberAccountStarted();
 }
 
-// Dispatched when user taps save button on edit profile.
+// Dispatched when Gym-owned profile fields are updated.
+//
+// Sent to:
+// PATCH /api/member/account/profile
+//
+// Gym backend updates only:
+// - dateOfBirth
+// - address
+// - gender
+//
+// Build4All profile fields are handled separately:
+// - firstName
+// - lastName
+// - username
+// - email
+// - phoneNumber
+// - profileImageUrl
+// - password
 class MemberAccountProfileUpdateRequested extends MemberAccountEvent {
-  final String fullName;
-  final String phone;
   final String? dateOfBirth;
   final String? address;
+  final String? gender;
 
   const MemberAccountProfileUpdateRequested({
-    required this.fullName,
-    required this.phone,
     this.dateOfBirth,
     this.address,
+    this.gender,
   });
 
   @override
-  List<Object?> get props => [fullName, phone, dateOfBirth, address];
+  List<Object?> get props => [
+    dateOfBirth,
+    address,
+    gender,
+  ];
 }

@@ -172,21 +172,83 @@ jobs:
 
       - name: Download app icon
         run: |
-           mkdir -p assets
-           python3 - <<'PY'
-           import json, os, urllib.request
-
-           with open("lib/env/ci_env.json", "r") as f:
-               env = json.load(f)
-
-           logo_url = (env.get("LOGO_URL") or "").strip()
-           if not logo_url:
-               raise SystemExit("Missing LOGO_URL")
-
-           print("Downloading icon from:", logo_url)
-           urllib.request.urlretrieve(logo_url, "assets/app_icon.png")
-           print("✅ app icon downloaded to assets/app_icon.png")
-           PY
+          mkdir -p assets
+          python3 - <<'PY'
+          import json
+          import urllib.request
+          import urllib.error
+          import socket
+          import shutil
+          import os
+      
+          ICON_PATH = "assets/app_icon.png"
+      
+          with open("lib/env/ci_env.json", "r") as f:
+              env = json.load(f)
+      
+          logo_url = (env.get("LOGO_URL") or "").strip()
+      
+          def use_existing_fallback():
+              fallback_paths = [
+                  "assets/app_icon.png",
+                  "assets/branding/logo.png",
+                  "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+              ]
+      
+              for path in fallback_paths:
+                  if path != ICON_PATH and os.path.exists(path):
+                      shutil.copyfile(path, ICON_PATH)
+                      print(f"⚠️ Using fallback icon from {path}")
+                      return
+      
+              # Last-resort tiny valid PNG
+              import base64
+              png_base64 = (
+                  "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAACXBIWXMAAAsTAAALEwEAmpwY"
+                  "AAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAA"
+                  "CxMAAAsTAQCanBgAAABjSURBVFjD7c4xAQAgDASw9L+ZpR0YQmQF9kxyZgAAAAAAAAAAAAAA"
+                  "AAAAAADwJ7Z0O1s6AAAAAAAAAAAAAAAAAAAAAADgD6wAAQAAAAAAAAAAAAAAAAAAAAAAAPgM"
+                  "AAGwAAH2Oe0rAAAAAElFTkSuQmCC"
+              )
+              with open(ICON_PATH, "wb") as f:
+                  f.write(base64.b64decode(png_base64))
+              print("⚠️ Using generated fallback icon")
+      
+          if not logo_url:
+              print("⚠️ Missing LOGO_URL, using fallback icon")
+              use_existing_fallback()
+          else:
+              print("Downloading icon from:", logo_url)
+      
+              try:
+                  req = urllib.request.Request(
+                      logo_url,
+                      headers={
+                          "User-Agent": "Mozilla/5.0",
+                          "Accept": "image/png,image/jpeg,image/webp,image/*,*/*",
+                      },
+                  )
+      
+                  with urllib.request.urlopen(req, timeout=20) as response:
+                      content_type = response.headers.get("Content-Type", "")
+                      data = response.read()
+      
+                  if len(data) < 100:
+                      raise RuntimeError("Downloaded icon file is too small")
+      
+                  if "image" not in content_type.lower():
+                      print("⚠️ Warning: response Content-Type is:", content_type)
+      
+                  with open(ICON_PATH, "wb") as f:
+                      f.write(data)
+      
+                  print("✅ app icon downloaded to assets/app_icon.png")
+      
+              except (urllib.error.HTTPError, urllib.error.URLError, socket.timeout, RuntimeError) as e:
+                  print("⚠️ Failed to download icon:", repr(e))
+                  print("⚠️ Build will continue with fallback icon")
+                  use_existing_fallback()
+          PY
 
 
       - name: Apply APP_NAME to strings.xml + Manifest

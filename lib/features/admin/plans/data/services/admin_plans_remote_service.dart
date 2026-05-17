@@ -1,13 +1,14 @@
+﻿
+
 import 'dart:convert';
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import '../../../../auth/data/services/auth_token_store.dart';
-import '../models/adminplanstatsmodel.dart';
-import '../models/adminplanlistitemmodel.dart';
+import 'package:build4allgym/core/network/authed_http_client.dart';
 import '../models/AdminBranchOptionModel.dart';
-import '../models/createplanrequestmodel.dart';
-import '../models/updateplanrequestmodel.dart';
+import '../models/AdminPlanStatsModel.dart';
+import '../models/AdminPlanListItemModel.dart';
+import '../models/CreatePlanRequestModel.dart';
+import '../models/UpdatePlanRequestModel.dart';
 import '../../../../../core/config/env.dart';
 
 // ── Abstract ──────────────────────────────────────────────────────────────────
@@ -25,6 +26,7 @@ abstract class AdminPlansRemoteDatasource {
 // ── Implementation ────────────────────────────────────────────────────────────
 
 class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
+  final _client = AuthedHttpClient();
 
   final _tokenStore = const AdminTokenStore();
 
@@ -33,8 +35,6 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   Future<Map<String, String>> _authHeaders() async {
 
     final token = await _tokenStore.getToken();
-    print('JWT TOKEN: $token'); // remove after debugging
-
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -45,7 +45,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   @override
   Future<AdminPlanStatsModel> getStats() async {
     final headers = await _authHeaders();
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/api/admin/plans/stats'),
       headers: headers,
     );
@@ -67,7 +67,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
     final uri = Uri.parse('$_baseUrl/api/admin/plans')
         .replace(queryParameters: queryParams.isEmpty ? null : queryParams);
 
-    final response = await http.get(uri, headers: headers);
+    final response = await _client.get(uri, headers: headers);
     _checkStatus(response);
 
     final list = jsonDecode(response.body) as List<dynamic>;
@@ -80,7 +80,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   @override
   Future<List<String>> getPlanTypes() async {
     final headers = await _authHeaders();
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/api/admin/plans/types'),
       headers: headers,
     );
@@ -93,7 +93,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   @override
   Future<List<AdminBranchOptionModel>> getBranches() async {
     final headers = await _authHeaders();
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$_baseUrl/api/admin/plans/branches'),
       headers: headers,
     );
@@ -108,7 +108,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   @override
   Future<void> createPlan(CreatePlanRequestModel request) async {
     final headers = await _authHeaders();
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/api/admin/plans'),
       headers: headers,
       body: jsonEncode(request.toJson()),
@@ -131,7 +131,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   @override
   Future<void> updatePlan(int planId, UpdatePlanRequestModel request) async {
     final headers = await _authHeaders();
-    final response = await http.put(
+    final response = await _client.put(
       Uri.parse('$_baseUrl/api/admin/plans/$planId'),
       headers: headers,
       body: jsonEncode(request.toJson()),
@@ -143,7 +143,7 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
   @override
   Future<void> deletePlan(int planId) async {
     final headers = await _authHeaders();
-    final response = await http.delete(
+    final response = await _client.delete(
       Uri.parse('$_baseUrl/api/admin/plans/$planId'),
       headers: headers,
     );

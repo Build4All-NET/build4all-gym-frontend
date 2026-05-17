@@ -11,6 +11,8 @@ class SessionCardModel {
   final int totalCapacity;
   final String? memberBookingStatus;
   final int? imageFileId;
+  final int? branchId;
+  final String? branchName;
 
   const SessionCardModel({
     required this.sessionId,
@@ -25,6 +27,8 @@ class SessionCardModel {
     required this.totalCapacity,
     this.memberBookingStatus,
     this.imageFileId,
+    this.branchId,
+    this.branchName,
   });
 
   factory SessionCardModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +45,10 @@ class SessionCardModel {
       totalCapacity: json['totalCapacity'] as int,
       memberBookingStatus: json['memberBookingStatus'] as String?,
       imageFileId: json['imageFileId'] as int?,
+      branchId: json['branchId'] == null
+          ? null
+          : (json['branchId'] as num).toInt(),
+      branchName: json['branchName'] as String?,
     );
   }
 
@@ -58,6 +66,8 @@ class SessionCardModel {
       'totalCapacity': totalCapacity,
       'memberBookingStatus': memberBookingStatus,
       'imageFileId': imageFileId,
+      'branchId': branchId,
+      'branchName': branchName,
     };
   }
 }

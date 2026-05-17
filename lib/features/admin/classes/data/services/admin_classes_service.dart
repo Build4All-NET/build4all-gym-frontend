@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // FILE: lib/features/admin/classes/data/services/admin_classes_service.dart
 //
 // PURPOSE:
@@ -11,6 +11,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:build4allgym/core/network/authed_http_client.dart';
 
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
@@ -23,6 +24,7 @@ import '../models/session_booking_item_model.dart';
 import '../models/update_class_request_model.dart';
 
 class AdminClassesService {
+  final _client = AuthedHttpClient();
   final AdminTokenStore _tokenStore;
 
   // ── Constructor ─────────────────────────────────────────────────────────────
@@ -65,7 +67,7 @@ class AdminClassesService {
         .replace(queryParameters: params.isEmpty ? null : params);
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return AdminClassListResponseModel.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
@@ -87,7 +89,7 @@ class AdminClassesService {
         .replace(queryParameters: params.isEmpty ? null : params);
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return ClassFormOptionsModel.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
@@ -104,7 +106,7 @@ class AdminClassesService {
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/classes');
 
     try {
-      final response = await http.post(
+      final response = await _client.post(
         uri,
         headers: headers,
         body: jsonEncode(request.toJson()),
@@ -129,7 +131,7 @@ class AdminClassesService {
         '${Env.apiProjectBaseUrl}/api/admin/classes/$sessionId');
 
     try {
-      final response = await http.put(
+      final response = await _client.put(
         uri,
         headers: headers,
         body: jsonEncode(request.toJson()),
@@ -150,7 +152,7 @@ class AdminClassesService {
         '${Env.apiProjectBaseUrl}/api/admin/classes/$sessionId/cancel');
 
     try {
-      final response = await http.patch(
+      final response = await _client.patch(
         uri,
         headers: headers,
         body: jsonEncode(request.toJson()),
@@ -171,7 +173,7 @@ class AdminClassesService {
         '${Env.apiProjectBaseUrl}/api/admin/classes/$sessionId/bookings');
 
     try {
-      final response = await http.get(uri, headers: headers);
+      final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
 
       final rawList = jsonDecode(response.body) as List<dynamic>;
@@ -179,7 +181,10 @@ class AdminClassesService {
           .map((e) =>
           SessionBookingItemModel.fromJson(e as Map<String, dynamic>))
           .toList();
-    } catch (e) {
+    } catch (e, stack) {
+      print('🔴 raw error type: ${e.runtimeType}');
+      print('🔴 raw error: $e');
+      print(stack);
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
       throw NetworkException();
     }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:build4allgym/core/config/env.dart';
 import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/core/utils/jwt_utils.dart';
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
@@ -21,9 +22,10 @@ class AuthRefreshCoordinator {
     return Dio(
       BaseOptions(
         baseUrl: g.appServerRoot,
-        headers: const {
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'X-Owner-Project-Link-Id': Env.ownerProjectLinkId,
         },
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 60),
@@ -71,17 +73,21 @@ class AuthRefreshCoordinator {
           ? Map<String, dynamic>.from(res.data as Map)
           : <String, dynamic>{};
 
-      final newAccess = (data['token'] ?? '').toString().trim();
+      final newAccess =
+          (data['token'] ?? data['accessToken'] ?? '').toString().trim();
       final newRefresh = (data['refreshToken'] ?? '').toString().trim();
 
-      if (newAccess.isEmpty || newRefresh.isEmpty) {
+      if (newAccess.isEmpty) {
         throw Exception('BAD_REFRESH_RESPONSE');
       }
+
+      // Keep the old refresh token if the backend doesn't rotate it.
+      final refreshToStore = newRefresh.isNotEmpty ? newRefresh : refresh;
 
       await _userStore.saveToken(
         token: newAccess,
         wasInactive: false,
-        refreshToken: newRefresh,
+        refreshToken: refreshToStore,
         tenantId: tenantId,
       );
 
@@ -116,19 +122,23 @@ class AuthRefreshCoordinator {
           ? Map<String, dynamic>.from(res.data as Map)
           : <String, dynamic>{};
 
-      final newAccess = (data['token'] ?? '').toString().trim();
+      final newAccess =
+          (data['token'] ?? data['accessToken'] ?? '').toString().trim();
       final newRefresh = (data['refreshToken'] ?? '').toString().trim();
 
-      if (newAccess.isEmpty || newRefresh.isEmpty) {
+      if (newAccess.isEmpty) {
         throw Exception('BAD_REFRESH_RESPONSE');
       }
+
+      // Keep the old refresh token if the backend doesn't rotate it.
+      final refreshToStore = newRefresh.isNotEmpty ? newRefresh : refresh;
 
       final role = (await _adminStore.getRole()) ?? '';
 
       await _adminStore.save(
         token: newAccess,
         role: role,
-        refreshToken: newRefresh,
+        refreshToken: refreshToStore,
         tenantId: tenantId,
       );
 

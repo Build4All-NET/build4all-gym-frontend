@@ -42,6 +42,15 @@ class RefreshTokenInterceptor extends Interceptor {
 
       if (map is! Map) return null;
 
+      // Backend stores roles as a List: ["ROLE_ADMIN"], ["ROLE_USER"], etc.
+      final roles = map['roles'];
+      if (roles is List && roles.isNotEmpty) {
+        var r = roles.first.toString().toUpperCase().trim();
+        if (r.startsWith('ROLE_')) r = r.substring(5);
+        return r;
+      }
+
+      // Fallback to singular 'role' field
       final role = map['role']?.toString();
       return role?.toUpperCase().trim();
     } catch (_) {

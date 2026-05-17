@@ -1,7 +1,7 @@
-import '../../domain/entities/member_account_entity.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_entity.dart';
 import 'package:build4allgym/features/member/account/domain/entities/member_account_stats_entity.dart';
 import 'package:build4allgym/features/member/account/domain/repositories/member_account_repository.dart';
+
 import '../models/update_profile_request_model.dart';
 import '../services/member_account_service.dart';
 
@@ -17,14 +17,11 @@ class MemberAccountRepositoryImpl implements MemberAccountRepository {
 
       return MemberAccountEntity(
         userId: model.userId,
-        fullName: model.fullName,
-        memberSince: model.memberSince,
-        planName: model.planName,
-        profileFileId: model.profileFileId,
-        email: model.email,
-        phone: model.phone,
         dateOfBirth: model.dateOfBirth,
         address: model.address,
+        gender: model.gender,
+        memberSince: model.memberSince,
+        planName: model.planName,
         referralCode: model.referralCode,
         activeBookingsCount: model.activeBookingsCount,
         stats: MemberAccountStatsEntity(

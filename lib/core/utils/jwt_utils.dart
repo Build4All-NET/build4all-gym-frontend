@@ -56,4 +56,13 @@ class JwtUtils {
     if (jsonMap is Map<String, dynamic>) return jsonMap;
     return {};
   }
+
+  static Map<String, dynamic>? decode(String? token) {
+    if (token == null || token.trim().isEmpty) return null;
+    try {
+      return _decodePayload(token);
+    } catch (_) {
+      return null;
+    }
+  }
 }

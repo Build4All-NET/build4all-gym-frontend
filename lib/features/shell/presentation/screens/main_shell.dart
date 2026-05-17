@@ -26,7 +26,6 @@ import 'package:build4allgym/features/member/home/domain/usecases/log_weight_use
 import 'package:build4allgym/features/member/home/presentation/bloc/member_home_bloc.dart';
 
 import 'package:build4allgym/features/member/plans/presentation/screens/member_plans_screen.dart';
-import 'package:build4allgym/features/member/sessions/presentation/screens/sessions_page.dart';
 
 import 'package:build4allgym/l10n/app_localizations.dart';
 
@@ -34,6 +33,13 @@ import '../../../member/account/data/repositories/member_account_repository_impl
 import '../../../member/account/data/services/member_account_service.dart';
 import '../../../member/account/domain/usecases/get_member_account_usecase.dart';
 import '../../../member/account/domain/usecases/update_profile_usecase.dart';
+
+import '../../../member/build4all_profile/data/repositories/member_build4all_profile_repository_impl.dart';
+import '../../../member/build4all_profile/data/services/member_build4all_profile_service.dart';
+import '../../../member/build4all_profile/domain/usecases/get_member_build4all_profile_usecase.dart';
+import '../../../member/build4all_profile/presentation/bloc/member_build4all_profile_bloc.dart';
+import '../../../member/build4all_profile/presentation/bloc/member_build4all_profile_event.dart';
+
 import '../../../member/sessions/data/repositories/sessions_repository_impl.dart';
 import '../../../member/sessions/domain/usecases/book_session_usecase.dart';
 import '../../../member/sessions/domain/usecases/cancel_booking_usecase.dart';
@@ -41,6 +47,16 @@ import '../../../member/sessions/domain/usecases/get_filter_options_usecase.dart
 import '../../../member/sessions/domain/usecases/get_sessions_usecase.dart';
 import '../../../member/sessions/data/services/sessions_service.dart';
 import '../../../member/sessions/domain/usecases/get_session_detail_use_case.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../member/sessions/presentation/screens/sessions_page.dart';
+
+import '../../../member/qr/data/repositories/member_qr_repository_impl.dart';
+import '../../../member/qr/data/services/member_qr_service.dart';
+import '../../../member/qr/domain/usecases/get_member_qr_use_case.dart';
+import '../../../member/qr/domain/usecases/refresh_member_qr_use_case.dart';
+import '../../../member/qr/presentation/bloc/member_qr_bloc.dart';
+import '../../../member/qr/presentation/bloc/member_qr_event.dart';
+import '../../../member/qr/presentation/screens/member_qr_screen.dart';
 class MainShell extends StatefulWidget {
   final AppConfig appConfig;
 
@@ -56,9 +72,17 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
+  late final List<Widget> _cachedPages;
+
   @override
   void initState() {
     super.initState();
+
+    // Build tab pages once.
+    // This prevents MemberAccountScreen and its blocs from being recreated
+    // whenever theme/locale changes rebuild MainShell.
+    _cachedPages = _buildPages();
+
     _startRealtime();
   }
 
@@ -113,13 +137,11 @@ class _MainShellState extends State<MainShell> {
   }
 
   Widget _buildBottomNavShell() {
-    final pages = _pages();
-
     return Scaffold(
       body: Column(
         children: [
           const ConnectionBanner(),
-          Expanded(child: pages[_currentIndex]),
+          Expanded(child: _cachedPages[_currentIndex]),
         ],
       ),
       bottomNavigationBar: MemberBottomNavBar(
@@ -130,7 +152,7 @@ class _MainShellState extends State<MainShell> {
   }
 
   Widget _buildDrawerShell(c) {
-    final pages = _pages();
+
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -154,7 +176,6 @@ class _MainShellState extends State<MainShell> {
                 ),
               ),
             ),
-
             ListTile(
               leading: const Icon(Icons.home_outlined),
               title: Text(l10n.memberBottomNavHome),
@@ -164,7 +185,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.credit_card_outlined),
               title: Text(l10n.memberBottomNavPlans),
@@ -174,7 +194,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.qr_code_2_rounded),
               title: Text(l10n.memberBottomNavQr),
@@ -184,7 +203,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.calendar_today_outlined),
               title: Text(l10n.memberBottomNavClasses),
@@ -194,7 +212,6 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.person_outline_rounded),
               title: Text(l10n.memberBottomNavAccount),
@@ -204,16 +221,13 @@ class _MainShellState extends State<MainShell> {
                 Navigator.pop(context);
               },
             ),
-
             const Spacer(),
             const Divider(),
-
             ListTile(
               leading: const Icon(Icons.logout_rounded),
               title: const Text('Logout'),
               onTap: _logout,
             ),
-
             const SizedBox(height: 16),
           ],
         ),
@@ -221,13 +235,13 @@ class _MainShellState extends State<MainShell> {
       body: Column(
         children: [
           const ConnectionBanner(),
-          Expanded(child: pages[_currentIndex]),
+          Expanded(child: _cachedPages[_currentIndex]),
         ],
       ),
     );
   }
 
-  List<Widget> _pages() => [
+  List<Widget> _buildPages() => [
     BlocProvider<MemberHomeBloc>(
       create: (_) {
         final datasource = MemberHomeRemoteDatasource(
@@ -254,48 +268,56 @@ class _MainShellState extends State<MainShell> {
     SessionsPage(
       getSessionsUseCase: GetSessionsUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
       getSessionDetailUseCase: GetSessionDetailUseCase(
         SessionsRepositoryImpl(SessionsService(g.dio())),
       ),
-
       bookSessionUseCase: BookSessionUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
       cancelBookingUseCase: CancelBookingUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
       getFilterOptionsUseCase: GetFilterOptionsUseCase(
         SessionsRepositoryImpl(
-          SessionsService(
-            g.dio()
-          ),
+          SessionsService(g.dio()),
         ),
       ),
     ),
 
-    MemberAccountScreen(
-      bloc: MemberAccountBloc(
-        getMemberAccountUseCase: GetMemberAccountUseCase(
-          MemberAccountRepositoryImpl(
-            MemberAccountService(g.dio()),
-          ),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<MemberBuild4AllProfileBloc>(
+          create: (_) {
+            final build4allRepo = MemberBuild4AllProfileRepositoryImpl(
+              MemberBuild4AllProfileService(),
+            );
+
+            return MemberBuild4AllProfileBloc(
+              getProfileUseCase: GetMemberBuild4AllProfileUseCase(
+                build4allRepo,
+              ),
+            )..add(const MemberBuild4AllProfileStarted());
+          },
         ),
-        updateProfileUseCase: UpdateProfileUseCase(
-          MemberAccountRepositoryImpl(
-            MemberAccountService(g.dio()),
+      ],
+      child: MemberAccountScreen(
+        bloc: MemberAccountBloc(
+          getMemberAccountUseCase: GetMemberAccountUseCase(
+            MemberAccountRepositoryImpl(
+              MemberAccountService(g.dio()),
+            ),
+          ),
+          updateProfileUseCase: UpdateProfileUseCase(
+            MemberAccountRepositoryImpl(
+              MemberAccountService(g.dio()),
+            ),
           ),
         ),
       ),
@@ -308,7 +330,30 @@ class _QrTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('QR'));
+    /*
+     * Same project style:
+     * dependencies are created near the screen using BlocProvider.
+     *
+     * Chain:
+     * Service -> RepositoryImpl -> UseCases -> Bloc -> Screen
+     */
+    final service = MemberQrService();
+
+    final repository = MemberQrRepositoryImpl(
+      service: service,
+    );
+
+    return BlocProvider(
+      create: (_) => MemberQrBloc(
+        getMemberQrUseCase: GetMemberQrUseCase(
+          repository: repository,
+        ),
+        refreshMemberQrUseCase: RefreshMemberQrUseCase(
+          repository: repository,
+        ),
+      )..add(const LoadMemberQr()),
+      child: const MemberQrScreen(),
+    );
   }
 }
 

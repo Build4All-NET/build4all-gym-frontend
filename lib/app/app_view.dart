@@ -7,6 +7,7 @@ import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/features/auth/presentation/gate/auth_gate.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
+import '../core/theme/app_theme_builder.dart';
 import 'app_router.dart';
 
 class MyAppView extends StatelessWidget {
@@ -28,10 +29,12 @@ class MyAppView extends StatelessWidget {
               title: appConfig.appName.isNotEmpty
                   ? appConfig.appName
                   : 'Gym App',
-              theme: themeState.themeData,
+
+              themeMode: themeState.selectedThemeMode,
+              theme: AppThemeBuilder.build(themeState.tokens),
+              darkTheme: AppThemeBuilder.buildDark(themeState.tokens),
 
               locale: locale,
-
               localizationsDelegates:
               AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
