@@ -6,11 +6,13 @@
 // =============================================================================
 
 import '../../../../../core/error/exceptions.dart';
+import '../../domain/entities/member_attendance_item_entity.dart';
 import '../../domain/entities/member_card_entity.dart';
 import '../../domain/entities/member_detail_entity.dart';
 import '../../domain/entities/member_list_result_entity.dart';
 import '../../domain/entities/membership_package_entity.dart';
 import '../../domain/repositories/admin_members_repository.dart';
+import '../models/member_attendance_item_model.dart';
 import '../models/member_card_model.dart';
 import '../models/member_detail_model.dart';
 import '../models/member_list_response_model.dart';
@@ -68,6 +70,33 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       throw Exception('Server error: ${e.message}');
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // getMemberAttendance
+  // ---------------------------------------------------------------------------
+  @override
+  Future<List<MemberAttendanceItemEntity>> getMemberAttendance(int userId) async {
+    try {
+      final models = await service.getMemberAttendance(userId);
+      return models.map((m) => MemberAttendanceItemEntity(
+        checkinId:       m.checkinId,
+        date:            m.date,
+        checkinTime:     m.checkinTime,
+        checkoutTime:    m.checkoutTime,
+        durationMinutes: m.durationMinutes,
+        status:          m.status,
+        checkinType:     m.checkinType,
+      )).toList();
+    } on UnauthorizedException {
+      throw Exception('Session expired. Please log in again.');
+    } on ForbiddenException {
+      throw Exception('You do not have permission to view attendance.');
+    } on ServerException catch (e) {
+      throw Exception('Server error: ${e.message}');
+    } on NetworkException {
+      throw Exception('No internet connection.');
     }
   }
 

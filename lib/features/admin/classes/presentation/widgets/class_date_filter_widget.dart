@@ -158,6 +158,7 @@ class ClassCardWidget extends StatelessWidget {
   final VoidCallback onBookingsTap;
   final VoidCallback onEditTap;
   final VoidCallback onCancelTap;
+  final VoidCallback? onReactivateTap;
 
   const ClassCardWidget({
     super.key,
@@ -166,6 +167,7 @@ class ClassCardWidget extends StatelessWidget {
     required this.onBookingsTap,
     required this.onEditTap,
     required this.onCancelTap,
+    this.onReactivateTap,
   });
 
   // Capacity bar colors are semantic data indicators — intentionally NOT theme-driven
@@ -204,7 +206,7 @@ class ClassCardWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            // ── Row 1: Class name + Nearly Full badge ──────────────────────
+            // ── Row 1: Class name + status badge ──────────────────────────
             Row(
               children: [
                 Expanded(
@@ -217,8 +219,42 @@ class ClassCardWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (session.status == 'CANCELLED')
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: cs.error.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Cancelled',
+                      style: TextStyle(
+                        color: cs.error,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
+                else if (session.status == 'COMPLETED')
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: cs.onSurface.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Completed',
+                      style: TextStyle(
+                        color: cs.onSurface.withOpacity(0.5),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  )
                 // "Nearly Full" badge — orange is semantic (warning), not brand
-                if (session.nearlyFull)
+                else if (session.nearlyFull)
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
@@ -333,40 +369,70 @@ class ClassCardWidget extends StatelessWidget {
             const SizedBox(height: 12),
 
             // ── Action buttons ─────────────────────────────────────────────
-            isLoading
-                ? Center(
-              child: SizedBox(
-                height: 32,
-                width: 32,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: cs.primary),
+            if (isLoading)
+              Center(
+                child: SizedBox(
+                  height: 32,
+                  width: 32,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: cs.primary),
+                ),
+              )
+            else if (session.status == 'CANCELLED')
+              Row(
+                children: [
+                  _ActionButton(
+                    icon: Icons.people_outline,
+                    label: 'Bookings',
+                    color: cs.primary,
+                    onTap: onBookingsTap,
+                  ),
+                  const SizedBox(width: 8),
+                  _ActionButton(
+                    icon: Icons.refresh_rounded,
+                    label: 'Reactivate',
+                    color: cs.tertiary != cs.surface ? cs.tertiary : const Color(0xFF4CAF50),
+                    onTap: onReactivateTap ?? () {},
+                  ),
+                ],
+              )
+            else if (session.status == 'COMPLETED')
+              Row(
+                children: [
+                  _ActionButton(
+                    icon: Icons.people_outline,
+                    label: 'Bookings',
+                    color: cs.primary,
+                    onTap: onBookingsTap,
+                  ),
+                ],
+              )
+            else
+              Row(
+                children: [
+                  _ActionButton(
+                    icon: Icons.people_outline,
+                    label: 'Bookings',
+                    color: cs.primary,
+                    onTap: onBookingsTap,
+                  ),
+                  const SizedBox(width: 8),
+                  _ActionButton(
+                    icon: Icons.edit_outlined,
+                    label: 'Edit',
+                    color: cs.onSurface.withOpacity(0.6),
+                    onTap: onEditTap,
+                  ),
+                  const SizedBox(width: 8),
+                  // Cancel button — error color is semantic
+                  _ActionButton(
+                    icon: Icons.close,
+                    label: 'Cancel',
+                    color: cs.error,
+                    onTap: onCancelTap,
+                  ),
+                ],
               ),
-            )
-                : Row(
-              children: [
-                _ActionButton(
-                  icon: Icons.people_outline,
-                  label: 'Bookings',
-                  color: cs.primary,
-                  onTap: onBookingsTap,
-                ),
-                const SizedBox(width: 8),
-                _ActionButton(
-                  icon: Icons.edit_outlined,
-                  label: 'Edit',
-                  color: cs.onSurface.withOpacity(0.6),
-                  onTap: onEditTap,
-                ),
-                const SizedBox(width: 8),
-                // Cancel button — error color is semantic
-                _ActionButton(
-                  icon: Icons.close,
-                  label: 'Cancel',
-                  color: cs.error,
-                  onTap: onCancelTap,
-                ),
-              ],
-            ),
           ],
         ),
       ),

@@ -47,6 +47,43 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
     return '$dayLabel — ${DateFormat('EEEE, MMMM d, yyyy').format(date)}';
   }
 
+  void _showReactivateConfirmation(BuildContext context, int sessionId) {
+    final cs = Theme.of(context).colorScheme;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: cs.surface,
+        title: Text('Reactivate Class',
+            style: TextStyle(
+                fontWeight: FontWeight.w700, color: cs.onSurface)),
+        content: Text(
+          'Restore this class to scheduled? Members will be able to book it again.',
+          style: TextStyle(color: cs.onSurface.withOpacity(0.7)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('Cancel',
+                style: TextStyle(color: cs.onSurface.withOpacity(0.6))),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.read<AdminClassesBloc>().add(
+                ClassReactivateRequested(sessionId),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4CAF50),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Yes, Reactivate'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showCancelConfirmation(BuildContext context, int sessionId) {
     final cs = Theme.of(context).colorScheme;
     showDialog(
@@ -92,7 +129,9 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
   void _openEditClassSheet(dynamic session) {
     context.read<AdminClassesBloc>().add(const ClassFormOptionsRequested());
     AddEditClassBottomSheet.show(context,
-        sessionId: session.sessionId, existing: session);
+        sessionId: session.sessionId,
+        existing: session,
+        existingDate: _lastLoadedState?.selectedDate);
   }
 
   @override
@@ -118,16 +157,18 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
 
             if (state is ClassActionSuccess) {
               final messages = {
-                'created':   'Class created successfully',
-                'updated':   'Class updated successfully',
-                'cancelled': 'Class cancelled',
+                'created':     'Class created successfully',
+                'updated':     'Class updated successfully',
+                'cancelled':   'Class cancelled',
+                'reactivated': 'Class reactivated successfully',
               };
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content:         Text(messages[state.actionType] ?? 'Done'),
-                backgroundColor: cs.primary,         // ← was Color(0xFF4CAF50)
+                backgroundColor: cs.primary,
                 behavior:        SnackBarBehavior.floating,
               ));
-              context.read<AdminClassesBloc>().add(ClassesStarted(DateTime.now()));
+              // BLoC already refreshes the list internally with the correct date —
+              // do NOT dispatch another ClassesStarted here or it overwrites to today.
             }
 
             if (state is ClassActionError) {
@@ -239,8 +280,10 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
                                   className: session.className,
                                 );
                               },
-                              onEditTap:   () => _openEditClassSheet(session),
-                              onCancelTap: () => _showCancelConfirmation(
+                              onEditTap:        () => _openEditClassSheet(session),
+                              onCancelTap:      () => _showCancelConfirmation(
+                                  context, session.sessionId),
+                              onReactivateTap:  () => _showReactivateConfirmation(
                                   context, session.sessionId),
                             );
                           },

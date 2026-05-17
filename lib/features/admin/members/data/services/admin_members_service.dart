@@ -12,6 +12,7 @@ import 'package:build4allgym/core/network/authed_http_client.dart';
 import '../../../../../core/config/env.dart';
 import '../../../../../core/error/exceptions.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
+import '../models/member_attendance_item_model.dart';
 import '../models/member_detail_model.dart';
 
 class AdminMembersService {
@@ -94,6 +95,26 @@ class AdminMembersService {
       final response = await _client.get(uri, headers: headers);
       _handleStatus(response);
       return MemberDetailModel.fromJson(_parseMap(response));
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // GET /api/admin/members/{userId}/attendance
+  // ---------------------------------------------------------------------------
+  Future<List<MemberAttendanceItemModel>> getMemberAttendance(int userId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/members/$userId/attendance');
+    try {
+      final response = await _client.get(uri, headers: headers);
+      _handleStatus(response);
+      final rawList = jsonDecode(response.body) as List<dynamic>;
+      return rawList
+          .map((e) => MemberAttendanceItemModel.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
       throw NetworkException();

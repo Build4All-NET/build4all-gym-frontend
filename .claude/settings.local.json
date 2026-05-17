@@ -22,7 +22,11 @@
       "Bash(xargs grep -l \"Trainer\")",
       "Bash(xargs grep -l \"CreateTrainerRequestModel\\\\|UpdateTrainerRequestModel\")",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\\\\lib\\\\features\\\\admin\" -Recurse)",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\\\\lib\\\\features\\\\admin\" -Recurse -ErrorAction SilentlyContinue)",
+      "Bash(xargs findstr /C:\"reactivate\")",
+      "Bash(Get-ChildItem -Recurse -Filter \"ClassSessionRepository.java\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }
