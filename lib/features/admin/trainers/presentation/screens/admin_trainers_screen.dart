@@ -305,6 +305,22 @@ class _TrainerCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                  if (trainer.branchNames.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on_outlined, color: c.muted, size: 13),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            trainer.branchNames.join(', '),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: c.muted, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 3),
                   Row(
                     children: [

@@ -17,6 +17,8 @@ class AdminPlanListItemModel {
   final int? freezeDaysAllowance;
   final int? maxFreezesCount;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final List<String> branches;
   final List<int> branchIds;
   final String? promotionText;
@@ -38,6 +40,8 @@ class AdminPlanListItemModel {
     this.freezeDaysAllowance,
     this.maxFreezesCount,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     required this.branches,
     this.branchIds = const [],
     this.promotionText,
@@ -61,6 +65,8 @@ class AdminPlanListItemModel {
       freezeDaysAllowance: json['freezeDaysAllowance'] as int?,
       maxFreezesCount: json['maxFreezesCount'] as int?,
       gracePeriodDays: json['gracePeriodDays'] as int?,
+      gymAccessStart: json['gymAccessStart'] as String?,
+      gymAccessEnd: json['gymAccessEnd'] as String?,
       branches: (json['branches'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -97,6 +103,8 @@ class AdminPlanListItemModel {
         freezeDaysAllowance: freezeDaysAllowance,
         maxFreezesCount: maxFreezesCount,
         gracePeriodDays: gracePeriodDays,
+        gymAccessStart: gymAccessStart,
+        gymAccessEnd: gymAccessEnd,
         branches: branches,
         branchIds: branchIds,
         promotionText: promotionText,

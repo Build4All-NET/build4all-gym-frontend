@@ -176,6 +176,25 @@ class AdminPlanCardWidget extends StatelessWidget {
                 ),
               ],
 
+              // ── Access Hours ──────────────────────────────────────────────
+              if (plan.gymAccessStart != null && plan.gymAccessEnd != null) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _DetailCell(
+                        icon: Icons.access_time_rounded,
+                        label: 'Entry Hours',
+                        value: '${plan.gymAccessStart} – ${plan.gymAccessEnd}',
+                        c: c,
+                        iconColor: c.primary,
+                        valueColor: c.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
               // ── Row 4: Grace Period | Auto Renew ─────────────────────────
               if (plan.gracePeriodDays != null || plan.autoRenew) ...[
                 const SizedBox(height: 12),

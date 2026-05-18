@@ -147,6 +147,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get validation_phoneAlreadyExists => 'رقم الهاتف مسجل مسبقاً';
 
   @override
+  String get validation_passwordNoLetter => 'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
+
+  @override
+  String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
+
+  @override
   String get general_cancel => 'إلغاء';
 
   @override
@@ -154,6 +163,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get general_optional => 'اختياري';
+
+  @override
+  String get common_or => 'أو';
 
   @override
   String get error_somethingWentWrong => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
@@ -202,9 +214,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get appAccessRetry => 'حاول مجدداً';
-
-  @override
-  String get common_or => 'أو';
 
   @override
   String get forgotPassword_title => 'إعادة تعيين كلمة المرور';
@@ -307,15 +316,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword_passwordResetSuccess => 'تم إعادة تعيين كلمة المرور بنجاح';
 
   @override
-  String get validation_passwordNoLetter => 'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
-
-  @override
-  String get validation_passwordNoNumber => 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
-
-  @override
-  String get validation_confirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
-
-  @override
   String get signup_title => 'إنشاء حساب جديد';
 
   @override
@@ -347,6 +347,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signup_alreadyVerifiedResume => 'تم التحقق من الحساب مسبقاً. جارٍ استكمال ملفك الشخصي.';
+
+  @override
+  String get signup_success => 'تم التسجيل بنجاح. يمكنك الآن تسجيل الدخول.';
 
   @override
   String get otp_title => 'تأكيد الحساب';
@@ -531,6 +534,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_renewNow => 'تجديد الآن';
 
   @override
+  String get home_quoteOfTheDay => 'مقولة اليوم';
+
+  @override
+  String get home_progressTracking => 'متابعة التقدم';
+
+  @override
+  String get home_weightTrackerSubtitle => 'كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك';
+
+  @override
+  String get home_updateWeightNow => 'تحديث وزني الآن';
+
+  @override
+  String get home_bookTrainer => 'حجز مدرب';
+
+  @override
+  String get home_checkInCode => 'رمز الدخول';
+
+  @override
+  String get home_paymentHistory => 'سجل الدفعات';
+
+  @override
   String get memberBottomNavHome => 'الرئيسية';
 
   @override
@@ -566,30 +590,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberHomeNoScheduleToday => 'لا توجد حصص اليوم — استمتع بيوم راحة! 💪';
-
-  @override
-  String get home_quoteOfTheDay => 'مقولة اليوم';
-
-  @override
-  String get home_progressTracking => 'متابعة التقدم';
-
-  @override
-  String get home_weightTrackerSubtitle => 'كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك';
-
-  @override
-  String get home_updateWeightNow => 'تحديث وزني الآن';
-
-  @override
-  String get home_bookTrainer => 'حجز مدرب';
-
-  @override
-  String get home_checkInCode => 'رمز الدخول';
-
-  @override
-  String get home_paymentHistory => 'سجل الدفعات';
-
-  @override
-  String get signup_success => 'تم التسجيل بنجاح يمكنك تسجيل الدخول الان';
 
   @override
   String get mostPopular => 'الأكثر شيوعاً';
@@ -628,12 +628,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get membershipStatusExpired => 'منتهي';
 
   @override
-  String remainingDays(Object days) {
+  String remainingDays(int days) {
     return 'متبقي $days يوم';
   }
 
   @override
-  String membershipEndsAt(Object date) {
+  String membershipEndsAt(String date) {
     return 'تنتهي في $date';
   }
 
@@ -680,8 +680,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get apply => 'تطبيق';
 
   @override
-  String couponAppliedFinalPrice(Object price) {
-    return 'السعر النهائي: $price';
+  String couponAppliedFinalPrice(String price) {
+    return '✓ تم تطبيق الكوبون — السعر النهائي: $price \$';
   }
 
   @override
@@ -787,7 +787,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sessionDetailSeatsLabel => 'المقاعد';
 
   @override
-  String sessionDetailSeatsRemaining(Object count) {
+  String sessionDetailSeatsRemaining(int count) {
     return '$count متبقي';
   }
 
@@ -993,6 +993,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appVersion => 'النسخة';
 
   @override
+  String get accountGender => 'الجنس';
+
+  @override
+  String get accountGenderMale => 'ذكر';
+
+  @override
+  String get accountGenderFemale => 'أنثى';
+
+  @override
+  String accountMemberSince(String date) {
+    return 'عضو منذ $date';
+  }
+
+  @override
+  String get accountMyInfo => 'معلوماتي';
+
+  @override
   String get ptAll => 'الكل';
 
   @override
@@ -1027,11 +1044,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptNoTrainers => 'لا يوجد مدربون متاحون';
-
-  @override
-  String accountMemberSince(String date) {
-    return 'عضو منذ $date';
-  }
 
   @override
   String get ptBookingChooseDate => 'اختر التاريخ';
@@ -1145,17 +1157,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String ptPackageDaysPerWeekRange(int min, int max) {
-    return 'Choose $min to $max days per week';
+    return 'اختر من $min إلى $max أيام في الأسبوع';
   }
 
   @override
   String ptPackageDaysPerWeekExact(int count) {
-    return 'Choose $count day(s) per week';
+    return 'اختر $count يوم في الأسبوع';
   }
 
   @override
   String ptPackageMaxDaysReached(int max) {
-    return 'You cannot select more than $max days per week';
+    return 'لا يمكنك اختيار أكثر من $max أيام في الأسبوع';
   }
 
   @override
@@ -1163,6 +1175,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
+
+  @override
+  String get ptBookingRequestSuccess => 'تم إرسال الطلب إلى المدرب. بانتظار الموافقة.';
+
+  @override
+  String get ptBookingRequestThisTime => 'طلب هذا الوقت';
+
+  @override
+  String get ptBookingBookSession => 'حجز الجلسة';
+
+  @override
+  String get ptBookingRequestNote => 'طلب العضو وقت تدريب غير متاح أو ممتلئ';
+
+  @override
+  String get ptBookingFullOrUnavailable => 'هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.';
+
+  @override
+  String get ptBookingFailed => 'تعذر تأكيد الحجز.';
+
+  @override
+  String get ptBookingRequestFailed => 'تعذر إرسال الطلب.';
 
   @override
   String get editProfileTitle => 'تعديل الملف الشخصي';
@@ -1208,15 +1241,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfileInvalidEmail => 'البريد الإلكتروني غير صالح';
-
-  @override
-  String get accountGender => 'الجنس';
-
-  @override
-  String get accountGenderMale => 'ذكر';
-
-  @override
-  String get accountGenderFemale => 'أنثى';
 
   @override
   String get editProfileFirstName => 'الاسم الأول';
@@ -1297,27 +1321,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfileCodeRequired => 'رمز التحقق مطلوب.';
 
   @override
-  String get ptBookingRequestSuccess => 'تم إرسال الطلب إلى المدرب. بانتظار الموافقة.';
-
-  @override
-  String get ptBookingRequestThisTime => 'طلب هذا الوقت';
-
-  @override
-  String get ptBookingBookSession => 'حجز الجلسة';
-
-  @override
-  String get ptBookingRequestNote => 'طلب العضو وقت تدريب غير متاح أو ممتلئ';
-
-  @override
-  String get ptBookingFullOrUnavailable => 'هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.';
-
-  @override
-  String get ptBookingFailed => 'تعذر تأكيد الحجز.';
-
-  @override
-  String get ptBookingRequestFailed => 'تعذر إرسال الطلب.';
-
-  @override
   String get memberQrTitle => 'رمز الدخول';
 
   @override
@@ -1371,9 +1374,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberQrRetry => 'إعادة المحاولة';
-
-  @override
-  String get accountMyInfo => 'معلوماتي';
 
   @override
   String get myInfoTitle => 'معلوماتي';
@@ -1440,4 +1440,112 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get myInfoRequiredError => 'الفرع المفضل والجنس وتاريخ الميلاد مطلوبة.';
+
+  @override
+  String get aiAppBarTitle => 'المساعد الذكي';
+
+  @override
+  String get aiNewConversationTooltip => 'محادثة جديدة';
+
+  @override
+  String get aiHeroBannerTitle => 'مساعد الرؤى الذكية';
+
+  @override
+  String get aiHeroBannerSubtitle => 'اسألني أي شيء عن صالتك';
+
+  @override
+  String get aiHeroBannerBody => 'احصل على تحليلات فورية ورؤى وتوصيات\nبناءً على بيانات صالتك.';
+
+  @override
+  String get aiSuggestedQuestionsHeader => 'أسئلة مقترحة';
+
+  @override
+  String get aiRecentQueriesHeader => 'الاستفسارات الأخيرة';
+
+  @override
+  String get aiRecentQueryViewLabel => 'عرض';
+
+  @override
+  String get aiInputHint => 'اسأل سؤالاً عن صالتك...';
+
+  @override
+  String get aiFollowUpHeader => 'قد تسأل أيضاً:';
+
+  @override
+  String get aiRetryButton => 'إعادة المحاولة';
+
+  @override
+  String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get aiErrorOffline => 'عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get checkins_title => 'تسجيل الحضور';
+
+  @override
+  String get checkins_scanQr => 'مسح QR';
+
+  @override
+  String get checkins_scanSuccessMsg => 'تم تسجيل الدخول بنجاح';
+
+  @override
+  String get checkins_activeNow => 'نشط الآن';
+
+  @override
+  String get checkins_totalToday => 'إجمالي اليوم';
+
+  @override
+  String get checkins_searchHint => 'ابحث عن الأعضاء...';
+
+  @override
+  String get checkins_todayTitle => 'حضور اليوم';
+
+  @override
+  String get checkins_noCheckins => 'لا يوجد حضور اليوم';
+
+  @override
+  String get checkins_active => 'نشط';
+
+  @override
+  String get checkins_checkedOut => 'خرج';
+
+  @override
+  String get checkins_out => 'خروج';
+
+  @override
+  String get checkins_freeze => 'تجميد';
+
+  @override
+  String get checkins_block => 'حجب';
+
+  @override
+  String get checkins_call => 'اتصال';
+
+  @override
+  String get checkins_freezeTitle => 'تجميد العضوية';
+
+  @override
+  String get checkins_fromDate => 'من تاريخ';
+
+  @override
+  String get checkins_toDate => 'إلى تاريخ';
+
+  @override
+  String get checkins_reasonHint => 'السبب (اختياري)';
+
+  @override
+  String get checkins_confirm => 'تأكيد';
+
+  @override
+  String get checkins_blockTitle => 'حجب العضو';
+
+  @override
+  String get checkins_cancel => 'إلغاء';
+
+  @override
+  String get checkins_blockConfirm => 'حجب';
+
+  @override
+  String get checkins_scannerTitle => 'مسح QR للعضو';
 }

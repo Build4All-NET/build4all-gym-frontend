@@ -371,6 +371,24 @@ abstract class AppLocalizations {
   /// **'Phone number already exists'**
   String get validation_phoneAlreadyExists;
 
+  /// No description provided for @validation_passwordNoLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one letter'**
+  String get validation_passwordNoLetter;
+
+  /// No description provided for @validation_passwordNoNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one number'**
+  String get validation_passwordNoNumber;
+
+  /// No description provided for @validation_confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get validation_confirmPasswordRequired;
+
   /// Cancel button text
   ///
   /// In en, this message translates to:
@@ -388,6 +406,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Optional'**
   String get general_optional;
+
+  /// No description provided for @common_or.
+  ///
+  /// In en, this message translates to:
+  /// **'Or'**
+  String get common_or;
 
   /// Generic error message
   ///
@@ -484,12 +508,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try Again'**
   String get appAccessRetry;
-
-  /// No description provided for @common_or.
-  ///
-  /// In en, this message translates to:
-  /// **'Or'**
-  String get common_or;
 
   /// No description provided for @forgotPassword_title.
   ///
@@ -683,24 +701,6 @@ abstract class AppLocalizations {
   /// **'Password reset successfully'**
   String get forgotPassword_passwordResetSuccess;
 
-  /// No description provided for @validation_passwordNoLetter.
-  ///
-  /// In en, this message translates to:
-  /// **'Password must contain at least one letter'**
-  String get validation_passwordNoLetter;
-
-  /// No description provided for @validation_passwordNoNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Password must contain at least one number'**
-  String get validation_passwordNoNumber;
-
-  /// No description provided for @validation_confirmPasswordRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Please confirm your password'**
-  String get validation_confirmPasswordRequired;
-
   /// No description provided for @signup_title.
   ///
   /// In en, this message translates to:
@@ -766,6 +766,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account already verified. Completing your profile.'**
   String get signup_alreadyVerifiedResume;
+
+  /// No description provided for @signup_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully registered. You can now login.'**
+  String get signup_success;
 
   /// No description provided for @otp_title.
   ///
@@ -869,7 +875,7 @@ abstract class AppLocalizations {
   /// **'Choose a unique username'**
   String get completeProfile_lastStepSubtitle;
 
-  /// Label shown in the step indicator — appended with (1/2) or (2/2)
+  /// Label shown in the step indicator
   ///
   /// In en, this message translates to:
   /// **'Personal Information'**
@@ -1127,6 +1133,48 @@ abstract class AppLocalizations {
   /// **'Renew Now'**
   String get home_renewNow;
 
+  /// No description provided for @home_quoteOfTheDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote of the day'**
+  String get home_quoteOfTheDay;
+
+  /// No description provided for @home_progressTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress tracking'**
+  String get home_progressTracking;
+
+  /// No description provided for @home_weightTrackerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your week? Take a moment to update your weight and track your progress.'**
+  String get home_weightTrackerSubtitle;
+
+  /// No description provided for @home_updateWeightNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update my weight'**
+  String get home_updateWeightNow;
+
+  /// No description provided for @home_bookTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Trainer'**
+  String get home_bookTrainer;
+
+  /// No description provided for @home_checkInCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in Code'**
+  String get home_checkInCode;
+
+  /// No description provided for @home_paymentHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment History'**
+  String get home_paymentHistory;
+
   /// No description provided for @memberBottomNavHome.
   ///
   /// In en, this message translates to:
@@ -1193,54 +1241,6 @@ abstract class AppLocalizations {
   /// **'No classes today — enjoy your rest day! 💪'**
   String get memberHomeNoScheduleToday;
 
-  /// No description provided for @home_quoteOfTheDay.
-  ///
-  /// In en, this message translates to:
-  /// **'Quote of the day'**
-  String get home_quoteOfTheDay;
-
-  /// No description provided for @home_progressTracking.
-  ///
-  /// In en, this message translates to:
-  /// **'Progress tracking'**
-  String get home_progressTracking;
-
-  /// No description provided for @home_weightTrackerSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'How was your week? Take a moment to update your weight and track your progress.'**
-  String get home_weightTrackerSubtitle;
-
-  /// No description provided for @home_updateWeightNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Update my weight'**
-  String get home_updateWeightNow;
-
-  /// No description provided for @home_bookTrainer.
-  ///
-  /// In en, this message translates to:
-  /// **'Book Trainer'**
-  String get home_bookTrainer;
-
-  /// No description provided for @home_checkInCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Check-in Code'**
-  String get home_checkInCode;
-
-  /// No description provided for @home_paymentHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment History'**
-  String get home_paymentHistory;
-
-  /// No description provided for @signup_success.
-  ///
-  /// In en, this message translates to:
-  /// **'Successfully registered. You can now login.'**
-  String get signup_success;
-
   /// No description provided for @mostPopular.
   ///
   /// In en, this message translates to:
@@ -1250,7 +1250,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectThisPlan.
   ///
   /// In en, this message translates to:
-  /// **'Select This Plan'**
+  /// **'Choose this plan'**
   String get selectThisPlan;
 
   /// No description provided for @renew.
@@ -1317,13 +1317,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{days} days remaining'**
-  String remainingDays(Object days);
+  String remainingDays(int days);
 
   /// No description provided for @membershipEndsAt.
   ///
   /// In en, this message translates to:
-  /// **'Ends at {date}'**
-  String membershipEndsAt(Object date);
+  /// **'Ends on {date}'**
+  String membershipEndsAt(String date);
 
   /// No description provided for @memberPlansTitle.
   ///
@@ -1334,13 +1334,13 @@ abstract class AppLocalizations {
   /// No description provided for @memberPlansSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Choose the best plan for you'**
+  /// **'Choose the plan that fits your goals'**
   String get memberPlansSubtitle;
 
   /// No description provided for @memberPlansEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No plans available'**
+  /// **'No plans available right now'**
   String get memberPlansEmpty;
 
   /// No description provided for @retry.
@@ -1358,19 +1358,19 @@ abstract class AppLocalizations {
   /// No description provided for @checkoutComingSoon.
   ///
   /// In en, this message translates to:
-  /// **'Checkout coming soon'**
+  /// **'Coming soon — checkout is under development'**
   String get checkoutComingSoon;
 
   /// No description provided for @planDuration.
   ///
   /// In en, this message translates to:
-  /// **'Plan Duration'**
+  /// **'Duration'**
   String get planDuration;
 
   /// No description provided for @visitLimit.
   ///
   /// In en, this message translates to:
-  /// **'Visit Limit'**
+  /// **'Visit limit'**
   String get visitLimit;
 
   /// No description provided for @unlimited.
@@ -1382,19 +1382,19 @@ abstract class AppLocalizations {
   /// No description provided for @freezeDays.
   ///
   /// In en, this message translates to:
-  /// **'Freeze Days'**
+  /// **'Freeze days'**
   String get freezeDays;
 
   /// No description provided for @planFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Plan Features'**
+  /// **'Features'**
   String get planFeatures;
 
   /// No description provided for @couponCode.
   ///
   /// In en, this message translates to:
-  /// **'Coupon Code'**
+  /// **'Coupon code'**
   String get couponCode;
 
   /// No description provided for @enterCouponCode.
@@ -1412,31 +1412,31 @@ abstract class AppLocalizations {
   /// No description provided for @couponAppliedFinalPrice.
   ///
   /// In en, this message translates to:
-  /// **'Final price: {price}'**
-  String couponAppliedFinalPrice(Object price);
+  /// **'✓ Coupon applied — final price: {price} \$'**
+  String couponAppliedFinalPrice(String price);
 
   /// No description provided for @selectedPlan.
   ///
   /// In en, this message translates to:
-  /// **'Selected Plan'**
+  /// **'Selected plan'**
   String get selectedPlan;
 
   /// No description provided for @baseAmount.
   ///
   /// In en, this message translates to:
-  /// **'Base Amount'**
+  /// **'Base amount'**
   String get baseAmount;
 
   /// No description provided for @totalAmount.
   ///
   /// In en, this message translates to:
-  /// **'Total Amount'**
+  /// **'Total amount'**
   String get totalAmount;
 
   /// No description provided for @planDetails.
   ///
   /// In en, this message translates to:
-  /// **'Plan Details'**
+  /// **'Plan details'**
   String get planDetails;
 
   /// No description provided for @dayMonday.
@@ -1611,7 +1611,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} remaining'**
-  String sessionDetailSeatsRemaining(Object count);
+  String sessionDetailSeatsRemaining(int count);
 
   /// No description provided for @sessionDetailLocationLabel.
   ///
@@ -2015,6 +2015,36 @@ abstract class AppLocalizations {
   /// **'Version'**
   String get appVersion;
 
+  /// No description provided for @accountGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get accountGender;
+
+  /// No description provided for @accountGenderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get accountGenderMale;
+
+  /// No description provided for @accountGenderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get accountGenderFemale;
+
+  /// No description provided for @accountMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since {date}'**
+  String accountMemberSince(String date);
+
+  /// No description provided for @accountMyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'My Info'**
+  String get accountMyInfo;
+
   /// No description provided for @ptAll.
   ///
   /// In en, this message translates to:
@@ -2074,12 +2104,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No trainers available'**
   String get ptNoTrainers;
-
-  /// No description provided for @accountMemberSince.
-  ///
-  /// In en, this message translates to:
-  /// **'Member since {date}'**
-  String accountMemberSince(String date);
 
   /// No description provided for @ptBookingChooseDate.
   ///
@@ -2327,6 +2351,48 @@ abstract class AppLocalizations {
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
 
+  /// No description provided for @ptBookingRequestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to PT. Waiting for approval.'**
+  String get ptBookingRequestSuccess;
+
+  /// No description provided for @ptBookingRequestThisTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Request this time'**
+  String get ptBookingRequestThisTime;
+
+  /// No description provided for @ptBookingBookSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Book session'**
+  String get ptBookingBookSession;
+
+  /// No description provided for @ptBookingRequestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Member requested unavailable/full PT time'**
+  String get ptBookingRequestNote;
+
+  /// No description provided for @ptBookingFullOrUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This slot is full or unavailable. Send a request instead.'**
+  String get ptBookingFullOrUnavailable;
+
+  /// No description provided for @ptBookingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to confirm booking.'**
+  String get ptBookingFailed;
+
+  /// No description provided for @ptBookingRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to send request.'**
+  String get ptBookingRequestFailed;
+
   /// No description provided for @editProfileTitle.
   ///
   /// In en, this message translates to:
@@ -2416,24 +2482,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid email address'**
   String get editProfileInvalidEmail;
-
-  /// No description provided for @accountGender.
-  ///
-  /// In en, this message translates to:
-  /// **'Gender'**
-  String get accountGender;
-
-  /// No description provided for @accountGenderMale.
-  ///
-  /// In en, this message translates to:
-  /// **'Male'**
-  String get accountGenderMale;
-
-  /// No description provided for @accountGenderFemale.
-  ///
-  /// In en, this message translates to:
-  /// **'Female'**
-  String get accountGenderFemale;
 
   /// No description provided for @editProfileFirstName.
   ///
@@ -2591,48 +2639,6 @@ abstract class AppLocalizations {
   /// **'Verification code is required.'**
   String get editProfileCodeRequired;
 
-  /// No description provided for @ptBookingRequestSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Request sent to PT. Waiting for approval.'**
-  String get ptBookingRequestSuccess;
-
-  /// No description provided for @ptBookingRequestThisTime.
-  ///
-  /// In en, this message translates to:
-  /// **'Request this time'**
-  String get ptBookingRequestThisTime;
-
-  /// No description provided for @ptBookingBookSession.
-  ///
-  /// In en, this message translates to:
-  /// **'Book session'**
-  String get ptBookingBookSession;
-
-  /// No description provided for @ptBookingRequestNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Member requested unavailable/full PT time'**
-  String get ptBookingRequestNote;
-
-  /// No description provided for @ptBookingFullOrUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'This slot is full or unavailable. Send a request instead.'**
-  String get ptBookingFullOrUnavailable;
-
-  /// No description provided for @ptBookingFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Unable to confirm booking.'**
-  String get ptBookingFailed;
-
-  /// No description provided for @ptBookingRequestFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Unable to send request.'**
-  String get ptBookingRequestFailed;
-
   /// No description provided for @memberQrTitle.
   ///
   /// In en, this message translates to:
@@ -2734,12 +2740,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get memberQrRetry;
-
-  /// No description provided for @accountMyInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'My Info'**
-  String get accountMyInfo;
 
   /// No description provided for @myInfoTitle.
   ///
@@ -2872,6 +2872,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferred branch, gender and date of birth are required.'**
   String get myInfoRequiredError;
+
+  /// AI assistant screen — AppBar title
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights Assistant'**
+  String get aiAppBarTitle;
+
+  /// Tooltip on the reset/refresh icon button
+  ///
+  /// In en, this message translates to:
+  /// **'New conversation'**
+  String get aiNewConversationTooltip;
+
+  /// Hero banner main title
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights Assistant'**
+  String get aiHeroBannerTitle;
+
+  /// Hero banner subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Ask me anything about your gym'**
+  String get aiHeroBannerSubtitle;
+
+  /// Hero banner body text
+  ///
+  /// In en, this message translates to:
+  /// **'Get instant analytics, insights and recommendations\nbased on your gym data.'**
+  String get aiHeroBannerBody;
+
+  /// Section header above suggested question chips
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested questions'**
+  String get aiSuggestedQuestionsHeader;
+
+  /// Section header above recent query list
+  ///
+  /// In en, this message translates to:
+  /// **'Recent queries'**
+  String get aiRecentQueriesHeader;
+
+  /// Trailing label on a recent query row
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get aiRecentQueryViewLabel;
+
+  /// Placeholder text in the chat input field
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question about your gym...'**
+  String get aiInputHint;
+
+  /// Label above the follow-up question chips after an AI answer
+  ///
+  /// In en, this message translates to:
+  /// **'You might also ask:'**
+  String get aiFollowUpHeader;
+
+  /// Retry button in the error view
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get aiRetryButton;
+
+  /// Generic error message shown in the error view
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get aiErrorGeneric;
+
+  /// Error appended to the conversation when a query call fails
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, I couldn\'t process your request. Please try again.'**
+  String get aiErrorOffline;
+
+  /// No description provided for @checkins_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins'**
+  String get checkins_title;
+
+  /// No description provided for @checkins_scanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR'**
+  String get checkins_scanQr;
+
+  /// No description provided for @checkins_scanSuccessMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'checked in successfully'**
+  String get checkins_scanSuccessMsg;
+
+  /// No description provided for @checkins_activeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Now'**
+  String get checkins_activeNow;
+
+  /// No description provided for @checkins_totalToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Today'**
+  String get checkins_totalToday;
+
+  /// No description provided for @checkins_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search members...'**
+  String get checkins_searchHint;
+
+  /// No description provided for @checkins_todayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Check-ins'**
+  String get checkins_todayTitle;
+
+  /// No description provided for @checkins_noCheckins.
+  ///
+  /// In en, this message translates to:
+  /// **'No check-ins today'**
+  String get checkins_noCheckins;
+
+  /// No description provided for @checkins_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get checkins_active;
+
+  /// No description provided for @checkins_checkedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked Out'**
+  String get checkins_checkedOut;
+
+  /// No description provided for @checkins_out.
+  ///
+  /// In en, this message translates to:
+  /// **'Out'**
+  String get checkins_out;
+
+  /// No description provided for @checkins_freeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze'**
+  String get checkins_freeze;
+
+  /// No description provided for @checkins_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get checkins_block;
+
+  /// No description provided for @checkins_call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get checkins_call;
+
+  /// No description provided for @checkins_freezeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze Membership'**
+  String get checkins_freezeTitle;
+
+  /// No description provided for @checkins_fromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From date'**
+  String get checkins_fromDate;
+
+  /// No description provided for @checkins_toDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To date'**
+  String get checkins_toDate;
+
+  /// No description provided for @checkins_reasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get checkins_reasonHint;
+
+  /// No description provided for @checkins_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get checkins_confirm;
+
+  /// No description provided for @checkins_blockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block Member'**
+  String get checkins_blockTitle;
+
+  /// No description provided for @checkins_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get checkins_cancel;
+
+  /// No description provided for @checkins_blockConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get checkins_blockConfirm;
+
+  /// No description provided for @checkins_scannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Member QR'**
+  String get checkins_scannerTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

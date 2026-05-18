@@ -85,6 +85,12 @@ class MemberQrData extends Equatable {
   /// Last 10 visit records.
   final List<VisitRecord> recentVisits;
 
+  /// Plan's allowed entry window start "HH:mm" — null if no restriction.
+  final String? planGymAccessStart;
+
+  /// Plan's allowed entry window end "HH:mm" — null if no restriction.
+  final String? planGymAccessEnd;
+
   const MemberQrData({
     required this.token,
     required this.expiresAt,
@@ -100,6 +106,8 @@ class MemberQrData extends Equatable {
     required this.accessStartTime,
     required this.accessEndTime,
     required this.recentVisits,
+    this.planGymAccessStart,
+    this.planGymAccessEnd,
   });
 
   @override
@@ -118,5 +126,7 @@ class MemberQrData extends Equatable {
     accessStartTime,
     accessEndTime,
     recentVisits,
+    planGymAccessStart,
+    planGymAccessEnd,
   ];
 }

@@ -100,6 +100,12 @@ class MemberQrLoaded extends MemberQrState {
   /// Last 10 visits.
   final List<VisitRecord> recentVisits;
 
+  /// Plan's allowed entry window start "HH:mm" — null if no restriction.
+  final String? planGymAccessStart;
+
+  /// Plan's allowed entry window end "HH:mm" — null if no restriction.
+  final String? planGymAccessEnd;
+
   const MemberQrLoaded({
     required this.token,
     required this.expiresAt,
@@ -115,6 +121,8 @@ class MemberQrLoaded extends MemberQrState {
     required this.accessStartTime,
     required this.accessEndTime,
     required this.recentVisits,
+    this.planGymAccessStart,
+    this.planGymAccessEnd,
   });
 
   /// True when QR token expires in less than 60 seconds.
@@ -145,6 +153,8 @@ class MemberQrLoaded extends MemberQrState {
     accessStartTime,
     accessEndTime,
     recentVisits,
+    planGymAccessStart,
+    planGymAccessEnd,
   ];
 }
 

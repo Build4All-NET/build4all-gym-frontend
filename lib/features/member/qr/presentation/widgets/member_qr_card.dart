@@ -32,6 +32,12 @@ class MemberQrCard extends StatelessWidget {
   final DateTime? accessStartTime;
   final DateTime? accessEndTime;
 
+  /// Plan's allowed entry window start "HH:mm" — null if no restriction.
+  final String? planGymAccessStart;
+
+  /// Plan's allowed entry window end "HH:mm" — null if no restriction.
+  final String? planGymAccessEnd;
+
   final bool isExpiringSoon;
   final int remainingSeconds;
 
@@ -50,6 +56,8 @@ class MemberQrCard extends StatelessWidget {
     required this.accessBranchName,
     required this.accessStartTime,
     required this.accessEndTime,
+    this.planGymAccessStart,
+    this.planGymAccessEnd,
     required this.isExpiringSoon,
     required this.remainingSeconds,
   });
@@ -241,6 +249,37 @@ class MemberQrCard extends StatelessWidget {
                     style: tokens.typography.bodySmall.copyWith(
                       color: tokens.colors.error,
                       fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          if (planGymAccessStart != null && planGymAccessEnd != null) ...[
+            SizedBox(height: tokens.spacing.md),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: tokens.spacing.md,
+                vertical: tokens.spacing.sm,
+              ),
+              decoration: BoxDecoration(
+                color: tokens.colors.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(tokens.card.radius),
+                border: Border.all(
+                    color: tokens.colors.primary.withOpacity(0.2)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.access_time_rounded,
+                      color: tokens.colors.primary, size: 16),
+                  SizedBox(width: tokens.spacing.xs),
+                  Text(
+                    'Entry: $planGymAccessStart – $planGymAccessEnd',
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: tokens.colors.primary,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],

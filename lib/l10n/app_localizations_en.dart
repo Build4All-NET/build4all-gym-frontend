@@ -147,6 +147,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validation_phoneAlreadyExists => 'Phone number already exists';
 
   @override
+  String get validation_passwordNoLetter => 'Password must contain at least one letter';
+
+  @override
+  String get validation_passwordNoNumber => 'Password must contain at least one number';
+
+  @override
+  String get validation_confirmPasswordRequired => 'Please confirm your password';
+
+  @override
   String get general_cancel => 'Cancel';
 
   @override
@@ -154,6 +163,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get general_optional => 'Optional';
+
+  @override
+  String get common_or => 'Or';
 
   @override
   String get error_somethingWentWrong => 'Something went wrong. Please try again.';
@@ -202,9 +214,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appAccessRetry => 'Try Again';
-
-  @override
-  String get common_or => 'Or';
 
   @override
   String get forgotPassword_title => 'Reset your password';
@@ -307,15 +316,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword_passwordResetSuccess => 'Password reset successfully';
 
   @override
-  String get validation_passwordNoLetter => 'Password must contain at least one letter';
-
-  @override
-  String get validation_passwordNoNumber => 'Password must contain at least one number';
-
-  @override
-  String get validation_confirmPasswordRequired => 'Please confirm your password';
-
-  @override
   String get signup_title => 'Create New Account';
 
   @override
@@ -347,6 +347,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signup_alreadyVerifiedResume => 'Account already verified. Completing your profile.';
+
+  @override
+  String get signup_success => 'Successfully registered. You can now login.';
 
   @override
   String get otp_title => 'Confirm Account';
@@ -531,6 +534,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_renewNow => 'Renew Now';
 
   @override
+  String get home_quoteOfTheDay => 'Quote of the day';
+
+  @override
+  String get home_progressTracking => 'Progress tracking';
+
+  @override
+  String get home_weightTrackerSubtitle => 'How was your week? Take a moment to update your weight and track your progress.';
+
+  @override
+  String get home_updateWeightNow => 'Update my weight';
+
+  @override
+  String get home_bookTrainer => 'Book Trainer';
+
+  @override
+  String get home_checkInCode => 'Check-in Code';
+
+  @override
+  String get home_paymentHistory => 'Payment History';
+
+  @override
   String get memberBottomNavHome => 'Home';
 
   @override
@@ -568,34 +592,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memberHomeNoScheduleToday => 'No classes today — enjoy your rest day! 💪';
 
   @override
-  String get home_quoteOfTheDay => 'Quote of the day';
-
-  @override
-  String get home_progressTracking => 'Progress tracking';
-
-  @override
-  String get home_weightTrackerSubtitle => 'How was your week? Take a moment to update your weight and track your progress.';
-
-  @override
-  String get home_updateWeightNow => 'Update my weight';
-
-  @override
-  String get home_bookTrainer => 'Book Trainer';
-
-  @override
-  String get home_checkInCode => 'Check-in Code';
-
-  @override
-  String get home_paymentHistory => 'Payment History';
-
-  @override
-  String get signup_success => 'Successfully registered. You can now login.';
-
-  @override
   String get mostPopular => 'Most Popular';
 
   @override
-  String get selectThisPlan => 'Select This Plan';
+  String get selectThisPlan => 'Choose this plan';
 
   @override
   String get renew => 'Renew';
@@ -628,23 +628,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get membershipStatusExpired => 'Expired';
 
   @override
-  String remainingDays(Object days) {
+  String remainingDays(int days) {
     return '$days days remaining';
   }
 
   @override
-  String membershipEndsAt(Object date) {
-    return 'Ends at $date';
+  String membershipEndsAt(String date) {
+    return 'Ends on $date';
   }
 
   @override
   String get memberPlansTitle => 'Membership Plans';
 
   @override
-  String get memberPlansSubtitle => 'Choose the best plan for you';
+  String get memberPlansSubtitle => 'Choose the plan that fits your goals';
 
   @override
-  String get memberPlansEmpty => 'No plans available';
+  String get memberPlansEmpty => 'No plans available right now';
 
   @override
   String get retry => 'Retry';
@@ -653,25 +653,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String get checkoutComingSoon => 'Checkout coming soon';
+  String get checkoutComingSoon => 'Coming soon — checkout is under development';
 
   @override
-  String get planDuration => 'Plan Duration';
+  String get planDuration => 'Duration';
 
   @override
-  String get visitLimit => 'Visit Limit';
+  String get visitLimit => 'Visit limit';
 
   @override
   String get unlimited => 'Unlimited';
 
   @override
-  String get freezeDays => 'Freeze Days';
+  String get freezeDays => 'Freeze days';
 
   @override
-  String get planFeatures => 'Plan Features';
+  String get planFeatures => 'Features';
 
   @override
-  String get couponCode => 'Coupon Code';
+  String get couponCode => 'Coupon code';
 
   @override
   String get enterCouponCode => 'Enter coupon code';
@@ -680,21 +680,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apply => 'Apply';
 
   @override
-  String couponAppliedFinalPrice(Object price) {
-    return 'Final price: $price';
+  String couponAppliedFinalPrice(String price) {
+    return '✓ Coupon applied — final price: $price \$';
   }
 
   @override
-  String get selectedPlan => 'Selected Plan';
+  String get selectedPlan => 'Selected plan';
 
   @override
-  String get baseAmount => 'Base Amount';
+  String get baseAmount => 'Base amount';
 
   @override
-  String get totalAmount => 'Total Amount';
+  String get totalAmount => 'Total amount';
 
   @override
-  String get planDetails => 'Plan Details';
+  String get planDetails => 'Plan details';
 
   @override
   String get dayMonday => 'Mon';
@@ -787,7 +787,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionDetailSeatsLabel => 'Seats';
 
   @override
-  String sessionDetailSeatsRemaining(Object count) {
+  String sessionDetailSeatsRemaining(int count) {
     return '$count remaining';
   }
 
@@ -993,6 +993,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appVersion => 'Version';
 
   @override
+  String get accountGender => 'Gender';
+
+  @override
+  String get accountGenderMale => 'Male';
+
+  @override
+  String get accountGenderFemale => 'Female';
+
+  @override
+  String accountMemberSince(String date) {
+    return 'Member since $date';
+  }
+
+  @override
+  String get accountMyInfo => 'My Info';
+
+  @override
   String get ptAll => 'All';
 
   @override
@@ -1027,11 +1044,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ptNoTrainers => 'No trainers available';
-
-  @override
-  String accountMemberSince(String date) {
-    return 'Member since $date';
-  }
 
   @override
   String get ptBookingChooseDate => 'Choose Date';
@@ -1165,6 +1177,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptWeeklySlotsFailed => 'Could not load available times';
 
   @override
+  String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
+
+  @override
+  String get ptBookingRequestThisTime => 'Request this time';
+
+  @override
+  String get ptBookingBookSession => 'Book session';
+
+  @override
+  String get ptBookingRequestNote => 'Member requested unavailable/full PT time';
+
+  @override
+  String get ptBookingFullOrUnavailable => 'This slot is full or unavailable. Send a request instead.';
+
+  @override
+  String get ptBookingFailed => 'Unable to confirm booking.';
+
+  @override
+  String get ptBookingRequestFailed => 'Unable to send request.';
+
+  @override
   String get editProfileTitle => 'Edit Profile';
 
   @override
@@ -1208,15 +1241,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfileInvalidEmail => 'Invalid email address';
-
-  @override
-  String get accountGender => 'Gender';
-
-  @override
-  String get accountGenderMale => 'Male';
-
-  @override
-  String get accountGenderFemale => 'Female';
 
   @override
   String get editProfileFirstName => 'First Name';
@@ -1297,27 +1321,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfileCodeRequired => 'Verification code is required.';
 
   @override
-  String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
-
-  @override
-  String get ptBookingRequestThisTime => 'Request this time';
-
-  @override
-  String get ptBookingBookSession => 'Book session';
-
-  @override
-  String get ptBookingRequestNote => 'Member requested unavailable/full PT time';
-
-  @override
-  String get ptBookingFullOrUnavailable => 'This slot is full or unavailable. Send a request instead.';
-
-  @override
-  String get ptBookingFailed => 'Unable to confirm booking.';
-
-  @override
-  String get ptBookingRequestFailed => 'Unable to send request.';
-
-  @override
   String get memberQrTitle => 'Entry QR Code';
 
   @override
@@ -1371,9 +1374,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberQrRetry => 'Retry';
-
-  @override
-  String get accountMyInfo => 'My Info';
 
   @override
   String get myInfoTitle => 'My Info';
@@ -1440,4 +1440,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myInfoRequiredError => 'Preferred branch, gender and date of birth are required.';
+
+  @override
+  String get aiAppBarTitle => 'AI Insights Assistant';
+
+  @override
+  String get aiNewConversationTooltip => 'New conversation';
+
+  @override
+  String get aiHeroBannerTitle => 'AI Insights Assistant';
+
+  @override
+  String get aiHeroBannerSubtitle => 'Ask me anything about your gym';
+
+  @override
+  String get aiHeroBannerBody => 'Get instant analytics, insights and recommendations\nbased on your gym data.';
+
+  @override
+  String get aiSuggestedQuestionsHeader => 'Suggested questions';
+
+  @override
+  String get aiRecentQueriesHeader => 'Recent queries';
+
+  @override
+  String get aiRecentQueryViewLabel => 'View';
+
+  @override
+  String get aiInputHint => 'Ask a question about your gym...';
+
+  @override
+  String get aiFollowUpHeader => 'You might also ask:';
+
+  @override
+  String get aiRetryButton => 'Retry';
+
+  @override
+  String get aiErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get aiErrorOffline => 'Sorry, I couldn\'t process your request. Please try again.';
+
+  @override
+  String get checkins_title => 'Check-ins';
+
+  @override
+  String get checkins_scanQr => 'Scan QR';
+
+  @override
+  String get checkins_scanSuccessMsg => 'checked in successfully';
+
+  @override
+  String get checkins_activeNow => 'Active Now';
+
+  @override
+  String get checkins_totalToday => 'Total Today';
+
+  @override
+  String get checkins_searchHint => 'Search members...';
+
+  @override
+  String get checkins_todayTitle => 'Today\'s Check-ins';
+
+  @override
+  String get checkins_noCheckins => 'No check-ins today';
+
+  @override
+  String get checkins_active => 'Active';
+
+  @override
+  String get checkins_checkedOut => 'Checked Out';
+
+  @override
+  String get checkins_out => 'Out';
+
+  @override
+  String get checkins_freeze => 'Freeze';
+
+  @override
+  String get checkins_block => 'Block';
+
+  @override
+  String get checkins_call => 'Call';
+
+  @override
+  String get checkins_freezeTitle => 'Freeze Membership';
+
+  @override
+  String get checkins_fromDate => 'From date';
+
+  @override
+  String get checkins_toDate => 'To date';
+
+  @override
+  String get checkins_reasonHint => 'Reason (optional)';
+
+  @override
+  String get checkins_confirm => 'Confirm';
+
+  @override
+  String get checkins_blockTitle => 'Block Member';
+
+  @override
+  String get checkins_cancel => 'Cancel';
+
+  @override
+  String get checkins_blockConfirm => 'Block';
+
+  @override
+  String get checkins_scannerTitle => 'Scan Member QR';
 }

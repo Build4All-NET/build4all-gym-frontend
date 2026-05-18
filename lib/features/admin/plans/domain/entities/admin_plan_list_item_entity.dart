@@ -16,6 +16,8 @@ class AdminPlanListItemEntity {
   final int? freezeDaysAllowance;
   final int? maxFreezesCount;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final List<String> branches;
   final List<int> branchIds;
 
@@ -41,6 +43,8 @@ class AdminPlanListItemEntity {
     this.freezeDaysAllowance,
     this.maxFreezesCount,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     required this.branches,
     this.branchIds = const [],
     this.promotionText,
