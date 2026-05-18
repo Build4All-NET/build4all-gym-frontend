@@ -111,6 +111,11 @@ class _PlanFormContentState extends State<_PlanFormContent> {
   bool _autoRenew = false;
   bool _isFeatured = false;
 
+  // Access time restriction
+  bool _restrictAccessHours = false;
+  TimeOfDay _accessStart = const TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _accessEnd   = const TimeOfDay(hour: 12, minute: 0);
+
   // Features
   final List<_FeatureRow> _featureRows = [];
 
@@ -157,6 +162,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     _unlimitedVisits = plan?.allowedVisits == null;
     _autoRenew = plan?.autoRenew ?? false;
     _isFeatured = plan?.isFeatured ?? false;
+
+    if (plan?.gymAccessStart != null && plan?.gymAccessEnd != null) {
+      _restrictAccessHours = true;
+      _accessStart = _parseTime(plan!.gymAccessStart!);
+      _accessEnd   = _parseTime(plan.gymAccessEnd!);
+    }
 
     // Pre-populate features
     if (plan != null) {
@@ -288,6 +299,35 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     }
   }
 
+  // ── Time helpers ───────────────────────────────────────────────────────────
+
+  TimeOfDay _parseTime(String hhmm) {
+    final parts = hhmm.split(':');
+    return TimeOfDay(
+      hour: int.tryParse(parts[0]) ?? 0,
+      minute: int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0,
+    );
+  }
+
+  String _formatTime(TimeOfDay t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+  Future<void> _pickAccessTime({required bool isStart}) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: isStart ? _accessStart : _accessEnd,
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStart) {
+          _accessStart = picked;
+        } else {
+          _accessEnd = picked;
+        }
+      });
+    }
+  }
+
   // ── Submit ─────────────────────────────────────────────────────────────────
 
   void _submit(List<String> types, List<AdminBranchOptionEntity> branches) {
@@ -300,6 +340,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     final freezeDays = int.tryParse(_freezeDaysController.text.trim());
     final maxFreezes = int.tryParse(_maxFreezesController.text.trim());
     final gracePeriod = int.tryParse(_gracePeriodController.text.trim());
+    final gymAccessStart = _restrictAccessHours ? _formatTime(_accessStart) : null;
+    final gymAccessEnd   = _restrictAccessHours ? _formatTime(_accessEnd)   : null;
 
     // Build features list
     final featureModels = _featureRows
@@ -356,6 +398,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                 autoRenew: _autoRenew,
                 isFeatured: _isFeatured,
                 gracePeriodDays: gracePeriod,
+                gymAccessStart: gymAccessStart ?? '',
+                gymAccessEnd: gymAccessEnd ?? '',
                 promotion: promoModel,
                 features: featureModels,
               ),
@@ -380,6 +424,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                 autoRenew: _autoRenew,
                 isFeatured: _isFeatured,
                 gracePeriodDays: gracePeriod,
+                gymAccessStart: gymAccessStart,
+                gymAccessEnd: gymAccessEnd,
                 promotion: promoModel,
                 features: featureModels,
               ),
@@ -772,6 +818,75 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   ),
 
                   // ════════════════════════════════════════════════════════
+                  // SECTION 3b: Access Hours Restriction
+                  // ════════════════════════════════════════════════════════
+                  _sectionHeader(
+                      'Access Hours', Icons.access_time_rounded, c),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: c.background,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: c.border.withOpacity(0.25)),
+                    ),
+                    child: SwitchListTile(
+                      title: Text('Restrict Entry Hours',
+                          style: TextStyle(
+                              color: c.label,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
+                      subtitle: Text(
+                          _restrictAccessHours
+                              ? 'Members can only enter between the times below'
+                              : 'Members can enter at any time',
+                          style: TextStyle(color: c.muted, fontSize: 12)),
+                      value: _restrictAccessHours,
+                      activeColor: c.primary,
+                      onChanged: (v) =>
+                          setState(() => _restrictAccessHours = v),
+                    ),
+                  ),
+
+                  if (_restrictAccessHours) ...[
+                    const SizedBox(height: 12),
+                    _FormLabel('Allowed Entry Window', c),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _FormLabel('From', c),
+                              GestureDetector(
+                                onTap: () => _pickAccessTime(isStart: true),
+                                child: _timeField(_accessStart, c),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _FormLabel('Until', c),
+                              GestureDetector(
+                                onTap: () => _pickAccessTime(isStart: false),
+                                child: _timeField(_accessEnd, c),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Members with booked sessions or PT can always enter during their session window.',
+                      style: TextStyle(color: c.muted, fontSize: 11),
+                    ),
+                  ],
+
+                  // ════════════════════════════════════════════════════════
                   // SECTION 4: Plan Features
                   // ════════════════════════════════════════════════════════
                   _sectionHeader(
@@ -1082,6 +1197,30 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                 fontSize: 13,
               )),
         ),
+      ),
+    );
+  }
+
+  Widget _timeField(TimeOfDay time, ColorTokens c) {
+    final label =
+        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: c.background,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: c.border.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.schedule_rounded, size: 15, color: c.muted),
+          const SizedBox(width: 6),
+          Text(label,
+              style: TextStyle(
+                  color: c.label,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }

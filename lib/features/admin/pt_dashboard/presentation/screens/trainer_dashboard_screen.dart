@@ -266,22 +266,28 @@ class _StatCard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(16),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment:  MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, color: Colors.white.withOpacity(0.9), size: 26),
+          Icon(icon, color: Colors.white.withOpacity(0.9), size: 22),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(value,
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(value,
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold, fontSize: 26)),
+              ),
               const SizedBox(height: 2),
               Text(label,
+                  maxLines:  2,
+                  overflow:  TextOverflow.ellipsis,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.85), fontSize: 12)),
+                      color: Colors.white.withOpacity(0.85), fontSize: 11)),
             ],
           ),
         ],

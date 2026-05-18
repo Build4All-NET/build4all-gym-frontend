@@ -22,6 +22,8 @@ class UpdatePlanRequestModel {
   final bool? autoRenew;
   final bool? isFeatured;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final PlanPromotionModel? promotion;
   final List<PlanFeatureModel>? features;
 
@@ -39,6 +41,8 @@ class UpdatePlanRequestModel {
     this.autoRenew,
     this.isFeatured,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     this.promotion,
     this.features,
   });
@@ -59,6 +63,8 @@ class UpdatePlanRequestModel {
     if (autoRenew != null) map['autoRenew'] = autoRenew;
     if (isFeatured != null) map['isFeatured'] = isFeatured;
     if (gracePeriodDays != null) map['gracePeriodDays'] = gracePeriodDays;
+    if (gymAccessStart != null) map['gymAccessStart'] = gymAccessStart;
+    if (gymAccessEnd != null) map['gymAccessEnd'] = gymAccessEnd;
     if (promotion != null) map['promotion'] = promotion!.toJson();
     if (features != null)
       map['features'] = features!.map((f) => f.toJson()).toList();

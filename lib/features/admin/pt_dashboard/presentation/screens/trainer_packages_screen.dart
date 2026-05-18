@@ -144,7 +144,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
   }
 
   Widget _buildBody(PtPackageState state, dynamic tokens) {
-    if (state is PtPackageLoading || state is PtPackageMutating) {
+    if (state is PtPackageLoading || state is PtPackageMutating || state is PtPackageMutationSuccess) {
       return const Center(child: CircularProgressIndicator());
     }
 

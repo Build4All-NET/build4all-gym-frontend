@@ -139,6 +139,8 @@ class MemberQrBloc extends Bloc<MemberQrEvent, MemberQrState> {
         accessEndTime: data.accessEndTime,
 
         recentVisits: data.recentVisits,
+        planGymAccessStart: data.planGymAccessStart,
+        planGymAccessEnd: data.planGymAccessEnd,
       ),
     );
 

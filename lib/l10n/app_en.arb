@@ -2,114 +2,49 @@
   "@@locale": "en",
 
   "auth_welcomeBack": "Welcome back",
-  "@auth_welcomeBack": {
-    "description": "Welcome message on login screen"
-  },
-
+  "@auth_welcomeBack": { "description": "Welcome message on login screen" },
   "auth_loginSubtitle": "Sign in to access your account",
-  "@auth_loginSubtitle": {
-    "description": "Subtitle text on login screen"
-  },
-
+  "@auth_loginSubtitle": { "description": "Subtitle text on login screen" },
   "auth_emailLabel": "Email Address",
-  "@auth_emailLabel": {
-    "description": "Label for email input field"
-  },
-
+  "@auth_emailLabel": { "description": "Label for email input field" },
   "auth_phoneLabel": "Phone Number",
-  "@auth_phoneLabel": {
-    "description": "Label for phone number input field"
-  },
-
+  "@auth_phoneLabel": { "description": "Label for phone number input field" },
   "auth_emailHint": "example@email.com",
-  "@auth_emailHint": {
-    "description": "Hint text for email input field"
-  },
-
+  "@auth_emailHint": { "description": "Hint text for email input field" },
   "auth_phoneHint": "+961 12 345 678",
-  "@auth_phoneHint": {
-    "description": "Hint text for phone input field"
-  },
-
+  "@auth_phoneHint": { "description": "Hint text for phone input field" },
   "auth_passwordLabel": "Password",
-  "@auth_passwordLabel": {
-    "description": "Label for password input field"
-  },
-
+  "@auth_passwordLabel": { "description": "Label for password input field" },
   "auth_passwordHint": "Enter your password",
-  "@auth_passwordHint": {
-    "description": "Hint text for password input field"
-  },
-
+  "@auth_passwordHint": { "description": "Hint text for password input field" },
   "auth_forgotPassword": "Forgot Password?",
-  "@auth_forgotPassword": {
-    "description": "Forgot password link text"
-  },
-
+  "@auth_forgotPassword": { "description": "Forgot password link text" },
   "auth_loginButton": "Sign In",
-  "@auth_loginButton": {
-    "description": "Login button text"
-  },
-
+  "@auth_loginButton": { "description": "Login button text" },
   "auth_continueWithGoogle": "Continue with Google",
-  "@auth_continueWithGoogle": {
-    "description": "Google login button text"
-  },
-
+  "@auth_continueWithGoogle": { "description": "Google login button text" },
   "auth_continueWithApple": "Continue with Apple",
-  "@auth_continueWithApple": {
-    "description": "Apple login button text"
-  },
-
+  "@auth_continueWithApple": { "description": "Apple login button text" },
   "auth_noAccount": "Don't have an account?",
-  "@auth_noAccount": {
-    "description": "Text asking if user has no account"
-  },
-
+  "@auth_noAccount": { "description": "Text asking if user has no account" },
   "auth_createAccount": "Create Account",
-  "@auth_createAccount": {
-    "description": "Create new account link text"
-  },
-
+  "@auth_createAccount": { "description": "Create new account link text" },
   "auth_accountInactiveTitle": "Account Inactive",
-  "@auth_accountInactiveTitle": {
-    "description": "Title for inactive account dialog"
-  },
-
+  "@auth_accountInactiveTitle": { "description": "Title for inactive account dialog" },
   "auth_accountInactiveMessage": "Your account is inactive. Would you like to reactivate it?",
-  "@auth_accountInactiveMessage": {
-    "description": "Message for inactive account dialog"
-  },
-
+  "@auth_accountInactiveMessage": { "description": "Message for inactive account dialog" },
   "auth_reactivate": "Reactivate",
-  "@auth_reactivate": {
-    "description": "Reactivate account button text"
-  },
-
+  "@auth_reactivate": { "description": "Reactivate account button text" },
   "auth_accountInactive": "Your account is inactive.",
-  "@auth_accountInactive": {
-    "description": "Error message for inactive account"
-  },
-
+  "@auth_accountInactive": { "description": "Error message for inactive account" },
   "auth_accountDeletedRestorableMessage": "Your account was deleted. Contact support to restore it.",
-  "@auth_accountDeletedRestorableMessage": {
-    "description": "Message when account is deleted but can be restored"
-  },
-
+  "@auth_accountDeletedRestorableMessage": { "description": "Message when account is deleted but can be restored" },
   "auth_accountDeletedPermanentMessage": "Your account has been permanently deleted.",
-  "@auth_accountDeletedPermanentMessage": {
-    "description": "Message when account is permanently deleted"
-  },
-
+  "@auth_accountDeletedPermanentMessage": { "description": "Message when account is permanently deleted" },
   "auth_userNotFound": "No account found with these credentials.",
-  "@auth_userNotFound": {
-    "description": "Error message when user account is not found"
-  },
-
+  "@auth_userNotFound": { "description": "Error message when user account is not found" },
   "auth_loginLocked": "Too many failed attempts. Please try again later.",
-  "@auth_loginLocked": {
-    "description": "Error message when login is locked due to too many attempts"
-  },
+  "@auth_loginLocked": { "description": "Error message when login is locked due to too many attempts" },
 
   "login_welcomeBack": "Welcome back",
   "login_subtitle": "Sign in to access your account",
@@ -125,81 +60,49 @@
   "login_createAccount": "Create new account",
 
   "validation_emailRequired": "Email is required",
-  "@validation_emailRequired": {
-    "description": "Validation message when email field is empty"
-  },
-
+  "@validation_emailRequired": { "description": "Validation message when email field is empty" },
   "validation_phoneRequired": "Phone number is required",
-  "@validation_phoneRequired": {
-    "description": "Validation message when phone field is empty"
-  },
-
+  "@validation_phoneRequired": { "description": "Validation message when phone field is empty" },
   "validation_emailInvalid": "Invalid email address",
-  "@validation_emailInvalid": {
-    "description": "Validation message when email format is invalid"
-  },
-
+  "@validation_emailInvalid": { "description": "Validation message when email format is invalid" },
   "validation_invalidEmail": "Please enter a valid email",
   "validation_passwordRequired": "Password is required",
-
-  "@validation_passwordRequired": {
-    "description": "Validation message when password field is empty"
-  },
-
+  "@validation_passwordRequired": { "description": "Validation message when password field is empty" },
   "validation_invalidCredentials": "Invalid email or password",
-  "@validation_invalidCredentials": {
-    "description": "Error message for invalid login credentials"
-  },
-
+  "@validation_invalidCredentials": { "description": "Error message for invalid login credentials" },
   "validation_passwordTooShort": "Password must be at least 8 characters",
   "validation_passwordsMismatch": "Passwords do not match",
   "validation_codeRequired": "Verification code is required",
   "validation_invalidCode": "Invalid or expired code",
   "validation_emailAlreadyExists": "Email already exists",
   "validation_phoneAlreadyExists": "Phone number already exists",
+  "validation_passwordNoLetter": "Password must contain at least one letter",
+  "validation_passwordNoNumber": "Password must contain at least one number",
+  "validation_confirmPasswordRequired": "Please confirm your password",
 
   "general_cancel": "Cancel",
-  "@general_cancel": {
-    "description": "Cancel button text"
-  },
-
+  "@general_cancel": { "description": "Cancel button text" },
   "general_or": "or",
-  "@general_or": {
-    "description": "Or text for divider"
-  },
-
+  "@general_or": { "description": "Or text for divider" },
   "general_optional": "Optional",
+  "common_or": "Or",
 
   "error_somethingWentWrong": "Something went wrong. Please try again.",
-  "@error_somethingWentWrong": {
-    "description": "Generic error message"
-  },
-
+  "@error_somethingWentWrong": { "description": "Generic error message" },
   "error_serverError": "Server error. Please try again later.",
 
   "connection_reconnecting": "Connecting...",
   "connection_offline": "No internet connection",
-  "@connection_offline": {
-    "description": "Error message when device is offline"
-  },
-
+  "@connection_offline": { "description": "Error message when device is offline" },
   "connection_issue": "Connection issue",
   "connection_timeout": "Request timed out. Please try again.",
 
   "authGateContinueAs": "Continue as",
-  "@authGateContinueAs": {
-    "description": "Title for role selection bottom sheet"
-  },
-
+  "@authGateContinueAs": { "description": "Title for role selection bottom sheet" },
   "authGateRoleAdminOwner": "Admin / Owner",
-  "@authGateRoleAdminOwner": {
-    "description": "Admin role option in role selection"
-  },
-
+  "@authGateRoleAdminOwner": { "description": "Admin role option in role selection" },
   "authGateRoleUser": "Regular User",
-  "@authGateRoleUser": {
-    "description": "User role option in role selection"
-  },
+  "@authGateRoleUser": { "description": "User role option in role selection" },
 
   "appAccessTitleDeleted": "App Deleted",
   "appAccessTitleExpired": "Subscription Expired",
@@ -208,8 +111,6 @@
   "appAccessMessageExpired": "The subscription for this app has expired. Please contact support.",
   "appAccessMessageUnavailable": "This application is currently unavailable. Please try again later.",
   "appAccessRetry": "Try Again",
-
-  "common_or": "Or",
 
   "forgotPassword_title": "Reset your password",
   "forgotPassword_subtitle": "Enter your email and we'll send you a code.",
@@ -220,13 +121,9 @@
   "@forgotPassword_codeSentTo": {
     "description": "Subtitle on verify screen showing which email was used.",
     "placeholders": {
-      "email": {
-        "type": "String",
-        "example": "user@example.com"
-      }
+      "email": { "type": "String", "example": "user@example.com" }
     }
   },
-
   "forgotPassword_codeLabel": "Code",
   "forgotPassword_verify": "Verify",
   "forgotPassword_resendCode": "Resend code",
@@ -243,11 +140,7 @@
   "forgotPassword_checkEmailOrSms": "Check your email or SMS",
   "forgotPassword_codeExpiresIn": "Code expires in {seconds}s",
   "@forgotPassword_codeExpiresIn": {
-    "placeholders": {
-      "seconds": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "seconds": { "type": "int" } }
   },
   "forgotPassword_codeExpired": "Code has expired",
   "forgotPassword_verifyCode": "Verify code",
@@ -260,9 +153,7 @@
   "forgotPassword_newPasswordScreenTitle": "Set New Password",
   "forgotPassword_newPasswordScreenSubtitle": "Enter your new password below",
   "forgotPassword_passwordResetSuccess": "Password reset successfully",
-  "validation_passwordNoLetter": "Password must contain at least one letter",
-  "validation_passwordNoNumber": "Password must contain at least one number",
-  "validation_confirmPasswordRequired": "Please confirm your password",
+
   "signup_title": "Create New Account",
   "signup_subtitle": "Start your fitness journey with us",
   "signup_step1Label": "Account Information",
@@ -274,6 +165,8 @@
   "signup_signIn": "Sign In",
   "signup_termsAgreement": "By continuing, you agree to our Terms of Service and Privacy Policy",
   "signup_alreadyVerifiedResume": "Account already verified. Completing your profile.",
+  "signup_success": "Successfully registered. You can now login.",
+
   "otp_title": "Confirm Account",
   "otp_subtitle": "Enter the verification code sent",
   "otp_step2Label": "Identity Verification",
@@ -290,134 +183,57 @@
   "otp_debugTip": "For testing use code 1234",
 
   "completeProfile_title": "Complete Your Profile",
-  "@completeProfile_title": {
-    "description": "Header title on sub-step 1 (name fields)"
-  },
-
+  "@completeProfile_title": { "description": "Header title on sub-step 1 (name fields)" },
   "completeProfile_subtitle": "Tell us more about you",
-  "@completeProfile_subtitle": {
-    "description": "Header subtitle on sub-step 1"
-  },
-
+  "@completeProfile_subtitle": { "description": "Header subtitle on sub-step 1" },
   "completeProfile_lastStepTitle": "Last Step!",
-  "@completeProfile_lastStepTitle": {
-    "description": "Header title on sub-step 2 (username + profile type)"
-  },
-
+  "@completeProfile_lastStepTitle": { "description": "Header title on sub-step 2 (username + profile type)" },
   "completeProfile_lastStepSubtitle": "Choose a unique username",
-  "@completeProfile_lastStepSubtitle": {
-    "description": "Header subtitle on sub-step 2"
-  },
-
+  "@completeProfile_lastStepSubtitle": { "description": "Header subtitle on sub-step 2" },
   "completeProfile_stepLabel": "Personal Information",
-  "@completeProfile_stepLabel": {
-    "description": "Label shown in the step indicator — appended with (1/2) or (2/2)"
-  },
-
+  "@completeProfile_stepLabel": { "description": "Label shown in the step indicator" },
   "completeProfile_nameInstruction": "We need your name to personalize your experience",
-  "@completeProfile_nameInstruction": {
-    "description": "Helper text shown above the name fields"
-  },
-
+  "@completeProfile_nameInstruction": { "description": "Helper text shown above the name fields" },
   "completeProfile_firstName": "First Name",
-  "@completeProfile_firstName": {
-    "description": "Label for the first name input field"
-  },
-
+  "@completeProfile_firstName": { "description": "Label for the first name input field" },
   "completeProfile_firstNameHint": "Enter your first name",
-  "@completeProfile_firstNameHint": {
-    "description": "Hint text inside the first name input"
-  },
-
+  "@completeProfile_firstNameHint": { "description": "Hint text inside the first name input" },
   "completeProfile_firstNameRequired": "First name is required",
-  "@completeProfile_firstNameRequired": {
-    "description": "Validation error when first name is empty"
-  },
-
+  "@completeProfile_firstNameRequired": { "description": "Validation error when first name is empty" },
   "completeProfile_lastName": "Last Name",
-  "@completeProfile_lastName": {
-    "description": "Label for the last name input field"
-  },
-
+  "@completeProfile_lastName": { "description": "Label for the last name input field" },
   "completeProfile_lastNameHint": "Enter your last name",
-  "@completeProfile_lastNameHint": {
-    "description": "Hint text inside the last name input"
-  },
-
+  "@completeProfile_lastNameHint": { "description": "Hint text inside the last name input" },
   "completeProfile_continueButton": "Continue",
-  "@completeProfile_continueButton": {
-    "description": "Button label on sub-step 1 to advance to sub-step 2"
-  },
-
+  "@completeProfile_continueButton": { "description": "Button label on sub-step 1 to advance to sub-step 2" },
   "completeProfile_usernameInstruction": "Your username will appear in your profile",
-  "@completeProfile_usernameInstruction": {
-    "description": "Helper text shown above the username field"
-  },
-
+  "@completeProfile_usernameInstruction": { "description": "Helper text shown above the username field" },
   "completeProfile_username": "Username",
-  "@completeProfile_username": {
-    "description": "Label for the username input field"
-  },
-
+  "@completeProfile_username": { "description": "Label for the username input field" },
   "completeProfile_usernameRequired": "Username is required",
-  "@completeProfile_usernameRequired": {
-    "description": "Validation error when username is empty"
-  },
-
+  "@completeProfile_usernameRequired": { "description": "Validation error when username is empty" },
   "completeProfile_usernameTooShort": "At least 3 characters required",
-  "@completeProfile_usernameTooShort": {
-    "description": "Validation error when username is shorter than 3 characters"
-  },
-
+  "@completeProfile_usernameTooShort": { "description": "Validation error when username is shorter than 3 characters" },
   "completeProfile_usernameInvalid": "Only letters, numbers, _ and . allowed",
-  "@completeProfile_usernameInvalid": {
-    "description": "Validation error when username contains invalid characters"
-  },
-
+  "@completeProfile_usernameInvalid": { "description": "Validation error when username contains invalid characters" },
   "completeProfile_usernameTaken": "This username is already taken",
-  "@completeProfile_usernameTaken": {
-    "description": "Error shown when the API returns a username conflict"
-  },
-
+  "@completeProfile_usernameTaken": { "description": "Error shown when the API returns a username conflict" },
   "completeProfile_profileType": "Profile Type",
-  "@completeProfile_profileType": {
-    "description": "Label above the public/private profile selection"
-  },
-
+  "@completeProfile_profileType": { "description": "Label above the public/private profile selection" },
   "completeProfile_publicTitle": "Public Account",
-  "@completeProfile_publicTitle": {
-    "description": "Title of the public profile option card"
-  },
-
+  "@completeProfile_publicTitle": { "description": "Title of the public profile option card" },
   "completeProfile_publicDescription": "Anyone can view your profile and activity",
-  "@completeProfile_publicDescription": {
-    "description": "Description under the public profile option"
-  },
-
+  "@completeProfile_publicDescription": { "description": "Description under the public profile option" },
   "completeProfile_privateTitle": "Private Account",
-  "@completeProfile_privateTitle": {
-    "description": "Title of the private profile option card"
-  },
-
+  "@completeProfile_privateTitle": { "description": "Title of the private profile option card" },
   "completeProfile_privateDescription": "Only you can see your information and activity",
-  "@completeProfile_privateDescription": {
-    "description": "Description under the private profile option"
-  },
-
+  "@completeProfile_privateDescription": { "description": "Description under the private profile option" },
   "completeProfile_settingsNote": "You can change these settings later from your profile",
-  "@completeProfile_settingsNote": {
-    "description": "Info box text below the profile type selector"
-  },
-
+  "@completeProfile_settingsNote": { "description": "Info box text below the profile type selector" },
   "completeProfile_finishButton": "Finish & Start",
-  "@completeProfile_finishButton": {
-    "description": "Final submit button label on sub-step 2"
-  },
-
+  "@completeProfile_finishButton": { "description": "Final submit button label on sub-step 2" },
   "completeProfile_backButton": "Back",
-  "@completeProfile_backButton": {
-    "description": "Back navigation link shown below the form"
-  },
+  "@completeProfile_backButton": { "description": "Back navigation link shown below the form" },
 
   "home_welcome": "Welcome",
   "home_weightUpdated": "Your weight was updated successfully ✅",
@@ -440,27 +256,6 @@
   "home_membershipStatus": "Membership Status",
   "home_expiresOn": "Expires on",
   "home_renewNow": "Renew Now",
-  "memberBottomNavHome": "Home",
-  "memberBottomNavPlans": "Plans",
-  "memberBottomNavQr": "QR",
-  "memberBottomNavClasses": "Classes",
-  "memberBottomNavAccount": "My Account",
-  "comingSoon": "Coming soon",
-  "memberHomeTodaySchedule": "Today's Schedule",
-  "memberHomeViewAll": "View All",
-  "memberHomeWithTrainer": "With coach {trainerName}",
-  "@memberHomeWithTrainer": {
-    "placeholders": {
-      "trainerName": {}
-    }
-  },
-  "memberHomeDurationMinutes": "{minutes} min",
-  "@memberHomeDurationMinutes": {
-    "placeholders": {
-      "minutes": {}
-    }
-  },
-  "memberHomeNoScheduleToday": "No classes today — enjoy your rest day! 💪",
   "home_quoteOfTheDay": "Quote of the day",
   "home_progressTracking": "Progress tracking",
   "home_weightTrackerSubtitle": "How was your week? Take a moment to update your weight and track your progress.",
@@ -468,288 +263,168 @@
   "home_bookTrainer": "Book Trainer",
   "home_checkInCode": "Check-in Code",
   "home_paymentHistory": "Payment History",
-  "signup_success": "Successfully registered. You can now login.",
 
-    "mostPopular": "Most Popular",
-    "selectThisPlan": "Choose this plan",
-    "renew": "Renew",
+  "memberBottomNavHome": "Home",
+  "memberBottomNavPlans": "Plans",
+  "memberBottomNavQr": "QR",
+  "memberBottomNavClasses": "Classes",
+  "memberBottomNavAccount": "My Account",
+  "comingSoon": "Coming soon",
 
-    "planTypeGym": "Gym",
-    "planTypeClasses": "Classes",
-    "planTypeMixed": "Mixed",
+  "memberHomeTodaySchedule": "Today's Schedule",
+  "memberHomeViewAll": "View All",
+  "memberHomeWithTrainer": "With coach {trainerName}",
+  "@memberHomeWithTrainer": { "placeholders": { "trainerName": {} } },
+  "memberHomeDurationMinutes": "{minutes} min",
+  "@memberHomeDurationMinutes": { "placeholders": { "minutes": {} } },
+  "memberHomeNoScheduleToday": "No classes today — enjoy your rest day! 💪",
 
-    "billingMonthly": "Monthly",
-    "billingYearly": "Yearly",
-    "billingWeekly": "Weekly",
-
-    "membershipStatusActive": "Active",
-    "membershipStatusFrozen": "Frozen",
-    "membershipStatusExpired": "Expired",
-
-    "remainingDays": "{days} days remaining",
-    "@remainingDays": {
-      "placeholders": {
-        "days": {
-          "type": "int"
-        }
-      }
-    },
-
-    "membershipEndsAt": "Ends on {date}",
-    "@membershipEndsAt": {
-      "placeholders": {
-        "date": {
-          "type": "String"
-        }
-      }
-    },
-    "memberPlansTitle": "Membership Plans",
-    "memberPlansSubtitle": "Choose the plan that fits your goals",
-    "memberPlansEmpty": "No plans available right now",
-    "retry": "Retry",
-    "back": "Back",
-    "checkoutComingSoon": "Coming soon — checkout is under development",
-    "planDuration": "Duration",
-    "visitLimit": "Visit limit",
-    "unlimited": "Unlimited",
-    "freezeDays": "Freeze days",
-    "planFeatures": "Features",
-    "couponCode": "Coupon code",
-    "enterCouponCode": "Enter coupon code",
-    "apply": "Apply",
-    "couponAppliedFinalPrice": "✓ Coupon applied — final price: {price} $",
-    "@couponAppliedFinalPrice": {
-      "placeholders": {
-        "price": {
-          "type": "String"
-        }
-      }
-    },
-    "selectedPlan": "Selected plan",
-    "baseAmount": "Base amount",
-    "totalAmount": "Total amount",
-    "planDetails": "Plan details",
-     "dayMonday": "Mon",
-         "dayTuesday": "Tue",
-"dayWednesday": "Wed",
-"dayThursday": "Thu",
-"dayFriday": "Fri",
-"daySaturday": "Sat",
-"daySunday": "Sun",
-    "memberSessionsDifficultyBeginner": "Beginner",
-    "memberSessionsDifficultyIntermediate": "Intermediate",
-    "memberSessionsDifficultyAdvanced": "Advanced",
-    "memberSessionsBookNow": "Book Now",
-    "memberSessionsTitle": "Sports Classes",
-    "memberSessionsSubtitle": "Book your spot in your favorite class",
-    "memberSessionsRoom": "Room {roomName}",
-    "@memberSessionsRoom": {
-      "placeholders": {
-        "roomName": { "type": "String" }
-      }
-    },
-    "memberSessionsMinute": "{minutes} min",
-    "@memberSessionsMinute": {
-      "placeholders": {
-        "minutes": { "type": "int" }
-      }
-    },
-    "memberSessionsSeatsAvailable": "{count} seats",
-    "@memberSessionsSeatsAvailable": {
-      "placeholders": {
-        "count": { "type": "int" }
-      }
-    },
-    "memberSessionsDifficultyBeginner": "Beginner",
-    "memberSessionsDifficultyIntermediate": "Intermediate",
-    "memberSessionsDifficultyAdvanced": "Advanced",
-    "memberSessionsBookNow": "Book Now",
-    "memberSessionsLoading": "Loading sessions...",
-    "memberSessionsEmpty": "No sessions available",
-    "memberSessionsError": "Failed to load sessions",
-    "memberSessionsFilterTitle": "Filter classes",
-    "memberSessionsFilterClassType": "Class type",
-    "memberSessionsFilterTrainer": "Trainer",
-    "memberSessionsFilterBranch": "Branch",
-    "memberSessionsFilterReset": "Reset",
-    "memberSessionsFilterApply": "Apply filter",
-    "sessionDetailTimeLabel": "Time",
-    "sessionDetailDateLabel": "Date",
-    "sessionDetailSeatsLabel": "Seats",
-    "sessionDetailSeatsRemaining": "{count} remaining",
-    "sessionDetailLocationLabel": "Location",
-    "sessionDetailAboutTitle": "About the Class",
-    "sessionDetailBenefitsTitle": "Benefits",
-    "sessionDetailEquipmentTitle": "Required Equipment",
-    "sessionDetailBookNow": "Book Now",
-    "sessionDetailAlreadyBooked": "Already Booked",
-    "sessionDetailWaitlisted": "On Waitlist",
-    "monthJanuary": "January", "monthFebruary": "February", "monthMarch": "March",
-    "monthApril": "April", "monthMay": "May", "monthJune": "June",
-    "monthJuly": "July", "monthAugust": "August", "monthSeptember": "September",
-    "monthOctober": "October", "monthNovember": "November", "monthDecember": "December",
-
-    "memberSessionsFilterApply": "Apply filter",
-
-  "navDashboard": "Dashboard",
-  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
-
-  "navMembers": "Members",
-  "@navMembers": { "description": "Admin drawer — Members item" },
-
-  "navPlans": "Plans",
-  "@navPlans": { "description": "Admin drawer — Plans item" },
-
-  "navStaff": "Staff",
-  "@navStaff": { "description": "Admin drawer — Staff item" },
-
-  "navPayments": "Payments",
-  "@navPayments": { "description": "Admin drawer — Payments item" },
-
-  "navClasses": "Classes",
-  "@navClasses": { "description": "Admin drawer — Classes item" },
-
-  "navAiAssistant": "AI Assistant",
-  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
-
-  "navSettings": "Settings",
-  "@navSettings": { "description": "Admin drawer — Settings item" },
-
-  "navLogout": "Logout",
-  "@navLogout": { "description": "Admin drawer — Logout item" },
-
-  "logoutConfirmTitle": "Log out?",
-  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
-
-  "logoutConfirmMessage": "Are you sure you want to log out?",
-  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
-
-  "sectionCoreOwner": "CORE OWNER",
-  "@sectionCoreOwner": { "description": "Drawer section label" },
-
-  "sectionOperationsReception": "OPERATIONS / RECEPTION",
-  "@sectionOperationsReception": { "description": "Drawer section label" },
-
-  "sectionTrainingPt": "TRAINING / PT",
-  "@sectionTrainingPt": { "description": "Drawer section label" },
-
-  "navTrainers": "Trainers / PT",
-  "@navTrainers": { "description": "Drawer nav item" },
-
-  "navReceptionStaff": "Reception Staff",
-  "@navReceptionStaff": { "description": "Drawer nav item" },
-
-  "navGymProfile": "Gym Profile",
-  "@navGymProfile": { "description": "Drawer nav item" },
-
-  "navBranches": "Branches",
-  "@navBranches": { "description": "Drawer nav item" },
-
-  "navCheckins": "Check-ins",
-  "@navCheckins": { "description": "Drawer nav item" },
-
-  "navClassesPt": "Classes & PT",
-  "@navClassesPt": { "description": "Drawer nav item" },
-
-  "navNotifications": "Notifications",
-  "@navNotifications": { "description": "Drawer nav item" },
-
-  "navPtSessions": "PT Sessions",
-  "@navPtSessions": { "description": "Drawer nav item" },
-
-  "navTrainingVideos": "Training Videos",
-  "@navTrainingVideos": { "description": "Drawer nav item" },
-
-  "checkoutComingSoon": "Checkout coming soon",
-  "selectThisPlan": "Select this plan",
+  "mostPopular": "Most Popular",
+  "selectThisPlan": "Choose this plan",
+  "renew": "Renew",
+  "planTypeGym": "Gym",
+  "planTypeClasses": "Classes",
+  "planTypeMixed": "Mixed",
+  "billingMonthly": "Monthly",
+  "billingYearly": "Yearly",
+  "billingWeekly": "Weekly",
+  "membershipStatusActive": "Active",
+  "membershipStatusFrozen": "Frozen",
+  "membershipStatusExpired": "Expired",
+  "remainingDays": "{days} days remaining",
+  "@remainingDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "membershipEndsAt": "Ends on {date}",
+  "@membershipEndsAt": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "memberPlansTitle": "Membership Plans",
+  "memberPlansSubtitle": "Choose the plan that fits your goals",
+  "memberPlansEmpty": "No plans available right now",
+  "retry": "Retry",
+  "back": "Back",
+  "checkoutComingSoon": "Coming soon — checkout is under development",
+  "planDuration": "Duration",
+  "visitLimit": "Visit limit",
+  "unlimited": "Unlimited",
+  "freezeDays": "Freeze days",
+  "planFeatures": "Features",
+  "couponCode": "Coupon code",
+  "enterCouponCode": "Enter coupon code",
+  "apply": "Apply",
+  "couponAppliedFinalPrice": "✓ Coupon applied — final price: {price} $",
+  "@couponAppliedFinalPrice": {
+    "placeholders": { "price": { "type": "String" } }
+  },
   "selectedPlan": "Selected plan",
   "baseAmount": "Base amount",
   "totalAmount": "Total amount",
   "planDetails": "Plan details",
-  "planDuration": "Plan duration",
-  "visitLimit": "Visit limit",
-  "unlimited": "Unlimited",
-  "freezeDays": "Freeze days",
-  "planFeatures": "Plan features",
-  "billingMonthly": "Monthly",
-  "billingYearly": "Yearly",
-  "billingWeekly": "Weekly",
-  "couponCode": "Coupon code",
-  "enterCouponCode": "Enter coupon code",
-  "apply": "Apply",
-  "couponAppliedFinalPrice": "Coupon applied. Final price: {price}",
-  "@couponAppliedFinalPrice": {
-    "placeholders": {
-      "price": {}
-    }
-  },
 
-  "retry": "Retry",
-  "memberPlansTitle": "Membership Plans",
-  "memberPlansSubtitle": "Choose the best plan for your fitness journey",
-  "memberPlansEmpty": "No membership plans available",
+  "dayMonday": "Mon",
+  "dayTuesday": "Tue",
+  "dayWednesday": "Wed",
+  "dayThursday": "Thu",
+  "dayFriday": "Fri",
+  "daySaturday": "Sat",
+  "daySunday": "Sun",
 
-  "remainingDays": "{days} days remaining",
-  "@remainingDays": {
-    "placeholders": {
-      "days": {}
-    }
-  },
-  "membershipEndsAt": "Ends at {date}",
-  "@membershipEndsAt": {
-    "placeholders": {
-      "date": {}
-    }
-  },
-  "renew": "Renew",
+  "memberSessionsDifficultyBeginner": "Beginner",
+  "memberSessionsDifficultyIntermediate": "Intermediate",
+  "memberSessionsDifficultyAdvanced": "Advanced",
+  "memberSessionsBookNow": "Book Now",
+  "memberSessionsTitle": "Sports Classes",
+  "memberSessionsSubtitle": "Book your spot in your favorite class",
+  "memberSessionsRoom": "Room {roomName}",
+  "@memberSessionsRoom": { "placeholders": { "roomName": { "type": "String" } } },
+  "memberSessionsMinute": "{minutes} min",
+  "@memberSessionsMinute": { "placeholders": { "minutes": { "type": "int" } } },
+  "memberSessionsSeatsAvailable": "{count} seats",
+  "@memberSessionsSeatsAvailable": { "placeholders": { "count": { "type": "int" } } },
+  "memberSessionsLoading": "Loading sessions...",
+  "memberSessionsEmpty": "No sessions available",
+  "memberSessionsError": "Failed to load sessions",
+  "memberSessionsFilterTitle": "Filter classes",
+  "memberSessionsFilterClassType": "Class type",
+  "memberSessionsFilterTrainer": "Trainer",
+  "memberSessionsFilterBranch": "Branch",
+  "memberSessionsFilterReset": "Reset",
+  "memberSessionsFilterApply": "Apply filter",
 
-  "mostPopular": "Most popular",
+  "sessionDetailTimeLabel": "Time",
+  "sessionDetailDateLabel": "Date",
+  "sessionDetailSeatsLabel": "Seats",
+  "sessionDetailSeatsRemaining": "{count} remaining",
+  "@sessionDetailSeatsRemaining": { "placeholders": { "count": { "type": "int" } } },
+  "sessionDetailLocationLabel": "Location",
+  "sessionDetailAboutTitle": "About the Class",
+  "sessionDetailBenefitsTitle": "Benefits",
+  "sessionDetailEquipmentTitle": "Required Equipment",
+  "sessionDetailBookNow": "Book Now",
+  "sessionDetailAlreadyBooked": "Already Booked",
+  "sessionDetailWaitlisted": "On Waitlist",
 
-  "retry": "Retry",
-  "memberPlansTitle": "Membership Plans",
-  "memberPlansSubtitle": "Choose the best plan for you",
-  "memberPlansEmpty": "No plans available",
-  "renew": "Renew",
-  "mostPopular": "Most Popular",
-  "selectThisPlan": "Select This Plan",
-  "billingMonthly": "Monthly",
-  "billingYearly": "Yearly",
-  "billingWeekly": "Weekly",
-  "checkoutComingSoon": "Checkout coming soon",
-  "selectedPlan": "Selected Plan",
-  "baseAmount": "Base Amount",
-  "totalAmount": "Total Amount",
-  "planDetails": "Plan Details",
-  "planDuration": "Plan Duration",
-  "visitLimit": "Visit Limit",
-  "unlimited": "Unlimited",
-  "freezeDays": "Freeze Days",
-  "planFeatures": "Plan Features",
-  "couponCode": "Coupon Code",
-  "enterCouponCode": "Enter coupon code",
-  "apply": "Apply",
+  "monthJanuary": "January",
+  "monthFebruary": "February",
+  "monthMarch": "March",
+  "monthApril": "April",
+  "monthMay": "May",
+  "monthJune": "June",
+  "monthJuly": "July",
+  "monthAugust": "August",
+  "monthSeptember": "September",
+  "monthOctober": "October",
+  "monthNovember": "November",
+  "monthDecember": "December",
 
-  "remainingDays": "{days} days remaining",
-  "@remainingDays": {
-    "placeholders": {
-      "days": {}
-    }
-  },
+  "navDashboard": "Dashboard",
+  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
+  "navMembers": "Members",
+  "@navMembers": { "description": "Admin drawer — Members item" },
+  "navPlans": "Plans",
+  "@navPlans": { "description": "Admin drawer — Plans item" },
+  "navStaff": "Staff",
+  "@navStaff": { "description": "Admin drawer — Staff item" },
+  "navPayments": "Payments",
+  "@navPayments": { "description": "Admin drawer — Payments item" },
+  "navClasses": "Classes",
+  "@navClasses": { "description": "Admin drawer — Classes item" },
+  "navAiAssistant": "AI Assistant",
+  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
+  "navSettings": "Settings",
+  "@navSettings": { "description": "Admin drawer — Settings item" },
+  "navLogout": "Logout",
+  "@navLogout": { "description": "Admin drawer — Logout item" },
+  "logoutConfirmTitle": "Log out?",
+  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
+  "logoutConfirmMessage": "Are you sure you want to log out?",
+  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
+  "sectionCoreOwner": "CORE OWNER",
+  "@sectionCoreOwner": { "description": "Drawer section label" },
+  "sectionOperationsReception": "OPERATIONS / RECEPTION",
+  "@sectionOperationsReception": { "description": "Drawer section label" },
+  "sectionTrainingPt": "TRAINING / PT",
+  "@sectionTrainingPt": { "description": "Drawer section label" },
+  "navTrainers": "Trainers / PT",
+  "@navTrainers": { "description": "Drawer nav item" },
+  "navReceptionStaff": "Reception Staff",
+  "@navReceptionStaff": { "description": "Drawer nav item" },
+  "navGymProfile": "Gym Profile",
+  "@navGymProfile": { "description": "Drawer nav item" },
+  "navBranches": "Branches",
+  "@navBranches": { "description": "Drawer nav item" },
+  "navCheckins": "Check-ins",
+  "@navCheckins": { "description": "Drawer nav item" },
+  "navClassesPt": "Classes & PT",
+  "@navClassesPt": { "description": "Drawer nav item" },
+  "navNotifications": "Notifications",
+  "@navNotifications": { "description": "Drawer nav item" },
+  "navPtSessions": "PT Sessions",
+  "@navPtSessions": { "description": "Drawer nav item" },
+  "navTrainingVideos": "Training Videos",
+  "@navTrainingVideos": { "description": "Drawer nav item" },
 
-  "membershipEndsAt": "Ends at {date}",
-  "@membershipEndsAt": {
-    "placeholders": {
-      "date": {}
-    }
-  },
-
-  "couponAppliedFinalPrice": "Final price: {price}",
-  "@couponAppliedFinalPrice": {
-    "placeholders": {
-      "price": {}
-    }
-  },
-  "back": "Back",
   "accountProfileUpdateSuccess": "Profile updated successfully",
   "accountStatExercises": "Exercises",
   "accountStatSessions": "Sessions",
@@ -775,33 +450,26 @@
   "accountSettings": "Settings",
   "accountHelpSupport": "Help & Support",
   "appVersion": "Version",
+  "accountGender": "Gender",
+  "accountGenderMale": "Male",
+  "accountGenderFemale": "Female",
+  "accountMemberSince": "Member since {date}",
+  "@accountMemberSince": { "placeholders": { "date": { "type": "String" } } },
+  "accountMyInfo": "My Info",
+
   "ptAll": "All",
   "ptFavorites": "Favorites",
   "ptFavoritesWithCount": "Favorites {count}",
-  "@ptFavoritesWithCount": {
-    "placeholders": { "count": { "type": "int" } }
-  },
+  "@ptFavoritesWithCount": { "placeholders": { "count": { "type": "int" } } },
   "ptPerSession": "/session",
   "ptYearsExperience": "{years} years exp",
-  "@ptYearsExperience": {
-    "placeholders": { "years": { "type": "int" } }
-  },
+  "@ptYearsExperience": { "placeholders": { "years": { "type": "int" } } },
   "ptReviews": "{count} reviews",
-  "@ptReviews": {
-    "placeholders": { "count": { "type": "int" } }
-  },
+  "@ptReviews": { "placeholders": { "count": { "type": "int" } } },
   "ptScreenTitle": "Personal Trainers",
   "ptScreenSubtitle": "Choose the right trainer for your goals",
   "ptBookSession": "Book Session",
   "ptNoTrainers": "No trainers available",
-  "accountMemberSince": "Member since {date}",
-  "@accountMemberSince": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "ptBookingChooseDate": "Choose Date",
   "ptBookingChooseTime": "Choose Time",
   "ptBookingNoSlotsForDate": "No available slots for this date.",
@@ -820,108 +488,93 @@
       "time": { "type": "String" }
     }
   },
-    "ptBookingSummary": "Booking summary",
-    "ptBookingTrainer": "Trainer:",
-    "ptBookingDate": "Date:",
-    "ptBookingTime": "Time:",
-    "ptBookingTotalAmount": "Total amount:",
-    "ptBookingSuccess": "Booking confirmed successfully.",
-    "ptSlotAlreadyBooked": "You already booked this time slot.",
-    "ptPackageChoosePackage": "Choose package",
-    "ptPackageChooseDays": "Choose days",
-    "ptPackageChooseTime": "Choose time",
-    "ptPackageBookingSummary": "Booking summary",
-    "ptPackageConfirmBooking": "Confirm booking",
-    "ptPackageBookingSuccess": "Package booking confirmed successfully.",
-    "ptPackageBookingFailed": "Could not confirm package booking.",
-    "ptPackageNoPackages": "No packages available right now",
-    "ptPackageSessions": "sessions",
-    "ptPackageDays": "days",
-    "ptPackageFinalPrice": "Final price",
-    "ptPackageOriginalPrice": "Original price",
-    "ptPackageSalePrice": "Sale price",
-    "ptPackageSelectedPackage": "Selected package",
-    "ptPackageSelectedDays": "Selected days",
-    "ptPackageSelectedTime": "Selected time",
-    "ptPackageMaxSessionsReached": "You cannot select more days than the package sessions",
+  "ptBookingSummary": "Booking summary",
+  "ptBookingTrainer": "Trainer:",
+  "ptBookingDate": "Date:",
+  "ptBookingTime": "Time:",
+  "ptBookingTotalAmount": "Total amount:",
+  "ptBookingSuccess": "Booking confirmed successfully.",
+  "ptSlotAlreadyBooked": "You already booked this time slot.",
+  "ptPackageChoosePackage": "Choose package",
+  "ptPackageChooseDays": "Choose days",
+  "ptPackageChooseTime": "Choose time",
+  "ptPackageBookingSummary": "Booking summary",
+  "ptPackageConfirmBooking": "Confirm booking",
+  "ptPackageBookingSuccess": "Package booking confirmed successfully.",
+  "ptPackageBookingFailed": "Could not confirm package booking.",
+  "ptPackageNoPackages": "No packages available right now",
+  "ptPackageSessions": "sessions",
+  "ptPackageDays": "days",
+  "ptPackageFinalPrice": "Final price",
+  "ptPackageOriginalPrice": "Original price",
+  "ptPackageSalePrice": "Sale price",
+  "ptPackageSelectedPackage": "Selected package",
+  "ptPackageSelectedDays": "Selected days",
+  "ptPackageSelectedTime": "Selected time",
+  "ptPackageMaxSessionsReached": "You cannot select more days than the package sessions",
+  "ptPackageDaysPerWeekRange": "Choose {min} to {max} days per week",
+  "@ptPackageDaysPerWeekRange": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "ptPackageDaysPerWeekExact": "Choose {count} day(s) per week",
+  "@ptPackageDaysPerWeekExact": { "placeholders": { "count": { "type": "int" } } },
+  "ptPackageMaxDaysReached": "You cannot select more than {max} days per week",
+  "@ptPackageMaxDaysReached": { "placeholders": { "max": { "type": "int" } } },
+  "ptPackageNoAvailableSlots": "No available times",
+  "ptWeeklySlotsFailed": "Could not load available times",
+  "ptBookingRequestSuccess": "Request sent to PT. Waiting for approval.",
+  "ptBookingRequestThisTime": "Request this time",
+  "ptBookingBookSession": "Book session",
+  "ptBookingRequestNote": "Member requested unavailable/full PT time",
+  "ptBookingFullOrUnavailable": "This slot is full or unavailable. Send a request instead.",
+  "ptBookingFailed": "Unable to confirm booking.",
+  "ptBookingRequestFailed": "Unable to send request.",
 
-    "ptPackageDaysPerWeekRange": "Choose {min} to {max} days per week",
-    "@ptPackageDaysPerWeekRange": {
-      "placeholders": {
-        "min": { "type": "int" },
-        "max": { "type": "int" }
-      }
-    },
+  "editProfileTitle": "Edit Profile",
+  "editProfileSubtitle": "Update your personal information",
+  "editProfileFullName": "Full Name",
+  "editProfileEmail": "Email",
+  "editProfilePhone": "Phone Number",
+  "editProfileDateOfBirth": "Date of Birth",
+  "editProfileAddress": "Address",
+  "editProfileGender": "Gender",
+  "editProfileMale": "Male",
+  "editProfileFemale": "Female",
+  "editProfileSave": "Save Changes",
+  "editProfileCancel": "Cancel",
+  "editProfileNameRequired": "Name is required",
+  "editProfileEmailRequired": "Email is required",
+  "editProfileInvalidEmail": "Invalid email address",
+  "editProfileFirstName": "First Name",
+  "editProfileLastName": "Last Name",
+  "editProfileUsername": "Username",
+  "editProfileChangePassword": "Change Password",
+  "editProfileCurrentPassword": "Current Password",
+  "editProfileNewPassword": "New Password",
+  "editProfileRequired": "Required.",
+  "editProfileUsernameRequired": "Username is required.",
+  "editProfileEmailRequiredMessage": "Email is required.",
+  "editProfileInvalidEmailMessage": "Invalid email address.",
+  "editProfilePhoneRequired": "Phone number is required.",
+  "editProfileCurrentPasswordRequired": "Current password is required.",
+  "editProfileNewPasswordRequired": "New password is required.",
+  "editProfilePasswordTooShort": "New password must be at least 6 characters.",
+  "editProfilePasswordSameAsCurrent": "New password must be different from current password.",
+  "editProfileInvalidOwnerProject": "Invalid owner project link id.",
+  "editProfileEmailVerified": "Email verified successfully.",
+  "editProfilePasswordUpdated": "Password updated successfully.",
+  "editProfileOnlyLetters": "Only letters and spaces are allowed.",
+  "editProfileVerifyNewEmail": "Verify new email",
+  "editProfileVerifyPasswordChange": "Verify password change",
+  "editProfileCodeSentTo": "Code sent to",
+  "editProfileVerificationCode": "Verification code",
+  "editProfileResend": "Resend",
+  "editProfileVerify": "Verify",
+  "editProfileCodeRequired": "Verification code is required.",
 
-    "ptPackageDaysPerWeekExact": "Choose {count} day(s) per week",
-    "@ptPackageDaysPerWeekExact": {
-      "placeholders": {
-        "count": { "type": "int" }
-      }
-    },
-
-    "ptPackageMaxDaysReached": "You cannot select more than {max} days per week",
-    "@ptPackageMaxDaysReached": {
-      "placeholders": {
-        "max": { "type": "int" }
-      }
-    },
-    "ptPackageNoAvailableSlots": "No available times",
-    "ptWeeklySlotsFailed": "Could not load available times",
-    "editProfileTitle": "Edit Profile",
-    "editProfileSubtitle": "Update your personal information",
-    "editProfileFullName": "Full Name",
-    "editProfileEmail": "Email",
-    "editProfilePhone": "Phone Number",
-    "editProfileDateOfBirth": "Date of Birth",
-    "editProfileAddress": "Address",
-    "editProfileGender": "Gender",
-    "editProfileMale": "Male",
-    "editProfileFemale": "Female",
-    "editProfileSave": "Save Changes",
-    "editProfileCancel": "Cancel",
-    "editProfileNameRequired": "Name is required",
-    "editProfileEmailRequired": "Email is required",
-    "editProfileInvalidEmail": "Invalid email address",
-    "accountGender": "Gender",
-    "accountGenderMale": "Male",
-    "accountGenderFemale": "Female",
-    "editProfileFirstName": "First Name",
-    "editProfileLastName": "Last Name",
-    "editProfileUsername": "Username",
-    "editProfileChangePassword": "Change Password",
-    "editProfileCurrentPassword": "Current Password",
-    "editProfileNewPassword": "New Password",
-
-    "editProfileRequired": "Required.",
-    "editProfileUsernameRequired": "Username is required.",
-    "editProfileEmailRequiredMessage": "Email is required.",
-    "editProfileInvalidEmailMessage": "Invalid email address.",
-    "editProfilePhoneRequired": "Phone number is required.",
-    "editProfileCurrentPasswordRequired": "Current password is required.",
-    "editProfileNewPasswordRequired": "New password is required.",
-    "editProfilePasswordTooShort": "New password must be at least 6 characters.",
-    "editProfilePasswordSameAsCurrent": "New password must be different from current password.",
-    "editProfileInvalidOwnerProject": "Invalid owner project link id.",
-    "editProfileEmailVerified": "Email verified successfully.",
-    "editProfilePasswordUpdated": "Password updated successfully.",
-    "editProfileOnlyLetters": "Only letters and spaces are allowed.",
-    "editProfileVerifyNewEmail": "Verify new email",
-    "editProfileVerifyPasswordChange": "Verify password change",
-    "editProfileCodeSentTo": "Code sent to",
-    "editProfileVerificationCode": "Verification code",
-    "editProfileResend": "Resend",
-    "editProfileVerify": "Verify",
-    "editProfileCodeRequired": "Verification code is required.",
-
-      "ptBookingSuccess": "Booking confirmed successfully.",
-      "ptBookingRequestSuccess": "Request sent to PT. Waiting for approval.",
-      "ptBookingRequestThisTime": "Request this time",
-      "ptBookingBookSession": "Book session",
-      "ptBookingRequestNote": "Member requested unavailable/full PT time",
-      "ptBookingFullOrUnavailable": "This slot is full or unavailable. Send a request instead.",
-      "ptBookingFailed": "Unable to confirm booking.",
-      "ptBookingRequestFailed": "Unable to send request.",
   "memberQrTitle": "Entry QR Code",
   "memberQrSubtitle": "Scan this code at the gym entrance",
   "memberQrActiveMembership": "Active membership",
@@ -936,35 +589,12 @@
   "memberQrToday": "Today",
   "memberQrYesterday": "Yesterday",
   "memberQrMinute": "{count} min",
-  "@memberQrMinute": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@memberQrMinute": { "placeholders": { "count": { "type": "int" } } },
   "memberQrHour": "{count} h",
-  "@memberQrHour": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
+  "@memberQrHour": { "placeholders": { "count": { "type": "String" } } },
   "memberQrLoadError": "Could not load QR data",
   "memberQrRetry": "Retry",
 
-"memberQrExpiresSoon": "QR expires soon",
-"memberQrRecentVisits": "Recent visits",
-"memberQrNoRecentVisits": "No previous visits",
-"memberQrDurationLabel": "Duration",
-"memberQrToday": "Today",
-"memberQrYesterday": "Yesterday",
-"memberQrMinute": "{count} min",
-"memberQrHour": "{count} h",
-"memberQrLoadError": "Could not load QR data",
-"memberQrRetry": "Retry"
-  "accountMyInfo": "My Info",
   "myInfoTitle": "My Info",
   "myInfoSubtitle": "Update your gym profile information",
   "myInfoPreferredBranch": "Preferred Branch",
@@ -986,6 +616,56 @@
   "myInfoUpdatedSuccessfully": "My Info updated successfully",
   "myInfoLoadError": "Failed to load your info. Please try again.",
   "myInfoSaveError": "Failed to save your info. Please try again.",
-  "myInfoRequiredError": "Preferred branch, gender and date of birth are required."
+  "myInfoRequiredError": "Preferred branch, gender and date of birth are required.",
 
+  "aiAppBarTitle": "AI Insights Assistant",
+  "@aiAppBarTitle": { "description": "AI assistant screen — AppBar title" },
+  "aiNewConversationTooltip": "New conversation",
+  "@aiNewConversationTooltip": { "description": "Tooltip on the reset/refresh icon button" },
+  "aiHeroBannerTitle": "AI Insights Assistant",
+  "@aiHeroBannerTitle": { "description": "Hero banner main title" },
+  "aiHeroBannerSubtitle": "Ask me anything about your gym",
+  "@aiHeroBannerSubtitle": { "description": "Hero banner subtitle" },
+  "aiHeroBannerBody": "Get instant analytics, insights and recommendations\nbased on your gym data.",
+  "@aiHeroBannerBody": { "description": "Hero banner body text" },
+  "aiSuggestedQuestionsHeader": "Suggested questions",
+  "@aiSuggestedQuestionsHeader": { "description": "Section header above suggested question chips" },
+  "aiRecentQueriesHeader": "Recent queries",
+  "@aiRecentQueriesHeader": { "description": "Section header above recent query list" },
+  "aiRecentQueryViewLabel": "View",
+  "@aiRecentQueryViewLabel": { "description": "Trailing label on a recent query row" },
+  "aiInputHint": "Ask a question about your gym...",
+  "@aiInputHint": { "description": "Placeholder text in the chat input field" },
+  "aiFollowUpHeader": "You might also ask:",
+  "@aiFollowUpHeader": { "description": "Label above the follow-up question chips after an AI answer" },
+  "aiRetryButton": "Retry",
+  "@aiRetryButton": { "description": "Retry button in the error view" },
+  "aiErrorGeneric": "Something went wrong. Please try again.",
+  "@aiErrorGeneric": { "description": "Generic error message shown in the error view" },
+  "aiErrorOffline": "Sorry, I couldn't process your request. Please try again.",
+  "@aiErrorOffline": { "description": "Error appended to the conversation when a query call fails" },
+
+  "checkins_title": "Check-ins",
+  "checkins_scanQr": "Scan QR",
+  "checkins_scanSuccessMsg": "checked in successfully",
+  "checkins_activeNow": "Active Now",
+  "checkins_totalToday": "Total Today",
+  "checkins_searchHint": "Search members...",
+  "checkins_todayTitle": "Today's Check-ins",
+  "checkins_noCheckins": "No check-ins today",
+  "checkins_active": "Active",
+  "checkins_checkedOut": "Checked Out",
+  "checkins_out": "Out",
+  "checkins_freeze": "Freeze",
+  "checkins_block": "Block",
+  "checkins_call": "Call",
+  "checkins_freezeTitle": "Freeze Membership",
+  "checkins_fromDate": "From date",
+  "checkins_toDate": "To date",
+  "checkins_reasonHint": "Reason (optional)",
+  "checkins_confirm": "Confirm",
+  "checkins_blockTitle": "Block Member",
+  "checkins_cancel": "Cancel",
+  "checkins_blockConfirm": "Block",
+  "checkins_scannerTitle": "Scan Member QR"
 }
