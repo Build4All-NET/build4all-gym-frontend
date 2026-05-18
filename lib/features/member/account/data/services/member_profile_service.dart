@@ -26,23 +26,32 @@ class MemberProfileService {
     throw ServerException(message: 'HTTP ${r.statusCode}: ${r.body}');
   }
 
-  // GET /api/member/account/profile-status
-  // Returns profile fields + complete flag.
   Future<Map<String, dynamic>> getProfileStatus() async {
     final headers = await _headers();
     final uri = Uri.parse(
-        '${Env.apiProjectBaseUrl}/api/member/account/profile-status');
+      '${Env.apiProjectBaseUrl}/api/member/account/profile-status',
+    );
+
     try {
       final r = await _client.get(uri, headers: headers);
+
       debugPrint('GET profile-status: ${r.statusCode}');
+      debugPrint('GET profile-status body: ${utf8.decode(r.bodyBytes)}');
+
       if (r.statusCode == 200) {
         return jsonDecode(utf8.decode(r.bodyBytes)) as Map<String, dynamic>;
       }
+
       _handleError(r);
     } catch (e) {
-      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) {
+        rethrow;
+      }
       throw NetworkException();
     }
+
     throw NetworkException();
   }
 
@@ -50,18 +59,39 @@ class MemberProfileService {
   Future<List<Map<String, dynamic>>> getBranches() async {
     final headers = await _headers();
     final uri = Uri.parse(
-        '${Env.apiProjectBaseUrl}/api/member/account/branches');
+      '${Env.apiProjectBaseUrl}/api/member/account/branches',
+    );
+
     try {
       final r = await _client.get(uri, headers: headers);
+
+      debugPrint('GET branches: ${r.statusCode}');
+      debugPrint('GET branches body: ${utf8.decode(r.bodyBytes)}');
+
       if (r.statusCode == 200) {
-        final list = jsonDecode(utf8.decode(r.bodyBytes)) as List<dynamic>;
-        return list.cast<Map<String, dynamic>>();
+        final decoded = jsonDecode(utf8.decode(r.bodyBytes));
+
+        if (decoded is List) {
+          return decoded
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
+        }
+
+        throw ServerException(
+          message: 'Expected List for branches but got: ${decoded.runtimeType}',
+        );
       }
+
       _handleError(r);
     } catch (e) {
-      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) {
+        rethrow;
+      }
       throw NetworkException();
     }
+
     throw NetworkException();
   }
 
