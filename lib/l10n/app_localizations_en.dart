@@ -1371,4 +1371,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberQrRetry => 'Retry';
+
+  @override
+  String get accountMyInfo => 'My Info';
+
+  @override
+  String get myInfoTitle => 'My Info';
+
+  @override
+  String get myInfoSubtitle => 'Update your gym profile information';
+
+  @override
+  String get myInfoPreferredBranch => 'Preferred Branch';
+
+  @override
+  String get myInfoSelectBranch => 'Select branch';
+
+  @override
+  String get myInfoGender => 'Gender';
+
+  @override
+  String get myInfoGenderMale => 'Male';
+
+  @override
+  String get myInfoGenderFemale => 'Female';
+
+  @override
+  String get myInfoGenderOther => 'Other';
+
+  @override
+  String get myInfoGenderPreferNotToSay => 'Prefer not to say';
+
+  @override
+  String get myInfoDateOfBirth => 'Date of Birth';
+
+  @override
+  String get myInfoSelectDateOfBirth => 'Select date of birth';
+
+  @override
+  String get myInfoHeightCm => 'Height (cm)';
+
+  @override
+  String get myInfoWeightKg => 'Weight (kg)';
+
+  @override
+  String get myInfoEmergencyContactName => 'Emergency Contact Name';
+
+  @override
+  String get myInfoEmergencyContactPhone => 'Emergency Contact Phone';
+
+  @override
+  String get myInfoFullNameHint => 'Full name';
+
+  @override
+  String get myInfoPhoneNumberHint => 'Phone number';
+
+  @override
+  String get myInfoSaveChanges => 'Save Changes';
+
+  @override
+  String get myInfoUpdatedSuccessfully => 'My Info updated successfully';
+
+  @override
+  String get myInfoLoadError => 'Failed to load your info. Please try again.';
+
+  @override
+  String get myInfoSaveError => 'Failed to save your info. Please try again.';
+
+  @override
+  String get myInfoRequiredError => 'Preferred branch, gender and date of birth are required.';
 }

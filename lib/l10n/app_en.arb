@@ -964,4 +964,28 @@
 "memberQrHour": "{count} h",
 "memberQrLoadError": "Could not load QR data",
 "memberQrRetry": "Retry"
+  "accountMyInfo": "My Info",
+  "myInfoTitle": "My Info",
+  "myInfoSubtitle": "Update your gym profile information",
+  "myInfoPreferredBranch": "Preferred Branch",
+  "myInfoSelectBranch": "Select branch",
+  "myInfoGender": "Gender",
+  "myInfoGenderMale": "Male",
+  "myInfoGenderFemale": "Female",
+  "myInfoGenderOther": "Other",
+  "myInfoGenderPreferNotToSay": "Prefer not to say",
+  "myInfoDateOfBirth": "Date of Birth",
+  "myInfoSelectDateOfBirth": "Select date of birth",
+  "myInfoHeightCm": "Height (cm)",
+  "myInfoWeightKg": "Weight (kg)",
+  "myInfoEmergencyContactName": "Emergency Contact Name",
+  "myInfoEmergencyContactPhone": "Emergency Contact Phone",
+  "myInfoFullNameHint": "Full name",
+  "myInfoPhoneNumberHint": "Phone number",
+  "myInfoSaveChanges": "Save Changes",
+  "myInfoUpdatedSuccessfully": "My Info updated successfully",
+  "myInfoLoadError": "Failed to load your info. Please try again.",
+  "myInfoSaveError": "Failed to save your info. Please try again.",
+  "myInfoRequiredError": "Preferred branch, gender and date of birth are required."
+
 }

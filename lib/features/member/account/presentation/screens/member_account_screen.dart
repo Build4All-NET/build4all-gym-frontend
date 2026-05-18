@@ -23,6 +23,7 @@ import 'package:build4allgym/features/member/account/presentation/widgets/referr
 import 'package:build4allgym/features/member/account/presentation/widgets/account_personal_info_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/widgets/account_menu_section_widget.dart';
 import 'package:build4allgym/features/member/account/presentation/screens/member_edit_profile_screen.dart';
+import 'package:build4allgym/features/member/account/presentation/screens/member_my_info_screen.dart';
 import 'package:build4allgym/app/app_router.dart';
 class MemberAccountScreen extends StatefulWidget {
   final MemberAccountBloc bloc;
@@ -226,6 +227,15 @@ class _AccountBody extends StatelessWidget {
     );
   }
 
+  void _openMyInfo(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const MemberMyInfoScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
@@ -312,9 +322,9 @@ class _AccountBody extends StatelessWidget {
                       onTap: () => _openEditProfile(context),
                     ),
                     AccountMenuItem(
-                      icon: Icons.credit_card_rounded,
-                      label: l10n.accountPaymentMethods,
-                      onTap: () {},
+                      icon: Icons.info_outline_rounded,
+                      label: l10n.accountMyInfo,
+                      onTap: () => _openMyInfo(context),
                     ),
                     AccountMenuItem(
                       icon: Icons.workspace_premium_rounded,
