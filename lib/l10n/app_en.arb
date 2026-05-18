@@ -953,6 +953,17 @@
   },
   "memberQrLoadError": "Could not load QR data",
   "memberQrRetry": "Retry",
+
+"memberQrExpiresSoon": "QR expires soon",
+"memberQrRecentVisits": "Recent visits",
+"memberQrNoRecentVisits": "No previous visits",
+"memberQrDurationLabel": "Duration",
+"memberQrToday": "Today",
+"memberQrYesterday": "Yesterday",
+"memberQrMinute": "{count} min",
+"memberQrHour": "{count} h",
+"memberQrLoadError": "Could not load QR data",
+"memberQrRetry": "Retry"
   "accountMyInfo": "My Info",
   "myInfoTitle": "My Info",
   "myInfoSubtitle": "Update your gym profile information",

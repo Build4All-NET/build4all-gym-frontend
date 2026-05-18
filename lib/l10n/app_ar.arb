@@ -888,6 +888,8 @@
   },
   "memberQrLoadError": "تعذر تحميل رمز الدخول",
   "memberQrRetry": "إعادة المحاولة",
+"aiAppBarTitle": "المساعد الذكي",
+    "@aiAppBarTitle": {"description": "AI assistant screen — AppBar title"},
   "accountMyInfo": "معلوماتي",
   "myInfoTitle": "معلوماتي",
   "myInfoSubtitle": "حدّث معلومات ملفك الرياضي",
@@ -912,5 +914,41 @@
   "myInfoSaveError": "فشل حفظ معلوماتك. حاول مرة أخرى.",
   "myInfoRequiredError": "الفرع المفضل والجنس وتاريخ الميلاد مطلوبة."
 
+    "aiNewConversationTooltip": "محادثة جديدة",
+    "@aiNewConversationTooltip": {"description": "Tooltip on the reset/refresh icon button"},
+
+    "aiHeroBannerTitle": "مساعد الرؤى الذكية",
+    "@aiHeroBannerTitle": {"description": "Hero banner main title"},
+
+    "aiHeroBannerSubtitle": "اسألني أي شيء عن صالتك",
+    "@aiHeroBannerSubtitle": {"description": "Hero banner subtitle"},
+
+    "aiHeroBannerBody": "احصل على تحليلات فورية ورؤى وتوصيات\nبناءً على بيانات صالتك.",
+    "@aiHeroBannerBody": {"description": "Hero banner body text"},
+
+    "aiSuggestedQuestionsHeader": "أسئلة مقترحة",
+    "@aiSuggestedQuestionsHeader": {"description": "Section header above suggested question chips"},
+
+    "aiRecentQueriesHeader": "الاستفسارات الأخيرة",
+    "@aiRecentQueriesHeader": {"description": "Section header above recent query list"},
+
+    "aiRecentQueryViewLabel": "عرض",
+    "@aiRecentQueryViewLabel": {"description": "Trailing label on a recent query row"},
+
+    "aiInputHint": "اسأل سؤالاً عن صالتك...",
+    "@aiInputHint": {"description": "Placeholder text in the chat input field"},
+
+    "aiFollowUpHeader": "قد تسأل أيضاً:",
+    "@aiFollowUpHeader": {"description": "Label above the follow-up question chips after an AI answer"},
+
+    "aiRetryButton": "إعادة المحاولة",
+    "@aiRetryButton": {"description": "Retry button in the error view"},
+
+    "aiErrorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "@aiErrorGeneric": {"description": "Generic error message shown in the error view"},
+
+    "aiErrorOffline": "عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مرة أخرى.",
+    "@aiErrorOffline": {"description": "Error appended to the conversation when a query call fails"}
 }
+
 

@@ -18,6 +18,7 @@ import '../features/admin/ai_assistant/presentation/bloc/ai_assistant_bloc.dart'
 import '../features/admin/ai_assistant/presentation/screens/ai_assistant_screen.dart';
 import '../features/admin/branches/presentation/bloc/branches_event.dart';
 import '../features/admin/branches/presentation/screens/branches_list_page.dart';
+import '../features/admin/checkins/data/services/CheckinsRemoteDataSource.dart';
 import '../features/admin/classes/data/repositories/admin_classes_repository_impl.dart';
 import '../features/admin/classes/data/services/admin_classes_service.dart';
 import '../features/admin/classes/domain/usecases/cancel_class_usecase.dart';
@@ -31,7 +32,7 @@ import '../features/admin/classes/presentation/bloc/admin_classes_bloc.dart';
 import '../features/admin/classes/presentation/bloc/admin_classes_event.dart';
 import '../features/admin/classes/presentation/screens/admin_classes_screen.dart';
 import '../features/admin/members/data/services/admin_members_service.dart';
-import '../features/admin/members/domain/usecases/block_member_use_case.dart';
+import '../features/admin/members/domain/usecases/block_member_use_case.dart' as member_uc;
 import '../features/admin/members/domain/usecases/bulk_delete_members_use_case.dart';
 import '../features/admin/members/domain/usecases/delete_member_use_case.dart';
 import '../features/admin/members/domain/usecases/get_member_attendance_use_case.dart';
@@ -138,6 +139,11 @@ import '../features/member/settings/data/services/member_settings_remote_service
 import '../features/member/settings/domain/usecases/get_member_settings_usecase.dart';
 import '../features/member/settings/presentation/cubit/member_settings_cubit.dart';
 import '../features/member/settings/presentation/screens/member_settings_screen.dart';
+
+import '../features/admin/checkins/data/repositories/checkins_repository_impl.dart';
+import '../features/admin/checkins/domain/usecases/checkins_usecases.dart';
+import '../features/admin/checkins/presentation/bloc/checkins_bloc.dart';
+import '../features/admin/checkins/presentation/screens/checkins_screen.dart';
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login          = '/login';
@@ -349,7 +355,7 @@ class AppRouter {
                 getMembersUseCase:         GetMembersUseCase(repository),
                 getMemberDetailUseCase:    GetMemberDetailUseCase(repository),
                 getMemberAttendanceUseCase: GetMemberAttendanceUseCase(repository),
-                blockMemberUseCase:        BlockMemberUseCase(repository),
+                blockMemberUseCase: member_uc.BlockMemberUseCase(repository),
                 unblockMemberUseCase:      UnblockMemberUseCase(repository),
                 deleteMemberUseCase:       DeleteMemberUseCase(repository),
                 bulkDeleteMembersUseCase:  BulkDeleteMembersUseCase(repository),
@@ -466,12 +472,33 @@ class AppRouter {
     // ── Admin: Check-ins ───────────────────────────────────────────────────
 
       case adminCheckins:
+      // Read branchId from args — the nav drawer or dashboard passes it in.
+      // Fallback to 1 (main branch) if not provided.
+        final ciArgs    = settings.arguments as Map<String, dynamic>?;
+        final ciBranchId = ciArgs?['branchId'] as int? ?? 1;
+
+        final ciRepo = CheckinsRepositoryImpl(CheckinsRemoteDataSource());
+
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            const _ComingSoonScreen(title: 'Check-ins'),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => CheckinsBloc(
+                    branchId:      ciBranchId,
+                    getTodayCheckins: GetTodayCheckinsUseCase(ciRepo),
+                    scanQrCheckin:    ScanQrCheckinUseCase(ciRepo),
+                    checkOutMember:   CheckOutMemberUseCase(ciRepo),
+                    freezeMember:     FreezeMemberUseCase(ciRepo),
+                    blockMember:      BlockMemberUseCase(ciRepo),
+                  ),
+                ),
+              ],
+              child: const CheckinsScreen(),
+            ),
           ),
         );
-
     // ── Admin: Payments ────────────────────────────────────────────────────
 
       case adminPayments:
