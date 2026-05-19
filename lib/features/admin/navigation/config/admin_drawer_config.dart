@@ -64,6 +64,12 @@ const _operationsItems = [
     route: '/admin/payments',
   ),
   NavigationItem(
+    id: 'membership_requests',
+    iconData: Icons.pending_actions_outlined,
+    labelKey: 'navMembershipRequests',
+    route: '/admin/membership-requests',
+  ),
+  NavigationItem(
     id: 'classes_pt',
     iconData: Icons.calendar_month_outlined,
     labelKey: 'navClassesPt',

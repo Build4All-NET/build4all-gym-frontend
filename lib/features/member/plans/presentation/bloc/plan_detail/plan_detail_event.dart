@@ -28,3 +28,24 @@ class ApplyCouponEvent extends PlanDetailEvent {
 
 /// Fired when the user clears the coupon field.
 class ClearCouponEvent extends PlanDetailEvent {}
+
+/// Fired once the plan is loaded — loads available payment methods from backend.
+class LoadPaymentMethodsEvent extends PlanDetailEvent {}
+
+/// Fired when the member taps a payment method radio button.
+class SelectPaymentMethodEvent extends PlanDetailEvent {
+  final String methodName;
+  SelectPaymentMethodEvent({required this.methodName});
+}
+
+/// Fired when the member taps the checkout button.
+class SubmitCheckoutEvent extends PlanDetailEvent {
+  final int planId;
+  final String paymentMethod;
+  final String? couponCode;
+  SubmitCheckoutEvent({
+    required this.planId,
+    required this.paymentMethod,
+    this.couponCode,
+  });
+}
