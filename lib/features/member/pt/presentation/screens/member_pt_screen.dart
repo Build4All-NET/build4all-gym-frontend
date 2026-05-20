@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/trainer_detail_entity.dart';
-import '../../domain/usecases/get_trainer_detail_usecase.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../data/repositories/member_pt_repository_impl.dart';
@@ -9,9 +8,9 @@ import '../../data/services/member_pt_service.dart';
 import '../../domain/usecases/get_trainers_usecase.dart';
 import '../../domain/usecases/get_filter_options_usecase.dart';
 import '../../domain/usecases/toggle_favorite_trainer_usecase.dart';
+import '../../domain/usecases/get_trainer_detail_usecase.dart';
 import '../bloc/member_pt_bloc.dart';
 import '../widgets/trainer_card_widget.dart';
-import '../../domain/usecases/get_trainer_detail_usecase.dart';
 import '../widgets/trainer_filter_chips_widget.dart';
 
 class MemberPtScreen extends StatelessWidget {
@@ -123,7 +122,6 @@ class _MemberPtView extends StatelessWidget {
                                 ),
                               ),
                             ),
-
                             Align(
                               alignment: isRtl
                                   ? Alignment.centerRight
@@ -149,9 +147,7 @@ class _MemberPtView extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 6),
-
                         Padding(
                           padding: const EdgeInsetsDirectional.only(
                             end: 52,
@@ -179,12 +175,16 @@ class _MemberPtView extends StatelessWidget {
                       specialties: state.specialties,
                       activeSpecialtyFilter:
                       state.activeSpecialtyFilter,
+                      branches: state.branches,
+                      activeBranchFilter: state.activeBranchFilter,
                       favoritesOnly: state.favoritesOnly,
                       favoriteCount: state.favoriteCount,
                     )
-                        : TrainerFilterChipsWidget(
-                      specialties: const [],
+                        : const TrainerFilterChipsWidget(
+                      specialties: [],
                       activeSpecialtyFilter: null,
+                      branches: {},
+                      activeBranchFilter: null,
                       favoritesOnly: false,
                       favoriteCount: 0,
                     ),

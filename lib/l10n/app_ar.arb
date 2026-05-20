@@ -661,5 +661,11 @@
   "checkins_blockTitle": "حجب العضو",
   "checkins_cancel": "إلغاء",
   "checkins_blockConfirm": "حجب",
-  "checkins_scannerTitle": "مسح QR للعضو"
+  "checkins_scannerTitle": "مسح QR للعضو",
+  "sessionDetailBookingClosed": "انتهى وقت الحجز",
+  "booked": "محجوز",
+  "noActiveMembership": "لا توجد عضوية نشطة",
+   "membershipStatusCancelled": "الغاء",
+   "editProfileVerifyNewPhone": "تحقق من رقم الهاتف الجديد",
+   "editProfilePhoneVerified": "تم التحقق من رقم الهاتف بنجاح"
 }

@@ -13,6 +13,7 @@ abstract class MemberProfileEditRepository {
 
   Future<void> resendEmailChangeCode();
 
+  // PASSWORD FLOW
   Future<void> verifyCurrentPassword({
     required String email,
     required String currentPassword,
@@ -29,5 +30,18 @@ abstract class MemberProfileEditRepository {
     required String code,
     required String newPassword,
     required int ownerProjectLinkId,
+  });
+
+  // PHONE FLOW
+  // No password here.
+  // Changing phone should only send OTP to the new phone number.
+  Future<void> sendPhoneChangeVerificationCode({
+    required String phoneNumber,
+    required int ownerProjectLinkId,
+  });
+
+  Future<void> verifyPhoneChangeCode({
+    required String phoneNumber,
+    required String code,
   });
 }

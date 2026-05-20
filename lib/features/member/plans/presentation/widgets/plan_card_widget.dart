@@ -22,6 +22,8 @@ class PlanCardWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final bool featured = plan.isFeatured;
+    final bool isBooked = plan.isBooked;
+    final promotion = plan.activePromotion;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     final textDirection = isRtl ? TextDirection.rtl : TextDirection.ltr;
@@ -126,6 +128,45 @@ class PlanCardWidget extends StatelessWidget {
 
                             const SizedBox(height: 14),
 
+                            if (promotion != null) ...[
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: tokens.colors.success.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: tokens.colors.success.withOpacity(0.35),
+                                  ),
+                                ),
+                                child: Row(
+                                  textDirection: textDirection,
+                                  children: [
+                                    Icon(
+                                      Icons.local_offer_rounded,
+                                      color: tokens.colors.success,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        _promotionLabel(promotion),
+                                        textAlign: textAlign,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: tokens.typography.bodySmall.copyWith(
+                                          color: tokens.colors.success,
+                                          fontWeight: FontWeight.w900,
+                                          height: 1.25,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                            ],
+
                             ...plan.features.map(
                                   (feature) => Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
@@ -181,23 +222,31 @@ class PlanCardWidget extends StatelessWidget {
                   SizedBox(
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: onSelectPlan,
+                      onPressed: isBooked ? null : onSelectPlan,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: featured
+                        backgroundColor: isBooked
+                            ? tokens.colors.border.withOpacity(0.35)
+                            : featured
                             ? tokens.colors.primary
                             : const Color(0xFFEAF0F8),
-                        foregroundColor: featured
+                        foregroundColor: isBooked
+                            ? tokens.colors.muted
+                            : featured
                             ? tokens.colors.onPrimary
                             : tokens.colors.label,
+                        disabledBackgroundColor: tokens.colors.border.withOpacity(0.35),
+                        disabledForegroundColor: tokens.colors.muted,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                       child: Text(
-                        l10n.selectThisPlan,
+                        isBooked ? l10n.booked : l10n.selectThisPlan,
                         style: tokens.typography.bodyMedium.copyWith(
-                          color: featured
+                          color: isBooked
+                              ? tokens.colors.muted
+                              : featured
                               ? tokens.colors.onPrimary
                               : tokens.colors.label,
                           fontWeight: FontWeight.w900,
@@ -224,6 +273,20 @@ class PlanCardWidget extends StatelessWidget {
       default:
         return value;
     }
+  }
+  String _promotionLabel(ActivePromotionEntity promotion) {
+    final discountType = promotion.discountType.toLowerCase().trim();
+    final value = promotion.discountValue;
+
+    if (discountType == 'percentage') {
+      return '${promotion.title} - ${value.toStringAsFixed(0)}% OFF';
+    }
+
+    if (discountType == 'fixed') {
+      return '${promotion.title} - \$${value.toStringAsFixed(0)} OFF';
+    }
+
+    return promotion.title;
   }
 }
 
@@ -263,6 +326,7 @@ class _PlanIcon extends StatelessWidget {
         size: 24,
       ),
     );
+
   }
 
   IconData _iconByName(String iconName) {

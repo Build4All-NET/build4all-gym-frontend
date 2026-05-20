@@ -8,6 +8,10 @@ import '../bloc/member_pt_bloc.dart';
 class TrainerFilterChipsWidget extends StatelessWidget {
   final List<String> specialties;
   final String? activeSpecialtyFilter;
+
+  final Map<int, String> branches;
+  final int? activeBranchFilter;
+
   final bool favoritesOnly;
   final int favoriteCount;
 
@@ -15,6 +19,8 @@ class TrainerFilterChipsWidget extends StatelessWidget {
     super.key,
     required this.specialties,
     required this.activeSpecialtyFilter,
+    required this.branches,
+    required this.activeBranchFilter,
     required this.favoritesOnly,
     required this.favoriteCount,
   });
@@ -29,11 +35,14 @@ class TrainerFilterChipsWidget extends StatelessWidget {
       // ── الكل ──────────────────────────────────────────────────
       _FilterChip(
         label: l10n.ptAll,
-        isActive: activeSpecialtyFilter == null && !favoritesOnly,
+        isActive: activeSpecialtyFilter == null &&
+            activeBranchFilter == null &&
+            !favoritesOnly,
         onTap: () => context
             .read<MemberPtBloc>()
-            .add(const TrainersSpecialtyFilterChanged(null)),
+            .add(const TrainersAllFiltersCleared()),
       ),
+
       // ── المفضلة ───────────────────────────────────────────────
       _FavoritesChip(
         label: favoriteCount > 0
@@ -44,6 +53,18 @@ class TrainerFilterChipsWidget extends StatelessWidget {
             .read<MemberPtBloc>()
             .add(const TrainersFavoritesFilterToggled()),
       ),
+
+      // ── Dynamic branch chips ──────────────────────────────────
+      ...branches.entries.map(
+            (entry) => _FilterChip(
+          label: entry.value,
+          isActive: activeBranchFilter == entry.key,
+          onTap: () => context
+              .read<MemberPtBloc>()
+              .add(TrainersBranchFilterChanged(entry.key)),
+        ),
+      ),
+
       // ── Dynamic specialty chips ───────────────────────────────
       ...specialties.map(
             (specialty) => _FilterChip(
@@ -156,15 +177,13 @@ class _FavoritesChip extends StatelessWidget {
                   ? Icons.favorite_rounded
                   : Icons.favorite_border_rounded,
               size: 14,
-              color:
-              isActive ? tokens.colors.onPrimary : tokens.colors.danger,
+              color: isActive ? tokens.colors.onPrimary : tokens.colors.danger,
             ),
             const SizedBox(width: 6),
             Text(
               label,
               style: tokens.typography.bodySmall.copyWith(
-                color:
-                isActive ? tokens.colors.onPrimary : tokens.colors.body,
+                color: isActive ? tokens.colors.onPrimary : tokens.colors.body,
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
               ),

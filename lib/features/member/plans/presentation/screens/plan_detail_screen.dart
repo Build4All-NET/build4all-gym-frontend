@@ -117,7 +117,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
 
           if (state is PlanDetailLoaded) {
             final plan = state.plan;
-
+            final bool isBooked = plan.isBooked;
             return Scaffold(
               backgroundColor: tokens.colors.background,
               body: Stack(

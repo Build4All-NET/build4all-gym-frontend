@@ -1548,4 +1548,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get checkins_scannerTitle => 'مسح QR للعضو';
+
+  @override
+  String get sessionDetailBookingClosed => 'انتهى وقت الحجز';
+
+  @override
+  String get booked => 'محجوز';
+
+  @override
+  String get noActiveMembership => 'لا توجد عضوية نشطة';
+
+  @override
+  String get membershipStatusCancelled => 'الغاء';
+
+  @override
+  String get editProfileVerifyNewPhone => 'تحقق من رقم الهاتف الجديد';
+
+  @override
+  String get editProfilePhoneVerified => 'تم التحقق من رقم الهاتف بنجاح';
 }

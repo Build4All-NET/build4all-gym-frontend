@@ -19,15 +19,25 @@ class TrainersLoading extends MemberPtState {
 class TrainersLoaded extends MemberPtState {
   final List<TrainerCardEntity> trainers;
   final int favoriteCount;
+
   final List<String> specialties;
   final String? activeSpecialtyFilter;
+
+  // Branch filter data.
+  // key = branchId
+  // value = branchName
+  final Map<int, String> branches;
+  final int? activeBranchFilter;
+
   final bool favoritesOnly;
 
   const TrainersLoaded({
     required this.trainers,
     required this.favoriteCount,
     required this.specialties,
+    required this.branches,
     this.activeSpecialtyFilter,
+    this.activeBranchFilter,
     required this.favoritesOnly,
   });
 
@@ -36,13 +46,22 @@ class TrainersLoaded extends MemberPtState {
     int? favoriteCount,
     List<String>? specialties,
     String? activeSpecialtyFilter,
+    Map<int, String>? branches,
+    int? activeBranchFilter,
     bool? favoritesOnly,
+    bool clearSpecialtyFilter = false,
+    bool clearBranchFilter = false,
   }) {
     return TrainersLoaded(
       trainers: trainers ?? this.trainers,
       favoriteCount: favoriteCount ?? this.favoriteCount,
       specialties: specialties ?? this.specialties,
-      activeSpecialtyFilter: activeSpecialtyFilter ?? this.activeSpecialtyFilter,
+      branches: branches ?? this.branches,
+      activeSpecialtyFilter: clearSpecialtyFilter
+          ? null
+          : activeSpecialtyFilter ?? this.activeSpecialtyFilter,
+      activeBranchFilter:
+      clearBranchFilter ? null : activeBranchFilter ?? this.activeBranchFilter,
       favoritesOnly: favoritesOnly ?? this.favoritesOnly,
     );
   }
