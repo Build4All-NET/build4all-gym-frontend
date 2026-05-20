@@ -184,6 +184,22 @@ class AdminClassesService {
     }
   }
 
+  // ── PATCH /api/admin/classes/bookings/{bookingId}/confirm-payment ──────────
+  // Confirms a cash payment for a pending booking.
+  Future<void> confirmBookingPayment(int bookingId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/classes/bookings/$bookingId/confirm-payment');
+
+    try {
+      final response = await _client.patch(uri, headers: headers, body: '{}');
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── GET /api/admin/classes/{sessionId}/bookings ────────────────────────────
   // Returns all BOOKED + WAITLISTED members for a session.
   Future<List<SessionBookingItemModel>> getSessionBookings(

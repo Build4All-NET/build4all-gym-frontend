@@ -82,12 +82,25 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
 
     try {
       if (bookSessionUseCase != null) {
-        await bookSessionUseCase!(event.sessionId);
+        final result = await bookSessionUseCase!(
+          event.sessionId,
+          paymentMethod: event.paymentMethod,
+        );
+
+        if ((result.isStripe || result.isRedirect) && result.transactionId != null) {
+          emit(SessionBookingPaymentReady(
+            result: result,
+            selectedDate: _selectedDate,
+          ));
+          return;
+        }
+
+        emit(SessionBookingDone(result));
       }
 
       await _loadSessions(emit);
-    } catch (_) {
-      emit(const SessionBookingError('Failed to book session'));
+    } catch (e) {
+      emit(SessionBookingError(e.toString()));
     }
   }
 

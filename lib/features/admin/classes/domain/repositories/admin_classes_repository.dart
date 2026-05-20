@@ -37,6 +37,9 @@ abstract class AdminClassesRepository {
   // Returns all non-cancelled bookings for a session
   Future<List<SessionBookingItemEntity>> getSessionBookings(int sessionId);
 
+  // Confirms a cash payment for a pending booking
+  Future<void> confirmBookingPayment(int bookingId);
+
   // Reactivates a cancelled session back to SCHEDULED
   Future<void> reactivateClass(int sessionId);
 }

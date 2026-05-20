@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/network/globals.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/session_detail_entity.dart';
@@ -10,6 +12,7 @@ import '../bloc/sessions_state.dart';
 import '../widgets/Session_About_Widget.dart';
 import '../widgets/Session_Benefits_Widget.dart';
 import '../widgets/Session_Equipment_Widget.dart';
+import '../widgets/session_booking_payment_sheet.dart';
 import '../widgets/session_info_grid_widget.dart';
 
 class SessionDetailScreen extends StatefulWidget {
@@ -221,6 +224,7 @@ class _DetailView extends StatelessWidget {
             sessionId: session.sessionId,
             memberBookingStatus: session.memberBookingStatus,
             l10n: l10n,
+            session: session,
           ),
         ),
       ],
@@ -232,11 +236,13 @@ class _BookNowBar extends StatelessWidget {
   final int sessionId;
   final String? memberBookingStatus;
   final AppLocalizations l10n;
+  final SessionDetailEntity session;
 
   const _BookNowBar({
     required this.sessionId,
     required this.memberBookingStatus,
     required this.l10n,
+    required this.session,
   });
 
   @override
@@ -268,10 +274,16 @@ class _BookNowBar extends StatelessWidget {
             child: ElevatedButton(
               onPressed: isLoading || isBooked
                   ? null
-                  : () {
-                context
-                    .read<SessionsBloc>()
-                    .add(SessionBookRequested(sessionId));
+                  : () async {
+                final dio = appDio ?? Dio();
+                await SessionBookingPaymentSheet.show(
+                  context,
+                  sessionId: session.sessionId,
+                  className: session.className,
+                  price: session.price,
+                  startTime: session.startTime,
+                  dio: dio,
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:

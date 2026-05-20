@@ -102,6 +102,8 @@ class AdminInvoiceSummaryEntity {
   final double  totalAmount;
   final double  paidAmount;
   final double  dueAmount;
+  final String? type;          // "PLAN", "CLASS", "PT"
+  final String? paymentMethod; // "CASH", "STRIPE", etc.
 
   const AdminInvoiceSummaryEntity({
     required this.invoiceId,
@@ -114,5 +116,7 @@ class AdminInvoiceSummaryEntity {
     required this.totalAmount,
     required this.paidAmount,
     required this.dueAmount,
+    this.type,
+    this.paymentMethod,
   });
 }

@@ -192,16 +192,18 @@ class AdminInvoiceModel {
 }
 
 class AdminInvoiceSummaryModel {
-  final int    invoiceId;
-  final String invoiceNumber;
-  final String invoiceDate;
-  final String status;
-  final String memberName;
-  final String memberEmail;
+  final int     invoiceId;
+  final String  invoiceNumber;
+  final String  invoiceDate;
+  final String  status;
+  final String  memberName;
+  final String  memberEmail;
   final String? branchName;
-  final double totalAmount;
-  final double paidAmount;
-  final double dueAmount;
+  final double  totalAmount;
+  final double  paidAmount;
+  final double  dueAmount;
+  final String? type;
+  final String? paymentMethod;
 
   AdminInvoiceSummaryModel({
     required this.invoiceId,
@@ -214,6 +216,8 @@ class AdminInvoiceSummaryModel {
     required this.totalAmount,
     required this.paidAmount,
     required this.dueAmount,
+    this.type,
+    this.paymentMethod,
   });
 
   factory AdminInvoiceSummaryModel.fromJson(Map<String, dynamic> j) =>
@@ -228,6 +232,8 @@ class AdminInvoiceSummaryModel {
         totalAmount:   (j['totalAmount']   as num?)?.toDouble() ?? 0.0,
         paidAmount:    (j['paidAmount']    as num?)?.toDouble() ?? 0.0,
         dueAmount:     (j['dueAmount']     as num?)?.toDouble() ?? 0.0,
+        type:          j['type']           as String?,
+        paymentMethod: j['paymentMethod']  as String?,
       );
 
   AdminInvoiceSummaryEntity toEntity() => AdminInvoiceSummaryEntity(
@@ -241,5 +247,7 @@ class AdminInvoiceSummaryModel {
         totalAmount:   totalAmount,
         paidAmount:    paidAmount,
         dueAmount:     dueAmount,
+        type:          type,
+        paymentMethod: paymentMethod,
       );
 }

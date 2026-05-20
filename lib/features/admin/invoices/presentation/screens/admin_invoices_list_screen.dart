@@ -18,12 +18,19 @@ class AdminInvoicesListScreen extends StatefulWidget {
 }
 
 class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
-  static const _filters = [
+  static const _statusFilters = [
     _StatusFilter(label: 'All',      status: null,        icon: Icons.receipt_long_outlined),
     _StatusFilter(label: 'Paid',     status: 'paid',      icon: Icons.check_circle_outline),
     _StatusFilter(label: 'Pending',  status: 'pending',   icon: Icons.hourglass_top_rounded),
     _StatusFilter(label: 'Overdue',  status: 'overdue',   icon: Icons.warning_amber_rounded),
     _StatusFilter(label: 'Cancelled',status: 'cancelled', icon: Icons.cancel_outlined),
+  ];
+
+  static const _typeFilters = [
+    _TypeFilter(label: 'All Types', type: null,    icon: Icons.all_inbox_outlined),
+    _TypeFilter(label: 'Plans',     type: 'PLAN',  icon: Icons.card_membership_outlined),
+    _TypeFilter(label: 'Classes',   type: 'CLASS', icon: Icons.fitness_center_outlined),
+    _TypeFilter(label: 'PT',        type: 'PT',    icon: Icons.sports_outlined),
   ];
 
   @override
@@ -58,11 +65,29 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
               buildWhen: (prev, curr) => curr is AdminInvoicesListLoaded || curr is AdminInvoicesListLoading,
               builder: (ctx, state) {
                 final selectedStatus = state is AdminInvoicesListLoaded ? state.selectedStatus : null;
-                return _FilterChipsRow(
-                  filters:        _filters,
-                  selectedStatus: selectedStatus,
-                  tokens:         tokens,
-                  onSelect:       (s) => ctx.read<AdminInvoicesListBloc>().add(FilterInvoicesEvent(status: s)),
+                final selectedType   = state is AdminInvoicesListLoaded ? state.selectedType   : null;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _FilterChipsRow(
+                      filters:        _statusFilters,
+                      selectedStatus: selectedStatus,
+                      tokens:         tokens,
+                      onSelect:       (s) => ctx.read<AdminInvoicesListBloc>().add(
+                        FilterInvoicesEvent(status: s, type: selectedType),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    _TypeFilterChipsRow(
+                      filters:      _typeFilters,
+                      selectedType: selectedType,
+                      tokens:       tokens,
+                      onSelect:     (t) => ctx.read<AdminInvoicesListBloc>().add(
+                        FilterInvoicesEvent(status: selectedStatus, type: t),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
                 );
               },
             ),
@@ -127,7 +152,7 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
                       color: c.primary,
                       onRefresh: () async => ctx
                           .read<AdminInvoicesListBloc>()
-                          .add(LoadInvoicesListEvent(status: state.selectedStatus)),
+                          .add(LoadInvoicesListEvent(status: state.selectedStatus, type: state.selectedType)),
                       child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                         itemCount: state.invoices.length,
@@ -160,6 +185,13 @@ class _StatusFilter {
   final String? status;
   final IconData icon;
   const _StatusFilter({required this.label, required this.status, required this.icon});
+}
+
+class _TypeFilter {
+  final String  label;
+  final String? type;
+  final IconData icon;
+  const _TypeFilter({required this.label, required this.type, required this.icon});
 }
 
 // ─── Filter chips row ─────────────────────────────────────────────────────────
@@ -213,6 +245,70 @@ class _FilterChipsRow extends StatelessWidget {
                     f.label,
                     style: tokens.typography.bodySmall.copyWith(
                       color:      isSelected ? c.onPrimary : c.label,
+                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ─── Type filter chips row ────────────────────────────────────────────────────
+
+class _TypeFilterChipsRow extends StatelessWidget {
+  final List<_TypeFilter>     filters;
+  final String?               selectedType;
+  final dynamic               tokens;
+  final void Function(String?) onSelect;
+
+  const _TypeFilterChipsRow({
+    required this.filters,
+    required this.selectedType,
+    required this.tokens,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = tokens.colors;
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: filters.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (_, i) {
+          final f          = filters[i];
+          final isSelected = f.type == selectedType;
+          return GestureDetector(
+            onTap: () => onSelect(f.type),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                color: isSelected ? c.success : c.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? c.success : c.border.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(f.icon,
+                      size: 13,
+                      color: isSelected ? Colors.white : c.muted),
+                  const SizedBox(width: 5),
+                  Text(
+                    f.label,
+                    style: tokens.typography.bodySmall.copyWith(
+                      color:      isSelected ? Colors.white : c.label,
                       fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     ),
                   ),
@@ -307,6 +403,20 @@ class _InvoiceSummaryCard extends StatelessWidget {
                                 color: c.label,
                                 fontWeight: FontWeight.w800)),
                       ),
+                      if (invoice.type != null)
+                        Container(
+                          margin: const EdgeInsets.only(right: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: _typeColor(invoice.type!).withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(invoice.type!.toUpperCase(),
+                              style: t.bodySmall.copyWith(
+                                  color: _typeColor(invoice.type!),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 10.0)),
+                        ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
@@ -325,9 +435,26 @@ class _InvoiceSummaryCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(invoice.memberName,
                       style: t.bodySmall.copyWith(color: c.muted)),
-                  Text(dateStr,
-                      style:
-                          t.bodySmall.copyWith(color: c.muted, fontSize: 11.0)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(dateStr,
+                            style: t.bodySmall.copyWith(color: c.muted, fontSize: 11.0)),
+                      ),
+                      if (invoice.paymentMethod != null)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(_paymentIcon(invoice.paymentMethod!), size: 11, color: c.muted),
+                            const SizedBox(width: 3),
+                            Text(
+                              invoice.paymentMethod!.toUpperCase(),
+                              style: t.bodySmall.copyWith(color: c.muted, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -350,5 +477,23 @@ class _InvoiceSummaryCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _typeColor(String type) {
+    switch (type.toUpperCase()) {
+      case 'PLAN':  return Colors.deepPurple;
+      case 'CLASS': return Colors.teal;
+      case 'PT':    return Colors.orange;
+      default:      return Colors.grey;
+    }
+  }
+
+  IconData _paymentIcon(String method) {
+    switch (method.toUpperCase()) {
+      case 'STRIPE': return Icons.credit_card_outlined;
+      case 'CASH':   return Icons.payments_outlined;
+      case 'PAYPAL': return Icons.account_balance_wallet_outlined;
+      default:       return Icons.payment_outlined;
+    }
   }
 }

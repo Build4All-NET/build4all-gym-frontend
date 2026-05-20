@@ -16,7 +16,7 @@ abstract class SessionsRepository {
   List<FilterOptionItemEntity> branches,
   })> getFilterOptions();
 
-  Future<BookSessionResultEntity> bookSession(int sessionId);
+  Future<BookSessionResultEntity> bookSession(int sessionId, {String? paymentMethod});
 
   Future<void> cancelBooking(int bookingId);
   Future<SessionDetailEntity> getSessionDetail(int sessionId);

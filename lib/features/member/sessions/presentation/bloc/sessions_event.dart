@@ -30,8 +30,9 @@ class SessionsFilterReset extends SessionsEvent {
 
 class SessionBookRequested extends SessionsEvent {
   final int sessionId;
+  final String? paymentMethod;
 
-  const SessionBookRequested(this.sessionId);
+  const SessionBookRequested(this.sessionId, {this.paymentMethod});
 }
 
 class SessionBookingCancelRequested extends SessionsEvent {

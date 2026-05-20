@@ -134,7 +134,20 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
         profileFileId:    m.profileFileId,
         status:           m.status,
         waitlistPosition: m.waitlistPosition,
+        paymentStatus:    m.paymentStatus,
+        paymentMethod:    m.paymentMethod,
+        invoiceId:        m.invoiceId,
       )).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // ── confirmBookingPayment ──────────────────────────────────────────────────
+  @override
+  Future<void> confirmBookingPayment(int bookingId) async {
+    try {
+      await _service.confirmBookingPayment(bookingId);
     } catch (e) {
       rethrow;
     }

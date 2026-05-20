@@ -12,6 +12,6 @@ class ListInvoicesUseCase {
   final AdminInvoiceRepository _repo;
   ListInvoicesUseCase(this._repo);
 
-  Future<List<AdminInvoiceSummaryEntity>> call({int page = 0, int size = 50, String? status}) =>
-      _repo.listInvoices(page: page, size: size, status: status);
+  Future<List<AdminInvoiceSummaryEntity>> call({int page = 0, int size = 50, String? status, String? type}) =>
+      _repo.listInvoices(page: page, size: size, status: status, type: type);
 }

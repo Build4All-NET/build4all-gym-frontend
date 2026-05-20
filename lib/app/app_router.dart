@@ -25,6 +25,7 @@ import '../features/admin/classes/domain/usecases/cancel_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/create_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_class_form_options_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_classes_by_date_usecase.dart';
+import '../features/admin/classes/domain/usecases/confirm_booking_payment_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
 import '../features/admin/classes/domain/usecases/reactivate_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
@@ -579,13 +580,14 @@ class AppRouter {
                 BlocProvider(create: (_) => BranchCubit()..loadBranches()),
                 BlocProvider(
                   create: (_) => AdminClassesBloc(
-                    getClassesByDate:    GetClassesByDateUseCase(classesRepo),
-                    getClassFormOptions: GetClassFormOptionsUseCase(classesRepo),
-                    createClass:         CreateClassUseCase(classesRepo),
-                    updateClass:         UpdateClassUseCase(classesRepo),
-                    cancelClass:         CancelClassUseCase(classesRepo),
-                    reactivateClass:     ReactivateClassUseCase(classesRepo),
-                    getSessionBookings:  GetSessionBookingsUseCase(classesRepo),
+                    getClassesByDate:       GetClassesByDateUseCase(classesRepo),
+                    getClassFormOptions:    GetClassFormOptionsUseCase(classesRepo),
+                    createClass:            CreateClassUseCase(classesRepo),
+                    updateClass:            UpdateClassUseCase(classesRepo),
+                    cancelClass:            CancelClassUseCase(classesRepo),
+                    reactivateClass:        ReactivateClassUseCase(classesRepo),
+                    getSessionBookings:     GetSessionBookingsUseCase(classesRepo),
+                    confirmBookingPayment:  ConfirmBookingPaymentUseCase(classesRepo),
                   )..add(ClassesStarted(DateTime.now())),
                 ),
               ],

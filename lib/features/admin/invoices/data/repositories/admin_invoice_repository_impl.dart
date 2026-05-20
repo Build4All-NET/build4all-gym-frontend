@@ -18,8 +18,9 @@ class AdminInvoiceRepositoryImpl implements AdminInvoiceRepository {
     int    page   = 0,
     int    size   = 50,
     String? status,
+    String? type,
   }) async {
-    final models = await _service.listInvoices(page: page, size: size, status: status);
+    final models = await _service.listInvoices(page: page, size: size, status: status, type: type);
     return models.map<AdminInvoiceSummaryEntity>((AdminInvoiceSummaryModel m) => m.toEntity()).toList();
   }
 }

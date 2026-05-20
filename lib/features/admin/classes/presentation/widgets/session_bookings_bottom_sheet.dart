@@ -2,6 +2,7 @@
 // FILE: lib/features/admin/classes/presentation/widgets/session_bookings_bottom_sheet.dart
 // ─────────────────────────────────────────────────────────────────────────────
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/session_booking_item_entity.dart';
@@ -28,10 +29,16 @@ class SessionBookingsBottomSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
+      builder: (ctx) => BlocProvider.value(
         value: context.read<AdminClassesBloc>(),
-        child: SessionBookingsBottomSheet(
-            sessionId: sessionId, className: className),
+        child: BlocListener<AdminClassesBloc, AdminClassesState>(
+          listener: (lCtx, state) {
+            if (state is SessionBookingsLoaded && state.sessionId == sessionId) {
+              AppToast.success(lCtx, 'Payment confirmed');
+            }
+          },
+          child: SessionBookingsBottomSheet(sessionId: sessionId, className: className),
+        ),
       ),
     );
   }
@@ -133,7 +140,7 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                               indent: 72,
                               color:  c.border.withOpacity(0.15)),
                           itemBuilder: (context, index) =>
-                              _MemberRow(booking: bookings[index]),
+                              _MemberRow(booking: bookings[index], sessionId: sessionId),
                         ),
                       ),
                     ],
@@ -162,8 +169,9 @@ class SessionBookingsBottomSheet extends StatelessWidget {
 // ── Single member row ─────────────────────────────────────────────────────────
 class _MemberRow extends StatelessWidget {
   final SessionBookingItemEntity booking;
+  final int sessionId;
 
-  const _MemberRow({required this.booking});
+  const _MemberRow({required this.booking, required this.sessionId});
 
   @override
   Widget build(BuildContext context) {
@@ -228,26 +236,96 @@ class _MemberRow extends StatelessWidget {
             ),
           ),
 
-          // ── Status chip ──────────────────────────────────────────────────
-          Container(
-            padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color:        chipBg,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              isWaitlisted
-                  ? 'Waitlist ${booking.waitlistPosition ?? ''}'
-                  : 'Booked',
-              style: TextStyle(
-                color:      chipText,
-                fontSize:   11,
-                fontWeight: FontWeight.w700,
+          // ── Status chip + payment info ───────────────────────────────────
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color:        chipBg,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  isWaitlisted
+                      ? 'Waitlist ${booking.waitlistPosition ?? ''}'
+                      : 'Booked',
+                  style: TextStyle(
+                    color:      chipText,
+                    fontSize:   11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-            ),
+              if (booking.paymentMethod != null) ...[
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: _paymentChipBg(booking.paymentMethod!, booking.paymentStatus, c),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _paymentLabel(booking.paymentMethod!, booking.paymentStatus),
+                    style: TextStyle(
+                      color: _paymentChipText(booking.paymentMethod!, booking.paymentStatus, c),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+              if (booking.isCashPending) ...[
+                const SizedBox(height: 6),
+                SizedBox(
+                  height: 30,
+                  child: ElevatedButton(
+                    onPressed: () => context.read<AdminClassesBloc>().add(
+                      ConfirmBookingPaymentRequested(
+                        bookingId: booking.bookingId,
+                        sessionId: sessionId,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: c.success,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Confirm Pay', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ),
     );
+  }
+
+  Color _paymentChipBg(String method, String? status, dynamic c) {
+    if (status?.toUpperCase() == 'PAID') return c.success.withOpacity(0.12);
+    if (method.toUpperCase() == 'CASH') return Colors.orange.withOpacity(0.12);
+    if (method.toUpperCase() == 'STRIPE') return Colors.indigo.withOpacity(0.12);
+    return c.muted.withOpacity(0.12);
+  }
+
+  Color _paymentChipText(String method, String? status, dynamic c) {
+    if (status?.toUpperCase() == 'PAID') return c.success;
+    if (method.toUpperCase() == 'CASH') return Colors.orange.shade800;
+    if (method.toUpperCase() == 'STRIPE') return Colors.indigo;
+    return c.muted;
+  }
+
+  String _paymentLabel(String method, String? status) {
+    final m = method.toUpperCase();
+    final s = status?.toUpperCase() ?? '';
+    if (s == 'PAID') return '$m · Paid';
+    if (s == 'PENDING' || s == 'UNPAID') return '$m · Pending';
+    return m;
   }
 }

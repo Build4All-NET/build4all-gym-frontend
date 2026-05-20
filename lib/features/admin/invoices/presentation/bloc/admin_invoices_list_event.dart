@@ -4,10 +4,12 @@ abstract class AdminInvoicesListEvent {}
 
 class LoadInvoicesListEvent extends AdminInvoicesListEvent {
   final String? status;
-  LoadInvoicesListEvent({this.status});
+  final String? type;
+  LoadInvoicesListEvent({this.status, this.type});
 }
 
 class FilterInvoicesEvent extends AdminInvoicesListEvent {
   final String? status;
-  FilterInvoicesEvent({this.status});
+  final String? type;
+  FilterInvoicesEvent({this.status, this.type});
 }
