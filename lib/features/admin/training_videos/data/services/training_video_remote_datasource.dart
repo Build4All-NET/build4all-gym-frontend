@@ -32,14 +32,14 @@ class TrainingVideoRemoteDataSourceImpl implements TrainingVideoRemoteDataSource
 
   @override
   Future<List<TrainerOption>> getTrainers() async {
-    final response = await _dio.get('/api/admin/trainers');
-    final data = response.data as Map<String, dynamic>;
-    final list = data['trainers'] as List<dynamic>;
+    final response = await _dio.get('/api/admin/gym-trainers');
+    final list = response.data as List<dynamic>;
     return list.map((e) {
       final m = e as Map<String, dynamic>;
+      final id = m['userId'] as int;
       return TrainerOption(
-        trainerId: m['trainerId'] as int,
-        name: m['fullName'] as String? ?? 'Trainer ${m['trainerId']}',
+        trainerId: id,
+        name: m['fullName'] as String? ?? 'Trainer $id',
       );
     }).toList();
   }
@@ -75,6 +75,11 @@ class TrainingVideoRemoteDataSourceImpl implements TrainingVideoRemoteDataSource
         'video': await MultipartFile.fromFile(
           request.videoFile!.path,
           filename: request.videoFile!.path.split('/').last,
+        ),
+      if (request.thumbnailFile != null)
+        'thumbnail': await MultipartFile.fromFile(
+          request.thumbnailFile!.path,
+          filename: request.thumbnailFile!.path.split('/').last,
         ),
     });
     await _dio.post('/api/admin/training-videos', data: formData);

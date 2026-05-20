@@ -25,6 +25,15 @@ abstract class MemberPlansRemoteDatasource {
     required String paymentMethod,
     String? couponCode,
   });
+
+  /// Stripe: call after flutter_stripe.presentPaymentSheet() succeeds.
+  Future<Map<String, String>> confirmStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  });
+
+  /// PayPal / MPGS: poll after user returns from the browser.
+  Future<Map<String, String>> checkPaymentStatus({required int membershipId});
 }
 
 class MemberPlansRemoteDatasourceImpl implements MemberPlansRemoteDatasource {
@@ -136,6 +145,40 @@ class MemberPlansRemoteDatasourceImpl implements MemberPlansRemoteDatasource {
         },
       );
       return CheckoutResponseModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<Map<String, String>> confirmStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/member/payments/$transactionId/confirm',
+        data: {'invoiceId': invoiceId},
+      );
+      final data = response.data as Map<String, dynamic>;
+      return {
+        'membershipStatus': data['membershipStatus'] as String? ?? 'active',
+        'paymentStatus':    data['paymentStatus']    as String? ?? 'paid',
+      };
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<Map<String, String>> checkPaymentStatus({required int membershipId}) async {
+    try {
+      final response = await dio.get('/api/member/payments/status/$membershipId');
+      final data = response.data as Map<String, dynamic>;
+      return {
+        'membershipStatus': data['membershipStatus'] as String? ?? 'pending',
+        'paymentStatus':    data['paymentStatus']    as String? ?? 'unpaid',
+      };
     } on DioException catch (e) {
       throw _handleDioException(e);
     }

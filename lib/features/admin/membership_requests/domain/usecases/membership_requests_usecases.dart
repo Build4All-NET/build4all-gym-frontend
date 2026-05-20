@@ -13,7 +13,7 @@ class ApproveMembershipRequestUseCase {
   final AdminMembershipRequestsRepository _repo;
   ApproveMembershipRequestUseCase(this._repo);
 
-  Future<void> call(int requestId, double amountPaid, {String? notes}) =>
+  Future<int> call(int requestId, double amountPaid, {String? notes}) =>
       _repo.approveRequest(requestId, amountPaid, notes: notes);
 }
 

@@ -53,6 +53,15 @@ class AdminPlansRepositoryImpl implements AdminPlansRepository {
   }
 
   @override
+  Future<String> createPlanType(String name) async {
+    try {
+      return await remoteDatasource.createPlanType(name);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> createPlan(CreatePlanRequestModel request) async {
     try {
       await remoteDatasource.createPlan(request);

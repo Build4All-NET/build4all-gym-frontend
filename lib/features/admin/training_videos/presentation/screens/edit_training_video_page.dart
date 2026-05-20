@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../core/network/globals.dart';
@@ -104,9 +105,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedCategoryId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
-      );
+      AppToast.info(context, 'Please select a category');
       return;
     }
 
@@ -114,9 +113,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
     final seconds = int.tryParse(_secondsController.text) ?? 0;
     final totalSeconds = (minutes * 60) + seconds;
     if (totalSeconds <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Duration must be greater than 0')),
-      );
+      AppToast.info(context, 'Duration must be greater than 0');
       return;
     }
 
@@ -146,14 +143,10 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
           listenWhen: (_, curr) => curr is UpdateVideoSuccess || curr is UpdateVideoError,
           listener: (context, state) {
             if (state is UpdateVideoSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Video updated successfully')),
-              );
+              AppToast.success(context, 'Video updated successfully');
               Navigator.pop(context, true);
             } else if (state is UpdateVideoError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              AppToast.error(context, state.message);
             }
           },
         ),
@@ -166,9 +159,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                 _selectedCategoryId = state.category.categoryId;
               });
             } else if (state is CategoryCreateError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed: ${state.message}')),
-              );
+              AppToast.error(context, 'Failed: ${state.message}');
             }
           },
         ),

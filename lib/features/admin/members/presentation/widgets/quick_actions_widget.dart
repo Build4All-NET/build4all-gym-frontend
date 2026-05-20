@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -168,18 +169,11 @@ class QuickActionsWidget extends StatelessWidget {
   }
 
   void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:         Text('$feature — coming soon'),
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      duration:        const Duration(seconds: 1),
-    ));
+    AppToast.info(context, '$feature — coming soon');
   }
 
   void _showError(BuildContext context, String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:         Text(msg),
-      backgroundColor: Theme.of(context).colorScheme.error,
-    ));
+    AppToast.error(context, msg);
   }
 }
 

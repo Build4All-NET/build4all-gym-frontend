@@ -94,9 +94,9 @@ class _BranchPill extends StatelessWidget {
     required this.onSelected,
   });
 
-  final List<BranchOptionModel>       branches;
-  final int?                          selectedBranchId;
-  final void Function(int? branchId)? onSelected;
+  final List<BranchOptionModel>        branches;
+  final int?                           selectedBranchId;
+  final void Function(int? branchId)?  onSelected;
 
   String get _selectedName {
     if (selectedBranchId == null) return 'All Branches';

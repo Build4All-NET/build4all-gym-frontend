@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/membership_request_entity.dart';
@@ -47,15 +48,18 @@ class AdminMembershipRequestsBloc
     emit(AdminMembershipRequestsLoaded(
         requests: current.requests, actingOnId: event.requestId));
     try {
-      await _approve(event.requestId, event.amountPaid, notes: event.notes);
+      final invoiceId =
+          await _approve(event.requestId, event.amountPaid, notes: event.notes);
       final updated =
           current.requests.where((r) => r.requestId != event.requestId).toList();
       emit(AdminMembershipRequestsActionSuccess(
-          requests: updated, message: 'تمت الموافقة على الطلب'));
+          requests: updated,
+          message: 'تمت الموافقة على الطلب',
+          invoiceId: invoiceId));
       emit(AdminMembershipRequestsLoaded(requests: updated));
     } catch (e) {
       emit(AdminMembershipRequestsActionFailure(
-          requests: current.requests, message: 'حدث خطأ، حاول مجدداً'));
+          requests: current.requests, message: _extractMessage(e)));
       emit(AdminMembershipRequestsLoaded(requests: current.requests));
     }
   }
@@ -83,6 +87,17 @@ class AdminMembershipRequestsBloc
   }
 
   String _extractMessage(Object e) {
+    if (e is DioException) {
+      final data = e.response?.data;
+      if (data is Map) {
+        final msg = data['message'] as String?
+            ?? data['error'] as String?
+            ?? data['detail'] as String?;
+        if (msg != null && msg.isNotEmpty) return msg;
+      }
+      if (data is String && data.isNotEmpty) return data;
+      return e.message ?? e.toString();
+    }
     final msg = e.toString();
     return msg.startsWith('Exception: ') ? msg.replaceFirst('Exception: ', '') : msg;
   }

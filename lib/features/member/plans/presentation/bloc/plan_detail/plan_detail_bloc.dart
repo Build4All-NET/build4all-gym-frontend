@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/usecases/check_payment_status_usecase.dart';
 import '../../../domain/usecases/checkout_usecase.dart';
+import '../../../domain/usecases/confirm_stripe_payment_usecase.dart';
 import '../../../domain/usecases/get_payment_methods_usecase.dart';
 import '../../../domain/usecases/get_plan_detail_usecase.dart';
 import '../../../domain/usecases/validate_coupon_usecase.dart';
@@ -12,12 +14,16 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
   final ValidateCouponUseCase validateCoupon;
   final GetPaymentMethodsUseCase getPaymentMethods;
   final CheckoutUseCase checkout;
+  final ConfirmStripePaymentUseCase confirmStripePayment;
+  final CheckPaymentStatusUseCase checkPaymentStatus;
 
   PlanDetailBloc({
     required this.getPlanDetail,
     required this.validateCoupon,
     required this.getPaymentMethods,
     required this.checkout,
+    required this.confirmStripePayment,
+    required this.checkPaymentStatus,
   }) : super(PlanDetailInitial()) {
     on<LoadPlanDetailEvent>(_onLoadPlanDetail);
     on<ApplyCouponEvent>(_onApplyCoupon);
@@ -25,6 +31,8 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
     on<LoadPaymentMethodsEvent>(_onLoadPaymentMethods);
     on<SelectPaymentMethodEvent>(_onSelectPaymentMethod);
     on<SubmitCheckoutEvent>(_onSubmitCheckout);
+    on<ConfirmStripePaymentEvent>(_onConfirmStripePayment);
+    on<CheckRedirectPaymentEvent>(_onCheckRedirectPayment);
   }
 
   Future<void> _onLoadPlanDetail(
@@ -107,10 +115,76 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
         paymentMethod: event.paymentMethod,
         couponCode: event.couponCode,
       );
-      emit(PlanDetailCheckoutSuccess(result: result));
+
+      // CASH: membership stays pending → show waiting sheet (existing behaviour)
+      if (!result.isStripe && !result.isRedirect) {
+        emit(PlanDetailCheckoutSuccess(result: result));
+        return;
+      }
+
+      // STRIPE / PAYPAL / MPGS: hand off to the screen for gateway UI
+      emit(PlanDetailOnlinePaymentReady(
+        previousState: current.copyWith(isSubmitting: false),
+        result: result,
+      ));
     } catch (e) {
       emit(PlanDetailCheckoutError(
         previousState: current.copyWith(isSubmitting: false),
+        message: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onConfirmStripePayment(
+    ConfirmStripePaymentEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    emit(event.previousState.copyWith(isSubmitting: true));
+    try {
+      final status = await confirmStripePayment(
+        transactionId: event.pendingResult.transactionId!,
+        invoiceId:     event.pendingResult.invoiceId,
+      );
+      emit(PlanDetailCheckoutSuccess(
+        result: event.pendingResult.copyWithStatus(
+          status['membershipStatus'] ?? 'active',
+          status['paymentStatus']    ?? 'paid',
+        ),
+      ));
+    } catch (e) {
+      emit(PlanDetailCheckoutError(
+        previousState: event.previousState.copyWith(isSubmitting: false),
+        message: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onCheckRedirectPayment(
+    CheckRedirectPaymentEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    emit(event.previousState.copyWith(isSubmitting: true));
+    try {
+      final status = await checkPaymentStatus(
+        membershipId: event.pendingResult.membershipId,
+      );
+      final ms = status['membershipStatus'] ?? 'pending';
+      if (ms.toLowerCase() == 'active') {
+        emit(PlanDetailCheckoutSuccess(
+          result: event.pendingResult.copyWithStatus(
+            ms,
+            status['paymentStatus'] ?? 'paid',
+          ),
+        ));
+      } else {
+        emit(PlanDetailCheckoutError(
+          previousState: event.previousState.copyWith(isSubmitting: false),
+          message: 'Payment not yet confirmed. Please try again in a moment.',
+        ));
+      }
+    } catch (e) {
+      emit(PlanDetailCheckoutError(
+        previousState: event.previousState.copyWith(isSubmitting: false),
         message: e.toString(),
       ));
     }

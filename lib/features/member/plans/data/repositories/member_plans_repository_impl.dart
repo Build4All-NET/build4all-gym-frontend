@@ -68,17 +68,33 @@ class MemberPlansRepositoryImpl implements MemberPlansRepository {
       couponCode: couponCode,
     );
     return CheckoutResultEntity(
-      membershipId: model.membershipId,
-      invoiceId: model.invoiceId,
-      invoiceNumber: model.invoiceNumber,
-      planName: model.planName,
-      startDate: model.startDate,
-      endDate: model.endDate,
-      originalPrice: model.originalPrice,
-      discountAmount: model.discountAmount,
-      totalAmount: model.totalAmount,
+      membershipId:    model.membershipId,
+      invoiceId:       model.invoiceId,
+      invoiceNumber:   model.invoiceNumber,
+      planName:        model.planName,
+      startDate:       model.startDate,
+      endDate:         model.endDate,
+      originalPrice:   model.originalPrice,
+      discountAmount:  model.discountAmount,
+      totalAmount:     model.totalAmount,
       membershipStatus: model.membershipStatus,
-      paymentStatus: model.paymentStatus,
+      paymentStatus:   model.paymentStatus,
+      transactionId:   model.transactionId,
+      redirectUrl:     model.redirectUrl,
+      clientSecret:    model.clientSecret,
+      publishableKey:  model.publishableKey,
     );
   }
+
+  @override
+  Future<Map<String, String>> confirmStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  }) =>
+      remoteDatasource.confirmStripePayment(
+          transactionId: transactionId, invoiceId: invoiceId);
+
+  @override
+  Future<Map<String, String>> checkPaymentStatus({required int membershipId}) =>
+      remoteDatasource.checkPaymentStatus(membershipId: membershipId);
 }

@@ -1,3 +1,6 @@
+import '../../../domain/entities/checkout_result_entity.dart';
+import 'plan_detail_state.dart';
+
 /// Base class for all plan detail events.
 ///
 /// This is full BLoC, not Cubit.
@@ -47,5 +50,25 @@ class SubmitCheckoutEvent extends PlanDetailEvent {
     required this.planId,
     required this.paymentMethod,
     this.couponCode,
+  });
+}
+
+/// Fired after flutter_stripe.presentPaymentSheet() succeeds.
+class ConfirmStripePaymentEvent extends PlanDetailEvent {
+  final PlanDetailLoaded previousState;
+  final CheckoutResultEntity pendingResult;
+  ConfirmStripePaymentEvent({
+    required this.previousState,
+    required this.pendingResult,
+  });
+}
+
+/// Fired when the user taps "Done" after returning from the PayPal / MPGS browser.
+class CheckRedirectPaymentEvent extends PlanDetailEvent {
+  final PlanDetailLoaded previousState;
+  final CheckoutResultEntity pendingResult;
+  CheckRedirectPaymentEvent({
+    required this.previousState,
+    required this.pendingResult,
   });
 }

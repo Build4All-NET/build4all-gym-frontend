@@ -1,11 +1,14 @@
 // FILE: lib/features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/app_router.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
+import '../../../branches/presentation/widgets/create_first_branch_dialog.dart';
 import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
 import '../bloc/admin_dashboard_state.dart';
@@ -38,11 +41,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   String _selectedPeriodLabel = 'Today';
 
   // ── Branch filter ──────────────────────────────────────────────────────────
-  //    We track only the selected branch ID (null = "All Branches").
-  //    The actual list of branches is loaded by BranchCubit from the backend
-  //    endpoint GET /api/admin/branches/options and rendered via BlocBuilder
-  //    inside _buildAppBar(). This is the same pattern AdminAppBar uses.
-  int? _selectedBranchId; // null → "All Branches"
+  int? _selectedBranchId;
+  bool _firstBranchDialogShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     final card    = tokens.card;
     final profile = context.watch<AdminProfileCubit>().state;
 
-    return Scaffold(
+    return BlocListener<BranchCubit, BranchState>(
+      listenWhen: (_, s) => s is BranchLoaded,
+      listener: (context, state) {
+        if (state is BranchLoaded &&
+            state.branches.isEmpty &&
+            !_firstBranchDialogShown) {
+          _firstBranchDialogShown = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) showCreateFirstBranchDialog(context);
+          });
+        }
+      },
+      child: Scaffold(
       drawer: AdminNavigationDrawer(
         gymName:         profile.gymName,
         branchName:      profile.branchName,
@@ -70,6 +82,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             Expanded(child: _buildBody(context, c, sp)),
           ],
         ),
+      ),
       ),
     );
   }
@@ -129,10 +142,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       borderRadius: BorderRadius.circular(card.radius)),
                   color:     c.surface,
                   elevation: 8,
-                  // When a branch is picked, update state.
-                  // The BLoC doesn't filter by branch yet (backend API doesn't
-                  // accept branchId on this endpoint); selection is stored for
-                  // display only and future branch-aware filtering.
                   onSelected: (int? id) =>
                       setState(() => _selectedBranchId = id),
                   itemBuilder: (context) => [
@@ -437,17 +446,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   TextMetricRows(data: state.data),
                   const SizedBox(height: 20),
 
-                  // Quick Actions: Add Member, Record Payment, Add Plan,
+                  // Quick Actions: AI Assistant, Record Payment, Add Plan,
                   // Send Announcement
                   QuickActionsSection(
-                    onAddMember: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-                    onRecordPayment: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-                    onAddPlan: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-                    onSendAnnouncement: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
+                    onAiAssistant: () =>
+                        Navigator.pushNamed(context, AppRouter.adminAiAssistant),
+                    onRecordPayment: () => AppToast.info(context, 'Coming soon'),
+                    onAddPlan: () =>
+                        Navigator.pushNamed(context, AppRouter.adminPlans),
+                    onSendAnnouncement: () => AppToast.info(context, 'Coming soon'),
                   ),
                   const SizedBox(height: 20),
 

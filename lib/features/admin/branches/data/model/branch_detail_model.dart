@@ -23,7 +23,7 @@ class BranchDetailModel extends BranchDetailEntity {
 
   factory BranchDetailModel.fromJson(Map<String, dynamic> json) {
     return BranchDetailModel(
-      branchId:       json['branchId']        as String,
+      branchId:       json['branchId']?.toString() ?? '',
       name:           json['name']            as String,
       city:           json['city']            as String?,
       status:         json['status']          as String? ?? 'ACTIVE',

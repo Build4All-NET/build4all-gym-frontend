@@ -6,6 +6,7 @@ class CreatePlanRequestModel {
   final String planType;
   final double price;
   final String billingCycle;
+  final int? customDurationDays;
   final String? description;
   final String status;
   final List<int> branchIds;
@@ -25,6 +26,7 @@ class CreatePlanRequestModel {
     required this.planType,
     required this.price,
     required this.billingCycle,
+    this.customDurationDays,
     this.description,
     required this.status,
     required this.branchIds,
@@ -46,6 +48,7 @@ class CreatePlanRequestModel {
       'planType': planType,
       'price': price,
       'billingCycle': billingCycle,
+      if (customDurationDays != null) 'customDurationDays': customDurationDays,
       if (description != null) 'description': description,
       'status': status,
       'branchIds': branchIds,

@@ -48,4 +48,31 @@ class AdminPaymentConfigCubit extends Cubit<AdminPaymentConfigState> {
       emit(AdminPaymentConfigLoaded(methods: current.methods));
     }
   }
+
+  Future<bool> saveCredentials(
+    PaymentMethodConfigModel method,
+    String configJson,
+  ) async {
+    final current = state;
+    if (current is! AdminPaymentConfigLoaded) return false;
+
+    emit(AdminPaymentConfigLoaded(methods: current.methods, savingMethod: method.name));
+    try {
+      final updated = await _service.saveConfig(
+        method.name,
+        method.tenantEnabled,
+        configJson: configJson,
+      );
+      final newList = current.methods.map((m) => m.name == updated.name ? updated : m).toList();
+      emit(AdminPaymentConfigLoaded(methods: newList));
+      return true;
+    } catch (e) {
+      emit(AdminPaymentConfigLoaded(methods: current.methods));
+      return false;
+    }
+  }
+
+  Future<({bool ok, String? error})> testConnection(String methodName) async {
+    return _service.testConnection(methodName);
+  }
 }

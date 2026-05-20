@@ -11,7 +11,15 @@ class CheckoutResultEntity {
   final String membershipStatus;
   final String paymentStatus;
 
-  bool get isPending => membershipStatus.toLowerCase() == 'pending';
+  // Online payment fields — populated for STRIPE / PAYPAL / MPGS
+  final int?    transactionId;
+  final String? redirectUrl;
+  final String? clientSecret;
+  final String? publishableKey;
+
+  bool get isPending  => membershipStatus.toLowerCase() == 'pending';
+  bool get isStripe   => clientSecret != null && publishableKey != null;
+  bool get isRedirect => redirectUrl != null && !isStripe;
 
   CheckoutResultEntity({
     required this.membershipId,
@@ -25,5 +33,25 @@ class CheckoutResultEntity {
     required this.totalAmount,
     required this.membershipStatus,
     required this.paymentStatus,
+    this.transactionId,
+    this.redirectUrl,
+    this.clientSecret,
+    this.publishableKey,
   });
+
+  CheckoutResultEntity copyWithStatus(String membershipStatus, String paymentStatus) {
+    return CheckoutResultEntity(
+      membershipId:     membershipId,
+      invoiceId:        invoiceId,
+      invoiceNumber:    invoiceNumber,
+      planName:         planName,
+      startDate:        startDate,
+      endDate:          endDate,
+      originalPrice:    originalPrice,
+      discountAmount:   discountAmount,
+      totalAmount:      totalAmount,
+      membershipStatus: membershipStatus,
+      paymentStatus:    paymentStatus,
+    );
+  }
 }

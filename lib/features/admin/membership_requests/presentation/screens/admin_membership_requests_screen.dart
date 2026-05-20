@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,15 +52,15 @@ class _AdminMembershipRequestsScreenState
                   AdminMembershipRequestsState>(
                 listener: (context, state) {
                   if (state is AdminMembershipRequestsActionSuccess) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: c.success,
-                    ));
+                    AppToast.success(context, state.message);
+                    if (state.invoiceId != null) {
+                      Navigator.of(context).pushNamed(
+                        '/admin/invoices/detail',
+                        arguments: state.invoiceId,
+                      );
+                    }
                   } else if (state is AdminMembershipRequestsActionFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: c.danger,
-                    ));
+                    AppToast.error(context, state.message);
                   }
                 },
                 builder: (context, state) {
@@ -166,7 +167,9 @@ class _AdminMembershipRequestsScreenState
           left: 24,
           right: 24,
           top: 24,
-          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 32,
+          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
+              MediaQuery.of(sheetCtx).padding.bottom +
+              24,
         ),
         child: Directionality(
           textDirection: TextDirection.rtl,
@@ -246,7 +249,9 @@ class _AdminMembershipRequestsScreenState
           left: 24,
           right: 24,
           top: 24,
-          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 32,
+          bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
+              MediaQuery.of(sheetCtx).padding.bottom +
+              24,
         ),
         child: Directionality(
           textDirection: TextDirection.rtl,
@@ -282,8 +287,7 @@ class _AdminMembershipRequestsScreenState
                 onPressed: () {
                   final reason = reasonController.text.trim();
                   if (reason.isEmpty) {
-                    ScaffoldMessenger.of(sheetCtx).showSnackBar(
-                        const SnackBar(content: Text('يرجى إدخال سبب الرفض')));
+                    AppToast.info(sheetCtx, 'يرجى إدخال سبب الرفض');
                     return;
                   }
                   Navigator.pop(sheetCtx);

@@ -8,7 +8,15 @@ class LoadFormDataEvent extends PlanFormEvent {}
 /// User taps Save on Add form
 class SubmitCreatePlanEvent extends PlanFormEvent {
   final CreatePlanRequestModel request;
-  SubmitCreatePlanEvent({required this.request});
+
+  /// True when the planType was typed by the user (not picked from the dropdown).
+  /// The BLoC calls POST /plans/types first to persist it to class_types.
+  final bool isCustomType;
+
+  SubmitCreatePlanEvent({
+    required this.request,
+    this.isCustomType = false,
+  });
 }
 
 /// User taps Save on Edit form

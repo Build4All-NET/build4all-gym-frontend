@@ -67,6 +67,7 @@ dependencies:
   stomp_dart_client: ^3.0.1
   cached_network_image: ^3.0.0
   video_player: ^2.8.2
+  video_thumbnail: ^0.5.3
   android_pip: ^2.0.2
   qr_flutter: ^4.1.0
 

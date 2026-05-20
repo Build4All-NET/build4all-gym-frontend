@@ -20,14 +20,16 @@ class AdminMembershipRequestsService {
         .toList();
   }
 
-  Future<void> approveRequest(int requestId, double amountPaid, {String? notes}) async {
-    await _dio.post(
+  Future<int> approveRequest(int requestId, double amountPaid, {String? notes}) async {
+    final response = await _dio.post(
       _url('/api/admin/membership-requests/$requestId/approve'),
       data: {
         'amountPaid': amountPaid,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       },
     );
+    final data = response.data as Map<String, dynamic>;
+    return (data['invoiceId'] as num).toInt();
   }
 
   Future<void> rejectRequest(int requestId, String reason) async {

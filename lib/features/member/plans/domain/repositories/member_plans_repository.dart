@@ -24,4 +24,11 @@ abstract class MemberPlansRepository {
     required String paymentMethod,
     String? couponCode,
   });
+
+  Future<Map<String, String>> confirmStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  });
+
+  Future<Map<String, String>> checkPaymentStatus({required int membershipId});
 }

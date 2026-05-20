@@ -332,7 +332,7 @@ class _ChatView extends StatelessWidget {
               crossAxisCount:   2,
               crossAxisSpacing: 12,
               mainAxisSpacing:  12,
-              childAspectRatio: 1.35,
+              mainAxisExtent:   170,
             ),
             itemBuilder: (_, i) => AiStatCardWidget(card: statCards[i]),
           ),

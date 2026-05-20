@@ -70,6 +70,12 @@ const _operationsItems = [
     route: '/admin/membership-requests',
   ),
   NavigationItem(
+    id: 'invoices',
+    iconData: Icons.receipt_long_outlined,
+    labelKey: 'navInvoices',
+    route: '/admin/invoices',
+  ),
+  NavigationItem(
     id: 'classes_pt',
     iconData: Icons.calendar_month_outlined,
     labelKey: 'navClassesPt',

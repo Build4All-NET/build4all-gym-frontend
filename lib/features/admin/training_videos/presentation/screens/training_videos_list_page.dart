@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -36,14 +37,10 @@ class _TrainingVideosListView extends StatelessWidget {
           curr is DeleteVideoLoading,
       listener: (context, state) {
         if (state is DeleteVideoSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Video deleted')),
-          );
+          AppToast.success(context, 'Video deleted');
           context.read<TrainingVideosBloc>().add(LoadTrainingVideos());
         } else if (state is DeleteVideoError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          AppToast.error(context, state.message);
         }
       },
       child: Scaffold(

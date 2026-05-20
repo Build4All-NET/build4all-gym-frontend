@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -265,9 +266,7 @@ class VideoCard extends StatelessWidget {
 
   void _openPlayer(BuildContext context) {
     if (video.videoUrl == null || video.videoUrl!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No video URL available')),
-      );
+      AppToast.info(context, 'No video URL available');
       return;
     }
     Navigator.push(

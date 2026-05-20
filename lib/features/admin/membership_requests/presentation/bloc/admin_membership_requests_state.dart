@@ -20,7 +20,12 @@ class AdminMembershipRequestsError extends AdminMembershipRequestsState {
 class AdminMembershipRequestsActionSuccess extends AdminMembershipRequestsState {
   final List<MembershipRequestEntity> requests;
   final String message;
-  AdminMembershipRequestsActionSuccess({required this.requests, required this.message});
+  final int?   invoiceId;
+  AdminMembershipRequestsActionSuccess({
+    required this.requests,
+    required this.message,
+    this.invoiceId,
+  });
 }
 
 class AdminMembershipRequestsActionFailure extends AdminMembershipRequestsState {

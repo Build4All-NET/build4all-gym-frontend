@@ -118,6 +118,8 @@ import '../features/admin/branches/data/repository/branch_repository_impl.dart';
 import '../features/admin/branches/domain/usecase/get_branches_usecase.dart';
 import '../features/admin/branches/domain/usecase/get_branch_detail_usecase.dart';
 import '../features/admin/branches/domain/usecase/create_branch_usecase.dart';
+import '../features/admin/branches/domain/usecase/update_branch_usecase.dart';
+import '../features/admin/branches/domain/usecase/delete_branch_usecase.dart';
 import '../features/admin/branches/presentation/bloc/branches_bloc.dart';
 
 // ── Training Videos imports ───────────────────────────────────────────────────
@@ -154,6 +156,14 @@ import '../features/admin/membership_requests/data/repositories/admin_membership
 import '../features/admin/membership_requests/domain/usecases/membership_requests_usecases.dart';
 import '../features/admin/membership_requests/presentation/bloc/admin_membership_requests_bloc.dart';
 import '../features/admin/membership_requests/presentation/screens/admin_membership_requests_screen.dart';
+import '../features/admin/invoices/data/repositories/admin_invoice_repository_impl.dart';
+import '../features/admin/invoices/data/services/admin_invoice_service.dart';
+import '../features/admin/invoices/domain/usecases/admin_invoice_usecases.dart';
+import '../features/admin/invoices/presentation/bloc/admin_invoice_bloc.dart';
+import '../features/admin/invoices/presentation/bloc/admin_invoices_list_bloc.dart';
+import '../features/admin/invoices/presentation/screens/admin_invoice_screen.dart';
+import '../features/admin/invoices/presentation/screens/admin_invoices_list_screen.dart';
+
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login          = '/login';
@@ -469,6 +479,8 @@ class AppRouter {
                     getBranchesUseCase:     GetBranchesUseCase(branchesRepo),
                     getBranchDetailUseCase: GetBranchDetailUseCase(branchesRepo),
                     createBranchUseCase:    CreateBranchUseCase(branchesRepo),
+                    updateBranchUseCase:    UpdateBranchUseCase(branchesRepo),
+                    deleteBranchUseCase:    DeleteBranchUseCase(branchesRepo),
                   )..add(const LoadBranches()),
                 ),
                 BlocProvider<BranchCubit>(
@@ -648,6 +660,55 @@ class AppRouter {
            ),
        );
 
+    // ── Admin: Invoices list ───────────────────────────────────────────────
+
+      case '/admin/invoices':
+        final invoicesRepo = AdminInvoiceRepositoryImpl(
+          AdminInvoiceService(),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => BranchCubit()..loadBranches(),
+                ),
+                BlocProvider(
+                  create: (_) => AdminInvoicesListBloc(
+                    listInvoices: ListInvoicesUseCase(invoicesRepo),
+                  ),
+                ),
+              ],
+              child: const AdminInvoicesListScreen(),
+            ),
+          ),
+        );
+    // ── Admin: Invoice detail ──────────────────────────────────────────────
+
+      case '/admin/invoices/detail':
+        final invoiceId = settings.arguments as int;
+        final invoiceRepo = AdminInvoiceRepositoryImpl(
+          AdminInvoiceService(),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => BranchCubit()..loadBranches(),
+                ),
+                BlocProvider(
+                  create: (_) => AdminInvoiceBloc(
+                    getInvoice: GetInvoiceUseCase(invoiceRepo),
+                  ),
+                ),
+              ],
+              child: AdminInvoiceScreen(invoiceId: invoiceId),
+            ),
+          ),
+        );
     // ── Logout ─────────────────────────────────────────────────────────────
 
       case logout:

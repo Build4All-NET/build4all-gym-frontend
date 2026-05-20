@@ -1,17 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
 import '../../data/repositories/member_plans_repository_impl.dart';
 import '../../data/services/member_plans_remote_datasource.dart';
+import '../../domain/entities/checkout_result_entity.dart';
 import '../../domain/entities/coupon_validation_entity.dart';
 import '../../domain/entities/payment_method_entity.dart';
 import '../../domain/entities/plan_detail_entity.dart';
-import '../../domain/entities/checkout_result_entity.dart';
+import '../../domain/usecases/check_payment_status_usecase.dart';
 import '../../domain/usecases/checkout_usecase.dart';
+import '../../domain/usecases/confirm_stripe_payment_usecase.dart';
 import '../../domain/usecases/get_payment_methods_usecase.dart';
 import '../../domain/usecases/get_plan_detail_usecase.dart';
 import '../../domain/usecases/validate_coupon_usecase.dart';
@@ -36,10 +40,12 @@ class PlanDetailScreenProvider extends StatelessWidget {
 
     return BlocProvider(
       create: (_) => PlanDetailBloc(
-        getPlanDetail: GetPlanDetailUseCase(repository: repository),
-        validateCoupon: ValidateCouponUseCase(repository: repository),
-        getPaymentMethods: GetPaymentMethodsUseCase(repository: repository),
-        checkout: CheckoutUseCase(repository: repository),
+        getPlanDetail:         GetPlanDetailUseCase(repository: repository),
+        validateCoupon:        ValidateCouponUseCase(repository: repository),
+        getPaymentMethods:     GetPaymentMethodsUseCase(repository: repository),
+        checkout:              CheckoutUseCase(repository: repository),
+        confirmStripePayment:  ConfirmStripePaymentUseCase(repository: repository),
+        checkPaymentStatus:    CheckPaymentStatusUseCase(repository: repository),
       )..add(LoadPlanDetailEvent(planId: planId)),
       child: PlanDetailScreen(planId: planId),
     );
@@ -73,8 +79,9 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
       textDirection: TextDirection.rtl,
       child: BlocConsumer<PlanDetailBloc, PlanDetailState>(
         listenWhen: (_, curr) =>
-            curr is PlanDetailCheckoutSuccess ||
-            curr is PlanDetailCheckoutError,
+        curr is PlanDetailCheckoutSuccess ||
+            curr is PlanDetailCheckoutError ||
+            curr is PlanDetailOnlinePaymentReady,
         listener: (context, state) {
           if (state is PlanDetailCheckoutSuccess) {
             _showCheckoutResult(context, state.result, tokens, l10n);
@@ -85,13 +92,20 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
                 backgroundColor: tokens.colors.danger,
               ),
             );
+          } else if (state is PlanDetailOnlinePaymentReady) {
+            _handleOnlinePayment(context, state, tokens);
           }
         },
         builder: (context, state) {
-          // On checkout error, fall through to render the previous loaded state
-          final renderState = state is PlanDetailCheckoutError
-              ? state.previousState
-              : state;
+          // Use previousState for transient states so the screen stays visible
+          final PlanDetailState renderState;
+          if (state is PlanDetailCheckoutError) {
+            renderState = state.previousState;
+          } else if (state is PlanDetailOnlinePaymentReady) {
+            renderState = state.previousState;
+          } else {
+            renderState = state;
+          }
 
           if (renderState is PlanDetailLoading) {
             return Scaffold(
@@ -130,7 +144,8 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
           }
 
           if (renderState is PlanDetailLoaded) {
-            final plan = renderState.plan;
+            final loaded = renderState;
+            final plan = loaded.plan;
 
             return Scaffold(
               backgroundColor: tokens.colors.background,
@@ -162,23 +177,23 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
                           _HeaderTitle(planName: plan.name),
                           const SizedBox(height: 28),
 
-                          _CheckoutPlanCard(plan: plan, coupon: renderState.coupon),
+                          _CheckoutPlanCard(plan: plan, coupon: loaded.coupon),
 
                           SizedBox(height: tokens.spacing.lg),
 
                           _CouponCard(
                             planId: widget.planId,
                             couponController: _couponController,
-                            coupon: renderState.coupon,
-                            isCouponValidating: renderState.isCouponValidating,
+                            coupon: loaded.coupon,
+                            isCouponValidating: loaded.isCouponValidating,
                           ),
 
                           SizedBox(height: tokens.spacing.lg),
 
                           _PaymentMethodsCard(
-                            methods: renderState.paymentMethods,
-                            selectedMethod: renderState.selectedPaymentMethod,
-                            isLoading: renderState.isPaymentMethodsLoading,
+                            methods: loaded.paymentMethods,
+                            selectedMethod: loaded.selectedPaymentMethod,
+                            isLoading: loaded.isPaymentMethodsLoading,
                             tokens: tokens,
                           ),
 
@@ -187,48 +202,48 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
                           SizedBox(
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: renderState.isSubmitting ||
-                                      renderState.selectedPaymentMethod == null
+                              onPressed: loaded.isSubmitting ||
+                                  loaded.selectedPaymentMethod == null
                                   ? null
                                   : () {
-                                      final coupon = renderState.coupon?.valid == true
-                                          ? _couponController.text.trim()
-                                          : null;
-                                      context.read<PlanDetailBloc>().add(
-                                            SubmitCheckoutEvent(
-                                              planId: widget.planId,
-                                              paymentMethod:
-                                                  renderState.selectedPaymentMethod!,
-                                              couponCode: coupon,
-                                            ),
-                                          );
-                                    },
+                                final coupon = loaded.coupon?.valid == true
+                                    ? _couponController.text.trim()
+                                    : null;
+                                context.read<PlanDetailBloc>().add(
+                                  SubmitCheckoutEvent(
+                                    planId: widget.planId,
+                                    paymentMethod:
+                                    loaded.selectedPaymentMethod!,
+                                    couponCode: coupon,
+                                  ),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: tokens.colors.primary,
                                 foregroundColor: tokens.colors.onPrimary,
                                 disabledBackgroundColor:
-                                    tokens.colors.primary.withOpacity(0.4),
+                                tokens.colors.primary.withOpacity(0.4),
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18),
                                 ),
                               ),
-                              child: renderState.isSubmitting
+                              child: loaded.isSubmitting
                                   ? SizedBox(
-                                      width: 22,
-                                      height: 22,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        color: tokens.colors.onPrimary,
-                                      ),
-                                    )
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: tokens.colors.onPrimary,
+                                ),
+                              )
                                   : Text(
-                                      l10n.selectThisPlan,
-                                      style: tokens.typography.bodyMedium.copyWith(
-                                        color: tokens.colors.onPrimary,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
+                                l10n.selectThisPlan,
+                                style: tokens.typography.bodyMedium.copyWith(
+                                  color: tokens.colors.onPrimary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -247,11 +262,11 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
   }
 
   void _showCheckoutResult(
-    BuildContext context,
-    CheckoutResultEntity result,
-    dynamic tokens,
-    AppLocalizations l10n,
-  ) {
+      BuildContext context,
+      CheckoutResultEntity result,
+      dynamic tokens,
+      AppLocalizations l10n,
+      ) {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
@@ -260,6 +275,175 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (_) => _CheckoutResultSheet(result: result, tokens: tokens),
+    );
+  }
+
+  void _handleOnlinePayment(
+      BuildContext context,
+      PlanDetailOnlinePaymentReady state,
+      dynamic tokens,
+      ) {
+    final result = state.result;
+
+    if (result.isStripe) {
+      _presentStripeSheet(context, state, tokens);
+    } else if (result.isRedirect) {
+      _launchRedirectPayment(context, state, tokens);
+    }
+  }
+
+  Future<void> _presentStripeSheet(
+      BuildContext context,
+      PlanDetailOnlinePaymentReady state,
+      dynamic tokens,
+      ) async {
+    try {
+      Stripe.publishableKey = state.result.publishableKey!;
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: state.result.clientSecret!,
+          merchantDisplayName: 'Build4All Gym',
+        ),
+      );
+      await Stripe.instance.presentPaymentSheet();
+
+      // Payment sheet closed successfully — confirm on our backend
+      if (context.mounted) {
+        context.read<PlanDetailBloc>().add(ConfirmStripePaymentEvent(
+          previousState: state.previousState,
+          pendingResult: state.result,
+        ));
+      }
+    } on StripeException catch (e) {
+      if (context.mounted && e.error.code != FailureCode.Canceled) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.error.localizedMessage ?? 'Payment failed'),
+          backgroundColor: tokens.colors.danger,
+        ));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: tokens.colors.danger,
+        ));
+      }
+    }
+  }
+
+  Future<void> _launchRedirectPayment(
+      BuildContext context,
+      PlanDetailOnlinePaymentReady state,
+      dynamic tokens,
+      ) async {
+    final url = Uri.parse(state.result.redirectUrl!);
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (_) {}
+
+    if (!context.mounted) return;
+
+    // Show "waiting" sheet — user comes back from browser and taps "Done"
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (ctx) => _WaitingForRedirectSheet(
+        tokens: tokens,
+        onDone: () {
+          Navigator.of(ctx).pop();
+          context.read<PlanDetailBloc>().add(CheckRedirectPaymentEvent(
+            previousState: state.previousState,
+            pendingResult: state.result,
+          ));
+        },
+        onRelaunch: () async {
+          try {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } catch (_) {}
+        },
+      ),
+    );
+  }
+}
+
+// ─── Waiting for Redirect Payment Sheet ──────────────────────────────────────
+
+class _WaitingForRedirectSheet extends StatelessWidget {
+  final dynamic tokens;
+  final VoidCallback onDone;
+  final VoidCallback onRelaunch;
+
+  const _WaitingForRedirectSheet({
+    required this.tokens,
+    required this.onDone,
+    required this.onRelaunch,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = tokens.colors;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64, height: 64,
+              decoration: BoxDecoration(
+                color: c.primary.withOpacity(0.10),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.open_in_browser_rounded, color: c.primary, size: 34),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'أكمل الدفع في المتصفح',
+              style: tokens.typography.headlineSmall.copyWith(
+                color: c.label, fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'تم فتح صفحة الدفع في المتصفح. أكمل عملية الدفع ثم ارجع هنا واضغط "تم".',
+              textAlign: TextAlign.center,
+              style: tokens.typography.bodyMedium.copyWith(color: c.muted, height: 1.5),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity, height: 52,
+              child: ElevatedButton(
+                onPressed: onDone,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: c.primary,
+                  foregroundColor: c.onPrimary,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                child: Text(
+                  'تم — التحقق من الدفع',
+                  style: tokens.typography.bodyMedium.copyWith(
+                      color: c.onPrimary, fontWeight: FontWeight.w900),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: onRelaunch,
+              child: Text(
+                'إعادة فتح صفحة الدفع',
+                style: tokens.typography.bodyMedium.copyWith(color: c.primary),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -320,13 +504,13 @@ class _PaymentMethodsCard extends StatelessWidget {
             )
           else
             ...methods.map((method) => _PaymentMethodRow(
-                  method: method,
-                  isSelected: selectedMethod == method.name,
-                  tokens: tokens,
-                  onTap: () => context
-                      .read<PlanDetailBloc>()
-                      .add(SelectPaymentMethodEvent(methodName: method.name)),
-                )),
+              method: method,
+              isSelected: selectedMethod == method.name,
+              tokens: tokens,
+              onTap: () => context
+                  .read<PlanDetailBloc>()
+                  .add(SelectPaymentMethodEvent(methodName: method.name)),
+            )),
         ],
       ),
     );
@@ -585,7 +769,7 @@ class _CheckoutPlanCard extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
     final finalPrice =
-        coupon?.valid == true && coupon?.finalPrice != null ? coupon!.finalPrice! : plan.price;
+    coupon?.valid == true && coupon?.finalPrice != null ? coupon!.finalPrice! : plan.price;
 
     return _WhiteCard(
       child: Column(
@@ -719,7 +903,7 @@ class _CouponCard extends StatelessWidget {
                     filled: true,
                     fillColor: tokens.colors.background,
                     contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -735,12 +919,12 @@ class _CouponCard extends StatelessWidget {
                   onPressed: isCouponValidating
                       ? null
                       : () {
-                          final code = couponController.text.trim();
-                          if (code.isEmpty) return;
-                          context.read<PlanDetailBloc>().add(
-                                ApplyCouponEvent(couponCode: code, planId: planId),
-                              );
-                        },
+                    final code = couponController.text.trim();
+                    if (code.isEmpty) return;
+                    context.read<PlanDetailBloc>().add(
+                      ApplyCouponEvent(couponCode: code, planId: planId),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: tokens.colors.primary.withOpacity(0.45),
                     foregroundColor: tokens.colors.onPrimary,
@@ -753,16 +937,16 @@ class _CouponCard extends StatelessWidget {
                   ),
                   child: isCouponValidating
                       ? SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: tokens.colors.onPrimary),
-                        )
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: tokens.colors.onPrimary),
+                  )
                       : Text(
-                          l10n.apply,
-                          style: tokens.typography.bodyMedium.copyWith(
-                              color: tokens.colors.onPrimary, fontWeight: FontWeight.w900),
-                        ),
+                    l10n.apply,
+                    style: tokens.typography.bodyMedium.copyWith(
+                        color: tokens.colors.onPrimary, fontWeight: FontWeight.w900),
+                  ),
                 ),
               ),
             ],
@@ -772,7 +956,7 @@ class _CouponCard extends StatelessWidget {
             Text(
               coupon!.valid
                   ? l10n.couponAppliedFinalPrice(
-                      coupon!.finalPrice?.toStringAsFixed(2) ?? '-')
+                  coupon!.finalPrice?.toStringAsFixed(2) ?? '-')
                   : coupon!.message,
               textAlign: TextAlign.right,
               style: tokens.typography.bodyMedium.copyWith(

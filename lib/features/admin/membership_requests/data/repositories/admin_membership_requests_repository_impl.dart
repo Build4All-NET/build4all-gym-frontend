@@ -17,9 +17,9 @@ class AdminMembershipRequestsRepositoryImpl
   }
 
   @override
-  Future<void> approveRequest(int requestId, double amountPaid,
+  Future<int> approveRequest(int requestId, double amountPaid,
       {String? notes}) async {
-    await _service.approveRequest(requestId, amountPaid, notes: notes);
+    return _service.approveRequest(requestId, amountPaid, notes: notes);
   }
 
   @override

@@ -68,3 +68,16 @@ class PlanDetailCheckoutError extends PlanDetailState {
   final String message;
   PlanDetailCheckoutError({required this.previousState, required this.message});
 }
+
+/// Emitted after checkout when the selected method requires an online payment.
+/// The screen handles Stripe (payment sheet) or redirect (browser) based on
+/// which fields are set.
+class PlanDetailOnlinePaymentReady extends PlanDetailState {
+  final PlanDetailLoaded previousState;
+  final CheckoutResultEntity result; // carries transactionId, redirectUrl, etc.
+
+  PlanDetailOnlinePaymentReady({
+    required this.previousState,
+    required this.result,
+  });
+}

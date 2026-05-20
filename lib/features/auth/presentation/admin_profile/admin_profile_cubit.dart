@@ -76,15 +76,18 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
   }
 
   Future<void> _load() async {
-    String? token       = await const AdminTokenStore().getToken();
-    String? tenantIdStr = await const AdminTokenStore().getTenantId();
+    // AuthTokenStore holds the gym-backend JWT (BUSINESS for staff, OWNER for admins).
+    // AdminTokenStore holds the platform-level OWNER token shared across all users.
+    // Always read from AuthTokenStore first so staff get their correct role.
+    String? token       = await const AuthTokenStore().getToken();
+    String? tenantIdStr = await const AuthTokenStore().getTenantId();
 
     if (token == null || token.isEmpty) {
-      token       = await const AuthTokenStore().getToken();
-      tenantIdStr = await const AuthTokenStore().getTenantId();
-      debugPrint('🔑 AdminProfileCubit: using AuthTokenStore');
-    } else {
+      token       = await const AdminTokenStore().getToken();
+      tenantIdStr = await const AdminTokenStore().getTenantId();
       debugPrint('🔑 AdminProfileCubit: using AdminTokenStore');
+    } else {
+      debugPrint('🔑 AdminProfileCubit: using AuthTokenStore');
     }
 
     if (token == null || token.isEmpty) {

@@ -28,4 +28,15 @@ class AdminPaymentConfigService {
     return PaymentMethodConfigModel.fromJson(
         response.data as Map<String, dynamic>);
   }
+
+  Future<({bool ok, String? error})> testConnection(String methodName) async {
+    final response = await _dio.post(
+      _url('/api/admin/payment-methods/$methodName/test'),
+    );
+    final data = response.data as Map<String, dynamic>;
+    return (
+      ok: data['ok'] as bool,
+      error: data['error'] as String?,
+    );
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:build4allgym/app/app_router.dart';
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -237,10 +238,7 @@ class MemberCardWidget extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content:         const Text('WhatsApp is not installed'),
-        backgroundColor: Theme.of(context).colorScheme.error,
-      ));
+      AppToast.error(context, 'WhatsApp is not installed');
     }
   }
 
@@ -311,11 +309,7 @@ class MemberCardWidget extends StatelessWidget {
   }
 
   void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('$feature — coming soon'),
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      duration: const Duration(seconds: 1),
-    ));
+    AppToast.info(context, '$feature — coming soon');
   }
 }
 
