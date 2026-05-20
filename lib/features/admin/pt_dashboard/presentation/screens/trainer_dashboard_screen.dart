@@ -27,7 +27,7 @@ import '../bloc/sessions/trainer_pt_sessions_event.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerDashboardScreen extends StatelessWidget {
-  final ValueChanged<int>  onTabSwitch;
+  final ValueChanged<int>     onTabSwitch;
   final ValueChanged<int?> onBranchChanged;
   final bool               isAdmin;
   final List<AdminTrainerCardModel> trainers;

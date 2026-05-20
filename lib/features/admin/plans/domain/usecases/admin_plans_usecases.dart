@@ -32,6 +32,12 @@ class GetBranchesUseCase {
   Future<List<AdminBranchOptionEntity>> call() => repository.getBranches();
 }
 
+class CreatePlanTypeUseCase {
+  final AdminPlansRepository repository;
+  CreatePlanTypeUseCase({required this.repository});
+  Future<String> call(String name) => repository.createPlanType(name);
+}
+
 class CreatePlanUseCase {
   final AdminPlansRepository repository;
   CreatePlanUseCase({required this.repository});

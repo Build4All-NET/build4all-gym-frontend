@@ -870,6 +870,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navAiAssistant => 'AI Assistant';
 
   @override
+  String get navMembershipRequests => 'Membership Requests';
+
+  @override
+  String get navInvoices => 'Invoices';
+
+  @override
   String get navSettings => 'Settings';
 
   @override

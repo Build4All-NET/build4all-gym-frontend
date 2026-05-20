@@ -5,6 +5,7 @@
 // FAB opens MemberPickerForTrainerSheet to add more.
 // Remove button on each card revokes the role.
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -121,12 +122,7 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
       body: BlocConsumer<GymTrainersCubit, GymTrainersState>(
         listener: (context, state) {
           if (state is GymTrainerRemoveError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red.shade700,
-              ),
-            );
+            AppToast.error(context, state.message);
           }
         },
         builder: (context, state) {

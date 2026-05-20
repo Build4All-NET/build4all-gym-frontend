@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,13 +107,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       if (!mounted) return;
       Navigator.pop(context);
       widget.onConfigured();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.trainerName} is fully set up as a trainer.'),
-          backgroundColor: Colors.green.shade700,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      AppToast.success(context, '${widget.trainerName} is fully set up as a trainer.');
     } catch (e) {
       if (mounted) setState(() { _submitting = false; _error = 'Failed to save. Please try again.'; });
     }

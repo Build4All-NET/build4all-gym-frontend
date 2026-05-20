@@ -68,22 +68,14 @@ class _DrawerBody extends StatelessWidget {
     final profile = context.watch<AdminProfileCubit>().state;
     debugPrint('🎯 Drawer → role: ${profile.role}, gymRoles: ${profile.gymRoles}, isTrainer: ${profile.isTrainerRole}');
 
-    // ── Filter sections by gym role ──────────────────────────────────────────
-    // Gym-specific roles (TRAINER / RECEPTION) always take priority over the
-    // base JWT role (ADMIN/OWNER/MANAGER).  Only when no gym role is assigned
-    // does isAdminRole unlock every section.
-    // TRAINER only          → TRAINING / PT
-    // RECEPTION only        → OPERATIONS / RECEPTION
-    // TRAINER + RECEPTION   → both sections, no CORE OWNER
-    // No gym role + admin   → all sections
+    // ── Filter sections by role ──────────────────────────────────────────────
+    // isAdminRole (OWNER/ADMIN/MANAGER JWT role) → all sections.
+    // Staff gym roles (TRAINER / RECEPTION) → only their section(s).
     final visibleSections = adminDrawerSections.where((section) {
-      if (profile.gymRoles.isNotEmpty) {
-        if (section.labelKey == 'sectionCoreOwner') return false;
-        if (section.labelKey == 'sectionTrainingPt') return profile.isTrainerRole;
-        if (section.labelKey == 'sectionOperationsReception') return profile.isReceptionRole;
-        return false;
-      }
       if (profile.isAdminRole) return true;
+      if (section.labelKey == 'sectionCoreOwner') return false;
+      if (section.labelKey == 'sectionTrainingPt') return profile.isTrainerRole;
+      if (section.labelKey == 'sectionOperationsReception') return profile.isReceptionRole;
       return false;
     }).toList();
 

@@ -213,9 +213,8 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     if (_isAdmin) {
       _loadTrainersForAdmin();
     } else if (_trainerId != 0) {
-      final id = branchId ?? _effectiveBranchId(context);
       _sessionsBloc.add(PtSessionsStarted(
-        branchId:  id,
+        branchId:  _effectiveBranchId(context),
         trainerId: _trainerId,
       ));
     }
@@ -359,7 +358,7 @@ class _MainShell extends StatelessWidget {
   final int                        trainerId;
   final bool                       isAdmin;
   final List<AdminTrainerCardModel> trainers;
-  final ValueChanged<int?>         onBranchChanged;
+  final ValueChanged<int?>           onBranchChanged;
 
   const _MainShell({
     required this.currentIndex,

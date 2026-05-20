@@ -1,5 +1,6 @@
 // FILE: lib/features/admin/staff/presentation/screens/admin_staff_screen.dart
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:build4allgym/features/admin/navigation/presentation/widgets/admin_navigation_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -111,28 +112,10 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                 child: BlocConsumer<AdminStaffBloc, AdminStaffState>(
                   listener: (context, state) {
                     if (state is StaffActionSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:         Text(_successMessage(state.actionType)),
-                          backgroundColor: c.success,
-                          behavior:        SnackBarBehavior.floating,
-                          margin:          const EdgeInsets.all(12),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                      );
+                      AppToast.success(context, _successMessage(state.actionType));
                     }
                     if (state is StaffActionError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:         Text(state.message),
-                          backgroundColor: c.danger,
-                          behavior:        SnackBarBehavior.floating,
-                          margin:          const EdgeInsets.all(12),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                      );
+                      AppToast.error(context, state.message);
                     }
                   },
                   builder: (context, state) {

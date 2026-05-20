@@ -24,4 +24,18 @@ abstract class BranchRepository {
     required String closingTime,
     required String status,
   });
+
+  Future<Either<Failure, BranchEntity>> updateBranch({
+    required String branchId,
+    required String name,
+    required String city,
+    required String phone,
+    required String email,
+    required String address,
+    required String openingTime,
+    required String closingTime,
+    required String status,
+  });
+
+  Future<Either<Failure, void>> deleteBranch(String branchId);
 }

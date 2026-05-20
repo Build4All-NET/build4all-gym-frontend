@@ -250,8 +250,8 @@ class _BranchesListPageState extends State<BranchesListPage> {
                       delegate: SliverChildBuilderDelegate(
                             (ctx, i) => BranchCard(
                           branch: state.branches[i],
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            final changed = await Navigator.push<bool>(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => BlocProvider.value(
@@ -262,6 +262,9 @@ class _BranchesListPageState extends State<BranchesListPage> {
                                 ),
                               ),
                             );
+                            if (changed == true && context.mounted) {
+                              context.read<BranchesBloc>().add(const LoadBranches());
+                            }
                           },
                         ),
                         childCount: state.branches.length,

@@ -9,6 +9,7 @@ abstract class AdminPlansRepository {
   Future<List<AdminPlanListItemEntity>> getPlans({String? type, String? search});
   Future<List<String>> getPlanTypes();
   Future<List<AdminBranchOptionEntity>> getBranches();
+  Future<String> createPlanType(String name);
   Future<void> createPlan(CreatePlanRequestModel request);
   Future<void> updatePlan(int planId, UpdatePlanRequestModel request);
   Future<void> deletePlan(int planId);

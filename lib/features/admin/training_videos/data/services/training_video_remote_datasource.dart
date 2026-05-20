@@ -6,13 +6,16 @@ import '../models/training_video_model.dart';
 import '../models/video_stats_model.dart';
 import '../models/video_category_model.dart';
 import '../models/create_training_video_request.dart';
+import '../models/update_training_video_request.dart';
 import '../../../../../../core/network/globals.dart';
 abstract class TrainingVideoRemoteDataSource {
   Future<({VideoStatsModel stats, List<TrainingVideoModel> videos})> getVideos({int? categoryId});
   Future<List<VideoCategoryModel>> getCategories();
   Future<void> createVideo(CreateTrainingVideoRequest request);
+  Future<TrainingVideoModel> updateVideo(UpdateTrainingVideoRequest request);
+  Future<void> deleteVideo(int videoId);
   Future<List<TrainerOption>> getTrainers();
-  Future<VideoCategoryModel> createCategory(String name); // ✅ new
+  Future<VideoCategoryModel> createCategory(String name);
 }
 
 class TrainingVideoRemoteDataSourceImpl implements TrainingVideoRemoteDataSource {
@@ -29,14 +32,14 @@ class TrainingVideoRemoteDataSourceImpl implements TrainingVideoRemoteDataSource
 
   @override
   Future<List<TrainerOption>> getTrainers() async {
-    final response = await _dio.get('/api/admin/trainers');
-    final data = response.data as Map<String, dynamic>;
-    final list = data['trainers'] as List<dynamic>;
+    final response = await _dio.get('/api/admin/gym-trainers');
+    final list = response.data as List<dynamic>;
     return list.map((e) {
       final m = e as Map<String, dynamic>;
+      final id = m['userId'] as int;
       return TrainerOption(
-        trainerId: m['trainerId'] as int,
-        name: m['fullName'] as String? ?? 'Trainer ${m['trainerId']}',
+        trainerId: id,
+        name: m['fullName'] as String? ?? 'Trainer $id',
       );
     }).toList();
   }
@@ -68,17 +71,39 @@ class TrainingVideoRemoteDataSourceImpl implements TrainingVideoRemoteDataSource
   Future<void> createVideo(CreateTrainingVideoRequest request) async {
     final formData = FormData.fromMap({
       ...request.toMultipart(),
+      if (request.videoFile != null)
+        'video': await MultipartFile.fromFile(
+          request.videoFile!.path,
+          filename: request.videoFile!.path.split('/').last,
+        ),
+      if (request.thumbnailFile != null)
+        'thumbnail': await MultipartFile.fromFile(
+          request.thumbnailFile!.path,
+          filename: request.thumbnailFile!.path.split('/').last,
+        ),
+    });
+    await _dio.post('/api/admin/training-videos', data: formData);
+  }
 
+  @override
+  Future<TrainingVideoModel> updateVideo(UpdateTrainingVideoRequest request) async {
+    final formData = FormData.fromMap({
+      ...request.toMultipart(),
       if (request.videoFile != null)
         'video': await MultipartFile.fromFile(
           request.videoFile!.path,
           filename: request.videoFile!.path.split('/').last,
         ),
     });
-
-    await _dio.post(
-      '/api/admin/training-videos',
+    final response = await _dio.put(
+      '/api/admin/training-videos/${request.videoId}',
       data: formData,
     );
+    return TrainingVideoModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> deleteVideo(int videoId) async {
+    await _dio.delete('/api/admin/training-videos/$videoId');
   }
 }
