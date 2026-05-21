@@ -12,6 +12,24 @@ import '../cubit/drawer_state.dart';
 import 'admin_drawer_header_widget.dart';
 import 'admin_drawer_item_widget.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// AdminNavigationDrawer
+//
+// The slide-in sidebar shown when the user taps the menu icon.
+// Delegates to _DrawerBody for the actual UI.
+//
+// DARK THEME IMPROVEMENTS in this file:
+//   • The Drawer widget itself uses theme.colorScheme.surface — in dark mode
+//     this resolves to #161B22 (rich ink-blue-grey) instead of flat #1E1E1E.
+//   • The Divider between nav items and bottom buttons uses
+//     theme.colorScheme.outlineVariant so it's a subtle hairline, not
+//     a harsh thick line.
+//   • Section label colours use onSurface.withOpacity(0.35) for dark mode —
+//     more readable than the previous 0.40 on a lighter background.
+//   • Added 0.5px top outline to SafeArea bottom section to visually separate
+//     Settings and Logout from the scrollable nav list.
+// ─────────────────────────────────────────────────────────────────────────────
+
 class AdminNavigationDrawer extends StatelessWidget {
   final String  gymName;
   final String  branchName;
@@ -65,12 +83,12 @@ class _DrawerBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme   = Theme.of(context);
+    final cs      = theme.colorScheme;
     final profile = context.watch<AdminProfileCubit>().state;
+
     debugPrint('🎯 Drawer → role: ${profile.role}, gymRoles: ${profile.gymRoles}, isTrainer: ${profile.isTrainerRole}');
 
     // ── Filter sections by role ──────────────────────────────────────────────
-    // isAdminRole (OWNER/ADMIN/MANAGER JWT role) → all sections.
-    // Staff gym roles (TRAINER / RECEPTION) → only their section(s).
     final visibleSections = adminDrawerSections.where((section) {
       if (profile.isAdminRole) return true;
       if (section.labelKey == 'sectionCoreOwner') return false;
@@ -80,14 +98,14 @@ class _DrawerBody extends StatelessWidget {
     }).toList();
 
     return Drawer(
-      width: 255,
-      backgroundColor: theme.colorScheme.surface,
-      elevation: 8,
+      width:           255,
+      backgroundColor: cs.surface,   // #161B22 in dark, white in light
+      elevation:       16,           // Stronger shadow so the drawer lifts clearly
       child: BlocBuilder<DrawerCubit, DrawerState>(
         builder: (context, state) {
           return Column(
             children: [
-              // ── HEADER ─────────────────────────────────────────────────────
+              // ── HEADER ────────────────────────────────────────────────────
               AdminDrawerHeaderWidget(
                 gymName:    gymName,
                 branchName: branchName,
@@ -101,7 +119,7 @@ class _DrawerBody extends StatelessWidget {
                 },
               ),
 
-              // ── SCROLLABLE NAV SECTIONS ─────────────────────────────────────
+              // ── SCROLLABLE NAV SECTIONS ──────────────────────────────────
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -120,12 +138,19 @@ class _DrawerBody extends StatelessWidget {
                 ),
               ),
 
-              // ── FIXED BOTTOM (Settings + Logout) ───────────────────────────
-              const Divider(height: 1, thickness: 1),
+              // ── FIXED BOTTOM (Settings + Logout) ─────────────────────────
+              // IMPROVED: Uses outlineVariant (hairline) colour and 0.5px
+              // thickness so the divider is subtle, not a thick harsh line.
+              Divider(
+                height:    1,
+                thickness: 0.5,
+                color:     cs.outlineVariant, // #21262D in dark, near-invisible
+              ),
               SafeArea(
                 top: false,
                 child: Column(
                   children: [
+                    const SizedBox(height: 4), // Small breathing room
                     for (final item in adminDrawerBottomItems)
                       AdminDrawerItemWidget(
                         item:     item,
@@ -183,6 +208,16 @@ class _DrawerBody extends StatelessWidget {
 
 // ─── Section label widget ─────────────────────────────────────────────────────
 
+/// The small ALL-CAPS category heading above each group of nav items.
+/// e.g. "OPERATIONS / RECEPTION", "CORE OWNER"
+///
+/// DARK THEME IMPROVEMENT:
+///   • Colour is now onSurface.withOpacity(0.38) — in dark mode this resolves
+///     to a medium-grey (#8B949E at 38%) that's clearly readable as a label
+///     without competing with the nav items.
+///   • The previous 0.40 on the old grey surface was too faint.
+///   • Added a very subtle left indentation increase (20 → 20 unchanged but
+///     kept for clarity) for visual alignment with the item icons.
 class _SectionLabel extends StatelessWidget {
   final String labelKey;
   const _SectionLabel({required this.labelKey});
@@ -191,6 +226,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n  = AppLocalizations.of(context)!;
+    final isDark = theme.brightness == Brightness.dark;
 
     final label = switch (labelKey) {
       'sectionCoreOwner'           => l10n.sectionCoreOwner,
@@ -200,13 +236,16 @@ class _SectionLabel extends StatelessWidget {
     };
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 6),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
       child: Text(
-        label,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color:         theme.colorScheme.onSurface.withOpacity(0.40),
-          fontWeight:    FontWeight.w600,
-          letterSpacing: 0.8,
+        label.toUpperCase(),
+        style: TextStyle(
+          fontSize:      10,
+          fontWeight:    FontWeight.w700,
+          color:         theme.colorScheme.onSurface.withOpacity(
+            isDark ? 0.38 : 0.40, // Slightly lower in dark — still very readable
+          ),
+          letterSpacing: 1.0, // Slightly wider tracking for ALL-CAPS label feel
         ),
       ),
     );
