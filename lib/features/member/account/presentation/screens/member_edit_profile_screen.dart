@@ -17,7 +17,6 @@ import 'package:build4allgym/features/member/build4all_profile/presentation/bloc
 
 import 'package:build4allgym/features/member/profile_edit/data/repositories/member_profile_edit_repository_impl.dart';
 import 'package:build4allgym/features/member/profile_edit/data/services/member_profile_edit_service.dart';
-
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/resend_email_change_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_password_reset_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_phone_verification_code_usecase.dart';
@@ -26,7 +25,6 @@ import 'package:build4allgym/features/member/profile_edit/domain/usecases/update
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_current_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_email_change_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_profile_phone_code_usecase.dart';
-
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_bloc.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_event.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_state.dart';
@@ -42,7 +40,6 @@ bool _isArabic(BuildContext context) {
 class MemberEditProfileScreen extends StatelessWidget {
   final MemberAccountEntity account;
   final MemberBuild4AllProfileEntity profile;
-
 
   const MemberEditProfileScreen({
     super.key,
@@ -96,16 +93,10 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
   late final TextEditingController _currentPasswordController;
   late final TextEditingController _newPasswordController;
 
-  late final TextEditingController _phoneController;
-
-
-
+  String _phoneCompleteNumber = '';
 
   bool _hideCurrentPassword = true;
   bool _hideNewPassword = true;
-
-  bool _phoneAlreadyVerified = false;
-  bool _passwordAlreadyUpdated = false;
 
   static final RegExp _nameAllowedChars = RegExp(
     r"[A-Za-zÀ-ÖØ-öø-ÿĀ-žḀ-ỿ\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]",
@@ -135,9 +126,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       text: widget.profile.email ?? '',
     );
 
-    _phoneController = TextEditingController(
-      text: widget.profile.phoneNumber?.trim() ?? '',
-    );
+    _phoneCompleteNumber = widget.profile.phoneNumber?.trim() ?? '';
 
     _currentPasswordController = TextEditingController();
     _newPasswordController = TextEditingController();
@@ -263,14 +252,13 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                               ),
                             ),
                             SizedBox(height: tokens.spacing.md),
-                            _EditField(
+                            _PhoneField(
                               label: l10n.editProfilePhone,
-                              controller: _phoneController,
-                              icon: Icons.phone_outlined,
-                              keyboardType: TextInputType.phone,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'[0-9+\s]')),
-                              ],
+                              requiredMessage: l10n.editProfilePhoneRequired,
+                              initialPhoneNumber: widget.profile.phoneNumber,
+                              onChanged: (completeNumber) {
+                                _phoneCompleteNumber = completeNumber.trim();
+                              },
                             ),
                             SizedBox(height: tokens.spacing.xl),
                             _SectionTitle(
@@ -320,21 +308,21 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                               ),
                               validator: (value) {
                                 final newPassword = value?.trim() ?? '';
-                                final currentPassword =
-                                _currentPasswordController.text.trim();
 
-                                if (newPassword.isEmpty &&
-                                    currentPassword.isEmpty) {
+                                // If the user did not type a new password,
+                                // do not validate password change.
+                                //
+                                // Important:
+                                // Current password can be used for phone verification,
+                                // so it must NOT force new password to be required.
+                                if (newPassword.isEmpty) {
                                   return null;
                                 }
 
-                                if (currentPassword.isEmpty) {
-                                  return l10n
-                                      .editProfileCurrentPasswordRequired;
-                                }
+                                final currentPassword = _currentPasswordController.text.trim();
 
-                                if (newPassword.isEmpty) {
-                                  return l10n.editProfileNewPasswordRequired;
+                                if (currentPassword.isEmpty) {
+                                  return l10n.editProfileCurrentPasswordRequired;
                                 }
 
                                 if (newPassword.length < 6) {
@@ -342,8 +330,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                                 }
 
                                 if (newPassword == currentPassword) {
-                                  return l10n
-                                      .editProfilePasswordSameAsCurrent;
+                                  return l10n.editProfilePasswordSameAsCurrent;
                                 }
 
                                 return null;
@@ -447,6 +434,49 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       return;
     }
 
+    if (state is MemberProfileEditPhoneVerificationRequired) {
+      final ok = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => MemberProfileEditOtpDialog(
+          title: 'Verify phone number',
+          sentToLabel: l10n.editProfileCodeSentTo,
+          destination: state.newPhoneNumber,
+          codeLabel: l10n.editProfileVerificationCode,
+          resendLabel: l10n.editProfileResend,
+          verifyLabel: l10n.editProfileVerify,
+          codeRequiredMessage: l10n.editProfileCodeRequired,
+          onVerify: (code) async {
+            final repository = MemberProfileEditRepositoryImpl(
+              MemberProfileEditService(),
+            );
+
+            await repository.verifyPhoneChangeCode(
+              phoneNumber: state.newPhoneNumber,
+              code: code,
+            );
+          },
+          onResend: () async {
+            final repository = MemberProfileEditRepositoryImpl(
+              MemberProfileEditService(),
+            );
+
+            await repository.sendPhoneChangeVerificationCode(
+              phoneNumber: state.newPhoneNumber,
+              password: _currentPasswordController.text,
+              ownerProjectLinkId: state.ownerProjectLinkId,
+            );
+          },
+        ),
+      );
+
+      if (ok == true && mounted) {
+        _submit(phoneAlreadyVerified: true);
+      }
+
+      return;
+    }
+
     if (state is MemberProfileEditEmailVerificationRequired) {
       final ok = await showDialog<bool>(
         context: context,
@@ -478,49 +508,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
       if (ok == true && mounted) {
         _refreshAccountAndClose(context);
-      }
-
-      return;
-    }
-
-    if (state is MemberProfileEditPhoneVerificationRequired) {
-      final ok = await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => MemberProfileEditOtpDialog(
-          title: l10n.editProfileVerifyNewPhone,
-          sentToLabel: l10n.editProfileCodeSentTo,
-          destination: state.newPhoneNumber,
-          codeLabel: l10n.editProfileVerificationCode,
-          resendLabel: l10n.editProfileResend,
-          verifyLabel: l10n.editProfileVerify,
-          codeRequiredMessage: l10n.editProfileCodeRequired,
-          onVerify: (code) async {
-            final repository = MemberProfileEditRepositoryImpl(
-              MemberProfileEditService(),
-            );
-
-            await repository.verifyPhoneChangeCode(
-              phoneNumber: state.newPhoneNumber,
-              code: code,
-            );
-          },
-          onResend: () async {
-            final repository = MemberProfileEditRepositoryImpl(
-              MemberProfileEditService(),
-            );
-
-            await repository.sendPhoneChangeVerificationCode(
-              phoneNumber: state.newPhoneNumber,
-              ownerProjectLinkId: state.ownerProjectLinkId,
-            );
-          },
-        ),
-      );
-
-      if (ok == true && mounted) {
-        _phoneAlreadyVerified = true;
-        _submit();
       }
 
       return;
@@ -564,8 +551,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
 
       if (ok == true && mounted) {
-        _passwordAlreadyUpdated = true;
-        _submit();
+        _refreshAccountAndClose(context);
       }
 
       return;
@@ -577,7 +563,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
 
     if (state is MemberProfileEditPhoneVerified) {
-      _showSnack(context, l10n.editProfilePhoneVerified);
+      _showSnack(context, 'Phone verified successfully');
       return;
     }
 
@@ -601,8 +587,41 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
     Navigator.pop(context);
   }
+  String _normalizePhone(String? raw) {
+    var value = (raw ?? '').trim();
 
-  void _submit() {
+    if (value.isEmpty) return '';
+
+    value = value
+        .replaceAll(' ', '')
+        .replaceAll('-', '')
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll('.', '');
+
+    if (value.startsWith('00')) {
+      value = '+${value.substring(2)}';
+    }
+
+    if (value.startsWith('+9610')) {
+      value = '+961${value.substring(5)}';
+    }
+
+    if (RegExp(r'^0(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+      value = '+961${value.substring(1)}';
+    }
+
+    if (!value.startsWith('+')) {
+      if (RegExp(r'^(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+        value = '+961$value';
+      }
+    }
+
+    return value;
+  }
+  void _submit({
+    bool phoneAlreadyVerified = false,
+  }) {
     final l10n = AppLocalizations.of(context)!;
 
     FocusScope.of(context).unfocus();
@@ -620,12 +639,33 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       return;
     }
 
-    // Phone is NOT required on submit.
-// If the user leaves it empty, we keep the old phone.
-// If the user enters a new phone, Bloc will detect the change and send OTP.
-    final submittedPhone = _phoneController.text.trim().isNotEmpty
-        ? _phoneController.text.trim()
-        : (widget.profile.phoneNumber ?? '').trim();
+    if (_phoneCompleteNumber.trim().isEmpty) {
+      _showSnack(
+        context,
+        l10n.editProfilePhoneRequired,
+        isError: true,
+      );
+      return;
+    }
+    final oldPhone = _normalizePhone(widget.profile.phoneNumber);
+    final newPhone = _normalizePhone(_phoneCompleteNumber);
+
+    final phoneChanged = oldPhone != newPhone;
+    final currentPasswordFilled =
+        _currentPasswordController.text.trim().isNotEmpty;
+    final newPasswordFilled =
+        _newPasswordController.text.trim().isNotEmpty;
+
+// Current password alone is not a valid action.
+// It is only used when changing phone or changing password.
+    if (currentPasswordFilled && !newPasswordFilled && !phoneChanged) {
+      _showSnack(
+        context,
+        l10n.editProfileNewPasswordRequired,
+        isError: true,
+      );
+      return;
+    }
 
     context.read<MemberProfileEditBloc>().add(
       MemberProfileEditSubmitted(
@@ -633,7 +673,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
         lastName: _lastNameController.text.trim(),
         username: _usernameController.text.trim(),
         email: _emailController.text.trim(),
-        phoneNumber: submittedPhone,
+        phoneNumber: _phoneCompleteNumber.trim(),
         dateOfBirth: null,
         address: null,
         currentEmail: widget.profile.email ?? '',
@@ -641,8 +681,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
         currentPassword: _currentPasswordController.text,
         newPassword: _newPasswordController.text.trim(),
         ownerProjectLinkId: ownerProjectLinkId,
-        phoneAlreadyVerified: _phoneAlreadyVerified,
-        passwordAlreadyUpdated: _passwordAlreadyUpdated,
+        phoneAlreadyVerified: phoneAlreadyVerified,
       ),
     );
   }
@@ -837,7 +876,104 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
+class _PhoneField extends StatelessWidget {
+  final String label;
+  final String requiredMessage;
+  final String? initialPhoneNumber;
+  final ValueChanged<String> onChanged;
 
+  const _PhoneField({
+    required this.label,
+    required this.requiredMessage,
+    required this.initialPhoneNumber,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final isArabic = _isArabic(context);
+
+    return Column(
+      crossAxisAlignment:
+      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        _FieldLabel(text: label),
+        SizedBox(height: tokens.spacing.xs),
+        IntlPhoneField(
+          initialCountryCode: _guessInitialCountryCode(initialPhoneNumber),
+          initialValue: _stripKnownDialCode(initialPhoneNumber),
+          keyboardType: TextInputType.phone,
+          textAlign: isArabic ? TextAlign.right : TextAlign.left,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: tokens.colors.background,
+            hintText: label,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderSide: BorderSide(
+                color: tokens.colors.primary,
+                width: tokens.search.borderWidth,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderSide: BorderSide(
+                color: tokens.colors.danger,
+                width: tokens.search.borderWidth,
+              ),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: tokens.spacing.md,
+              vertical: tokens.spacing.md,
+            ),
+          ),
+          validator: (phone) {
+            final complete = phone?.completeNumber.trim() ?? '';
+            if (complete.isEmpty) return requiredMessage;
+            return null;
+          },
+          onChanged: (phone) {
+            onChanged(phone.completeNumber);
+          },
+        ),
+      ],
+    );
+  }
+
+  static String _guessInitialCountryCode(String? phone) {
+    final v = phone?.trim() ?? '';
+
+    if (v.startsWith('+961')) return 'LB';
+    if (v.startsWith('+33')) return 'FR';
+    if (v.startsWith('+1')) return 'US';
+    if (v.startsWith('+44')) return 'GB';
+    if (v.startsWith('+971')) return 'AE';
+
+    return 'LB';
+  }
+
+  static String? _stripKnownDialCode(String? phone) {
+    final v = phone?.trim();
+    if (v == null || v.isEmpty) return null;
+
+    if (v.startsWith('+961')) return v.substring(4);
+    if (v.startsWith('+33')) return v.substring(3);
+    if (v.startsWith('+1')) return v.substring(2);
+    if (v.startsWith('+44')) return v.substring(3);
+    if (v.startsWith('+971')) return v.substring(4);
+
+    return v;
+  }
+}
 
 class _EditField extends StatelessWidget {
   final String label;
