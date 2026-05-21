@@ -1,6 +1,7 @@
 // FILE: lib/features/admin/plans/presentation/screens/admin_plans_screen.dart
 
 import 'dart:async';
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -119,10 +120,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
               child: BlocConsumer<AdminPlansBloc, AdminPlansState>(
                 listener: (context, state) {
                   if (state is AdminPlansError) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content:         Text(state.message),
-                      backgroundColor: c.danger,
-                    ));
+                    AppToast.error(context, state.message);
                   }
                 },
                 builder: (context, state) {

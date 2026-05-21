@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/app/app_router.dart';
+import 'package:build4allgym/core/network/globals.dart' as globals;
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import '../../../member/account/data/services/member_profile_service.dart';
 import '../../../member/account/presentation/widgets/profile_completion_dialog.dart';
@@ -68,15 +69,19 @@ class _RoleCheckBody extends StatelessWidget {
   }
 
   void _routeByRoles(BuildContext context, List<String> gymRoles) {
+    final jwtPayload  = globals.decodeJwtPayload();
+    final jwtRole     = (jwtPayload?['role'] as String?)?.toUpperCase().trim() ?? '';
+    final isOwner     = jwtRole == 'OWNER' || jwtRole == 'ADMIN' || jwtRole == 'SUPER_ADMIN';
     final isTrainer   = gymRoles.contains('TRAINER');
     final isReception = gymRoles.contains('RECEPTION');
 
-    if (isTrainer && !isReception) {
+    if (isOwner) {
+      Navigator.pushReplacementNamed(context, AppRouter.adminDashboard);
+    } else if (isTrainer && !isReception) {
       Navigator.pushReplacementNamed(context, AppRouter.adminPtSessions);
     } else if (isReception) {
       Navigator.pushReplacementNamed(context, AppRouter.adminClasses);
     } else {
-      // Member — check profile completeness before entering the shell.
       _checkMemberProfile(context);
     }
   }
@@ -87,13 +92,21 @@ class _RoleCheckBody extends StatelessWidget {
       final complete = status['complete'] as bool? ?? false;
       if (!context.mounted) return;
       if (!complete) {
-        // Show blocking dialog; navigate to shell only after it's submitted.
+        // Track whether the user actually submitted the form.
+        bool completed = false;
         await ProfileCompletionDialog.show(
           context,
           existing: status,
-          onCompleted: () =>
-              Navigator.pushReplacementNamed(context, AppRouter.user),
+          onCompleted: () {
+            completed = true;
+            Navigator.pushReplacementNamed(context, AppRouter.user);
+          },
         );
+        // If the dialog was dismissed via back button without submitting,
+        // send the user back to login so they are not stuck on the loading screen.
+        if (!completed && context.mounted) {
+          Navigator.pushReplacementNamed(context, AppRouter.login);
+        }
       } else {
         Navigator.pushReplacementNamed(context, AppRouter.user);
       }

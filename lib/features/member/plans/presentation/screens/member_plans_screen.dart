@@ -229,7 +229,6 @@ class MemberPlansScreen extends StatelessWidget {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                            final otherPlans = plans.skip(1).toList();
                             final plan = plans[index];
                             return PlanCardWidget(
                               plan: plan,

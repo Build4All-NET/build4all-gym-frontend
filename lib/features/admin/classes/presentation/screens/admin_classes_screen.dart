@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -162,21 +163,13 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
                 'cancelled':   'Class cancelled',
                 'reactivated': 'Class reactivated successfully',
               };
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:         Text(messages[state.actionType] ?? 'Done'),
-                backgroundColor: cs.primary,
-                behavior:        SnackBarBehavior.floating,
-              ));
+              AppToast.success(context, messages[state.actionType] ?? 'Done');
               // BLoC already refreshes the list internally with the correct date —
               // do NOT dispatch another ClassesStarted here or it overwrites to today.
             }
 
             if (state is ClassActionError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:         Text(state.message),
-                backgroundColor: cs.error,            // ← was Color(0xFFF44336)
-                behavior:        SnackBarBehavior.floating,
-              ));
+              AppToast.error(context, state.message);
             }
           },
           builder: (context, state) {

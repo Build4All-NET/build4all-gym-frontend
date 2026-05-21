@@ -870,6 +870,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navAiAssistant => 'المساعد الذكي';
 
   @override
+  String get navMembershipRequests => 'طلبات الاشتراك';
+
+  @override
+  String get navInvoices => 'الفواتير';
+
+  @override
   String get navSettings => 'الإعدادات';
 
   @override

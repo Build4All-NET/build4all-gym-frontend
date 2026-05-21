@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import '../models/coupon_validation_response_model.dart';
 import '../models/my_membership_model.dart';
+import '../models/payment_method_model.dart';
+import '../models/checkout_response_model.dart';
 import '../models/plan_detail_model.dart';
 import '../models/plan_list_item_model.dart';
 
@@ -15,6 +17,23 @@ abstract class MemberPlansRemoteDatasource {
     String couponCode,
     int planId,
   );
+
+  Future<List<PaymentMethodModel>> getPaymentMethods();
+
+  Future<CheckoutResponseModel> checkout({
+    required int planId,
+    required String paymentMethod,
+    String? couponCode,
+  });
+
+  /// Stripe: call after flutter_stripe.presentPaymentSheet() succeeds.
+  Future<Map<String, String>> confirmStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  });
+
+  /// PayPal / MPGS: poll after user returns from the browser.
+  Future<Map<String, String>> checkPaymentStatus({required int membershipId});
 }
 
 class MemberPlansRemoteDatasourceImpl implements MemberPlansRemoteDatasource {
@@ -92,6 +111,74 @@ class MemberPlansRemoteDatasourceImpl implements MemberPlansRemoteDatasource {
       return CouponValidationResponseModel.fromJson(
         response.data as Map<String, dynamic>,
       );
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<List<PaymentMethodModel>> getPaymentMethods() async {
+    try {
+      final response = await dio.get('/api/member/payment-methods');
+      final data = response.data as List;
+      return data
+          .map((e) => PaymentMethodModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<CheckoutResponseModel> checkout({
+    required int planId,
+    required String paymentMethod,
+    String? couponCode,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/member/plans/checkout',
+        data: {
+          'planId': planId,
+          'paymentMethod': paymentMethod,
+          if (couponCode != null && couponCode.isNotEmpty) 'couponCode': couponCode,
+        },
+      );
+      return CheckoutResponseModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<Map<String, String>> confirmStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  }) async {
+    try {
+      final response = await dio.post(
+        '/api/member/payments/$transactionId/confirm',
+        data: {'invoiceId': invoiceId},
+      );
+      final data = response.data as Map<String, dynamic>;
+      return {
+        'membershipStatus': data['membershipStatus'] as String? ?? 'active',
+        'paymentStatus':    data['paymentStatus']    as String? ?? 'paid',
+      };
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<Map<String, String>> checkPaymentStatus({required int membershipId}) async {
+    try {
+      final response = await dio.get('/api/member/payments/status/$membershipId');
+      final data = response.data as Map<String, dynamic>;
+      return {
+        'membershipStatus': data['membershipStatus'] as String? ?? 'pending',
+        'paymentStatus':    data['paymentStatus']    as String? ?? 'unpaid',
+      };
     } on DioException catch (e) {
       throw _handleDioException(e);
     }

@@ -83,3 +83,38 @@ class BranchCreateError extends BranchesState {
   @override
   List<Object?> get props => [message];
 }
+
+// ── Update states ─────────────────────────────────────────────────────────────
+class BranchUpdating extends BranchesState {
+  const BranchUpdating();
+}
+
+class BranchUpdated extends BranchesState {
+  final BranchEntity branch;
+  const BranchUpdated(this.branch);
+  @override
+  List<Object?> get props => [branch];
+}
+
+class BranchUpdateError extends BranchesState {
+  final String message;
+  const BranchUpdateError(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
+// ── Delete states ─────────────────────────────────────────────────────────────
+class BranchDeleting extends BranchesState {
+  const BranchDeleting();
+}
+
+class BranchDeleted extends BranchesState {
+  const BranchDeleted();
+}
+
+class BranchDeleteError extends BranchesState {
+  final String message;
+  const BranchDeleteError(this.message);
+  @override
+  List<Object?> get props => [message];
+}

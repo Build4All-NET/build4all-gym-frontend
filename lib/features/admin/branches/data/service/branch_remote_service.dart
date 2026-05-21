@@ -126,6 +126,45 @@ class AdminBranchesService {
     }
   }
 
+  // ── PUT /api/admin/branches/{branchId} ─────────────────────────────────────
+  Future<BranchCardModel> updateBranch(
+      String branchId, CreateBranchRequestModel request) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/branches/$branchId');
+    try {
+      final response = await _client.put(
+        uri,
+        headers: headers,
+        body: jsonEncode(request.toJson()),
+      );
+      _handleStatus(response);
+      return BranchCardModel.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── DELETE /api/admin/branches/{branchId} ───────────────────────────────────
+  Future<void> deleteBranch(String branchId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/branches/$branchId');
+    try {
+      final response = await _client.delete(uri, headers: headers);
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── GET /api/admin/branches/options ────────────────────────────────────────
   // Returns slim list of active branches for form dropdowns
   // (used by Classes, Plans, Staff filters — active branches only).

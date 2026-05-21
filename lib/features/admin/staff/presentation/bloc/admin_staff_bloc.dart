@@ -38,7 +38,7 @@ class AdminStaffBloc extends Bloc<AdminStaffEvent, AdminStaffState> {
 
   // Internal filter state — preserved across action reloads.
   String? _activeSearch;
-  int? _activeBranchId; // extend if branch picker is added to the screen
+  int? _activeBranchId;
 
   Timer? _searchDebounce;
 

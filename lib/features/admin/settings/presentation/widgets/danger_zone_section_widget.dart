@@ -15,6 +15,7 @@
 //   Red circle ! icon header. Two white-bordered action buttons.
 // ─────────────────────────────────────────────────────────────────────────────
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

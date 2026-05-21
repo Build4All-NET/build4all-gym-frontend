@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../data/services/member_profile_service.dart';
 
@@ -423,7 +424,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                     style: TextStyle(color: c.primary)),
               ))
           .toList(),
-      onChanged: (v) => setState(() => _selectedBranchId = v),
+      onChanged: (int? v) => setState(() => _selectedBranchId = v),
     );
   }
 

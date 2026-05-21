@@ -11,6 +11,7 @@ import '../../data/models/create_class_request_model.dart';
 import '../../data/models/update_class_request_model.dart';
 import '../../domain/entities/admin_class_card_entity.dart';
 import '../../domain/entities/class_form_option_item_entity.dart';
+import '../../../../../common/widgets/app_toast.dart';
 import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
 import '../bloc/admin_classes_state.dart';
@@ -260,10 +261,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 if (newType != null && ctx.mounted) {
                   Navigator.of(ctx).pop(newType);
                 } else if (ctx.mounted) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                    content: const Text('Failed to create class type'),
-                    backgroundColor: cs.error,
-                  ));
+                  AppToast.error(ctx, 'Failed to create class type');
                 }
               },
               child: const Text('Create'),
@@ -316,12 +314,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       }
 
       if (r.statusCode == 409 && mounted) {
-        final cs = Theme.of(context).colorScheme;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              '$name already exists — select it from the dropdown'),
-          backgroundColor: const Color(0xFFFF9800), // semantic warning
-        ));
+        AppToast.info(context, '$name already exists — select it from the dropdown');
       }
       return null;
     } catch (_) {
@@ -353,10 +346,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         if (combined.isBefore(now2)) {
           setState(() => _selectedTime = null);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Previously selected time is now in the past — please re-select'),
-              duration: Duration(seconds: 3),
-            ));
+            AppToast.info(context, 'Previously selected time is now in the past — please re-select');
           }
         }
       }
@@ -382,9 +372,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           now.year, now.month, now.day, picked.hour, picked.minute);
       if (combined.isBefore(now)) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Time cannot be in the past'),
-          ));
+          AppToast.info(context, 'Time cannot be in the past');
         }
         return;
       }
@@ -396,8 +384,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   void _onSave() {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedDate == null || _selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select date and time')));
+      AppToast.info(context, 'Please select date and time');
       return;
     }
 
@@ -406,17 +393,14 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         _selectedDate!.year, _selectedDate!.month, _selectedDate!.day,
         _selectedTime!.hour, _selectedTime!.minute);
     if (combined.isBefore(DateTime.now())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Class date and time cannot be in the past')));
+      AppToast.info(context, 'Class date and time cannot be in the past');
       return;
     }
 
     if (_selectedType == null ||
         _selectedTrainer == null ||
         _selectedBranch == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Please fill all required fields')));
+      AppToast.info(context, 'Please fill all required fields');
       return;
     }
 

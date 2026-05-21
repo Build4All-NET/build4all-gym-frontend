@@ -5,14 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 
 class QuickActionsSection extends StatelessWidget {
-  final VoidCallback onAddMember;
+  final VoidCallback onAiAssistant;
   final VoidCallback onRecordPayment;
   final VoidCallback onAddPlan;
   final VoidCallback onSendAnnouncement;
 
   const QuickActionsSection({
     super.key,
-    required this.onAddMember,
+    required this.onAiAssistant,
     required this.onRecordPayment,
     required this.onAddPlan,
     required this.onSendAnnouncement,
@@ -57,11 +57,11 @@ class QuickActionsSection extends StatelessWidget {
           child: Column(
             children: [
               _ActionRow(
-                icon:      Icons.person_add_outlined,
+                icon:      Icons.psychology_outlined,
                 iconColor: accentA,
                 iconBg:    accentA.withOpacity(0.1),
-                label:     'Add Member',
-                onTap:     onAddMember,
+                label:     'AI Assistant',
+                onTap:     onAiAssistant,
                 isFirst:   true,
                 chevronColor: c.border,
                 labelColor:   c.body,

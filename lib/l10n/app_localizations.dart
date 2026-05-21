@@ -1769,6 +1769,18 @@ abstract class AppLocalizations {
   /// **'AI Assistant'**
   String get navAiAssistant;
 
+  /// Admin drawer — Membership Requests item
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Requests'**
+  String get navMembershipRequests;
+
+  /// Admin drawer — Invoices item
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get navInvoices;
+
   /// Admin drawer — Settings item
   ///
   /// In en, this message translates to:

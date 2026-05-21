@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/branches_bloc.dart';
 import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
+import 'add_branch_page.dart';
 
 class BranchDetailPage extends StatefulWidget {
   final String branchId;
@@ -39,8 +40,64 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
               fontWeight: FontWeight.w700,
               fontSize: 18),
         ),
+        actions: [
+          BlocBuilder<BranchesBloc, BranchesState>(
+            buildWhen: (_, curr) => curr is BranchDetailLoaded,
+            builder: (context, state) {
+              if (state is! BranchDetailLoaded) return const SizedBox.shrink();
+              final detail = state.detail;
+              return Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, color: Color(0xFF3B82F6)),
+                    onPressed: () async {
+                      final updated = await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<BranchesBloc>(),
+                            child: AddBranchPage(existing: detail),
+                          ),
+                        ),
+                      );
+                      if (updated == true && context.mounted) {
+                        context.read<BranchesBloc>().add(LoadBranchDetail(widget.branchId));
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                    onPressed: () => _confirmDelete(context, detail.name),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
-      body: BlocBuilder<BranchesBloc, BranchesState>(
+      body: BlocListener<BranchesBloc, BranchesState>(
+        listenWhen: (_, curr) =>
+            curr is BranchDeleted || curr is BranchDeleteError || curr is BranchDeleting,
+        listener: (context, state) {
+          if (state is BranchDeleted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Branch deleted successfully'),
+                backgroundColor: Color(0xFF10B981),
+              ),
+            );
+            Navigator.pop(context, true);
+          } else if (state is BranchDeleteError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.redAccent,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+        },
+        child: BlocBuilder<BranchesBloc, BranchesState>(
         // Guard: only rebuild this page from detail states
         buildWhen: (prev, curr) =>
         curr is BranchDetailLoading ||
@@ -241,6 +298,32 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
           }
           return const SizedBox.shrink();
         },
+      ),
+        ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, String branchName) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Branch'),
+        content: Text(
+            'Are you sure you want to delete "$branchName"?\n\nThis cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<BranchesBloc>().add(DeleteBranch(widget.branchId));
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }

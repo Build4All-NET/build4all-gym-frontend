@@ -13,6 +13,7 @@ class UpdatePlanRequestModel {
   final String? planType;
   final double? price;
   final String? billingCycle;
+  final int? customDurationDays;
   final String? description;
   final String? status;
   final List<int>? branchIds;
@@ -32,6 +33,7 @@ class UpdatePlanRequestModel {
     this.planType,
     this.price,
     this.billingCycle,
+    this.customDurationDays,
     this.description,
     this.status,
     this.branchIds,
@@ -53,6 +55,7 @@ class UpdatePlanRequestModel {
     if (planType != null) map['planType'] = planType;
     if (price != null) map['price'] = price;
     if (billingCycle != null) map['billingCycle'] = billingCycle;
+    if (customDurationDays != null) map['customDurationDays'] = customDurationDays;
     if (description != null) map['description'] = description;
     if (status != null) map['status'] = status;
     if (branchIds != null) map['branchIds'] = branchIds;

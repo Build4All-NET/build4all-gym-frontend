@@ -12,6 +12,7 @@ class AdminPlanListItemModel {
   final String? description;
   final double price;
   final String billingCycle;
+  final int? durationDays;
   final int memberCount;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
@@ -35,6 +36,7 @@ class AdminPlanListItemModel {
     this.description,
     required this.price,
     required this.billingCycle,
+    this.durationDays,
     required this.memberCount,
     this.allowedVisits,
     this.freezeDaysAllowance,
@@ -43,7 +45,7 @@ class AdminPlanListItemModel {
     this.gymAccessStart,
     this.gymAccessEnd,
     required this.branches,
-    this.branchIds = const [],
+    this.branchIds = const <int>[],
     this.promotionText,
     this.promotion,
     this.features = const [],
@@ -60,6 +62,7 @@ class AdminPlanListItemModel {
       description: json['description'] as String?,
       price: (json['price'] as num).toDouble(),
       billingCycle: json['billingCycle'] as String,
+      durationDays: json['durationDays'] as int?,
       memberCount: json['memberCount'] as int,
       allowedVisits: json['allowedVisits'] as int?,
       freezeDaysAllowance: json['freezeDaysAllowance'] as int?,
@@ -98,6 +101,7 @@ class AdminPlanListItemModel {
         description: description,
         price: price,
         billingCycle: billingCycle,
+        durationDays: durationDays,
         memberCount: memberCount,
         allowedVisits: allowedVisits,
         freezeDaysAllowance: freezeDaysAllowance,

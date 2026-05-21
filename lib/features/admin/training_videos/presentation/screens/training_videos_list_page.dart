@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -29,63 +30,78 @@ class _TrainingVideosListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final profile = context.watch<AdminProfileCubit>().state;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Training Videos'),
-        centerTitle: false,
-      ),
-      drawer: AdminNavigationDrawer(
-        gymName:    profile.gymName,
-        branchName: profile.branchName,
-        adminName:  profile.adminName,
-        adminEmail: profile.adminEmail,
-        avatarUrl:  profile.avatarUrl,
-        initialActiveId: 'training_videos',
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: context.read<TrainingVideosBloc>(),
-              child: const AddTrainingVideoPage(),
-            ),
-          ),
-        ).then((_) {
-          // Refresh list after returning from add page
+    return BlocListener<TrainingVideosBloc, TrainingVideosState>(
+      listenWhen: (_, curr) =>
+          curr is DeleteVideoSuccess ||
+          curr is DeleteVideoError ||
+          curr is DeleteVideoLoading,
+      listener: (context, state) {
+        if (state is DeleteVideoSuccess) {
+          AppToast.success(context, 'Video deleted');
           context.read<TrainingVideosBloc>().add(LoadTrainingVideos());
-        }),
-        child: const Icon(Icons.add),
-      ),
-      body: BlocBuilder<TrainingVideosBloc, TrainingVideosState>(
-        buildWhen: (prev, curr) =>
-        curr is TrainingVideosLoading ||
-            curr is TrainingVideosLoaded ||
-            curr is TrainingVideosError,
-        builder: (context, state) {
-          if (state is TrainingVideosLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is TrainingVideosError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(state.message),
-                  TextButton(
-                    onPressed: () =>
-                        context.read<TrainingVideosBloc>().add(LoadTrainingVideos()),
-                    child: const Text('Retry'),
-                  ),
-                ],
+        } else if (state is DeleteVideoError) {
+          AppToast.error(context, state.message);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Training Videos'),
+          centerTitle: false,
+        ),
+        drawer: AdminNavigationDrawer(
+          gymName:    profile.gymName,
+          branchName: profile.branchName,
+          adminName:  profile.adminName,
+          adminEmail: profile.adminEmail,
+          avatarUrl:  profile.avatarUrl,
+          initialActiveId: 'training_videos',
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<TrainingVideosBloc>(),
+                child: const AddTrainingVideoPage(),
               ),
-            );
-          }
-          if (state is TrainingVideosLoaded) {
-            return _LoadedBody(state: state);
-          }
-          return const SizedBox.shrink();
-        },
+            ),
+          ).then((_) {
+            context.read<TrainingVideosBloc>().add(LoadTrainingVideos());
+          }),
+          child: const Icon(Icons.add),
+        ),
+        body: BlocBuilder<TrainingVideosBloc, TrainingVideosState>(
+          buildWhen: (prev, curr) =>
+              curr is TrainingVideosLoading ||
+              curr is TrainingVideosLoaded ||
+              curr is TrainingVideosError ||
+              curr is DeleteVideoLoading,
+          builder: (context, state) {
+            if (state is TrainingVideosLoading || state is DeleteVideoLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is TrainingVideosError) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(state.message),
+                    TextButton(
+                      onPressed: () => context
+                          .read<TrainingVideosBloc>()
+                          .add(LoadTrainingVideos()),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            if (state is TrainingVideosLoaded) {
+              return _LoadedBody(state: state);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
