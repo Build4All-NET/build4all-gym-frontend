@@ -8,6 +8,7 @@ class PlanDetailEntity {
   final String billingCycle;
   final int durationDays;
   final bool isFeatured;
+  final bool isBooked;
   final String? description;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
@@ -24,6 +25,7 @@ class PlanDetailEntity {
     required this.billingCycle,
     required this.durationDays,
     required this.isFeatured,
+    required this.isBooked,
     this.description,
     this.allowedVisits,
     this.freezeDaysAllowance,

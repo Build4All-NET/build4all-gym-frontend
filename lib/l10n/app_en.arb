@@ -671,5 +671,12 @@
   "checkins_blockTitle": "Block Member",
   "checkins_cancel": "Cancel",
   "checkins_blockConfirm": "Block",
-  "checkins_scannerTitle": "Scan Member QR"
+  "checkins_scannerTitle": "Scan Member QR",
+  "sessionDetailBookingClosed": "Booking closed",
+  "booked": "Booked",
+  "noActiveMembership": "No active membership",
+  "membershipStatusCancelled": "cancelled",
+  "editProfileVerifyNewPhone": "Verify new phone number",
+  "editProfilePhoneVerified": "Phone number verified successfully"
+
 }

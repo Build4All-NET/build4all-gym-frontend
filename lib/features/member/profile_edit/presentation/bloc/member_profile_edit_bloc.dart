@@ -2,26 +2,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/resend_email_change_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_password_reset_code_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_phone_verification_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_build4all_profile_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_profile_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_current_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_email_change_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_profile_phone_code_usecase.dart';
 
 import 'member_profile_edit_event.dart';
 import 'member_profile_edit_state.dart';
 
-/// Bloc responsible for the Build4All part of Edit Profile.
-///
-/// It does NOT update Gym backend fields directly.
-/// Gym-only fields such as dateOfBirth/address stay handled by MemberAccountBloc.
-///
-/// Responsibilities here:
-/// - Update Build4All profile: firstName, lastName, username, email, phoneNumber.
-/// - Trigger email verification state when email changes.
-/// - Verify email OTP.
-/// - Check current password before password change.
-/// - Send password reset code.
-/// - Update password through Build4All reset/update-password flow.
 class MemberProfileEditBloc
     extends Bloc<MemberProfileEditEvent, MemberProfileEditState> {
   final UpdateBuild4AllProfileUseCase updateBuild4AllProfile;
@@ -31,6 +21,9 @@ class MemberProfileEditBloc
   final SendProfilePasswordResetCodeUseCase sendPasswordResetCode;
   final UpdateProfilePasswordUseCase updatePassword;
 
+  final SendProfilePhoneVerificationCodeUseCase sendPhoneVerificationCode;
+  final VerifyProfilePhoneCodeUseCase verifyPhoneCode;
+
   MemberProfileEditBloc({
     required this.updateBuild4AllProfile,
     required this.verifyEmailChange,
@@ -38,28 +31,31 @@ class MemberProfileEditBloc
     required this.verifyCurrentPassword,
     required this.sendPasswordResetCode,
     required this.updatePassword,
+    required this.sendPhoneVerificationCode,
+    required this.verifyPhoneCode,
   }) : super(const MemberProfileEditInitial()) {
     on<MemberProfileEditSubmitted>(_onSubmitted);
+
     on<MemberProfileEditEmailCodeSubmitted>(_onEmailCodeSubmitted);
     on<MemberProfileEditEmailCodeResendRequested>(_onEmailCodeResendRequested);
+
     on<MemberProfileEditPasswordCodeSubmitted>(_onPasswordCodeSubmitted);
     on<MemberProfileEditPasswordCodeResendRequested>(
       _onPasswordCodeResendRequested,
     );
+
+    on<MemberProfileEditPhoneCodeSubmitted>(_onPhoneCodeSubmitted);
+    on<MemberProfileEditPhoneCodeResendRequested>(_onPhoneCodeResendRequested);
   }
 
-  /// Handles the main Save button.
+  /// Main save flow.
   ///
-  /// Flow:
-  /// 1. Validate/update Build4All profile fields.
-  /// 2. If password fields are filled:
-  ///    - check current password using Build4All login
-  ///    - send reset code
-  ///    - ask UI to open OTP dialog
-  /// 3. If email changed:
-  ///    - Build4All profile update should trigger email OTP
-  ///    - ask UI to open OTP dialog
-  /// 4. Otherwise emit success.
+  /// Correct behavior:
+  /// - Other profile fields changed only -> save directly.
+  /// - Phone changed -> phone OTP, then save.
+  /// - Password changed -> password OTP, then save.
+  /// - Phone + password changed -> phone OTP, password OTP, then save.
+  /// - Email changed -> save profile first, then email OTP.
   Future<void> _onSubmitted(
       MemberProfileEditSubmitted event,
       Emitter<MemberProfileEditState> emit,
@@ -70,34 +66,55 @@ class MemberProfileEditBloc
       final oldEmail = event.currentEmail.trim();
       final newEmail = event.email.trim();
 
-      final wantsPasswordChange = event.newPassword.trim().isNotEmpty;
+      final oldPhone = _normalizePhone(event.currentPhoneNumber);
+      final newPhone = _normalizePhone(event.phoneNumber);
 
-      // Build4All profile update:
-      // firstName, lastName, username, email, phoneNumber.
+      final emailChanged = newEmail.toLowerCase() != oldEmail.toLowerCase();
+      final phoneChanged = newPhone.isNotEmpty && newPhone != oldPhone;
+
+      final wantsPasswordChange =
+          event.newPassword.trim().isNotEmpty && !event.passwordAlreadyUpdated;
+
+      // 1) PHONE OTP FLOW
       //
-      // If email changed, Build4All should mark it pending and send OTP.
-      await updateBuild4AllProfile(
-        firstName: event.firstName,
-        lastName: event.lastName,
-        username: event.username,
-        email: newEmail,
-        phoneNumber: event.phoneNumber,
-      );
+      // Phone change does NOT require current password.
+      // We send an OTP to the new phone number only.
+      if (phoneChanged && !event.phoneAlreadyVerified) {
+        await sendPhoneVerificationCode(
+          phoneNumber: event.phoneNumber.trim(),
+          ownerProjectLinkId: event.ownerProjectLinkId,
+        );
 
-      // Password change is handled through the reset-code/update-password flow.
-      // We first verify the current password using the Build4All login endpoint.
+        emit(
+          MemberProfileEditPhoneVerificationRequired(
+            newPhoneNumber: event.phoneNumber.trim(),
+            ownerProjectLinkId: event.ownerProjectLinkId,
+          ),
+        );
+        return;
+      }
+
+      // 2) PASSWORD OTP FLOW
+      //
+      // Password change requires:
+      // - current password check
+      // - password reset OTP
+      // - update password after OTP
       if (wantsPasswordChange) {
-        if (event.currentPassword.trim().isEmpty) {
+        final currentPassword = event.currentPassword.trim();
+        final newPassword = event.newPassword.trim();
+
+        if (currentPassword.isEmpty) {
           emit(const MemberProfileEditError('Current password is required.'));
           return;
         }
 
-        if (event.newPassword.trim().isEmpty) {
+        if (newPassword.isEmpty) {
           emit(const MemberProfileEditError('New password is required.'));
           return;
         }
 
-        if (event.newPassword.trim().length < 6) {
+        if (newPassword.length < 6) {
           emit(
             const MemberProfileEditError(
               'New password must be at least 6 characters.',
@@ -106,7 +123,7 @@ class MemberProfileEditBloc
           return;
         }
 
-        if (event.newPassword.trim() == event.currentPassword.trim()) {
+        if (newPassword == currentPassword) {
           emit(
             const MemberProfileEditError(
               'New password must be different from current password.',
@@ -117,7 +134,7 @@ class MemberProfileEditBloc
 
         await verifyCurrentPassword(
           email: oldEmail,
-          currentPassword: event.currentPassword,
+          currentPassword: currentPassword,
           ownerProjectLinkId: event.ownerProjectLinkId,
         );
 
@@ -129,16 +146,28 @@ class MemberProfileEditBloc
         emit(
           MemberProfileEditPasswordVerificationRequired(
             email: oldEmail,
-            newPassword: event.newPassword.trim(),
+            newPassword: newPassword,
             ownerProjectLinkId: event.ownerProjectLinkId,
           ),
         );
         return;
       }
 
-      // If the user changed email, Build4All should have sent a verification code.
-      // The UI opens the same e-commerce-style OTP dialog.
-      if (newEmail.toLowerCase() != oldEmail.toLowerCase()) {
+      // 3) PROFILE UPDATE FLOW
+      //
+      // This runs only after required OTP steps are finished.
+      await updateBuild4AllProfile(
+        firstName: event.firstName,
+        lastName: event.lastName,
+        username: event.username,
+        email: newEmail,
+        phoneNumber: event.phoneNumber,
+      );
+
+      // 4) EMAIL OTP FLOW
+      //
+      // Build4All sends/handles email OTP after profile update.
+      if (emailChanged) {
         emit(MemberProfileEditEmailVerificationRequired(newEmail: newEmail));
         return;
       }
@@ -149,7 +178,6 @@ class MemberProfileEditBloc
     }
   }
 
-  /// Verifies the email change OTP through Build4All.
   Future<void> _onEmailCodeSubmitted(
       MemberProfileEditEmailCodeSubmitted event,
       Emitter<MemberProfileEditState> emit,
@@ -164,7 +192,6 @@ class MemberProfileEditBloc
     }
   }
 
-  /// Resends the email change OTP through Build4All.
   Future<void> _onEmailCodeResendRequested(
       MemberProfileEditEmailCodeResendRequested event,
       Emitter<MemberProfileEditState> emit,
@@ -177,7 +204,6 @@ class MemberProfileEditBloc
     }
   }
 
-  /// Verifies the password reset code and saves the new password in Build4All.
   Future<void> _onPasswordCodeSubmitted(
       MemberProfileEditPasswordCodeSubmitted event,
       Emitter<MemberProfileEditState> emit,
@@ -198,7 +224,6 @@ class MemberProfileEditBloc
     }
   }
 
-  /// Resends the password reset code.
   Future<void> _onPasswordCodeResendRequested(
       MemberProfileEditPasswordCodeResendRequested event,
       Emitter<MemberProfileEditState> emit,
@@ -215,7 +240,75 @@ class MemberProfileEditBloc
     }
   }
 
-  /// Converts raw exceptions into user-readable messages.
+  Future<void> _onPhoneCodeSubmitted(
+      MemberProfileEditPhoneCodeSubmitted event,
+      Emitter<MemberProfileEditState> emit,
+      ) async {
+    emit(const MemberProfileEditLoading());
+
+    try {
+      await verifyPhoneCode(
+        phoneNumber: event.phoneNumber,
+        code: event.code,
+      );
+
+      emit(
+        MemberProfileEditPhoneVerified(
+          phoneNumber: event.phoneNumber,
+        ),
+      );
+    } catch (e) {
+      emit(MemberProfileEditError(_cleanError(e)));
+    }
+  }
+
+  Future<void> _onPhoneCodeResendRequested(
+      MemberProfileEditPhoneCodeResendRequested event,
+      Emitter<MemberProfileEditState> emit,
+      ) async {
+    try {
+      await sendPhoneVerificationCode(
+        phoneNumber: event.phoneNumber,
+        ownerProjectLinkId: event.ownerProjectLinkId,
+      );
+
+      emit(const MemberProfileEditCodeResent());
+    } catch (e) {
+      emit(MemberProfileEditError(_cleanError(e)));
+    }
+  }
+
+  /// Normalizes phone values before comparing old/new.
+  ///
+  /// This prevents false phone changes caused by formatting differences:
+  /// - 71312570
+  /// - 071312570
+  /// - +961 71 312 570
+  /// - +96171312570
+  String _normalizePhone(String value) {
+    var v = value.trim();
+
+    // Remove spaces, dashes, brackets, etc. Keep digits and +.
+    v = v.replaceAll(RegExp(r'[^0-9+]'), '');
+
+    // Lebanese local format: 71312570 -> +96171312570
+    if (!v.startsWith('+') && v.length == 8) {
+      return '+961$v';
+    }
+
+    // Lebanese local format with leading 0: 071312570 -> +96171312570
+    if (!v.startsWith('+') && v.length == 9 && v.startsWith('0')) {
+      return '+961${v.substring(1)}';
+    }
+
+    // International without +: 96171312570 -> +96171312570
+    if (!v.startsWith('+') && v.startsWith('961')) {
+      return '+$v';
+    }
+
+    return v;
+  }
+
   String _cleanError(Object error) {
     final text = error.toString().replaceFirst('Exception: ', '').trim();
     return text.isEmpty ? 'Failed to update profile.' : text;

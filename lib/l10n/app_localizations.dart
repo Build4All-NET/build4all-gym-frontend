@@ -3100,6 +3100,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan Member QR'**
   String get checkins_scannerTitle;
+
+  /// No description provided for @sessionDetailBookingClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking closed'**
+  String get sessionDetailBookingClosed;
+
+  /// No description provided for @booked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get booked;
+
+  /// No description provided for @noActiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'No active membership'**
+  String get noActiveMembership;
+
+  /// No description provided for @membershipStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'cancelled'**
+  String get membershipStatusCancelled;
+
+  /// No description provided for @editProfileVerifyNewPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify new phone number'**
+  String get editProfileVerifyNewPhone;
+
+  /// No description provided for @editProfilePhoneVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number verified successfully'**
+  String get editProfilePhoneVerified;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -10,12 +10,26 @@ class TrainersStarted extends MemberPtEvent {
   const TrainersStarted();
 }
 
+// Dispatched when All chip is tapped.
+// Clears specialty, branch, and favorites filters.
+class TrainersAllFiltersCleared extends MemberPtEvent {
+  const TrainersAllFiltersCleared();
+}
+
 // Dispatched when a specialty chip is tapped.
-// null means "All".
+// null means "All specialties".
 class TrainersSpecialtyFilterChanged extends MemberPtEvent {
   final String? specialty;
 
   const TrainersSpecialtyFilterChanged(this.specialty);
+}
+
+// Dispatched when a branch chip is tapped.
+// null means "All branches".
+class TrainersBranchFilterChanged extends MemberPtEvent {
+  final int? branchId;
+
+  const TrainersBranchFilterChanged(this.branchId);
 }
 
 // Dispatched when favorites chip is tapped.

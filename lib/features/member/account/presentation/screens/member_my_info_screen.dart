@@ -348,34 +348,37 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
             ),
             SizedBox(height: tokens.spacing.xl),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: (_saving || !_canSave) ? null : _saveInfo,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.primary,
-                  disabledBackgroundColor:
-                  colors.primary.withOpacity(0.4),
-                  foregroundColor: colors.onPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(tokens.button.radius),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom + 24,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: (_saving || !_canSave) ? null : _saveInfo,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.primary,
+                    disabledBackgroundColor: colors.primary.withOpacity(0.4),
+                    foregroundColor: colors.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(tokens.button.radius),
+                    ),
                   ),
-                ),
-                child: _saving
-                    ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-                    : Text(
-                  l10n.myInfoSaveChanges,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                  child: _saving
+                      ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : Text(
+                    l10n.myInfoSaveChanges,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

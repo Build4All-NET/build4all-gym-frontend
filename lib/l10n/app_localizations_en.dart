@@ -1554,4 +1554,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_scannerTitle => 'Scan Member QR';
+
+  @override
+  String get sessionDetailBookingClosed => 'Booking closed';
+
+  @override
+  String get booked => 'Booked';
+
+  @override
+  String get noActiveMembership => 'No active membership';
+
+  @override
+  String get membershipStatusCancelled => 'cancelled';
+
+  @override
+  String get editProfileVerifyNewPhone => 'Verify new phone number';
+
+  @override
+  String get editProfilePhoneVerified => 'Phone number verified successfully';
 }

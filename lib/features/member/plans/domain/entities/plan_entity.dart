@@ -19,6 +19,7 @@ class PlanEntity {
   final int durationDays;
   final bool isFeatured;
   final List<String> features;
+  final bool isBooked;
   final ActivePromotionEntity? activePromotion;
   final String? iconName;
 
@@ -31,6 +32,7 @@ class PlanEntity {
     required this.durationDays,
     required this.isFeatured,
     required this.features,
+    required this.isBooked,
     this.activePromotion,
     this.iconName,
   });

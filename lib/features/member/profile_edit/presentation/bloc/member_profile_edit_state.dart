@@ -30,9 +30,6 @@ class MemberProfileEditLoading extends MemberProfileEditState {
 }
 
 /// Build4All profile was updated successfully.
-///
-/// This does not necessarily mean email was verified.
-/// If email changed, Build4All may require OTP verification next.
 class MemberProfileEditSuccess extends MemberProfileEditState {
   final String message;
 
@@ -63,6 +60,43 @@ class MemberProfileEditEmailVerificationRequired
 /// Email OTP was verified successfully.
 class MemberProfileEditEmailVerified extends MemberProfileEditState {
   const MemberProfileEditEmailVerified();
+}
+
+/// Phone changed and Build4All requires OTP verification.
+///
+/// Flow:
+/// 1. User changes phone number.
+/// 2. Bloc sends OTP using Build4All:
+///    POST /api/auth/send-verification
+/// 3. UI opens OTP dialog.
+/// 4. Dialog dispatches MemberProfileEditPhoneCodeSubmitted.
+/// 5. After phone is verified, UI submits again with phoneAlreadyVerified = true.
+class MemberProfileEditPhoneVerificationRequired
+    extends MemberProfileEditState {
+  final String newPhoneNumber;
+  final int ownerProjectLinkId;
+
+  const MemberProfileEditPhoneVerificationRequired({
+    required this.newPhoneNumber,
+    required this.ownerProjectLinkId,
+  });
+
+  @override
+  List<Object?> get props => [
+    newPhoneNumber,
+    ownerProjectLinkId,
+  ];
+}
+/// Phone OTP was verified successfully.
+class MemberProfileEditPhoneVerified extends MemberProfileEditState {
+  final String phoneNumber;
+
+  const MemberProfileEditPhoneVerified({
+    required this.phoneNumber,
+  });
+
+  @override
+  List<Object?> get props => [phoneNumber];
 }
 
 /// Password change requires OTP verification.

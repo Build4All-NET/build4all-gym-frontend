@@ -348,7 +348,9 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                           ),
                         );
                       },
-                      onQrCode: () => _showComingSoon(context),
+                      onQrCode: () {
+                        widget.onTabSelected(2);
+                      },
                       onPaymentHistory: () => _showComingSoon(context),
                     ),
                   ],

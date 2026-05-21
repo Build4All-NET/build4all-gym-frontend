@@ -36,6 +36,8 @@ class MemberProfileEditRepositoryImpl implements MemberProfileEditRepository {
     return _service.resendEmailChangeCode();
   }
 
+  // PASSWORD STEP 1:
+  // Check current password before sending password OTP.
   @override
   Future<void> verifyCurrentPassword({
     required String email,
@@ -49,6 +51,8 @@ class MemberProfileEditRepositoryImpl implements MemberProfileEditRepository {
     );
   }
 
+  // PASSWORD STEP 2:
+  // Send password OTP/reset code.
   @override
   Future<void> sendPasswordResetCode({
     required String email,
@@ -60,6 +64,8 @@ class MemberProfileEditRepositoryImpl implements MemberProfileEditRepository {
     );
   }
 
+  // PASSWORD STEP 3:
+  // Update password after OTP verification.
   @override
   Future<void> updatePassword({
     required String email,
@@ -72,6 +78,33 @@ class MemberProfileEditRepositoryImpl implements MemberProfileEditRepository {
       code: code,
       newPassword: newPassword,
       ownerProjectLinkId: ownerProjectLinkId,
+    );
+  }
+
+  // PHONE STEP 1:
+  // Send OTP to the new phone number.
+
+  @override
+  Future<void> sendPhoneChangeVerificationCode({
+    required String phoneNumber,
+    required int ownerProjectLinkId,
+  }) {
+    return _service.sendPhoneChangeVerificationCode(
+      phoneNumber: phoneNumber,
+      ownerProjectLinkId: ownerProjectLinkId,
+    );
+  }
+
+  // PHONE STEP 2:
+  // Verify OTP sent to the new phone number.
+  @override
+  Future<void> verifyPhoneChangeCode({
+    required String phoneNumber,
+    required String code,
+  }) {
+    return _service.verifyPhoneChangeCode(
+      phoneNumber: phoneNumber,
+      code: code,
     );
   }
 
