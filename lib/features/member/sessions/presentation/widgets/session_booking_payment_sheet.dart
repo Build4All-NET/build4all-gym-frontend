@@ -372,7 +372,7 @@ class _SummaryCard extends StatelessWidget {
               Text(
                 '\$ ${price.toStringAsFixed(2)}',
                 style: tokens.typography.headlineSmall.copyWith(
-                  color: c.primary, fontWeight: FontWeight.w900, fontSize: 22,
+                  color: c.primary, fontWeight: FontWeight.w900, fontSize: 22.0,
                 ),
               ),
             ],

@@ -33,7 +33,9 @@ class SessionBookingsBottomSheet extends StatelessWidget {
         value: context.read<AdminClassesBloc>(),
         child: BlocListener<AdminClassesBloc, AdminClassesState>(
           listener: (lCtx, state) {
-            if (state is SessionBookingsLoaded && state.sessionId == sessionId) {
+            if (state is SessionBookingsLoaded &&
+                state.sessionId == sessionId &&
+                state.wasPaymentConfirmed) {
               AppToast.success(lCtx, 'Payment confirmed');
             }
           },
@@ -185,12 +187,18 @@ class _MemberRow extends StatelessWidget {
         .join();
 
     final isWaitlisted = booking.status == 'WAITLISTED';
+    final isPending    = booking.status == 'PENDING';
 
-    // Derive waitlist/booked colors from theme tokens
-    final chipBg    = isWaitlisted
-        ? c.danger.withOpacity(0.12)
-        : c.success.withOpacity(0.12);
-    final chipText  = isWaitlisted ? c.danger : c.success;
+    final chipBg = isPending
+        ? Colors.orange.withOpacity(0.12)
+        : isWaitlisted
+            ? c.danger.withOpacity(0.12)
+            : c.success.withOpacity(0.12);
+    final chipText = isPending
+        ? Colors.orange.shade800
+        : isWaitlisted
+            ? c.danger
+            : c.success;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -229,7 +237,7 @@ class _MemberRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  booking.phone?.isNotEmpty == true ? booking.phone! : 'No phone',
+                  booking.phone.isNotEmpty ? booking.phone : 'No phone',
                   style: TextStyle(fontSize: 12, color: c.muted),
                 ),
               ],
@@ -248,9 +256,11 @@ class _MemberRow extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  isWaitlisted
-                      ? 'Waitlist ${booking.waitlistPosition ?? ''}'
-                      : 'Booked',
+                  isPending
+                      ? 'Pending'
+                      : isWaitlisted
+                          ? 'Waitlist ${booking.waitlistPosition ?? ''}'
+                          : 'Booked',
                   style: TextStyle(
                     color:      chipText,
                     fontSize:   11,
@@ -258,18 +268,18 @@ class _MemberRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (booking.paymentMethod != null) ...[
+              if (booking.paymentMethod case final pm?) ...[
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: _paymentChipBg(booking.paymentMethod!, booking.paymentStatus, c),
+                    color: _paymentChipBg(pm, booking.paymentStatus, c),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _paymentLabel(booking.paymentMethod!, booking.paymentStatus),
+                    _paymentLabel(pm, booking.paymentStatus),
                     style: TextStyle(
-                      color: _paymentChipText(booking.paymentMethod!, booking.paymentStatus, c),
+                      color: _paymentChipText(pm, booking.paymentStatus, c),
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                     ),

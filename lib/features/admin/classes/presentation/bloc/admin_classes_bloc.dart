@@ -200,7 +200,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
       await _confirmBookingPayment(event.bookingId);
       // Reload bookings for this session to reflect updated payment status
       final bookings = await _getSessionBookings(event.sessionId);
-      emit(SessionBookingsLoaded(event.sessionId, bookings));
+      emit(SessionBookingsLoaded(event.sessionId, bookings, wasPaymentConfirmed: true));
     } catch (e) {
       emit(SessionBookingsError(
         sessionId: event.sessionId,

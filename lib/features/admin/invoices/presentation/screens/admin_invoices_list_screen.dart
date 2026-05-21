@@ -62,7 +62,7 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
           children: [
             AdminAppBar(title: 'Invoices'),
             BlocBuilder<AdminInvoicesListBloc, AdminInvoicesListState>(
-              buildWhen: (prev, curr) => curr is AdminInvoicesListLoaded || curr is AdminInvoicesListLoading,
+              buildWhen: (prev, curr) => curr is AdminInvoicesListLoaded,
               builder: (ctx, state) {
                 final selectedStatus = state is AdminInvoicesListLoaded ? state.selectedStatus : null;
                 final selectedType   = state is AdminInvoicesListLoaded ? state.selectedType   : null;
@@ -73,18 +73,26 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
                       filters:        _statusFilters,
                       selectedStatus: selectedStatus,
                       tokens:         tokens,
-                      onSelect:       (s) => ctx.read<AdminInvoicesListBloc>().add(
-                        FilterInvoicesEvent(status: s, type: selectedType),
-                      ),
+                      onSelect: (s) {
+                        final cur = ctx.read<AdminInvoicesListBloc>().state;
+                        final curType = cur is AdminInvoicesListLoaded ? cur.selectedType : null;
+                        ctx.read<AdminInvoicesListBloc>().add(
+                          FilterInvoicesEvent(status: s, type: curType),
+                        );
+                      },
                     ),
                     const SizedBox(height: 6),
                     _TypeFilterChipsRow(
                       filters:      _typeFilters,
                       selectedType: selectedType,
                       tokens:       tokens,
-                      onSelect:     (t) => ctx.read<AdminInvoicesListBloc>().add(
-                        FilterInvoicesEvent(status: selectedStatus, type: t),
-                      ),
+                      onSelect: (t) {
+                        final cur = ctx.read<AdminInvoicesListBloc>().state;
+                        final curStatus = cur is AdminInvoicesListLoaded ? cur.selectedStatus : null;
+                        ctx.read<AdminInvoicesListBloc>().add(
+                          FilterInvoicesEvent(status: curStatus, type: t),
+                        );
+                      },
                     ),
                     const SizedBox(height: 4),
                   ],
@@ -395,51 +403,69 @@ class _InvoiceSummaryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Invoice number — full width, never wraps
+                  Text(
+                    invoice.invoiceNumber,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.bodyMedium.copyWith(
+                        color: c.label, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 4),
+                  // Member name + badges on same row
                   Row(
                     children: [
                       Expanded(
-                        child: Text(invoice.invoiceNumber,
-                            style: t.bodyMedium.copyWith(
-                                color: c.label,
-                                fontWeight: FontWeight.w800)),
+                        child: Text(
+                          invoice.memberName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: t.bodySmall.copyWith(color: c.muted),
+                        ),
                       ),
-                      if (invoice.type != null)
+                      if (invoice.type != null) ...[
+                        const SizedBox(width: 4),
                         Container(
-                          margin: const EdgeInsets.only(right: 4),
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: _typeColor(invoice.type!).withValues(alpha: 0.10),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          child: Text(invoice.type!.toUpperCase(),
-                              style: t.bodySmall.copyWith(
-                                  color: _typeColor(invoice.type!),
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 10.0)),
+                          child: Text(
+                            invoice.type!.toUpperCase(),
+                            style: t.bodySmall.copyWith(
+                                color: _typeColor(invoice.type!),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 9.5),
+                          ),
                         ),
+                      ],
+                      const SizedBox(width: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: statusColor.withValues(alpha: 0.10),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Text(invoice.status.toUpperCase(),
-                            style: t.bodySmall.copyWith(
-                                color: statusColor,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10.0)),
+                        child: Text(
+                          invoice.status.toUpperCase(),
+                          style: t.bodySmall.copyWith(
+                              color: statusColor,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 9.5),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(invoice.memberName,
-                      style: t.bodySmall.copyWith(color: c.muted)),
+                  const SizedBox(height: 3),
+                  // Date + payment method
                   Row(
                     children: [
                       Expanded(
-                        child: Text(dateStr,
-                            style: t.bodySmall.copyWith(color: c.muted, fontSize: 11.0)),
+                        child: Text(
+                          dateStr,
+                          style: t.bodySmall.copyWith(color: c.muted, fontSize: 11.0),
+                        ),
                       ),
                       if (invoice.paymentMethod != null)
                         Row(
@@ -449,7 +475,7 @@ class _InvoiceSummaryCard extends StatelessWidget {
                             const SizedBox(width: 3),
                             Text(
                               invoice.paymentMethod!.toUpperCase(),
-                              style: t.bodySmall.copyWith(color: c.muted, fontSize: 10),
+                              style: t.bodySmall.copyWith(color: c.muted, fontSize: 10.0),
                             ),
                           ],
                         ),

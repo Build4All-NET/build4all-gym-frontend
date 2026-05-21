@@ -126,7 +126,17 @@
       "Bash(xargs grep -A3 \"enum MembershipStatus\\\\|enum PaymentStatus\")",
       "Bash(xargs grep -n \"GrantedAuthority\\\\|SimpleGrantedAuthority\\\\|role\\\\|authority\\\\|MEMBER\\\\|ROLE_\")",
       "Bash(xargs grep -l \"gym-role\\\\|gymRole\\\\|gym_role\")",
-      "Bash(xargs grep -l \"AdminTokenStore\\\\|AuthTokenStore\")"
+      "Bash(xargs grep -l \"AdminTokenStore\\\\|AuthTokenStore\")",
+      "Bash(Get-ChildItem -Path . -Directory)",
+      "Bash(grep -i \"\\\\.dart$\")",
+      "Bash(xargs grep -l \"invoice\\\\|Invoice\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(xargs grep -l \"paymentMethod\\\\|PaymentMethod\\\\|createPaymentIntent\\\\|stripe\\\\|Stripe\")",
+      "Bash(xargs grep -l \"PaymentOrchestratorService\")",
+      "Bash(xargs grep -l \"login\\\\|LoginService\\\\|LoginController\")",
+      "Bash(xargs grep -l \"loginWithPhone\\\\|loginWithEmail\\\\|/api/auth\\\\|AuthController\")",
+      "Bash(findstr /C:\"sectionCoreOwner\" /C:\"sectionOperationsReception\" /C:\"sectionTrainingPt\")"
     ]
   }
 }
