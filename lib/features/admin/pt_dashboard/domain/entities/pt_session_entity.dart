@@ -79,6 +79,7 @@ class PtSessionEntity {
 
   int get durationMinutes => endTime.difference(startTime).inMinutes;
 
+  bool get isRequested => status == 'REQUESTED';
   bool get isScheduled => status == 'SCHEDULED';
   bool get isCompleted => status == 'COMPLETED';
   bool get isCancelled => status == 'CANCELLED';

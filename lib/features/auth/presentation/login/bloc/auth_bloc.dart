@@ -183,6 +183,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Must save auth_user_id because Build4All profile feature calls:
       // GET /api/users/{userId}
       if (result.userOk) {
+        // Reset any stale admin role so drawer doesn't treat this user as owner.
+        await const AdminTokenStore().save(token: '', role: 'user');
+
         await _saveUserSession(
           token: result.userToken!,
           user: result.userEntity!,

@@ -53,6 +53,7 @@ abstract class MemberPtRepository {
   getWeeklyAvailableSlots({
     required int trainerId,
     required String day,
+    int? packageId,
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -111,5 +112,12 @@ abstract class MemberPtRepository {
   createPackageBooking({
     required int packageId,
     required List<Map<String, dynamic>> weeklySchedule,
+    String? paymentMethod,
   });
+
+  Future<({PtPackageBookingResponseEntity? data, Failure? failure})>
+  confirmPackagePayment(int bookingId);
+
+  Future<({PtPackageBookingResponseEntity? data, Failure? failure})>
+  checkPackagePaymentStatus(int bookingId);
 }

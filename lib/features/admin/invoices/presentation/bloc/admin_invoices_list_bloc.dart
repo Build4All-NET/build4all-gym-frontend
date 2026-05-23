@@ -24,8 +24,8 @@ class AdminInvoicesListBloc
   ) async {
     emit(AdminInvoicesListLoading());
     try {
-      final invoices = await _listInvoices(status: event.status);
-      emit(AdminInvoicesListLoaded(invoices, selectedStatus: event.status));
+      final invoices = await _listInvoices(status: event.status, type: event.type);
+      emit(AdminInvoicesListLoaded(invoices, selectedStatus: event.status, selectedType: event.type));
     } catch (e) {
       emit(AdminInvoicesListError(_extractMessage(e)));
     }
@@ -37,8 +37,8 @@ class AdminInvoicesListBloc
   ) async {
     emit(AdminInvoicesListLoading());
     try {
-      final invoices = await _listInvoices(status: event.status);
-      emit(AdminInvoicesListLoaded(invoices, selectedStatus: event.status));
+      final invoices = await _listInvoices(status: event.status, type: event.type);
+      emit(AdminInvoicesListLoaded(invoices, selectedStatus: event.status, selectedType: event.type));
     } catch (e) {
       emit(AdminInvoicesListError(_extractMessage(e)));
     }

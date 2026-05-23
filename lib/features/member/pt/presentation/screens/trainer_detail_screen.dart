@@ -9,9 +9,12 @@ import '../../data/services/member_pt_service.dart';
 
 import '../../domain/entities/trainer_detail_entity.dart';
 
+import '../../domain/usecases/check_package_payment_status_usecase.dart';
+import '../../domain/usecases/confirm_package_payment_usecase.dart';
 import '../../domain/usecases/create_package_booking_usecase.dart';
 import '../../domain/usecases/get_trainer_detail_usecase.dart';
 import '../../domain/usecases/get_weekly_available_slots_usecase.dart';
+import '../../domain/usecases/request_booking_usecase.dart';
 import '../../domain/usecases/toggle_favorite_trainer_usecase.dart';
 
 import '../bloc/pt_package_booking_bloc.dart';
@@ -64,24 +67,13 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
   /// Toggles favorite status for the trainer.
   late final ToggleFavoriteTrainerUseCase _toggleFavoriteTrainerUseCase;
 
-  /// Creates a package booking.
   late final CreatePackageBookingUseCase _createPackageBookingUseCase;
-
-  /// Loads recurring weekly available slots from trainer availability.
-  ///
-  /// Used when the member selects a weekday in package booking.
+  late final ConfirmPackagePaymentUseCase _confirmPackagePaymentUseCase;
+  late final CheckPackagePaymentStatusUseCase _checkPackagePaymentStatusUseCase;
   late final GetWeeklyAvailableSlotsUseCase _getWeeklyAvailableSlotsUseCase;
-
-  /// Bloc for package booking state.
-  ///
-  /// Stores:
-  /// - trainerId
-  /// - packages
-  /// - selected package
-  /// - selected weekly schedule
-  /// - available slots per selected day
-  /// - booking submit state
+  late final RequestBookingUseCase _requestBookingUseCase;
   late final PtPackageBookingBloc _packageBookingBloc;
+  late final MemberPtService _memberPtService;
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -95,24 +87,23 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
   void initState() {
     super.initState();
 
-    /// Build service/repository/usecases manually.
-    final service = MemberPtService();
-    final repository = MemberPtRepositoryImpl(service: service);
+    _memberPtService = MemberPtService();
+    final repository = MemberPtRepositoryImpl(service: _memberPtService);
 
     _getTrainerDetailUseCase = GetTrainerDetailUseCase(repository);
     _toggleFavoriteTrainerUseCase = ToggleFavoriteTrainerUseCase(repository);
     _createPackageBookingUseCase = CreatePackageBookingUseCase(repository);
-    _getWeeklyAvailableSlotsUseCase =
-        GetWeeklyAvailableSlotsUseCase(repository);
+    _confirmPackagePaymentUseCase = ConfirmPackagePaymentUseCase(repository);
+    _checkPackagePaymentStatusUseCase = CheckPackagePaymentStatusUseCase(repository);
+    _getWeeklyAvailableSlotsUseCase = GetWeeklyAvailableSlotsUseCase(repository);
+    _requestBookingUseCase = RequestBookingUseCase(repository);
 
-    /// Package booking bloc.
-    ///
-    /// It needs both:
-    /// - createPackageBookingUseCase: to confirm booking
-    /// - getWeeklyAvailableSlotsUseCase: to load PT availability per weekday
     _packageBookingBloc = PtPackageBookingBloc(
       createPackageBookingUseCase: _createPackageBookingUseCase,
+      confirmPackagePaymentUseCase: _confirmPackagePaymentUseCase,
+      checkPackagePaymentStatusUseCase: _checkPackagePaymentStatusUseCase,
       getWeeklyAvailableSlotsUseCase: _getWeeklyAvailableSlotsUseCase,
+      requestBookingUseCase: _requestBookingUseCase,
     );
 
     _loadTrainerDetail();
@@ -173,6 +164,7 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
       PtPackageBookingStarted(
         trainerId: widget.trainerId,
         packages: result.data!.packages,
+        availableDays: result.data!.availableDays,
       ),
     );
   }
@@ -255,6 +247,7 @@ class _TrainerDetailScreenState extends State<TrainerDetailScreen> {
             trainer: _trainer!,
             isFavoriteLoading: _isFavoriteLoading,
             onFavoritePressed: _toggleFavorite,
+            memberPtService: _memberPtService,
           ),
         ),
       ),
@@ -274,11 +267,13 @@ class _TrainerDetailBody extends StatelessWidget {
   final TrainerDetailEntity trainer;
   final bool isFavoriteLoading;
   final VoidCallback onFavoritePressed;
+  final MemberPtService memberPtService;
 
   const _TrainerDetailBody({
     required this.trainer,
     required this.isFavoriteLoading,
     required this.onFavoritePressed,
+    required this.memberPtService,
   });
 
   @override
@@ -336,11 +331,11 @@ class _TrainerDetailBody extends StatelessWidget {
           ],
         ),
 
-        const Positioned(
+        Positioned(
           bottom: 0,
           left: 0,
           right: 0,
-          child: PtPackageConfirmBarWidget(),
+          child: PtPackageConfirmBarWidget(memberPtService: memberPtService),
         ),
       ],
     );

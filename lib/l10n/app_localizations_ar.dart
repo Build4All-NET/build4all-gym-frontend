@@ -924,6 +924,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navTrainingVideos => 'فيديوهات التدريب';
 
   @override
+  String get navPtPackageBookings => 'مدفوعات باقات PT';
+
+  @override
   String get accountProfileUpdateSuccess => 'تم تحديث الملف الشخصي بنجاح';
 
   @override
@@ -1181,6 +1184,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
+
+  @override
+  String get ptRequestTimePickerHint => 'اطلب وقتاً من المدرب';
+
+  @override
+  String get ptTimeRequestSuccess => 'تم إرسال طلب الوقت إلى المدرب.';
+
+  @override
+  String get ptTimeRequestFailed => 'تعذر إرسال طلب الوقت. يرجى المحاولة مجدداً.';
 
   @override
   String get ptBookingRequestSuccess => 'تم إرسال الطلب إلى المدرب. بانتظار الموافقة.';

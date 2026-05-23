@@ -8,7 +8,8 @@ class AdminInvoicesListLoading  extends AdminInvoicesListState {}
 class AdminInvoicesListLoaded extends AdminInvoicesListState {
   final List<AdminInvoiceSummaryEntity> invoices;
   final String? selectedStatus;
-  AdminInvoicesListLoaded(this.invoices, {this.selectedStatus});
+  final String? selectedType;
+  AdminInvoicesListLoaded(this.invoices, {this.selectedStatus, this.selectedType});
 }
 
 class AdminInvoicesListError extends AdminInvoicesListState {

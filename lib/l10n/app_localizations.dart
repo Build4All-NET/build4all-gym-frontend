@@ -1877,6 +1877,9 @@ abstract class AppLocalizations {
   /// **'Training Videos'**
   String get navTrainingVideos;
 
+  /// No description provided for @navPtPackageBookings.
+  String get navPtPackageBookings;
+
   /// No description provided for @accountProfileUpdateSuccess.
   ///
   /// In en, this message translates to:
@@ -2362,6 +2365,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
+
+  /// No description provided for @ptRequestTimePickerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a time from the trainer'**
+  String get ptRequestTimePickerHint;
+
+  /// No description provided for @ptTimeRequestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your time request has been sent to the trainer.'**
+  String get ptTimeRequestSuccess;
+
+  /// No description provided for @ptTimeRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send time request. Please try again.'**
+  String get ptTimeRequestFailed;
 
   /// No description provided for @ptBookingRequestSuccess.
   ///

@@ -1,5 +1,6 @@
 // lib/features/admin/navigation/presentation/widgets/admin_navigation_drawer.dart
 
+import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -89,6 +90,10 @@ class _DrawerBody extends StatelessWidget {
     debugPrint('🎯 Drawer → role: ${profile.role}, gymRoles: ${profile.gymRoles}, isTrainer: ${profile.isTrainerRole}');
 
     // ── Filter sections by role ──────────────────────────────────────────────
+
+    // isAdminRole (OWNER/ADMIN/MANAGER JWT role) → all sections.
+    // Staff gym roles (TRAINER / RECEPTION) → only their section(s)
+
     final visibleSections = adminDrawerSections.where((section) {
       if (profile.isAdminRole) return true;
       if (section.labelKey == 'sectionCoreOwner') return false;

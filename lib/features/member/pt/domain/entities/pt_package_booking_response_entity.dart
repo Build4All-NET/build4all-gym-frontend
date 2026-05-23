@@ -1,16 +1,3 @@
-/// Domain entity returned after a PT package booking is created.
-///
-/// Backend example:
-/// {
-///   "id": 1,
-///   "branchId": 1,
-///   "packageId": 1,
-///   "selectedDays": "[{\"day\":\"Sunday\",\"date\":\"2026-05-10\"}]",
-///   "selectedTime": "17:00",
-///   "totalAmount": 140.00,
-///   "status": "PENDING",
-///   "createdAt": "2026-05-09T12:00:00"
-/// }
 class PtPackageBookingResponseEntity {
   final int id;
   final int? branchId;
@@ -21,6 +8,15 @@ class PtPackageBookingResponseEntity {
   final String status;
   final String? createdAt;
 
+  // Payment fields
+  final int? invoiceId;
+  final int? transactionId;
+  final String? paymentMethod;
+  final String? paymentStatus;
+  final String? clientSecret;
+  final String? publishableKey;
+  final String? redirectUrl;
+
   const PtPackageBookingResponseEntity({
     required this.id,
     this.branchId,
@@ -30,5 +26,20 @@ class PtPackageBookingResponseEntity {
     required this.totalAmount,
     required this.status,
     this.createdAt,
+    this.invoiceId,
+    this.transactionId,
+    this.paymentMethod,
+    this.paymentStatus,
+    this.clientSecret,
+    this.publishableKey,
+    this.redirectUrl,
   });
+
+  bool get isPending =>
+      paymentStatus?.toUpperCase() == 'PENDING' ||
+      status.toUpperCase() == 'PENDING';
+  bool get isStripe   => paymentMethod?.toUpperCase() == 'STRIPE';
+  bool get isRedirect =>
+      paymentMethod?.toUpperCase() == 'PAYPAL' ||
+      paymentMethod?.toUpperCase() == 'MPGS';
 }

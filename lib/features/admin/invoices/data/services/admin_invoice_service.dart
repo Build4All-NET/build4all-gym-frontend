@@ -17,9 +17,11 @@ class AdminInvoiceService {
     int    page   = 0,
     int    size   = 50,
     String? status,
+    String? type,
   }) async {
     final Map<String, dynamic> params = {'page': page, 'size': size};
     if (status != null && status.isNotEmpty) params['status'] = status;
+    if (type   != null && type.isNotEmpty)   params['type']   = type;
     final response = await _dio.get(
       _url('/api/admin/invoices'),
       queryParameters: params,

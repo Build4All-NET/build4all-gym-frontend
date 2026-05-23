@@ -93,6 +93,7 @@ class PtPackageBookingSectionWidget extends StatelessWidget {
             PtPackageDaysSelectorWidget(
               weeklySchedule: state.weeklySchedule,
               selectedPackage: state.selectedPackage,
+              availableDays: state.availableDays,
             ),
 
             SizedBox(height: tokens.spacing.xl),

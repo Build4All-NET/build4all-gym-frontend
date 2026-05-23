@@ -84,35 +84,145 @@ class PtPackageTimeSelectorWidget extends StatelessWidget {
                   ),
                 )
               else if (slots.isEmpty)
-                  Text(
-                    l10n.ptPackageNoAvailableSlots,
-                    textAlign: TextAlign.start,
-                    style: tokens.typography.bodySmall.copyWith(
-                      color: tokens.colors.muted,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  )
-                else
-                  Wrap(
-                    spacing: tokens.spacing.sm,
-                    runSpacing: tokens.spacing.sm,
-                    children: slots.map((slot) {
-                      final time = _formatSlotTime(slot);
-                      final selected = selectedTime == time;
-
-                      return _TimeChip(
-                        time: time,
-                        selected: selected,
-                        onTap: () {
-                          context.read<PtPackageBookingBloc>().add(
-                            PtPackageTimeSelected(
-                              day: dayCode,
-                              time: time,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.ptPackageNoAvailableSlots,
+                        textAlign: TextAlign.start,
+                        style: tokens.typography.bodySmall.copyWith(
+                          color: tokens.colors.muted,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: tokens.spacing.sm),
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: const TimeOfDay(hour: 9, minute: 0),
+                            helpText: l10n.ptRequestTimePickerHint,
+                            builder: (ctx, child) => Directionality(
+                              textDirection: Directionality.of(context),
+                              child: child!,
                             ),
                           );
+                          if (time != null && context.mounted) {
+                            context.read<PtPackageBookingBloc>().add(
+                              PtPackageTimeRequestSubmitted(
+                                day: dayCode,
+                                hour: time.hour,
+                                minute: time.minute,
+                              ),
+                            );
+                          }
                         },
-                      );
-                    }).toList(),
+                        icon: Icon(
+                          Icons.access_time_rounded,
+                          size: 16.0,
+                          color: tokens.colors.primary,
+                        ),
+                        label: Text(
+                          l10n.ptBookingRequestThisTime,
+                          style: tokens.typography.bodySmall.copyWith(
+                            color: tokens.colors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: tokens.colors.primary.withOpacity(0.5),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 8.0,
+                          ),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: tokens.spacing.sm,
+                        runSpacing: tokens.spacing.sm,
+                        children: slots.map((slot) {
+                          final time = _formatSlotTime(slot);
+                          final selected = selectedTime == time;
+
+                          return _TimeChip(
+                            time: time,
+                            selected: selected,
+                            onTap: () {
+                              context.read<PtPackageBookingBloc>().add(
+                                PtPackageTimeSelected(
+                                  day: dayCode,
+                                  time: time,
+                                ),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+
+                      SizedBox(height: tokens.spacing.sm),
+
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: const TimeOfDay(hour: 9, minute: 0),
+                            helpText: l10n.ptRequestTimePickerHint,
+                            builder: (ctx, child) => Directionality(
+                              textDirection: Directionality.of(context),
+                              child: child!,
+                            ),
+                          );
+                          if (time != null && context.mounted) {
+                            context.read<PtPackageBookingBloc>().add(
+                              PtPackageTimeRequestSubmitted(
+                                day: dayCode,
+                                hour: time.hour,
+                                minute: time.minute,
+                              ),
+                            );
+                          }
+                        },
+                        icon: Icon(
+                          Icons.add_alarm_rounded,
+                          size: 16.0,
+                          color: tokens.colors.primary,
+                        ),
+                        label: Text(
+                          l10n.ptBookingRequestThisTime,
+                          style: tokens.typography.bodySmall.copyWith(
+                            color: tokens.colors.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: tokens.colors.primary.withOpacity(0.5),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 8.0,
+                          ),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
                   ),
             ],
           ),

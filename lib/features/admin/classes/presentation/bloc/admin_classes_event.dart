@@ -106,3 +106,25 @@ class SessionBookingsRequested extends AdminClassesEvent {
   @override
   List<Object?> get props => [sessionId];
 }
+
+// ── ConfirmBookingPaymentRequested ─────────────────────────────────────────
+// Dispatched when admin taps "Confirm Payment" on a cash-pending booking.
+class ConfirmBookingPaymentRequested extends AdminClassesEvent {
+  final int bookingId;
+  final int sessionId;
+  const ConfirmBookingPaymentRequested({required this.bookingId, required this.sessionId});
+
+  @override
+  List<Object?> get props => [bookingId, sessionId];
+}
+
+// ── RejectBookingRequested ─────────────────────────────────────────────────
+// Dispatched when admin taps "Reject" on a pending booking.
+class RejectBookingRequested extends AdminClassesEvent {
+  final int bookingId;
+  final int sessionId;
+  const RejectBookingRequested({required this.bookingId, required this.sessionId});
+
+  @override
+  List<Object?> get props => [bookingId, sessionId];
+}

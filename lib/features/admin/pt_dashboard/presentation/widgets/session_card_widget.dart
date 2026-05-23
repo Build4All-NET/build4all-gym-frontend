@@ -166,6 +166,39 @@ class SessionCardWidget extends StatelessWidget {
                   ),
                 ],
 
+                // ── Accept / Decline buttons (REQUESTED only) ───────────────
+                if (session.isRequested) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (isLoading)
+                        const SizedBox(
+                          width: 24, height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      else ...[
+                        _ActionButton(
+                          label:    'Decline',
+                          icon:     Icons.close_rounded,
+                          color:    const Color(0xFFEF4444),
+                          outlined: true,
+                          onTap:    () => _confirmDecline(context),
+                        ),
+                        const SizedBox(width: 8),
+                        _ActionButton(
+                          label: 'Accept',
+                          icon:  Icons.check_rounded,
+                          color: const Color(0xFF22C55E),
+                          onTap: () => context.read<TrainerPtSessionsBloc>().add(
+                            PtSessionAcceptRequested(sessionId: session.ptSessionId),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+
                 // ── Payment badge + action buttons (SCHEDULED only) ─────────
                 if (session.isScheduled) ...[
                   const SizedBox(height: 12),
@@ -214,6 +247,37 @@ class SessionCardWidget extends StatelessWidget {
   void _updateStatus(BuildContext context, int sessionId, String status) {
     context.read<TrainerPtSessionsBloc>().add(
         PtSessionStatusUpdateRequested(sessionId: sessionId, status: status));
+  }
+
+  void _confirmDecline(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title:   const Text('Decline Request'),
+        content: const Text('Are you sure you want to decline this session request?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Keep'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<TrainerPtSessionsBloc>().add(
+                PtSessionDeclineRequested(sessionId: session.ptSessionId),
+              );
+            },
+            child: const Text('Decline'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _confirmCancel(BuildContext context) {
@@ -285,6 +349,8 @@ class _StatusBadge extends StatelessWidget {
     Color  fg;
     String label;
     switch (status) {
+      case 'REQUESTED':
+        bg = const Color(0xFFFFF7ED); fg = const Color(0xFFEA580C); label = 'requested'; break;
       case 'COMPLETED':
         bg = const Color(0xFFD1FAE5); fg = const Color(0xFF059669); label = 'completed'; break;
       case 'CANCELLED':

@@ -4,28 +4,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
+import '../../data/services/member_pt_service.dart';
 import '../bloc/pt_package_booking_bloc.dart';
-import '../bloc/pt_package_booking_event.dart';
 import '../bloc/pt_package_booking_state.dart';
+import 'pt_package_payment_sheet.dart';
 
-/// Sticky bottom confirm bar for PT package booking.
-///
-/// Responsibilities:
-/// 1. Disable button until package + days + time are selected.
-/// 2. Show loading spinner while booking request is running.
-/// 3. Dispatch PtPackageBookingConfirmRequested.
-/// 4. Show success/error SnackBar.
-///
-/// Flow:
-/// User taps confirm
-/// -> PtPackageBookingConfirmRequested
-/// -> PtPackageBookingBloc
-/// -> CreatePackageBookingUseCase
-/// -> Repository
-/// -> Service
-/// -> POST /api/member/pt-package-bookings
 class PtPackageConfirmBarWidget extends StatelessWidget {
-  const PtPackageConfirmBarWidget({super.key});
+  final MemberPtService memberPtService;
+
+  const PtPackageConfirmBarWidget({
+    super.key,
+    required this.memberPtService,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +23,21 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
       listener: (context, state) {
         final l10n = AppLocalizations.of(context)!;
 
-        // Booking succeeded.
-        if (state is PtPackageBookingSuccess) {
+        if (state is PtPackageTimeRequestSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.ptPackageBookingSuccess),
+              content: Text(l10n.ptTimeRequestSuccess),
               behavior: SnackBarBehavior.floating,
             ),
           );
         }
 
-        // Booking failed.
-        if (state is PtPackageBookingError) {
+        if (state is PtPackageTimeRequestError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.message == 'PACKAGE_BOOKING_FAILED'
-                    ? l10n.ptPackageBookingFailed
+                state.message == 'ptRequestTimeFailed'
+                    ? l10n.ptTimeRequestFailed
                     : state.message,
               ),
               behavior: SnackBarBehavior.floating,
@@ -61,7 +49,6 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
         final l10n = AppLocalizations.of(context)!;
         final tokens = context.read<ThemeCubit>().state.tokens;
 
-        // Bloc not ready yet, so no button.
         if (state is! PtPackageBookingLoaded) {
           return const SizedBox.shrink();
         }
@@ -87,11 +74,7 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
               height: tokens.button.height,
               child: ElevatedButton(
                 onPressed: state.canConfirm && !isSubmitting
-                    ? () {
-                  context.read<PtPackageBookingBloc>().add(
-                    const PtPackageBookingConfirmRequested(),
-                  );
-                }
+                    ? () => _openPaymentSheet(context, state)
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: tokens.colors.primary,
@@ -105,25 +88,37 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
                 ),
                 child: isSubmitting
                     ? SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: tokens.colors.onPrimary,
-                  ),
-                )
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: tokens.colors.onPrimary,
+                        ),
+                      )
                     : Text(
-                  l10n.ptPackageConfirmBooking,
-                  style: tokens.typography.bodyMedium.copyWith(
-                    color: tokens.colors.onPrimary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
+                        l10n.ptPackageConfirmBooking,
+                        style: tokens.typography.bodyMedium.copyWith(
+                          color: tokens.colors.onPrimary,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  void _openPaymentSheet(BuildContext context, PtPackageBookingLoaded state) {
+    final package = state.selectedPackage;
+    if (package == null) return;
+
+    PtPackagePaymentSheet.show(
+      context,
+      totalAmount: package.finalPrice,
+      packageName: package.name,
+      memberPtService: memberPtService,
     );
   }
 }

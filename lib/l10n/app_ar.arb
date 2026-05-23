@@ -422,6 +422,8 @@
   "@navPtSessions": { "description": "Drawer nav item" },
   "navTrainingVideos": "فيديوهات التدريب",
   "@navTrainingVideos": { "description": "Drawer nav item" },
+  "navPtPackageBookings": "مدفوعات باقات PT",
+  "@navPtPackageBookings": { "description": "Drawer nav item — pending cash PT package bookings" },
 
   "accountProfileUpdateSuccess": "تم تحديث الملف الشخصي بنجاح",
   "accountStatExercises": "التمارين",
@@ -523,6 +525,9 @@
   "@ptPackageMaxDaysReached": { "placeholders": { "max": { "type": "int" } } },
   "ptPackageNoAvailableSlots": "لا توجد أوقات متاحة",
   "ptWeeklySlotsFailed": "تعذر تحميل الأوقات المتاحة",
+  "ptRequestTimePickerHint": "اطلب وقتاً من المدرب",
+  "ptTimeRequestSuccess": "تم إرسال طلب الوقت إلى المدرب.",
+  "ptTimeRequestFailed": "تعذر إرسال طلب الوقت. يرجى المحاولة مجدداً.",
   "ptBookingRequestSuccess": "تم إرسال الطلب إلى المدرب. بانتظار الموافقة.",
   "ptBookingRequestThisTime": "طلب هذا الوقت",
   "ptBookingBookSession": "حجز الجلسة",

@@ -25,6 +25,8 @@ import '../features/admin/classes/domain/usecases/cancel_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/create_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_class_form_options_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_classes_by_date_usecase.dart';
+import '../features/admin/classes/domain/usecases/confirm_booking_payment_usecase.dart';
+import '../features/admin/classes/domain/usecases/reject_booking_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
 import '../features/admin/classes/domain/usecases/reactivate_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
@@ -91,6 +93,7 @@ import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.
 import '../features/gym_profile/presentation/screens/role_check_screen.dart';
 import '../features/shell/presentation/screens/main_shell.dart';
 import '../features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart';
+import '../features/admin/pt_dashboard/presentation/screens/admin_pt_package_bookings_screen.dart';
 
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
@@ -193,8 +196,9 @@ class AppRouter {
   static const String adminNotifications = '/admin/notifications';
 
   // ─── Admin: Training / PT ─────────────────────────────────────────────────
-  static const String adminPtSessions     = '/admin/pt-services';
-  static const String adminTrainingVideos = '/admin/training-videos';
+  static const String adminPtSessions            = '/admin/pt-services';
+  static const String adminPtPackageBookings     = '/admin/pt-package-bookings';
+  static const String adminTrainingVideos        = '/admin/training-videos';
 
   // ─── Admin: Settings ──────────────────────────────────────────────────────
   static const String adminMembershipRequests = '/admin/membership-requests';
@@ -579,13 +583,15 @@ class AppRouter {
                 BlocProvider(create: (_) => BranchCubit()..loadBranches()),
                 BlocProvider(
                   create: (_) => AdminClassesBloc(
-                    getClassesByDate:    GetClassesByDateUseCase(classesRepo),
-                    getClassFormOptions: GetClassFormOptionsUseCase(classesRepo),
-                    createClass:         CreateClassUseCase(classesRepo),
-                    updateClass:         UpdateClassUseCase(classesRepo),
-                    cancelClass:         CancelClassUseCase(classesRepo),
-                    reactivateClass:     ReactivateClassUseCase(classesRepo),
-                    getSessionBookings:  GetSessionBookingsUseCase(classesRepo),
+                    getClassesByDate:       GetClassesByDateUseCase(classesRepo),
+                    getClassFormOptions:    GetClassFormOptionsUseCase(classesRepo),
+                    createClass:            CreateClassUseCase(classesRepo),
+                    updateClass:            UpdateClassUseCase(classesRepo),
+                    cancelClass:            CancelClassUseCase(classesRepo),
+                    reactivateClass:        ReactivateClassUseCase(classesRepo),
+                    getSessionBookings:     GetSessionBookingsUseCase(classesRepo),
+                    confirmBookingPayment:  ConfirmBookingPaymentUseCase(classesRepo),
+                    rejectBooking:          RejectBookingUseCase(classesRepo),
                   )..add(ClassesStarted(DateTime.now())),
                 ),
               ],
@@ -614,6 +620,13 @@ class AppRouter {
             ),
           ),
         );
+    // ── Admin: PT Package Bookings (pending cash) ──────────────────────────
+
+      case adminPtPackageBookings:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(const AdminPtPackageBookingsScreen()),
+        );
+
     // ── Admin: Training Videos ─────────────────────────────────────────────
 
       case adminTrainingVideos:

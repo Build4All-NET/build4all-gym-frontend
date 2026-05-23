@@ -428,6 +428,8 @@
   "@navPtSessions": { "description": "Drawer nav item" },
   "navTrainingVideos": "Training Videos",
   "@navTrainingVideos": { "description": "Drawer nav item" },
+  "navPtPackageBookings": "PT Package Payments",
+  "@navPtPackageBookings": { "description": "Drawer nav item — pending cash PT package bookings" },
 
   "accountProfileUpdateSuccess": "Profile updated successfully",
   "accountStatExercises": "Exercises",
@@ -529,6 +531,9 @@
   "@ptPackageMaxDaysReached": { "placeholders": { "max": { "type": "int" } } },
   "ptPackageNoAvailableSlots": "No available times",
   "ptWeeklySlotsFailed": "Could not load available times",
+  "ptRequestTimePickerHint": "Request a time from the trainer",
+  "ptTimeRequestSuccess": "Your time request has been sent to the trainer.",
+  "ptTimeRequestFailed": "Could not send time request. Please try again.",
   "ptBookingRequestSuccess": "Request sent to PT. Waiting for approval.",
   "ptBookingRequestThisTime": "Request this time",
   "ptBookingBookSession": "Book session",

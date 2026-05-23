@@ -200,6 +200,8 @@ class _SessionsView extends StatelessWidget {
 
   String _successMsg(String actionType) {
     switch (actionType) {
+      case 'accepted':  return '✅ Session request accepted.';
+      case 'declined':  return 'Session request declined.';
       case 'completed': return '✅ Session marked as completed.';
       case 'cancelled': return 'Session cancelled.';
       case 'no_show':   return 'Session marked as no-show.';
@@ -300,11 +302,15 @@ class _DateNavigator extends StatelessWidget {
 // ── Segmented tab filter ──────────────────────────────────────────────────────
 
 class _TabFilter extends StatelessWidget {
-  final int             selectedIndex;
+  final int               selectedIndex;
   final ValueChanged<int> onTap;
+
   static const _tabs = ['Today', 'Upcoming', 'Completed'];
 
-  const _TabFilter({required this.selectedIndex, required this.onTap});
+  const _TabFilter({
+    required this.selectedIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

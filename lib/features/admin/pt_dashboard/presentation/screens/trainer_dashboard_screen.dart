@@ -194,7 +194,13 @@ class TrainerDashboardScreen extends StatelessWidget {
             branchId:   effectiveBranchId,
           ),
           const SizedBox(height: 24),
-          _UpcomingClientsSection(sessions: sessions, tokens: tokens, isAdmin: isAdmin),
+          _UpcomingClientsSection(sessions: state.upcomingSessions, tokens: tokens, isAdmin: isAdmin),
+          const SizedBox(height: 24),
+          _PendingRequestsSection(
+            requests: state.requestedSessions,
+            tokens:   tokens,
+            isAdmin:  isAdmin,
+          ),
         ],
       ),
     );
@@ -674,6 +680,215 @@ class _QACard extends StatelessWidget {
   }
 }
 
+// ── Pending Requests ───────────────────────────────────────────────────────────
+
+class _PendingRequestsSection extends StatelessWidget {
+  final List<PtSessionEntity> requests;
+  final AppThemeTokens         tokens;
+  final bool                   isAdmin;
+  const _PendingRequestsSection({
+    required this.requests,
+    required this.tokens,
+    required this.isAdmin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = tokens.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text('Pending Requests',
+                style: TextStyle(
+                    fontSize: 17, fontWeight: FontWeight.bold, color: c.label)),
+            if (requests.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color:        const Color(0xFFEF4444),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${requests.length}',
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (requests.isEmpty)
+          Container(
+            width:   double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            decoration: BoxDecoration(
+              color:        c.surface,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Center(
+              child: Text('No pending requests.',
+                  style: TextStyle(color: c.muted, fontSize: 14)),
+            ),
+          )
+        else
+          ...requests.map(
+            (req) => _RequestCard(request: req, tokens: tokens, isAdmin: isAdmin),
+          ),
+      ],
+    );
+  }
+}
+
+class _RequestCard extends StatelessWidget {
+  final PtSessionEntity request;
+  final AppThemeTokens  tokens;
+  final bool            isAdmin;
+  const _RequestCard({
+    super.key,
+    required this.request,
+    required this.tokens,
+    required this.isAdmin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c   = tokens.colors;
+    final bloc = context.read<TrainerPtSessionsBloc>();
+
+    return Container(
+      margin:  const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color:        c.surface,
+        borderRadius: BorderRadius.circular(14),
+        border:       Border.all(color: const Color(0xFFEF4444).withOpacity(0.25)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width:  42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEF4444).withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  request.initials,
+                  style: const TextStyle(
+                      color: Color(0xFFEF4444),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(request.displayName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: c.label)),
+                    Text(
+                      request.serviceName ?? request.notes ?? 'PT Session',
+                      style: TextStyle(fontSize: 12, color: c.muted),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (isAdmin &&
+                        request.trainerName != null &&
+                        request.trainerName!.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color:        c.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'By ${request.trainerName}',
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: c.primary),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color:        const Color(0xFFEF4444).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  DateFormat('MMM d, h:mm a').format(request.startTime),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFEF4444)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => bloc.add(
+                      PtSessionDeclineRequested(sessionId: request.ptSessionId)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFEF4444),
+                    side: const BorderSide(color: Color(0xFFEF4444)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: const Text('Decline', style: TextStyle(fontSize: 13)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => bloc.add(
+                      PtSessionAcceptRequested(sessionId: request.ptSessionId)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF22C55E),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: const Text('Accept', style: TextStyle(fontSize: 13)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ── Upcoming Clients ───────────────────────────────────────────────────────────
 
 class _UpcomingClientsSection extends StatelessWidget {
@@ -694,10 +909,11 @@ class _UpcomingClientsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = tokens.colors;
-    final now      = DateTime.now();
+    final c   = tokens.colors;
+    final now = DateTime.now();
+    final tomorrowStart = DateTime(now.year, now.month, now.day + 1);
     final upcoming = sessions
-        .where((s) => s.isScheduled && s.startTime.isAfter(now))
+        .where((s) => !s.startTime.isBefore(tomorrowStart))
         .toList()
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 

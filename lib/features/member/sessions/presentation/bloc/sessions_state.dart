@@ -1,3 +1,4 @@
+import '../../domain/entities/book_session_result_entity.dart';
 import '../../domain/entities/filter_option_item_entity.dart';
 import '../../domain/entities/session_card_entity.dart';
 import '../../domain/entities/session_detail_entity.dart';
@@ -48,6 +49,22 @@ class SessionBookingError extends SessionsState {
   final String message;
 
   const SessionBookingError(this.message);
+}
+
+class SessionBookingPaymentReady extends SessionsState {
+  final BookSessionResultEntity result;
+  final DateTime selectedDate;
+
+  const SessionBookingPaymentReady({
+    required this.result,
+    required this.selectedDate,
+  });
+}
+
+class SessionBookingDone extends SessionsState {
+  final BookSessionResultEntity result;
+
+  const SessionBookingDone(this.result);
 }
 
 class SessionsFilterOptionsLoaded extends SessionsState {

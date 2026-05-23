@@ -18,6 +18,11 @@ class TrainerDetailEntity {
 
   final List<PtPackageEntity> packages;
 
+  // Weekday codes where trainer has set availability.
+  // e.g. ['MONDAY', 'WEDNESDAY', 'FRIDAY']
+  // Empty when trainer has no availability configured.
+  final List<String> availableDays;
+
   const TrainerDetailEntity({
     required this.id,
     required this.fullName,
@@ -33,6 +38,7 @@ class TrainerDetailEntity {
     this.branchId,
     this.branchName,
     required this.packages,
+    this.availableDays = const [],
   });
 
   TrainerDetailEntity copyWith({
@@ -50,6 +56,7 @@ class TrainerDetailEntity {
     int? branchId,
     String? branchName,
     List<PtPackageEntity>? packages,
+    List<String>? availableDays,
   }) {
     return TrainerDetailEntity(
       id: id ?? this.id,
@@ -66,6 +73,7 @@ class TrainerDetailEntity {
       branchId: branchId ?? this.branchId,
       branchName: branchName ?? this.branchName,
       packages: packages ?? this.packages,
+      availableDays: availableDays ?? this.availableDays,
     );
   }
 }
