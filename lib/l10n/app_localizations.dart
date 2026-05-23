@@ -1877,7 +1877,10 @@ abstract class AppLocalizations {
   /// **'Training Videos'**
   String get navTrainingVideos;
 
-  /// No description provided for @navPtPackageBookings.
+  /// Drawer nav item — pending cash PT package bookings
+  ///
+  /// In en, this message translates to:
+  /// **'PT Package Payments'**
   String get navPtPackageBookings;
 
   /// No description provided for @accountProfileUpdateSuccess.
@@ -3157,6 +3160,510 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone number verified successfully'**
   String get editProfilePhoneVerified;
+
+  /// No description provided for @memberBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get memberBookingsTitle;
+
+  /// No description provided for @memberBookingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your classes and PT sessions'**
+  String get memberBookingsSubtitle;
+
+  /// No description provided for @memberBookingsUpcomingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get memberBookingsUpcomingTab;
+
+  /// No description provided for @memberBookingsPreviousTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get memberBookingsPreviousTab;
+
+  /// No description provided for @memberBookingsEmptyUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming bookings'**
+  String get memberBookingsEmptyUpcoming;
+
+  /// No description provided for @memberBookingsEmptyPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous bookings'**
+  String get memberBookingsEmptyPrevious;
+
+  /// No description provided for @memberBookingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load bookings'**
+  String get memberBookingsLoadFailed;
+
+  /// No description provided for @memberBookingsCancelRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request sent'**
+  String get memberBookingsCancelRequestSent;
+
+  /// No description provided for @memberBookingsCancelRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send cancel request'**
+  String get memberBookingsCancelRequestFailed;
+
+  /// No description provided for @memberBookingsCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel booking'**
+  String get memberBookingsCancelButton;
+
+  /// No description provided for @memberBookingsReviewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate session'**
+  String get memberBookingsReviewButton;
+
+  /// No description provided for @memberBookingsCancelPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request pending'**
+  String get memberBookingsCancelPending;
+
+  /// No description provided for @memberBookingsClassDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Class session'**
+  String get memberBookingsClassDefaultTitle;
+
+  /// No description provided for @memberBookingsPtDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PT session'**
+  String get memberBookingsPtDefaultTitle;
+
+  /// No description provided for @memberBookingsSessionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Session {current} of {total}'**
+  String memberBookingsSessionProgress(int current, int total);
+
+  /// No description provided for @bookingStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get bookingStatusConfirmed;
+
+  /// No description provided for @bookingStatusWaitlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlisted'**
+  String get bookingStatusWaitlisted;
+
+  /// No description provided for @bookingStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get bookingStatusPending;
+
+  /// No description provided for @bookingStatusCancelRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request pending'**
+  String get bookingStatusCancelRequested;
+
+  /// No description provided for @bookingStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get bookingStatusCancelled;
+
+  /// No description provided for @bookingStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get bookingStatusCompleted;
+
+  /// No description provided for @bookingStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get bookingStatusUnknown;
+
+  /// No description provided for @memberBookingsMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min'**
+  String memberBookingsMinutes(int count);
+
+  /// No description provided for @memberBookingsRatingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your opinion matters to us'**
+  String get memberBookingsRatingTitle;
+
+  /// No description provided for @memberBookingsRatingLabelLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Terrible'**
+  String get memberBookingsRatingLabelLow;
+
+  /// No description provided for @memberBookingsRatingLabelHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get memberBookingsRatingLabelHigh;
+
+  /// No description provided for @memberBookingsRateNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Now'**
+  String get memberBookingsRateNowButton;
+
+  /// No description provided for @memberBookingsReviewSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your review!'**
+  String get memberBookingsReviewSubmitted;
+
+  /// No description provided for @memberBookingsReviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit review. Please try again.'**
+  String get memberBookingsReviewFailed;
+
+  /// No description provided for @memberInvoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment History'**
+  String get memberInvoicesTitle;
+
+  /// No description provided for @memberInvoicesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments found'**
+  String get memberInvoicesEmptyTitle;
+
+  /// No description provided for @memberInvoicesEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your completed payments will appear here.'**
+  String get memberInvoicesEmptySubtitle;
+
+  /// No description provided for @memberInvoicesRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get memberInvoicesRetry;
+
+  /// No description provided for @memberInvoicesAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get memberInvoicesAll;
+
+  /// No description provided for @memberInvoicesAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All Types'**
+  String get memberInvoicesAllTypes;
+
+  /// No description provided for @memberInvoicesStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get memberInvoicesStatusPaid;
+
+  /// No description provided for @memberInvoicesStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get memberInvoicesStatusPending;
+
+  /// No description provided for @memberInvoicesStatusRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get memberInvoicesStatusRefunded;
+
+  /// No description provided for @memberInvoicesStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get memberInvoicesStatusCancelled;
+
+  /// No description provided for @memberInvoicesStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get memberInvoicesStatusRejected;
+
+  /// No description provided for @memberInvoicesStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get memberInvoicesStatusFailed;
+
+  /// No description provided for @memberInvoicesStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get memberInvoicesStatusUnknown;
+
+  /// No description provided for @memberInvoicesTypePlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get memberInvoicesTypePlans;
+
+  /// No description provided for @memberInvoicesTypeClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get memberInvoicesTypeClasses;
+
+  /// No description provided for @memberInvoicesTypePt.
+  ///
+  /// In en, this message translates to:
+  /// **'PT'**
+  String get memberInvoicesTypePt;
+
+  /// No description provided for @memberInvoicesTypePtPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Package'**
+  String get memberInvoicesTypePtPackage;
+
+  /// No description provided for @memberInvoicesTypeDailyPass.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Pass'**
+  String get memberInvoicesTypeDailyPass;
+
+  /// No description provided for @memberInvoicesTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get memberInvoicesTypeOther;
+
+  /// No description provided for @memberInvoicesDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get memberInvoicesDetails;
+
+  /// No description provided for @memberInvoicesRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get memberInvoicesRefund;
+
+  /// No description provided for @memberInvoicesRefundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Request'**
+  String get memberInvoicesRefundTitle;
+
+  /// No description provided for @memberInvoicesRefundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A refund request will be sent to the admin. The amount will not be refunded immediately.'**
+  String get memberInvoicesRefundMessage;
+
+  /// No description provided for @memberInvoicesRefundReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason optional'**
+  String get memberInvoicesRefundReason;
+
+  /// No description provided for @memberInvoicesRefundSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Request'**
+  String get memberInvoicesRefundSend;
+
+  /// No description provided for @memberInvoicesRefundStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Request'**
+  String get memberInvoicesRefundStatus;
+
+  /// No description provided for @memberInvoicesDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get memberInvoicesDate;
+
+  /// No description provided for @memberInvoicesBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get memberInvoicesBranch;
+
+  /// No description provided for @memberInvoicesPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get memberInvoicesPaymentMethod;
+
+  /// No description provided for @memberInvoicesPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get memberInvoicesPaid;
+
+  /// No description provided for @memberInvoicesDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get memberInvoicesDue;
+
+  /// No description provided for @memberInvoicesPaymentCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get memberInvoicesPaymentCash;
+
+  /// No description provided for @memberInvoicesPaymentCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get memberInvoicesPaymentCard;
+
+  /// No description provided for @memberInvoicesPaymentStripe.
+  ///
+  /// In en, this message translates to:
+  /// **'Stripe'**
+  String get memberInvoicesPaymentStripe;
+
+  /// No description provided for @memberInvoicesPaymentBankTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Transfer'**
+  String get memberInvoicesPaymentBankTransfer;
+
+  /// No description provided for @memberInvoicesPaymentWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get memberInvoicesPaymentWallet;
+
+  /// No description provided for @memberInvoicesPaymentOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get memberInvoicesPaymentOther;
+
+  /// No description provided for @memberInvoiceDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Details'**
+  String get memberInvoiceDetailsTitle;
+
+  /// No description provided for @memberInvoiceItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get memberInvoiceItems;
+
+  /// No description provided for @memberInvoicePayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get memberInvoicePayments;
+
+  /// No description provided for @memberInvoiceSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get memberInvoiceSubtotal;
+
+  /// No description provided for @memberInvoiceDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get memberInvoiceDiscount;
+
+  /// No description provided for @memberInvoiceTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get memberInvoiceTax;
+
+  /// No description provided for @memberInvoiceTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get memberInvoiceTotal;
+
+  /// No description provided for @memberInvoiceInvoiceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Number'**
+  String get memberInvoiceInvoiceNumber;
+
+  /// No description provided for @memberInvoiceBranchAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Address'**
+  String get memberInvoiceBranchAddress;
+
+  /// No description provided for @memberInvoiceBranchPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Phone'**
+  String get memberInvoiceBranchPhone;
+
+  /// No description provided for @memberInvoiceQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty'**
+  String get memberInvoiceQty;
+
+  /// No description provided for @memberInvoiceUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Price'**
+  String get memberInvoiceUnitPrice;
+
+  /// No description provided for @memberInvoicesStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get memberInvoicesStatus;
+
+  /// No description provided for @memberInvoicesType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get memberInvoicesType;
+
+  /// No description provided for @memberInvoiceDownloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download / Share PDF'**
+  String get memberInvoiceDownloadPdf;
+
+  /// No description provided for @memberInvoicePdfTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice'**
+  String get memberInvoicePdfTitle;
+
+  /// No description provided for @memberInvoicePdfFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you'**
+  String get memberInvoicePdfFooter;
+
+  /// No description provided for @memberInvoiceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get memberInvoiceDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

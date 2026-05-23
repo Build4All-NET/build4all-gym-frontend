@@ -1,12 +1,30 @@
 class ActivePromotionEntity {
   final String title;
+  final String? description;
+
   final String discountType;
   final double discountValue;
 
+  /// These values come from backend.
+  /// Flutter displays them only.
+  /// Flutter should not calculate the promotion price.
+  final double originalPrice;
+  final double discountAmount;
+  final double finalPrice;
+
+  final String? startDate;
+  final String? endDate;
+
   const ActivePromotionEntity({
     required this.title,
+    this.description,
     required this.discountType,
     required this.discountValue,
+    required this.originalPrice,
+    required this.discountAmount,
+    required this.finalPrice,
+    this.startDate,
+    this.endDate,
   });
 }
 
@@ -36,4 +54,16 @@ class PlanEntity {
     this.activePromotion,
     this.iconName,
   });
+
+  /// Price shown in the UI.
+  /// If promotion exists, show backend finalPrice.
+  /// Otherwise show normal price.
+  double get displayPrice {
+    return activePromotion?.finalPrice ?? price;
+  }
+
+  /// Cleaner UI condition.
+  bool get hasActivePromotion {
+    return activePromotion != null;
+  }
 }
