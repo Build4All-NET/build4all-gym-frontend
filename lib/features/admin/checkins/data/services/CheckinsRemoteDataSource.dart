@@ -43,7 +43,14 @@ class CheckinsRemoteDataSource {
         response.statusCode == 201 ||
         response.statusCode == 204) return;
     if (response.statusCode == 401) throw UnauthorizedException();
-    if (response.statusCode == 403) throw ForbiddenException();
+    if (response.statusCode == 403) {
+      String msg = '';
+      try {
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        msg = body['message'] as String? ?? '';
+      } catch (_) {}
+      throw ForbiddenException(message: msg);
+    }
     throw ServerException(message: 'HTTP ${response.statusCode}: ${response.body}');
   }
 

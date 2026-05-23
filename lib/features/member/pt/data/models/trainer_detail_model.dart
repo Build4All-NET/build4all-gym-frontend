@@ -18,6 +18,7 @@ class TrainerDetailModel {
   final String? branchName;
 
   final List<PtPackageModel> packages;
+  final List<String> availableDays;
 
   const TrainerDetailModel({
     required this.id,
@@ -34,6 +35,7 @@ class TrainerDetailModel {
     this.branchId,
     this.branchName,
     required this.packages,
+    this.availableDays = const [],
   });
 
   factory TrainerDetailModel.fromJson(Map<String, dynamic> json) {
@@ -75,6 +77,7 @@ class TrainerDetailModel {
       )
           .toList()
           : const [],
+      availableDays: List<String>.from(json['availableDays'] ?? []),
     );
   }
 
@@ -94,6 +97,7 @@ class TrainerDetailModel {
       'branchId': branchId,
       'branchName': branchName,
       'packages': packages.map((ptPackage) => ptPackage.toJson()).toList(),
+      'availableDays': availableDays,
     };
   }
 
@@ -113,6 +117,7 @@ class TrainerDetailModel {
       branchId: branchId,
       branchName: branchName,
       packages: packages.map((ptPackage) => ptPackage.toEntity()).toList(),
+      availableDays: availableDays,
     );
   }
 }

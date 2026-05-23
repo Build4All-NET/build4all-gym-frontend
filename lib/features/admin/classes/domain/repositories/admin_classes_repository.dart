@@ -42,4 +42,7 @@ abstract class AdminClassesRepository {
 
   // Reactivates a cancelled session back to SCHEDULED
   Future<void> reactivateClass(int sessionId);
+
+  // Rejects a PENDING booking (sets it to CANCELLED)
+  Future<void> rejectBooking(int bookingId);
 }

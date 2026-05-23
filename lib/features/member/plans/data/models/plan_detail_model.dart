@@ -9,6 +9,7 @@ class PlanDetailModel {
   final String billingCycle;
   final int durationDays;
   final bool isFeatured;
+  final bool isBooked;
   final String? description;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
@@ -25,6 +26,7 @@ class PlanDetailModel {
     required this.billingCycle,
     required this.durationDays,
     required this.isFeatured,
+    required this.isBooked,
     this.description,
     this.allowedVisits,
     this.freezeDaysAllowance,
@@ -43,6 +45,7 @@ class PlanDetailModel {
       billingCycle: json['billingCycle'] as String,
       durationDays: json['durationDays'] as int,
       isFeatured: json['isFeatured'] as bool,
+      isBooked: json['isBooked'] == true,
       description: json['description'] as String?,
       allowedVisits: json['allowedVisits'] as int?,
       freezeDaysAllowance: json['freezeDaysAllowance'] as int?,
@@ -51,8 +54,8 @@ class PlanDetailModel {
       features: List<String>.from(json['features'] ?? []),
       activePromotion: json['activePromotion'] != null
           ? ActivePromotionModel.fromJson(
-              json['activePromotion'] as Map<String, dynamic>,
-            )
+        json['activePromotion'] as Map<String, dynamic>,
+      )
           : null,
     );
   }
@@ -66,6 +69,7 @@ class PlanDetailModel {
       billingCycle: billingCycle,
       durationDays: durationDays,
       isFeatured: isFeatured,
+      isBooked: isBooked,
       description: description,
       allowedVisits: allowedVisits,
       freezeDaysAllowance: freezeDaysAllowance,

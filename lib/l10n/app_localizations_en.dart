@@ -924,6 +924,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navTrainingVideos => 'Training Videos';
 
   @override
+  String get navPtPackageBookings => 'PT Package Payments';
+
+  @override
   String get accountProfileUpdateSuccess => 'Profile updated successfully';
 
   @override
@@ -1181,6 +1184,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'Could not load available times';
+
+  @override
+  String get ptRequestTimePickerHint => 'Request a time from the trainer';
+
+  @override
+  String get ptTimeRequestSuccess => 'Your time request has been sent to the trainer.';
+
+  @override
+  String get ptTimeRequestFailed => 'Could not send time request. Please try again.';
 
   @override
   String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
@@ -1554,4 +1566,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_scannerTitle => 'Scan Member QR';
+
+  @override
+  String get sessionDetailBookingClosed => 'Booking closed';
+
+  @override
+  String get booked => 'Booked';
+
+  @override
+  String get noActiveMembership => 'No active membership';
+
+  @override
+  String get membershipStatusCancelled => 'cancelled';
+
+  @override
+  String get editProfileVerifyNewPhone => 'Verify new phone number';
+
+  @override
+  String get editProfilePhoneVerified => 'Phone number verified successfully';
 }

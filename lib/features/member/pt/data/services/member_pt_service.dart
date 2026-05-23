@@ -386,16 +386,18 @@ class MemberPtService {
   Future<List<TimeSlotModel>> getWeeklyAvailableSlots({
     required int trainerId,
     required String day,
+    int? packageId,
   }) async {
     final headers = await _authHeaders();
 
+    final queryParams = <String, String>{
+      'day': day.trim().toUpperCase(),
+      if (packageId != null) 'packageId': packageId.toString(),
+    };
+
     final uri = Uri.parse(
       '${Env.apiProjectBaseUrl}/api/member/trainers/$trainerId/weekly-slots',
-    ).replace(
-      queryParameters: {
-        'day': day.trim().toUpperCase(),
-      },
-    );
+    ).replace(queryParameters: queryParams);
 
     try {
       debugPrint('WEEKLY SLOTS URI: $uri');
@@ -569,27 +571,6 @@ class MemberPtService {
 
   // ─────────────────────────────────────────────────────────────
   // POST /api/member/pt-package-bookings
-  //
-  // New package booking flow.
-  //
-  // Request body:
-  // {
-  //   "packageId": 1,
-  //   "weeklySchedule": [
-  //     {
-  //       "day": "MONDAY",
-  //       "time": "09:00"
-  //     },
-  //     {
-  //       "day": "THURSDAY",
-  //       "time": "18:00"
-  //     }
-  //   ]
-  // }
-  //
-  // No dates.
-  // No selectedTime shared by all days.
-  // No totalAmount. Backend calculates it.
   // ─────────────────────────────────────────────────────────────
 
   Future<PtPackageBookingResponseModel> createPackageBooking(
@@ -619,25 +600,106 @@ class MemberPtService {
         );
       }
 
-      if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      }
-
-      if (response.statusCode == 403) {
-        throw ForbiddenException();
-      }
+      if (response.statusCode == 401) throw UnauthorizedException();
+      if (response.statusCode == 403) throw ForbiddenException();
 
       throw ServerException(message: decodedBody);
     } catch (e, stackTrace) {
       debugPrint('PACKAGE BOOKING ERROR: $e');
       debugPrint('PACKAGE BOOKING STACK: $stackTrace');
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
 
-      if (e is UnauthorizedException ||
-          e is ForbiddenException ||
-          e is ServerException) {
-        rethrow;
+  // ─────────────────────────────────────────────────────────────
+  // GET /api/member/payment-methods
+  // ─────────────────────────────────────────────────────────────
+
+  Future<List<Map<String, dynamic>>> getPaymentMethods() async {
+    final headers = await _authHeaders();
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/member/payment-methods');
+
+    try {
+      final response = await _client.get(uri, headers: headers);
+      final decodedBody = _decodeBody(response);
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(decodedBody);
+        if (decoded is List) {
+          return decoded.cast<Map<String, dynamic>>();
+        }
+        return const [];
       }
 
+      if (response.statusCode == 401) throw UnauthorizedException();
+      if (response.statusCode == 403) throw ForbiddenException();
+
+      throw ServerException(message: decodedBody);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // POST /api/member/pt-package-bookings/{id}/confirm-payment
+  // Called after Stripe presentPaymentSheet() succeeds.
+  // ─────────────────────────────────────────────────────────────
+
+  Future<PtPackageBookingResponseModel> confirmPackagePayment(int bookingId) async {
+    final headers = await _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/member/pt-package-bookings/$bookingId/confirm-payment',
+    );
+
+    try {
+      final response = await _client.post(uri, headers: headers);
+      final decodedBody = _decodeBody(response);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return PtPackageBookingResponseModel.fromJson(
+          jsonDecode(decodedBody) as Map<String, dynamic>,
+        );
+      }
+
+      if (response.statusCode == 401) throw UnauthorizedException();
+      if (response.statusCode == 403) throw ForbiddenException();
+
+      throw ServerException(message: decodedBody);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // POST /api/member/pt-package-bookings/{id}/check-status
+  // Used for PayPal / MPGS redirect payments.
+  // ─────────────────────────────────────────────────────────────
+
+  Future<PtPackageBookingResponseModel> checkPackagePaymentStatus(int bookingId) async {
+    final headers = await _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/member/pt-package-bookings/$bookingId/check-status',
+    );
+
+    try {
+      final response = await _client.post(uri, headers: headers);
+      final decodedBody = _decodeBody(response);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return PtPackageBookingResponseModel.fromJson(
+          jsonDecode(decodedBody) as Map<String, dynamic>,
+        );
+      }
+
+      if (response.statusCode == 401) throw UnauthorizedException();
+      if (response.statusCode == 403) throw ForbiddenException();
+
+      throw ServerException(message: decodedBody);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
       throw NetworkException();
     }
   }

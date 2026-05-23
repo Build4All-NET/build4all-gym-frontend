@@ -310,7 +310,6 @@ class _AccountBody extends StatelessWidget {
                 AccountPersonalInfoWidget(
                   account: account,
                   profile: profile,
-                  onEditTap: () => _openEditProfile(context),
                 ),
                 SizedBox(height: tokens.spacing.lg),
                 AccountMenuSectionWidget(

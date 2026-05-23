@@ -98,6 +98,12 @@ const _trainingItems = [
     route: '/admin/pt-services',
   ),
   NavigationItem(
+    id: 'pt_package_bookings',
+    iconData: Icons.assignment_turned_in_outlined,
+    labelKey: 'navPtPackageBookings',
+    route: '/admin/pt-package-bookings',
+  ),
+  NavigationItem(
     id: 'training_videos',
     iconData: Icons.play_circle_outline,
     labelKey: 'navTrainingVideos',

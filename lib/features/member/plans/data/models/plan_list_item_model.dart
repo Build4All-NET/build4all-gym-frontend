@@ -1,4 +1,3 @@
-
 import '../../domain/entities/plan_entity.dart';
 
 class ActivePromotionModel {
@@ -38,6 +37,7 @@ class PlanListItemModel {
   final int durationDays;
   final bool isFeatured;
   final List<String> features;
+  final bool isBooked;
   final ActivePromotionModel? activePromotion;
   final String? iconName;
 
@@ -50,6 +50,7 @@ class PlanListItemModel {
     required this.durationDays,
     required this.isFeatured,
     required this.features,
+    required this.isBooked,
     this.activePromotion,
     this.iconName,
   });
@@ -64,6 +65,7 @@ class PlanListItemModel {
       durationDays: json['durationDays'] as int,
       isFeatured: json['isFeatured'] as bool,
       features: List<String>.from(json['features'] ?? []),
+      isBooked: json['isBooked'] == true,
       activePromotion: json['activePromotion'] != null
           ? ActivePromotionModel.fromJson(
         json['activePromotion'] as Map<String, dynamic>,
@@ -83,6 +85,7 @@ class PlanListItemModel {
       durationDays: durationDays,
       isFeatured: isFeatured,
       features: features,
+      isBooked: isBooked,
       activePromotion: activePromotion?.toEntity(),
       iconName: iconName,
     );

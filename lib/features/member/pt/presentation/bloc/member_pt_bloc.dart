@@ -16,12 +16,15 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
   final ToggleFavoriteTrainerUseCase _toggleFavoriteTrainerUseCase;
   final GetTrainerDetailUseCase _getTrainerDetailUseCase;
 
-  // Internal fields — reused after toggle reload to maintain active filters.
+  // Internal fields — reused after reload to maintain active filters.
   String? _activeSpecialtyFilter;
+  int? _activeBranchFilter;
   bool _favoritesOnly = false;
 
-  // Cache specialties so they persist across filter changes.
+  // Cache data so it persists across filter changes.
   List<String> _cachedSpecialties = [];
+  Map<int, String> _cachedBranches = {};
+
   List<TrainerCardEntity> _allTrainers = [];
   int _favoriteCount = 0;
 
@@ -36,7 +39,9 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
         _getTrainerDetailUseCase = getTrainerDetailUseCase,
         super(const TrainersInitial()) {
     on<TrainersStarted>(_onStarted);
+    on<TrainersAllFiltersCleared>(_onAllFiltersCleared);
     on<TrainersSpecialtyFilterChanged>(_onSpecialtyFilterChanged);
+    on<TrainersBranchFilterChanged>(_onBranchFilterChanged);
     on<TrainersFavoritesFilterToggled>(_onFavoritesFilterToggled);
     on<TrainerFavoriteToggleRequested>(_onFavoriteToggleRequested);
     on<TrainerDetailRequested>(_onTrainerDetailRequested);
@@ -49,12 +54,11 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       ) async {
     emit(const TrainersLoading());
 
-    // Call both usecases concurrently.
     final results = await Future.wait([
       _getFilterOptionsUseCase(),
       _getTrainersUseCase(
-        specialtyFilter: _activeSpecialtyFilter,
-        favoritesOnly: _favoritesOnly,
+        specialtyFilter: null,
+        favoritesOnly: false,
       ),
     ]);
 
@@ -73,17 +77,31 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
 
     _cachedSpecialties = filterResult.data!.specialties as List<String>;
     _allTrainers = trainersResult.data!.trainers as List<TrainerCardEntity>;
+    for (final trainer in _allTrainers) {
+      print(
+        'PT TRAINER => id=${trainer.trainerId}, '
+            'name=${trainer.fullName}, '
+            'branchId=${trainer.branchId}, '
+            'branchName=${trainer.branchName}',
+      );
+    }
     _favoriteCount = trainersResult.data!.favoriteCount as int;
 
-    emit(
-      TrainersLoaded(
-        trainers: _applyLocalFilters(),
-        favoriteCount: _favoriteCount,
-        specialties: _cachedSpecialties,
-        activeSpecialtyFilter: _activeSpecialtyFilter,
-        favoritesOnly: _favoritesOnly,
-      ),
-    );
+    _cachedBranches = _extractBranches(_allTrainers);
+
+    _emitLoaded(emit);
+  }
+
+  // ── TrainersAllFiltersCleared ─────────────────────────────────────────────
+  Future<void> _onAllFiltersCleared(
+      TrainersAllFiltersCleared event,
+      Emitter<MemberPtState> emit,
+      ) async {
+    _activeSpecialtyFilter = null;
+    _activeBranchFilter = null;
+    _favoritesOnly = false;
+
+    _emitLoaded(emit);
   }
 
   // ── TrainersSpecialtyFilterChanged ────────────────────────────────────────
@@ -94,15 +112,18 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     _activeSpecialtyFilter = event.specialty;
     _favoritesOnly = false;
 
-    emit(
-      TrainersLoaded(
-        trainers: _applyLocalFilters(),
-        favoriteCount: _favoriteCount,
-        specialties: _cachedSpecialties,
-        activeSpecialtyFilter: _activeSpecialtyFilter,
-        favoritesOnly: _favoritesOnly,
-      ),
-    );
+    _emitLoaded(emit);
+  }
+
+  // ── TrainersBranchFilterChanged ───────────────────────────────────────────
+  Future<void> _onBranchFilterChanged(
+      TrainersBranchFilterChanged event,
+      Emitter<MemberPtState> emit,
+      ) async {
+    _activeBranchFilter = event.branchId;
+    _favoritesOnly = false;
+
+    _emitLoaded(emit);
   }
 
   // ── TrainersFavoritesFilterToggled ────────────────────────────────────────
@@ -111,17 +132,10 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       Emitter<MemberPtState> emit,
       ) async {
     _activeSpecialtyFilter = null;
+    _activeBranchFilter = null;
     _favoritesOnly = !_favoritesOnly;
 
-    emit(
-      TrainersLoaded(
-        trainers: _applyLocalFilters(),
-        favoriteCount: _favoriteCount,
-        specialties: _cachedSpecialties,
-        activeSpecialtyFilter: _activeSpecialtyFilter,
-        favoritesOnly: _favoritesOnly,
-      ),
-    );
+    _emitLoaded(emit);
   }
 
   // ── TrainerFavoriteToggleRequested ────────────────────────────────────────
@@ -143,8 +157,7 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     final currentTrainer = _allTrainers[trainerIndex];
     final newFavoriteValue = !currentTrainer.isFavorited;
 
-    // Optimistic update:
-    // update the local cache immediately so the UI changes instantly.
+    // Optimistic update.
     _allTrainers = _allTrainers.map((trainer) {
       if (trainer.trainerId == event.trainerId) {
         return trainer.copyWith(
@@ -156,19 +169,9 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     }).toList();
 
     _favoriteCount = _allTrainers.where((trainer) => trainer.isFavorited).length;
+    _cachedBranches = _extractBranches(_allTrainers);
 
-    // Re-emit the normal loaded state.
-    // If favoritesOnly == true and the trainer was unfavorited,
-    // _applyLocalFilters() removes it from the visible list immediately.
-    emit(
-      TrainersLoaded(
-        trainers: _applyLocalFilters(),
-        favoriteCount: _favoriteCount,
-        specialties: _cachedSpecialties,
-        activeSpecialtyFilter: _activeSpecialtyFilter,
-        favoritesOnly: _favoritesOnly,
-      ),
-    );
+    _emitLoaded(emit);
 
     final toggleResult = await _toggleFavoriteTrainerUseCase(event.trainerId);
 
@@ -176,16 +179,9 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
       // Rollback if backend failed.
       _allTrainers = previousAllTrainers;
       _favoriteCount = previousFavoriteCount;
+      _cachedBranches = _extractBranches(_allTrainers);
 
-      emit(
-        TrainersLoaded(
-          trainers: _applyLocalFilters(),
-          favoriteCount: _favoriteCount,
-          specialties: _cachedSpecialties,
-          activeSpecialtyFilter: _activeSpecialtyFilter,
-          favoritesOnly: _favoritesOnly,
-        ),
-      );
+      _emitLoaded(emit);
 
       emit(
         TrainerFavoriteToggleError(
@@ -198,7 +194,6 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     }
 
     // Reload all trainers from backend to keep server as source of truth.
-    // Important: fetch all trainers, then apply local filters.
     final reloadResult = await _getTrainersUseCase(
       specialtyFilter: null,
       favoritesOnly: false,
@@ -210,16 +205,9 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
 
     _allTrainers = reloadResult.data!.trainers;
     _favoriteCount = reloadResult.data!.favoriteCount;
+    _cachedBranches = _extractBranches(_allTrainers);
 
-    emit(
-      TrainersLoaded(
-        trainers: _applyLocalFilters(),
-        favoriteCount: _favoriteCount,
-        specialties: _cachedSpecialties,
-        activeSpecialtyFilter: _activeSpecialtyFilter,
-        favoritesOnly: _favoritesOnly,
-      ),
-    );
+    _emitLoaded(emit);
   }
 
   // ── TrainerDetailRequested ────────────────────────────────────────────────
@@ -244,12 +232,33 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     emit(TrainerDetailLoaded(result.data!));
   }
 
+  // ── Emit loaded state ─────────────────────────────────────────────────────
+  void _emitLoaded(Emitter<MemberPtState> emit) {
+    emit(
+      TrainersLoaded(
+        trainers: _applyLocalFilters(),
+        favoriteCount: _favoriteCount,
+        specialties: _cachedSpecialties,
+        branches: _cachedBranches,
+        activeSpecialtyFilter: _activeSpecialtyFilter,
+        activeBranchFilter: _activeBranchFilter,
+        favoritesOnly: _favoritesOnly,
+      ),
+    );
+  }
+
   // ── Local filters ─────────────────────────────────────────────────────────
   List<TrainerCardEntity> _applyLocalFilters() {
     var filtered = List<TrainerCardEntity>.from(_allTrainers);
 
     if (_favoritesOnly) {
       filtered = filtered.where((trainer) => trainer.isFavorited).toList();
+    }
+
+    if (_activeBranchFilter != null) {
+      filtered = filtered
+          .where((trainer) => trainer.branchId == _activeBranchFilter)
+          .toList();
     }
 
     if (_activeSpecialtyFilter != null) {
@@ -261,5 +270,33 @@ class MemberPtBloc extends Bloc<MemberPtEvent, MemberPtState> {
     }
 
     return filtered;
+  }
+
+  // ── Branch extraction ─────────────────────────────────────────────────────
+  Map<int, String> _extractBranches(List<TrainerCardEntity> trainers) {
+    final branchMap = <int, String>{};
+
+    for (final trainer in trainers) {
+      final branchId = trainer.branchId;
+
+      if (branchId == null || branchId <= 0) {
+        continue;
+      }
+
+      final branchName = trainer.branchName?.trim();
+
+      branchMap[branchId] = branchName == null || branchName.isEmpty
+          ? 'Branch $branchId'
+          : branchName;
+    }
+
+    final entries = branchMap.entries.toList()
+      ..sort(
+            (a, b) => a.value.toLowerCase().compareTo(b.value.toLowerCase()),
+      );
+
+    return {
+      for (final entry in entries) entry.key: entry.value,
+    };
   }
 }

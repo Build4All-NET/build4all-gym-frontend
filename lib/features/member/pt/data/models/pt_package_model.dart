@@ -30,6 +30,7 @@ class PtPackageModel {
   final String packageType;
   final int numberOfSessions;
   final int daysAvailable;
+  final int? sessionDurationMinutes;
   final int minDaysPerWeek;
   final int maxDaysPerWeek;
   final double price;
@@ -44,6 +45,7 @@ class PtPackageModel {
     required this.packageType,
     required this.numberOfSessions,
     required this.daysAvailable,
+    this.sessionDurationMinutes,
     required this.minDaysPerWeek,
     required this.maxDaysPerWeek,
     required this.price,
@@ -61,6 +63,7 @@ class PtPackageModel {
       numberOfSessions: (json['numberOfSessions'] as num?)?.toInt() ?? 0,
       daysAvailable: (json['daysAvailable'] as num?)?.toInt() ?? 0,
 
+      sessionDurationMinutes: (json['sessionDurationMinutes'] as num?)?.toInt(),
       // New backend fields.
       // Defaults keep old API responses from crashing during transition.
       minDaysPerWeek: (json['minDaysPerWeek'] as num?)?.toInt() ?? 1,
@@ -84,6 +87,7 @@ class PtPackageModel {
       'packageType': packageType,
       'numberOfSessions': numberOfSessions,
       'daysAvailable': daysAvailable,
+      'sessionDurationMinutes': sessionDurationMinutes,
       'minDaysPerWeek': minDaysPerWeek,
       'maxDaysPerWeek': maxDaysPerWeek,
       'price': price,
@@ -101,6 +105,7 @@ class PtPackageModel {
       packageType: packageType,
       numberOfSessions: numberOfSessions,
       daysAvailable: daysAvailable,
+      sessionDurationMinutes: sessionDurationMinutes,
       minDaysPerWeek: minDaysPerWeek,
       maxDaysPerWeek: maxDaysPerWeek,
       price: price,

@@ -22,10 +22,12 @@ class GetWeeklyAvailableSlotsUseCase {
   Future<({List<TimeSlotEntity>? data, Failure? failure})> call({
     required int trainerId,
     required String day,
+    int? packageId,
   }) {
     return _repository.getWeeklyAvailableSlots(
       trainerId: trainerId,
       day: day,
+      packageId: packageId,
     );
   }
 }

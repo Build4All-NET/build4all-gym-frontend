@@ -68,8 +68,9 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
       return json['fullName'] as String? ?? 'Member';
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception('Member is blocked and cannot check in.');
+    } on ForbiddenException catch (e) {
+      final msg = e.message.isNotEmpty ? e.message : 'Member is blocked and cannot check in.';
+      throw Exception(msg);
     } on ServerException catch (e) {
       // Surface specific conflict messages (token used, expired, duplicate check-in).
       throw Exception(e.message);

@@ -146,9 +146,8 @@ class _DetailView extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Row(
-                            textDirection: isRtl
-                                ? TextDirection.rtl
-                                : TextDirection.ltr,
+                            textDirection:
+                            isRtl ? TextDirection.rtl : TextDirection.ltr,
                             children: [
                               Text(
                                 session.trainerRating.toStringAsFixed(1),
@@ -158,15 +157,18 @@ class _DetailView extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              const Icon(Icons.star_rounded,
-                                  color: Colors.amber, size: 18),
+                              const Icon(
+                                Icons.star_rounded,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
                               const SizedBox(width: 8),
                               Container(
                                 width: 4,
                                 height: 4,
                                 decoration: BoxDecoration(
-                                  color: tokens.colors.onPrimary
-                                      .withOpacity(0.6),
+                                  color:
+                                  tokens.colors.onPrimary.withOpacity(0.6),
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -174,8 +176,8 @@ class _DetailView extends StatelessWidget {
                               Text(
                                 session.trainerName,
                                 style: tokens.typography.bodyMedium.copyWith(
-                                  color: tokens.colors.onPrimary
-                                      .withOpacity(0.9),
+                                  color:
+                                  tokens.colors.onPrimary.withOpacity(0.9),
                                 ),
                               ),
                             ],
@@ -197,7 +199,8 @@ class _DetailView extends StatelessWidget {
                   SessionInfoGridWidget(session: session),
                   SizedBox(height: tokens.spacing.md),
                   SessionAboutWidget(
-                    description: session.description ?? 'No description available',
+                    description:
+                    session.description ?? 'No description available',
                   ),
                   SizedBox(height: tokens.spacing.md),
                   SessionBenefitsWidget(benefits: session.benefits),
@@ -222,6 +225,12 @@ class _DetailView extends StatelessWidget {
           right: 0,
           child: _BookNowBar(
             sessionId: session.sessionId,
+
+            /*
+             * Needed to disable booking when the session already started.
+             */
+            startTime: session.startTime,
+
             memberBookingStatus: session.memberBookingStatus,
             l10n: l10n,
             session: session,
@@ -234,12 +243,21 @@ class _DetailView extends StatelessWidget {
 
 class _BookNowBar extends StatelessWidget {
   final int sessionId;
+
+  /*
+   * Session start time.
+   * Used only for frontend UX.
+   * Backend already blocks old sessions.
+   */
+  final DateTime startTime;
+
   final String? memberBookingStatus;
   final AppLocalizations l10n;
   final SessionDetailEntity session;
 
   const _BookNowBar({
     required this.sessionId,
+    required this.startTime,
     required this.memberBookingStatus,
     required this.l10n,
     required this.session,
@@ -268,11 +286,22 @@ class _BookNowBar extends StatelessWidget {
           final isBooked = memberBookingStatus == 'BOOKED';
           final isWaitlisted = memberBookingStatus == 'WAITLISTED';
 
+          /*
+           * Booking is closed when the session start time is now or in the past.
+           *
+           * This mirrors the backend check:
+           * if (!session.getStartTime().isAfter(LocalDateTime.now())) block.
+           */
+          final isSessionClosed = !startTime.isAfter(DateTime.now());
+
+          final isDisabled =
+              isLoading || isBooked || isWaitlisted || isSessionClosed;
+
           return SizedBox(
             width: double.infinity,
             height: tokens.button.height,
             child: ElevatedButton(
-              onPressed: isLoading || isBooked
+              onPressed: isDisabled
                   ? null
                   : () async {
                 final dio = appDio ?? Dio();
@@ -286,8 +315,9 @@ class _BookNowBar extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                isBooked ? tokens.colors.muted : tokens.colors.primary,
+                backgroundColor: isDisabled
+                    ? tokens.colors.muted
+                    : tokens.colors.primary,
                 foregroundColor: tokens.colors.onPrimary,
                 disabledBackgroundColor: tokens.colors.muted,
                 elevation: 0,
@@ -309,6 +339,8 @@ class _BookNowBar extends StatelessWidget {
                     ? l10n.sessionDetailAlreadyBooked
                     : isWaitlisted
                     ? l10n.sessionDetailWaitlisted
+                    : isSessionClosed
+                    ? l10n.sessionDetailBookingClosed
                     : l10n.sessionDetailBookNow,
                 style: TextStyle(
                   fontSize: tokens.button.textSize,

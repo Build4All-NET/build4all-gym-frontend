@@ -1770,9 +1770,15 @@ abstract class AppLocalizations {
   String get navAiAssistant;
 
   /// Admin drawer — Membership Requests item
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Requests'**
   String get navMembershipRequests;
 
   /// Admin drawer — Invoices item
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
   String get navInvoices;
 
   /// Admin drawer — Settings item
@@ -1870,6 +1876,9 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training Videos'**
   String get navTrainingVideos;
+
+  /// No description provided for @navPtPackageBookings.
+  String get navPtPackageBookings;
 
   /// No description provided for @accountProfileUpdateSuccess.
   ///
@@ -2356,6 +2365,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
+
+  /// No description provided for @ptRequestTimePickerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a time from the trainer'**
+  String get ptRequestTimePickerHint;
+
+  /// No description provided for @ptTimeRequestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your time request has been sent to the trainer.'**
+  String get ptTimeRequestSuccess;
+
+  /// No description provided for @ptTimeRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send time request. Please try again.'**
+  String get ptTimeRequestFailed;
 
   /// No description provided for @ptBookingRequestSuccess.
   ///
@@ -3094,6 +3121,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan Member QR'**
   String get checkins_scannerTitle;
+
+  /// No description provided for @sessionDetailBookingClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking closed'**
+  String get sessionDetailBookingClosed;
+
+  /// No description provided for @booked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get booked;
+
+  /// No description provided for @noActiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'No active membership'**
+  String get noActiveMembership;
+
+  /// No description provided for @membershipStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'cancelled'**
+  String get membershipStatusCancelled;
+
+  /// No description provided for @editProfileVerifyNewPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify new phone number'**
+  String get editProfileVerifyNewPhone;
+
+  /// No description provided for @editProfilePhoneVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number verified successfully'**
+  String get editProfilePhoneVerified;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

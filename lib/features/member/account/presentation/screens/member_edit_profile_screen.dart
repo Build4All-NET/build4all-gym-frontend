@@ -17,12 +17,16 @@ import 'package:build4allgym/features/member/build4all_profile/presentation/bloc
 
 import 'package:build4allgym/features/member/profile_edit/data/repositories/member_profile_edit_repository_impl.dart';
 import 'package:build4allgym/features/member/profile_edit/data/services/member_profile_edit_service.dart';
+
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/resend_email_change_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_password_reset_code_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_phone_verification_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_build4all_profile_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_profile_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_current_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_email_change_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_profile_phone_code_usecase.dart';
+
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_bloc.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_event.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_state.dart';
@@ -38,6 +42,7 @@ bool _isArabic(BuildContext context) {
 class MemberEditProfileScreen extends StatelessWidget {
   final MemberAccountEntity account;
   final MemberBuild4AllProfileEntity profile;
+
 
   const MemberEditProfileScreen({
     super.key,
@@ -59,9 +64,11 @@ class MemberEditProfileScreen extends StatelessWidget {
         verifyCurrentPassword: VerifyCurrentPasswordUseCase(repository),
         sendPasswordResetCode: SendProfilePasswordResetCodeUseCase(repository),
         updatePassword: UpdateProfilePasswordUseCase(repository),
+        sendPhoneVerificationCode:
+        SendProfilePhoneVerificationCodeUseCase(repository),
+        verifyPhoneCode: VerifyProfilePhoneCodeUseCase(repository),
       ),
       child: _MemberEditProfileView(
-        account: account,
         profile: profile,
       ),
     );
@@ -69,11 +76,9 @@ class MemberEditProfileScreen extends StatelessWidget {
 }
 
 class _MemberEditProfileView extends StatefulWidget {
-  final MemberAccountEntity account;
   final MemberBuild4AllProfileEntity profile;
 
   const _MemberEditProfileView({
-    required this.account,
     required this.profile,
   });
 
@@ -88,16 +93,19 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _usernameController;
   late final TextEditingController _emailController;
-  late final TextEditingController _dateOfBirthController;
-  late final TextEditingController _addressController;
   late final TextEditingController _currentPasswordController;
   late final TextEditingController _newPasswordController;
 
-  String _phoneCompleteNumber = '';
-  String? _selectedGender;
+  late final TextEditingController _phoneController;
+
+
+
 
   bool _hideCurrentPassword = true;
   bool _hideNewPassword = true;
+
+  bool _phoneAlreadyVerified = false;
+  bool _passwordAlreadyUpdated = false;
 
   static final RegExp _nameAllowedChars = RegExp(
     r"[A-Za-zÀ-ÖØ-öø-ÿĀ-žḀ-ỿ\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]",
@@ -127,17 +135,9 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       text: widget.profile.email ?? '',
     );
 
-    _phoneCompleteNumber = widget.profile.phoneNumber?.trim() ?? '';
-
-    _dateOfBirthController = TextEditingController(
-      text: widget.account.dateOfBirth ?? '',
+    _phoneController = TextEditingController(
+      text: widget.profile.phoneNumber?.trim() ?? '',
     );
-
-    _addressController = TextEditingController(
-      text: widget.account.address ?? '',
-    );
-
-    _selectedGender = _normalizeGender(widget.account.gender);
 
     _currentPasswordController = TextEditingController();
     _newPasswordController = TextEditingController();
@@ -149,8 +149,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     _lastNameController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
-    _dateOfBirthController.dispose();
-    _addressController.dispose();
     _currentPasswordController.dispose();
     _newPasswordController.dispose();
     super.dispose();
@@ -161,11 +159,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final isArabic = _isArabic(context);
     final l10n = AppLocalizations.of(context)!;
-
-    final genderItems = <String, String>{
-      'MALE': l10n.editProfileMale,
-      'FEMALE': l10n.editProfileFemale,
-    };
 
     return BlocConsumer<MemberProfileEditBloc, MemberProfileEditState>(
       listener: _onProfileEditState,
@@ -270,41 +263,14 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                               ),
                             ),
                             SizedBox(height: tokens.spacing.md),
-                            _PhoneField(
+                            _EditField(
                               label: l10n.editProfilePhone,
-                              requiredMessage: l10n.editProfilePhoneRequired,
-                              initialPhoneNumber: widget.profile.phoneNumber,
-                              onChanged: (completeNumber) {
-                                _phoneCompleteNumber = completeNumber.trim();
-                              },
-                            ),
-                            SizedBox(height: tokens.spacing.xl),
-                            _EditField(
-                              label: l10n.editProfileDateOfBirth,
-                              controller: _dateOfBirthController,
-                              icon: Icons.calendar_today_outlined,
-                              readOnly: true,
-                              onTap: loading ? null : _pickDate,
-                            ),
-                            SizedBox(height: tokens.spacing.md),
-                            _GenderDropdown(
-                              value: _selectedGender,
-                              label: l10n.editProfileGender,
-                              items: genderItems,
-                              onChanged: loading
-                                  ? null
-                                  : (value) {
-                                setState(() {
-                                  _selectedGender = value;
-                                });
-                              },
-                            ),
-                            SizedBox(height: tokens.spacing.md),
-                            _EditField(
-                              label: l10n.editProfileAddress,
-                              controller: _addressController,
-                              icon: Icons.location_on_outlined,
-                              keyboardType: TextInputType.streetAddress,
+                              controller: _phoneController,
+                              icon: Icons.phone_outlined,
+                              keyboardType: TextInputType.phone,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[0-9+\s]')),
+                              ],
                             ),
                             SizedBox(height: tokens.spacing.xl),
                             _SectionTitle(
@@ -477,7 +443,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
 
     if (state is MemberProfileEditSuccess) {
-      await _saveGymFields(context);
       _refreshAccountAndClose(context);
       return;
     }
@@ -512,8 +477,50 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
 
       if (ok == true && mounted) {
-        await _saveGymFields(context);
         _refreshAccountAndClose(context);
+      }
+
+      return;
+    }
+
+    if (state is MemberProfileEditPhoneVerificationRequired) {
+      final ok = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => MemberProfileEditOtpDialog(
+          title: l10n.editProfileVerifyNewPhone,
+          sentToLabel: l10n.editProfileCodeSentTo,
+          destination: state.newPhoneNumber,
+          codeLabel: l10n.editProfileVerificationCode,
+          resendLabel: l10n.editProfileResend,
+          verifyLabel: l10n.editProfileVerify,
+          codeRequiredMessage: l10n.editProfileCodeRequired,
+          onVerify: (code) async {
+            final repository = MemberProfileEditRepositoryImpl(
+              MemberProfileEditService(),
+            );
+
+            await repository.verifyPhoneChangeCode(
+              phoneNumber: state.newPhoneNumber,
+              code: code,
+            );
+          },
+          onResend: () async {
+            final repository = MemberProfileEditRepositoryImpl(
+              MemberProfileEditService(),
+            );
+
+            await repository.sendPhoneChangeVerificationCode(
+              phoneNumber: state.newPhoneNumber,
+              ownerProjectLinkId: state.ownerProjectLinkId,
+            );
+          },
+        ),
+      );
+
+      if (ok == true && mounted) {
+        _phoneAlreadyVerified = true;
+        _submit();
       }
 
       return;
@@ -557,8 +564,8 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
 
       if (ok == true && mounted) {
-        await _saveGymFields(context);
-        _refreshAccountAndClose(context);
+        _passwordAlreadyUpdated = true;
+        _submit();
       }
 
       return;
@@ -566,6 +573,11 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
     if (state is MemberProfileEditEmailVerified) {
       _showSnack(context, l10n.editProfileEmailVerified);
+      return;
+    }
+
+    if (state is MemberProfileEditPhoneVerified) {
+      _showSnack(context, l10n.editProfilePhoneVerified);
       return;
     }
 
@@ -578,16 +590,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       _showSnack(context, state.message);
       return;
     }
-  }
-
-  Future<void> _saveGymFields(BuildContext context) async {
-    context.read<MemberAccountBloc>().add(
-      MemberAccountProfileUpdateRequested(
-        dateOfBirth: _emptyToNull(_dateOfBirthController.text),
-        address: _emptyToNull(_addressController.text),
-        gender: _selectedGender,
-      ),
-    );
   }
 
   void _refreshAccountAndClose(BuildContext context) {
@@ -618,14 +620,12 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       return;
     }
 
-    if (_phoneCompleteNumber.trim().isEmpty) {
-      _showSnack(
-        context,
-        l10n.editProfilePhoneRequired,
-        isError: true,
-      );
-      return;
-    }
+    // Phone is NOT required on submit.
+// If the user leaves it empty, we keep the old phone.
+// If the user enters a new phone, Bloc will detect the change and send OTP.
+    final submittedPhone = _phoneController.text.trim().isNotEmpty
+        ? _phoneController.text.trim()
+        : (widget.profile.phoneNumber ?? '').trim();
 
     context.read<MemberProfileEditBloc>().add(
       MemberProfileEditSubmitted(
@@ -633,39 +633,18 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
         lastName: _lastNameController.text.trim(),
         username: _usernameController.text.trim(),
         email: _emailController.text.trim(),
-        phoneNumber: _phoneCompleteNumber.trim(),
-        dateOfBirth: _emptyToNull(_dateOfBirthController.text),
-        address: _emptyToNull(_addressController.text),
+        phoneNumber: submittedPhone,
+        dateOfBirth: null,
+        address: null,
         currentEmail: widget.profile.email ?? '',
+        currentPhoneNumber: widget.profile.phoneNumber ?? '',
         currentPassword: _currentPasswordController.text,
         newPassword: _newPasswordController.text.trim(),
         ownerProjectLinkId: ownerProjectLinkId,
+        phoneAlreadyVerified: _phoneAlreadyVerified,
+        passwordAlreadyUpdated: _passwordAlreadyUpdated,
       ),
     );
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-
-    final initialDate = DateTime.tryParse(_dateOfBirthController.text) ??
-        DateTime(now.year - 18, now.month, now.day);
-
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: now,
-    );
-
-    if (picked == null) return;
-
-    final yyyy = picked.year.toString().padLeft(4, '0');
-    final mm = picked.month.toString().padLeft(2, '0');
-    final dd = picked.day.toString().padLeft(2, '0');
-
-    setState(() {
-      _dateOfBirthController.text = '$yyyy-$mm-$dd';
-    });
   }
 
   String? _validateName(
@@ -696,24 +675,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     if (!ok) return l10n.editProfileInvalidEmail;
 
     return null;
-  }
-
-  String? _normalizeGender(String? value) {
-    final key = value?.trim().toUpperCase();
-
-    const allowed = {
-      'MALE',
-      'FEMALE',
-    };
-
-    if (key == null || key.isEmpty) return null;
-
-    return allowed.contains(key) ? key : null;
-  }
-
-  String? _emptyToNull(String value) {
-    final v = value.trim();
-    return v.isEmpty ? null : v;
   }
 
   void _showSnack(
@@ -876,206 +837,7 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-class _PhoneField extends StatelessWidget {
-  final String label;
-  final String requiredMessage;
-  final String? initialPhoneNumber;
-  final ValueChanged<String> onChanged;
 
-  const _PhoneField({
-    required this.label,
-    required this.requiredMessage,
-    required this.initialPhoneNumber,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-    final isArabic = _isArabic(context);
-
-    return Column(
-      crossAxisAlignment:
-      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        _FieldLabel(text: label),
-        SizedBox(height: tokens.spacing.xs),
-        IntlPhoneField(
-          initialCountryCode: _guessInitialCountryCode(initialPhoneNumber),
-          initialValue: _stripKnownDialCode(initialPhoneNumber),
-          keyboardType: TextInputType.phone,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: tokens.colors.background,
-            hintText: label,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide(
-                color: tokens.colors.primary,
-                width: tokens.search.borderWidth,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide(
-                color: tokens.colors.danger,
-                width: tokens.search.borderWidth,
-              ),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: tokens.spacing.md,
-              vertical: tokens.spacing.md,
-            ),
-          ),
-          validator: (phone) {
-            final complete = phone?.completeNumber.trim() ?? '';
-            if (complete.isEmpty) return requiredMessage;
-            return null;
-          },
-          onChanged: (phone) {
-            onChanged(phone.completeNumber);
-          },
-        ),
-      ],
-    );
-  }
-
-  static String _guessInitialCountryCode(String? phone) {
-    final v = phone?.trim() ?? '';
-
-    if (v.startsWith('+961')) return 'LB';
-    if (v.startsWith('+33')) return 'FR';
-    if (v.startsWith('+1')) return 'US';
-    if (v.startsWith('+44')) return 'GB';
-    if (v.startsWith('+971')) return 'AE';
-
-    return 'LB';
-  }
-
-  static String? _stripKnownDialCode(String? phone) {
-    final v = phone?.trim();
-    if (v == null || v.isEmpty) return null;
-
-    if (v.startsWith('+961')) return v.substring(4);
-    if (v.startsWith('+33')) return v.substring(3);
-    if (v.startsWith('+1')) return v.substring(2);
-    if (v.startsWith('+44')) return v.substring(3);
-    if (v.startsWith('+971')) return v.substring(4);
-
-    return v;
-  }
-}
-
-class _GenderDropdown extends StatelessWidget {
-  final String? value;
-  final ValueChanged<String?>? onChanged;
-  final String label;
-  final Map<String, String> items;
-
-  const _GenderDropdown({
-    required this.value,
-    required this.onChanged,
-    required this.label,
-    required this.items,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-    final isArabic = _isArabic(context);
-
-    return Column(
-      crossAxisAlignment:
-      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        _FieldLabel(text: label),
-        SizedBox(height: tokens.spacing.xs),
-        DropdownButtonFormField<String>(
-          value: value,
-          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: tokens.colors.background,
-            prefixIcon: Icon(
-              Icons.wc_rounded,
-              color: tokens.colors.muted,
-              size: 20,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide(
-                color: tokens.colors.primary,
-                width: tokens.search.borderWidth,
-              ),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: tokens.spacing.md,
-              vertical: tokens.spacing.md,
-            ),
-          ),
-          hint: Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-            child: Text(
-              label,
-              textAlign: isArabic ? TextAlign.right : TextAlign.left,
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-            ),
-          ),
-          selectedItemBuilder: (context) {
-            return items.entries.map((entry) {
-              return Align(
-                alignment:
-                isArabic ? Alignment.centerRight : Alignment.centerLeft,
-                child: Text(
-                  entry.value,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection:
-                  isArabic ? TextDirection.rtl : TextDirection.ltr,
-                ),
-              );
-            }).toList();
-          },
-          items: items.entries.map((entry) {
-            return DropdownMenuItem<String>(
-              value: entry.key,
-              child: SizedBox(
-                width: double.infinity,
-                child: Align(
-                  alignment:
-                  isArabic ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Text(
-                    entry.value,
-                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                    textDirection:
-                    isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
-}
 
 class _EditField extends StatelessWidget {
   final String label;

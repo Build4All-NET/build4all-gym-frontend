@@ -10,6 +10,15 @@ class PtPackageBookingResponseModel {
   final String status;
   final String? createdAt;
 
+  // Payment fields
+  final int? invoiceId;
+  final int? transactionId;
+  final String? paymentMethod;
+  final String? paymentStatus;
+  final String? clientSecret;
+  final String? publishableKey;
+  final String? redirectUrl;
+
   const PtPackageBookingResponseModel({
     required this.id,
     this.branchId,
@@ -19,6 +28,13 @@ class PtPackageBookingResponseModel {
     required this.totalAmount,
     required this.status,
     this.createdAt,
+    this.invoiceId,
+    this.transactionId,
+    this.paymentMethod,
+    this.paymentStatus,
+    this.clientSecret,
+    this.publishableKey,
+    this.redirectUrl,
   });
 
   factory PtPackageBookingResponseModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +47,13 @@ class PtPackageBookingResponseModel {
       totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
       status: json['status'] as String? ?? '',
       createdAt: json['createdAt'] as String?,
+      invoiceId: (json['invoiceId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      paymentMethod: json['paymentMethod'] as String?,
+      paymentStatus: json['paymentStatus'] as String?,
+      clientSecret: json['clientSecret'] as String?,
+      publishableKey: json['publishableKey'] as String?,
+      redirectUrl: json['redirectUrl'] as String?,
     );
   }
 
@@ -44,6 +67,13 @@ class PtPackageBookingResponseModel {
       totalAmount: totalAmount,
       status: status,
       createdAt: createdAt,
+      invoiceId: invoiceId,
+      transactionId: transactionId,
+      paymentMethod: paymentMethod,
+      paymentStatus: paymentStatus,
+      clientSecret: clientSecret,
+      publishableKey: publishableKey,
+      redirectUrl: redirectUrl,
     );
   }
 }
