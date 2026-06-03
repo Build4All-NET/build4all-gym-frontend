@@ -304,7 +304,7 @@ jobs:
                   return None
               return re.sub(r"\s+", "", str(v))  # removes spaces/newlines that break base64
           
-          # ✅ only set the key if it exists (no nulls)
+          # only set the key if it exists (no nulls)
           for env_key, alt_key in [
               ("THEME_JSON_B64", "themeJsonB64"),
               ("NAV_JSON_B64", "navJsonB64"),
@@ -776,7 +776,7 @@ jobs:
           # remove any leftover \u{...} that isn't valid hex
           app_name_clean = re.sub(r'\\u\{[^}]*\}', '', app_name_clean)
           
-          # 🔥 nuke backslashes completely (Android treats them as escapes)
+          # nuke backslashes completely (Android treats them as escapes)
           app_name_clean = app_name_clean.replace("\\", "")
           
           # remove literal patterns like u{...} if they appear without backslash
@@ -812,6 +812,17 @@ jobs:
                   shutil.copyfile("assets/branding/logo.png","assets/branding/splash.png")
               except Exception as e:
                   print("⚠️ Failed to download logo:", e)
+
+          # Gym uses assets/app_icon.png for flutter_launcher_icons
+          pathlib.Path("assets").mkdir(parents=True, exist_ok=True)
+          if pathlib.Path("assets/branding/logo.png").exists():
+              shutil.copyfile("assets/branding/logo.png", "assets/app_icon.png")
+              print("✅ Copied logo to assets/app_icon.png")
+          elif not pathlib.Path("assets/app_icon.png").exists():
+              import base64 as _b64
+              stub_png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwADhQGAWjR9awAAAABJRU5ErkJggg=="
+              pathlib.Path("assets/app_icon.png").write_bytes(_b64.b64decode(stub_png))
+              print("⚠️ Created stub assets/app_icon.png (no logo available)")
 
           values_dir = pathlib.Path("android/app/src/main/res/values")
           values_dir.mkdir(parents=True, exist_ok=True)
