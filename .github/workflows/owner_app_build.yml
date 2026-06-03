@@ -121,6 +121,26 @@ jobs:
           echo "----- pretty -----"
           python3 -m json.tool payload.json || true
 
+      - name: Install Android NDK 27.0.12077973
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r27
+          local-cache: false
+
+      - name: Link NDK into Android SDK directory
+        run: |
+          NDK_PATH="${{ steps.setup-ndk.outputs.ndk-path }}"
+          NDK_TARGET="${ANDROID_SDK_ROOT}/ndk/27.0.12077973"
+          if [ ! -d "$NDK_TARGET" ]; then
+            mkdir -p "${ANDROID_SDK_ROOT}/ndk"
+            ln -s "$NDK_PATH" "$NDK_TARGET"
+            echo "✅ Linked NDK: $NDK_PATH -> $NDK_TARGET"
+          else
+            echo "✅ NDK 27.0.12077973 already at $NDK_TARGET"
+          fi
+          echo "Installed NDK versions:"
+          ls "${ANDROID_SDK_ROOT}/ndk/" || true
 
       - name: Force Android NDK 27
         run: |
@@ -156,7 +176,6 @@ jobs:
 
           echo "---- compileSdk now ----"
           grep -n "compileSdk" "$FILE" || true
-
 
       - name: Build ci_env.json (BY_LINK runtime-config + fallback)
         run: |
@@ -302,9 +321,8 @@ jobs:
           def clean_b64(v):
               if not v:
                   return None
-              return re.sub(r"\s+", "", str(v))  # removes spaces/newlines that break base64
+              return re.sub(r"\s+", "", str(v))
           
-          # only set the key if it exists (no nulls)
           for env_key, alt_key in [
               ("THEME_JSON_B64", "themeJsonB64"),
               ("NAV_JSON_B64", "navJsonB64"),
@@ -481,8 +499,6 @@ jobs:
         run: |
           set -euo pipefail
       
-          EXPECTED_PKG="$(tr -d '\r\n' < ci_package_name.txt)"
-      
           python3 - <<'PY'
           import json
           import sys
@@ -535,7 +551,7 @@ jobs:
           PY
           
       # ════════════════════════════════════════════════════════════════════
-      # 🔧 FIX: Sync menuType (BRANDING -> THEME) so hamburger stays hamburger
+      # 🔧 Sync menuType (BRANDING -> THEME) so hamburger stays hamburger
       # ════════════════════════════════════════════════════════════════════
       - name: 🔧 Sync menuType (BRANDING -> THEME) so drawer doesn't flip to bottom
         run: |
@@ -557,13 +573,11 @@ jobs:
           branding = {}
           theme = {}
 
-          # read BRANDING
           if env.get("BRANDING_JSON_B64"):
               branding = json.loads(b64decode(env["BRANDING_JSON_B64"]) or "{}")
           elif env.get("BRANDING_JSON"):
               branding = json.loads(env["BRANDING_JSON"] or "{}")
 
-          # read THEME
           if env.get("THEME_JSON_B64"):
               theme = json.loads(b64decode(env["THEME_JSON_B64"]) or "{}")
           elif env.get("THEME_JSON"):
@@ -571,7 +585,6 @@ jobs:
 
           menu = (branding.get("menuType") or "").strip().lower()
 
-          # normalize drawer -> hamburger
           if menu == "drawer":
               menu = "hamburger"
 
@@ -642,14 +655,12 @@ jobs:
           echo "VERSION_CODE=$VC"
           echo "VERSION_NAME=$VN"
 
-          # 1) namespace
           if grep -qE 'namespace\s*=\s*"' "$FILE"; then
             sed -i "s|namespace\s*=.*|namespace = \"$PKG\"|g" "$FILE"
           else
             perl -0777 -i -pe "s/android\\s*\\{\\s*/android {\\n    namespace = \\\"$PKG\\\"\\n/s" "$FILE"
           fi
 
-          # 2) versionCode / versionName
           if grep -qE 'versionCode\s*=' "$FILE"; then
             sed -i "s|versionCode\s*=.*|versionCode = $VC|g" "$FILE"
           else
@@ -665,7 +676,6 @@ jobs:
           echo "---- build.gradle.kts (key lines) ----"
           grep -n "namespace\|applicationId\|versionCode\|versionName" "$FILE" || true
 
-          # 3) Update MainActivity package + move file to new folder
           ROOT_KT="android/app/src/main/kotlin"
           ROOT_JAVA="android/app/src/main/java"
           NEW_PATH_REL="$(echo "$PKG" | tr '.' '/')"
@@ -707,7 +717,6 @@ jobs:
           fix_activity_in_root "$ROOT_KT"
           fix_activity_in_root "$ROOT_JAVA"
 
-          # 4) AndroidManifest.xml package attr (only if exists)
           MAN="android/app/src/main/AndroidManifest.xml"
           if [ -f "$MAN" ]; then
             if grep -q 'package="' "$MAN"; then
@@ -716,8 +725,6 @@ jobs:
             fi
           fi
 
-
-          
       - name: Fix Stripe ProGuard rules
         run: |
           PROGUARD_FILE="android/app/proguard-rules.pro"
@@ -750,44 +757,19 @@ jobs:
 
           cfg = json.load(open("lib/env/ci_env.json","r",encoding="utf-8"))
 
-          def decode_js_unicode(s: str) -> str:
-              # Convert JS-style \u{XXXX} into real characters
-              def repl(m):
-                  try:
-                      return chr(int(m.group(1), 16))
-                  except Exception:
-                      return m.group(0)
-              s = re.sub(r'\\u\{([0-9a-fA-F]+)\}', repl, s)
-
-              # If anything weird is still there, neutralize it
-              s = re.sub(r'\\u\{[^}]*\}', '', s)
-              return s
-
           app_name_raw = str(cfg.get("APP_NAME") or "My App")
 
-          # Convert JS-style \u{XXXX} (hex only)
           def repl(m):
               try:
                   return chr(int(m.group(1), 16))
               except Exception:
                   return ""
           app_name_clean = re.sub(r'\\u\{([0-9a-fA-F]+)\}', repl, app_name_raw)
-          
-          # remove any leftover \u{...} that isn't valid hex
           app_name_clean = re.sub(r'\\u\{[^}]*\}', '', app_name_clean)
-          
-          # nuke backslashes completely (Android treats them as escapes)
           app_name_clean = app_name_clean.replace("\\", "")
-          
-          # remove literal patterns like u{...} if they appear without backslash
           app_name_clean = re.sub(r'u\{[^}]*\}', '', app_name_clean)
-          
-          # remove control chars (newlines/tabs/etc)
           app_name_clean = re.sub(r'[\x00-\x1F\x7F]', ' ', app_name_clean).strip()
-          
-          # optional: escape single quote
           app_name_clean = app_name_clean.replace("'", "\\'")
-          
           app_name_xml = escape(app_name_clean)
 
           api_base = (cfg.get("API_BASE_URL") or "").strip().rstrip("/")
@@ -857,7 +839,6 @@ jobs:
           echo "----- search for app_name occurrences -----"
           grep -RIn "name=\"app_name\"" android/app/src/main/res || true
 
-          # fail fast if still present
           if grep -RIn "\\\\u{" android/app/src/main/res >/dev/null 2>&1; then
             echo "❌ Found invalid \\u{...} sequence in Android resources. Failing early."
             exit 1
@@ -980,7 +961,6 @@ jobs:
           echo "========================================"
           echo ""
 
-          # Build JSON payloads (include buildId only if present)
           APK_JSON="{\"apkUrl\":\"${APK_URL}\""
           if [ -n "$BUILD_ID" ]; then
             APK_JSON="${APK_JSON},\"buildId\":\"${BUILD_ID}\""
