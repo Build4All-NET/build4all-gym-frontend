@@ -339,7 +339,7 @@ jobs:
 
           print("✅ ci_env.json written")
           print("API_BASE_URL =", api_base)
-          print("PROJECT_API_BASE_URL =", gym_api_base)
+          print("OVERRIDE_BASE_URL=", gym_api_base)
           print("OWNER_PROJECT_LINK_ID =", link_id)
           print("PROJECT_ID =", project_id)
           print("IOS_BUNDLE_ID =", ios_bundle)
