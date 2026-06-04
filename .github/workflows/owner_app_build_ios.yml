@@ -565,31 +565,36 @@ jobs:
           # Force all pods deployment target to 15.5
           python3 - <<'PY'
           from pathlib import Path
-      
+
           p = Path("ios/Podfile")
           s = p.read_text()
-      
-          old = """post_install do |installer|
-          installer.pods_project.targets.each do |target|
-            flutter_additional_ios_build_settings(target)
-          end
-          end"""
-        
-            new = """post_install do |installer|
-          installer.pods_project.targets.each do |target|
-            flutter_additional_ios_build_settings(target)
-        
-            target.build_configurations.each do |config|
-              config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
-            end
-          end
-          end"""
-      
-          if old in s:
-              s = s.replace(old, new)
-          elif "IPHONEOS_DEPLOYMENT_TARGET" not in s:
-              s += "\\n" + new + "\\n"
-      
+
+          target_line = "config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'"
+          anchor = "flutter_additional_ios_build_settings(target)"
+
+          # Idempotent: only patch once, and inject into the EXISTING
+          # post_install loop so we never create a duplicate post_install block.
+          if "IPHONEOS_DEPLOYMENT_TARGET" not in s:
+              if anchor in s:
+                  injected = (
+                      anchor + "\n"
+                      "    target.build_configurations.each do |config|\n"
+                      "      " + target_line + "\n"
+                      "    end"
+                  )
+                  s = s.replace(anchor, injected, 1)
+              else:
+                  s += (
+                      "\npost_install do |installer|\n"
+                      "  installer.pods_project.targets.each do |target|\n"
+                      "    flutter_additional_ios_build_settings(target)\n"
+                      "    target.build_configurations.each do |config|\n"
+                      "      " + target_line + "\n"
+                      "    end\n"
+                      "  end\n"
+                      "end\n"
+                  )
+
           p.write_text(s)
           PY
       
