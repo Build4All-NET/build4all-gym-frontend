@@ -188,17 +188,17 @@ jobs:
 
           api_base = (cfg.get("API_BASE_URL") or payload.get("API_BASE_URL") or "").strip().rstrip("/")
           gym_api_base = str(
-              cfg.get("PROJECT_API_BASE_URL")
+              cfg.get("OVERRIDE_BASE_URL")
               or cfg.get("GYM_API_BASE_URL")
               or cfg.get("API_BASE_URL_OVERRIDE")
-              or payload.get("PROJECT_API_BASE_URL")
+              or payload.get("OVERRIDE_BASE_URL")
               or payload.get("GYM_API_BASE_URL")
               or payload.get("API_BASE_URL_OVERRIDE")
               or ""
           ).strip().rstrip("/")
           if not gym_api_base:
               gym_api_base = api_base
-              print("⚠️ PROJECT_API_BASE_URL not found in payload, defaulting to API_BASE_URL")
+              print("⚠️ OVERRIDE_BASE_URL not found in payload, defaulting to API_BASE_URL")
           link_id  = str(
               cfg.get("OWNER_PROJECT_LINK_ID")
               or payload.get("OWNER_PROJECT_LINK_ID")
@@ -289,7 +289,7 @@ jobs:
               "ANDROID_VERSION_CODE": vc_int if vc_int is not None else 1,
               "ANDROID_VERSION_NAME": vn_str if vn_str else "1.0.0",
               "CONFIG_SOURCE": source,
-              "PROJECT_API_BASE_URL": gym_api_base,
+              "OVERRIDE_BASE_URL": gym_api_base,
           }
 
           currency_id = pick("CURRENCY_ID")
