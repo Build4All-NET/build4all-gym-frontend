@@ -813,16 +813,17 @@ jobs:
               except Exception as e:
                   print("⚠️ Failed to download logo:", e)
 
-          # Gym uses assets/app_icon.png for flutter_launcher_icons
+          # Ensure assets/branding/logo.png exists (needed for flutter_launcher_icons + flutter_native_splash)
           pathlib.Path("assets").mkdir(parents=True, exist_ok=True)
+          if not pathlib.Path("assets/branding/logo.png").exists():
+              import base64 as _b64
+              stub_png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwADhQGAWjR9awAAAABJRU5ErkJggg=="
+              pathlib.Path("assets/branding").mkdir(parents=True, exist_ok=True)
+              pathlib.Path("assets/branding/logo.png").write_bytes(_b64.b64decode(stub_png))
+              print("⚠️ Created stub assets/branding/logo.png (no logo available)")
           if pathlib.Path("assets/branding/logo.png").exists():
               shutil.copyfile("assets/branding/logo.png", "assets/app_icon.png")
               print("✅ Copied logo to assets/app_icon.png")
-          elif not pathlib.Path("assets/app_icon.png").exists():
-              import base64 as _b64
-              stub_png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwADhQGAWjR9awAAAABJRU5ErkJggg=="
-              pathlib.Path("assets/app_icon.png").write_bytes(_b64.b64decode(stub_png))
-              print("⚠️ Created stub assets/app_icon.png (no logo available)")
 
           values_dir = pathlib.Path("android/app/src/main/res/values")
           values_dir.mkdir(parents=True, exist_ok=True)
