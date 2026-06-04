@@ -190,8 +190,10 @@ jobs:
           gym_api_base = str(
               cfg.get("PROJECT_API_BASE_URL")
               or cfg.get("GYM_API_BASE_URL")
+              or cfg.get("API_BASE_URL_OVERRIDE")
               or payload.get("PROJECT_API_BASE_URL")
               or payload.get("GYM_API_BASE_URL")
+              or payload.get("API_BASE_URL_OVERRIDE")
               or ""
           ).strip().rstrip("/")
           if not gym_api_base:
@@ -349,6 +351,7 @@ jobs:
 
           print("ci_env.json written")
           print("API_BASE_URL =", api_base)
+          print("PROJECT_API_BASE_URL =", gym_api_base)
           print("OWNER_PROJECT_LINK_ID =", link_id)
           print("PROJECT_ID =", project_id)
           print("PACKAGE_NAME =", pkg)
