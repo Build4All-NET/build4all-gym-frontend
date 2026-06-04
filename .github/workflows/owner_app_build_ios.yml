@@ -546,13 +546,55 @@ jobs:
             f.write(f"BETA_CONTACT_PHONE={contact_phone}\n")
           PY
 
-      - name: Ensure iOS Podfile exists
+      - name: Ensure iOS Podfile exists and set iOS deployment target
         shell: bash
         run: |
           set -euo pipefail
+      
           if [ ! -f "ios/Podfile" ]; then
             flutter create .
           fi
+      
+          # Force iOS minimum version required by mobile_scanner / MLKit pods
+          if grep -q "^platform :ios" ios/Podfile; then
+            sed -i '' "s/^platform :ios.*/platform :ios, '15.5'/" ios/Podfile
+          else
+            sed -i '' "1s/^/platform :ios, '15.5'\n/" ios/Podfile
+          fi
+      
+          # Force all pods deployment target to 15.5
+          python3 - <<'PY'
+          from pathlib import Path
+      
+          p = Path("ios/Podfile")
+          s = p.read_text()
+      
+          old = """post_install do |installer|
+          installer.pods_project.targets.each do |target|
+            flutter_additional_ios_build_settings(target)
+          end
+          end"""
+        
+            new = """post_install do |installer|
+          installer.pods_project.targets.each do |target|
+            flutter_additional_ios_build_settings(target)
+        
+            target.build_configurations.each do |config|
+              config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
+            end
+          end
+          end"""
+      
+          if old in s:
+              s = s.replace(old, new)
+          elif "IPHONEOS_DEPLOYMENT_TARGET" not in s:
+              s += "\\n" + new + "\\n"
+      
+          p.write_text(s)
+          PY
+      
+          echo "✅ Podfile after patch:"
+          cat ios/Podfile
 
       - name: Set iOS version & build number (initial)
         shell: bash
