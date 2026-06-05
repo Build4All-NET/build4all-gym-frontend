@@ -1584,4 +1584,260 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfilePhoneVerified => 'Phone number verified successfully';
+
+  @override
+  String get memberBookingsTitle => 'My Bookings';
+
+  @override
+  String get memberBookingsSubtitle => 'Your classes and PT sessions';
+
+  @override
+  String get memberBookingsUpcomingTab => 'Upcoming';
+
+  @override
+  String get memberBookingsPreviousTab => 'Previous';
+
+  @override
+  String get memberBookingsEmptyUpcoming => 'No upcoming bookings';
+
+  @override
+  String get memberBookingsEmptyPrevious => 'No previous bookings';
+
+  @override
+  String get memberBookingsLoadFailed => 'Failed to load bookings';
+
+  @override
+  String get memberBookingsCancelRequestSent => 'Cancel request sent';
+
+  @override
+  String get memberBookingsCancelRequestFailed => 'Failed to send cancel request';
+
+  @override
+  String get memberBookingsCancelButton => 'Cancel booking';
+
+  @override
+  String get memberBookingsReviewButton => 'Rate session';
+
+  @override
+  String get memberBookingsCancelPending => 'Cancel request pending';
+
+  @override
+  String get memberBookingsClassDefaultTitle => 'Class session';
+
+  @override
+  String get memberBookingsPtDefaultTitle => 'PT session';
+
+  @override
+  String memberBookingsSessionProgress(int current, int total) {
+    return 'Session $current of $total';
+  }
+
+  @override
+  String get bookingStatusConfirmed => 'Confirmed';
+
+  @override
+  String get bookingStatusWaitlisted => 'Waitlisted';
+
+  @override
+  String get bookingStatusPending => 'Pending';
+
+  @override
+  String get bookingStatusCancelRequested => 'Cancel request pending';
+
+  @override
+  String get bookingStatusCancelled => 'Cancelled';
+
+  @override
+  String get bookingStatusCompleted => 'Completed';
+
+  @override
+  String get bookingStatusUnknown => 'Unknown';
+
+  @override
+  String memberBookingsMinutes(int count) {
+    return '$count min';
+  }
+
+  @override
+  String get memberBookingsRatingTitle => 'Your opinion matters to us';
+
+  @override
+  String get memberBookingsRatingLabelLow => 'Terrible';
+
+  @override
+  String get memberBookingsRatingLabelHigh => 'Excellent';
+
+  @override
+  String get memberBookingsRateNowButton => 'Rate Now';
+
+  @override
+  String get memberBookingsReviewSubmitted => 'Thank you for your review!';
+
+  @override
+  String get memberBookingsReviewFailed => 'Failed to submit review. Please try again.';
+
+  @override
+  String get memberInvoicesTitle => 'Payment History';
+
+  @override
+  String get memberInvoicesEmptyTitle => 'No payments found';
+
+  @override
+  String get memberInvoicesEmptySubtitle => 'Your completed payments will appear here.';
+
+  @override
+  String get memberInvoicesRetry => 'Retry';
+
+  @override
+  String get memberInvoicesAll => 'All';
+
+  @override
+  String get memberInvoicesAllTypes => 'All Types';
+
+  @override
+  String get memberInvoicesStatusPaid => 'Paid';
+
+  @override
+  String get memberInvoicesStatusPending => 'Pending';
+
+  @override
+  String get memberInvoicesStatusRefunded => 'Refunded';
+
+  @override
+  String get memberInvoicesStatusCancelled => 'Cancelled';
+
+  @override
+  String get memberInvoicesStatusRejected => 'Rejected';
+
+  @override
+  String get memberInvoicesStatusFailed => 'Failed';
+
+  @override
+  String get memberInvoicesStatusUnknown => 'Unknown';
+
+  @override
+  String get memberInvoicesTypePlans => 'Plans';
+
+  @override
+  String get memberInvoicesTypeClasses => 'Classes';
+
+  @override
+  String get memberInvoicesTypePt => 'PT';
+
+  @override
+  String get memberInvoicesTypePtPackage => 'PT Package';
+
+  @override
+  String get memberInvoicesTypeDailyPass => 'Daily Pass';
+
+  @override
+  String get memberInvoicesTypeOther => 'Other';
+
+  @override
+  String get memberInvoicesDetails => 'View Details';
+
+  @override
+  String get memberInvoicesRefund => 'Refund';
+
+  @override
+  String get memberInvoicesRefundTitle => 'Refund Request';
+
+  @override
+  String get memberInvoicesRefundMessage => 'A refund request will be sent to the admin. The amount will not be refunded immediately.';
+
+  @override
+  String get memberInvoicesRefundReason => 'Reason optional';
+
+  @override
+  String get memberInvoicesRefundSend => 'Send Request';
+
+  @override
+  String get memberInvoicesRefundStatus => 'Refund Request';
+
+  @override
+  String get memberInvoicesDate => 'Date';
+
+  @override
+  String get memberInvoicesBranch => 'Branch';
+
+  @override
+  String get memberInvoicesPaymentMethod => 'Payment Method';
+
+  @override
+  String get memberInvoicesPaid => 'Paid';
+
+  @override
+  String get memberInvoicesDue => 'Due';
+
+  @override
+  String get memberInvoicesPaymentCash => 'Cash';
+
+  @override
+  String get memberInvoicesPaymentCard => 'Card';
+
+  @override
+  String get memberInvoicesPaymentStripe => 'Stripe';
+
+  @override
+  String get memberInvoicesPaymentBankTransfer => 'Bank Transfer';
+
+  @override
+  String get memberInvoicesPaymentWallet => 'Wallet';
+
+  @override
+  String get memberInvoicesPaymentOther => 'Other';
+
+  @override
+  String get memberInvoiceDetailsTitle => 'Invoice Details';
+
+  @override
+  String get memberInvoiceItems => 'Items';
+
+  @override
+  String get memberInvoicePayments => 'Payments';
+
+  @override
+  String get memberInvoiceSubtotal => 'Subtotal';
+
+  @override
+  String get memberInvoiceDiscount => 'Discount';
+
+  @override
+  String get memberInvoiceTax => 'Tax';
+
+  @override
+  String get memberInvoiceTotal => 'Total';
+
+  @override
+  String get memberInvoiceInvoiceNumber => 'Invoice Number';
+
+  @override
+  String get memberInvoiceBranchAddress => 'Branch Address';
+
+  @override
+  String get memberInvoiceBranchPhone => 'Branch Phone';
+
+  @override
+  String get memberInvoiceQty => 'Qty';
+
+  @override
+  String get memberInvoiceUnitPrice => 'Unit Price';
+
+  @override
+  String get memberInvoicesStatus => 'Status';
+
+  @override
+  String get memberInvoicesType => 'Type';
+
+  @override
+  String get memberInvoiceDownloadPdf => 'Download / Share PDF';
+
+  @override
+  String get memberInvoicePdfTitle => 'Invoice';
+
+  @override
+  String get memberInvoicePdfFooter => 'Thank you';
+
+  @override
+  String get memberInvoiceDescription => 'Description';
 }

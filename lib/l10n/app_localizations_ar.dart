@@ -1584,4 +1584,260 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editProfilePhoneVerified => 'تم التحقق من رقم الهاتف بنجاح';
+
+  @override
+  String get memberBookingsTitle => 'حجوزاتي';
+
+  @override
+  String get memberBookingsSubtitle => 'حصصك وجلسات التدريب الشخصية';
+
+  @override
+  String get memberBookingsUpcomingTab => 'الحصص القادمة';
+
+  @override
+  String get memberBookingsPreviousTab => 'الحصص السابقة';
+
+  @override
+  String get memberBookingsEmptyUpcoming => 'لا توجد حجوزات قادمة';
+
+  @override
+  String get memberBookingsEmptyPrevious => 'لا توجد حجوزات سابقة';
+
+  @override
+  String get memberBookingsLoadFailed => 'تعذر تحميل الحجوزات';
+
+  @override
+  String get memberBookingsCancelRequestSent => 'تم إرسال طلب الإلغاء';
+
+  @override
+  String get memberBookingsCancelRequestFailed => 'تعذر إرسال طلب الإلغاء';
+
+  @override
+  String get memberBookingsCancelButton => 'إلغاء الحجز';
+
+  @override
+  String get memberBookingsReviewButton => 'قيّم الحصة';
+
+  @override
+  String get memberBookingsCancelPending => 'طلب الإلغاء قيد المراجعة';
+
+  @override
+  String get memberBookingsClassDefaultTitle => 'حصة تدريبية';
+
+  @override
+  String get memberBookingsPtDefaultTitle => 'جلسة تدريب شخصية';
+
+  @override
+  String memberBookingsSessionProgress(int current, int total) {
+    return 'الجلسة $current من $total';
+  }
+
+  @override
+  String get bookingStatusConfirmed => 'مؤكد';
+
+  @override
+  String get bookingStatusWaitlisted => 'قائمة الانتظار';
+
+  @override
+  String get bookingStatusPending => 'قيد المراجعة';
+
+  @override
+  String get bookingStatusCancelRequested => 'طلب الإلغاء قيد المراجعة';
+
+  @override
+  String get bookingStatusCancelled => 'ملغاة';
+
+  @override
+  String get bookingStatusCompleted => 'مكتمل';
+
+  @override
+  String get bookingStatusUnknown => 'غير معروف';
+
+  @override
+  String memberBookingsMinutes(int count) {
+    return '$count دقيقة';
+  }
+
+  @override
+  String get memberBookingsRatingTitle => 'رأيك يهمنا';
+
+  @override
+  String get memberBookingsRatingLabelLow => 'سيئة';
+
+  @override
+  String get memberBookingsRatingLabelHigh => 'ممتازة';
+
+  @override
+  String get memberBookingsRateNowButton => 'قيّم الآن';
+
+  @override
+  String get memberBookingsReviewSubmitted => 'شكراً على تقييمك!';
+
+  @override
+  String get memberBookingsReviewFailed => 'فشل إرسال التقييم. حاول مجدداً.';
+
+  @override
+  String get memberInvoicesTitle => 'سجل الدفعات';
+
+  @override
+  String get memberInvoicesEmptyTitle => 'لا توجد دفعات';
+
+  @override
+  String get memberInvoicesEmptySubtitle => 'ستظهر دفعاتك المكتملة هنا.';
+
+  @override
+  String get memberInvoicesRetry => 'إعادة المحاولة';
+
+  @override
+  String get memberInvoicesAll => 'الكل';
+
+  @override
+  String get memberInvoicesAllTypes => 'كل الأنواع';
+
+  @override
+  String get memberInvoicesStatusPaid => 'مدفوع';
+
+  @override
+  String get memberInvoicesStatusPending => 'معلّق';
+
+  @override
+  String get memberInvoicesStatusRefunded => 'مسترجع';
+
+  @override
+  String get memberInvoicesStatusCancelled => 'ملغي';
+
+  @override
+  String get memberInvoicesStatusRejected => 'مرفوض';
+
+  @override
+  String get memberInvoicesStatusFailed => 'فشل';
+
+  @override
+  String get memberInvoicesStatusUnknown => 'غير معروف';
+
+  @override
+  String get memberInvoicesTypePlans => 'اشتراكات';
+
+  @override
+  String get memberInvoicesTypeClasses => 'حصص';
+
+  @override
+  String get memberInvoicesTypePt => 'مدرب خاص';
+
+  @override
+  String get memberInvoicesTypePtPackage => 'باقة تدريب';
+
+  @override
+  String get memberInvoicesTypeDailyPass => 'دخول يومي';
+
+  @override
+  String get memberInvoicesTypeOther => 'أخرى';
+
+  @override
+  String get memberInvoicesDetails => 'عرض التفاصيل';
+
+  @override
+  String get memberInvoicesRefund => 'استرجاع المبلغ';
+
+  @override
+  String get memberInvoicesRefundTitle => 'طلب استرجاع';
+
+  @override
+  String get memberInvoicesRefundMessage => 'سيتم إرسال طلب استرجاع إلى الإدارة. لن يتم استرجاع المبلغ مباشرة.';
+
+  @override
+  String get memberInvoicesRefundReason => 'سبب الاسترجاع اختياري';
+
+  @override
+  String get memberInvoicesRefundSend => 'إرسال الطلب';
+
+  @override
+  String get memberInvoicesRefundStatus => 'طلب الاسترجاع';
+
+  @override
+  String get memberInvoicesDate => 'التاريخ';
+
+  @override
+  String get memberInvoicesBranch => 'الفرع';
+
+  @override
+  String get memberInvoicesPaymentMethod => 'طريقة الدفع';
+
+  @override
+  String get memberInvoicesPaid => 'المدفوع';
+
+  @override
+  String get memberInvoicesDue => 'المتبقي';
+
+  @override
+  String get memberInvoicesPaymentCash => 'نقداً';
+
+  @override
+  String get memberInvoicesPaymentCard => 'بطاقة';
+
+  @override
+  String get memberInvoicesPaymentStripe => 'Stripe';
+
+  @override
+  String get memberInvoicesPaymentBankTransfer => 'تحويل مصرفي';
+
+  @override
+  String get memberInvoicesPaymentWallet => 'محفظة';
+
+  @override
+  String get memberInvoicesPaymentOther => 'أخرى';
+
+  @override
+  String get memberInvoiceDetailsTitle => 'تفاصيل الفاتورة';
+
+  @override
+  String get memberInvoiceItems => 'العناصر';
+
+  @override
+  String get memberInvoicePayments => 'الدفعات';
+
+  @override
+  String get memberInvoiceSubtotal => 'المجموع الفرعي';
+
+  @override
+  String get memberInvoiceDiscount => 'الخصم';
+
+  @override
+  String get memberInvoiceTax => 'الضريبة';
+
+  @override
+  String get memberInvoiceTotal => 'المجموع';
+
+  @override
+  String get memberInvoiceInvoiceNumber => 'رقم الفاتورة';
+
+  @override
+  String get memberInvoiceBranchAddress => 'عنوان الفرع';
+
+  @override
+  String get memberInvoiceBranchPhone => 'هاتف الفرع';
+
+  @override
+  String get memberInvoiceQty => 'الكمية';
+
+  @override
+  String get memberInvoiceUnitPrice => 'سعر الوحدة';
+
+  @override
+  String get memberInvoicesStatus => 'الحالة';
+
+  @override
+  String get memberInvoicesType => 'النوع';
+
+  @override
+  String get memberInvoiceDownloadPdf => 'Download / Share PDF';
+
+  @override
+  String get memberInvoicePdfTitle => 'Invoice';
+
+  @override
+  String get memberInvoicePdfFooter => 'Thank you';
+
+  @override
+  String get memberInvoiceDescription => 'Description';
 }

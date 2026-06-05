@@ -39,18 +39,18 @@ class PlanDetailModel {
   factory PlanDetailModel.fromJson(Map<String, dynamic> json) {
     return PlanDetailModel(
       planId: json['planId'] as int,
-      name: json['name'] as String,
-      planType: json['planType'] as String,
-      price: (json['price'] as num).toDouble(),
-      billingCycle: json['billingCycle'] as String,
-      durationDays: json['durationDays'] as int,
-      isFeatured: json['isFeatured'] as bool,
+      name: json['name'] as String? ?? '',
+      planType: json['planType'] as String? ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      billingCycle: json['billingCycle'] as String? ?? '',
+      durationDays: json['durationDays'] as int? ?? 0,
+      isFeatured: json['isFeatured'] == true,
       isBooked: json['isBooked'] == true,
       description: json['description'] as String?,
       allowedVisits: json['allowedVisits'] as int?,
       freezeDaysAllowance: json['freezeDaysAllowance'] as int?,
       gracePeriodDays: json['gracePeriodDays'] as int?,
-      autoRenew: json['autoRenew'] as bool,
+      autoRenew: json['autoRenew'] == true,
       features: List<String>.from(json['features'] ?? []),
       activePromotion: json['activePromotion'] != null
           ? ActivePromotionModel.fromJson(

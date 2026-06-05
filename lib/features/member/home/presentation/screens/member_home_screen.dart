@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_screen.dart';
-
+import '../../../../../app/app_router.dart';
 import '../../domain/entities/member_home.dart';
 import '../../domain/entities/member_stats.dart';
 import '../../domain/entities/membership_card.dart';
@@ -470,7 +470,9 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                       onQrCode: () {
                         widget.onTabSelected(2);
                       },
-                      onPaymentHistory: () => _showComingSoon(context),
+                      onPaymentHistory: () {
+                        Navigator.of(context).pushNamed(AppRouter.memberInvoices);
+                      },
                     ),
                   ],
                 ),

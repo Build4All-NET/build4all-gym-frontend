@@ -166,7 +166,13 @@ import '../features/admin/invoices/presentation/bloc/admin_invoice_bloc.dart';
 import '../features/admin/invoices/presentation/bloc/admin_invoices_list_bloc.dart';
 import '../features/admin/invoices/presentation/screens/admin_invoice_screen.dart';
 import '../features/admin/invoices/presentation/screens/admin_invoices_list_screen.dart';
-
+import '../features/member/invoices/data/repositories/member_invoice_repository_impl.dart';
+import '../features/member/invoices/data/services/member_invoice_service.dart';
+import '../features/member/invoices/domain/usecases/member_invoice_usecases.dart';
+import '../features/member/invoices/presentation/bloc/member_invoice_bloc.dart';
+import '../features/member/invoices/presentation/bloc/member_invoices_list_bloc.dart';
+import '../features/member/invoices/presentation/screens/member_invoice_screen.dart';
+import '../features/member/invoices/presentation/screens/member_invoices_list_screen.dart';
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login          = '/login';
@@ -204,6 +210,10 @@ class AppRouter {
   static const String adminMembershipRequests = '/admin/membership-requests';
   static const String adminSettings = '/admin/settings';
   static const String userSettings = '/user/settings';
+
+  // ─── Member: Invoices ─────────────────────────────────────────────────────
+  static const String memberInvoices = '/member/invoices';
+  static const String memberInvoiceDetail = '/member/invoices/detail';
 
   // ─── Logout ────────────────────────────────────────────────────────────────
   static const String logout = '/logout';
@@ -293,6 +303,39 @@ class AppRouter {
           ),
         );
 
+    // ── Member: Invoices list ───────────────────────────────────────────────
+
+      case memberInvoices:
+        final invoiceRepo = MemberInvoiceRepositoryImpl(
+          MemberInvoiceService(appDio ?? Dio()),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => MemberInvoicesListBloc(
+              listInvoicesUseCase: ListMemberInvoicesUseCase(invoiceRepo),
+              requestRefundUseCase: RequestMemberRefundUseCase(invoiceRepo),
+            ),
+            child: const MemberInvoicesListScreen(),
+          ),
+        );
+// ── Member: Invoice detail ──────────────────────────────────────────────
+
+      case memberInvoiceDetail:
+        final invoiceId = settings.arguments as int;
+
+        final invoiceRepo = MemberInvoiceRepositoryImpl(
+          MemberInvoiceService(appDio ?? Dio()),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => MemberInvoiceBloc(
+              getInvoiceUseCase: GetMemberInvoiceUseCase(invoiceRepo),
+            ),
+            child: MemberInvoiceScreen(invoiceId: invoiceId),
+          ),
+        );
     // ── Admin: Dashboard ───────────────────────────────────────────────────
 
       case admin:

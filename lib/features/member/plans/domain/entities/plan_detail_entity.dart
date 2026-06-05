@@ -34,4 +34,16 @@ class PlanDetailEntity {
     required this.features,
     this.activePromotion,
   });
+
+  /// Price shown in detail / checkout UI.
+  /// If backend sent an active promotion, use finalPrice.
+  /// Otherwise use normal plan price.
+  double get displayPrice {
+    return activePromotion?.finalPrice ?? price;
+  }
+
+  /// Cleaner condition for the UI.
+  bool get hasActivePromotion {
+    return activePromotion != null;
+  }
 }
