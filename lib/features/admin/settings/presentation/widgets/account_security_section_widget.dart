@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../cubit/admin_settings_cubit.dart';
 import '../cubit/admin_settings_state.dart';
 
@@ -29,9 +30,9 @@ class AccountSecuritySectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.watch<ThemeCubit>().state.tokens;
-    final c = tokens.colors;
+    final c      = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
 
-    // Read cubit state for toggle values
     final state = context.watch<AdminSettingsCubit>().state;
     final cubit = context.read<AdminSettingsCubit>();
 
@@ -63,9 +64,9 @@ class AccountSecuritySectionWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Account & Security',
+                    Text(l10n.admin_settings_accountTitle,
                         style: tokens.typography.titleMedium),
-                    Text('Manage your account security',
+                    Text(l10n.admin_settings_accountSubtitle,
                         style: tokens.typography.bodySmall.copyWith(color: c.muted)),
                   ],
                 ),
@@ -80,8 +81,8 @@ class AccountSecuritySectionWidget extends StatelessWidget {
           // Tapping navigates to the existing ForgotPasswordEmailScreen (reused).
           _SettingsRow(
             icon: Icons.key_rounded,
-            label: 'Change Password',
-            subtitle: 'Update your account password',
+            label: l10n.admin_settings_changePassword,
+            subtitle: l10n.admin_settings_changePasswordSubtitle,
             trailing: Icon(Icons.chevron_right_rounded,
                 color: c.muted, size: 22),
             onTap: () => Navigator.of(context).pushNamed(AppRouter.forgotPassword),
@@ -90,13 +91,10 @@ class AccountSecuritySectionWidget extends StatelessWidget {
 
           Divider(height: 1, color: c.border.withOpacity(0.2)),
 
-          // ── Row 2: Biometric Login ─────────────────────────────────────────
-          // UI preference only — actual biometric prompt integration is out of scope.
-          // Value is persisted to FlutterSecureStorage on "Save Changes".
           _SettingsRow(
             icon: Icons.phone_android_rounded,
-            label: 'Biometric Login',
-            subtitle: 'Use fingerprint or face ID',
+            label: l10n.admin_settings_biometricLogin,
+            subtitle: l10n.admin_settings_biometricSubtitle,
             trailing: Switch(
               value: state.isBiometricEnabled,
               onChanged: (v) => cubit.setBiometricEnabled(v),
@@ -107,13 +105,10 @@ class AccountSecuritySectionWidget extends StatelessWidget {
 
           Divider(height: 1, color: c.border.withOpacity(0.2)),
 
-          // ── Row 3: Two-Factor Authentication ──────────────────────────────
-          // TODO: Call DELETE Env.apiBaseUrl + '/api/v1/auth/2fa/toggle' on Save
-          //       when the build4all platform team confirms the endpoint.
           _SettingsRow(
             icon: Icons.shield_outlined,
-            label: 'Two-Factor Authentication',
-            subtitle: 'Add an extra layer of security',
+            label: l10n.admin_settings_twoFactor,
+            subtitle: l10n.admin_settings_twoFactorSubtitle,
             trailing: Switch(
               value: state.isTwoFactorEnabled,
               onChanged: (v) => cubit.setTwoFactorEnabled(v),

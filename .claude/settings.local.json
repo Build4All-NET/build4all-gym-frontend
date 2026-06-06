@@ -144,7 +144,9 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Filter \"*.java\")",
       "Bash(xargs grep -l \"trainers.*slots\\\\|slots.*trainers\")",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\" -Recurse -Directory -ErrorAction SilentlyContinue)",
-      "Bash(Get-ChildItem \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\\\\src\\\\main\\\\resources\\\\db\\\\migration\")"
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\\\\src\\\\main\\\\resources\\\\db\\\\migration\")",
+      "Bash(Get-Content \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\\\\lib\\\\l10n\\\\app_ar.arb\")",
+      "Bash(Select-Object -Last 10)"
     ]
   }
 }

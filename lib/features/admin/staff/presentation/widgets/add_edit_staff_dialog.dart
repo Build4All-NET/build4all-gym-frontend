@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../data/models/create_staff_request_model.dart';
 import '../../data/models/update_staff_request_model.dart';
 import '../../domain/entities/admin_staff_card_entity.dart';
@@ -100,6 +101,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
 
     return Dialog(
       backgroundColor: c.surface,
@@ -118,7 +120,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _isEditMode ? 'Edit Staff Member' : 'Add New Staff',
+                    _isEditMode ? l10n.admin_staff_editTitle : l10n.admin_staff_addTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -138,11 +140,11 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
               const SizedBox(height: 20),
 
               // ── Full Name ─────────────────────────────────────────────────
-              _buildLabel('Full Name *', c),
+              _buildLabel(l10n.admin_staff_fullName, c),
               _buildTextField(
                 c: c,
                 controller: _fullNameCtrl,
-                hint: 'Enter full name',
+                hint: l10n.admin_staff_fullNameHint,
                 validator: (v) =>
                 (v == null || v.trim().isEmpty) && !_isEditMode
                     ? 'Full name is required'
@@ -151,11 +153,11 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
               const SizedBox(height: 14),
 
               // ── Email ─────────────────────────────────────────────────────
-              _buildLabel('Email *', c),
+              _buildLabel(l10n.admin_staff_email, c),
               _buildTextField(
                 c: c,
                 controller: _emailCtrl,
-                hint: 'Enter email',
+                hint: l10n.admin_staff_emailHint,
                 keyboardType: TextInputType.emailAddress,
                 validator: (v) {
                   if ((v == null || v.trim().isEmpty) && !_isEditMode) {
@@ -173,11 +175,11 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
               const SizedBox(height: 14),
 
               // ── Phone Number ──────────────────────────────────────────────
-              _buildLabel('Phone Number *', c),
+              _buildLabel(l10n.admin_staff_phone, c),
               _buildTextField(
                 c: c,
                 controller: _phoneCtrl,
-                hint: 'Enter phone number',
+                hint: l10n.admin_staff_phoneHint,
                 keyboardType: TextInputType.phone,
                 validator: (v) =>
                 (v == null || v.trim().isEmpty) && !_isEditMode
@@ -187,12 +189,12 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
               const SizedBox(height: 14),
 
               // ── Role dropdown ─────────────────────────────────────────────
-              _buildLabel('Role *', c),
+              _buildLabel(l10n.admin_staff_role, c),
               // TODO: Replace _roleOptions with dynamic list from your roles provider
               DropdownButtonFormField<String>(
                 value: _selectedRole,
                 hint: Text(
-                  'Select role',
+                  l10n.admin_staff_selectRole,
                   style: TextStyle(color: c.muted, fontSize: 14),
                 ),
                 items: _roleOptions
@@ -207,12 +209,12 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
               const SizedBox(height: 14),
 
               // ── Branch Assignment dropdown ─────────────────────────────────
-              _buildLabel('Branch Assignment *', c),
+              _buildLabel(l10n.admin_staff_branchAssignment, c),
               // TODO: Replace _branchOptions with dynamic list from your branches provider/BLoC
               DropdownButtonFormField<int>(
                 value: _selectedBranchId,
                 hint: Text(
-                  'Select branch',
+                  l10n.admin_staff_selectBranch,
                   style: TextStyle(color: c.muted, fontSize: 14),
                 ),
                 items: _branchOptions
@@ -231,17 +233,17 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
 
               // ── Password (ADD mode only) ──────────────────────────────────
               if (!_isEditMode) ...[
-                _buildLabel('Password', c),
+                _buildLabel(l10n.admin_staff_password, c),
                 _buildTextField(
                   c: c,
                   controller: _passwordCtrl,
-                  hint: 'Auto-generate or enter',
+                  hint: l10n.admin_staff_autoGeneratePassword,
                   obscureText: true,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    'Leave empty to auto-generate a secure password',
+                    l10n.admin_staff_autoGeneratePassword,
                     style: TextStyle(fontSize: 11, color: c.muted),
                   ),
                 ),
@@ -265,7 +267,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.general_cancel),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -282,7 +284,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                         ),
                       ),
                       child: Text(
-                        _isEditMode ? 'Save Changes' : 'Save Staff',
+                        _isEditMode ? l10n.admin_settings_saveChanges : l10n.admin_staff_saveStaff,
                       ),
                     ),
                   ),

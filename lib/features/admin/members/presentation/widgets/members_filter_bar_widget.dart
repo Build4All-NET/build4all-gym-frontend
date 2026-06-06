@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_members_bloc.dart';
 
 class MembersFilterBarWidget extends StatelessWidget {
   const MembersFilterBarWidget({super.key});
 
-  static const _statusOptions = [
-    _DropdownOption(label: 'All Status',   value: ''),
-    _DropdownOption(label: 'Active',       value: 'active'),
-    _DropdownOption(label: 'Inactive',     value: 'inactive'),
-    _DropdownOption(label: 'Blocked',      value: 'blocked'),
-    _DropdownOption(label: 'Pending',      value: 'pending'),
-  ];
-
-  static const _sortOptions = [
-    _DropdownOption(label: 'Newest',       value: 'newest'),
-    _DropdownOption(label: 'Oldest',       value: 'oldest'),
-    _DropdownOption(label: 'Alphabetical', value: 'name_asc'),
-  ];
-
-  static const _genderOptions = [
-    _DropdownOption(label: 'All Gender', value: ''),
-    _DropdownOption(label: 'Male',       value: 'male'),
-    _DropdownOption(label: 'Female',     value: 'female'),
-    _DropdownOption(label: 'Other',      value: 'other'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final statusOptions = [
+      _DropdownOption(label: l10n.admin_members_filterAllStatus, value: ''),
+      _DropdownOption(label: l10n.membershipStatusActive,        value: 'active'),
+      _DropdownOption(label: l10n.membershipStatusInactive,      value: 'inactive'),
+      _DropdownOption(label: l10n.membershipStatusBlocked,       value: 'blocked'),
+      _DropdownOption(label: l10n.membershipStatusPending,       value: 'pending'),
+    ];
+    final sortOptions = [
+      _DropdownOption(label: l10n.admin_members_sortNewest, value: 'newest'),
+      _DropdownOption(label: l10n.admin_members_sortOldest, value: 'oldest'),
+      _DropdownOption(label: l10n.admin_members_sortAlpha,  value: 'name_asc'),
+    ];
+    final genderOptions = [
+      _DropdownOption(label: l10n.admin_members_filterAllGender, value: ''),
+      _DropdownOption(label: l10n.genderMale,   value: 'male'),
+      _DropdownOption(label: l10n.genderFemale, value: 'female'),
+      _DropdownOption(label: l10n.genderOther,  value: 'other'),
+    ];
+
     return BlocBuilder<AdminMembersBloc, AdminMembersState>(
       builder: (context, state) {
         final filters = state is MembersLoaded
@@ -41,7 +42,7 @@ class MembersFilterBarWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: _FilterDropdown(
-                  options:       _statusOptions,
+                  options:       statusOptions,
                   selectedValue: filters.status,
                   isActive:      filters.status.isNotEmpty,
                   onSelected:    (v) => context.read<AdminMembersBloc>()
@@ -51,7 +52,7 @@ class MembersFilterBarWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _FilterDropdown(
-                  options:       _sortOptions,
+                  options:       sortOptions,
                   selectedValue: filters.sort,
                   isActive:      filters.sort != 'newest',
                   onSelected:    (v) => context.read<AdminMembersBloc>()
@@ -61,7 +62,7 @@ class MembersFilterBarWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _FilterDropdown(
-                  options:       _genderOptions,
+                  options:       genderOptions,
                   selectedValue: filters.gender,
                   isActive:      filters.gender.isNotEmpty,
                   onSelected:    (v) => context.read<AdminMembersBloc>()

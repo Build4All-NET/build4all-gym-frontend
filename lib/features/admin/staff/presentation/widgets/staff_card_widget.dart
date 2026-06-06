@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/admin_staff_card_entity.dart';
 import '../bloc/admin_staff_bloc.dart';
 import '../bloc/admin_staff_event.dart';
@@ -149,7 +150,7 @@ class StaffCardWidget extends StatelessWidget {
                                 strokeWidth: 2, color: c.primary),
                           )
                               : const Icon(Icons.edit_outlined, size: 16),
-                          label: const Text('Edit Profile'),
+                          label: Text(AppLocalizations.of(context)!.admin_staff_editProfile),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: c.label,
                             side: BorderSide(
@@ -178,7 +179,7 @@ class StaffCardWidget extends StatelessWidget {
                                 strokeWidth: 2, color: c.danger),
                           )
                               : const Icon(Icons.block_outlined, size: 16),
-                          label: const Text('Remove'),
+                          label: Text(AppLocalizations.of(context)!.admin_trainers_remove),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: c.danger,
                             side:            BorderSide(color: c.danger),
@@ -246,15 +247,12 @@ class StaffCardWidget extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title:   const Text('Remove Staff Member'),
-        content: Text(
-          'Are you sure you want to remove ${staff.fullName}? '
-              'This action cannot be undone.',
-        ),
+        title:   Text(AppLocalizations.of(context)!.admin_staff_removeTitle),
+        content: Text(AppLocalizations.of(context)!.admin_staff_removeMessage(staff.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child:     const Text('Cancel'),
+            child:     Text(AppLocalizations.of(context)!.general_cancel),
           ),
           TextButton(
             onPressed: () {
@@ -262,7 +260,7 @@ class StaffCardWidget extends StatelessWidget {
               bloc.add(StaffRemoveRequested(staff.staffId));
             },
             style: TextButton.styleFrom(foregroundColor: c.danger),
-            child: const Text('Remove'),
+            child: Text(AppLocalizations.of(context)!.admin_trainers_remove),
           ),
         ],
       ),

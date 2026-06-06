@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class TextMetricRows extends StatelessWidget {
   final AdminDashboardSummary data;
@@ -14,6 +15,7 @@ class TextMetricRows extends StatelessWidget {
     final tokens        = context.read<ThemeCubit>().state.tokens;
     final c             = tokens.colors;
     final card          = tokens.card;
+    final l10n          = AppLocalizations.of(context)!;
     final churnVsLast   = data.members.churnRateVsLastMonth;
     final revenueVsLast = data.revenue?.monthlyRevenueVsLastMonth;
     final accentD       = Color.lerp(c.primary, c.label, 0.3) ?? c.primary;
@@ -33,10 +35,10 @@ class TextMetricRows extends StatelessWidget {
       child: Column(
         children: [
           _TextMetricRow(
-            label:          'Total Plans',
+            label:          l10n.admin_dashboard_totalPlans,
             value:          '${data.plans.totalPlans}',
             dotColor:       c.primary,
-            sublabel:       '${data.plans.activePlans} Active',
+            sublabel:       l10n.admin_dashboard_activeCount(data.plans.activePlans),
             sublabelColor:  c.primary,
             isFirst:        true,
             labelColor:     c.muted,
@@ -44,17 +46,17 @@ class TextMetricRows extends StatelessWidget {
           ),
           _Divider(color: c.border.withOpacity(0.1)),
           _TextMetricRow(
-            label:         'Canceled',
+            label:         l10n.admin_dashboard_canceled,
             value:         '${data.members.canceledLast7Days}',
             dotColor:      c.danger,
-            sublabel:      'Last 7 days',
+            sublabel:      l10n.admin_dashboard_last7Days,
             sublabelColor: c.muted,
             labelColor:    c.muted,
             valueColor:    c.label,
           ),
           _Divider(color: c.border.withOpacity(0.1)),
           _TextMetricRow(
-            label:         'Churn Rate',
+            label:         l10n.admin_dashboard_churnRate,
             value:         '${data.members.churnRate.toStringAsFixed(1)}%',
             dotColor:      c.success,
             sublabel:      churnVsLast <= 0
@@ -66,7 +68,7 @@ class TextMetricRows extends StatelessWidget {
           ),
           _Divider(color: c.border.withOpacity(0.1)),
           _TextMetricRow(
-            label:         'Monthly Revenue',
+            label:         l10n.admin_dashboard_monthlyRevenue,
             value:         data.revenue != null
                 ? '₹${(data.revenue!.monthlyRevenue / 100000).toStringAsFixed(1)}L'
                 : 'N/A',
