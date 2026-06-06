@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
@@ -18,21 +19,6 @@ class AdminInvoicesListScreen extends StatefulWidget {
 }
 
 class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
-  static const _statusFilters = [
-    _StatusFilter(label: 'All',      status: null,        icon: Icons.receipt_long_outlined),
-    _StatusFilter(label: 'Paid',     status: 'paid',      icon: Icons.check_circle_outline),
-    _StatusFilter(label: 'Pending',  status: 'pending',   icon: Icons.hourglass_top_rounded),
-    _StatusFilter(label: 'Overdue',  status: 'overdue',   icon: Icons.warning_amber_rounded),
-    _StatusFilter(label: 'Cancelled',status: 'cancelled', icon: Icons.cancel_outlined),
-  ];
-
-  static const _typeFilters = [
-    _TypeFilter(label: 'All Types', type: null,    icon: Icons.all_inbox_outlined),
-    _TypeFilter(label: 'Plans',     type: 'PLAN',  icon: Icons.card_membership_outlined),
-    _TypeFilter(label: 'Classes',   type: 'CLASS', icon: Icons.fitness_center_outlined),
-    _TypeFilter(label: 'PT',        type: 'PT',    icon: Icons.sports_outlined),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -43,7 +29,23 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
   Widget build(BuildContext context) {
     final tokens  = context.read<ThemeCubit>().state.tokens;
     final c       = tokens.colors;
+    final l10n    = AppLocalizations.of(context)!;
     final profile = context.watch<AdminProfileCubit>().state;
+
+    final statusFilters = [
+      _StatusFilter(label: l10n.admin_invoices_filterAll,       status: null,        icon: Icons.receipt_long_outlined),
+      _StatusFilter(label: l10n.admin_invoices_filterPaid,      status: 'paid',      icon: Icons.check_circle_outline),
+      _StatusFilter(label: l10n.admin_invoices_filterPending,   status: 'pending',   icon: Icons.hourglass_top_rounded),
+      _StatusFilter(label: l10n.admin_invoices_filterOverdue,   status: 'overdue',   icon: Icons.warning_amber_rounded),
+      _StatusFilter(label: l10n.admin_invoices_filterCancelled, status: 'cancelled', icon: Icons.cancel_outlined),
+    ];
+
+    final typeFilters = [
+      _TypeFilter(label: l10n.admin_invoices_typeAll,     type: null,    icon: Icons.all_inbox_outlined),
+      _TypeFilter(label: l10n.admin_invoices_typePlans,   type: 'PLAN',  icon: Icons.card_membership_outlined),
+      _TypeFilter(label: l10n.admin_invoices_typeClasses, type: 'CLASS', icon: Icons.fitness_center_outlined),
+      _TypeFilter(label: l10n.admin_invoices_typePt,      type: 'PT',    icon: Icons.sports_outlined),
+    ];
 
     return Scaffold(
       backgroundColor: c.background,
@@ -60,7 +62,7 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            AdminAppBar(title: 'Invoices'),
+            AdminAppBar(title: l10n.navInvoices),
             BlocBuilder<AdminInvoicesListBloc, AdminInvoicesListState>(
               buildWhen: (prev, curr) => curr is AdminInvoicesListLoaded,
               builder: (ctx, state) {
@@ -70,7 +72,7 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _FilterChipsRow(
-                      filters:        _statusFilters,
+                      filters:        statusFilters,
                       selectedStatus: selectedStatus,
                       tokens:         tokens,
                       onSelect: (s) {
@@ -83,7 +85,7 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
                     ),
                     const SizedBox(height: 6),
                     _TypeFilterChipsRow(
-                      filters:      _typeFilters,
+                      filters:      typeFilters,
                       selectedType: selectedType,
                       tokens:       tokens,
                       onSelect: (t) {
@@ -124,7 +126,7 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
                               onPressed: () => ctx
                                   .read<AdminInvoicesListBloc>()
                                   .add(LoadInvoicesListEvent()),
-                              child: const Text('Retry'),
+                              child: Text(l10n.retry),
                             ),
                           ],
                         ),
@@ -140,14 +142,14 @@ class _AdminInvoicesListScreenState extends State<AdminInvoicesListScreen> {
                             Icon(Icons.receipt_long_outlined,
                                 color: c.muted, size: 56),
                             const SizedBox(height: 16),
-                            Text('No invoices found',
+                            Text(l10n.admin_invoices_noInvoices,
                                 style: tokens.typography.titleMedium
                                     .copyWith(color: c.label)),
                             const SizedBox(height: 8),
                             Text(
                               state.selectedStatus != null
-                                  ? 'No ${state.selectedStatus} invoices.'
-                                  : 'Invoices appear here after payments are completed.',
+                                  ? l10n.admin_invoices_noFilteredInvoices(state.selectedStatus!)
+                                  : l10n.admin_invoices_emptyDesc,
                               textAlign: TextAlign.center,
                               style: tokens.typography.bodyMedium
                                   .copyWith(color: c.muted),

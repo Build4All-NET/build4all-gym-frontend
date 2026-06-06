@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../data/models/availability_model.dart';
 import '../../data/models/pt_service_model.dart';
@@ -184,16 +185,17 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context)!;
     if (_startTime == null || _endTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a time slot or set the times manually.')),
+        SnackBar(content: Text(l10n.trainer_selectTimeSlot)),
       );
       return;
     }
     final userId = int.tryParse(_memberIdCtrl.text.trim());
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid Member ID.')),
+        SnackBar(content: Text(l10n.trainer_enterValidMemberId)),
       );
       return;
     }
@@ -219,6 +221,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final cs     = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
     final daySlots = _slotsForDate(_selectedDate);
 
     return DraggableScrollableSheet(
@@ -248,7 +251,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
               padding: const EdgeInsets.fromLTRB(20, 0, 8, 0),
               child: Row(
                 children: [
-                  Text('Book Session',
+                  Text(l10n.trainer_bookSession,
                       style: TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold, color: cs.label)),
                   const Spacer(),
@@ -272,7 +275,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                     children: [
                       // ── Trainer picker (admin) ───────────────────────────
                       if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
-                        _label('Assign to Trainer', cs),
+                        _label(l10n.trainer_assignToTrainer, cs),
                         const SizedBox(height: 8),
                         _dropdownBox(
                           cs: cs,
@@ -306,7 +309,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                       ],
 
                       // ── Calendar ─────────────────────────────────────────
-                      _label('Select Date', cs),
+                      _label(l10n.trainer_selectDate, cs),
                       const SizedBox(height: 12),
                       _slotsLoading
                           ? Center(
@@ -325,7 +328,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
 
                       // ── Time slot section ─────────────────────────────────
                       if (!_slotsLoading) ...[
-                        _label('Select Time', cs),
+                        _label(l10n.trainer_selectTimeLabel, cs),
                         const SizedBox(height: 10),
                         if (daySlots.isEmpty) ...[
                           // No availability banner
@@ -343,7 +346,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    'No availability set for this day. You can still set a custom time below.',
+                                    l10n.trainer_noAvailabilityCustomTime,
                                     style: TextStyle(
                                         fontSize: 13, color: cs.danger),
                                   ),
@@ -354,9 +357,9 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              Expanded(child: _manualTimeTile('Start Time', _startTime, () => _pickManualTime(true), cs)),
+                              Expanded(child: _manualTimeTile(l10n.trainer_startTime, _startTime, () => _pickManualTime(true), cs)),
                               const SizedBox(width: 12),
-                              Expanded(child: _manualTimeTile('End Time', _endTime, () => _pickManualTime(false), cs)),
+                              Expanded(child: _manualTimeTile(l10n.trainer_endTime, _endTime, () => _pickManualTime(false), cs)),
                             ],
                           ),
                         ] else ...[
@@ -418,7 +421,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                           ),
                           if (_selectedSlot == null) ...[
                             const SizedBox(height: 8),
-                            Text('Tap a slot to select it.',
+                            Text(l10n.trainer_tapSlotToSelect,
                                 style: TextStyle(fontSize: 12, color: cs.muted)),
                           ],
                         ],
@@ -426,25 +429,25 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                       const SizedBox(height: 20),
 
                       // ── Member ID ─────────────────────────────────────────
-                      _label('Member ID *', cs),
+                      _label(l10n.trainer_memberIdLabel, cs),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller:  _memberIdCtrl,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: cs.label),
-                        decoration:  _inputDec('Enter member user ID', cs),
+                        decoration:  _inputDec(l10n.trainer_enterMemberUserId, cs),
                         validator:   (v) =>
                             (v == null || v.trim().isEmpty || int.tryParse(v.trim()) == null)
-                                ? 'Enter a valid member ID'
+                                ? l10n.trainer_enterValidMemberIdValidation
                                 : null,
                       ),
                       const SizedBox(height: 16),
 
                       // ── Member Package ID ─────────────────────────────────
-                      _label('Member Package ID (optional)', cs),
+                      _label(l10n.trainer_memberPackageIdOptional, cs),
                       const SizedBox(height: 4),
                       Text(
-                        'Link this session to the member\'s PT package.',
+                        l10n.trainer_linkSessionToPackage,
                         style: TextStyle(color: cs.muted, fontSize: 12),
                       ),
                       const SizedBox(height: 8),
@@ -452,17 +455,17 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                         controller:   _memberPackageIdCtrl,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: cs.label),
-                        decoration:   _inputDec('Leave blank if none', cs),
+                        decoration:   _inputDec(l10n.trainer_leaveBlankIfNone, cs),
                         validator:    (v) {
                           if (v == null || v.trim().isEmpty) return null;
-                          if (int.tryParse(v.trim()) == null) return 'Enter a valid number';
+                          if (int.tryParse(v.trim()) == null) return l10n.trainer_validNumberError;
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
 
                       // ── Service ───────────────────────────────────────────
-                      _label('Service (optional)', cs),
+                      _label(l10n.trainer_serviceOptionalLabel, cs),
                       const SizedBox(height: 8),
                       if (_servicesLoading)
                         Center(child: CircularProgressIndicator(color: cs.primary))
@@ -475,12 +478,12 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                               isExpanded:  true,
                               dropdownColor: cs.surface,
                               style: TextStyle(color: cs.label, fontSize: 14),
-                              hint: Text('No service',
+                              hint: Text(l10n.trainer_noService,
                                   style: TextStyle(color: cs.muted)),
                               items: [
                                 DropdownMenuItem<PtServiceModel?>(
                                   value: null,
-                                  child: Text('No service',
+                                  child: Text(l10n.trainer_noService,
                                       style: TextStyle(color: cs.muted)),
                                 ),
                                 ..._services.map((s) => DropdownMenuItem(
@@ -495,13 +498,13 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                       const SizedBox(height: 16),
 
                       // ── Notes ─────────────────────────────────────────────
-                      _label('Notes (optional)', cs),
+                      _label(l10n.trainer_notesOptionalLabel, cs),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: _notesCtrl,
                         maxLines:   3,
                         style: TextStyle(color: cs.label),
-                        decoration: _inputDec('e.g. Focus on upper body', cs),
+                        decoration: _inputDec(l10n.trainer_notesHint, cs),
                       ),
                       const SizedBox(height: 28),
 
@@ -518,8 +521,8 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14)),
                           ),
-                          child: const Text('Book Session',
-                              style: TextStyle(
+                          child: Text(l10n.trainer_bookSession,
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600)),
                         ),
                       ),
@@ -560,7 +563,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
                 Icon(Icons.access_time, size: 16, color: cs.primary),
                 const SizedBox(width: 6),
                 Text(
-                  time == null ? 'Pick time' : time.format(context),
+                  time == null ? AppLocalizations.of(context)!.trainer_pickTime : time.format(context),
                   style: TextStyle(
                     fontSize: 14,
                     color: time == null ? cs.muted : cs.label,
@@ -797,7 +800,7 @@ class _InlineCalendarState extends State<_InlineCalendar> {
               children: [
                 _legendDot(cs.success),
                 const SizedBox(width: 4),
-                Text('Available', style: TextStyle(fontSize: 11, color: cs.muted)),
+                Text(AppLocalizations.of(context)!.trainer_calendarAvailable, style: TextStyle(fontSize: 11, color: cs.muted)),
                 const SizedBox(width: 16),
                 Container(
                   width: 5, height: 5,
@@ -807,7 +810,7 @@ class _InlineCalendarState extends State<_InlineCalendar> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Text('Selected', style: TextStyle(fontSize: 11, color: cs.muted)),
+                Text(AppLocalizations.of(context)!.trainer_calendarSelected, style: TextStyle(fontSize: 11, color: cs.muted)),
               ],
             ),
           ),

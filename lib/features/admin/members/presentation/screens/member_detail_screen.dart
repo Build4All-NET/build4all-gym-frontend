@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/admin_members_bloc.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../widgets/member_info_section_widget.dart';
 import '../widgets/membership_package_widget.dart';
 import '../widgets/quick_actions_widget.dart';
@@ -75,7 +76,7 @@ class _TopBar extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              'Member Detail',
+              AppLocalizations.of(context)!.admin_members_detailTitle,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 17,
@@ -158,7 +159,7 @@ class _DetailBody extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),
                     ),
-                    child: const Text('Retry'),
+                    child: Text(AppLocalizations.of(context)!.retry),
                   ),
                 ],
               ),

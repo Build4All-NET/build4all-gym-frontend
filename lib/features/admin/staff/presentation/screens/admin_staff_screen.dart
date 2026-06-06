@@ -11,6 +11,7 @@ import 'package:build4allgym/features/admin/AppBar/presentation/admin_app_bar.da
 import 'package:build4allgym/features/admin/AppBar/presentation/branch_cubit.dart';
 
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../data/repositories/admin_staff_repository_impl.dart';
 import '../../data/services/admin_staff_service.dart';
 import '../../domain/usecases/create_staff_usecase.dart';
@@ -101,7 +102,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
           child: Column(
             children: [
               AdminAppBar(
-                title:             'Staff',
+                title:             AppLocalizations.of(context)!.navStaff,
                 selectedBranchId:  _selectedBranchId,
                 onBranchChanged:   _onBranchChanged,
                 onAddTap:          _openAddDialog,
@@ -142,7 +143,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                                   .add(StaffStarted(
                                   branchId: _selectedBranchId)),
                               icon:  const Icon(Icons.refresh),
-                              label: const Text('Retry'),
+                              label: Text(AppLocalizations.of(context)!.retry),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: c.primary,
                                 foregroundColor: c.onPrimary,
@@ -175,7 +176,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                             child: loaded.staff.isEmpty
                                 ? Center(
                               child: Text(
-                                'No staff members found.',
+                                AppLocalizations.of(context)!.admin_staff_noStaff,
                                 style: TextStyle(color: c.muted),
                               ),
                             )
@@ -218,11 +219,12 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
   }
 
   String _successMessage(String actionType) {
+    final l10n = AppLocalizations.of(context)!;
     return switch (actionType) {
-      'create' => 'Staff member added successfully',
-      'update' => 'Staff member updated successfully',
-      'remove' => 'Staff member removed successfully',
-      _        => 'Action completed successfully',
+      'create' => l10n.admin_staff_addedSuccess,
+      'update' => l10n.admin_staff_updatedSuccess,
+      'remove' => l10n.admin_staff_removedSuccess,
+      _        => l10n.admin_staff_actionCompleted,
     };
   }
 }
