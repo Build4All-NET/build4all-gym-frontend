@@ -1,6 +1,6 @@
 {
-  "API_BASE_URL": "http://192.168.1.12:8989",
-  "OVERRIDE_BASE_URL": "http://192.168.1.12:8980",
+  "API_BASE_URL": "http://3.96.140.126:8080",
+  "OVERRIDE_BASE_URL": "http://3.96.140.126:8082",
   "APP_NAME": "B-Pro",
   "APP_TYPE": "GYM",
   "OWNER_PROJECT_LINK_ID": "1",
