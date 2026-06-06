@@ -1677,10 +1677,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberBookingsReviewFailed => 'فشل إرسال التقييم. حاول مجدداً.';
 
   @override
-  String get memberInvoicesTitle => 'سجل الدفعات';
+  String get memberInvoicesTitle => 'Payment History';
 
   @override
-  String get memberInvoicesEmptyTitle => 'لا توجد دفعات';
+  String get memberInvoicesEmptyTitle => 'No payments found';
 
   @override
   String get memberInvoicesEmptySubtitle => 'ستظهر دفعاتك المكتملة هنا.';
@@ -1827,17 +1827,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberInvoicesStatus => 'الحالة';
 
   @override
-  String get memberInvoicesType => 'النوع';
+  String get memberInvoicesType => 'Type';
 
   @override
-  String get memberInvoiceDownloadPdf => 'Download / Share PDF';
+  String get memberInvoiceDownloadPdf => 'تحميل / مشاركة PDF';
 
   @override
-  String get memberInvoicePdfTitle => 'Invoice';
+  String get memberInvoicePdfTitle => 'فاتورة';
 
   @override
-  String get memberInvoicePdfFooter => 'Thank you';
+  String get memberInvoicePdfFooter => 'شكراً لك';
 
   @override
-  String get memberInvoiceDescription => 'Description';
+  String get memberInvoiceDescription => 'الوصف';
+
+  @override
+  String get myInfoAddress => 'العنوان';
+
+  @override
+  String get myInfoAddressHint => 'أدخل عنوانك';
+
+  @override
+  String get memberSettingsTitle => 'الإعدادات';
+
+  @override
+  String get memberSettingsUnsaved => 'غير محفوظ';
+
+  @override
+  String get memberSettingsUnexpectedError => 'حدث خطأ غير متوقع';
+
+  @override
+  String get memberSettingsTryAgain => 'حاول مجددًا';
+
+  @override
+  String get memberSettingsSavedSuccessfully => 'تم حفظ الإعدادات بنجاح';
+
+  @override
+  String get memberSettingsSaveFailed => 'فشل حفظ الإعدادات';
+
+  @override
+  String get memberSettingsSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get memberSettingsSaving => 'جارٍ الحفظ...';
 }

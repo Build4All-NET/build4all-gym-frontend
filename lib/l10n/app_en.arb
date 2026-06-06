@@ -781,5 +781,23 @@
    "memberInvoiceDownloadPdf": "Download / Share PDF",
    "memberInvoicePdfTitle": "Invoice",
    "memberInvoicePdfFooter": "Thank you",
-   "memberInvoiceDescription": "Description"
+   "memberInvoiceDescription": "Description",
+   "myInfoAddress": "Address",
+   "@myInfoAddress": {
+     "description": "Address label in member my info screen"
+   },
+
+   "myInfoAddressHint": "Enter your address",
+   "@myInfoAddressHint": {
+     "description": "Address input hint in member my info screen"
+   },
+
+"memberSettingsTitle": "Settings",
+"memberSettingsUnsaved": "Unsaved",
+"memberSettingsUnexpectedError": "Unexpected error occurred",
+"memberSettingsTryAgain": "Try Again",
+"memberSettingsSavedSuccessfully": "Settings saved successfully",
+"memberSettingsSaveFailed": "Failed to save settings",
+"memberSettingsSaveChanges": "Save Changes",
+"memberSettingsSaving": "Saving..."
 }

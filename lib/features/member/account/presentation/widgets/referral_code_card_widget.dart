@@ -55,23 +55,29 @@ class ReferralCodeCardWidget extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              SizedBox(width: tokens.spacing.sm),
+
+              // This controls the space between icon and title/subtitle
+              SizedBox(width: isRtl ? 4 : tokens.spacing.sm),
+
               Expanded(
                 child: Column(
-                  crossAxisAlignment: isRtl
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                  isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.accountReferralTitle,
-                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: tokens.typography.titleMedium.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     Text(
                       l10n.accountReferralSubtitle,
-                      textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: tokens.typography.bodySmall.copyWith(
                         color: tokens.colors.muted,
                       ),
@@ -99,9 +105,8 @@ class ReferralCodeCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
-                  crossAxisAlignment: isRtl
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                  isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.accountReferralCodeLabel,

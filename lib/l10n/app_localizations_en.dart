@@ -1840,4 +1840,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberInvoiceDescription => 'Description';
+
+  @override
+  String get myInfoAddress => 'Address';
+
+  @override
+  String get myInfoAddressHint => 'Enter your address';
+
+  @override
+  String get memberSettingsTitle => 'Settings';
+
+  @override
+  String get memberSettingsUnsaved => 'Unsaved';
+
+  @override
+  String get memberSettingsUnexpectedError => 'Unexpected error occurred';
+
+  @override
+  String get memberSettingsTryAgain => 'Try Again';
+
+  @override
+  String get memberSettingsSavedSuccessfully => 'Settings saved successfully';
+
+  @override
+  String get memberSettingsSaveFailed => 'Failed to save settings';
+
+  @override
+  String get memberSettingsSaveChanges => 'Save Changes';
+
+  @override
+  String get memberSettingsSaving => 'Saving...';
 }

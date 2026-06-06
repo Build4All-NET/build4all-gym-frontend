@@ -3664,6 +3664,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Description'**
   String get memberInvoiceDescription;
+
+  /// Address label in member my info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get myInfoAddress;
+
+  /// Address input hint in member my info screen
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your address'**
+  String get myInfoAddressHint;
+
+  /// No description provided for @memberSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get memberSettingsTitle;
+
+  /// No description provided for @memberSettingsUnsaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved'**
+  String get memberSettingsUnsaved;
+
+  /// No description provided for @memberSettingsUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error occurred'**
+  String get memberSettingsUnexpectedError;
+
+  /// No description provided for @memberSettingsTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get memberSettingsTryAgain;
+
+  /// No description provided for @memberSettingsSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved successfully'**
+  String get memberSettingsSavedSuccessfully;
+
+  /// No description provided for @memberSettingsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save settings'**
+  String get memberSettingsSaveFailed;
+
+  /// No description provided for @memberSettingsSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get memberSettingsSaveChanges;
+
+  /// No description provided for @memberSettingsSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get memberSettingsSaving;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
