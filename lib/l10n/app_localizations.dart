@@ -3665,65 +3665,2447 @@ abstract class AppLocalizations {
   /// **'Description'**
   String get memberInvoiceDescription;
 
-  /// Address label in member my info screen
+  /// No description provided for @admin_dashboard_allBranches.
   ///
   /// In en, this message translates to:
-  /// **'Address'**
-  String get myInfoAddress;
+  /// **'All Branches'**
+  String get admin_dashboard_allBranches;
 
-  /// Address input hint in member my info screen
+  /// No description provided for @admin_dashboard_timePeriod.
   ///
   /// In en, this message translates to:
-  /// **'Enter your address'**
-  String get myInfoAddressHint;
+  /// **'Time Period'**
+  String get admin_dashboard_timePeriod;
 
-  /// No description provided for @memberSettingsTitle.
+  /// No description provided for @admin_dashboard_today.
   ///
   /// In en, this message translates to:
-  /// **'Settings'**
-  String get memberSettingsTitle;
+  /// **'Today'**
+  String get admin_dashboard_today;
 
-  /// No description provided for @memberSettingsUnsaved.
+  /// No description provided for @admin_dashboard_thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get admin_dashboard_thisWeek;
+
+  /// No description provided for @admin_dashboard_thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get admin_dashboard_thisMonth;
+
+  /// No description provided for @admin_dashboard_custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get admin_dashboard_custom;
+
+  /// No description provided for @admin_dashboard_activeMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Members'**
+  String get admin_dashboard_activeMembers;
+
+  /// No description provided for @admin_dashboard_pendingRenewals.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Renewals'**
+  String get admin_dashboard_pendingRenewals;
+
+  /// No description provided for @admin_dashboard_todayCheckins.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Check-ins'**
+  String get admin_dashboard_todayCheckins;
+
+  /// No description provided for @admin_dashboard_upcomingPt.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming PT'**
+  String get admin_dashboard_upcomingPt;
+
+  /// No description provided for @admin_dashboard_dueSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Due soon'**
+  String get admin_dashboard_dueSoon;
+
+  /// No description provided for @admin_dashboard_liveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Live now'**
+  String get admin_dashboard_liveNow;
+
+  /// No description provided for @admin_dashboard_sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get admin_dashboard_sessions;
+
+  /// No description provided for @admin_dashboard_attendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get admin_dashboard_attendance;
+
+  /// No description provided for @admin_dashboard_paymentsCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments Collected'**
+  String get admin_dashboard_paymentsCollected;
+
+  /// No description provided for @admin_dashboard_expiringPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring Plans'**
+  String get admin_dashboard_expiringPlans;
+
+  /// No description provided for @admin_dashboard_totalMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Members'**
+  String get admin_dashboard_totalMembers;
+
+  /// No description provided for @admin_dashboard_next7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 7 days'**
+  String get admin_dashboard_next7Days;
+
+  /// No description provided for @admin_dashboard_activeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Active'**
+  String admin_dashboard_activeCount(int count);
+
+  /// No description provided for @admin_dashboard_quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get admin_dashboard_quickActions;
+
+  /// No description provided for @admin_dashboard_recordPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Payment'**
+  String get admin_dashboard_recordPayment;
+
+  /// No description provided for @admin_dashboard_addPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Plan'**
+  String get admin_dashboard_addPlan;
+
+  /// No description provided for @admin_dashboard_sendAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Announcement'**
+  String get admin_dashboard_sendAnnouncement;
+
+  /// No description provided for @admin_dashboard_totalPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Plans'**
+  String get admin_dashboard_totalPlans;
+
+  /// No description provided for @admin_dashboard_canceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get admin_dashboard_canceled;
+
+  /// No description provided for @admin_dashboard_churnRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Churn Rate'**
+  String get admin_dashboard_churnRate;
+
+  /// No description provided for @admin_dashboard_monthlyRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Revenue'**
+  String get admin_dashboard_monthlyRevenue;
+
+  /// No description provided for @admin_dashboard_last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get admin_dashboard_last7Days;
+
+  /// No description provided for @admin_dashboard_recentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get admin_dashboard_recentActivity;
+
+  /// No description provided for @admin_dashboard_viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get admin_dashboard_viewAll;
+
+  /// No description provided for @admin_dashboard_noRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent activity'**
+  String get admin_dashboard_noRecentActivity;
+
+  /// No description provided for @admin_members_noMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'No members found.'**
+  String get admin_members_noMembers;
+
+  /// No description provided for @admin_members_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by Name, Phone, Member Code'**
+  String get admin_members_searchHint;
+
+  /// No description provided for @admin_members_filterAllStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'All Status'**
+  String get admin_members_filterAllStatus;
+
+  /// No description provided for @admin_members_filterInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get admin_members_filterInactive;
+
+  /// No description provided for @admin_members_filterBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get admin_members_filterBlocked;
+
+  /// No description provided for @admin_members_sortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get admin_members_sortNewest;
+
+  /// No description provided for @admin_members_sortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get admin_members_sortOldest;
+
+  /// No description provided for @admin_members_sortAlpha.
+  ///
+  /// In en, this message translates to:
+  /// **'Alphabetical'**
+  String get admin_members_sortAlpha;
+
+  /// No description provided for @admin_members_filterAllGender.
+  ///
+  /// In en, this message translates to:
+  /// **'All Gender'**
+  String get admin_members_filterAllGender;
+
+  /// No description provided for @admin_members_colPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get admin_members_colPlan;
+
+  /// No description provided for @admin_members_colDueAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Amount'**
+  String get admin_members_colDueAmount;
+
+  /// No description provided for @admin_members_colExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry'**
+  String get admin_members_colExpiry;
+
+  /// No description provided for @admin_members_colBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get admin_members_colBranch;
+
+  /// No description provided for @admin_members_actionWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get admin_members_actionWhatsApp;
+
+  /// No description provided for @admin_members_actionAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get admin_members_actionAttendance;
+
+  /// No description provided for @admin_members_actionRenew.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew'**
+  String get admin_members_actionRenew;
+
+  /// No description provided for @admin_members_actionUnblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get admin_members_actionUnblock;
+
+  /// No description provided for @admin_members_actionBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get admin_members_actionBlock;
+
+  /// No description provided for @admin_members_actionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get admin_members_actionDelete;
+
+  /// No description provided for @admin_members_actionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get admin_members_actionEdit;
+
+  /// No description provided for @admin_members_actionCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get admin_members_actionCall;
+
+  /// No description provided for @admin_members_actionSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get admin_members_actionSms;
+
+  /// No description provided for @admin_members_blockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block Member'**
+  String get admin_members_blockTitle;
+
+  /// No description provided for @admin_members_blockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reason for blocking'**
+  String get admin_members_blockHint;
+
+  /// No description provided for @admin_members_deleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Member'**
+  String get admin_members_deleteTitle;
+
+  /// No description provided for @admin_members_deleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete {name}? This cannot be undone.'**
+  String admin_members_deleteMessage(String name);
+
+  /// No description provided for @admin_members_statusNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'No Plan'**
+  String get admin_members_statusNoPlan;
+
+  /// No description provided for @admin_members_statusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get admin_members_statusInactive;
+
+  /// No description provided for @admin_members_detailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Detail'**
+  String get admin_members_detailTitle;
+
+  /// No description provided for @admin_members_membershipPackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Package'**
+  String get admin_members_membershipPackageTitle;
+
+  /// No description provided for @admin_members_packagePlanName.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Name'**
+  String get admin_members_packagePlanName;
+
+  /// No description provided for @admin_members_packageTotalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get admin_members_packageTotalAmount;
+
+  /// No description provided for @admin_members_packageDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get admin_members_packageDiscount;
+
+  /// No description provided for @admin_members_packagePurchaseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Date'**
+  String get admin_members_packagePurchaseDate;
+
+  /// No description provided for @admin_members_packagePaidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid Amount'**
+  String get admin_members_packagePaidAmount;
+
+  /// No description provided for @admin_members_packageDueAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Amount'**
+  String get admin_members_packageDueAmount;
+
+  /// No description provided for @admin_members_packageRemainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Days'**
+  String get admin_members_packageRemainingDays;
+
+  /// No description provided for @admin_members_packageDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String admin_members_packageDays(int count);
+
+  /// No description provided for @admin_trainers_removeRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Trainer Role'**
+  String get admin_trainers_removeRoleTitle;
+
+  /// No description provided for @admin_trainers_removeRoleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will lose the Trainer role and see the Member dashboard on next login.'**
+  String admin_trainers_removeRoleMessage(String name);
+
+  /// No description provided for @admin_trainers_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get admin_trainers_remove;
+
+  /// No description provided for @admin_trainers_addTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Trainer'**
+  String get admin_trainers_addTrainer;
+
+  /// No description provided for @admin_trainers_loadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load trainers'**
+  String get admin_trainers_loadError;
+
+  /// No description provided for @admin_trainers_emptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Trainers Yet'**
+  String get admin_trainers_emptyTitle;
+
+  /// No description provided for @admin_trainers_emptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Add Trainer\" to promote a member to the Trainer role.'**
+  String get admin_trainers_emptyMessage;
+
+  /// No description provided for @admin_trainers_badgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TRAINER'**
+  String get admin_trainers_badgeLabel;
+
+  /// No description provided for @admin_trainers_removeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Trainer Role'**
+  String get admin_trainers_removeTooltip;
+
+  /// No description provided for @admin_plans_deleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Plan'**
+  String get admin_plans_deleteTitle;
+
+  /// No description provided for @admin_plans_deleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this plan?'**
+  String get admin_plans_deleteMessage;
+
+  /// No description provided for @admin_plans_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get admin_plans_delete;
+
+  /// No description provided for @admin_plans_allTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All Types'**
+  String get admin_plans_allTypes;
+
+  /// No description provided for @admin_plans_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search plans...'**
+  String get admin_plans_searchHint;
+
+  /// No description provided for @admin_plans_noPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'No plans found'**
+  String get admin_plans_noPlans;
+
+  /// No description provided for @admin_plans_editTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Plan'**
+  String get admin_plans_editTitle;
+
+  /// No description provided for @admin_plans_addTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Plan'**
+  String get admin_plans_addTitle;
+
+  /// No description provided for @admin_plans_createPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Plan'**
+  String get admin_plans_createPlan;
+
+  /// No description provided for @admin_staff_noStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'No staff members found.'**
+  String get admin_staff_noStaff;
+
+  /// No description provided for @admin_staff_addedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff member added successfully'**
+  String get admin_staff_addedSuccess;
+
+  /// No description provided for @admin_staff_updatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff member updated successfully'**
+  String get admin_staff_updatedSuccess;
+
+  /// No description provided for @admin_staff_removedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff member removed successfully'**
+  String get admin_staff_removedSuccess;
+
+  /// No description provided for @admin_staff_actionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Action completed successfully'**
+  String get admin_staff_actionCompleted;
+
+  /// No description provided for @admin_staff_editTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Staff Member'**
+  String get admin_staff_editTitle;
+
+  /// No description provided for @admin_staff_addTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Staff'**
+  String get admin_staff_addTitle;
+
+  /// No description provided for @admin_staff_fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name *'**
+  String get admin_staff_fullName;
+
+  /// No description provided for @admin_staff_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email *'**
+  String get admin_staff_email;
+
+  /// No description provided for @admin_staff_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number *'**
+  String get admin_staff_phone;
+
+  /// No description provided for @admin_staff_role.
+  ///
+  /// In en, this message translates to:
+  /// **'Role *'**
+  String get admin_staff_role;
+
+  /// No description provided for @admin_staff_branchAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Assignment *'**
+  String get admin_staff_branchAssignment;
+
+  /// No description provided for @admin_staff_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get admin_staff_password;
+
+  /// No description provided for @admin_staff_saveStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Staff'**
+  String get admin_staff_saveStaff;
+
+  /// No description provided for @admin_staff_editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get admin_staff_editProfile;
+
+  /// No description provided for @admin_staff_removeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Staff Member'**
+  String get admin_staff_removeTitle;
+
+  /// No description provided for @admin_staff_removeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {name}? This action cannot be undone.'**
+  String admin_staff_removeMessage(String name);
+
+  /// No description provided for @admin_staff_fullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter full name'**
+  String get admin_staff_fullNameHint;
+
+  /// No description provided for @admin_staff_emailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter email'**
+  String get admin_staff_emailHint;
+
+  /// No description provided for @admin_staff_phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter phone number'**
+  String get admin_staff_phoneHint;
+
+  /// No description provided for @admin_staff_selectRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Select role'**
+  String get admin_staff_selectRole;
+
+  /// No description provided for @admin_staff_selectBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Select branch'**
+  String get admin_staff_selectBranch;
+
+  /// No description provided for @admin_staff_autoGeneratePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to auto-generate a secure password'**
+  String get admin_staff_autoGeneratePassword;
+
+  /// No description provided for @admin_settings_unsaved.
   ///
   /// In en, this message translates to:
   /// **'Unsaved'**
-  String get memberSettingsUnsaved;
+  String get admin_settings_unsaved;
 
-  /// No description provided for @memberSettingsUnexpectedError.
+  /// No description provided for @admin_settings_searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Unexpected error occurred'**
-  String get memberSettingsUnexpectedError;
+  /// **'Search settings...'**
+  String get admin_settings_searchHint;
 
-  /// No description provided for @memberSettingsTryAgain.
+  /// No description provided for @admin_settings_legalTitle.
   ///
   /// In en, this message translates to:
-  /// **'Try Again'**
-  String get memberSettingsTryAgain;
+  /// **'Legal & Policies'**
+  String get admin_settings_legalTitle;
 
-  /// No description provided for @memberSettingsSavedSuccessfully.
+  /// No description provided for @admin_settings_legalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review our policies'**
+  String get admin_settings_legalSubtitle;
+
+  /// No description provided for @admin_settings_saveSuccess.
   ///
   /// In en, this message translates to:
   /// **'Settings saved successfully'**
-  String get memberSettingsSavedSuccessfully;
+  String get admin_settings_saveSuccess;
 
-  /// No description provided for @memberSettingsSaveFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to save settings'**
-  String get memberSettingsSaveFailed;
-
-  /// No description provided for @memberSettingsSaveChanges.
-  ///
-  /// In en, this message translates to:
-  /// **'Save Changes'**
-  String get memberSettingsSaveChanges;
-
-  /// No description provided for @memberSettingsSaving.
+  /// No description provided for @admin_settings_saving.
   ///
   /// In en, this message translates to:
   /// **'Saving...'**
-  String get memberSettingsSaving;
+  String get admin_settings_saving;
+
+  /// No description provided for @admin_settings_saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get admin_settings_saveChanges;
+
+  /// No description provided for @admin_settings_saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save settings'**
+  String get admin_settings_saveFailed;
+
+  /// No description provided for @admin_branches_activeBranches.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Branches'**
+  String get admin_branches_activeBranches;
+
+  /// No description provided for @admin_branches_totalMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Members'**
+  String get admin_branches_totalMembers;
+
+  /// No description provided for @admin_branches_monthlyRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Revenue'**
+  String get admin_branches_monthlyRevenue;
+
+  /// No description provided for @admin_branches_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by branch name or location.'**
+  String get admin_branches_searchHint;
+
+  /// No description provided for @admin_branches_allStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'All Status'**
+  String get admin_branches_allStatus;
+
+  /// No description provided for @admin_branches_statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get admin_branches_statusActive;
+
+  /// No description provided for @admin_branches_statusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get admin_branches_statusInactive;
+
+  /// No description provided for @admin_branches_noFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No branches found'**
+  String get admin_branches_noFound;
+
+  /// No description provided for @admin_trainingVideos_deleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Video deleted'**
+  String get admin_trainingVideos_deleteSuccess;
+
+  /// No description provided for @admin_trainingVideos_totalVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Videos'**
+  String get admin_trainingVideos_totalVideos;
+
+  /// No description provided for @admin_trainingVideos_totalViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Views'**
+  String get admin_trainingVideos_totalViews;
+
+  /// No description provided for @admin_trainingVideos_noVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos found.'**
+  String get admin_trainingVideos_noVideos;
+
+  /// No description provided for @admin_trainingVideos_allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get admin_trainingVideos_allCategories;
+
+  /// No description provided for @admin_classes_noClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'No classes scheduled for this day'**
+  String get admin_classes_noClasses;
+
+  /// No description provided for @admin_classes_reactivateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate Class'**
+  String get admin_classes_reactivateTitle;
+
+  /// No description provided for @admin_classes_reactivateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore this class to scheduled? Members will be able to book it again.'**
+  String get admin_classes_reactivateMessage;
+
+  /// No description provided for @admin_classes_reactivateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Reactivate'**
+  String get admin_classes_reactivateConfirm;
+
+  /// No description provided for @admin_classes_cancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Class'**
+  String get admin_classes_cancelTitle;
+
+  /// No description provided for @admin_classes_cancelMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this class? All booked members will be notified.'**
+  String get admin_classes_cancelMessage;
+
+  /// No description provided for @admin_classes_keepClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Class'**
+  String get admin_classes_keepClass;
+
+  /// No description provided for @admin_classes_cancelConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Cancel'**
+  String get admin_classes_cancelConfirm;
+
+  /// No description provided for @admin_classes_createdSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Class created successfully'**
+  String get admin_classes_createdSuccess;
+
+  /// No description provided for @admin_classes_updatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Class updated successfully'**
+  String get admin_classes_updatedSuccess;
+
+  /// No description provided for @admin_classes_cancelledSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Class cancelled'**
+  String get admin_classes_cancelledSuccess;
+
+  /// No description provided for @admin_classes_reactivatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Class reactivated successfully'**
+  String get admin_classes_reactivatedSuccess;
+
+  /// No description provided for @admin_membershipRequests_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Requests'**
+  String get admin_membershipRequests_title;
+
+  /// No description provided for @admin_membershipRequests_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get admin_membershipRequests_retry;
+
+  /// No description provided for @admin_membershipRequests_noPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests'**
+  String get admin_membershipRequests_noPending;
+
+  /// No description provided for @admin_membershipRequests_noPendingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'New cash payment requests will appear here'**
+  String get admin_membershipRequests_noPendingDesc;
+
+  /// No description provided for @admin_membershipRequests_pendingBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get admin_membershipRequests_pendingBadge;
+
+  /// No description provided for @admin_membershipRequests_plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get admin_membershipRequests_plan;
+
+  /// No description provided for @admin_membershipRequests_branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get admin_membershipRequests_branch;
+
+  /// No description provided for @admin_membershipRequests_amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get admin_membershipRequests_amount;
+
+  /// No description provided for @admin_membershipRequests_reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get admin_membershipRequests_reject;
+
+  /// No description provided for @admin_membershipRequests_approve.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get admin_membershipRequests_approve;
+
+  /// No description provided for @admin_membershipRequests_approveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Payment Receipt'**
+  String get admin_membershipRequests_approveTitle;
+
+  /// No description provided for @admin_membershipRequests_notesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get admin_membershipRequests_notesHint;
+
+  /// No description provided for @admin_membershipRequests_approveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve — Received \$ {amount}'**
+  String admin_membershipRequests_approveButton(String amount);
+
+  /// No description provided for @admin_membershipRequests_subscriptionInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan: {plan}\nAmount: \$ {amount}'**
+  String admin_membershipRequests_subscriptionInfo(String plan, String amount);
+
+  /// No description provided for @admin_membershipRequests_rejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Request'**
+  String get admin_membershipRequests_rejectTitle;
+
+  /// No description provided for @admin_membershipRequests_rejectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection reason (required)'**
+  String get admin_membershipRequests_rejectHint;
+
+  /// No description provided for @admin_membershipRequests_rejectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Request'**
+  String get admin_membershipRequests_rejectButton;
+
+  /// No description provided for @admin_membershipRequests_enterReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a rejection reason'**
+  String get admin_membershipRequests_enterReason;
+
+  /// No description provided for @membershipStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get membershipStatusPending;
+
+  /// No description provided for @membershipStatusBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get membershipStatusBlocked;
+
+  /// No description provided for @membershipStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get membershipStatusInactive;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @genderOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get genderOther;
+
+  /// No description provided for @admin_invoices_filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get admin_invoices_filterAll;
+
+  /// No description provided for @admin_invoices_filterPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get admin_invoices_filterPaid;
+
+  /// No description provided for @admin_invoices_filterPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get admin_invoices_filterPending;
+
+  /// No description provided for @admin_invoices_filterOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get admin_invoices_filterOverdue;
+
+  /// No description provided for @admin_invoices_filterCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get admin_invoices_filterCancelled;
+
+  /// No description provided for @admin_invoices_typeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All Types'**
+  String get admin_invoices_typeAll;
+
+  /// No description provided for @admin_invoices_typePlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get admin_invoices_typePlans;
+
+  /// No description provided for @admin_invoices_typeClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get admin_invoices_typeClasses;
+
+  /// No description provided for @admin_invoices_typePt.
+  ///
+  /// In en, this message translates to:
+  /// **'PT'**
+  String get admin_invoices_typePt;
+
+  /// No description provided for @admin_invoices_noInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices found'**
+  String get admin_invoices_noInvoices;
+
+  /// No description provided for @admin_invoices_emptyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices appear here after payments are completed.'**
+  String get admin_invoices_emptyDesc;
+
+  /// No description provided for @admin_invoices_noFilteredInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'No {status} invoices.'**
+  String admin_invoices_noFilteredInvoices(String status);
+
+  /// No description provided for @admin_invoices_invoiceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice'**
+  String get admin_invoices_invoiceLabel;
+
+  /// No description provided for @admin_invoices_downloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download / Share PDF'**
+  String get admin_invoices_downloadPdf;
+
+  /// No description provided for @admin_classes_addTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Class'**
+  String get admin_classes_addTitle;
+
+  /// No description provided for @admin_classes_editTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Class'**
+  String get admin_classes_editTitle;
+
+  /// No description provided for @admin_classes_nameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Class Name *'**
+  String get admin_classes_nameLabel;
+
+  /// No description provided for @admin_classes_typeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type / Activity *'**
+  String get admin_classes_typeLabel;
+
+  /// No description provided for @admin_classes_newTypeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'New Type'**
+  String get admin_classes_newTypeButton;
+
+  /// No description provided for @admin_classes_trainerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer *'**
+  String get admin_classes_trainerLabel;
+
+  /// No description provided for @admin_classes_branchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch *'**
+  String get admin_classes_branchLabel;
+
+  /// No description provided for @admin_classes_dateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date *'**
+  String get admin_classes_dateLabel;
+
+  /// No description provided for @admin_classes_timeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time *'**
+  String get admin_classes_timeLabel;
+
+  /// No description provided for @admin_classes_durationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (minutes) *'**
+  String get admin_classes_durationLabel;
+
+  /// No description provided for @admin_classes_capacityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity *'**
+  String get admin_classes_capacityLabel;
+
+  /// No description provided for @admin_classes_roomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Name'**
+  String get admin_classes_roomLabel;
+
+  /// No description provided for @admin_classes_notesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes / Description'**
+  String get admin_classes_notesLabel;
+
+  /// No description provided for @admin_classes_saveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Class'**
+  String get admin_classes_saveButton;
+
+  /// No description provided for @admin_classes_selectType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select type'**
+  String get admin_classes_selectType;
+
+  /// No description provided for @admin_classes_selectTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select trainer'**
+  String get admin_classes_selectTrainer;
+
+  /// No description provided for @admin_classes_selectBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Select branch'**
+  String get admin_classes_selectBranch;
+
+  /// No description provided for @admin_classes_newTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Class Type'**
+  String get admin_classes_newTypeTitle;
+
+  /// No description provided for @admin_classes_failedCreateType.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create class type'**
+  String get admin_classes_failedCreateType;
+
+  /// No description provided for @admin_classes_timePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Time cannot be in the past'**
+  String get admin_classes_timePast;
+
+  /// No description provided for @admin_classes_timeReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Previously selected time is now in the past — please re-select'**
+  String get admin_classes_timeReset;
+
+  /// No description provided for @admin_classes_selectDateTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select date and time'**
+  String get admin_classes_selectDateTime;
+
+  /// No description provided for @admin_classes_dateTimePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Class date and time cannot be in the past'**
+  String get admin_classes_dateTimePast;
+
+  /// No description provided for @admin_classes_fillRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all required fields'**
+  String get admin_classes_fillRequired;
+
+  /// No description provided for @admin_classes_sessionBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Bookings'**
+  String get admin_classes_sessionBookingsTitle;
+
+  /// No description provided for @admin_classes_paymentConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment confirmed'**
+  String get admin_classes_paymentConfirmed;
+
+  /// No description provided for @admin_classes_bookingRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking rejected'**
+  String get admin_classes_bookingRejected;
+
+  /// No description provided for @admin_classes_noBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
+  String get admin_classes_noBookings;
+
+  /// No description provided for @admin_classes_noPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone'**
+  String get admin_classes_noPhone;
+
+  /// No description provided for @admin_classes_statusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get admin_classes_statusPending;
+
+  /// No description provided for @admin_classes_statusBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get admin_classes_statusBooked;
+
+  /// No description provided for @admin_classes_rejectBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get admin_classes_rejectBooking;
+
+  /// No description provided for @admin_classes_confirmPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Pay'**
+  String get admin_classes_confirmPayment;
+
+  /// No description provided for @admin_settings_accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & Security'**
+  String get admin_settings_accountTitle;
+
+  /// No description provided for @admin_settings_accountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your account security'**
+  String get admin_settings_accountSubtitle;
+
+  /// No description provided for @admin_settings_changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get admin_settings_changePassword;
+
+  /// No description provided for @admin_settings_changePasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your account password'**
+  String get admin_settings_changePasswordSubtitle;
+
+  /// No description provided for @admin_settings_biometricLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Login'**
+  String get admin_settings_biometricLogin;
+
+  /// No description provided for @admin_settings_biometricSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint or face ID'**
+  String get admin_settings_biometricSubtitle;
+
+  /// No description provided for @admin_settings_twoFactor.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-Factor Authentication'**
+  String get admin_settings_twoFactor;
+
+  /// No description provided for @admin_settings_twoFactorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an extra layer of security'**
+  String get admin_settings_twoFactorSubtitle;
+
+  /// No description provided for @admin_settings_businessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Rules'**
+  String get admin_settings_businessTitle;
+
+  /// No description provided for @admin_settings_adminOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Only'**
+  String get admin_settings_adminOnly;
+
+  /// No description provided for @admin_settings_businessSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure membership & class logic'**
+  String get admin_settings_businessSubtitle;
+
+  /// No description provided for @admin_settings_subscriptionRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Rules'**
+  String get admin_settings_subscriptionRules;
+
+  /// No description provided for @admin_settings_ownerOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the owner can change business rules'**
+  String get admin_settings_ownerOnly;
+
+  /// No description provided for @admin_settings_allowClassWithoutMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow class subscription without membership'**
+  String get admin_settings_allowClassWithoutMembership;
+
+  /// No description provided for @admin_settings_allowClassWithoutMembershipDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Users can join classes without buying a plan'**
+  String get admin_settings_allowClassWithoutMembershipDesc;
+
+  /// No description provided for @admin_settings_requireMembershipForClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Require membership for class subscription'**
+  String get admin_settings_requireMembershipForClass;
+
+  /// No description provided for @admin_settings_requireMembershipForClassDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Users must have an active membership to subscribe to classes'**
+  String get admin_settings_requireMembershipForClassDesc;
+
+  /// No description provided for @admin_settings_allowMembershipWithoutClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow membership without class enrollment'**
+  String get admin_settings_allowMembershipWithoutClass;
+
+  /// No description provided for @admin_settings_allowMembershipWithoutClassDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Members can purchase plans without enrolling in any class'**
+  String get admin_settings_allowMembershipWithoutClassDesc;
+
+  /// No description provided for @admin_settings_allowBothIndependently.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow both independently'**
+  String get admin_settings_allowBothIndependently;
+
+  /// No description provided for @admin_settings_allowBothIndependentlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Memberships and classes can be purchased separately'**
+  String get admin_settings_allowBothIndependentlyDesc;
+
+  /// No description provided for @admin_settings_dangerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get admin_settings_dangerTitle;
+
+  /// No description provided for @admin_settings_dangerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Irreversible actions'**
+  String get admin_settings_dangerSubtitle;
+
+  /// No description provided for @admin_settings_logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get admin_settings_logOut;
+
+  /// No description provided for @admin_settings_deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get admin_settings_deleteAccount;
+
+  /// No description provided for @admin_settings_logOutMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get admin_settings_logOutMessage;
+
+  /// No description provided for @admin_settings_deleteAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your account. This action cannot be undone.'**
+  String get admin_settings_deleteAccountMessage;
+
+  /// No description provided for @admin_settings_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get admin_settings_delete;
+
+  /// No description provided for @settings_appearanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settings_appearanceTitle;
+
+  /// No description provided for @settings_appearanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize your visual experience'**
+  String get settings_appearanceSubtitle;
+
+  /// No description provided for @settings_lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get settings_lightMode;
+
+  /// No description provided for @settings_lightModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean and bright interface'**
+  String get settings_lightModeSubtitle;
+
+  /// No description provided for @settings_darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get settings_darkMode;
+
+  /// No description provided for @settings_darkModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy on the eyes'**
+  String get settings_darkModeSubtitle;
+
+  /// No description provided for @settings_systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get settings_systemDefault;
+
+  /// No description provided for @settings_systemDefaultSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match your device settings'**
+  String get settings_systemDefaultSubtitle;
+
+  /// No description provided for @trainer_ptDashboardAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Dashboard (All Trainers)'**
+  String get trainer_ptDashboardAllTitle;
+
+  /// No description provided for @trainer_ptDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer Dashboard'**
+  String get trainer_ptDashboardTitle;
+
+  /// No description provided for @trainer_todaySessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Today Sessions'**
+  String get trainer_todaySessions;
+
+  /// No description provided for @trainer_cancelledNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled / No-Show'**
+  String get trainer_cancelledNoShow;
+
+  /// No description provided for @trainer_todayScheduleHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Schedule'**
+  String get trainer_todayScheduleHeader;
+
+  /// No description provided for @trainer_noServicesScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'No services scheduled for today.'**
+  String get trainer_noServicesScheduled;
+
+  /// No description provided for @trainer_byName.
+  ///
+  /// In en, this message translates to:
+  /// **'By {name}'**
+  String trainer_byName(String name);
+
+  /// No description provided for @trainer_confirmedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRMED'**
+  String get trainer_confirmedBadge;
+
+  /// No description provided for @trainer_createPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Package'**
+  String get trainer_createPackage;
+
+  /// No description provided for @trainer_addAvailabilityButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Availability'**
+  String get trainer_addAvailabilityButton;
+
+  /// No description provided for @trainer_addPtService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add PT Service'**
+  String get trainer_addPtService;
+
+  /// No description provided for @trainer_createSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Session'**
+  String get trainer_createSession;
+
+  /// No description provided for @trainer_pendingRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Requests'**
+  String get trainer_pendingRequests;
+
+  /// No description provided for @trainer_noPendingRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests.'**
+  String get trainer_noPendingRequests;
+
+  /// No description provided for @trainer_declineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get trainer_declineButton;
+
+  /// No description provided for @trainer_acceptButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get trainer_acceptButton;
+
+  /// No description provided for @trainer_upcomingClients.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Clients'**
+  String get trainer_upcomingClients;
+
+  /// No description provided for @trainer_noUpcomingClients.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming clients.'**
+  String get trainer_noUpcomingClients;
+
+  /// No description provided for @trainer_sessionOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Session {current}/{total}'**
+  String trainer_sessionOfTotal(int current, int total);
+
+  /// No description provided for @trainer_servicesAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All PT Services'**
+  String get trainer_servicesAllTitle;
+
+  /// No description provided for @trainer_servicesMyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Services'**
+  String get trainer_servicesMyTitle;
+
+  /// No description provided for @trainer_noPtServicesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No PT services found.'**
+  String get trainer_noPtServicesFound;
+
+  /// No description provided for @trainer_deleteServiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Service'**
+  String get trainer_deleteServiceTitle;
+
+  /// No description provided for @trainer_deleteServiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"?'**
+  String trainer_deleteServiceMessage(String name);
+
+  /// No description provided for @trainer_inactiveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get trainer_inactiveBadge;
+
+  /// No description provided for @trainer_editService.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Service'**
+  String get trainer_editService;
+
+  /// No description provided for @trainer_newPtService.
+  ///
+  /// In en, this message translates to:
+  /// **'New PT Service'**
+  String get trainer_newPtService;
+
+  /// No description provided for @trainer_assignToTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to Trainer'**
+  String get trainer_assignToTrainer;
+
+  /// No description provided for @trainer_selectTrainerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a trainer'**
+  String get trainer_selectTrainerRequired;
+
+  /// No description provided for @trainer_serviceNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Name'**
+  String get trainer_serviceNameLabel;
+
+  /// No description provided for @trainer_requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get trainer_requiredField;
+
+  /// No description provided for @trainer_descriptionOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get trainer_descriptionOptional;
+
+  /// No description provided for @trainer_durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (minutes)'**
+  String get trainer_durationMinutes;
+
+  /// No description provided for @trainer_enterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number'**
+  String get trainer_enterNumber;
+
+  /// No description provided for @trainer_priceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get trainer_priceLabel;
+
+  /// No description provided for @trainer_enterPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price'**
+  String get trainer_enterPrice;
+
+  /// No description provided for @trainer_activeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get trainer_activeLabel;
+
+  /// No description provided for @trainer_inactiveHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive services are hidden from members'**
+  String get trainer_inactiveHidden;
+
+  /// No description provided for @trainer_selectTrainerSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a trainer.'**
+  String get trainer_selectTrainerSnackbar;
+
+  /// No description provided for @trainer_packagesAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All Packages'**
+  String get trainer_packagesAllTitle;
+
+  /// No description provided for @trainer_packagesMyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Packages'**
+  String get trainer_packagesMyTitle;
+
+  /// No description provided for @trainer_showDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Deactivated'**
+  String get trainer_showDeactivated;
+
+  /// No description provided for @trainer_noPackagesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No packages found.'**
+  String get trainer_noPackagesFound;
+
+  /// No description provided for @trainer_deactivatedPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivated Packages'**
+  String get trainer_deactivatedPackages;
+
+  /// No description provided for @trainer_noDeactivatedPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No deactivated packages.'**
+  String get trainer_noDeactivatedPackages;
+
+  /// No description provided for @trainer_deactivatePackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Package'**
+  String get trainer_deactivatePackageTitle;
+
+  /// No description provided for @trainer_deactivatePackageMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate \"{name}\"?'**
+  String trainer_deactivatePackageMessage(String name);
+
+  /// No description provided for @trainer_deactivateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get trainer_deactivateButton;
+
+  /// No description provided for @trainer_reactivatePackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate Package'**
+  String get trainer_reactivatePackageTitle;
+
+  /// No description provided for @trainer_reactivatePackageMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate \"{name}\"? It will become visible to members again.'**
+  String trainer_reactivatePackageMessage(String name);
+
+  /// No description provided for @trainer_reactivateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get trainer_reactivateButton;
+
+  /// No description provided for @trainer_maxConcurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Max {count} concurrent'**
+  String trainer_maxConcurrent(int count);
+
+  /// No description provided for @trainer_editPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Package'**
+  String get trainer_editPackage;
+
+  /// No description provided for @trainer_newPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'New Package'**
+  String get trainer_newPackage;
+
+  /// No description provided for @trainer_packageNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Package Name'**
+  String get trainer_packageNameLabel;
+
+  /// No description provided for @trainer_packageTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Package Type *'**
+  String get trainer_packageTypeLabel;
+
+  /// No description provided for @trainer_numberOfSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Sessions'**
+  String get trainer_numberOfSessions;
+
+  /// No description provided for @trainer_sessionDurationMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Duration (min)'**
+  String get trainer_sessionDurationMin;
+
+  /// No description provided for @trainer_daysAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Available (validity period) *'**
+  String get trainer_daysAvailable;
+
+  /// No description provided for @trainer_minDaysWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Days/Week'**
+  String get trainer_minDaysWeek;
+
+  /// No description provided for @trainer_maxDaysWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Days/Week'**
+  String get trainer_maxDaysWeek;
+
+  /// No description provided for @trainer_maxConcurrentSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Concurrent Sessions'**
+  String get trainer_maxConcurrentSessions;
+
+  /// No description provided for @trainer_salePriceOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale Price (optional)'**
+  String get trainer_salePriceOptional;
+
+  /// No description provided for @trainer_linkedPtServiceOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked PT Service (optional)'**
+  String get trainer_linkedPtServiceOptional;
+
+  /// No description provided for @trainer_noneOption.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get trainer_noneOption;
+
+  /// No description provided for @trainer_uncheckDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncheck to deactivate this package'**
+  String get trainer_uncheckDeactivate;
+
+  /// No description provided for @trainer_trainerNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer #{id}'**
+  String trainer_trainerNumber(int id);
+
+  /// No description provided for @trainer_schedulesAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All Schedules'**
+  String get trainer_schedulesAllTitle;
+
+  /// No description provided for @trainer_schedulesMyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Availability'**
+  String get trainer_schedulesMyTitle;
+
+  /// No description provided for @trainer_noAvailabilityFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No availability slots found.'**
+  String get trainer_noAvailabilityFound;
+
+  /// No description provided for @trainer_recurringWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring weekly'**
+  String get trainer_recurringWeekly;
+
+  /// No description provided for @trainer_oneTimeDate.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time: {date}'**
+  String trainer_oneTimeDate(String date);
+
+  /// No description provided for @trainer_oneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time'**
+  String get trainer_oneTime;
+
+  /// No description provided for @trainer_deleteSlotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Slot'**
+  String get trainer_deleteSlotTitle;
+
+  /// No description provided for @trainer_deleteSlotMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {start}–{end} slot?'**
+  String trainer_deleteSlotMessage(String start, String end);
+
+  /// No description provided for @trainer_addAvailabilitySlotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Availability Slot'**
+  String get trainer_addAvailabilitySlotTitle;
+
+  /// No description provided for @trainer_dayOfWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of Week'**
+  String get trainer_dayOfWeek;
+
+  /// No description provided for @trainer_startTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get trainer_startTime;
+
+  /// No description provided for @trainer_endTime.
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get trainer_endTime;
+
+  /// No description provided for @trainer_recurringWeeklyToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring (weekly)'**
+  String get trainer_recurringWeeklyToggle;
+
+  /// No description provided for @trainer_specificDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Date *'**
+  String get trainer_specificDate;
+
+  /// No description provided for @trainer_requiredForOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Required for one-time slots'**
+  String get trainer_requiredForOneTime;
+
+  /// No description provided for @trainer_pickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get trainer_pickDate;
+
+  /// No description provided for @trainer_pickSpecificDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Please pick a specific date for one-time slots.'**
+  String get trainer_pickSpecificDate;
+
+  /// No description provided for @trainer_addButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get trainer_addButton;
+
+  /// No description provided for @trainer_dayFullMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get trainer_dayFullMonday;
+
+  /// No description provided for @trainer_dayFullTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get trainer_dayFullTuesday;
+
+  /// No description provided for @trainer_dayFullWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get trainer_dayFullWednesday;
+
+  /// No description provided for @trainer_dayFullThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get trainer_dayFullThursday;
+
+  /// No description provided for @trainer_dayFullFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get trainer_dayFullFriday;
+
+  /// No description provided for @trainer_dayFullSaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get trainer_dayFullSaturday;
+
+  /// No description provided for @trainer_dayFullSunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get trainer_dayFullSunday;
+
+  /// No description provided for @trainer_sessionsAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All Sessions'**
+  String get trainer_sessionsAllTitle;
+
+  /// No description provided for @trainer_sessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get trainer_sessionsTitle;
+
+  /// No description provided for @trainer_bookSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Session'**
+  String get trainer_bookSession;
+
+  /// No description provided for @trainer_sessionAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Session request accepted.'**
+  String get trainer_sessionAccepted;
+
+  /// No description provided for @trainer_sessionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Session marked as completed.'**
+  String get trainer_sessionCompleted;
+
+  /// No description provided for @trainer_sessionBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Session booked successfully.'**
+  String get trainer_sessionBooked;
+
+  /// No description provided for @trainer_sessionDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Session request declined.'**
+  String get trainer_sessionDeclined;
+
+  /// No description provided for @trainer_sessionCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Session cancelled.'**
+  String get trainer_sessionCancelled;
+
+  /// No description provided for @trainer_sessionNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Session marked as no-show.'**
+  String get trainer_sessionNoShow;
+
+  /// No description provided for @trainer_sessionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Session updated.'**
+  String get trainer_sessionUpdated;
+
+  /// No description provided for @trainer_tabToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get trainer_tabToday;
+
+  /// No description provided for @trainer_tabUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get trainer_tabUpcoming;
+
+  /// No description provided for @trainer_tabCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get trainer_tabCompleted;
+
+  /// No description provided for @trainer_noServicesUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming services.'**
+  String get trainer_noServicesUpcoming;
+
+  /// No description provided for @trainer_noServicesCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed services yet.'**
+  String get trainer_noServicesCompleted;
+
+  /// No description provided for @trainer_loadTrainersError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load trainers. Please check your connection and retry.'**
+  String get trainer_loadTrainersError;
+
+  /// No description provided for @trainer_idNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer ID not found in profile.\nPlease log out and log in again.'**
+  String get trainer_idNotFound;
+
+  /// No description provided for @trainer_navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get trainer_navDashboard;
+
+  /// No description provided for @trainer_navSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get trainer_navSessions;
+
+  /// No description provided for @trainer_navPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Packages'**
+  String get trainer_navPackages;
+
+  /// No description provided for @trainer_navSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get trainer_navSchedule;
+
+  /// No description provided for @trainer_navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get trainer_navMore;
+
+  /// No description provided for @trainer_ptSession.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Session'**
+  String get trainer_ptSession;
+
+  /// No description provided for @trainer_completeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get trainer_completeButton;
+
+  /// No description provided for @trainer_cancelSessionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get trainer_cancelSessionButton;
+
+  /// No description provided for @trainer_declineRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline Request'**
+  String get trainer_declineRequestTitle;
+
+  /// No description provided for @trainer_declineRequestMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to decline this session request?'**
+  String get trainer_declineRequestMessage;
+
+  /// No description provided for @trainer_keepButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get trainer_keepButton;
+
+  /// No description provided for @trainer_cancelSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Session'**
+  String get trainer_cancelSessionTitle;
+
+  /// No description provided for @trainer_cancelSessionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this session?'**
+  String get trainer_cancelSessionMessage;
+
+  /// No description provided for @trainer_cancelSessionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Session'**
+  String get trainer_cancelSessionConfirm;
+
+  /// No description provided for @trainer_statusRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'requested'**
+  String get trainer_statusRequested;
+
+  /// No description provided for @trainer_statusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'completed'**
+  String get trainer_statusCompleted;
+
+  /// No description provided for @trainer_statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'cancelled'**
+  String get trainer_statusCancelled;
+
+  /// No description provided for @trainer_statusNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'no-show'**
+  String get trainer_statusNoShow;
+
+  /// No description provided for @trainer_statusScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'scheduled'**
+  String get trainer_statusScheduled;
+
+  /// No description provided for @trainer_sessionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Progress'**
+  String get trainer_sessionProgress;
+
+  /// No description provided for @trainer_selectTimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a time slot or set the times manually.'**
+  String get trainer_selectTimeSlot;
+
+  /// No description provided for @trainer_enterValidMemberId.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid Member ID.'**
+  String get trainer_enterValidMemberId;
+
+  /// No description provided for @trainer_noAvailabilityCustomTime.
+  ///
+  /// In en, this message translates to:
+  /// **'No availability set for this day. You can still set a custom time below.'**
+  String get trainer_noAvailabilityCustomTime;
+
+  /// No description provided for @trainer_tapSlotToSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a slot to select it.'**
+  String get trainer_tapSlotToSelect;
+
+  /// No description provided for @trainer_memberIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Member ID *'**
+  String get trainer_memberIdLabel;
+
+  /// No description provided for @trainer_enterMemberUserId.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter member user ID'**
+  String get trainer_enterMemberUserId;
+
+  /// No description provided for @trainer_enterValidMemberIdValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid member ID'**
+  String get trainer_enterValidMemberIdValidation;
+
+  /// No description provided for @trainer_memberPackageIdOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Package ID (optional)'**
+  String get trainer_memberPackageIdOptional;
+
+  /// No description provided for @trainer_linkSessionToPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Link this session to the member\'s PT package.'**
+  String get trainer_linkSessionToPackage;
+
+  /// No description provided for @trainer_selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get trainer_selectDate;
+
+  /// No description provided for @trainer_selectTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get trainer_selectTimeLabel;
+
+  /// No description provided for @trainer_bookingId.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID'**
+  String get trainer_bookingId;
+
+  /// No description provided for @trainer_paymentStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Status'**
+  String get trainer_paymentStatusLabel;
+
+  /// No description provided for @trainer_confirmCashPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Cash Receipt'**
+  String get trainer_confirmCashPayment;
+
+  /// No description provided for @trainer_confirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming...'**
+  String get trainer_confirming;
+
+  /// No description provided for @trainer_noPendingCashPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending cash payments'**
+  String get trainer_noPendingCashPayments;
+
+  /// No description provided for @trainer_allPtPackagesConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'All PT packages payment confirmed'**
+  String get trainer_allPtPackagesConfirmed;
+
+  /// No description provided for @trainer_leaveBlankIfNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank if none'**
+  String get trainer_leaveBlankIfNone;
+
+  /// No description provided for @trainer_validNumberError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get trainer_validNumberError;
+
+  /// No description provided for @trainer_serviceOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service (optional)'**
+  String get trainer_serviceOptionalLabel;
+
+  /// No description provided for @trainer_noService.
+  ///
+  /// In en, this message translates to:
+  /// **'No service'**
+  String get trainer_noService;
+
+  /// No description provided for @trainer_notesOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get trainer_notesOptionalLabel;
+
+  /// No description provided for @trainer_notesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Focus on upper body'**
+  String get trainer_notesHint;
+
+  /// No description provided for @trainer_pickTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick time'**
+  String get trainer_pickTime;
+
+  /// No description provided for @trainer_calendarAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get trainer_calendarAvailable;
+
+  /// No description provided for @trainer_calendarSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get trainer_calendarSelected;
+
+  /// No description provided for @trainer_cashPaymentConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment confirmed and sessions activated.'**
+  String get trainer_cashPaymentConfirmed;
+
+  /// No description provided for @trainer_dateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get trainer_dateLabel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

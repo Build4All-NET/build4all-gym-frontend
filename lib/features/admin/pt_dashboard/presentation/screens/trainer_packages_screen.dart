@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../data/models/pt_service_model.dart';
 import '../../data/services/pt_service_service.dart';
@@ -90,13 +91,13 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
     if (value) _loadInactive();
   }
 
-  String _trainerName(int trainerId) {
+  String _trainerName(int trainerId, BuildContext context) {
     try {
       return widget.trainers
           .firstWhere((t) => t.trainerId == trainerId)
           .fullName;
     } catch (_) {
-      return 'Trainer #$trainerId';
+      return AppLocalizations.of(context)!.trainer_trainerNumber(trainerId);
     }
   }
 
@@ -125,7 +126,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
           backgroundColor: tokens.colors.background,
           appBar: AppBar(
             title: Text(
-              widget.isAdmin ? 'All Packages' : 'My Packages',
+              widget.isAdmin ? AppLocalizations.of(context)!.trainer_packagesAllTitle : AppLocalizations.of(context)!.trainer_packagesMyTitle,
               style: TextStyle(color: tokens.colors.label),
             ),
             backgroundColor: tokens.colors.surface,
@@ -137,13 +138,13 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               ),
             ],
           ),
-          body: _buildBody(state, tokens),
+          body: _buildBody(context, state, tokens),
         );
       },
     );
   }
 
-  Widget _buildBody(PtPackageState state, dynamic tokens) {
+  Widget _buildBody(BuildContext context, PtPackageState state, dynamic tokens) {
     if (state is PtPackageLoading || state is PtPackageMutating || state is PtPackageMutationSuccess) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -155,7 +156,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
           children: [
             Text(state.message),
             const SizedBox(height: 12),
-            ElevatedButton(onPressed: _load, child: const Text('Retry')),
+            ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)!.retry)),
           ],
         ),
       );
@@ -179,7 +180,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Show Deactivated',
+                AppLocalizations.of(context)!.trainer_showDeactivated,
                 style: TextStyle(color: tokens.colors.body, fontSize: 14),
               ),
               Switch(
@@ -197,7 +198,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               padding: const EdgeInsets.symmetric(vertical: 32),
               child: Center(
                 child: Text(
-                  'No packages found.',
+                  AppLocalizations.of(context)!.trainer_noPackagesFound,
                   style: TextStyle(color: tokens.colors.muted),
                 ),
               ),
@@ -207,7 +208,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               padding: const EdgeInsets.only(bottom: 12),
               child: _PackageCard(
                 package:     pkg,
-                trainerName: _trainerName(pkg.trainerId),
+                trainerName: _trainerName(pkg.trainerId, context),
                 showBadge:   widget.isAdmin,
                 onEdit:      (p) => _showEditDialog(context, p, tokens),
                 onDeactivate:(p) => _confirmDeactivate(context, p),
@@ -223,7 +224,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                'Deactivated Packages',
+                AppLocalizations.of(context)!.trainer_deactivatedPackages,
                 style: TextStyle(
                   color: tokens.colors.muted,
                   fontSize: 13,
@@ -235,7 +236,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Text(
-                  'No deactivated packages.',
+                  AppLocalizations.of(context)!.trainer_noDeactivatedPackages,
                   style: TextStyle(color: tokens.colors.muted, fontSize: 13),
                 ),
               ),
@@ -244,7 +245,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _PackageCard(
                   package:     pkg,
-                  trainerName: _trainerName(pkg.trainerId),
+                  trainerName: _trainerName(pkg.trainerId, context),
                   showBadge:   widget.isAdmin,
                   onEdit:      null,
                   onDeactivate: null,
@@ -309,20 +310,20 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Deactivate Package'),
-        content: Text('Deactivate "${pkg.name}"?'),
+        title: Text(AppLocalizations.of(context)!.trainer_deactivatePackageTitle),
+        content: Text(AppLocalizations.of(context)!.trainer_deactivatePackageMessage(pkg.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.general_cancel),
           ),
           TextButton(
             onPressed: () {
               _bloc.add(PtPackageDeactivateRequested(pkg.id));
               Navigator.pop(context);
             },
-            child: const Text('Deactivate',
-                style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.trainer_deactivateButton,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -333,12 +334,12 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Reactivate Package'),
-        content: Text('Reactivate "${pkg.name}"? It will become visible to members again.'),
+        title: Text(AppLocalizations.of(context)!.trainer_reactivatePackageTitle),
+        content: Text(AppLocalizations.of(context)!.trainer_reactivatePackageMessage(pkg.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.general_cancel),
           ),
           TextButton(
             onPressed: () {
@@ -348,7 +349,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
               ));
               Navigator.pop(context);
             },
-            child: const Text('Reactivate'),
+            child: Text(AppLocalizations.of(context)!.trainer_reactivateButton),
           ),
         ],
       ),
@@ -425,7 +426,7 @@ class _PackageCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'Inactive',
+                      AppLocalizations.of(context)!.trainer_inactiveBadge,
                       style: TextStyle(
                           color: tokens.colors.muted, fontSize: 11),
                     ),
@@ -442,7 +443,7 @@ class _PackageCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'By $trainerName',
+                  AppLocalizations.of(context)!.trainer_byName(trainerName),
                   style: TextStyle(
                     color: tokens.colors.primary,
                     fontSize: 11,
@@ -463,7 +464,7 @@ class _PackageCard extends StatelessWidget {
                 Icons.date_range),
             if (package.maxConcurrentSessions > 1)
               _infoRow(tokens,
-                  'Max ${package.maxConcurrentSessions} concurrent',
+                  AppLocalizations.of(context)!.trainer_maxConcurrent(package.maxConcurrentSessions),
                   Icons.people),
             _infoRow(tokens,
                 package.salePrice != null
@@ -478,7 +479,7 @@ class _PackageCard extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () => onEdit!(package),
                     icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('Edit'),
+                    label: Text(AppLocalizations.of(context)!.admin_members_actionEdit),
                   ),
                 if (onDeactivate != null) ...[
                   const SizedBox(width: 4),
@@ -486,7 +487,7 @@ class _PackageCard extends StatelessWidget {
                     onPressed: () => onDeactivate!(package),
                     icon: Icon(Icons.delete_outline,
                         size: 16, color: tokens.colors.danger),
-                    label: Text('Deactivate',
+                    label: Text(AppLocalizations.of(context)!.trainer_deactivateButton,
                         style: TextStyle(color: tokens.colors.danger)),
                   ),
                 ],
@@ -495,7 +496,7 @@ class _PackageCard extends StatelessWidget {
                     onPressed: () => onReactivate!(package),
                     icon: Icon(Icons.refresh_rounded,
                         size: 16, color: tokens.colors.primary),
-                    label: Text('Reactivate',
+                    label: Text(AppLocalizations.of(context)!.trainer_reactivateButton,
                         style: TextStyle(color: tokens.colors.primary)),
                   ),
               ],
@@ -658,7 +659,7 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
   Widget build(BuildContext context) {
     final isEdit = widget.initialPackage != null;
     return AlertDialog(
-      title: Text(isEdit ? 'Edit Package' : 'New Package'),
+      title: Text(isEdit ? AppLocalizations.of(context)!.trainer_editPackage : AppLocalizations.of(context)!.trainer_newPackage),
       content: SizedBox(
         width: double.maxFinite,
         child: SingleChildScrollView(
@@ -671,7 +672,7 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                 if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
                   DropdownButtonFormField<int>(
                     value: _selectedTrainerId,
-                    hint: const Text('Assign to Trainer'),
+                    hint: Text(AppLocalizations.of(context)!.trainer_assignToTrainer),
                     items: widget.trainers.map((t) {
                       return DropdownMenuItem(
                         value: t.trainerId,
@@ -681,15 +682,15 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                     onChanged: (v) =>
                         setState(() => _selectedTrainerId = v),
                     validator: (v) =>
-                    v == null ? 'Please select a trainer' : null,
+                    v == null ? AppLocalizations.of(context)!.trainer_selectTrainerRequired : null,
                   ),
                   const SizedBox(height: 12),
                 ],
 
                 // ── Package Name ───────────────────────────────────────────
-                _field(_name, 'Package Name',
+                _field(_name, AppLocalizations.of(context)!.trainer_packageNameLabel,
                     validator: (v) =>
-                    v == null || v.isEmpty ? 'Required' : null),
+                    v == null || v.isEmpty ? AppLocalizations.of(context)!.trainer_requiredField : null),
 
                 // ── Package Type (NOT NULL in DB) ──────────────────────────
                 Padding(
@@ -697,60 +698,60 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                   child: DropdownButtonFormField<String>(
                     value: _packageType,
                     decoration:
-                        const InputDecoration(labelText: 'Package Type *'),
+                        InputDecoration(labelText: AppLocalizations.of(context)!.trainer_packageTypeLabel),
                     items: _kPackageTypes.map((t) {
                       return DropdownMenuItem(value: t, child: Text(t));
                     }).toList(),
                     onChanged: (v) =>
                         setState(() => _packageType = v ?? _kPackageTypes.first),
                     validator: (v) =>
-                    v == null || v.isEmpty ? 'Required' : null,
+                    v == null || v.isEmpty ? AppLocalizations.of(context)!.trainer_requiredField : null,
                   ),
                 ),
 
                 // ── Number of Sessions ─────────────────────────────────────
-                _field(_sessions, 'Number of Sessions',
+                _field(_sessions, AppLocalizations.of(context)!.trainer_numberOfSessions,
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                    int.tryParse(v ?? '') == null ? 'Enter a number' : null),
+                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
 
                 // ── Session Duration ───────────────────────────────────────
-                _field(_duration, 'Session Duration (min)',
+                _field(_duration, AppLocalizations.of(context)!.trainer_sessionDurationMin,
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                    int.tryParse(v ?? '') == null ? 'Enter a number' : null),
+                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
 
                 // ── Days Available (validity, NOT NULL in DB) ──────────────
-                _field(_daysAvailable, 'Days Available (validity period) *',
+                _field(_daysAvailable, AppLocalizations.of(context)!.trainer_daysAvailable,
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                    int.tryParse(v ?? '') == null ? 'Enter a number' : null),
+                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
 
                 // ── Min / Max Days per Week ────────────────────────────────
-                _field(_minDays, 'Min Days/Week',
+                _field(_minDays, AppLocalizations.of(context)!.trainer_minDaysWeek,
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                    int.tryParse(v ?? '') == null ? 'Enter a number' : null),
-                _field(_maxDays, 'Max Days/Week',
+                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
+                _field(_maxDays, AppLocalizations.of(context)!.trainer_maxDaysWeek,
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                    int.tryParse(v ?? '') == null ? 'Enter a number' : null),
+                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
 
                 // ── Max Concurrent Sessions (nullable in DB) ───────────────
-                _field(_maxConcurrent, 'Max Concurrent Sessions',
+                _field(_maxConcurrent, AppLocalizations.of(context)!.trainer_maxConcurrentSessions,
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                    int.tryParse(v ?? '') == null ? 'Enter a number' : null),
+                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
 
                 // ── Price / Sale Price ─────────────────────────────────────
-                _field(_price, 'Price',
+                _field(_price, AppLocalizations.of(context)!.trainer_priceLabel,
                     keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                     validator: (v) =>
                     double.tryParse(v ?? '') == null
-                        ? 'Enter a price'
+                        ? AppLocalizations.of(context)!.trainer_enterPrice
                         : null),
-                _field(_salePrice, 'Sale Price (optional)',
+                _field(_salePrice, AppLocalizations.of(context)!.trainer_salePriceOptional,
                     keyboardType:
                     const TextInputType.numberWithOptions(decimal: true)),
 
@@ -765,12 +766,12 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                               child: CircularProgressIndicator(strokeWidth: 2)))
                       : DropdownButtonFormField<int?>(
                           value: _selectedServiceId,
-                          decoration: const InputDecoration(
-                              labelText: 'Linked PT Service (optional)'),
-                          hint: const Text('None'),
+                          decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.trainer_linkedPtServiceOptional),
+                          hint: Text(AppLocalizations.of(context)!.trainer_noneOption),
                           items: [
-                            const DropdownMenuItem<int?>(
-                                value: null, child: Text('None')),
+                            DropdownMenuItem<int?>(
+                                value: null, child: Text(AppLocalizations.of(context)!.trainer_noneOption)),
                             ..._services.map((s) => DropdownMenuItem<int?>(
                                 value: s.serviceId,
                                 child: Text(s.name))),
@@ -783,8 +784,8 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                 // ── isActive toggle (edit mode only) ──────────────────────
                 if (isEdit) ...[
                   SwitchListTile(
-                    title: const Text('Active'),
-                    subtitle: const Text('Uncheck to deactivate this package'),
+                    title: Text(AppLocalizations.of(context)!.trainer_activeLabel),
+                    subtitle: Text(AppLocalizations.of(context)!.trainer_uncheckDeactivate),
                     value: _isActive,
                     onChanged: (v) => setState(() => _isActive = v),
                     contentPadding: EdgeInsets.zero,
@@ -798,11 +799,11 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.general_cancel),
         ),
         ElevatedButton(
           onPressed: _submit,
-          child: const Text('Save'),
+          child: Text(AppLocalizations.of(context)!.editProfileSave),
         ),
       ],
     );
@@ -831,7 +832,7 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
     final trainerId = _selectedTrainerId ?? widget.defaultTrainerId;
     if (trainerId == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a trainer.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.trainer_selectTrainerSnackbar)),
       );
       return;
     }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
@@ -46,7 +47,7 @@ class _AdminMembershipRequestsScreenState
       body: SafeArea(
         child: Column(
           children: [
-            AdminAppBar(title: 'طلبات الاشتراك'),
+            AdminAppBar(title: AppLocalizations.of(context)!.navMembershipRequests),
             Expanded(
               child: BlocConsumer<AdminMembershipRequestsBloc,
                   AdminMembershipRequestsState>(
@@ -84,7 +85,7 @@ class _AdminMembershipRequestsScreenState
                             onPressed: () => context
                                 .read<AdminMembershipRequestsBloc>()
                                 .add(LoadMembershipRequestsEvent()),
-                            child: const Text('إعادة المحاولة'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),
@@ -111,11 +112,11 @@ class _AdminMembershipRequestsScreenState
                           Icon(Icons.check_circle_outline,
                               color: c.success, size: 56),
                           const SizedBox(height: 16),
-                          Text('لا توجد طلبات معلقة',
+                          Text(AppLocalizations.of(context)!.admin_membershipRequests_noPending,
                               style: tokens.typography.titleMedium
                                   .copyWith(color: c.label)),
                           const SizedBox(height: 8),
-                          Text('سيظهر هنا أي طلب دفع نقدي جديد',
+                          Text(AppLocalizations.of(context)!.admin_membershipRequests_noPendingDesc,
                               style: tokens.typography.bodyMedium
                                   .copyWith(color: c.muted)),
                         ],
@@ -173,17 +174,20 @@ class _AdminMembershipRequestsScreenState
         ),
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Column(
+          child: Builder(
+            builder: (ctx) {
+              final l10n = AppLocalizations.of(ctx)!;
+              return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('تأكيد استلام الدفع',
+              Text(l10n.admin_membershipRequests_approveTitle,
                   style: tokens.typography.headlineSmall.copyWith(
                       color: tokens.colors.label,
                       fontWeight: FontWeight.w900)),
               const SizedBox(height: 8),
               Text(
-                'الاشتراك: ${req.planName}\nالمبلغ: \$ ${req.totalAmount.toStringAsFixed(2)}',
+                l10n.admin_membershipRequests_subscriptionInfo(req.planName, req.totalAmount.toStringAsFixed(2)),
                 style: tokens.typography.bodyMedium
                     .copyWith(color: tokens.colors.muted),
               ),
@@ -192,7 +196,7 @@ class _AdminMembershipRequestsScreenState
                 controller: notesController,
                 textAlign: TextAlign.right,
                 decoration: InputDecoration(
-                  hintText: 'ملاحظة (اختياري)',
+                  hintText: l10n.admin_membershipRequests_notesHint,
                   filled: true,
                   fillColor: tokens.colors.background,
                   border: OutlineInputBorder(
@@ -224,12 +228,14 @@ class _AdminMembershipRequestsScreenState
                       borderRadius: BorderRadius.circular(16)),
                 ),
                 child: Text(
-                    'موافقة — تم استلام \$ ${req.totalAmount.toStringAsFixed(2)}',
+                    l10n.admin_membershipRequests_approveButton(req.totalAmount.toStringAsFixed(2)),
                     style: tokens.typography.bodyMedium.copyWith(
                         color: tokens.colors.onPrimary,
                         fontWeight: FontWeight.w900)),
               ),
             ],
+          );
+            },
           ),
         ),
       ),
@@ -255,11 +261,14 @@ class _AdminMembershipRequestsScreenState
         ),
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Column(
+          child: Builder(
+            builder: (ctx) {
+              final l10n = AppLocalizations.of(ctx)!;
+              return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('رفض الطلب',
+              Text(l10n.admin_membershipRequests_rejectTitle,
                   style: tokens.typography.headlineSmall.copyWith(
                       color: tokens.colors.label,
                       fontWeight: FontWeight.w900)),
@@ -273,7 +282,7 @@ class _AdminMembershipRequestsScreenState
                 textAlign: TextAlign.right,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'سبب الرفض (إلزامي)',
+                  hintText: l10n.admin_membershipRequests_rejectHint,
                   filled: true,
                   fillColor: tokens.colors.background,
                   border: OutlineInputBorder(
@@ -287,7 +296,7 @@ class _AdminMembershipRequestsScreenState
                 onPressed: () {
                   final reason = reasonController.text.trim();
                   if (reason.isEmpty) {
-                    AppToast.info(sheetCtx, 'يرجى إدخال سبب الرفض');
+                    AppToast.info(sheetCtx, l10n.admin_membershipRequests_enterReason);
                     return;
                   }
                   Navigator.pop(sheetCtx);
@@ -306,12 +315,14 @@ class _AdminMembershipRequestsScreenState
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                 ),
-                child: Text('رفض الطلب',
+                child: Text(l10n.admin_membershipRequests_rejectButton,
                     style: tokens.typography.bodyMedium.copyWith(
                         color: tokens.colors.onPrimary,
                         fontWeight: FontWeight.w900)),
               ),
             ],
+          );
+            },
           ),
         ),
       ),
@@ -399,7 +410,7 @@ class _RequestCard extends StatelessWidget {
                           color: const Color(0xFFFFF3CD),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text('معلق',
+                        child: Text(AppLocalizations.of(context)!.admin_membershipRequests_pendingBadge,
                             style: tokens.typography.bodySmall.copyWith(
                                 color: const Color(0xFF856404),
                                 fontWeight: FontWeight.w700)),
@@ -408,13 +419,13 @@ class _RequestCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   _InfoRow(
-                      label: 'الخطة', value: request.planName, tokens: tokens),
+                      label: AppLocalizations.of(context)!.admin_membershipRequests_plan, value: request.planName, tokens: tokens),
                   _InfoRow(
-                      label: 'الفرع',
+                      label: AppLocalizations.of(context)!.admin_membershipRequests_branch,
                       value: request.branchName,
                       tokens: tokens),
                   _InfoRow(
-                      label: 'المبلغ',
+                      label: AppLocalizations.of(context)!.admin_membershipRequests_amount,
                       value: '\$ ${request.totalAmount.toStringAsFixed(2)}',
                       tokens: tokens,
                       valueColor: c.primary),
@@ -430,7 +441,7 @@ class _RequestCard extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text('رفض',
+                          child: Text(AppLocalizations.of(context)!.admin_membershipRequests_reject,
                               style: tokens.typography.bodyMedium.copyWith(
                                   color: c.danger,
                                   fontWeight: FontWeight.w700)),
@@ -447,7 +458,7 @@ class _RequestCard extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text('موافقة',
+                          child: Text(AppLocalizations.of(context)!.admin_membershipRequests_approve,
                               style: tokens.typography.bodyMedium.copyWith(
                                   color: c.onPrimary,
                                   fontWeight: FontWeight.w700)),

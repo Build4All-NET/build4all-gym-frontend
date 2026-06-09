@@ -17,6 +17,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
+import '../cubit/admin_settings_cubit.dart';
+import '../cubit/admin_settings_state.dart';
 
 class AccountSecuritySectionWidget extends StatelessWidget {
   const AccountSecuritySectionWidget({super.key});
@@ -24,7 +27,11 @@ class AccountSecuritySectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.watch<ThemeCubit>().state.tokens;
-    final c = tokens.colors;
+    final c      = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
+
+    final state = context.watch<AdminSettingsCubit>().state;
+    final cubit = context.read<AdminSettingsCubit>();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -56,16 +63,10 @@ class AccountSecuritySectionWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Account & Security',
-                      style: tokens.typography.titleMedium,
-                    ),
-                    Text(
-                      'Manage your account security',
-                      style: tokens.typography.bodySmall.copyWith(
-                        color: c.muted,
-                      ),
-                    ),
+                    Text(l10n.admin_settings_accountTitle,
+                        style: tokens.typography.titleMedium),
+                    Text(l10n.admin_settings_accountSubtitle,
+                        style: tokens.typography.bodySmall.copyWith(color: c.muted)),
                   ],
                 ),
               ],
@@ -76,15 +77,38 @@ class AccountSecuritySectionWidget extends StatelessWidget {
 
           _SettingsRow(
             icon: Icons.key_rounded,
-            label: 'Change Password',
-            subtitle: 'Update your account password',
-            trailing: Icon(
-              Icons.chevron_right_rounded,
-              color: c.muted,
-              size: 22,
+            label: l10n.admin_settings_changePassword,
+            subtitle: l10n.admin_settings_changePasswordSubtitle,
+            trailing: Icon(Icons.chevron_right_rounded,
+                color: c.muted, size: 22),
+            onTap: () => Navigator.of(context).pushNamed(AppRouter.forgotPassword),
+            tokens: tokens,
+          ),
+
+          Divider(height: 1, color: c.border.withOpacity(0.2)),
+
+          _SettingsRow(
+            icon: Icons.phone_android_rounded,
+            label: l10n.admin_settings_biometricLogin,
+            subtitle: l10n.admin_settings_biometricSubtitle,
+            trailing: Switch(
+              value: state.isBiometricEnabled,
+              onChanged: (v) => cubit.setBiometricEnabled(v),
+              activeColor: c.primary,
             ),
-            onTap: () => Navigator.of(context).pushNamed(
-              AppRouter.forgotPassword,
+            tokens: tokens,
+          ),
+
+          Divider(height: 1, color: c.border.withOpacity(0.2)),
+
+          _SettingsRow(
+            icon: Icons.shield_outlined,
+            label: l10n.admin_settings_twoFactor,
+            subtitle: l10n.admin_settings_twoFactorSubtitle,
+            trailing: Switch(
+              value: state.isTwoFactorEnabled,
+              onChanged: (v) => cubit.setTwoFactorEnabled(v),
+              activeColor: c.primary,
             ),
             tokens: tokens,
           ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/recent_activity_item.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class RecentActivityFeed extends StatelessWidget {
   final List<RecentActivityItem> activities;
@@ -14,6 +15,7 @@ class RecentActivityFeed extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final card   = tokens.card;
+    final l10n   = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +26,7 @@ class RecentActivityFeed extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 2),
               child: Text(
-                'Recent Activity',
+                l10n.admin_dashboard_recentActivity,
                 style: TextStyle(
                     fontSize:   17,
                     fontWeight: FontWeight.w700,
@@ -40,7 +42,7 @@ class RecentActivityFeed extends StatelessWidget {
                 tapTargetSize:    MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
-                'View all',
+                l10n.admin_dashboard_viewAll,
                 style: TextStyle(
                     fontSize: 13, fontWeight: FontWeight.w600, color: c.primary),
               ),
@@ -64,7 +66,7 @@ class RecentActivityFeed extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'No recent activity',
+                l10n.admin_dashboard_noRecentActivity,
                 style: TextStyle(color: c.muted, fontSize: 14),
               ),
             ),

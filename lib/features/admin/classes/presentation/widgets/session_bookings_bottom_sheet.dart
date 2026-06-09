@@ -6,6 +6,7 @@ import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
 import '../bloc/admin_classes_state.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class SessionBookingsBottomSheet extends StatelessWidget {
   final int    sessionId;
@@ -31,10 +32,11 @@ class SessionBookingsBottomSheet extends StatelessWidget {
         child: BlocListener<AdminClassesBloc, AdminClassesState>(
           listener: (lCtx, state) {
             if (state is SessionBookingsLoaded && state.sessionId == sessionId) {
-              if (state.wasPaymentConfirmed) {
-                AppToast.success(lCtx, 'Payment confirmed');
+              final l10n = AppLocalizations.of(lCtx)!;
+            if (state.wasPaymentConfirmed) {
+                AppToast.success(lCtx, l10n.admin_classes_paymentConfirmed);
               } else if (state.wasBookingRejected) {
-                AppToast.success(lCtx, 'Booking rejected');
+                AppToast.success(lCtx, l10n.admin_classes_bookingRejected);
               }
             }
           },
@@ -80,7 +82,7 @@ class SessionBookingsBottomSheet extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Session Bookings',
+                  AppLocalizations.of(context)!.admin_classes_sessionBookingsTitle,
                   style: TextStyle(
                     fontSize:   18,
                     fontWeight: FontWeight.w700,
@@ -139,7 +141,7 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                         child: bookings.isEmpty
                             ? Center(
                           child: Text(
-                            'No bookings yet',
+                            AppLocalizations.of(context)!.admin_classes_noBookings,
                             style: TextStyle(color: c.muted, fontSize: 15),
                           ),
                         )
@@ -255,7 +257,7 @@ class _MemberRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  phone.isNotEmpty ? phone : 'No phone',
+                  phone.isNotEmpty ? phone : AppLocalizations.of(context)!.admin_classes_noPhone,
                   style: TextStyle(fontSize: 12, color: c.muted),
                 ),
               ],
@@ -276,18 +278,21 @@ class _MemberRow extends StatelessWidget {
                   color: chipBg,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
-                  isPending
-                      ? 'Pending'
-                      : isWaitlisted
-                      ? 'Waitlist ${booking.waitlistPosition ?? ''}'
-                      : 'Booked',
-                  style: TextStyle(
-                    color: chipText,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: Builder(builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx)!;
+                  return Text(
+                    isPending
+                        ? l10n.admin_classes_statusPending
+                        : isWaitlisted
+                        ? 'Waitlist ${booking.waitlistPosition ?? ''}'
+                        : l10n.admin_classes_statusBooked,
+                    style: TextStyle(
+                      color: chipText,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  );
+                }),
               ),
 
               // Payment method chip
@@ -339,10 +344,9 @@ class _MemberRow extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Reject',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight
-                              .w700),
+                        child: Text(
+                          AppLocalizations.of(context)!.admin_classes_rejectBooking,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
@@ -369,10 +373,9 @@ class _MemberRow extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Confirm Pay',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight
-                              .w700),
+                        child: Text(
+                          AppLocalizations.of(context)!.admin_classes_confirmPayment,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),

@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/member_detail_entity.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class MemberInfoSectionWidget extends StatelessWidget {
   const MemberInfoSectionWidget({super.key, required this.member});
@@ -136,17 +137,18 @@ class _StatusBadge extends StatelessWidget {
     Color bg, text;
     String label;
 
+    final l10n = AppLocalizations.of(context)!;
     switch (status.toLowerCase()) {
       case 'active':
-        bg = const Color(0xFF052E16); text = const Color(0xFF4ADE80); label = 'Active';
+        bg = const Color(0xFF052E16); text = const Color(0xFF4ADE80); label = l10n.membershipStatusActive;
       case 'pending':
-        bg = const Color(0xFF431407); text = const Color(0xFFFB923C); label = 'Pending';
+        bg = const Color(0xFF431407); text = const Color(0xFFFB923C); label = l10n.membershipStatusPending;
       case 'blocked':
-        bg = const Color(0xFF450A0A); text = const Color(0xFFF87171); label = 'Blocked';
+        bg = const Color(0xFF450A0A); text = const Color(0xFFF87171); label = l10n.membershipStatusBlocked;
       default:
         bg = Theme.of(context).colorScheme.surfaceVariant;
         text = Theme.of(context).colorScheme.onSurface.withOpacity(0.6);
-        label = status.isEmpty ? 'Inactive' : status;
+        label = status.isEmpty ? l10n.membershipStatusInactive : status;
     }
 
     return Container(

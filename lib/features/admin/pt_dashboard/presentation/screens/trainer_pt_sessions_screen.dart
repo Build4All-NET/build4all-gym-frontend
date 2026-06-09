@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../l10n/app_localizations.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -76,7 +78,9 @@ class _SessionsView extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
-          isAdmin ? 'All Sessions' : 'Sessions',
+          isAdmin
+              ? AppLocalizations.of(context)!.trainer_sessionsAllTitle
+              : AppLocalizations.of(context)!.trainer_sessionsTitle,
           style: const TextStyle(
             color:      Color(0xFF1A1A2E),
             fontWeight: FontWeight.bold,
@@ -108,7 +112,7 @@ class _SessionsView extends StatelessWidget {
                     );
                   },
                   icon:  const Icon(Icons.add, size: 18),
-                  label: const Text('Book Session', style: TextStyle(fontSize: 13)),
+                  label: Text(AppLocalizations.of(context)!.trainer_bookSession, style: const TextStyle(fontSize: 13)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cs.primary,
                     foregroundColor: Colors.white,
@@ -129,7 +133,7 @@ class _SessionsView extends StatelessWidget {
           if (state is PtSessionActionSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content:         Text(_successMsg(state.actionType)),
+                content:         Text(_successMsg(context, state.actionType)),
                 backgroundColor: const Color(0xFF22C55E),
                 behavior:        SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -198,15 +202,16 @@ class _SessionsView extends StatelessWidget {
     );
   }
 
-  String _successMsg(String actionType) {
+  String _successMsg(BuildContext context, String actionType) {
+    final l10n = AppLocalizations.of(context)!;
     switch (actionType) {
-      case 'accepted':  return '✅ Session request accepted.';
-      case 'declined':  return 'Session request declined.';
-      case 'completed': return '✅ Session marked as completed.';
-      case 'cancelled': return 'Session cancelled.';
-      case 'no_show':   return 'Session marked as no-show.';
-      case 'created':   return '✅ Session booked successfully.';
-      default:          return 'Session updated.';
+      case 'accepted':  return l10n.trainer_sessionAccepted;
+      case 'declined':  return l10n.trainer_sessionDeclined;
+      case 'completed': return l10n.trainer_sessionCompleted;
+      case 'cancelled': return l10n.trainer_sessionCancelled;
+      case 'no_show':   return l10n.trainer_sessionNoShow;
+      case 'created':   return l10n.trainer_sessionBooked;
+      default:          return l10n.trainer_sessionUpdated;
     }
   }
 }
@@ -305,15 +310,20 @@ class _TabFilter extends StatelessWidget {
   final int               selectedIndex;
   final ValueChanged<int> onTap;
 
-  static const _tabs = ['Today', 'Upcoming', 'Completed'];
-
   const _TabFilter({
     required this.selectedIndex,
     required this.onTap,
   });
 
+  List<String> _localizedTabs(AppLocalizations l10n) => [
+    l10n.trainer_tabToday,
+    l10n.trainer_tabUpcoming,
+    l10n.trainer_tabCompleted,
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final tabs = _localizedTabs(AppLocalizations.of(context)!);
     return Container(
       color:   Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -323,7 +333,7 @@ class _TabFilter extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
-          children: List.generate(_tabs.length, (i) {
+          children: List.generate(tabs.length, (i) {
             final selected = i == selectedIndex;
             return Expanded(
               child: GestureDetector(
@@ -343,7 +353,7 @@ class _TabFilter extends StatelessWidget {
                         : [],
                   ),
                   child: Text(
-                    _tabs[i],
+                    tabs[i],
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize:   13,
@@ -371,10 +381,11 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const messages = [
-      'No services scheduled for today.',
-      'No upcoming services.',
-      'No completed services yet.',
+    final l10n = AppLocalizations.of(context)!;
+    final messages = [
+      l10n.trainer_noServicesScheduled,
+      l10n.trainer_noServicesUpcoming,
+      l10n.trainer_noServicesCompleted,
     ];
     return Center(
       child: Column(
@@ -409,7 +420,7 @@ class _ErrorView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(color: Color(0xFF4B5563))),
           const SizedBox(height: 16),
-          TextButton(onPressed: onRetry, child: const Text('Retry')),
+          TextButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.retry)),
         ],
       ),
     );

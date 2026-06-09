@@ -24,6 +24,7 @@ import '../../../../../core/config/env.dart';
 import '../../../../../core/network/globals.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import 'package:dio/dio.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class DangerZoneSectionWidget extends StatelessWidget {
   const DangerZoneSectionWidget({super.key});
@@ -46,48 +47,56 @@ class DangerZoneSectionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Header ───────────────────────────────────────────────────────
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: c.danger,
-                  shape: BoxShape.circle,
+          Builder(builder: (ctx) {
+            final l10n = AppLocalizations.of(ctx)!;
+            return Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: c.danger,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.warning_rounded,
+                      color: Colors.white, size: 24),
                 ),
-                child: const Icon(Icons.warning_rounded,
-                    color: Colors.white, size: 24),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Danger Zone',
-                      style: tokens.typography.titleMedium.copyWith(
-                          color: c.danger.withOpacity(0.8),
-                          fontWeight: FontWeight.w700)),
-                  Text('Irreversible actions',
-                      style: tokens.typography.bodySmall.copyWith(color: c.danger)),
-                ],
-              ),
-            ],
-          ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.admin_settings_dangerTitle,
+                        style: tokens.typography.titleMedium.copyWith(
+                            color: c.danger.withOpacity(0.8),
+                            fontWeight: FontWeight.w700)),
+                    Text(l10n.admin_settings_dangerSubtitle,
+                        style: tokens.typography.bodySmall.copyWith(color: c.danger)),
+                  ],
+                ),
+              ],
+            );
+          }),
           const SizedBox(height: 16),
 
           // ── Log Out button ────────────────────────────────────────────────
-          _DangerButton(
-            icon: Icons.logout_rounded,
-            label: 'Log Out',
-            onTap: () => _confirmLogOut(context, c, tokens),
-          ),
-          const SizedBox(height: 10),
-
-          // ── Delete Account button ─────────────────────────────────────────
-          _DangerButton(
-            icon: Icons.delete_outline_rounded,
-            label: 'Delete Account',
-            onTap: () => _confirmDeleteAccount(context, c, tokens),
-          ),
+          Builder(builder: (ctx) {
+            final l10n = AppLocalizations.of(ctx)!;
+            return Column(
+              children: [
+                _DangerButton(
+                  icon: Icons.logout_rounded,
+                  label: l10n.admin_settings_logOut,
+                  onTap: () => _confirmLogOut(ctx, c, tokens),
+                ),
+                const SizedBox(height: 10),
+                _DangerButton(
+                  icon: Icons.delete_outline_rounded,
+                  label: l10n.admin_settings_deleteAccount,
+                  onTap: () => _confirmDeleteAccount(ctx, c, tokens),
+                ),
+              ],
+            );
+          }),
         ],
       ),
     );
@@ -96,24 +105,25 @@ class DangerZoneSectionWidget extends StatelessWidget {
   // ── Log Out confirmation + execution ────────────────────────────────────────
 
   void _confirmLogOut(BuildContext context, dynamic c, dynamic tokens) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Log Out',
+        title: Text(l10n.admin_settings_logOut,
             style: tokens.typography.titleMedium),
-        content: const Text('Are you sure you want to log out?'),
+        content: Text(l10n.admin_settings_logOutMessage),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(), // Cancel
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.general_cancel),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(ctx).pop(); // Close dialog first
+              Navigator.of(ctx).pop();
               await _performLogOut(context);
             },
             style: TextButton.styleFrom(foregroundColor: c.danger),
-            child: const Text('Log Out'),
+            child: Text(l10n.admin_settings_logOut),
           ),
         ],
       ),
@@ -136,19 +146,17 @@ class DangerZoneSectionWidget extends StatelessWidget {
   // ── Delete Account confirmation + execution ─────────────────────────────────
 
   void _confirmDeleteAccount(BuildContext context, dynamic c, dynamic tokens) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete Account',
+        title: Text(l10n.admin_settings_deleteAccount,
             style: tokens.typography.titleMedium),
-        content: const Text(
-          'This will permanently delete your account. '
-              'This action cannot be undone.',
-        ),
+        content: Text(l10n.admin_settings_deleteAccountMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.general_cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -156,7 +164,8 @@ class DangerZoneSectionWidget extends StatelessWidget {
               await _performDeleteAccount(context);
             },
             style: TextButton.styleFrom(foregroundColor: c.danger),
-            child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: Text(l10n.admin_settings_delete,
+                style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
         ],
       ),

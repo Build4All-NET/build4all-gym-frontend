@@ -58,7 +58,7 @@ class _AdminPtPackageBookingsScreenState
           _confirming.remove(bookingId);
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تأكيد الدفع وتفعيل الحصص')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.trainer_cashPaymentConfirmed)),
         );
       }
     } catch (e) {
@@ -141,7 +141,8 @@ class _BookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = tokens.colors;
+    final c    = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     final id = (booking['id'] as num?)?.toInt() ?? 0;
     final totalAmount = (booking['totalAmount'] as num?)?.toDouble() ?? 0.0;
@@ -211,10 +212,10 @@ class _BookingCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          _Row(label: 'Booking ID', value: '#$id', tokens: tokens),
+          _Row(label: l10n.trainer_bookingId, value: '#$id', tokens: tokens),
           if (formattedDate.isNotEmpty)
-            _Row(label: 'Date', value: formattedDate, tokens: tokens),
-          _Row(label: 'Payment Status', value: paymentStatus, tokens: tokens),
+            _Row(label: l10n.trainer_dateLabel, value: formattedDate, tokens: tokens),
+          _Row(label: l10n.trainer_paymentStatusLabel, value: paymentStatus, tokens: tokens),
           const SizedBox(height: 16),
           SizedBox(
             height: 46,
@@ -230,7 +231,7 @@ class _BookingCard extends StatelessWidget {
                       ),
                     )
                   : const Icon(Icons.check_circle_outline, size: 18),
-              label: Text(isConfirming ? 'جاري...' : 'تأكيد استلام الدفع النقدي'),
+              label: Text(isConfirming ? l10n.trainer_confirming : l10n.trainer_confirmCashPayment),
               style: ElevatedButton.styleFrom(
                 backgroundColor: c.success,
                 foregroundColor: Colors.white,
@@ -290,7 +291,8 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = tokens.colors;
+    final c    = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -298,7 +300,7 @@ class _EmptyView extends StatelessWidget {
           Icon(Icons.check_circle_outline, size: 56, color: c.success),
           const SizedBox(height: 16),
           Text(
-            'لا توجد مدفوعات نقدية معلقة',
+            l10n.trainer_noPendingCashPayments,
             style: tokens.typography.titleMedium.copyWith(
               color: c.label,
               fontWeight: FontWeight.w700,
@@ -306,7 +308,7 @@ class _EmptyView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'جميع باقات PT تم تأكيد دفعها',
+            l10n.trainer_allPtPackagesConfirmed,
             style: tokens.typography.bodyMedium.copyWith(color: c.muted),
           ),
         ],
@@ -339,7 +341,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: onRetry,
-            child: const Text('إعادة المحاولة'),
+            child: Text(AppLocalizations.of(context)!.retry),
           ),
         ],
       ),

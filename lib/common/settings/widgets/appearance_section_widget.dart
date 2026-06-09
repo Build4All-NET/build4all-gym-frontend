@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/theme_cubit.dart';
+import '../../../l10n/app_localizations.dart';
 import '../cubits/appearance_settings_cubit.dart';
 
 class AppearanceSectionWidget extends StatelessWidget {
@@ -61,8 +62,8 @@ class AppearanceSectionWidget extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Appearance', style: tokens.typography.titleMedium),
-                  Text('Customize your visual experience',
+                  Text(AppLocalizations.of(context)!.settings_appearanceTitle, style: tokens.typography.titleMedium),
+                  Text(AppLocalizations.of(context)!.settings_appearanceSubtitle,
                       style: tokens.typography.bodySmall
                           .copyWith(color: c.muted)),
                 ],
@@ -77,8 +78,8 @@ class AppearanceSectionWidget extends StatelessWidget {
           _ModeCard(
             icon: Icons.wb_sunny_rounded,
             iconColor: Colors.blue,
-            label: 'Light Mode',
-            subtitle: 'Clean and bright interface',
+            label: AppLocalizations.of(context)!.settings_lightMode,
+            subtitle: AppLocalizations.of(context)!.settings_lightModeSubtitle,
             mode: ThemeMode.light,
             selected: selectedMode == ThemeMode.light,
             tokens: tokens,
@@ -87,8 +88,8 @@ class AppearanceSectionWidget extends StatelessWidget {
           _ModeCard(
             icon: Icons.nightlight_round,
             iconColor: Colors.blueGrey,
-            label: 'Dark Mode',
-            subtitle: 'Easy on the eyes',
+            label: AppLocalizations.of(context)!.settings_darkMode,
+            subtitle: AppLocalizations.of(context)!.settings_darkModeSubtitle,
             mode: ThemeMode.dark,
             selected: selectedMode == ThemeMode.dark,
             tokens: tokens,
@@ -97,8 +98,8 @@ class AppearanceSectionWidget extends StatelessWidget {
           _ModeCard(
             icon: Icons.monitor_rounded,
             iconColor: Colors.grey,
-            label: 'System Default',
-            subtitle: 'Match your device settings',
+            label: AppLocalizations.of(context)!.settings_systemDefault,
+            subtitle: AppLocalizations.of(context)!.settings_systemDefaultSubtitle,
             mode: ThemeMode.system,
             selected: selectedMode == ThemeMode.system,
             tokens: tokens,

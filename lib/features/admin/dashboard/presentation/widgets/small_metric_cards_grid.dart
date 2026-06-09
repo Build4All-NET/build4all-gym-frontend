@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class SmallMetricCardsGrid extends StatelessWidget {
   final AdminDashboardSummary data;
@@ -13,6 +14,7 @@ class SmallMetricCardsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens     = context.read<ThemeCubit>().state.tokens;
     final c          = tokens.colors;
+    final l10n       = AppLocalizations.of(context)!;
     final accentA    = c.primary;
     final accentB    = c.success;
     final accentC    = Color.lerp(c.danger, c.primary, 0.5) ?? c.primary;
@@ -30,7 +32,7 @@ class SmallMetricCardsGrid extends StatelessWidget {
                   iconColor:  accentA,
                   iconBg:     accentA.withOpacity(0.1),
                   value:      '${data.checkins.attendanceCount}',
-                  label:      'Attendance',
+                  label:      l10n.admin_dashboard_attendance,
                   badge:      '+${data.checkins.attendanceGrowth.toStringAsFixed(0)}%',
                   badgeColor: accentB,
                   cardColor:  c.surface,
@@ -47,7 +49,7 @@ class SmallMetricCardsGrid extends StatelessWidget {
                   value:      data.revenue != null
                       ? '₹${data.revenue!.paymentsCollected.toStringAsFixed(0)}'
                       : 'N/A',
-                  label:      'Payments Collected',
+                  label:      l10n.admin_dashboard_paymentsCollected,
                   badge:      data.revenue != null
                       ? '+${data.revenue!.paymentsGrowth.toStringAsFixed(0)}%'
                       : null,
@@ -71,8 +73,8 @@ class SmallMetricCardsGrid extends StatelessWidget {
                   iconColor:  accentC,
                   iconBg:     accentC.withOpacity(0.1),
                   value:      '${data.members.expiringPlansNext7Days}',
-                  label:      'Expiring Plans',
-                  sublabel:   'Next 7 days',
+                  label:      l10n.admin_dashboard_expiringPlans,
+                  sublabel:   l10n.admin_dashboard_next7Days,
                   cardColor:  c.surface,
                   labelColor: c.muted,
                   valueColor: c.label,
@@ -85,8 +87,8 @@ class SmallMetricCardsGrid extends StatelessWidget {
                   iconColor:  accentD,
                   iconBg:     accentD.withOpacity(0.1),
                   value:      '${data.members.totalMembers}',
-                  label:      'Total Members',
-                  badge:      '~${data.members.activeMembers} Active',
+                  label:      l10n.admin_dashboard_totalMembers,
+                  badge:      l10n.admin_dashboard_activeCount(data.members.activeMembers),
                   badgeColor: accentB,
                   cardColor:  c.surface,
                   labelColor: c.muted,

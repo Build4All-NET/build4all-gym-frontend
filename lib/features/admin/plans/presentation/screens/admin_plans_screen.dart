@@ -14,6 +14,7 @@ import '../widgets/plan_stats_card_widget.dart';
 import '../widgets/admin_plan_card_widget.dart';
 import '../widgets/plan_form_bottom_sheet.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AdminPlansScreen extends StatefulWidget {
   const AdminPlansScreen({super.key});
@@ -55,16 +56,17 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
   }
 
   void _showDeleteDialog(int planId) {
-    final c = context.read<ThemeCubit>().state.tokens.colors;
+    final c    = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title:   const Text('Delete Plan'),
-        content: const Text('Are you sure you want to delete this plan?'),
+        title:   Text(l10n.admin_plans_deleteTitle),
+        content: Text(l10n.admin_plans_deleteMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child:     const Text('Cancel'),
+            child:     Text(l10n.general_cancel),
           ),
           TextButton(
             onPressed: () {
@@ -72,7 +74,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
               context.read<AdminPlansBloc>()
                   .add(DeletePlanEvent(planId: planId));
             },
-            child: Text('Delete',
+            child: Text(l10n.admin_plans_delete,
                 style: TextStyle(color: c.danger)),
           ),
         ],
@@ -104,7 +106,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
           children: [
 
             AdminAppBar(
-              title:             'Plans',
+              title:             AppLocalizations.of(context)!.navPlans,
               selectedBranchId:  _selectedBranchId,
               onBranchChanged:   _onBranchChanged,
               onAddTap: () => PlanFormBottomSheet.show(
@@ -150,7 +152,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                               backgroundColor: c.primary,
                               foregroundColor: c.onPrimary,
                             ),
-                            child: const Text('Retry'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),
@@ -179,7 +181,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                                     value:      state.activeTypeFilter,
                                     isExpanded: true,
                                     underline:  const SizedBox.shrink(),
-                                    hint: Text('All Types',
+                                    hint: Text(AppLocalizations.of(context)!.admin_plans_allTypes,
                                         style: TextStyle(
                                             fontSize: 13, color: c.muted)),
                                     dropdownColor: c.surface,
@@ -188,7 +190,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                                     items: [
                                       DropdownMenuItem(
                                         value: null,
-                                        child: Text('All Types',
+                                        child: Text(AppLocalizations.of(context)!.admin_plans_allTypes,
                                             style: TextStyle(
                                                 fontSize:  13,
                                                 color:     c.label)),
@@ -217,7 +219,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                                   style: TextStyle(
                                       fontSize: 13, color: c.label),
                                   decoration: InputDecoration(
-                                    hintText:  'Search plans...',
+                                    hintText:  AppLocalizations.of(context)!.admin_plans_searchHint,
                                     hintStyle: TextStyle(
                                         fontSize: 13, color: c.muted),
                                     prefixIcon: Icon(Icons.search,
@@ -251,7 +253,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(40),
                                     child: Center(
-                                      child: Text('No plans found',
+                                      child: Text(AppLocalizations.of(context)!.admin_plans_noPlans,
                                           style: TextStyle(
                                               color: c.muted)),
                                     ),

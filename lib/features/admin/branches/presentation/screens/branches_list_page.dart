@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/branches_bloc.dart';
 import '../bloc/branches_event.dart';
@@ -55,7 +56,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
         preferredSize: const Size.fromHeight(64),
         child: SafeArea(
           child: AdminAppBar(
-            title: 'Branches',
+            title: AppLocalizations.of(context)!.navBranches,
 
             // ➤ Add button (same logic you had)
             onAddTap: () async {
@@ -110,7 +111,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
                     onPressed: () => context
                         .read<BranchesBloc>()
                         .add(const LoadBranches()),
-                    child: const Text('Retry'),
+                    child: Text(AppLocalizations.of(context)!.retry),
                   ),
                 ],
               ),
@@ -129,7 +130,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
                       child: Column(
                         children: [
                           BranchStatCard(
-                            label: 'Active Branches',
+                            label: AppLocalizations.of(context)!.admin_branches_activeBranches,
                             value: '${state.stats.activeBranches}',
                             icon: Icons.business,
                             iconBgColor: const Color(0xFF3B82F6).withOpacity(0.12),
@@ -137,7 +138,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
                           ),
                           const SizedBox(height: 8),
                           BranchStatCard(
-                            label: 'Total Members',
+                            label: AppLocalizations.of(context)!.admin_branches_totalMembers,
                             value: '${state.stats.totalMembers}',
                             icon: Icons.people,
                             iconBgColor: const Color(0xFF10B981).withOpacity(0.12),
@@ -145,7 +146,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
                           ),
                           const SizedBox(height: 8),
                           BranchStatCard(
-                            label: 'Monthly Revenue',
+                            label: AppLocalizations.of(context)!.admin_branches_monthlyRevenue,
                             value: '₹${_formatRevenue(state.stats.monthlyRevenue)}',
                             icon: Icons.trending_up,
                             iconBgColor: const Color(0xFF8B5CF6).withOpacity(0.12),
@@ -175,7 +176,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
                                   .add(SearchBranches(v)),
                               decoration: InputDecoration(
                                 hintText:
-                                'Search by branch name or location.',
+                                AppLocalizations.of(context)!.admin_branches_searchHint,
                                 hintStyle: TextStyle(
                                     color: Colors.grey[400], fontSize: 14),
                                 prefixIcon: Icon(Icons.search,
@@ -212,16 +213,16 @@ class _BranchesListPageState extends State<BranchesListPage> {
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 12),
                               ),
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
                                     value: null,
-                                    child: Text('All Status')),
+                                    child: Text(AppLocalizations.of(context)!.admin_branches_allStatus)),
                                 DropdownMenuItem(
                                     value: 'ACTIVE',
-                                    child: Text('Active')),
+                                    child: Text(AppLocalizations.of(context)!.admin_branches_statusActive)),
                                 DropdownMenuItem(
                                     value: 'INACTIVE',
-                                    child: Text('Inactive')),
+                                    child: Text(AppLocalizations.of(context)!.admin_branches_statusInactive)),
                               ],
                               onChanged: (v) {
                                 setState(() => _selectedStatus = v);
@@ -237,11 +238,11 @@ class _BranchesListPageState extends State<BranchesListPage> {
                   ),
                   // ── Branch List ──────────────────────────────────────────
                   if (state.branches.isEmpty)
-                    const SliverFillRemaining(
+                    SliverFillRemaining(
                       child: Center(
                         child: Text(
-                          'No branches found',
-                          style: TextStyle(color: Colors.grey),
+                          AppLocalizations.of(context)!.admin_branches_noFound,
+                          style: const TextStyle(color: Colors.grey),
                         ),
                       ),
                     )
