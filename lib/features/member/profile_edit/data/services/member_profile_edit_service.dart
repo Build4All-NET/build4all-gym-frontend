@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:build4allgym/core/config/env.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
@@ -7,9 +12,16 @@ class MemberProfileEditService {
   final Dio _dio;
   final AuthTokenStore _tokenStore;
 
+  // Same storage used by MemberHomeScreen to read:
+  // user_first_name
+  // user_last_name
+  // auth_user_json
+  final FlutterSecureStorage _storage;
+
   MemberProfileEditService({
     Dio? dio,
     AuthTokenStore tokenStore = const AuthTokenStore(),
+    FlutterSecureStorage storage = const FlutterSecureStorage(),
   })  : _dio = dio ??
       Dio(
         BaseOptions(
@@ -22,7 +34,8 @@ class MemberProfileEditService {
           },
         ),
       ),
-        _tokenStore = tokenStore;
+        _tokenStore = tokenStore,
+        _storage = storage;
 
   Future<int> _userId() async {
     final userId = await _tokenStore.getUserId();
@@ -56,12 +69,18 @@ class MemberProfileEditService {
     final userId = await _userId();
     final auth = await _authHeader();
 
+    final cleanFirstName = firstName.trim();
+    final cleanLastName = lastName.trim();
+    final cleanUsername = username.trim();
+    final cleanEmail = email.trim();
+    final cleanPhoneNumber = phoneNumber.trim();
+
     final formData = FormData.fromMap({
-      'firstName': firstName.trim(),
-      'lastName': lastName.trim(),
-      'username': username.trim(),
-      'email': email.trim(),
-      'phoneNumber': phoneNumber.trim(),
+      'firstName': cleanFirstName,
+      'lastName': cleanLastName,
+      'username': cleanUsername,
+      'email': cleanEmail,
+      'phoneNumber': cleanPhoneNumber,
       'isPublicProfile': true,
       'imageRemoved': false,
     });
@@ -76,6 +95,62 @@ class MemberProfileEditService {
         contentType: Headers.multipartFormDataContentType,
         receiveDataWhenStatusError: true,
       ),
+    );
+
+    // IMPORTANT:
+    // MemberHomeScreen reads the displayed name from secure storage.
+    // So after profile update succeeds, update the cached user data too.
+    await _saveUpdatedUserToStorage(
+      firstName: cleanFirstName,
+      lastName: cleanLastName,
+      username: cleanUsername,
+      email: cleanEmail,
+      phoneNumber: cleanPhoneNumber,
+    );
+  }
+
+  Future<void> _saveUpdatedUserToStorage({
+    required String firstName,
+    required String lastName,
+    required String username,
+    required String email,
+    required String phoneNumber,
+  }) async {
+    await _storage.write(
+      key: 'user_first_name',
+      value: firstName,
+    );
+
+    await _storage.write(
+      key: 'user_last_name',
+      value: lastName,
+    );
+
+    final rawUserJson = await _storage.read(key: 'auth_user_json');
+
+    final Map<String, dynamic> userJson = {};
+
+    if (rawUserJson != null && rawUserJson.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(rawUserJson);
+
+        if (decoded is Map<String, dynamic>) {
+          userJson.addAll(decoded);
+        }
+      } catch (_) {
+        // If old cached JSON is invalid, recreate a clean one below.
+      }
+    }
+
+    userJson['firstName'] = firstName;
+    userJson['lastName'] = lastName;
+    userJson['username'] = username;
+    userJson['email'] = email;
+    userJson['phoneNumber'] = phoneNumber;
+
+    await _storage.write(
+      key: 'auth_user_json',
+      value: jsonEncode(userJson),
     );
   }
 
@@ -186,18 +261,10 @@ class MemberProfileEditService {
       throw Exception('Current password is incorrect.');
     }
   }
-// ---------------------------------------------------------------------------
-// PHONE CHANGE OTP FLOW
-// ---------------------------------------------------------------------------
-//
-// Flow:
-// 1. User changes phone number.
-// 2. We verify current password first in the Bloc.
-// 3. Then we call /api/auth/send-verification.
-// 4. User enters OTP.
-// 5. We call /api/auth/user/verify-phone-code.
-// 6. If OTP is valid, Bloc submits profile update again and saves phone.
-// ---------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  // PHONE CHANGE OTP FLOW
+  // ---------------------------------------------------------------------------
 
   Future<void> sendPhoneChangeVerificationCode({
     required String phoneNumber,
@@ -250,6 +317,7 @@ class MemberProfileEditService {
       );
     }
   }
+
   String readError(Object error, String fallback) {
     if (error is DioException) {
       final data = error.response?.data;

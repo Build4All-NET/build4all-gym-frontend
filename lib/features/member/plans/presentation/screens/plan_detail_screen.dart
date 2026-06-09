@@ -768,8 +768,11 @@ class _CheckoutPlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
-    final finalPrice =
-    coupon?.valid == true && coupon?.finalPrice != null ? coupon!.finalPrice! : plan.price;
+    final baseDisplayPrice = plan.displayPrice;
+
+    final finalPrice = coupon?.valid == true && coupon?.finalPrice != null
+        ? coupon!.finalPrice!
+        : baseDisplayPrice;
 
     return _WhiteCard(
       child: Column(
@@ -808,7 +811,7 @@ class _CheckoutPlanCard extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               Text(
-                '\$ ${plan.price.toStringAsFixed(0)}',
+                '\$ ${finalPrice.toStringAsFixed(0)}',
                 style: tokens.typography.headlineSmall.copyWith(
                   color: tokens.colors.primary,
                   fontSize: 28,
@@ -830,7 +833,17 @@ class _CheckoutPlanCard extends StatelessWidget {
           Divider(color: tokens.colors.border.withOpacity(0.32)),
           SizedBox(height: tokens.spacing.md),
           _SummaryRow(
-              label: l10n.baseAmount, value: '\$ ${plan.price.toStringAsFixed(2)}'),
+            label: l10n.baseAmount,
+            value: '\$ ${plan.price.toStringAsFixed(2)}',
+          ),
+          if (plan.hasActivePromotion) ...[
+            SizedBox(height: tokens.spacing.sm),
+            _SummaryRow(
+              label: l10n.promotionPrice,
+              value: '\$ ${plan.displayPrice.toStringAsFixed(2)}',
+              highlighted: true,
+            ),
+          ],
           SizedBox(height: tokens.spacing.sm),
           _SummaryRow(
             label: l10n.totalAmount,

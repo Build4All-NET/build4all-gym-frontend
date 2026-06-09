@@ -1827,16 +1827,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberInvoicesStatus => 'الحالة';
 
   @override
-  String get memberInvoicesType => 'Type';
+  String get memberInvoicesType => 'النوع';
 
   @override
-  String get memberInvoiceDownloadPdf => 'تحميل / مشاركة PDF';
+  String get memberInvoiceDownloadPdf => 'Download / Share PDF';
 
   @override
-  String get memberInvoicePdfTitle => 'فاتورة';
+  String get memberInvoicePdfTitle => 'Invoice';
 
   @override
-  String get memberInvoicePdfFooter => 'شكراً لك';
+  String get memberInvoicePdfFooter => 'Thank you';
 
   @override
   String get memberInvoiceDescription => 'Description';
@@ -3095,4 +3095,61 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_dateLabel => 'التاريخ';
+
+  @override
+  String get myInfoAddress => 'العنوان';
+
+  @override
+  String get myInfoAddressHint => 'أدخل عنوانك';
+
+  @override
+  String get promotionPrice => 'بعد العرض';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get settingsUnsaved => 'غير محفوظ';
+
+  @override
+  String get settingsUnexpectedError => 'حدث خطأ غير متوقع';
+
+  @override
+  String get settingsTryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get settingsSavedSuccessfully => 'تم حفظ الإعدادات بنجاح';
+
+  @override
+  String get settingsSaveFailed => 'فشل حفظ الإعدادات';
+
+  @override
+  String get settingsSaving => 'جارٍ الحفظ...';
+
+  @override
+  String get settingsSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get settingsLanguageRegionTitle => 'اللغة والمنطقة';
+
+  @override
+  String get settingsLanguageRegionSubtitle => 'اختر لغتك المفضلة';
+
+  @override
+  String get settingsLanguageEnglish => 'الإنجليزية';
+
+  @override
+  String get settingsLanguageEnglishSubtitle => 'اللغة الافتراضية';
+
+  @override
+  String get settingsLanguageArabic => 'العربية';
+
+  @override
+  String get settingsLanguageArabicSubtitle => 'اللغة العربية';
+
+  @override
+  String get settingsLanguageSystemDefault => 'لغة الجهاز';
+
+  @override
+  String get settingsLanguageSystemDefaultSubtitle => 'استخدام لغة الجهاز';
 }

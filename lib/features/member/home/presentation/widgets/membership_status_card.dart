@@ -9,9 +9,18 @@ import '../../domain/entities/membership_card.dart';
 class MembershipStatusCard extends StatelessWidget {
   final MembershipCard membership;
 
+  /*
+   * Called when member clicks Renew from Home.
+   *
+   * Home does not open payment directly.
+   * It only navigates to the Plans tab/screen.
+   */
+  final VoidCallback? onRenew;
+
   const MembershipStatusCard({
     super.key,
     required this.membership,
+    this.onRenew,
   });
 
   @override
@@ -22,7 +31,13 @@ class MembershipStatusCard extends StatelessWidget {
 
     final status = membership.status.toLowerCase().trim();
     final bool hasNoActiveMembership = status == 'no_active_membership';
-    final showRenewButton = membership.canRenew || status == 'expired';
+
+    /*
+     * Renewal rule:
+     * Renew appears ONLY when the current membership is expired.
+     */
+    final showRenewButton = status == 'expired';
+
     final localizedPlanName = _localizedPlanName(
       membership.planName,
       status,
@@ -54,17 +69,11 @@ class MembershipStatusCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
+
           if (showRenewButton)
             InkWell(
               borderRadius: BorderRadius.circular(999),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.comingSoon),
-                    backgroundColor: tokens.colors.primary,
-                  ),
-                );
-              },
+              onTap: onRenew,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 decoration: BoxDecoration(
@@ -102,9 +111,8 @@ class MembershipStatusCard extends StatelessWidget {
         padding: const EdgeInsets.only(left: 8),
         child: Column(
           // RTL → stretch so TextAlign.right works | LTR → start as normal
-          crossAxisAlignment: isRtl
-              ? CrossAxisAlignment.stretch
-              : CrossAxisAlignment.start,
+          crossAxisAlignment:
+          isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
@@ -133,9 +141,8 @@ class MembershipStatusCard extends StatelessWidget {
               maintainAnimation: true,
               maintainState: true,
               child: Column(
-                crossAxisAlignment: isRtl
-                    ? CrossAxisAlignment.stretch
-                    : CrossAxisAlignment.start,
+                crossAxisAlignment:
+                isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.home_expiresOn,

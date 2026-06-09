@@ -333,6 +333,10 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             color: tokens.colors.primary,
             backgroundColor: tokens.colors.surface,
             onRefresh: () async {
+              await _loadUserName();
+
+              if (!context.mounted) return;
+
               context.read<MemberHomeBloc>().add(
                 const MemberHomeRefreshRequested(),
               );
@@ -410,7 +414,12 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                             notificationCount: notificationCount,
                           ),
                           SizedBox(height: tokens.spacing.xl),
-                          MembershipStatusCard(membership: membership),
+                          MembershipStatusCard(
+                            membership: membership,
+                            onRenew: () {
+                              widget.onTabSelected(1);
+                            },
+                          ),
                         ],
                       ),
                     ),
