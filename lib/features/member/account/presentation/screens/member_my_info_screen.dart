@@ -297,11 +297,11 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
             _datePickerField(l10n),
             SizedBox(height: tokens.spacing.lg),
 
-            const _StaticLabel(text: 'Address'),
+            _Label(text: l10n.myInfoAddress),
             SizedBox(height: tokens.spacing.sm),
             _TextInput(
               controller: _addressController,
-              hint: 'Enter your address',
+              hint: l10n.myInfoAddressHint,
               keyboardType: TextInputType.streetAddress,
               enabled: !_saving,
             ),

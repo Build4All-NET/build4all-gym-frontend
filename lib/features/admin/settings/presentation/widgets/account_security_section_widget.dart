@@ -2,22 +2,19 @@
 // lib/features/admin/settings/presentation/widgets/account_security_section_widget.dart
 //
 // PURPOSE:
-//   Renders the "Account & Security" settings card with 3 rows:
-//     1. Change Password   → navigates to ForgotPasswordEmailScreen
-//     2. Biometric Login   → toggle (ON by default per Figma)
-//     3. Two-Factor Auth   → toggle (OFF by default per Figma)
+//   Renders the "Account & Security" settings card.
 //
-// AUTH BACKEND SCOPE:
-//   All auth-related calls go to Env.apiBaseUrl (the build4all platform backend).
-//   The 2FA endpoint is NOT yet available — it's stubbed with a TODO.
+// CURRENT ADMIN UI:
+//   1. Change Password only.
 //
-// DESIGN (matches Figma):
-//   Green lock icon header. White card. Rows separated by thin dividers.
-//   Each row: icon | label + subtitle | toggle or chevron
+// REMOVED FROM ADMIN SETTINGS:
+//   - Biometric Login
+//   - Two-Factor Authentication
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -45,12 +42,10 @@ class AccountSecuritySectionWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Section header ────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // Green lock icon (tokens.colors.success tinted container)
                 Container(
                   width: 40,
                   height: 40,
@@ -58,7 +53,11 @@ class AccountSecuritySectionWidget extends StatelessWidget {
                     color: c.success.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(Icons.lock_rounded, color: c.success, size: 22),
+                  child: Icon(
+                    Icons.lock_rounded,
+                    color: c.success,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -76,9 +75,6 @@ class AccountSecuritySectionWidget extends StatelessWidget {
 
           Divider(height: 1, color: c.border.withOpacity(0.2)),
 
-          // ── Row 1: Change Password ─────────────────────────────────────────
-          // This is a navigation action, NOT a dirty-tracked setting.
-          // Tapping navigates to the existing ForgotPasswordEmailScreen (reused).
           _SettingsRow(
             icon: Icons.key_rounded,
             label: l10n.admin_settings_changePassword,
@@ -122,8 +118,6 @@ class AccountSecuritySectionWidget extends StatelessWidget {
   }
 }
 
-// ─── Private reusable row widget ──────────────────────────────────────────────
-
 class _SettingsRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -144,6 +138,7 @@ class _SettingsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(tokens.card.radius),
@@ -157,13 +152,21 @@ class _SettingsRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label,
-                      style: tokens.typography.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w600)),
-                  Text(subtitle,
-                      style: tokens.typography.bodySmall.copyWith(color: c.muted)),
+                  Text(
+                    label,
+                    style: tokens.typography.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: c.muted,
+                    ),
+                  ),
                 ],
               ),
+
             ),
             trailing,
           ],

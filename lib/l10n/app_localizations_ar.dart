@@ -1677,10 +1677,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberBookingsReviewFailed => 'فشل إرسال التقييم. حاول مجدداً.';
 
   @override
-  String get memberInvoicesTitle => 'سجل الدفعات';
+  String get memberInvoicesTitle => 'Payment History';
 
   @override
-  String get memberInvoicesEmptyTitle => 'لا توجد دفعات';
+  String get memberInvoicesEmptyTitle => 'No payments found';
 
   @override
   String get memberInvoicesEmptySubtitle => 'ستظهر دفعاتك المكتملة هنا.';
@@ -1827,16 +1827,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberInvoicesStatus => 'الحالة';
 
   @override
-  String get memberInvoicesType => 'النوع';
+  String get memberInvoicesType => 'Type';
 
   @override
-  String get memberInvoiceDownloadPdf => 'Download / Share PDF';
+  String get memberInvoiceDownloadPdf => 'تحميل / مشاركة PDF';
 
   @override
-  String get memberInvoicePdfTitle => 'Invoice';
+  String get memberInvoicePdfTitle => 'فاتورة';
 
   @override
-  String get memberInvoicePdfFooter => 'Thank you';
+  String get memberInvoicePdfFooter => 'شكراً لك';
 
   @override
   String get memberInvoiceDescription => 'Description';
