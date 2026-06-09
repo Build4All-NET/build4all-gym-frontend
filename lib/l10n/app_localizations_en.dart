@@ -1421,6 +1421,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myInfoGenderPreferNotToSay => 'Prefer not to say';
 
   @override
+  String get myInfoAddress => 'Address';
+
+  @override
+  String get myInfoAddressHint => 'Enter your address';
+
+  @override
   String get myInfoDateOfBirth => 'Date of Birth';
 
   @override

@@ -607,6 +607,8 @@
   "myInfoGenderFemale": "أنثى",
   "myInfoGenderOther": "آخر",
   "myInfoGenderPreferNotToSay": "أفضل عدم الإجابة",
+  "myInfoAddress": "العنوان",
+  "myInfoAddressHint": "أدخل عنوانك",
   "myInfoDateOfBirth": "تاريخ الميلاد",
   "myInfoSelectDateOfBirth": "اختر تاريخ الميلاد",
   "myInfoHeightCm": "الطول (سم)",
