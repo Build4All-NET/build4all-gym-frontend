@@ -2831,6 +2831,18 @@ abstract class AppLocalizations {
   /// **'Prefer not to say'**
   String get myInfoGenderPreferNotToSay;
 
+  /// No description provided for @myInfoAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get myInfoAddress;
+
+  /// No description provided for @myInfoAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your address'**
+  String get myInfoAddressHint;
+
   /// No description provided for @myInfoDateOfBirth.
   ///
   /// In en, this message translates to:

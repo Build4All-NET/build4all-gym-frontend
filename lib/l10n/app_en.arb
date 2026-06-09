@@ -613,6 +613,8 @@
   "myInfoGenderFemale": "Female",
   "myInfoGenderOther": "Other",
   "myInfoGenderPreferNotToSay": "Prefer not to say",
+  "myInfoAddress": "Address",
+  "myInfoAddressHint": "Enter your address",
   "myInfoDateOfBirth": "Date of Birth",
   "myInfoSelectDateOfBirth": "Select date of birth",
   "myInfoHeightCm": "Height (cm)",

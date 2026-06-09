@@ -1421,6 +1421,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get myInfoGenderPreferNotToSay => 'أفضل عدم الإجابة';
 
   @override
+  String get myInfoAddress => 'العنوان';
+
+  @override
+  String get myInfoAddressHint => 'أدخل عنوانك';
+
+  @override
   String get myInfoDateOfBirth => 'تاريخ الميلاد';
 
   @override
