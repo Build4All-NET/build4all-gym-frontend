@@ -16,6 +16,7 @@ class BranchCardModel extends BranchEntity {
     required super.monthlyRevenue,
     super.openingTime,
     super.closingTime,
+    super.isOpen24Hours,
   });
 
   factory BranchCardModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +31,7 @@ class BranchCardModel extends BranchEntity {
       monthlyRevenue: (json['monthlyRevenue'] as num?)?.toDouble() ?? 0.0,
       openingTime:    json['openingTime']     as String?,
       closingTime:    json['closingTime']     as String?,
+      isOpen24Hours:  json['isOpen24Hours']   as bool? ?? false,
     );
   }
 }

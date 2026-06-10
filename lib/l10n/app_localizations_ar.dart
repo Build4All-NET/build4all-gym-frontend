@@ -813,6 +813,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sessionDetailWaitlisted => 'في قائمة الانتظار';
 
   @override
+  String get sessionDetailMembershipRequired => 'يلزم الاشتراك';
+
+  @override
   String get monthJanuary => 'يناير';
 
   @override
@@ -3158,4 +3161,5 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'استخدام لغة الجهاز';
+
 }

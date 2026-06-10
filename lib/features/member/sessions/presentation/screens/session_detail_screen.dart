@@ -234,6 +234,8 @@ class _DetailView extends StatelessWidget {
             memberBookingStatus: session.memberBookingStatus,
             l10n: l10n,
             session: session,
+            requiresMembership: session.requiresMembership,
+            memberHasActiveMembership: session.memberHasActiveMembership,
           ),
         ),
       ],
@@ -254,6 +256,8 @@ class _BookNowBar extends StatelessWidget {
   final String? memberBookingStatus;
   final AppLocalizations l10n;
   final SessionDetailEntity session;
+  final bool requiresMembership;
+  final bool memberHasActiveMembership;
 
   const _BookNowBar({
     required this.sessionId,
@@ -261,6 +265,8 @@ class _BookNowBar extends StatelessWidget {
     required this.memberBookingStatus,
     required this.l10n,
     required this.session,
+    required this.requiresMembership,
+    required this.memberHasActiveMembership,
   });
 
   @override
@@ -294,9 +300,13 @@ class _BookNowBar extends StatelessWidget {
            */
           final isSessionClosed = !startTime.isAfter(DateTime.now());
 
-          final isDisabled =
-              isLoading || isBooked || isWaitlisted || isSessionClosed;
 
+          // Blocked when gym rules require membership and member has none.
+          final isMembershipBlocked =
+              requiresMembership && !memberHasActiveMembership;
+
+          final isDisabled =
+              isLoading || isBooked || isWaitlisted || isSessionClosed || isMembershipBlocked;
           return SizedBox(
             width: double.infinity,
             height: tokens.button.height,
@@ -341,6 +351,8 @@ class _BookNowBar extends StatelessWidget {
                     ? l10n.sessionDetailWaitlisted
                     : isSessionClosed
                     ? l10n.sessionDetailBookingClosed
+                    : isMembershipBlocked
+                    ? l10n.sessionDetailMembershipRequired
                     : l10n.sessionDetailBookNow,
                 style: TextStyle(
                   fontSize: tokens.button.textSize,

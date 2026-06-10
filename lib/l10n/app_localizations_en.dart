@@ -813,6 +813,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionDetailWaitlisted => 'On Waitlist';
 
   @override
+  String get sessionDetailMembershipRequired => 'Membership Required';
+
+  @override
   String get monthJanuary => 'January';
 
   @override
@@ -3158,4 +3161,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'Use device language';
+
 }

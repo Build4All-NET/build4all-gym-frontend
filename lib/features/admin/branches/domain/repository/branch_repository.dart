@@ -20,8 +20,9 @@ abstract class BranchRepository {
     required String phone,
     required String email,
     required String address,
-    required String openingTime,
-    required String closingTime,
+    String? openingTime,
+    String? closingTime,
+    bool isOpen24Hours = false,
     required String status,
   });
 
@@ -32,8 +33,9 @@ abstract class BranchRepository {
     required String phone,
     required String email,
     required String address,
-    required String openingTime,
-    required String closingTime,
+    String? openingTime,
+    String? closingTime,
+    bool isOpen24Hours = false,
     required String status,
   });
 

@@ -92,6 +92,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return BlocListener<PtPackageBookingBloc, PtPackageBookingState>(
       listener: (ctx, state) async {
@@ -138,6 +139,55 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+                color: c.primary,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      alignment: isRtl
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                            color: tokens.colors.onPrimary.withOpacity(0.22),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: tokens.colors.onPrimary,
+                            size: 18.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: isRtl
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 52.0),
+                        child: Text(
+                          'تأكيد الحجز',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: tokens.typography.headlineSmall.copyWith(
+                            color: tokens.colors.onPrimary,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,
@@ -145,16 +195,6 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        'تأكيد الحجز',
-                        textAlign: TextAlign.center,
-                        style: tokens.typography.headlineSmall.copyWith(
-                          color: c.label,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
                       // Summary card
                       Container(
                         padding: const EdgeInsets.all(18),

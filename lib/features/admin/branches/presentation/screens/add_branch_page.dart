@@ -26,6 +26,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
 
   String? _openingTime;
   String? _closingTime;
+  bool    _isOpen24Hours = false;
   String  _status = 'ACTIVE';
 
   bool get _isEdit => widget.existing != null;
@@ -34,14 +35,15 @@ class _AddBranchPageState extends State<AddBranchPage> {
   void initState() {
     super.initState();
     final e = widget.existing;
-    _nameCtrl    = TextEditingController(text: e?.name ?? '');
-    _cityCtrl    = TextEditingController(text: e?.city ?? '');
-    _phoneCtrl   = TextEditingController(text: e?.phone ?? '');
-    _emailCtrl   = TextEditingController(text: e?.email ?? '');
-    _addressCtrl = TextEditingController(text: e?.address ?? '');
-    _openingTime = e?.openingTime;
-    _closingTime = e?.closingTime;
-    _status      = e?.status ?? 'ACTIVE';
+    _nameCtrl      = TextEditingController(text: e?.name ?? '');
+    _cityCtrl      = TextEditingController(text: e?.city ?? '');
+    _phoneCtrl     = TextEditingController(text: e?.phone ?? '');
+    _emailCtrl     = TextEditingController(text: e?.email ?? '');
+    _addressCtrl   = TextEditingController(text: e?.address ?? '');
+    _openingTime   = e?.openingTime;
+    _closingTime   = e?.closingTime;
+    _isOpen24Hours = e?.isOpen24Hours ?? false;
+    _status        = e?.status ?? 'ACTIVE';
   }
 
   @override
@@ -167,35 +169,48 @@ class _AddBranchPageState extends State<AddBranchPage> {
                 _FormCard(children: [
                   const _SectionTitle('Operating Hours'),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _TimePicker(
-                          label: 'Opening Time',
-                          value: _openingTime,
-                          onPicked: (t) => setState(() => _openingTime = t),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _TimePicker(
-                          label: 'Closing Time',
-                          value: _closingTime,
-                          onPicked: (t) => setState(() => _closingTime = t),
-                        ),
-                      ),
-                    ],
+                  _Open24Toggle(
+                    value: _isOpen24Hours,
+                    onChanged: (v) => setState(() {
+                      _isOpen24Hours = v;
+                      if (v) {
+                        _openingTime = null;
+                        _closingTime = null;
+                      }
+                    }),
                   ),
-                  if (_openingTime != null &&
-                      _closingTime != null &&
-                      !_closingAfterOpening())
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Closing time must be after opening time',
-                        style: TextStyle(color: Colors.red, fontSize: 12),
-                      ),
+                  if (!_isOpen24Hours) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _TimePicker(
+                            label: 'Opening Time',
+                            value: _openingTime,
+                            onPicked: (t) => setState(() => _openingTime = t),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _TimePicker(
+                            label: 'Closing Time',
+                            value: _closingTime,
+                            onPicked: (t) => setState(() => _closingTime = t),
+                          ),
+                        ),
+                      ],
                     ),
+                    if (_openingTime != null &&
+                        _closingTime != null &&
+                        !_closingAfterOpening())
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Closing time must be after opening time',
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
                 ]),
                 const SizedBox(height: 12),
                 _FormCard(children: [
@@ -255,39 +270,43 @@ class _AddBranchPageState extends State<AddBranchPage> {
   void _submit() {
     final valid = _formKey.currentState?.validate() ?? false;
     if (!valid) return;
-    if (_openingTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an opening time')),
-      );
-      return;
-    }
-    if (_closingTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a closing time')),
-      );
-      return;
-    }
-    if (!_closingAfterOpening()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Closing time must be after opening time')),
-      );
-      return;
+
+    if (!_isOpen24Hours) {
+      if (_openingTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select an opening time')),
+        );
+        return;
+      }
+      if (_closingTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a closing time')),
+        );
+        return;
+      }
+      if (!_closingAfterOpening()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Closing time must be after opening time')),
+        );
+        return;
+      }
     }
 
     if (_isEdit) {
       context.read<BranchesBloc>().add(
             SubmitUpdateBranch(
               UpdateBranchParams(
-                branchId:    widget.existing!.branchId,
-                name:        _nameCtrl.text.trim(),
-                city:        _cityCtrl.text.trim(),
-                phone:       _phoneCtrl.text.trim(),
-                email:       _emailCtrl.text.trim(),
-                address:     _addressCtrl.text.trim(),
-                openingTime: _openingTime!,
-                closingTime: _closingTime!,
-                status:      _status,
+                branchId:      widget.existing!.branchId,
+                name:          _nameCtrl.text.trim(),
+                city:          _cityCtrl.text.trim(),
+                phone:         _phoneCtrl.text.trim(),
+                email:         _emailCtrl.text.trim(),
+                address:       _addressCtrl.text.trim(),
+                openingTime:   _isOpen24Hours ? null : _openingTime,
+                closingTime:   _isOpen24Hours ? null : _closingTime,
+                isOpen24Hours: _isOpen24Hours,
+                status:        _status,
               ),
             ),
           );
@@ -295,14 +314,15 @@ class _AddBranchPageState extends State<AddBranchPage> {
       context.read<BranchesBloc>().add(
             SubmitCreateBranch(
               CreateBranchParams(
-                name:        _nameCtrl.text.trim(),
-                city:        _cityCtrl.text.trim(),
-                phone:       _phoneCtrl.text.trim(),
-                email:       _emailCtrl.text.trim(),
-                address:     _addressCtrl.text.trim(),
-                openingTime: _openingTime!,
-                closingTime: _closingTime!,
-                status:      _status,
+                name:          _nameCtrl.text.trim(),
+                city:          _cityCtrl.text.trim(),
+                phone:         _phoneCtrl.text.trim(),
+                email:         _emailCtrl.text.trim(),
+                address:       _addressCtrl.text.trim(),
+                openingTime:   _isOpen24Hours ? null : _openingTime,
+                closingTime:   _isOpen24Hours ? null : _closingTime,
+                isOpen24Hours: _isOpen24Hours,
+                status:        _status,
               ),
             ),
           );
@@ -403,6 +423,56 @@ class _SectionTitle extends StatelessWidget {
           fontWeight: FontWeight.w700,
           fontSize: 15,
           color: Color(0xFF1A1A2E)),
+    );
+  }
+}
+
+class _Open24Toggle extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  const _Open24Toggle({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: value ? const Color(0xFFEFF6FF) : const Color(0xFFF9FAFB),
+          border: Border.all(
+            color: value ? const Color(0xFF3B82F6) : Colors.grey.shade300,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.wb_sunny_outlined,
+              size: 18,
+              color: value ? const Color(0xFF2563EB) : Colors.grey.shade500,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Open 24 Hours',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: value
+                      ? const Color(0xFF1D4ED8)
+                      : const Color(0xFF374151),
+                ),
+              ),
+            ),
+            Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: const Color(0xFF2563EB),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

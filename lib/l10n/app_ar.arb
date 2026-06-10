@@ -358,6 +358,7 @@
   "sessionDetailBookNow": "احجز الآن",
   "sessionDetailAlreadyBooked": "تم الحجز",
   "sessionDetailWaitlisted": "في قائمة الانتظار",
+  "sessionDetailMembershipRequired": "يلزم الاشتراك",
 
   "monthJanuary": "يناير",
   "monthFebruary": "فبراير",
@@ -672,7 +673,7 @@
   "checkins_blockTitle": "حجب العضو",
   "checkins_cancel": "إلغاء",
   "checkins_blockConfirm": "حجب",
-  "checkins_scannerTitle": "مسح QR للعضو",
+  "checkins_scannerTitle": "مسح QR للعضو"
   "sessionDetailBookingClosed": "انتهى وقت الحجز",
   "booked": "محجوز",
   "noActiveMembership": "لا توجد عضوية نشطة",
@@ -1223,7 +1224,7 @@
   "trainer_cashPaymentConfirmed": "تم تأكيد الدفع وتفعيل الحصص.",
   "trainer_dateLabel": "التاريخ",
   "myInfoAddress": "العنوان",
-  "myInfoAddressHint": "أدخل عنوانك",
+  "myInfoAddressHint": "أدخل عنوانك"
   "promotionPrice": "بعد العرض",
   "settingsTitle": "الإعدادات",
   "settingsUnsaved": "غير محفوظ",

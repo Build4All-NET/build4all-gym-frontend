@@ -14,6 +14,7 @@ class BranchDetailEntity extends Equatable {
   final String? address;
   final String? openingTime;
   final String? closingTime;
+  final bool isOpen24Hours;
   final int memberCount;
   final int trainerCount;
   final int staffCount;
@@ -29,6 +30,7 @@ class BranchDetailEntity extends Equatable {
     this.address,
     this.openingTime,
     this.closingTime,
+    this.isOpen24Hours = false,
     required this.memberCount,
     required this.trainerCount,
     required this.staffCount,
@@ -37,8 +39,8 @@ class BranchDetailEntity extends Equatable {
 
   bool get isActive => status == 'ACTIVE';
 
-  // Format operating hours as "6 AM - 10 PM" for display
   String get hoursDisplay {
+    if (isOpen24Hours) return 'Open 24 Hours';
     if (openingTime == null || closingTime == null) return '—';
     return '${_toAmPm(openingTime!)} - ${_toAmPm(closingTime!)}';
   }

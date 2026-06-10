@@ -364,6 +364,7 @@
   "sessionDetailBookNow": "Book Now",
   "sessionDetailAlreadyBooked": "Already Booked",
   "sessionDetailWaitlisted": "On Waitlist",
+  "sessionDetailMembershipRequired": "Membership Required",
 
   "monthJanuary": "January",
   "monthFebruary": "February",

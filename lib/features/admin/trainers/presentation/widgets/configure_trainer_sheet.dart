@@ -115,7 +115,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens = context.watch<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final mq     = MediaQuery.of(context);
 
@@ -162,7 +162,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                             fontSize: 16,
                           )),
                       Text(widget.trainerName,
-                          style: TextStyle(color: c.onPrimary, fontSize: 12)),
+                          style: TextStyle(color: c.body, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -192,7 +192,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                       ? Center(child: CircularProgressIndicator(color: c.primary))
                       : _branches.isEmpty
                           ? Text('No branches found.',
-                              style: TextStyle(color: c.onPrimary, fontSize: 13))
+                              style: TextStyle(color: c.body, fontSize: 13))
                           : _branchChips(c),
                   const SizedBox(height: 20),
 
@@ -297,7 +297,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
           selectedColor: c.primary.withOpacity(0.2),
           checkmarkColor: c.primary,
           labelStyle: TextStyle(
-            color: selected ? c.primary : c.onPrimary,
+            color: selected ? c.primary : c.body,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
             fontSize: 13,
           ),
@@ -345,7 +345,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       style:           TextStyle(color: c.primary),
       decoration: InputDecoration(
         hintText:  hint,
-        hintStyle: TextStyle(color: c.onPrimary),
+        hintStyle: TextStyle(color: c.muted),
         filled:    true,
         fillColor: c.background,
         contentPadding:

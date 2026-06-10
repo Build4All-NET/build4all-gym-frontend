@@ -667,7 +667,14 @@ class AppRouter {
 
       case adminPtPackageBookings:
         return MaterialPageRoute(
-          builder: (_) => _withProfile(const AdminPtPackageBookingsScreen()),
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+              ],
+              child: const AdminPtPackageBookingsScreen(),
+            ),
+          ),
         );
 
     // ── Admin: Training Videos ─────────────────────────────────────────────

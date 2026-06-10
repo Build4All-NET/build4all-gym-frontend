@@ -146,7 +146,15 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\" -Recurse -Directory -ErrorAction SilentlyContinue)",
       "Bash(Get-ChildItem \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\\\\src\\\\main\\\\resources\\\\db\\\\migration\")",
       "Bash(Get-Content \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\\\\lib\\\\l10n\\\\app_ar.arb\")",
-      "Bash(Select-Object -Last 10)"
+      "Bash(Select-Object -Last 10)",
+      "Bash(cd /d \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\")",
+      "Bash(findstr /r /s \"pt.*package.*payment\\\\|ptPackagePayment\\\\|pt_package_payments\\\\|pt-package-payments\" lib\\\\**\\\\*.dart)",
+      "Bash(powershell -NoProfile -Command \"Select-String -Path 'lib/app/app_router.dart' -Pattern 'member.*pt|memberPt|/member/pt|/user.*pt' -Context 2\")",
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem -Path 'lib\\\\features\\\\member' -Directory | Select-Object -ExpandProperty Name\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Directory)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\\\\src\\\\main\\\\resources\\\\db\\\\migration\" | Where-Object { $_.Name -match \"V20|V111|V112\" })",
+      "Bash(mvn install *)"
+
     ]
   }
 }

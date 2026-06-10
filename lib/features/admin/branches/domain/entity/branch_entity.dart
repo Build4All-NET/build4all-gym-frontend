@@ -15,6 +15,7 @@ class BranchEntity extends Equatable {
   final double monthlyRevenue;
   final String? openingTime;    // "06:00"
   final String? closingTime;    // "22:00"
+  final bool isOpen24Hours;
 
   const BranchEntity({
     required this.branchId,
@@ -27,11 +28,12 @@ class BranchEntity extends Equatable {
     required this.monthlyRevenue,
     this.openingTime,
     this.closingTime,
+    this.isOpen24Hours = false,
   });
 
   bool get isActive => status == 'ACTIVE';
 
   @override
-  List<Object?> get props => [branchId, name, status];
+  List<Object?> get props => [branchId, name, status, isOpen24Hours];
 }
  

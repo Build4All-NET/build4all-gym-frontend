@@ -1655,6 +1655,12 @@ abstract class AppLocalizations {
   /// **'On Waitlist'**
   String get sessionDetailWaitlisted;
 
+  /// No description provided for @sessionDetailMembershipRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Required'**
+  String get sessionDetailMembershipRequired;
+
   /// No description provided for @monthJanuary.
   ///
   /// In en, this message translates to:
@@ -6232,6 +6238,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use device language'**
   String get settingsLanguageSystemDefaultSubtitle;
+
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
