@@ -927,6 +927,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navTrainingVideos => 'Training Videos';
 
   @override
+  String get navPtPackageBookings => 'PT Package Payments';
+
+  @override
   String get accountProfileUpdateSuccess => 'Profile updated successfully';
 
   @override
@@ -1186,6 +1189,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptWeeklySlotsFailed => 'Could not load available times';
 
   @override
+  String get ptRequestTimePickerHint => 'Request a time from the trainer';
+
+  @override
+  String get ptTimeRequestSuccess => 'Your time request has been sent to the trainer.';
+
+  @override
+  String get ptTimeRequestFailed => 'Could not send time request. Please try again.';
+
+  @override
   String get ptBookingRequestSuccess => 'Request sent to PT. Waiting for approval.';
 
   @override
@@ -1412,6 +1424,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myInfoGenderPreferNotToSay => 'Prefer not to say';
 
   @override
+  String get myInfoAddress => 'Address';
+
+  @override
+  String get myInfoAddressHint => 'Enter your address';
+
+  @override
   String get myInfoDateOfBirth => 'Date of Birth';
 
   @override
@@ -1557,8 +1575,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_scannerTitle => 'Scan Member QR';
-<<<<<<< fixing
-=======
 
   @override
   String get sessionDetailBookingClosed => 'Booking closed';
@@ -3094,5 +3110,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myInfoAddressHint => 'Enter your address';
->>>>>>> local
+
+  @override
+  String get promotionPrice => 'Promotion price';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsUnsaved => 'Unsaved';
+
+  @override
+  String get settingsUnexpectedError => 'Unexpected error occurred';
+
+  @override
+  String get settingsTryAgain => 'Try Again';
+
+  @override
+  String get settingsSavedSuccessfully => 'Settings saved successfully';
+
+  @override
+  String get settingsSaveFailed => 'Failed to save settings';
+
+  @override
+  String get settingsSaving => 'Saving...';
+
+  @override
+  String get settingsSaveChanges => 'Save Changes';
+
+  @override
+  String get settingsLanguageRegionTitle => 'Language & Region';
+
+  @override
+  String get settingsLanguageRegionSubtitle => 'Choose your preferred language';
+
+  @override
+  String get settingsLanguageEnglish => 'English';
+
+  @override
+  String get settingsLanguageEnglishSubtitle => 'Default language';
+
+  @override
+  String get settingsLanguageArabic => 'Arabic';
+
+  @override
+  String get settingsLanguageArabicSubtitle => 'Arabic language';
+
+  @override
+  String get settingsLanguageSystemDefault => 'System Default';
+
+  @override
+  String get settingsLanguageSystemDefaultSubtitle => 'Use device language';
+
 }

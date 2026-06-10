@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/member_card_entity.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_members_bloc.dart';
 import 'attendance_history_bottom_sheet.dart';
 
@@ -68,7 +69,7 @@ class MemberCardWidget extends StatelessWidget {
                       const SizedBox(height: 12),
                       Divider(color: cs.outline.withOpacity(0.2), height: 1),
                       const SizedBox(height: 12),
-                      _buildInfoGrid(cs),
+                      _buildInfoGrid(context, cs),
                       const SizedBox(height: 12),
                       Divider(color: cs.outline.withOpacity(0.2), height: 1),
                       const SizedBox(height: 8),
@@ -133,17 +134,17 @@ class MemberCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoGrid(ColorScheme cs) {
+  Widget _buildInfoGrid(BuildContext context, ColorScheme cs) {
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _InfoLabel(label: 'Plan', cs: cs),
+              _InfoLabel(label: AppLocalizations.of(context)!.admin_members_colPlan, cs: cs),
               _InfoValue(value: member.planName ?? '—', cs: cs),
               const SizedBox(height: 8),
-              _InfoLabel(label: 'Due Amount', cs: cs),
+              _InfoLabel(label: AppLocalizations.of(context)!.admin_members_colDueAmount, cs: cs),
               _InfoValue(
                 value: '₹${(member.dueAmount ?? 0).toStringAsFixed(0)}',
                 cs: cs,
@@ -157,10 +158,10 @@ class MemberCardWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _InfoLabel(label: 'Expiry', cs: cs),
+              _InfoLabel(label: AppLocalizations.of(context)!.admin_members_colExpiry, cs: cs),
               _InfoValue(value: member.expiryDate ?? '—', cs: cs),
               const SizedBox(height: 8),
-              _InfoLabel(label: 'Branch', cs: cs),
+              _InfoLabel(label: AppLocalizations.of(context)!.admin_members_colBranch, cs: cs),
               _InfoValue(value: member.branchName ?? '—', cs: cs),
             ],
           ),
@@ -182,7 +183,7 @@ class MemberCardWidget extends StatelessWidget {
           color:    member.phone.isNotEmpty
               ? const Color(0xFF25D366)
               : cs.onSurface.withOpacity(0.25),
-          tooltip:  'WhatsApp',
+          tooltip:  AppLocalizations.of(context)!.admin_members_actionWhatsApp,
           disabled: member.phone.isEmpty,
           onTap:    () => _launchWhatsApp(context),
         ),
@@ -190,7 +191,7 @@ class MemberCardWidget extends StatelessWidget {
         _ActionIcon(
           icon:    Icons.calendar_today_outlined,
           color:   cs.primary,
-          tooltip: 'Attendance',
+          tooltip: AppLocalizations.of(context)!.admin_members_actionAttendance,
           onTap:   () => AttendanceHistoryBottomSheet.show(
             context,
             userId:     member.userId,
@@ -201,14 +202,14 @@ class MemberCardWidget extends StatelessWidget {
         _ActionIcon(
           icon: Icons.refresh,
           color: cs.tertiary,
-          tooltip: 'Renew',
+          tooltip: AppLocalizations.of(context)!.admin_members_actionRenew,
           onTap: () => _showComingSoon(context, 'Plan Renewal'),
         ),
         // Block / Unblock — semantic colors
         _ActionIcon(
           icon:  member.isBlocked ? Icons.lock_open_outlined : Icons.block,
           color: member.isBlocked ? const Color(0xFF10B981) : const Color(0xFFF97316),
-          tooltip: member.isBlocked ? 'Unblock' : 'Block',
+          tooltip: member.isBlocked ? AppLocalizations.of(context)!.admin_members_actionUnblock : AppLocalizations.of(context)!.admin_members_actionBlock,
           onTap: () => member.isBlocked
               ? bloc.add(MemberUnblockRequested(member.userId))
               : _showBlockDialog(context, bloc),
@@ -217,14 +218,14 @@ class MemberCardWidget extends StatelessWidget {
         _ActionIcon(
           icon:    Icons.delete_outline,
           color:   cs.error,
-          tooltip: 'Delete',
+          tooltip: AppLocalizations.of(context)!.admin_members_actionDelete,
           onTap:   () => _showDeleteConfirm(context, bloc),
         ),
         // Edit
         _ActionIcon(
           icon:    Icons.edit_outlined,
           color:   cs.onSurface.withOpacity(0.4),
-          tooltip: 'Edit',
+          tooltip: AppLocalizations.of(context)!.admin_members_actionEdit,
           onTap:   () => _showComingSoon(context, 'Edit Member'),
         ),
       ],
@@ -249,12 +250,12 @@ class MemberCardWidget extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
-        title: Text('Block Member', style: TextStyle(color: cs.onSurface)),
+        title: Text(AppLocalizations.of(context)!.admin_members_blockTitle, style: TextStyle(color: cs.onSurface)),
         content: TextField(
           controller: reasonController,
           style: TextStyle(color: cs.onSurface),
           decoration: InputDecoration(
-            hintText: 'Enter reason for blocking',
+            hintText: AppLocalizations.of(context)!.admin_members_blockHint,
             hintStyle: TextStyle(color: cs.onSurface.withOpacity(0.4)),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: cs.outline)),
@@ -263,7 +264,7 @@ class MemberCardWidget extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
+            child: Text(AppLocalizations.of(context)!.general_cancel, style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
           ),
           TextButton(
             onPressed: () {
@@ -273,7 +274,7 @@ class MemberCardWidget extends StatelessWidget {
                 reason: reasonController.text.trim(),
               ));
             },
-            child: const Text('Block', style: TextStyle(color: Color(0xFFF97316))),
+            child: Text(AppLocalizations.of(context)!.admin_members_actionBlock, style: const TextStyle(color: Color(0xFFF97316))),
           ),
         ],
       ),
@@ -286,22 +287,22 @@ class MemberCardWidget extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
-        title: Text('Delete Member', style: TextStyle(color: cs.onSurface)),
+        title: Text(AppLocalizations.of(context)!.admin_members_deleteTitle, style: TextStyle(color: cs.onSurface)),
         content: Text(
-          'Permanently delete ${member.fullName}? This cannot be undone.',
+          AppLocalizations.of(context)!.admin_members_deleteMessage(member.fullName),
           style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
+            child: Text(AppLocalizations.of(context)!.general_cancel, style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               bloc.add(MemberDeleteRequested(member.userId));
             },
-            child: Text('Delete', style: TextStyle(color: cs.error)),
+            child: Text(AppLocalizations.of(context)!.admin_members_actionDelete, style: TextStyle(color: cs.error)),
           ),
         ],
       ),
@@ -328,17 +329,18 @@ class _StatusBadge extends StatelessWidget {
     Color bg, text;
     String label;
 
+    final l10n = AppLocalizations.of(context)!;
     switch (status.toLowerCase()) {
       case 'active':
-        bg = const Color(0xFF052E16); text = const Color(0xFF4ADE80); label = 'Active';
+        bg = const Color(0xFF052E16); text = const Color(0xFF4ADE80); label = l10n.membershipStatusActive;
       case 'pending':
-        bg = const Color(0xFF431407); text = const Color(0xFFFB923C); label = 'Pending';
+        bg = const Color(0xFF431407); text = const Color(0xFFFB923C); label = l10n.membershipStatusPending;
       case 'blocked':
-        bg = const Color(0xFF450A0A); text = const Color(0xFFF87171); label = 'Blocked';
+        bg = const Color(0xFF450A0A); text = const Color(0xFFF87171); label = l10n.membershipStatusBlocked;
       default:
         bg = Theme.of(context).colorScheme.surfaceVariant;
         text = Theme.of(context).colorScheme.onSurface.withOpacity(0.6);
-        label = status.isEmpty ? 'No Plan' : status;
+        label = status.isEmpty ? l10n.admin_members_statusNoPlan : status;
     }
 
     return Container(

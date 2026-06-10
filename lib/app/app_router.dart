@@ -26,6 +26,7 @@ import '../features/admin/classes/domain/usecases/create_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_class_form_options_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_classes_by_date_usecase.dart';
 import '../features/admin/classes/domain/usecases/confirm_booking_payment_usecase.dart';
+import '../features/admin/classes/domain/usecases/reject_booking_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
 import '../features/admin/classes/domain/usecases/reactivate_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
@@ -92,6 +93,7 @@ import '../features/admin/dashboard/presentation/screens/admin_dashboard_screen.
 import '../features/gym_profile/presentation/screens/role_check_screen.dart';
 import '../features/shell/presentation/screens/main_shell.dart';
 import '../features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart';
+import '../features/admin/pt_dashboard/presentation/screens/admin_pt_package_bookings_screen.dart';
 
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
@@ -164,7 +166,13 @@ import '../features/admin/invoices/presentation/bloc/admin_invoice_bloc.dart';
 import '../features/admin/invoices/presentation/bloc/admin_invoices_list_bloc.dart';
 import '../features/admin/invoices/presentation/screens/admin_invoice_screen.dart';
 import '../features/admin/invoices/presentation/screens/admin_invoices_list_screen.dart';
-
+import '../features/member/invoices/data/repositories/member_invoice_repository_impl.dart';
+import '../features/member/invoices/data/services/member_invoice_service.dart';
+import '../features/member/invoices/domain/usecases/member_invoice_usecases.dart';
+import '../features/member/invoices/presentation/bloc/member_invoice_bloc.dart';
+import '../features/member/invoices/presentation/bloc/member_invoices_list_bloc.dart';
+import '../features/member/invoices/presentation/screens/member_invoice_screen.dart';
+import '../features/member/invoices/presentation/screens/member_invoices_list_screen.dart';
 class AppRouter {
   // ─── Auth ──────────────────────────────────────────────────────────────────
   static const String login          = '/login';
@@ -194,13 +202,18 @@ class AppRouter {
   static const String adminNotifications = '/admin/notifications';
 
   // ─── Admin: Training / PT ─────────────────────────────────────────────────
-  static const String adminPtSessions     = '/admin/pt-services';
-  static const String adminTrainingVideos = '/admin/training-videos';
+  static const String adminPtSessions            = '/admin/pt-services';
+  static const String adminPtPackageBookings     = '/admin/pt-package-bookings';
+  static const String adminTrainingVideos        = '/admin/training-videos';
 
   // ─── Admin: Settings ──────────────────────────────────────────────────────
   static const String adminMembershipRequests = '/admin/membership-requests';
   static const String adminSettings = '/admin/settings';
   static const String userSettings = '/user/settings';
+
+  // ─── Member: Invoices ─────────────────────────────────────────────────────
+  static const String memberInvoices = '/member/invoices';
+  static const String memberInvoiceDetail = '/member/invoices/detail';
 
   // ─── Logout ────────────────────────────────────────────────────────────────
   static const String logout = '/logout';
@@ -290,6 +303,39 @@ class AppRouter {
           ),
         );
 
+    // ── Member: Invoices list ───────────────────────────────────────────────
+
+      case memberInvoices:
+        final invoiceRepo = MemberInvoiceRepositoryImpl(
+          MemberInvoiceService(appDio ?? Dio()),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => MemberInvoicesListBloc(
+              listInvoicesUseCase: ListMemberInvoicesUseCase(invoiceRepo),
+              requestRefundUseCase: RequestMemberRefundUseCase(invoiceRepo),
+            ),
+            child: const MemberInvoicesListScreen(),
+          ),
+        );
+// ── Member: Invoice detail ──────────────────────────────────────────────
+
+      case memberInvoiceDetail:
+        final invoiceId = settings.arguments as int;
+
+        final invoiceRepo = MemberInvoiceRepositoryImpl(
+          MemberInvoiceService(appDio ?? Dio()),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => MemberInvoiceBloc(
+              getInvoiceUseCase: GetMemberInvoiceUseCase(invoiceRepo),
+            ),
+            child: MemberInvoiceScreen(invoiceId: invoiceId),
+          ),
+        );
     // ── Admin: Dashboard ───────────────────────────────────────────────────
 
       case admin:
@@ -588,6 +634,7 @@ class AppRouter {
                     reactivateClass:        ReactivateClassUseCase(classesRepo),
                     getSessionBookings:     GetSessionBookingsUseCase(classesRepo),
                     confirmBookingPayment:  ConfirmBookingPaymentUseCase(classesRepo),
+                    rejectBooking:          RejectBookingUseCase(classesRepo),
                   )..add(ClassesStarted(DateTime.now())),
                 ),
               ],
@@ -616,8 +663,6 @@ class AppRouter {
             ),
           ),
         );
-<<<<<<< fixing
-=======
     // ── Admin: PT Package Bookings (pending cash) ──────────────────────────
 
       case adminPtPackageBookings:
@@ -632,7 +677,6 @@ class AppRouter {
           ),
         );
 
->>>>>>> local
     // ── Admin: Training Videos ─────────────────────────────────────────────
 
       case adminTrainingVideos:

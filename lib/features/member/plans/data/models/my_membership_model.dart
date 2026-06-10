@@ -2,6 +2,14 @@ import '../../domain/entities/my_membership_entity.dart';
 
 class MyMembershipModel {
   final int membershipId;
+
+  /*
+   * Needed for membership renewal.
+   *
+   * Comes from backend as planId.
+   */
+  final int planId;
+
   final String planName;
   final String planType;
   final String status;
@@ -15,6 +23,7 @@ class MyMembershipModel {
 
   MyMembershipModel({
     required this.membershipId,
+    required this.planId,
     required this.planName,
     required this.planType,
     required this.status,
@@ -29,15 +38,18 @@ class MyMembershipModel {
 
   factory MyMembershipModel.fromJson(Map<String, dynamic> json) {
     return MyMembershipModel(
-      membershipId: json['membershipId'] as int,
+      membershipId: (json['membershipId'] as num).toInt(),
+      planId: (json['planId'] as num).toInt(),
       planName: json['planName'] as String,
       planType: json['planType'] as String,
       status: json['status'] as String,
       startDate: json['startDate'] as String,
       endDate: json['endDate'] as String,
-      remainingDays: json['remainingDays'] as int,
-      remainingVisits: json['remainingVisits'] as int?,
-      frozenDaysUsed: json['frozenDaysUsed'] as int,
+      remainingDays: (json['remainingDays'] as num).toInt(),
+      remainingVisits: json['remainingVisits'] == null
+          ? null
+          : (json['remainingVisits'] as num).toInt(),
+      frozenDaysUsed: (json['frozenDaysUsed'] as num).toInt(),
       autoRenewEnabled: json['autoRenewEnabled'] as bool,
       paymentStatus: json['paymentStatus'] as String,
     );
@@ -46,6 +58,7 @@ class MyMembershipModel {
   MyMembershipEntity toEntity() {
     return MyMembershipEntity(
       membershipId: membershipId,
+      planId: planId,
       planName: planName,
       planType: planType,
       status: status,

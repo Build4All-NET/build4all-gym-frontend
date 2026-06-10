@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/member_detail_entity.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_members_bloc.dart';
 import 'attendance_history_bottom_sheet.dart';
 
@@ -17,6 +18,7 @@ class QuickActionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs   = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final bloc = context.read<AdminMembersBloc>();
 
     return Container(
@@ -29,7 +31,7 @@ class QuickActionsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Actions',
+            l10n.admin_dashboard_quickActions,
             style: TextStyle(
               color:      cs.onSurface,
               fontSize:   16,
@@ -47,28 +49,28 @@ class QuickActionsWidget extends StatelessWidget {
             children: [
               _ActionButton(
                 icon:     Icons.phone_outlined,
-                label:    'Call',
+                label:    l10n.admin_members_actionCall,
                 color:    cs.primary,
                 disabled: !_hasPhone,
                 onTap:    () => _launchPhone(context),
               ),
               _ActionButton(
                 icon:     Icons.chat_bubble_outline,
-                label:    'WhatsApp',
+                label:    l10n.admin_members_actionWhatsApp,
                 color:    const Color(0xFF25D366),
                 disabled: !_hasPhone,
                 onTap:    () => _launchWhatsApp(context),
               ),
               _ActionButton(
                 icon:     Icons.sms_outlined,
-                label:    'SMS',
+                label:    l10n.admin_members_actionSms,
                 color:    cs.tertiary,
                 disabled: !_hasPhone,
                 onTap:    () => _launchSms(context),
               ),
               _ActionButton(
                 icon:  Icons.calendar_today_outlined,
-                label: 'Attendance',
+                label: l10n.admin_members_actionAttendance,
                 color: cs.primary,
                 onTap: () => AttendanceHistoryBottomSheet.show(
                   context,
@@ -78,7 +80,7 @@ class QuickActionsWidget extends StatelessWidget {
               ),
               _ActionButton(
                 icon:  Icons.refresh_rounded,
-                label: 'Renew',
+                label: l10n.admin_members_actionRenew,
                 color: const Color(0xFFF97316),
                 onTap: () => _showComingSoon(context, 'Renew Plan'),
               ),
@@ -86,7 +88,7 @@ class QuickActionsWidget extends StatelessWidget {
                 icon:  member.isBlocked
                     ? Icons.lock_open_outlined
                     : Icons.block_outlined,
-                label: member.isBlocked ? 'Unblock' : 'Block',
+                label: member.isBlocked ? l10n.admin_members_actionUnblock : l10n.admin_members_actionBlock,
                 color: member.isBlocked
                     ? const Color(0xFF10B981)
                     : cs.error,
@@ -130,18 +132,19 @@ class QuickActionsWidget extends StatelessWidget {
   }
 
   void _showBlockDialog(BuildContext context, AdminMembersBloc bloc) {
-    final cs = Theme.of(context).colorScheme;
+    final cs   = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final reasonController = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
-        title: Text('Block Member', style: TextStyle(color: cs.onSurface)),
+        title: Text(l10n.admin_members_blockTitle, style: TextStyle(color: cs.onSurface)),
         content: TextField(
           controller: reasonController,
           style: TextStyle(color: cs.onSurface),
           decoration: InputDecoration(
-            hintText: 'Enter reason for blocking',
+            hintText: l10n.admin_members_blockHint,
             hintStyle: TextStyle(color: cs.onSurface.withOpacity(0.4)),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: cs.outline)),
@@ -150,7 +153,7 @@ class QuickActionsWidget extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel',
+            child: Text(l10n.general_cancel,
                 style: TextStyle(color: cs.onSurface.withOpacity(0.5))),
           ),
           TextButton(
@@ -161,7 +164,7 @@ class QuickActionsWidget extends StatelessWidget {
                 reason: reasonController.text.trim(),
               ));
             },
-            child: Text('Block', style: TextStyle(color: cs.error)),
+            child: Text(l10n.admin_members_actionBlock, style: TextStyle(color: cs.error)),
           ),
         ],
       ),

@@ -111,6 +111,30 @@ class PtSessionStatusUpdateRequested
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Accept REQUESTED session (REQUESTED → SCHEDULED)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionAcceptRequested extends TrainerPtSessionsEvent {
+  final int sessionId;
+  const PtSessionAcceptRequested({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Decline REQUESTED session (REQUESTED → CANCELLED)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionDeclineRequested extends TrainerPtSessionsEvent {
+  final int sessionId;
+  const PtSessionDeclineRequested({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Create session
 // ─────────────────────────────────────────────────────────────────────────────
 

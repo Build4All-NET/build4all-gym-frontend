@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
-import '../widgets/today_schedule_widget.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
+import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_screen.dart';
+import '../../../../../app/app_router.dart';
 import '../../domain/entities/member_home.dart';
 import '../../domain/entities/member_stats.dart';
 import '../../domain/entities/membership_card.dart';
@@ -18,7 +21,7 @@ import '../widgets/member_stats_row.dart';
 import '../widgets/membership_status_card.dart';
 import '../widgets/motivational_quote_card.dart';
 import '../widgets/quick_actions_grid.dart';
-import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_screen.dart';
+import '../widgets/today_schedule_widget.dart';
 import '../widgets/weight_tracker_card.dart';
 
 class MemberHomeScreen extends StatefulWidget {
@@ -36,16 +39,14 @@ class MemberHomeScreen extends StatefulWidget {
 class _MemberHomeScreenState extends State<MemberHomeScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<void> _logoutAndGoToLogin(BuildContext context) async {
-    await _storage.deleteAll();
-    if (!mounted) return;
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/login',
-          (route) => false,
-    );
-  }
+  Timer? _quoteRefreshTimer;
 
   String _fullName = '';
+
+  bool _hideProgressTrackingCard = true;
+
+  static const String _progressTrackingDismissedWeekKey =
+      'member_progress_tracking_dismissed_week';
 
   static const double _maxWidth = 430;
   static const double _headerHeight = 340;
@@ -54,14 +55,54 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
   @override
   void initState() {
     super.initState();
+
     _loadUserName();
-    context.read<MemberHomeBloc>().add(const MemberHomeLoadRequested());
+    _loadProgressTrackingPreference();
+
+    context.read<MemberHomeBloc>().add(
+      const MemberHomeLoadRequested(),
+    );
+
+    // TEMP TEST MODE:
+    // Quote refreshes every 2 seconds.
+    //
+    // Later, for production, change seconds: 2 to minutes: 30.
+    _quoteRefreshTimer = Timer.periodic(
+      const Duration(seconds: 4),
+          (_) {
+        if (!mounted) return;
+
+        context.read<MemberHomeBloc>().add(
+          const MemberHomeRefreshRequested(),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _quoteRefreshTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _logoutAndGoToLogin(BuildContext context) async {
+    await _storage.deleteAll();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/login',
+          (route) => false,
+    );
   }
 
   void _showComingSoon(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.comingSoon)),
+      SnackBar(
+        content: Text(l10n.comingSoon),
+      ),
     );
   }
 
@@ -73,28 +114,102 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
 
     if (fullName.isNotEmpty) {
       if (!mounted) return;
-      setState(() => _fullName = fullName);
+
+      setState(() {
+        _fullName = fullName;
+      });
+
       return;
     }
 
     final rawUserJson = await _storage.read(key: 'auth_user_json');
+
     String fallbackName = '';
 
     if (rawUserJson != null && rawUserJson.trim().isNotEmpty) {
       final decoded = jsonDecode(rawUserJson);
+
       if (decoded is Map<String, dynamic>) {
         fallbackName = decoded['username']?.toString() ?? '';
       }
     }
 
     if (!mounted) return;
-    setState(() => _fullName = fallbackName);
+
+    setState(() {
+      _fullName = fallbackName;
+    });
+  }
+
+  Future<void> _loadProgressTrackingPreference() async {
+    final today = DateTime.now();
+
+    // Last day of week logic.
+    // Dart uses:
+    // Monday = 1
+    // Sunday = 7
+    //
+    // So this card appears only on Sunday.
+    final isLastDayOfWeek = today.weekday == DateTime.sunday;
+
+    if (!isLastDayOfWeek) {
+      if (!mounted) return;
+
+      setState(() {
+        _hideProgressTrackingCard = true;
+      });
+
+      return;
+    }
+
+    final currentWeekKey = _currentWeekKey(today);
+
+    final dismissedWeekKey = await _storage.read(
+      key: _progressTrackingDismissedWeekKey,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      // If user dismissed it during this week, keep it hidden.
+      // If not dismissed this week, show it.
+      _hideProgressTrackingCard = dismissedWeekKey == currentWeekKey;
+    });
+  }
+
+  Future<void> _dismissProgressTrackingCard() async {
+    final today = DateTime.now();
+    final currentWeekKey = _currentWeekKey(today);
+
+    setState(() {
+      _hideProgressTrackingCard = true;
+    });
+
+    await _storage.write(
+      key: _progressTrackingDismissedWeekKey,
+      value: currentWeekKey,
+    );
+
+    if (!mounted) return;
+
+    context.read<MemberHomeBloc>().add(
+      const MemberHomeWeightCardDismissed(),
+    );
+  }
+
+  String _currentWeekKey(DateTime date) {
+    final startOfYear = DateTime(date.year, 1, 1);
+    final dayOfYear = date.difference(startOfYear).inDays + 1;
+    final weekNumber = ((dayOfYear - 1) / 7).floor() + 1;
+
+    return '${date.year}-W$weekNumber';
   }
 
   MemberHome? _getDataFromState(MemberHomeState state) {
     if (state is MemberHomeLoaded) return state.data;
     if (state is MemberHomeWeightLogSuccess) return state.data;
     if (state is MemberHomeWeightLogError) return state.data;
+
     return null;
   }
 
@@ -102,6 +217,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     if (state is MemberHomeLoaded) return state.showWeightCard;
     if (state is MemberHomeWeightLogSuccess) return state.showWeightCard;
     if (state is MemberHomeWeightLogError) return state.showWeightCard;
+
     return true;
   }
 
@@ -135,6 +251,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
 
           if (state is MemberHomeError) {
             final msg = state.message.toLowerCase();
+
             final isAuthError = msg.contains('unauthorized') ||
                 msg.contains('401') ||
                 msg.contains('missing token') ||
@@ -169,9 +286,9 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                     SizedBox(height: tokens.spacing.md),
                     ElevatedButton(
                       onPressed: () {
-                        context
-                            .read<MemberHomeBloc>()
-                            .add(const MemberHomeLoadRequested());
+                        context.read<MemberHomeBloc>().add(
+                          const MemberHomeLoadRequested(),
+                        );
                       },
                       child: Text(l10n.appAccessRetry),
                     ),
@@ -179,8 +296,11 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                     TextButton(
                       onPressed: () async {
                         const storage = FlutterSecureStorage();
+
                         await storage.deleteAll();
+
                         if (!context.mounted) return;
+
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           '/login',
                               (route) => false,
@@ -213,6 +333,10 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
             color: tokens.colors.primary,
             backgroundColor: tokens.colors.surface,
             onRefresh: () async {
+              await _loadUserName();
+
+              if (!context.mounted) return;
+
               context.read<MemberHomeBloc>().add(
                 const MemberHomeRefreshRequested(),
               );
@@ -223,7 +347,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
               stats: data.stats,
               quote: data.quote,
               scheduleItems: data.schedule.items,
-              showWeightCard: showWeightCard,
+              showWeightCard: showWeightCard && !_hideProgressTrackingCard,
               welcomeText: l10n.home_welcome,
               fullName: _fullName,
               notificationCount: 0,
@@ -290,7 +414,12 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                             notificationCount: notificationCount,
                           ),
                           SizedBox(height: tokens.spacing.xl),
-                          MembershipStatusCard(membership: membership),
+                          MembershipStatusCard(
+                            membership: membership,
+                            onRenew: () {
+                              widget.onTabSelected(1);
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -299,29 +428,28 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                     left: tokens.spacing.lg,
                     right: tokens.spacing.lg,
                     bottom: -_statsOverlap,
-                    child: MemberStatsRow(stats: stats),
+                    child: MemberStatsRow(
+                      stats: stats,
+                    ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 92),
-
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: tokens.spacing.lg),
+                padding: EdgeInsets.symmetric(
+                  horizontal: tokens.spacing.lg,
+                ),
                 child: Column(
                   children: [
                     if (quote != null) ...[
-                      MotivationalQuoteCard(quote: quote),
+                      MotivationalQuoteCard(
+                        quote: quote,
+                      ),
                       SizedBox(height: tokens.spacing.lg),
                     ],
-
                     if (showWeightCard) ...[
                       WeightTrackerCard(
-                        onDismiss: () {
-                          context.read<MemberHomeBloc>().add(
-                            const MemberHomeWeightCardDismissed(),
-                          );
-                        },
+                        onDismiss: _dismissProgressTrackingCard,
                         onWeightSubmitted: (weight) {
                           context.read<MemberHomeBloc>().add(
                             MemberHomeWeightLogged(weight: weight),
@@ -348,8 +476,12 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                           ),
                         );
                       },
-                      onQrCode: () => _showComingSoon(context),
-                      onPaymentHistory: () => _showComingSoon(context),
+                      onQrCode: () {
+                        widget.onTabSelected(2);
+                      },
+                      onPaymentHistory: () {
+                        Navigator.of(context).pushNamed(AppRouter.memberInvoices);
+                      },
                     ),
                   ],
                 ),
@@ -372,7 +504,6 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
 
     return Row(
       children: [
-        // TEXT on the LEFT for LTR (English), Flutter mirrors to RIGHT for RTL (Arabic)
         Column(
           crossAxisAlignment:
           isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -399,7 +530,6 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
           ],
         ),
         const Spacer(),
-        // ICON on the RIGHT for LTR (English), Flutter mirrors to LEFT for RTL (Arabic)
         Stack(
           clipBehavior: Clip.none,
           children: [

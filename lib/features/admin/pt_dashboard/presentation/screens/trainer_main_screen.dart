@@ -12,6 +12,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../l10n/app_localizations.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
@@ -78,10 +80,14 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final service    = TrainerPtSessionsService();
     final repository = TrainerPtSessionsRepositoryImpl(service: service);
     _sessionsBloc = TrainerPtSessionsBloc(
-      getSessions:   GetSessionsByDateUseCase(repository),
-      getStats:      GetSessionStatsUseCase(repository),
-      createSession: CreateSessionUseCase(repository),
-      updateStatus:  UpdateSessionStatusUseCase(repository),
+      getSessions:    GetSessionsByDateUseCase(repository),
+      getStats:       GetSessionStatsUseCase(repository),
+      getUpcoming:    GetUpcomingSessionsUseCase(repository),
+      getRequests:    GetSessionRequestsUseCase(repository),
+      createSession:  CreateSessionUseCase(repository),
+      updateStatus:   UpdateSessionStatusUseCase(repository),
+      acceptRequest:  AcceptSessionRequestUseCase(repository),
+      declineRequest: DeclineSessionRequestUseCase(repository),
     );
     _blocInitialized = true;
   }
@@ -282,7 +288,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
                     size: 56, color: Color(0xFFEF4444)),
                 const SizedBox(height: 16),
                 Text(
-                  _trainersError!,
+                  AppLocalizations.of(context)!.trainer_loadTrainersError,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 15, color: Color(0xFF6B7280)),
                 ),
@@ -290,7 +296,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
                 ElevatedButton.icon(
                   onPressed: _loadTrainersForAdmin,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Retry'),
+                  label: Text(AppLocalizations.of(context)!.retry),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4F46E5),
                     foregroundColor: Colors.white,
@@ -319,10 +325,10 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
               const Icon(Icons.person_off_outlined,
                   size: 56, color: Color(0xFFEF4444)),
               const SizedBox(height: 16),
-              const Text(
-                'Trainer ID not found in profile.\nPlease log out and log in again.',
+              Text(
+                AppLocalizations.of(context)!.trainer_idNotFound,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: Color(0xFF6B7280)),
+                style: const TextStyle(fontSize: 15, color: Color(0xFF6B7280)),
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
@@ -332,7 +338,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
                   _syncTrainerFromProfile(profile);
                 },
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Retry'),
+                label: Text(AppLocalizations.of(context)!.retry),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4F46E5),
                   foregroundColor: Colors.white,
@@ -374,13 +380,14 @@ class _MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
-    const navItems = <_NavItem>[
-      _NavItem(icon: Icons.grid_view_rounded,      label: 'Dashboard'),
-      _NavItem(icon: Icons.calendar_today_rounded, label: 'Sessions'),
-      _NavItem(icon: Icons.inventory_2_outlined,   label: 'Packages'),
-      _NavItem(icon: Icons.schedule_rounded,       label: 'Schedule'),
-      _NavItem(icon: Icons.people_outline_rounded, label: 'More'),
+    final navItems = <_NavItem>[
+      _NavItem(icon: Icons.grid_view_rounded,      label: l10n.trainer_navDashboard),
+      _NavItem(icon: Icons.calendar_today_rounded, label: l10n.trainer_navSessions),
+      _NavItem(icon: Icons.inventory_2_outlined,   label: l10n.trainer_navPackages),
+      _NavItem(icon: Icons.schedule_rounded,       label: l10n.trainer_navSchedule),
+      _NavItem(icon: Icons.people_outline_rounded, label: l10n.trainer_navMore),
     ];
 
     final bodies = <Widget>[

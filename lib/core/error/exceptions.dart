@@ -11,7 +11,8 @@ class UnauthorizedException implements Exception {
 
 // Thrown when the user doesn't have permission → 403
 class ForbiddenException implements Exception {
-  const ForbiddenException();
+  final String message;
+  const ForbiddenException({this.message = ''});
 }
 
 // Thrown when there is no internet connection or request times out

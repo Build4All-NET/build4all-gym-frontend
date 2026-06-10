@@ -27,11 +27,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../../core/theme/theme_cubit.dart';
-<<<<<<< fixing
 import '../../../../../core/utils/jwt_utils.dart';
-=======
 import '../../../../../l10n/app_localizations.dart';
->>>>>>> local
 import '../cubit/admin_settings_cubit.dart';
 import '../cubit/admin_settings_state.dart';
 
@@ -100,31 +97,36 @@ class _BusinessRulesSectionWidgetState
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text('Business Rules',
-                            style: tokens.typography.titleMedium),
-                        const SizedBox(width: 8),
-                        // "Admin Only" orange pill badge — always visible
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                                color: Colors.orange.withOpacity(0.3)),
+                    Builder(builder: (ctx) {
+                      final l10n = AppLocalizations.of(ctx)!;
+                      return Row(
+                        children: [
+                          Text(l10n.admin_settings_businessTitle,
+                              style: tokens.typography.titleMedium),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                  color: Colors.orange.withOpacity(0.3)),
+                            ),
+                            child: Text(l10n.admin_settings_adminOnly,
+                                style: tokens.typography.bodySmall.copyWith(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.w600,
+                                )),
                           ),
-                          child: Text('Admin Only',
-                              style: tokens.typography.bodySmall.copyWith(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.w600,
-                              )),
-                        ),
-                      ],
-                    ),
-                    Text('Configure membership & class logic',
-                        style: tokens.typography.bodySmall.copyWith(color: c.muted)),
+                        ],
+                      );
+                    }),
+                    Builder(builder: (ctx) {
+                      final l10n = AppLocalizations.of(ctx)!;
+                      return Text(l10n.admin_settings_businessSubtitle,
+                          style: tokens.typography.bodySmall.copyWith(color: c.muted));
+                    }),
                   ],
                 ),
               ],
@@ -143,7 +145,7 @@ class _BusinessRulesSectionWidgetState
                   const Icon(Icons.calendar_month_outlined,
                       size: 18, color: Colors.grey),
                   const SizedBox(width: 8),
-                  Text('Subscription Rules',
+                  Text(AppLocalizations.of(context)!.admin_settings_subscriptionRules,
                       style: tokens.typography.bodyMedium.copyWith(
                           fontWeight: FontWeight.w600)),
                   const Spacer(),
@@ -174,7 +176,6 @@ class _BusinessRulesSectionWidgetState
 
   Widget _buildToggles(BuildContext context, AdminSettingsState state,
       AdminSettingsCubit cubit, dynamic tokens, dynamic c) {
-    // Show loading shimmer while the initial GET is in flight
     if (state.status == AdminSettingsStatus.loading ||
         state.businessRules == null) {
       return const Padding(
@@ -184,13 +185,14 @@ class _BusinessRulesSectionWidgetState
     }
 
     final rules = state.businessRules!;
+    final l10n  = AppLocalizations.of(context)!;
 
     return Column(
       children: [
         Divider(height: 1, color: c.border.withOpacity(0.15)),
         _ToggleRow(
-          label: 'Allow class subscription without membership',
-          subtitle: 'Users can join classes without buying a plan',
+          label: l10n.admin_settings_allowClassWithoutMembership,
+          subtitle: l10n.admin_settings_allowClassWithoutMembershipDesc,
           value: rules.allowClassWithoutMembership,
           isOwner: _isOwner,
           onChanged: (v) =>
@@ -200,8 +202,8 @@ class _BusinessRulesSectionWidgetState
         ),
         Divider(height: 1, color: c.border.withOpacity(0.15)),
         _ToggleRow(
-          label: 'Require membership for class subscription',
-          subtitle: 'Users must have an active membership to subscribe to classes',
+          label: l10n.admin_settings_requireMembershipForClass,
+          subtitle: l10n.admin_settings_requireMembershipForClassDesc,
           value: rules.requireMembershipForClass,
           isOwner: _isOwner,
           onChanged: (v) =>
@@ -211,8 +213,8 @@ class _BusinessRulesSectionWidgetState
         ),
         Divider(height: 1, color: c.border.withOpacity(0.15)),
         _ToggleRow(
-          label: 'Allow membership without class enrollment',
-          subtitle: 'Members can purchase plans without enrolling in any class',
+          label: l10n.admin_settings_allowMembershipWithoutClass,
+          subtitle: l10n.admin_settings_allowMembershipWithoutClassDesc,
           value: rules.allowMembershipWithoutClass,
           isOwner: _isOwner,
           onChanged: (v) =>
@@ -222,8 +224,8 @@ class _BusinessRulesSectionWidgetState
         ),
         Divider(height: 1, color: c.border.withOpacity(0.15)),
         _ToggleRow(
-          label: 'Allow both independently',
-          subtitle: 'Memberships and classes can be purchased separately',
+          label: l10n.admin_settings_allowBothIndependently,
+          subtitle: l10n.admin_settings_allowBothIndependentlyDesc,
           value: rules.allowBothIndependently,
           isOwner: _isOwner,
           onChanged: (v) =>
@@ -289,7 +291,7 @@ class _ToggleRow extends StatelessWidget {
           isOwner
               ? toggle
               : Tooltip(
-            message: 'Only the owner can change business rules',
+            message: AppLocalizations.of(context)!.admin_settings_ownerOnly,
             child: toggle,
           ),
         ],

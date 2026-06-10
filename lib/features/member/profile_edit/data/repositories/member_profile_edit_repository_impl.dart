@@ -78,4 +78,27 @@ class MemberProfileEditRepositoryImpl implements MemberProfileEditRepository {
   String readError(Object error, String fallback) {
     return _service.readError(error, fallback);
   }
+  @override
+  Future<void> sendPhoneChangeVerificationCode({
+    required String phoneNumber,
+    required String password,
+    required int ownerProjectLinkId,
+  }) {
+    return _service.sendPhoneChangeVerificationCode(
+      phoneNumber: phoneNumber,
+      password: password,
+      ownerProjectLinkId: ownerProjectLinkId,
+    );
+  }
+
+  @override
+  Future<void> verifyPhoneChangeCode({
+    required String phoneNumber,
+    required String code,
+  }) {
+    return _service.verifyPhoneChangeCode(
+      phoneNumber: phoneNumber,
+      code: code,
+    );
+  }
 }

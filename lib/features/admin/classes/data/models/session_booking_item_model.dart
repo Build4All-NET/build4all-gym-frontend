@@ -33,16 +33,16 @@ class SessionBookingItemModel {
 
   factory SessionBookingItemModel.fromJson(Map<String, dynamic> json) {
     return SessionBookingItemModel(
-      bookingId:        json['bookingId']        as int,
-      userId:           json['userId']           as int,
+      bookingId:        (json['bookingId']        as num?)?.toInt() ?? 0,
+      userId:           (json['userId']           as num?)?.toInt() ?? 0,
       fullName:         json['fullName']         as String? ?? 'Unknown',
       phone:            json['phone']            as String? ?? '',
-      profileFileId:    json['profileFileId']    as int?,
+      profileFileId:    (json['profileFileId']   as num?)?.toInt(),
       status:           json['status']           as String? ?? 'BOOKED',
-      waitlistPosition: json['waitlistPosition'] as int?,
+      waitlistPosition: (json['waitlistPosition'] as num?)?.toInt(),
       paymentStatus:    json['paymentStatus']    as String?,
       paymentMethod:    json['paymentMethod']    as String?,
-      invoiceId:        json['invoiceId']        as int?,
+      invoiceId:        (json['invoiceId']       as num?)?.toInt(),
     );
   }
 

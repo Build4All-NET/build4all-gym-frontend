@@ -423,6 +423,8 @@
   "@navPtSessions": { "description": "Drawer nav item" },
   "navTrainingVideos": "فيديوهات التدريب",
   "@navTrainingVideos": { "description": "Drawer nav item" },
+  "navPtPackageBookings": "مدفوعات باقات PT",
+  "@navPtPackageBookings": { "description": "Drawer nav item — pending cash PT package bookings" },
 
   "accountProfileUpdateSuccess": "تم تحديث الملف الشخصي بنجاح",
   "accountStatExercises": "التمارين",
@@ -524,6 +526,9 @@
   "@ptPackageMaxDaysReached": { "placeholders": { "max": { "type": "int" } } },
   "ptPackageNoAvailableSlots": "لا توجد أوقات متاحة",
   "ptWeeklySlotsFailed": "تعذر تحميل الأوقات المتاحة",
+  "ptRequestTimePickerHint": "اطلب وقتاً من المدرب",
+  "ptTimeRequestSuccess": "تم إرسال طلب الوقت إلى المدرب.",
+  "ptTimeRequestFailed": "تعذر إرسال طلب الوقت. يرجى المحاولة مجدداً.",
   "ptBookingRequestSuccess": "تم إرسال الطلب إلى المدرب. بانتظار الموافقة.",
   "ptBookingRequestThisTime": "طلب هذا الوقت",
   "ptBookingBookSession": "حجز الجلسة",
@@ -603,6 +608,8 @@
   "myInfoGenderFemale": "أنثى",
   "myInfoGenderOther": "آخر",
   "myInfoGenderPreferNotToSay": "أفضل عدم الإجابة",
+  "myInfoAddress": "العنوان",
+  "myInfoAddressHint": "أدخل عنوانك",
   "myInfoDateOfBirth": "تاريخ الميلاد",
   "myInfoSelectDateOfBirth": "اختر تاريخ الميلاد",
   "myInfoHeightCm": "الطول (سم)",
@@ -666,11 +673,7 @@
   "checkins_blockTitle": "حجب العضو",
   "checkins_cancel": "إلغاء",
   "checkins_blockConfirm": "حجب",
-<<<<<<< fixing
   "checkins_scannerTitle": "مسح QR للعضو"
-}
-=======
-  "checkins_scannerTitle": "مسح QR للعضو",
   "sessionDetailBookingClosed": "انتهى وقت الحجز",
   "booked": "محجوز",
   "noActiveMembership": "لا توجد عضوية نشطة",
@@ -1222,5 +1225,21 @@
   "trainer_dateLabel": "التاريخ",
   "myInfoAddress": "العنوان",
   "myInfoAddressHint": "أدخل عنوانك"
+  "promotionPrice": "بعد العرض",
+  "settingsTitle": "الإعدادات",
+  "settingsUnsaved": "غير محفوظ",
+  "settingsUnexpectedError": "حدث خطأ غير متوقع",
+  "settingsTryAgain": "حاول مرة أخرى",
+  "settingsSavedSuccessfully": "تم حفظ الإعدادات بنجاح",
+  "settingsSaveFailed": "فشل حفظ الإعدادات",
+  "settingsSaving": "جارٍ الحفظ...",
+  "settingsSaveChanges": "حفظ التغييرات",
+  "settingsLanguageRegionTitle": "اللغة والمنطقة",
+  "settingsLanguageRegionSubtitle": "اختر لغتك المفضلة",
+  "settingsLanguageEnglish": "الإنجليزية",
+  "settingsLanguageEnglishSubtitle": "اللغة الافتراضية",
+  "settingsLanguageArabic": "العربية",
+  "settingsLanguageArabicSubtitle": "اللغة العربية",
+  "settingsLanguageSystemDefault": "لغة الجهاز",
+  "settingsLanguageSystemDefaultSubtitle": "استخدام لغة الجهاز"
 }
->>>>>>> local

@@ -429,6 +429,8 @@
   "@navPtSessions": { "description": "Drawer nav item" },
   "navTrainingVideos": "Training Videos",
   "@navTrainingVideos": { "description": "Drawer nav item" },
+  "navPtPackageBookings": "PT Package Payments",
+  "@navPtPackageBookings": { "description": "Drawer nav item — pending cash PT package bookings" },
 
   "accountProfileUpdateSuccess": "Profile updated successfully",
   "accountStatExercises": "Exercises",
@@ -530,6 +532,9 @@
   "@ptPackageMaxDaysReached": { "placeholders": { "max": { "type": "int" } } },
   "ptPackageNoAvailableSlots": "No available times",
   "ptWeeklySlotsFailed": "Could not load available times",
+  "ptRequestTimePickerHint": "Request a time from the trainer",
+  "ptTimeRequestSuccess": "Your time request has been sent to the trainer.",
+  "ptTimeRequestFailed": "Could not send time request. Please try again.",
   "ptBookingRequestSuccess": "Request sent to PT. Waiting for approval.",
   "ptBookingRequestThisTime": "Request this time",
   "ptBookingBookSession": "Book session",
@@ -609,6 +614,8 @@
   "myInfoGenderFemale": "Female",
   "myInfoGenderOther": "Other",
   "myInfoGenderPreferNotToSay": "Prefer not to say",
+  "myInfoAddress": "Address",
+  "myInfoAddressHint": "Enter your address",
   "myInfoDateOfBirth": "Date of Birth",
   "myInfoSelectDateOfBirth": "Select date of birth",
   "myInfoHeightCm": "Height (cm)",
@@ -672,9 +679,6 @@
   "checkins_blockTitle": "Block Member",
   "checkins_cancel": "Cancel",
   "checkins_blockConfirm": "Block",
-<<<<<<< fixing
-  "checkins_scannerTitle": "Scan Member QR"
-=======
   "checkins_scannerTitle": "Scan Member QR",
   "sessionDetailBookingClosed": "Booking closed",
   "booked": "Booked",
@@ -1237,6 +1241,22 @@
   "trainer_cashPaymentConfirmed": "Payment confirmed and sessions activated.",
   "trainer_dateLabel": "Date",
   "myInfoAddress": "Address",
-  "myInfoAddressHint": "Enter your address"
->>>>>>> local
+  "myInfoAddressHint": "Enter your address",
+  "promotionPrice": "Promotion price",
+  "settingsTitle": "Settings",
+  "settingsUnsaved": "Unsaved",
+  "settingsUnexpectedError": "Unexpected error occurred",
+  "settingsTryAgain": "Try Again",
+  "settingsSavedSuccessfully": "Settings saved successfully",
+  "settingsSaveFailed": "Failed to save settings",
+  "settingsSaving": "Saving...",
+  "settingsSaveChanges": "Save Changes",
+  "settingsLanguageRegionTitle": "Language & Region",
+  "settingsLanguageRegionSubtitle": "Choose your preferred language",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageEnglishSubtitle": "Default language",
+  "settingsLanguageArabic": "Arabic",
+  "settingsLanguageArabicSubtitle": "Arabic language",
+  "settingsLanguageSystemDefault": "System Default",
+  "settingsLanguageSystemDefaultSubtitle": "Use device language"
 }

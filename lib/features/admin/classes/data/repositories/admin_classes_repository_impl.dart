@@ -152,4 +152,14 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
       rethrow;
     }
   }
+
+  // ── rejectBooking ──────────────────────────────────────────────────────────
+  @override
+  Future<void> rejectBooking(int bookingId) async {
+    try {
+      await _service.rejectBooking(bookingId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

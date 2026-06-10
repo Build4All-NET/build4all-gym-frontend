@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class LargeStatCardsGrid extends StatelessWidget {
   final AdminDashboardSummary data;
@@ -14,6 +15,7 @@ class LargeStatCardsGrid extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final card   = tokens.card;
+    final l10n   = AppLocalizations.of(context)!;
 
     // Use theme-derived accent colors — primary for main stats, success/danger for growth
     final growthPositive = c.success;
@@ -40,7 +42,7 @@ class LargeStatCardsGrid extends StatelessWidget {
                   sublabelColor: data.members.activeMembersGrowth >= 0
                       ? growthPositive
                       : growthNegative,
-                  title:     'Active Members',
+                  title:     l10n.admin_dashboard_activeMembers,
                   cardColor: c.surface,
                   titleColor: c.muted,
                   valueColor: c.label,
@@ -53,9 +55,9 @@ class LargeStatCardsGrid extends StatelessWidget {
                   iconBg:        pendingColor.withOpacity(0.1),
                   icon:          Icons.calendar_today_outlined,
                   value:         '${data.members.pendingRenewals}',
-                  sublabel:      'Due soon',
+                  sublabel:      l10n.admin_dashboard_dueSoon,
                   sublabelColor: pendingColor,
-                  title:         'Pending Renewals',
+                  title:         l10n.admin_dashboard_pendingRenewals,
                   cardColor:     c.surface,
                   titleColor:    c.muted,
                   valueColor:    c.label,
@@ -75,9 +77,9 @@ class LargeStatCardsGrid extends StatelessWidget {
                   iconBg:        checkColor.withOpacity(0.1),
                   icon:          Icons.how_to_reg_outlined,
                   value:         '${data.checkins.todayCheckins}',
-                  sublabel:      'Live now',
+                  sublabel:      l10n.admin_dashboard_liveNow,
                   sublabelColor: checkColor,
-                  title:         "Today's Check-ins",
+                  title:         l10n.admin_dashboard_todayCheckins,
                   cardColor:     c.surface,
                   titleColor:    c.muted,
                   valueColor:    c.label,
@@ -90,9 +92,9 @@ class LargeStatCardsGrid extends StatelessWidget {
                   iconBg:        ptColor.withOpacity(0.1),
                   icon:          Icons.fitness_center_outlined,
                   value:         '${data.checkins.upcomingPTSessions}',
-                  sublabel:      'Sessions',
+                  sublabel:      l10n.admin_dashboard_sessions,
                   sublabelColor: ptColor,
-                  title:         'Upcoming PT',
+                  title:         l10n.admin_dashboard_upcomingPt,
                   cardColor:     c.surface,
                   titleColor:    c.muted,
                   valueColor:    c.label,

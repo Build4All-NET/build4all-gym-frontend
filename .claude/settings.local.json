@@ -136,9 +136,6 @@
       "Bash(xargs grep -l \"PaymentOrchestratorService\")",
       "Bash(xargs grep -l \"login\\\\|LoginService\\\\|LoginController\")",
       "Bash(xargs grep -l \"loginWithPhone\\\\|loginWithEmail\\\\|/api/auth\\\\|AuthController\")",
-<<<<<<< fixing
-      "Bash(findstr /C:\"sectionCoreOwner\" /C:\"sectionOperationsReception\" /C:\"sectionTrainingPt\")"
-=======
       "Bash(findstr /C:\"sectionCoreOwner\" /C:\"sectionOperationsReception\" /C:\"sectionTrainingPt\")",
       "Bash(xargs grep -l \"trainer\\\\|TrainerAvailability\")",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\" -Recurse)",
@@ -157,7 +154,7 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Directory)",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\\\\src\\\\main\\\\resources\\\\db\\\\migration\" | Where-Object { $_.Name -match \"V20|V111|V112\" })",
       "Bash(mvn install *)"
->>>>>>> local
+
     ]
   }
 }

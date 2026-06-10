@@ -21,7 +21,8 @@ class MemberProfileEditSubmitted extends MemberProfileEditEvent {
   final String currentPassword;
   final String newPassword;
   final int ownerProjectLinkId;
-
+  final String currentPhoneNumber;
+  final bool phoneAlreadyVerified;
   const MemberProfileEditSubmitted({
     required this.firstName,
     required this.lastName,
@@ -33,6 +34,8 @@ class MemberProfileEditSubmitted extends MemberProfileEditEvent {
     required this.currentEmail,
     required this.currentPassword,
     required this.newPassword,
+    required this.currentPhoneNumber,
+    this.phoneAlreadyVerified = false,
     required this.ownerProjectLinkId,
   });
 

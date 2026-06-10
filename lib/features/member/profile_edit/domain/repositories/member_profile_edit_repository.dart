@@ -30,4 +30,14 @@ abstract class MemberProfileEditRepository {
     required String newPassword,
     required int ownerProjectLinkId,
   });
+
+  Future<void> sendPhoneChangeVerificationCode({
+    required String phoneNumber,
+    required String password,
+    required int ownerProjectLinkId,
+  });
+  Future<void> verifyPhoneChangeCode({
+    required String phoneNumber,
+    required String code,
+  });
 }

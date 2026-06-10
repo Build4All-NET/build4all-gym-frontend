@@ -1776,9 +1776,15 @@ abstract class AppLocalizations {
   String get navAiAssistant;
 
   /// Admin drawer — Membership Requests item
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Requests'**
   String get navMembershipRequests;
 
   /// Admin drawer — Invoices item
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
   String get navInvoices;
 
   /// Admin drawer — Settings item
@@ -1876,6 +1882,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training Videos'**
   String get navTrainingVideos;
+
+  /// Drawer nav item — pending cash PT package bookings
+  ///
+  /// In en, this message translates to:
+  /// **'PT Package Payments'**
+  String get navPtPackageBookings;
 
   /// No description provided for @accountProfileUpdateSuccess.
   ///
@@ -2363,6 +2375,24 @@ abstract class AppLocalizations {
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
 
+  /// No description provided for @ptRequestTimePickerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a time from the trainer'**
+  String get ptRequestTimePickerHint;
+
+  /// No description provided for @ptTimeRequestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your time request has been sent to the trainer.'**
+  String get ptTimeRequestSuccess;
+
+  /// No description provided for @ptTimeRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send time request. Please try again.'**
+  String get ptTimeRequestFailed;
+
   /// No description provided for @ptBookingRequestSuccess.
   ///
   /// In en, this message translates to:
@@ -2807,6 +2837,18 @@ abstract class AppLocalizations {
   /// **'Prefer not to say'**
   String get myInfoGenderPreferNotToSay;
 
+  /// No description provided for @myInfoAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get myInfoAddress;
+
+  /// No description provided for @myInfoAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your address'**
+  String get myInfoAddressHint;
+
   /// No description provided for @myInfoDateOfBirth.
   ///
   /// In en, this message translates to:
@@ -3100,8 +3142,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan Member QR'**
   String get checkins_scannerTitle;
-<<<<<<< fixing
-=======
 
   /// No description provided for @sessionDetailBookingClosed.
   ///
@@ -6096,7 +6136,109 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your address'**
   String get myInfoAddressHint;
->>>>>>> local
+
+  /// No description provided for @promotionPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion price'**
+  String get promotionPrice;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsUnsaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved'**
+  String get settingsUnsaved;
+
+  /// No description provided for @settingsUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error occurred'**
+  String get settingsUnexpectedError;
+
+  /// No description provided for @settingsTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get settingsTryAgain;
+
+  /// No description provided for @settingsSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved successfully'**
+  String get settingsSavedSuccessfully;
+
+  /// No description provided for @settingsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save settings'**
+  String get settingsSaveFailed;
+
+  /// No description provided for @settingsSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get settingsSaving;
+
+  /// No description provided for @settingsSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get settingsSaveChanges;
+
+  /// No description provided for @settingsLanguageRegionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language & Region'**
+  String get settingsLanguageRegionTitle;
+
+  /// No description provided for @settingsLanguageRegionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred language'**
+  String get settingsLanguageRegionSubtitle;
+
+  /// No description provided for @settingsLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get settingsLanguageEnglish;
+
+  /// No description provided for @settingsLanguageEnglishSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default language'**
+  String get settingsLanguageEnglishSubtitle;
+
+  /// No description provided for @settingsLanguageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get settingsLanguageArabic;
+
+  /// No description provided for @settingsLanguageArabicSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic language'**
+  String get settingsLanguageArabicSubtitle;
+
+  /// No description provided for @settingsLanguageSystemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get settingsLanguageSystemDefault;
+
+  /// No description provided for @settingsLanguageSystemDefaultSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use device language'**
+  String get settingsLanguageSystemDefaultSubtitle;
+
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

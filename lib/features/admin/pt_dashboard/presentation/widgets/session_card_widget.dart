@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/pt_session_entity.dart';
 import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
@@ -34,6 +35,7 @@ class SessionCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final cs     = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
 
     return BlocBuilder<TrainerPtSessionsBloc, TrainerPtSessionsState>(
       buildWhen: (prev, curr) {
@@ -82,7 +84,7 @@ class SessionCardWidget extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             session.serviceName ??
-                                (session.notes ?? 'PT Session'),
+                                (session.notes ?? l10n.trainer_ptSession),
                             style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                           ),
                           // Trainer attribution badge (admin only)
@@ -104,7 +106,7 @@ class SessionCardWidget extends StatelessWidget {
                                       size: 11, color: cs.primary),
                                   const SizedBox(width: 4),
                                   Text(
-                                    'By ${session.trainerName}',
+                                    l10n.trainer_byName(session.trainerName!),
                                     style: TextStyle(
                                         fontSize:   11,
                                         fontWeight: FontWeight.w600,
@@ -166,6 +168,39 @@ class SessionCardWidget extends StatelessWidget {
                   ),
                 ],
 
+                // ── Accept / Decline buttons (REQUESTED only) ───────────────
+                if (session.isRequested) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (isLoading)
+                        const SizedBox(
+                          width: 24, height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      else ...[
+                        _ActionButton(
+                          label:    l10n.trainer_declineButton,
+                          icon:     Icons.close_rounded,
+                          color:    const Color(0xFFEF4444),
+                          outlined: true,
+                          onTap:    () => _confirmDecline(context),
+                        ),
+                        const SizedBox(width: 8),
+                        _ActionButton(
+                          label: l10n.trainer_acceptButton,
+                          icon:  Icons.check_rounded,
+                          color: const Color(0xFF22C55E),
+                          onTap: () => context.read<TrainerPtSessionsBloc>().add(
+                            PtSessionAcceptRequested(sessionId: session.ptSessionId),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+
                 // ── Payment badge + action buttons (SCHEDULED only) ─────────
                 if (session.isScheduled) ...[
                   const SizedBox(height: 12),
@@ -181,7 +216,7 @@ class SessionCardWidget extends StatelessWidget {
                         )
                       else ...[
                         _ActionButton(
-                          label: 'Complete',
+                          label: l10n.trainer_completeButton,
                           icon:  Icons.check_circle_outline,
                           color: const Color(0xFF22C55E),
                           onTap: () => _updateStatus(
@@ -189,7 +224,7 @@ class SessionCardWidget extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         _ActionButton(
-                          label:    'Cancel',
+                          label:    l10n.trainer_cancelSessionButton,
                           icon:     Icons.cancel_outlined,
                           color:    const Color(0xFFEF4444),
                           outlined: true,
@@ -216,17 +251,50 @@ class SessionCardWidget extends StatelessWidget {
         PtSessionStatusUpdateRequested(sessionId: sessionId, status: status));
   }
 
-  void _confirmCancel(BuildContext context) {
+  void _confirmDecline(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title:   const Text('Cancel Session'),
-        content: const Text('Are you sure you want to cancel this session?'),
+        title:   Text(l10n.trainer_declineRequestTitle),
+        content: Text(l10n.trainer_declineRequestMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Keep'),
+            child: Text(l10n.trainer_keepButton),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<TrainerPtSessionsBloc>().add(
+                PtSessionDeclineRequested(sessionId: session.ptSessionId),
+              );
+            },
+            child: Text(l10n.trainer_declineButton),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmCancel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title:   Text(l10n.trainer_cancelSessionTitle),
+        content: Text(l10n.trainer_cancelSessionMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.trainer_keepButton),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -238,7 +306,7 @@ class SessionCardWidget extends StatelessWidget {
               Navigator.pop(context);
               _updateStatus(context, session.ptSessionId, 'CANCELLED');
             },
-            child: const Text('Cancel Session'),
+            child: Text(l10n.trainer_cancelSessionConfirm),
           ),
         ],
       ),
@@ -281,18 +349,21 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Color  bg;
     Color  fg;
     String label;
     switch (status) {
+      case 'REQUESTED':
+        bg = const Color(0xFFFFF7ED); fg = const Color(0xFFEA580C); label = l10n.trainer_statusRequested; break;
       case 'COMPLETED':
-        bg = const Color(0xFFD1FAE5); fg = const Color(0xFF059669); label = 'completed'; break;
+        bg = const Color(0xFFD1FAE5); fg = const Color(0xFF059669); label = l10n.trainer_statusCompleted; break;
       case 'CANCELLED':
-        bg = const Color(0xFFFEE2E2); fg = const Color(0xFFDC2626); label = 'cancelled'; break;
+        bg = const Color(0xFFFEE2E2); fg = const Color(0xFFDC2626); label = l10n.trainer_statusCancelled; break;
       case 'NO_SHOW':
-        bg = const Color(0xFFFEF3C7); fg = const Color(0xFFD97706); label = 'no-show';   break;
+        bg = const Color(0xFFFEF3C7); fg = const Color(0xFFD97706); label = l10n.trainer_statusNoShow;   break;
       default:
-        bg = const Color(0xFFEEF2FF); fg = const Color(0xFF4F46E5); label = 'scheduled';
+        bg = const Color(0xFFEEF2FF); fg = const Color(0xFF4F46E5); label = l10n.trainer_statusScheduled;
     }
     return Container(
       padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -393,7 +464,7 @@ class _PackageProgress extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Session Progress',
+            Text(AppLocalizations.of(context)!.trainer_sessionProgress,
                 style: TextStyle(fontSize: 12, color: Colors.grey[500])),
             Text('$current/$total',
                 style: TextStyle(

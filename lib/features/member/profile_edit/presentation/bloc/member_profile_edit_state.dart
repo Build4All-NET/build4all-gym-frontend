@@ -117,3 +117,23 @@ class MemberProfileEditError extends MemberProfileEditState {
   @override
   List<Object?> get props => [message];
 }
+class MemberProfileEditPhoneVerificationRequired
+    extends MemberProfileEditState {
+  final String newPhoneNumber;
+  final int ownerProjectLinkId;
+
+  const MemberProfileEditPhoneVerificationRequired({
+    required this.newPhoneNumber,
+    required this.ownerProjectLinkId,
+  });
+
+  @override
+  List<Object?> get props => [
+    newPhoneNumber,
+    ownerProjectLinkId,
+  ];
+}
+
+class MemberProfileEditPhoneVerified extends MemberProfileEditState {
+  const MemberProfileEditPhoneVerified();
+}

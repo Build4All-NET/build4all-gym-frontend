@@ -9,13 +9,11 @@ import 'package:build4allgym/features/member/build4all_profile/domain/entities/m
 class AccountPersonalInfoWidget extends StatelessWidget {
   final MemberAccountEntity account;
   final MemberBuild4AllProfileEntity profile;
-  final VoidCallback onEditTap;
 
   const AccountPersonalInfoWidget({
     super.key,
     required this.account,
     required this.profile,
-    required this.onEditTap,
   });
 
   @override
@@ -82,30 +80,6 @@ class AccountPersonalInfoWidget extends StatelessWidget {
               value: account.address!,
               isLast: true,
             ),
-
-          SizedBox(height: tokens.spacing.md),
-          SizedBox(
-            width: double.infinity,
-            height: tokens.button.height,
-            child: ElevatedButton(
-              onPressed: onEditTap,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: tokens.colors.primary,
-                foregroundColor: tokens.colors.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(tokens.button.radius),
-                ),
-              ),
-              child: Text(
-                l10n.accountEditProfile,
-                style: TextStyle(
-                  fontSize: tokens.button.textSize,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

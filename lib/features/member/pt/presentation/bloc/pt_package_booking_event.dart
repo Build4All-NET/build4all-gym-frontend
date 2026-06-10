@@ -17,9 +17,13 @@ class PtPackageBookingStarted extends PtPackageBookingEvent {
   final int trainerId;
   final List<PtPackageEntity> packages;
 
+  // Weekday codes where trainer has set availability.
+  final List<String> availableDays;
+
   const PtPackageBookingStarted({
     required this.trainerId,
     required this.packages,
+    this.availableDays = const [],
   });
 }
 
@@ -79,7 +83,45 @@ class PtPackageTimeSelected extends PtPackageBookingEvent {
   });
 }
 
-/// Fired when user taps confirm booking.
+/// Fired when user taps confirm booking (no payment yet — opens payment sheet).
 class PtPackageBookingConfirmRequested extends PtPackageBookingEvent {
   const PtPackageBookingConfirmRequested();
+}
+
+/// Fired by the payment sheet once the user picks a payment method.
+///
+/// The bloc creates the booking with the chosen paymentMethod and emits
+/// PtPackageBookingPaymentReady so the sheet can drive Stripe or redirect.
+class PtPackagePaymentConfirmRequested extends PtPackageBookingEvent {
+  final String paymentMethod;
+
+  const PtPackagePaymentConfirmRequested(this.paymentMethod);
+}
+
+/// Fired by the payment sheet after Stripe presentPaymentSheet() succeeds,
+/// or after a redirect payment is confirmed in-browser.
+class PtPackagePaymentActivated extends PtPackageBookingEvent {
+  const PtPackagePaymentActivated();
+}
+
+/// Fired when user requests a custom time from the trainer.
+///
+/// Used when:
+/// - The selected day has no available slots.
+/// - The user wants a time outside the trainer's current availability.
+///
+/// This creates a REQUESTED pt_session (not a confirmed booking).
+/// Backend endpoint: POST /api/pt-sessions/request
+///
+/// hour/minute represent the user's desired start time (24h).
+class PtPackageTimeRequestSubmitted extends PtPackageBookingEvent {
+  final String day;   // "MONDAY", "TUESDAY", etc.
+  final int hour;     // 0-23
+  final int minute;   // 0-59
+
+  const PtPackageTimeRequestSubmitted({
+    required this.day,
+    required this.hour,
+    required this.minute,
+  });
 }

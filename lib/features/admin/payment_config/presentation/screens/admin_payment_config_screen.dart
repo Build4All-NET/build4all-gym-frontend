@@ -307,12 +307,12 @@ class _MethodCard extends StatelessWidget {
                   )
                 else
                   Switch(
-                    value: method.tenantEnabled,
-                    activeThumbColor: c.primary,
-                    onChanged: (value) => context
-                        .read<AdminPaymentConfigCubit>()
-                        .toggleMethod(method, value),
-                  ),
+                  value: method.tenantEnabled,
+                  activeColor: c.primary, //  works
+                  onChanged: (value) => context
+                      .read<AdminPaymentConfigCubit>()
+                      .toggleMethod(method, value),
+                ),
               ],
             ),
           ),

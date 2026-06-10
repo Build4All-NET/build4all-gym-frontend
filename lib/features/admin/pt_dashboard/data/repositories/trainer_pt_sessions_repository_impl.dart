@@ -129,4 +129,86 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
       return (data: null, failure: const NetworkFailure('No internet connection.'));
     }
   }
+
+  // ── Get all upcoming sessions ──────────────────────────────────────────────
+
+  @override
+  Future<({List<PtSessionEntity>? data, Failure? failure})> getUpcoming({
+    required int branchId,
+    int? trainerId,
+  }) async {
+    try {
+      final models = await _service.getUpcoming(branchId: branchId, trainerId: trainerId);
+      return (data: models.map((m) => m.toEntity()).toList(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
+  // ── Get all REQUESTED sessions ─────────────────────────────────────────────
+
+  @override
+  Future<({List<PtSessionEntity>? data, Failure? failure})> getRequests({
+    required int branchId,
+    int? trainerId,
+  }) async {
+    try {
+      final models = await _service.getRequests(branchId: branchId, trainerId: trainerId);
+      return (data: models.map((m) => m.toEntity()).toList(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
+  // ── Accept REQUESTED session ────────────────────────────────────────────────
+
+  @override
+  Future<({PtSessionEntity? data, Failure? failure})> acceptRequest({
+    required int sessionId,
+  }) async {
+    try {
+      final model = await _service.acceptRequest(sessionId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
+  // ── Decline REQUESTED session ───────────────────────────────────────────────
+
+  @override
+  Future<({PtSessionEntity? data, Failure? failure})> declineRequest({
+    required int sessionId,
+  }) async {
+    try {
+      final model = await _service.declineRequest(sessionId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
 }

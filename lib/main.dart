@@ -9,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Initialize Dio for the GYM backend
-  // Member home/account APIs are on PROJECT_API_BASE_URL = port 8980
+  // Member home/account APIs are on OVERRIDE_BASE_URL = port 8980
   g.makeDefaultDio(Env.apiProjectBaseUrl);
 
   // 2. Restore saved token

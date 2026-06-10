@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
@@ -49,7 +50,7 @@ class _AdminInvoiceScreenState extends State<AdminInvoiceScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            AdminAppBar(title: 'Invoice'),
+            AdminAppBar(title: AppLocalizations.of(context)!.admin_invoices_invoiceLabel),
             Expanded(
               child: BlocBuilder<AdminInvoiceBloc, AdminInvoiceState>(
                 builder: (ctx, state) {
@@ -75,7 +76,7 @@ class _AdminInvoiceScreenState extends State<AdminInvoiceScreen> {
                               onPressed: () => ctx
                                   .read<AdminInvoiceBloc>()
                                   .add(LoadInvoiceEvent(widget.invoiceId)),
-                              child: const Text('Retry'),
+                              child: Text(AppLocalizations.of(ctx)!.retry),
                             ),
                           ],
                         ),
@@ -139,7 +140,7 @@ class _InvoiceView extends StatelessWidget {
               onPressed: () => _downloadPdf(context, invoice, gymName, c, t),
               icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
               label: Text(
-                'Download / Share PDF',
+                AppLocalizations.of(context)!.admin_invoices_downloadPdf,
                 style: t.bodyMedium.copyWith(
                     color: c.onPrimary, fontWeight: FontWeight.w800),
               ),

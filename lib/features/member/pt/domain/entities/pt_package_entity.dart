@@ -28,6 +28,10 @@ class PtPackageEntity {
   /// Example: 112 days.
   final int daysAvailable;
 
+  /// Session duration in minutes.
+  /// Example: 60, 90. Null means default (60).
+  final int? sessionDurationMinutes;
+
   /// Minimum number of days/week the member must choose.
   /// Example: 1.
   final int minDaysPerWeek;
@@ -55,6 +59,7 @@ class PtPackageEntity {
     required this.packageType,
     required this.numberOfSessions,
     required this.daysAvailable,
+    this.sessionDurationMinutes,
     required this.minDaysPerWeek,
     required this.maxDaysPerWeek,
     required this.price,

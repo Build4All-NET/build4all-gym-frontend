@@ -42,4 +42,26 @@ abstract class TrainerPtSessionsRepository {
     required int sessionId,
     required String status, // COMPLETED | CANCELLED | NO_SHOW
   });
+
+  /// GET /api/trainer/pt-sessions/upcoming?branchId=&[trainerId=]
+  Future<({List<PtSessionEntity>? data, Failure? failure})> getUpcoming({
+    required int branchId,
+    int? trainerId,
+  });
+
+  /// GET /api/trainer/pt-sessions/requests?branchId=&[trainerId=]
+  Future<({List<PtSessionEntity>? data, Failure? failure})> getRequests({
+    required int branchId,
+    int? trainerId,
+  });
+
+  /// PATCH /api/trainer/pt-sessions/{id}/accept  (REQUESTED → SCHEDULED)
+  Future<({PtSessionEntity? data, Failure? failure})> acceptRequest({
+    required int sessionId,
+  });
+
+  /// PATCH /api/trainer/pt-sessions/{id}/decline  (REQUESTED → CANCELLED)
+  Future<({PtSessionEntity? data, Failure? failure})> declineRequest({
+    required int sessionId,
+  });
 }

@@ -200,6 +200,20 @@ class AdminClassesService {
     }
   }
 
+  // ── PATCH /api/admin/classes/bookings/{bookingId}/reject ──────────────────
+  Future<void> rejectBooking(int bookingId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/classes/bookings/$bookingId/reject');
+    try {
+      final response = await _client.patch(uri, headers: headers, body: '{}');
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── GET /api/admin/classes/{sessionId}/bookings ────────────────────────────
   // Returns all BOOKED + WAITLISTED members for a session.
   Future<List<SessionBookingItemModel>> getSessionBookings(

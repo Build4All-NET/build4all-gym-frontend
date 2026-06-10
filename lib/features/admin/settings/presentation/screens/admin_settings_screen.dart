@@ -8,12 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/localization/locale_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
-<<<<<<< fixing
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../../../common/settings/cubits/appearance_settings_cubit.dart';
 import '../../../../../../common/settings/widgets/appearance_section_widget.dart';
-=======
+
 import '../../../../../l10n/app_localizations.dart';
->>>>>>> local
+
 import '../../../../../../common/settings/widgets/language_section_widget.dart';
 import '../../../../../../common/settings/widgets/settings_version_footer.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -66,14 +66,14 @@ class _AdminSettingsBody extends StatelessWidget {
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: Text('Settings', style: tokens.typography.titleMedium),
+        title: Text(AppLocalizations.of(context)!.navSettings, style: tokens.typography.titleMedium),
         actions: [
           if (state.isDirty)
             Padding(
               padding: const EdgeInsets.only(right: 12),
               child: Chip(
-                label: const Text('Unsaved',
-                    style: TextStyle(
+                label: Text(AppLocalizations.of(context)!.admin_settings_unsaved,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.w600)),
@@ -101,7 +101,7 @@ class _AdminSettingsBody extends StatelessWidget {
                     child: TextField(
                       readOnly: true,
                       decoration: InputDecoration(
-                        hintText: 'Search settings...',
+                        hintText: AppLocalizations.of(context)!.admin_settings_searchHint,
                         prefixIcon: Icon(Icons.search, color: c.muted),
                         filled: true,
                         fillColor: c.surface,
@@ -174,25 +174,23 @@ class _AdminSettingsBody extends StatelessWidget {
     if (success) {
       await context.read<LocaleCubit>().setLocale(state.pendingLocale);
       if (!context.mounted) return;
-<<<<<<< fixing
       context.read<ThemeCubit>().setThemeMode(state.selectedThemeMode);
       // context.read<ThemeCubit>().setThemeMode(state.selectedThemeMode);
       // ↑ Uncomment when GA-478 adds setThemeMode() to ThemeCubit.
 
       if (!context.mounted) return;
-=======
-      final l10n = AppLocalizations.of(context)!;
->>>>>>> local
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Settings saved successfully'),
+        SnackBar(
+            content: Text(l10n.admin_settings_saveSuccess),
             backgroundColor: Colors.green),
       );
     } else {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content:
-            Text(cubit.state.errorMessage ?? 'Failed to save settings'),
+            Text(cubit.state.errorMessage ?? l10n.admin_settings_saveFailed),
             backgroundColor: Colors.red),
       );
     }
@@ -236,7 +234,7 @@ class _SaveChangesButton extends StatelessWidget {
                 color: Colors.white, strokeWidth: 2),
           )
               : const Icon(Icons.save_rounded, size: 20),
-          label: Text(isSaving ? 'Saving...' : 'Save Changes',
+          label: Text(isSaving ? AppLocalizations.of(context)!.admin_settings_saving : AppLocalizations.of(context)!.admin_settings_saveChanges,
               style: const TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w600)),
           style: ElevatedButton.styleFrom(
@@ -289,9 +287,9 @@ class _LegalPoliciesStub extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Legal & Policies',
+                Text(AppLocalizations.of(context)!.admin_settings_legalTitle,
                     style: tokens.typography.titleMedium),
-                Text('Review our policies',
+                Text(AppLocalizations.of(context)!.admin_settings_legalSubtitle,
                     style: tokens.typography.bodySmall
                         .copyWith(color: c.muted)),
               ],

@@ -79,3 +79,53 @@ class UpdateSessionStatusUseCase {
   }) =>
       _repository.updateStatus(sessionId: sessionId, status: status);
 }
+
+// ── 5. Get all upcoming sessions (Upcoming tab) ─────────────────────────────
+
+class GetUpcomingSessionsUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const GetUpcomingSessionsUseCase(this._repository);
+
+  Future<({List<PtSessionEntity>? data, Failure? failure})> call({
+    required int branchId,
+    int? trainerId,
+  }) =>
+      _repository.getUpcoming(branchId: branchId, trainerId: trainerId);
+}
+
+// ── 7. Get all REQUESTED sessions (Requests tab) ────────────────────────────
+
+class GetSessionRequestsUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const GetSessionRequestsUseCase(this._repository);
+
+  Future<({List<PtSessionEntity>? data, Failure? failure})> call({
+    required int branchId,
+    int? trainerId,
+  }) =>
+      _repository.getRequests(branchId: branchId, trainerId: trainerId);
+}
+
+// ── 8. Accept REQUESTED session ─────────────────────────────────────────────
+
+class AcceptSessionRequestUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const AcceptSessionRequestUseCase(this._repository);
+
+  Future<({PtSessionEntity? data, Failure? failure})> call({
+    required int sessionId,
+  }) =>
+      _repository.acceptRequest(sessionId: sessionId);
+}
+
+// ── 9. Decline REQUESTED session ────────────────────────────────────────────
+
+class DeclineSessionRequestUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const DeclineSessionRequestUseCase(this._repository);
+
+  Future<({PtSessionEntity? data, Failure? failure})> call({
+    required int sessionId,
+  }) =>
+      _repository.declineRequest(sessionId: sessionId);
+}

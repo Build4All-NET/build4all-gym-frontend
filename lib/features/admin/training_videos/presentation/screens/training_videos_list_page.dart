@@ -2,6 +2,7 @@ import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/training_videos_bloc.dart';
 import '../bloc/training_videos_event.dart';
@@ -37,7 +38,7 @@ class _TrainingVideosListView extends StatelessWidget {
           curr is DeleteVideoLoading,
       listener: (context, state) {
         if (state is DeleteVideoSuccess) {
-          AppToast.success(context, 'Video deleted');
+          AppToast.success(context, AppLocalizations.of(context)!.admin_trainingVideos_deleteSuccess);
           context.read<TrainingVideosBloc>().add(LoadTrainingVideos());
         } else if (state is DeleteVideoError) {
           AppToast.error(context, state.message);
@@ -45,7 +46,7 @@ class _TrainingVideosListView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Training Videos'),
+          title: Text(AppLocalizations.of(context)!.navTrainingVideos),
           centerTitle: false,
         ),
         drawer: AdminNavigationDrawer(
@@ -90,7 +91,7 @@ class _TrainingVideosListView extends StatelessWidget {
                       onPressed: () => context
                           .read<TrainingVideosBloc>()
                           .add(LoadTrainingVideos()),
-                      child: const Text('Retry'),
+                      child: Text(AppLocalizations.of(context)!.retry),
                     ),
                   ],
                 ),
@@ -114,6 +115,7 @@ class _LoadedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return CustomScrollView(
       slivers: [
         // Stats row
@@ -124,7 +126,7 @@ class _LoadedBody extends StatelessWidget {
               children: [
                 Expanded(
                   child: _StatCard(
-                    label: 'Total Videos',
+                    label: l10n.admin_trainingVideos_totalVideos,
                     value: '${state.stats.totalVideos}',
                     backgroundColor:
                     const Color(0xFFEDE7F6), // lavender/purple tint
@@ -135,7 +137,7 @@ class _LoadedBody extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _StatCard(
-                    label: 'Total Views',
+                    label: l10n.admin_trainingVideos_totalViews,
                     value: '${state.stats.totalViews}',
                     backgroundColor:
                     const Color(0xFFE0F2FE), // light blue tint
@@ -159,8 +161,8 @@ class _LoadedBody extends StatelessWidget {
         ),
         // Video list
         if (state.videos.isEmpty)
-          const SliverFillRemaining(
-            child: Center(child: Text('No videos found.')),
+          SliverFillRemaining(
+            child: Center(child: Text(l10n.admin_trainingVideos_noVideos)),
           )
         else
           SliverList(
@@ -239,6 +241,7 @@ class _CategoryDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return DropdownButtonFormField<int?>(
       value: selectedCategoryId,
       decoration: InputDecoration(
@@ -247,11 +250,11 @@ class _CategoryDropdown extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         isDense: true,
       ),
-      hint: const Text('All Categories'),
+      hint: Text(l10n.admin_trainingVideos_allCategories),
       items: [
-        const DropdownMenuItem<int?>(
+        DropdownMenuItem<int?>(
           value: null,
-          child: Text('All Categories'),
+          child: Text(l10n.admin_trainingVideos_allCategories),
         ),
         ...categories.map(
               (c) => DropdownMenuItem<int?>(

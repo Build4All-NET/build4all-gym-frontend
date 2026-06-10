@@ -292,14 +292,14 @@ class _AccountBody extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: -60,
+                bottom: -50,
                 left: tokens.spacing.lg,
                 right: tokens.spacing.lg,
                 child: AccountActionCardsWidget(account: account),
               ),
             ],
           ),
-          const SizedBox(height: 76),
+          const SizedBox(height: 60),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: tokens.spacing.lg),
             child: Column(
@@ -310,7 +310,6 @@ class _AccountBody extends StatelessWidget {
                 AccountPersonalInfoWidget(
                   account: account,
                   profile: profile,
-                  onEditTap: () => _openEditProfile(context),
                 ),
                 SizedBox(height: tokens.spacing.lg),
                 AccountMenuSectionWidget(

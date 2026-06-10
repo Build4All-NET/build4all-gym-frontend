@@ -150,6 +150,118 @@ class TrainerPtSessionsService {
     }
   }
 
+  // ── GET all upcoming sessions (from now, no date filter) ─────────────────
+
+  Future<List<PtSessionModel>> getUpcoming({
+    required int branchId,
+    int? trainerId,
+  }) async {
+    final headers = _authHeaders();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/upcoming'
+        '?branchId=$branchId';
+    final uri = Uri.parse(
+      trainerId != null ? '$base&trainerId=$trainerId' : base,
+    );
+
+    try {
+      final response = await _client.get(uri, headers: headers);
+      debugPrint('GET UPCOMING STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        final data = decoded['data'] as List<dynamic>;
+        return data
+            .map((e) => PtSessionModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── GET all REQUESTED sessions (no date filter) ──────────────────────────
+
+  Future<List<PtSessionModel>> getRequests({
+    required int branchId,
+    int? trainerId,
+  }) async {
+    final headers = _authHeaders();
+    final base = '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/requests'
+        '?branchId=$branchId';
+    final uri = Uri.parse(
+      trainerId != null ? '$base&trainerId=$trainerId' : base,
+    );
+
+    try {
+      final response = await _client.get(uri, headers: headers);
+      debugPrint('GET REQUESTS STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        final data = decoded['data'] as List<dynamic>;
+        return data
+            .map((e) => PtSessionModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── PATCH accept REQUESTED session ───────────────────────────────────────
+
+  Future<PtSessionModel> acceptRequest(int sessionId) async {
+    final headers = _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/accept',
+    );
+
+    try {
+      final response = await _client.patch(uri, headers: headers);
+      debugPrint('ACCEPT REQUEST STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        return PtSessionModel.fromJson(decoded['data'] as Map<String, dynamic>);
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── PATCH decline REQUESTED session ──────────────────────────────────────
+
+  Future<PtSessionModel> declineRequest(int sessionId) async {
+    final headers = _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/decline',
+    );
+
+    try {
+      final response = await _client.patch(uri, headers: headers);
+      debugPrint('DECLINE REQUEST STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        return PtSessionModel.fromJson(decoded['data'] as Map<String, dynamic>);
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── PATCH update status ───────────────────────────────────────────────────
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {

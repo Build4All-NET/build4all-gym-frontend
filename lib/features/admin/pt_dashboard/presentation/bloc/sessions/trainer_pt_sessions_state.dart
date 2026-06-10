@@ -58,11 +58,18 @@ class PtSessionsLoaded extends TrainerPtSessionsState {
 
   final List<PtSessionEntity> sessions;
 
+  /// All future active sessions loaded independently of date — shown in tab 1.
+  final List<PtSessionEntity> upcomingSessions;
+
+  /// All REQUESTED sessions loaded independently of date — shown in tab 3.
+  final List<PtSessionEntity> requestedSessions;
+
   final DateTime selectedDate;
 
   /// 0 = Today
   /// 1 = Upcoming
   /// 2 = Completed
+  /// 3 = Requests (REQUESTED status, date-independent)
   final int selectedTabIndex;
 
   final PtSessionStatsEntity stats;
@@ -72,6 +79,8 @@ class PtSessionsLoaded extends TrainerPtSessionsState {
     required this.selectedDate,
     required this.selectedTabIndex,
     required this.stats,
+    this.upcomingSessions  = const [],
+    this.requestedSessions = const [],
   });
 
   // ==========================================================================
@@ -137,18 +146,20 @@ class PtSessionsLoaded extends TrainerPtSessionsState {
     // ======================================================================
 
       case 1:
-
-        return sessions.where((session) {
-
-          final start = session.startTime;
-
-          if (start == null) return false;
-
-          return start.isAfter(today) &&
-              !_isSameDay(start, today) &&
-              _isActive(session.status);
-
+        // Also include today's future SCHEDULED sessions so that accepting
+        // a same-day request immediately shows up here even if the backend
+        // /upcoming endpoint only returns sessions after today.
+        final now = DateTime.now();
+        final todayFuture = sessions.where((s) {
+          final start = s.startTime;
+          return s.isScheduled && start != null && start.isAfter(now);
         }).toList();
+        final upcomingIds = {for (final s in upcomingSessions) s.ptSessionId};
+        final extra = todayFuture.where((s) => !upcomingIds.contains(s.ptSessionId)).toList();
+        final merged = [...upcomingSessions, ...extra]
+          ..sort((a, b) => (a.startTime ?? DateTime(9999))
+              .compareTo(b.startTime ?? DateTime(9999)));
+        return merged;
 
     // ======================================================================
     // COMPLETED
@@ -162,6 +173,13 @@ class PtSessionsLoaded extends TrainerPtSessionsState {
 
         }).toList();
 
+    // ======================================================================
+    // REQUESTS
+    // ======================================================================
+
+      case 3:
+        return List.of(requestedSessions);
+
       default:
         return [];
     }
@@ -173,23 +191,27 @@ class PtSessionsLoaded extends TrainerPtSessionsState {
 
   PtSessionsLoaded copyWith({
     List<PtSessionEntity>? sessions,
+    List<PtSessionEntity>? upcomingSessions,
+    List<PtSessionEntity>? requestedSessions,
     DateTime? selectedDate,
     int? selectedTabIndex,
     PtSessionStatsEntity? stats,
   }) {
-
     return PtSessionsLoaded(
-      sessions: sessions ?? this.sessions,
-      selectedDate: selectedDate ?? this.selectedDate,
-      selectedTabIndex:
-      selectedTabIndex ?? this.selectedTabIndex,
-      stats: stats ?? this.stats,
+      sessions:          sessions          ?? this.sessions,
+      upcomingSessions:  upcomingSessions  ?? this.upcomingSessions,
+      requestedSessions: requestedSessions ?? this.requestedSessions,
+      selectedDate:      selectedDate      ?? this.selectedDate,
+      selectedTabIndex:  selectedTabIndex  ?? this.selectedTabIndex,
+      stats:             stats             ?? this.stats,
     );
   }
 
   @override
   List<Object?> get props => [
     sessions,
+    upcomingSessions,
+    requestedSessions,
     selectedDate,
     selectedTabIndex,
     stats,

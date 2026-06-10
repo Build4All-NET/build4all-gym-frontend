@@ -3,27 +3,20 @@
 //
 // PURPOSE:
 //   Purely presentational widget for the Language & Region settings section.
-//   Displays 3 selectable cards: English, العربية, System Default.
 //
-// WHY SHARED (lib/common/):
-//   Same reason as AppearanceSectionWidget — LocaleCubit is app-root-level.
-//   Both admin and member settings screens reuse this.
+// LOCALIZATION:
+//   No hardcoded visible strings.
+//   All user-facing labels/subtitles come from AppLocalizations.
 //
-// DESIGN (matches Figma):
-//   Selected card → purple border + purple checkmark
-//   Arabic card   → text is right-aligned (RTL visual), globe icon on the LEFT
-//                   We do NOT use Directionality wrapper — only the Text widgets
-//                   are right-aligned, keeping the overall card layout intact.
-//
-// HOW SAVE WORKS:
-//   This widget does NOT call LocaleCubit directly.
-//   It calls onLocaleChanged, which stores the pending value in the parent cubit.
-//   On "Save Changes", the parent cubit calls LocaleCubit.setLocale(pendingLocale).
+// COLORS:
+//   Existing accent colors are kept as design constants.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/theme/theme_cubit.dart';
+import '../../../l10n/app_localizations.dart';
 
 class LanguageSectionWidget extends StatelessWidget {
   /// Currently selected locale — null means "System Default".
@@ -43,8 +36,8 @@ class LanguageSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
-    // Helper: is this locale currently selected?
     bool isSelected(Locale? locale) {
       if (locale == null && selectedLocale == null) return true;
       return selectedLocale?.languageCode == locale?.languageCode;
@@ -61,7 +54,6 @@ class LanguageSectionWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Section header ────────────────────────────────────────────────
           Row(
             children: [
               Container(
@@ -71,52 +63,60 @@ class LanguageSectionWidget extends StatelessWidget {
                   color: Colors.purple.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.language_rounded,
-                    color: Colors.purple, size: 22),
+                child: const Icon(
+                  Icons.language_rounded,
+                  color: Colors.purple,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Language & Region',
-                      style: tokens.typography.titleMedium),
-                  Text('Choose your preferred language',
-                      style: tokens.typography.bodySmall.copyWith(color: c.muted)),
+                  Text(
+                    l10n.settingsLanguageRegionTitle,
+                    style: tokens.typography.titleMedium,
+                  ),
+                  Text(
+                    l10n.settingsLanguageRegionSubtitle,
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: c.muted,
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
+
           const SizedBox(height: 16),
 
-          // ── English card (LTR) ────────────────────────────────────────────
           _LanguageCard(
             locale: const Locale('en'),
-            label: 'English',
-            subtitle: 'Default language',
+            label: l10n.settingsLanguageEnglish,
+            subtitle: l10n.settingsLanguageEnglishSubtitle,
             isRtl: false,
             selected: isSelected(const Locale('en')),
             onTap: () => onLocaleChanged(const Locale('en')),
             tokens: tokens,
           ),
+
           const SizedBox(height: 8),
 
-          // ── Arabic card (RTL text layout — NOT a Directionality wrapper) ──
           _LanguageCard(
             locale: const Locale('ar'),
-            label: 'العربية',
-            subtitle: 'اللغة العربية',
-            isRtl: true, // tells the card to right-align text
+            label: l10n.settingsLanguageArabic,
+            subtitle: l10n.settingsLanguageArabicSubtitle,
+            isRtl: false,
             selected: isSelected(const Locale('ar')),
             onTap: () => onLocaleChanged(const Locale('ar')),
             tokens: tokens,
           ),
           const SizedBox(height: 8),
 
-          // ── System Default card ───────────────────────────────────────────
           _LanguageCard(
             locale: null,
-            label: 'System Default',
-            subtitle: 'Use device language',
+            label: l10n.settingsLanguageSystemDefault,
+            subtitle: l10n.settingsLanguageSystemDefaultSubtitle,
             isRtl: false,
             selected: isSelected(null),
             onTap: () => onLocaleChanged(null),
@@ -128,16 +128,14 @@ class LanguageSectionWidget extends StatelessWidget {
   }
 }
 
-// ─── Private card widget ──────────────────────────────────────────────────────
-
 class _LanguageCard extends StatelessWidget {
   final Locale? locale;
   final String label;
   final String subtitle;
-  final bool isRtl;     // true only for Arabic — right-aligns text inside the card
+  final bool isRtl;
   final bool selected;
   final VoidCallback onTap;
-  final dynamic tokens; // AppThemeTokens
+  final dynamic tokens;
 
   const _LanguageCard({
     required this.locale,
@@ -168,10 +166,7 @@ class _LanguageCard extends StatelessWidget {
           ),
         ),
         child: Row(
-          // For Arabic: globe icon is on the LEFT, text is RIGHT-aligned.
-          // The Row direction is always LTR — we only flip the text alignment.
           children: [
-            // Globe icon — always on the left side of the row
             Container(
               width: 36,
               height: 36,
@@ -181,21 +176,22 @@ class _LanguageCard extends StatelessWidget {
                     : Colors.grey.withOpacity(0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(Icons.language_rounded,
-                  color: selected ? accentColor : Colors.grey, size: 18),
+              child: Icon(
+                Icons.language_rounded,
+                color: selected ? accentColor : Colors.grey,
+                size: 18,
+              ),
             ),
+
             const SizedBox(width: 12),
 
-            // Text block — right-aligned for Arabic, left-aligned for others
             Expanded(
               child: Column(
-                crossAxisAlignment: isRtl
-                    ? CrossAxisAlignment.end  // Right-align Arabic text
-                    : CrossAxisAlignment.start,
+                crossAxisAlignment:
+                isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
                   Text(
                     label,
-                    // textDirection RTL only for the Arabic text widget itself
                     textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
                     style: tokens.typography.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
@@ -205,15 +201,20 @@ class _LanguageCard extends StatelessWidget {
                   Text(
                     subtitle,
                     textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-                    style: tokens.typography.bodySmall.copyWith(color: c.muted),
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: c.muted,
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // Purple checkmark — visible only when selected
             if (selected)
-              const Icon(Icons.check_rounded, color: accentColor, size: 20),
+              const Icon(
+                Icons.check_rounded,
+                color: accentColor,
+                size: 20,
+              ),
           ],
         ),
       ),

@@ -27,8 +27,12 @@ class TrainerPtSessionsBloc
 
   final GetSessionsByDateUseCase _getSessions;
   final GetSessionStatsUseCase _getStats;
+  final GetUpcomingSessionsUseCase _getUpcoming;
+  final GetSessionRequestsUseCase _getRequests;
   final CreateSessionUseCase _createSession;
   final UpdateSessionStatusUseCase _updateStatus;
+  final AcceptSessionRequestUseCase _acceptRequest;
+  final DeclineSessionRequestUseCase _declineRequest;
 
   DateTime _selectedDate = DateTime.now();
 
@@ -50,18 +54,28 @@ class TrainerPtSessionsBloc
   TrainerPtSessionsBloc({
     required GetSessionsByDateUseCase getSessions,
     required GetSessionStatsUseCase getStats,
+    required GetUpcomingSessionsUseCase getUpcoming,
+    required GetSessionRequestsUseCase getRequests,
     required CreateSessionUseCase createSession,
     required UpdateSessionStatusUseCase updateStatus,
+    required AcceptSessionRequestUseCase acceptRequest,
+    required DeclineSessionRequestUseCase declineRequest,
   })  : _getSessions = getSessions,
         _getStats = getStats,
+        _getUpcoming = getUpcoming,
+        _getRequests = getRequests,
         _createSession = createSession,
         _updateStatus = updateStatus,
+        _acceptRequest = acceptRequest,
+        _declineRequest = declineRequest,
         super(const PtSessionsInitial()) {
 
     on<PtSessionsStarted>(_onStarted);
     on<PtSessionsDateChanged>(_onDateChanged);
     on<PtSessionsTabChanged>(_onTabChanged);
     on<PtSessionStatusUpdateRequested>(_onStatusUpdate);
+    on<PtSessionAcceptRequested>(_onAcceptRequest);
+    on<PtSessionDeclineRequested>(_onDeclineRequest);
     on<PtSessionCreateRequested>(_onCreate);
   }
 
@@ -185,6 +199,85 @@ class TrainerPtSessionsBloc
       ),
     );
 
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Accept REQUESTED session
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onAcceptRequest(
+      PtSessionAcceptRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _acceptRequest(sessionId: event.sessionId);
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to accept session.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    // Remove from requestedSessions; add to upcomingSessions (now SCHEDULED).
+    final updatedSessions = current.sessions.map((s) =>
+        s.ptSessionId == event.sessionId ? result.data! : s).toList();
+    final updatedRequests = current.requestedSessions
+        .where((s) => s.ptSessionId != event.sessionId)
+        .toList();
+    final updatedUpcoming = [...current.upcomingSessions, result.data!]
+      ..sort((a, b) => (a.startTime ?? DateTime(9999))
+          .compareTo(b.startTime ?? DateTime(9999)));
+
+    final updatedState = current.copyWith(
+      sessions:         updatedSessions,
+      upcomingSessions: updatedUpcoming,
+      requestedSessions: updatedRequests,
+    );
+    emit(PtSessionActionSuccess(actionType: 'accepted', updatedState: updatedState));
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Decline REQUESTED session
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onDeclineRequest(
+      PtSessionDeclineRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _declineRequest(sessionId: event.sessionId);
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to decline session.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    // Remove from requestedSessions; session is now CANCELLED so no date list update.
+    final updatedRequests = current.requestedSessions
+        .where((s) => s.ptSessionId != event.sessionId)
+        .toList();
+
+    final updatedState = current.copyWith(requestedSessions: updatedRequests);
+    emit(PtSessionActionSuccess(actionType: 'declined', updatedState: updatedState));
     emit(updatedState);
   }
 
@@ -409,11 +502,25 @@ class TrainerPtSessionsBloc
                 PtSessionStatsEntity.empty;
       }
 
+      // Fetch upcoming + requests independently (no date filter).
+      final effectiveTrainerId =
+          _isAllTrainersMode ? null : (_trainerId == 0 ? null : _trainerId);
+
+      final extraResults = await Future.wait([
+        _getUpcoming(branchId: _branchId, trainerId: effectiveTrainerId),
+        _getRequests(branchId: _branchId, trainerId: effectiveTrainerId),
+      ]);
+
+      final upcomingSessions  = extraResults[0].data ?? <PtSessionEntity>[];
+      final requestedSessions = extraResults[1].data ?? <PtSessionEntity>[];
+
       final loadedState = PtSessionsLoaded(
-        sessions: sessions,
-        stats: stats,
-        selectedDate: date,
-        selectedTabIndex: tabIndex,
+        sessions:          sessions,
+        upcomingSessions:  upcomingSessions,
+        requestedSessions: requestedSessions,
+        stats:             stats,
+        selectedDate:      date,
+        selectedTabIndex:  tabIndex,
       );
 
       if (actionType != null) {

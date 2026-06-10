@@ -10,6 +10,7 @@ import '../../../../member/plans/data/repositories/member_plans_repository_impl.
 import '../../../../member/plans/data/services/member_plans_remote_datasource.dart';
 import '../../../../member/plans/domain/entities/payment_method_entity.dart';
 import '../../../../member/plans/domain/usecases/get_payment_methods_usecase.dart';
+import '../../data/services/sessions_service.dart';
 import '../../domain/entities/book_session_result_entity.dart';
 import '../bloc/sessions_bloc.dart';
 import '../bloc/sessions_event.dart';
@@ -261,6 +262,15 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
         ),
       );
       await Stripe.instance.presentPaymentSheet();
+
+      if (result.transactionId != null && result.invoiceId != null) {
+        try {
+          await SessionsService(widget.dio).confirmBookingStripePayment(
+            transactionId: result.transactionId!,
+            invoiceId: result.invoiceId!,
+          );
+        } catch (_) {}
+      }
 
       if (context.mounted) {
         context.read<SessionsBloc>().add(const SessionsStarted());
