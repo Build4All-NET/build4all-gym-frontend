@@ -1,6 +1,11 @@
 {
+<<<<<<< fixing
   "API_BASE_URL": "http://192.168.0.101:8989",
   "PROJECT_API_BASE_URL": "http://192.168.0.101:8980",
+=======
+  "API_BASE_URL": "http://192.168.0.100:8989",
+  "OVERRIDE_BASE_URL": "http://192.168.0.100:8082",
+>>>>>>> local
   "APP_NAME": "B-Pro",
   "APP_TYPE": "GYM",
   "OWNER_PROJECT_LINK_ID": "1",

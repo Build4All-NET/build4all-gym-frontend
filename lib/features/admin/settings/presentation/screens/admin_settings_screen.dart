@@ -8,8 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/localization/locale_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+<<<<<<< fixing
 import '../../../../../../common/settings/cubits/appearance_settings_cubit.dart';
 import '../../../../../../common/settings/widgets/appearance_section_widget.dart';
+=======
+import '../../../../../l10n/app_localizations.dart';
+>>>>>>> local
 import '../../../../../../common/settings/widgets/language_section_widget.dart';
 import '../../../../../../common/settings/widgets/settings_version_footer.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -24,28 +28,7 @@ class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final adminCubit = context.read<AdminSettingsCubit>();
-
-    // ── Provide AppearanceSettingsCubit scoped to this screen ─────────────────
-    // Seeded from the admin cubit's current selectedThemeMode so the widget
-    // shows the correct card on first render.
-    // BlocListener bridges taps in the widget back to AdminSettingsCubit
-    // (which owns dirty-state and the eventual Save call).
-    // AFTER
-    return BlocProvider<AppearanceSettingsCubit>(
-      create: (ctx) => AppearanceSettingsCubit(
-        initial: ctx.read<ThemeCubit>().state.selectedThemeMode,  // ✅ reads actual saved mode
-      ),
-      child: BlocListener<AppearanceSettingsCubit, ThemeMode>(
-        listener: (context, themeMode) {
-          adminCubit.setThemeMode(themeMode);                        // dirty tracking
-          context.read<ThemeCubit>().setThemeMode(themeMode);        // ✅ live preview
-        },
-        child: const _AdminSettingsBody(),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const _AdminSettingsBody();
 }
 
 // ─── Body extracted so build() above stays clean ──────────────────────────────
@@ -141,10 +124,7 @@ class _AdminSettingsBody extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // ── 1. Appearance — no params; reads AppearanceSettingsCubit ─
-                  const AppearanceSectionWidget(),
-
-                  // ── 2. Language & Region ──────────────────────────────────
+                  // ── 1. Language & Region ──────────────────────────────────
                   LanguageSectionWidget(
                     selectedLocale: state.pendingLocale,
                     onLocaleChanged: (locale) =>
@@ -194,11 +174,15 @@ class _AdminSettingsBody extends StatelessWidget {
     if (success) {
       await context.read<LocaleCubit>().setLocale(state.pendingLocale);
       if (!context.mounted) return;
+<<<<<<< fixing
       context.read<ThemeCubit>().setThemeMode(state.selectedThemeMode);
       // context.read<ThemeCubit>().setThemeMode(state.selectedThemeMode);
       // ↑ Uncomment when GA-478 adds setThemeMode() to ThemeCubit.
 
       if (!context.mounted) return;
+=======
+      final l10n = AppLocalizations.of(context)!;
+>>>>>>> local
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Settings saved successfully'),
@@ -234,9 +218,11 @@ class _SaveChangesButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SafeArea(
+      top: false,
+      child: Container(
       color: c.background,
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       child: SizedBox(
         width: double.infinity,
         height: 52,
@@ -263,6 +249,7 @@ class _SaveChangesButton extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

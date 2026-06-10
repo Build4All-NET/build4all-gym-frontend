@@ -27,7 +27,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+<<<<<<< fixing
 import '../../../../../core/utils/jwt_utils.dart';
+=======
+import '../../../../../l10n/app_localizations.dart';
+>>>>>>> local
 import '../cubit/admin_settings_cubit.dart';
 import '../cubit/admin_settings_state.dart';
 
@@ -51,19 +55,12 @@ class _BusinessRulesSectionWidgetState
     _resolveRole();
   }
 
-  /// Reads the JWT from secure storage and checks if the role is OWNER.
+  /// Reads the admin role from secure storage.
   /// OWNER can edit toggles; ADMIN sees them as disabled.
   Future<void> _resolveRole() async {
     const storage = FlutterSecureStorage();
-    // The JWT key is 'jwt_token' — matches what the auth flow stores.
-    final token = await storage.read(key: 'jwt_token');
-    if (token == null) return;
-
-    final claims = JwtUtils.decode(token);
-    if (claims == null) return;
-
-    // JWT claim "role" contains "OWNER" or "ADMIN" (uppercase, from Spring Security)
-    final role = claims['role'] as String? ?? '';
+    // Role is stored separately under 'admin_role' by AdminTokenStore.
+    final role = await storage.read(key: 'admin_role') ?? '';
     if (mounted) setState(() => _isOwner = role == 'OWNER');
   }
 

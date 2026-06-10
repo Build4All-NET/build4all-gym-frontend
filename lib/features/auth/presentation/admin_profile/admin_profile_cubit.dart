@@ -126,7 +126,12 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
       gymRoles:   [],
     ));
 
-    await _fetchGymRole(token);
+    // OWNER/ADMIN/MANAGER do not carry gym-specific roles.
+    // Skipping the fetch also prevents picking up stale AuthTokenStore tokens
+    // left behind from a previous trainer/reception session.
+    if (!isAdmin) {
+      await _fetchGymRole(token);
+    }
   }
 
   Future<void> _fetchGymRole(String adminToken) async {

@@ -616,6 +616,23 @@ class AppRouter {
             ),
           ),
         );
+<<<<<<< fixing
+=======
+    // ── Admin: PT Package Bookings (pending cash) ──────────────────────────
+
+      case adminPtPackageBookings:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+              ],
+              child: const AdminPtPackageBookingsScreen(),
+            ),
+          ),
+        );
+
+>>>>>>> local
     // ── Admin: Training Videos ─────────────────────────────────────────────
 
       case adminTrainingVideos:

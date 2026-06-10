@@ -103,6 +103,8 @@ class SessionsRepositoryImpl implements SessionsRepository {
         description: model.description ?? 'No description available',
         benefits: model.benefits,
         equipment: model.equipment,
+        requiresMembership: model.requiresMembership,
+        memberHasActiveMembership: model.memberHasActiveMembership,
       );
   }
 }

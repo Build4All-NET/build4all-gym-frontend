@@ -10,8 +10,9 @@ class UpdateBranchParams {
   final String phone;
   final String email;
   final String address;
-  final String openingTime;
-  final String closingTime;
+  final String? openingTime;
+  final String? closingTime;
+  final bool isOpen24Hours;
   final String status;
 
   const UpdateBranchParams({
@@ -21,8 +22,9 @@ class UpdateBranchParams {
     required this.phone,
     required this.email,
     required this.address,
-    required this.openingTime,
-    required this.closingTime,
+    this.openingTime,
+    this.closingTime,
+    this.isOpen24Hours = false,
     this.status = 'ACTIVE',
   });
 }
@@ -34,15 +36,16 @@ class UpdateBranchUseCase {
 
   Future<Either<Failure, BranchEntity>> call(UpdateBranchParams params) {
     return repository.updateBranch(
-      branchId:    params.branchId,
-      name:        params.name,
-      city:        params.city,
-      phone:       params.phone,
-      email:       params.email,
-      address:     params.address,
-      openingTime: params.openingTime,
-      closingTime: params.closingTime,
-      status:      params.status,
+      branchId:      params.branchId,
+      name:          params.name,
+      city:          params.city,
+      phone:         params.phone,
+      email:         params.email,
+      address:       params.address,
+      openingTime:   params.openingTime,
+      closingTime:   params.closingTime,
+      isOpen24Hours: params.isOpen24Hours,
+      status:        params.status,
     );
   }
 }

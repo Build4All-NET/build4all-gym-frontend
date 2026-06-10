@@ -18,6 +18,8 @@ class SessionDetailEntity {
   final List<String> equipment;
   final int? branchId;
   final String? branchName;
+  final bool requiresMembership;
+  final bool memberHasActiveMembership;
 
   const SessionDetailEntity({
     required this.sessionId,
@@ -39,5 +41,7 @@ class SessionDetailEntity {
     this.branchId,
     this.branchName,
     required this.equipment,
+    this.requiresMembership = false,
+    this.memberHasActiveMembership = true,
   });
 }

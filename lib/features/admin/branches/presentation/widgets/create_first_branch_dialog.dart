@@ -60,6 +60,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
 
   String? _openingTime;
   String? _closingTime;
+  bool    _isOpen24Hours = false;
 
   @override
   void dispose() {
@@ -169,38 +170,51 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
                       const SizedBox(height: 20),
                       _sectionLabel('Operating Hours'),
                       const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _TimeTile(
-                              label: 'Opening',
-                              value: _openingTime,
-                              onPicked: (t) =>
-                                  setState(() => _openingTime = t),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _TimeTile(
-                              label: 'Closing',
-                              value: _closingTime,
-                              onPicked: (t) =>
-                                  setState(() => _closingTime = t),
-                            ),
-                          ),
-                        ],
+                      _Open24HoursTile(
+                        value: _isOpen24Hours,
+                        onChanged: (v) => setState(() {
+                          _isOpen24Hours = v;
+                          if (v) {
+                            _openingTime = null;
+                            _closingTime = null;
+                          }
+                        }),
                       ),
-                      if (_openingTime != null &&
-                          _closingTime != null &&
-                          !_isClosingAfterOpening())
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            'Closing time must be after opening time',
-                            style: TextStyle(
-                                color: Colors.red[600], fontSize: 12),
-                          ),
+                      if (!_isOpen24Hours) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _TimeTile(
+                                label: 'Opening',
+                                value: _openingTime,
+                                onPicked: (t) =>
+                                    setState(() => _openingTime = t),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _TimeTile(
+                                label: 'Closing',
+                                value: _closingTime,
+                                onPicked: (t) =>
+                                    setState(() => _closingTime = t),
+                              ),
+                            ),
+                          ],
                         ),
+                        if (_openingTime != null &&
+                            _closingTime != null &&
+                            !_isClosingAfterOpening())
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              'Closing time must be after opening time',
+                              style: TextStyle(
+                                  color: Colors.red[600], fontSize: 12),
+                            ),
+                          ),
+                      ],
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -270,30 +284,34 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    if (_openingTime == null) {
-      _snack('Please select an opening time');
-      return;
-    }
-    if (_closingTime == null) {
-      _snack('Please select a closing time');
-      return;
-    }
-    if (!_isClosingAfterOpening()) {
-      _snack('Closing time must be after opening time');
-      return;
+
+    if (!_isOpen24Hours) {
+      if (_openingTime == null) {
+        _snack('Please select an opening time');
+        return;
+      }
+      if (_closingTime == null) {
+        _snack('Please select a closing time');
+        return;
+      }
+      if (!_isClosingAfterOpening()) {
+        _snack('Closing time must be after opening time');
+        return;
+      }
     }
 
     context.read<BranchesBloc>().add(
           SubmitCreateBranch(
             CreateBranchParams(
-              name:        _nameCtrl.text.trim(),
-              city:        _cityCtrl.text.trim(),
-              phone:       _phoneCtrl.text.trim(),
-              email:       _emailCtrl.text.trim(),
-              address:     _addressCtrl.text.trim(),
-              openingTime: _openingTime!,
-              closingTime: _closingTime!,
-              status:      'ACTIVE',
+              name:          _nameCtrl.text.trim(),
+              city:          _cityCtrl.text.trim(),
+              phone:         _phoneCtrl.text.trim(),
+              email:         _emailCtrl.text.trim(),
+              address:       _addressCtrl.text.trim(),
+              openingTime:   _isOpen24Hours ? null : _openingTime,
+              closingTime:   _isOpen24Hours ? null : _closingTime,
+              isOpen24Hours: _isOpen24Hours,
+              status:        'ACTIVE',
             ),
           ),
         );
@@ -423,6 +441,73 @@ class _Footer extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Open24HoursTile extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  const _Open24HoursTile({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: value ? const Color(0xFFEFF6FF) : const Color(0xFFF9FAFB),
+          border: Border.all(
+            color: value
+                ? const Color(0xFF93C5FD)
+                : const Color(0xFFE5E7EB),
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.wb_sunny_outlined,
+              size: 18,
+              color: value
+                  ? const Color(0xFF2563EB)
+                  : const Color(0xFF9CA3AF),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Open 24 Hours',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: value
+                          ? const Color(0xFF1D4ED8)
+                          : const Color(0xFF374151),
+                    ),
+                  ),
+                  if (value)
+                    const Text(
+                      'Branch is always open',
+                      style: TextStyle(
+                          fontSize: 11, color: Color(0xFF6B7280)),
+                    ),
+                ],
+              ),
+            ),
+            Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: const Color(0xFF2563EB),
+            ),
+          ],
+        ),
       ),
     );
   }
