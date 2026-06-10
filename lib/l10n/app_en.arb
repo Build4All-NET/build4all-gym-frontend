@@ -605,6 +605,17 @@
   "memberQrLoadError": "Could not load QR data",
   "memberQrRetry": "Retry",
 
+"memberQrExpiresSoon": "QR expires soon",
+"memberQrRecentVisits": "Recent visits",
+"memberQrNoRecentVisits": "No previous visits",
+"memberQrDurationLabel": "Duration",
+"memberQrToday": "Today",
+"memberQrYesterday": "Yesterday",
+"memberQrMinute": "{count} min",
+"memberQrHour": "{count} h",
+"memberQrLoadError": "Could not load QR data",
+"memberQrRetry": "Retry",
+  "accountMyInfo": "My Info",
   "myInfoTitle": "My Info",
   "myInfoSubtitle": "Update your gym profile information",
   "myInfoPreferredBranch": "Preferred Branch",
@@ -629,6 +640,35 @@
   "myInfoLoadError": "Failed to load your info. Please try again.",
   "myInfoSaveError": "Failed to save your info. Please try again.",
   "myInfoRequiredError": "Preferred branch, gender and date of birth are required.",
+  "aiHeroBannerTitle": "AI Assistant",
+  "aiHeroBannerSubtitle": "Your intelligent gym management companion",
+  "aiHeroBannerBody": "Ask questions about members, revenue, attendance, performance, and business insights.",
+
+  "aiSuggestedQuestionsHeader": "Suggested Questions",
+
+  "aiAppBarTitle": "AI Assistant",
+  "aiNewConversationTooltip": "New Conversation",
+  "aiInputHint": "Ask anything about your gym...",
+  "aiRetryButton": "Try Again",
+  "aiFollowUpHeader": "Suggested Follow-up Questions",
+  "aiRecentQueriesHeader": "Recent Queries",
+  "aiRecentQueryViewLabel": "View",
+  "aiErrorOffline": "Unable to get a response. Please try again.",
+  "checkins_title": "Check-ins",
+  "checkins_scanQr": "Scan QR Code",
+  "checkins_scanSuccessMsg": "checked in successfully",
+
+  "checkins_scannerTitle": "Scan Member QR Code",
+
+  "checkins_activeNow": "Active Now",
+  "checkins_totalToday": "Total Today",
+
+  "checkins_todayTitle": "Today's Check-ins",
+  "checkins_noCheckins": "No check-ins found today",
+
+  "checkins_searchHint": "Search members...",
+
+
 
   "aiAppBarTitle": "AI Insights Assistant",
   "@aiAppBarTitle": { "description": "AI assistant screen — AppBar title" },
@@ -671,6 +711,20 @@
   "checkins_freeze": "Freeze",
   "checkins_block": "Block",
   "checkins_call": "Call",
+
+  "checkins_active": "Active",
+  "checkins_checkedOut": "Checked Out",
+
+  "checkins_freezeTitle": "Freeze Membership",
+  "checkins_fromDate": "From Date",
+  "checkins_toDate": "To Date",
+  "checkins_reasonHint": "Enter reason...",
+  "checkins_confirm": "Confirm",
+
+  "checkins_blockTitle": "Block Member",
+  "checkins_cancel": "Cancel",
+  "checkins_blockConfirm": "Block",
+
   "checkins_freezeTitle": "Freeze Membership",
   "checkins_fromDate": "From date",
   "checkins_toDate": "To date",

@@ -168,6 +168,8 @@ class _AdminSettingsBody extends StatelessWidget {
   Future<void> _onSave(
       BuildContext context, AdminSettingsCubit cubit) async {
     final state = cubit.state;
+    final l10n = AppLocalizations.of(context)!;
+
     final success = await cubit.saveSettings();
     if (!context.mounted) return;
 

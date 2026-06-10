@@ -1469,22 +1469,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get myInfoRequiredError => 'الفرع المفضل والجنس وتاريخ الميلاد مطلوبة.';
 
   @override
+  String get aiHeroBannerTitle => 'المساعد الذكي';
+
+  @override
+  String get aiHeroBannerSubtitle => 'مساعدك الذكي لإدارة النادي';
+
+  @override
+  String get aiHeroBannerBody => 'اسأل عن الأعضاء والإيرادات والحضور والأداء وتحليلات الأعمال.';
+
+  @override
+  String get aiSuggestedQuestionsHeader => 'الأسئلة المقترحة';
+
+  @override
   String get aiAppBarTitle => 'المساعد الذكي';
 
   @override
   String get aiNewConversationTooltip => 'محادثة جديدة';
 
   @override
-  String get aiHeroBannerTitle => 'مساعد الرؤى الذكية';
+  String get aiInputHint => 'اسأل أي شيء عن النادي...';
 
   @override
-  String get aiHeroBannerSubtitle => 'اسألني أي شيء عن صالتك';
+  String get aiRetryButton => 'إعادة المحاولة';
 
   @override
-  String get aiHeroBannerBody => 'احصل على تحليلات فورية ورؤى وتوصيات\nبناءً على بيانات صالتك.';
-
-  @override
-  String get aiSuggestedQuestionsHeader => 'أسئلة مقترحة';
+  String get aiFollowUpHeader => 'أسئلة متابعة مقترحة';
 
   @override
   String get aiRecentQueriesHeader => 'الاستفسارات الأخيرة';
@@ -1493,64 +1502,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aiRecentQueryViewLabel => 'عرض';
 
   @override
-  String get aiInputHint => 'اسأل سؤالاً عن صالتك...';
+  String get aiErrorOffline => 'تعذر الحصول على رد. يرجى المحاولة مرة أخرى.';
 
   @override
-  String get aiFollowUpHeader => 'قد تسأل أيضاً:';
+  String get checkins_title => 'تسجيلات الدخول';
 
   @override
-  String get aiRetryButton => 'إعادة المحاولة';
+  String get checkins_scanQr => 'مسح رمز QR';
 
   @override
-  String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+  String get checkins_scanSuccessMsg => 'تم تسجيل دخوله بنجاح';
 
   @override
-  String get aiErrorOffline => 'عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مرة أخرى.';
+  String get checkins_scannerTitle => 'مسح رمز العضو';
 
   @override
-  String get checkins_title => 'تسجيل الحضور';
-
-  @override
-  String get checkins_scanQr => 'مسح QR';
-
-  @override
-  String get checkins_scanSuccessMsg => 'تم تسجيل الدخول بنجاح';
-
-  @override
-  String get checkins_activeNow => 'نشط الآن';
+  String get checkins_activeNow => 'النشطون الآن';
 
   @override
   String get checkins_totalToday => 'إجمالي اليوم';
 
   @override
-  String get checkins_searchHint => 'ابحث عن الأعضاء...';
+  String get checkins_todayTitle => 'تسجيلات دخول اليوم';
 
   @override
-  String get checkins_todayTitle => 'حضور اليوم';
+  String get checkins_noCheckins => 'لا توجد تسجيلات دخول اليوم';
 
   @override
-  String get checkins_noCheckins => 'لا يوجد حضور اليوم';
+  String get checkins_searchHint => 'ابحث عن عضو...';
+
+  @override
+  String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
 
   @override
   String get checkins_active => 'نشط';
 
   @override
-  String get checkins_checkedOut => 'خرج';
+  String get checkins_checkedOut => 'تم تسجيل الخروج';
 
   @override
-  String get checkins_out => 'خروج';
+  String get checkins_out => 'تسجيل خروج';
 
   @override
   String get checkins_freeze => 'تجميد';
 
   @override
-  String get checkins_block => 'حجب';
+  String get checkins_block => 'حظر';
 
   @override
   String get checkins_call => 'اتصال';
 
   @override
-  String get checkins_freezeTitle => 'تجميد العضوية';
+  String get checkins_freezeTitle => 'تجميد الاشتراك';
 
   @override
   String get checkins_fromDate => 'من تاريخ';
@@ -1559,22 +1562,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkins_toDate => 'إلى تاريخ';
 
   @override
-  String get checkins_reasonHint => 'السبب (اختياري)';
+  String get checkins_reasonHint => 'أدخل السبب...';
 
   @override
   String get checkins_confirm => 'تأكيد';
 
   @override
-  String get checkins_blockTitle => 'حجب العضو';
+  String get checkins_blockTitle => 'حظر العضو';
 
   @override
   String get checkins_cancel => 'إلغاء';
 
   @override
-  String get checkins_blockConfirm => 'حجب';
-
-  @override
-  String get checkins_scannerTitle => 'مسح QR للعضو';
+  String get checkins_blockConfirm => 'حظر';
 
   @override
   String get sessionDetailBookingClosed => 'انتهى وقت الحجز';
@@ -3106,12 +3106,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_dateLabel => 'التاريخ';
 
   @override
-  String get myInfoAddress => 'العنوان';
-
-  @override
-  String get myInfoAddressHint => 'أدخل عنوانك';
-
-  @override
   String get promotionPrice => 'بعد العرض';
 
   @override
@@ -3161,5 +3155,4 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'استخدام لغة الجهاز';
-
 }

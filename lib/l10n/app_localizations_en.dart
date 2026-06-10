@@ -1469,12 +1469,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myInfoRequiredError => 'Preferred branch, gender and date of birth are required.';
 
   @override
-  String get aiAppBarTitle => 'AI Insights Assistant';
-
-  @override
-  String get aiNewConversationTooltip => 'New conversation';
-
-  @override
   String get aiHeroBannerTitle => 'AI Insights Assistant';
 
   @override
@@ -1487,22 +1481,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiSuggestedQuestionsHeader => 'Suggested questions';
 
   @override
-  String get aiRecentQueriesHeader => 'Recent queries';
+  String get aiAppBarTitle => 'AI Insights Assistant';
 
   @override
-  String get aiRecentQueryViewLabel => 'View';
+  String get aiNewConversationTooltip => 'New conversation';
 
   @override
   String get aiInputHint => 'Ask a question about your gym...';
 
   @override
-  String get aiFollowUpHeader => 'You might also ask:';
-
-  @override
   String get aiRetryButton => 'Retry';
 
   @override
-  String get aiErrorGeneric => 'Something went wrong. Please try again.';
+  String get aiFollowUpHeader => 'You might also ask:';
+
+  @override
+  String get aiRecentQueriesHeader => 'Recent queries';
+
+  @override
+  String get aiRecentQueryViewLabel => 'View';
 
   @override
   String get aiErrorOffline => 'Sorry, I couldn\'t process your request. Please try again.';
@@ -1517,19 +1514,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkins_scanSuccessMsg => 'checked in successfully';
 
   @override
+  String get checkins_scannerTitle => 'Scan Member QR';
+
+  @override
   String get checkins_activeNow => 'Active Now';
 
   @override
   String get checkins_totalToday => 'Total Today';
 
   @override
-  String get checkins_searchHint => 'Search members...';
-
-  @override
   String get checkins_todayTitle => 'Today\'s Check-ins';
 
   @override
   String get checkins_noCheckins => 'No check-ins today';
+
+  @override
+  String get checkins_searchHint => 'Search members...';
+
+  @override
+  String get aiErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
   String get checkins_active => 'Active';
@@ -1572,9 +1575,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_blockConfirm => 'Block';
-
-  @override
-  String get checkins_scannerTitle => 'Scan Member QR';
 
   @override
   String get sessionDetailBookingClosed => 'Booking closed';
@@ -3106,12 +3106,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_dateLabel => 'Date';
 
   @override
-  String get myInfoAddress => 'Address';
-
-  @override
-  String get myInfoAddressHint => 'Enter your address';
-
-  @override
   String get promotionPrice => 'Promotion price';
 
   @override
@@ -3161,5 +3155,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'Use device language';
-
 }

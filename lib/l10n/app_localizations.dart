@@ -2927,18 +2927,6 @@ abstract class AppLocalizations {
   /// **'Preferred branch, gender and date of birth are required.'**
   String get myInfoRequiredError;
 
-  /// AI assistant screen — AppBar title
-  ///
-  /// In en, this message translates to:
-  /// **'AI Insights Assistant'**
-  String get aiAppBarTitle;
-
-  /// Tooltip on the reset/refresh icon button
-  ///
-  /// In en, this message translates to:
-  /// **'New conversation'**
-  String get aiNewConversationTooltip;
-
   /// Hero banner main title
   ///
   /// In en, this message translates to:
@@ -2963,6 +2951,36 @@ abstract class AppLocalizations {
   /// **'Suggested questions'**
   String get aiSuggestedQuestionsHeader;
 
+  /// AI assistant screen — AppBar title
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights Assistant'**
+  String get aiAppBarTitle;
+
+  /// Tooltip on the reset/refresh icon button
+  ///
+  /// In en, this message translates to:
+  /// **'New conversation'**
+  String get aiNewConversationTooltip;
+
+  /// Placeholder text in the chat input field
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question about your gym...'**
+  String get aiInputHint;
+
+  /// Retry button in the error view
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get aiRetryButton;
+
+  /// Label above the follow-up question chips after an AI answer
+  ///
+  /// In en, this message translates to:
+  /// **'You might also ask:'**
+  String get aiFollowUpHeader;
+
   /// Section header above recent query list
   ///
   /// In en, this message translates to:
@@ -2974,30 +2992,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View'**
   String get aiRecentQueryViewLabel;
-
-  /// Placeholder text in the chat input field
-  ///
-  /// In en, this message translates to:
-  /// **'Ask a question about your gym...'**
-  String get aiInputHint;
-
-  /// Label above the follow-up question chips after an AI answer
-  ///
-  /// In en, this message translates to:
-  /// **'You might also ask:'**
-  String get aiFollowUpHeader;
-
-  /// Retry button in the error view
-  ///
-  /// In en, this message translates to:
-  /// **'Retry'**
-  String get aiRetryButton;
-
-  /// Generic error message shown in the error view
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong. Please try again.'**
-  String get aiErrorGeneric;
 
   /// Error appended to the conversation when a query call fails
   ///
@@ -3023,6 +3017,12 @@ abstract class AppLocalizations {
   /// **'checked in successfully'**
   String get checkins_scanSuccessMsg;
 
+  /// No description provided for @checkins_scannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Member QR'**
+  String get checkins_scannerTitle;
+
   /// No description provided for @checkins_activeNow.
   ///
   /// In en, this message translates to:
@@ -3035,12 +3035,6 @@ abstract class AppLocalizations {
   /// **'Total Today'**
   String get checkins_totalToday;
 
-  /// No description provided for @checkins_searchHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Search members...'**
-  String get checkins_searchHint;
-
   /// No description provided for @checkins_todayTitle.
   ///
   /// In en, this message translates to:
@@ -3052,6 +3046,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No check-ins today'**
   String get checkins_noCheckins;
+
+  /// No description provided for @checkins_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search members...'**
+  String get checkins_searchHint;
+
+  /// Generic error message shown in the error view
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get aiErrorGeneric;
 
   /// No description provided for @checkins_active.
   ///
@@ -3136,12 +3142,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Block'**
   String get checkins_blockConfirm;
-
-  /// No description provided for @checkins_scannerTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan Member QR'**
-  String get checkins_scannerTitle;
 
   /// No description provided for @sessionDetailBookingClosed.
   ///
@@ -6125,18 +6125,6 @@ abstract class AppLocalizations {
   /// **'Date'**
   String get trainer_dateLabel;
 
-  /// No description provided for @myInfoAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Address'**
-  String get myInfoAddress;
-
-  /// No description provided for @myInfoAddressHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your address'**
-  String get myInfoAddressHint;
-
   /// No description provided for @promotionPrice.
   ///
   /// In en, this message translates to:
@@ -6238,7 +6226,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use device language'**
   String get settingsLanguageSystemDefaultSubtitle;
-
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
