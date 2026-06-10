@@ -183,6 +183,16 @@ class MemberPlansScreen extends StatelessWidget {
                               if (membershipState is MyMembershipLoaded) {
                                 return MyMembershipCardWidget(
                                   membership: membershipState.membership,
+                                  onRenew: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => PlanDetailScreenProvider(
+                                          planId: membershipState.membership.planId,
+                                          dio: dio,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               }
 

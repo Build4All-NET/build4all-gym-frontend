@@ -17,6 +17,10 @@
 // COLORS:
 //   No hardcoded UI colors.
 //   Uses tokens.colors only.
+//
+// LOCALIZATION:
+//   No hardcoded visible strings.
+//   All user-facing text must come from AppLocalizations.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
@@ -24,6 +28,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/core/localization/locale_cubit.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 
 import 'package:build4allgym/common/settings/cubits/appearance_settings_cubit.dart';
 import 'package:build4allgym/common/settings/widgets/appearance_section_widget.dart';
@@ -64,6 +69,7 @@ class _MemberSettingsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     final state = context.watch<MemberSettingsCubit>().state;
     final cubit = context.read<MemberSettingsCubit>();
@@ -71,7 +77,7 @@ class _MemberSettingsBody extends StatelessWidget {
     if (state.status == MemberSettingsStatus.loading) {
       return Scaffold(
         backgroundColor: c.background,
-        appBar: _buildAppBar(context, tokens, c, state),
+        appBar: _buildAppBar(context, tokens, c, state, l10n),
         body: Center(
           child: CircularProgressIndicator(
             color: c.primary,
@@ -83,7 +89,7 @@ class _MemberSettingsBody extends StatelessWidget {
     if (state.status == MemberSettingsStatus.error) {
       return Scaffold(
         backgroundColor: c.background,
-        appBar: _buildAppBar(context, tokens, c, state),
+        appBar: _buildAppBar(context, tokens, c, state, l10n),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -97,7 +103,7 @@ class _MemberSettingsBody extends StatelessWidget {
                 ),
                 const SizedBox(height: 16.0),
                 Text(
-                  state.errorMessage ?? 'Unexpected error occurred',
+                  state.errorMessage ?? l10n.settingsUnexpectedError,
                   textAlign: TextAlign.center,
                   style: tokens.typography.bodyMedium.copyWith(
                     color: c.label,
@@ -107,7 +113,7 @@ class _MemberSettingsBody extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: cubit.reload,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Try Again'),
+                  label: Text(l10n.settingsTryAgain),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: c.primary,
                     foregroundColor: c.onPrimary,
@@ -129,7 +135,7 @@ class _MemberSettingsBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: c.background,
-      appBar: _buildAppBar(context, tokens, c, state),
+      appBar: _buildAppBar(context, tokens, c, state, l10n),
       body: Column(
         children: [
           Expanded(
@@ -164,6 +170,7 @@ class _MemberSettingsBody extends StatelessWidget {
             onSave: () => _onSave(context, cubit),
             tokens: tokens,
             c: c,
+            l10n: l10n,
           ),
         ],
       ),
@@ -175,6 +182,7 @@ class _MemberSettingsBody extends StatelessWidget {
       dynamic tokens,
       dynamic c,
       MemberSettingsState state,
+      AppLocalizations l10n,
       ) {
     return AppBar(
       backgroundColor: c.surface,
@@ -187,7 +195,7 @@ class _MemberSettingsBody extends StatelessWidget {
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
-        'Settings',
+        l10n.settingsTitle,
         style: tokens.typography.titleMedium.copyWith(
           color: c.label,
         ),
@@ -198,7 +206,7 @@ class _MemberSettingsBody extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Chip(
               label: Text(
-                'Unsaved',
+                l10n.settingsUnsaved,
                 style: tokens.typography.bodySmall.copyWith(
                   color: c.onPrimary,
                   fontSize: 12.0,
@@ -220,6 +228,7 @@ class _MemberSettingsBody extends StatelessWidget {
       ) async {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     final success = await cubit.saveSettings();
     if (!context.mounted) return;
@@ -228,7 +237,7 @@ class _MemberSettingsBody extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Settings saved successfully',
+            l10n.settingsSavedSuccessfully,
             style: tokens.typography.bodyMedium.copyWith(
               color: c.onPrimary,
             ),
@@ -240,7 +249,7 @@ class _MemberSettingsBody extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            cubit.state.errorMessage ?? 'Failed to save settings',
+            cubit.state.errorMessage ?? l10n.settingsSaveFailed,
             style: tokens.typography.bodyMedium.copyWith(
               color: c.onPrimary,
             ),
@@ -258,6 +267,7 @@ class _SaveChangesButton extends StatelessWidget {
   final VoidCallback onSave;
   final dynamic tokens;
   final dynamic c;
+  final AppLocalizations l10n;
 
   const _SaveChangesButton({
     required this.isDirty,
@@ -265,6 +275,7 @@ class _SaveChangesButton extends StatelessWidget {
     required this.onSave,
     required this.tokens,
     required this.c,
+    required this.l10n,
   });
 
   @override
@@ -295,16 +306,14 @@ class _SaveChangesButton extends StatelessWidget {
               size: 20.0,
             ),
             label: Text(
-              isSaving ? 'Saving...' : 'Save Changes',
+              isSaving ? l10n.settingsSaving : l10n.settingsSaveChanges,
               style: tokens.typography.bodyMedium.copyWith(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDirty
-                  ? c.primary
-                  : c.border.withOpacity(0.35),
+              backgroundColor: isDirty ? c.primary : c.border.withOpacity(0.35),
               foregroundColor: isDirty ? c.onPrimary : c.muted,
               disabledBackgroundColor: c.border.withOpacity(0.35),
               disabledForegroundColor: c.muted,

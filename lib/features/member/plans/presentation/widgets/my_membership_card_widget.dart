@@ -9,9 +9,18 @@ import '../../domain/entities/my_membership_entity.dart';
 class MyMembershipCardWidget extends StatelessWidget {
   final MyMembershipEntity membership;
 
+  /*
+   * Called when the expired member clicks Renew.
+   *
+   * The widget does not open Plan Detail by itself.
+   * The parent Plans screen handles navigation using membership.planId.
+   */
+  final VoidCallback? onRenew;
+
   const MyMembershipCardWidget({
     super.key,
     required this.membership,
+    this.onRenew,
   });
 
   @override
@@ -20,88 +29,92 @@ class MyMembershipCardWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
+    final normalizedStatus = membership.status.toLowerCase().trim();
+    final isExpired = normalizedStatus == 'expired';
+
     return Container(
-        margin: EdgeInsets.only(bottom: tokens.spacing.lg),
-        decoration: BoxDecoration(
-          color: tokens.colors.surface,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: tokens.colors.border.withOpacity(0.18),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: tokens.colors.label.withOpacity(0.08),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      margin: EdgeInsets.only(bottom: tokens.spacing.lg),
+      decoration: BoxDecoration(
+        color: tokens.colors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: tokens.colors.border.withOpacity(0.18),
+          width: 1,
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment:
-                      isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          membership.planName,
-                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                          style: tokens.typography.headlineSmall.copyWith(
-                            color: tokens.colors.label,
-                            fontWeight: FontWeight.w900,
-                            height: 1.1,
-                          ),
+        boxShadow: [
+          BoxShadow(
+            color: tokens.colors.label.withOpacity(0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment:
+                    isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        membership.planName,
+                        textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                        style: tokens.typography.headlineSmall.copyWith(
+                          color: tokens.colors.label,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
                         ),
+                      ),
 
-                        const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                        Text(
-                          l10n.remainingDays(membership.remainingDays),
-                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                          style: tokens.typography.bodyMedium.copyWith(
-                            color: tokens.colors.primary,
-                            fontWeight: FontWeight.w800,
-                          ),
+                      Text(
+                        l10n.remainingDays(membership.remainingDays),
+                        textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                        style: tokens.typography.bodyMedium.copyWith(
+                          color: tokens.colors.primary,
+                          fontWeight: FontWeight.w800,
                         ),
+                      ),
 
-                        const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                        Text(
-                          l10n.membershipEndsAt(membership.endDate),
-                          textAlign: isRtl ? TextAlign.end : TextAlign.start,
-                          style: tokens.typography.bodyMedium.copyWith(
-                            color: tokens.colors.muted,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Text(
+                        l10n.membershipEndsAt(membership.endDate),
+                        textAlign: isRtl ? TextAlign.end : TextAlign.start,
+                        style: tokens.typography.bodyMedium.copyWith(
+                          color: tokens.colors.muted,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  const SizedBox(width: 16),
+                const SizedBox(width: 16),
 
-                  _MembershipStatusIcon(
-                    status: membership.status,
-                  ),
-                ],
-              ),
+                _MembershipStatusIcon(
+                  status: membership.status,
+                ),
+              ],
+            ),
 
+            if (isExpired) ...[
               const SizedBox(height: 20),
 
               SizedBox(
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: null,
+                  onPressed: onRenew,
                   style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor: const Color(0xFFEAF0F8),
-                    disabledForegroundColor: tokens.colors.label,
+                    backgroundColor: tokens.colors.primary,
+                    foregroundColor: tokens.colors.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -110,14 +123,16 @@ class MyMembershipCardWidget extends StatelessWidget {
                   child: Text(
                     l10n.renew,
                     style: tokens.typography.bodyMedium.copyWith(
+                      color: tokens.colors.onPrimary,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
               ),
             ],
-          ),
+          ],
         ),
+      ),
     );
   }
 }
