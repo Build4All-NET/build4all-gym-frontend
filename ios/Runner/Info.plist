@@ -47,6 +47,11 @@
 	<true/>
 	 <key>NSCameraUsageDescription</key>
      <string>Camera is used to scan member QR codes for check-in.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 
 </dict>
 </plist>

@@ -46,6 +46,10 @@ class PtPackageBookingLoaded extends PtPackageBookingState {
   final List<PtPackageEntity> packages;
   final PtPackageEntity? selectedPackage;
 
+  /// Weekday codes where trainer has set availability.
+  /// e.g. ['MONDAY', 'WEDNESDAY', 'FRIDAY']
+  final List<String> availableDays;
+
   /// Source of truth for the booking request.
   ///
   /// No dates.
@@ -69,14 +73,21 @@ class PtPackageBookingLoaded extends PtPackageBookingState {
   /// Keep message as key/string. UI decides how to display/translate.
   final Map<String, String> slotErrorsByDay;
 
+  /// The weekday currently being time-requested (POST /api/pt-sessions/request).
+  /// null = no request in progress.
+  /// "MONDAY" = Monday request is submitting.
+  final String? requestingDay;
+
   const PtPackageBookingLoaded({
     required this.trainerId,
     required this.packages,
     this.selectedPackage,
+    this.availableDays = const [],
     required this.weeklySchedule,
     this.weeklySlotsByDay = const {},
     this.loadingSlotDays = const {},
     this.slotErrorsByDay = const {},
+    this.requestingDay,
   });
 
   /// Number of selected weekdays.
@@ -162,25 +173,36 @@ class PtPackageBookingLoaded extends PtPackageBookingState {
     });
   }
 
+  /// Returns true when trainer has availability on this weekday.
+  bool isTrainerAvailableOnDay(String day) {
+    if (availableDays.isEmpty) return true; // unknown → assume available
+    return availableDays.contains(day.trim().toUpperCase());
+  }
+
   PtPackageBookingLoaded copyWith({
     int? trainerId,
     List<PtPackageEntity>? packages,
     PtPackageEntity? selectedPackage,
+    List<String>? availableDays,
     List<Map<String, dynamic>>? weeklySchedule,
     Map<String, List<TimeSlotEntity>>? weeklySlotsByDay,
     Set<String>? loadingSlotDays,
     Map<String, String>? slotErrorsByDay,
+    String? requestingDay,
     bool clearSelectedPackage = false,
+    bool clearRequestingDay = false,
   }) {
     return PtPackageBookingLoaded(
       trainerId: trainerId ?? this.trainerId,
       packages: packages ?? this.packages,
       selectedPackage:
       clearSelectedPackage ? null : selectedPackage ?? this.selectedPackage,
+      availableDays: availableDays ?? this.availableDays,
       weeklySchedule: weeklySchedule ?? this.weeklySchedule,
       weeklySlotsByDay: weeklySlotsByDay ?? this.weeklySlotsByDay,
       loadingSlotDays: loadingSlotDays ?? this.loadingSlotDays,
       slotErrorsByDay: slotErrorsByDay ?? this.slotErrorsByDay,
+      requestingDay: clearRequestingDay ? null : requestingDay ?? this.requestingDay,
     );
   }
 }
@@ -191,6 +213,7 @@ class PtPackageBookingSubmitting extends PtPackageBookingLoaded {
     required super.trainerId,
     required super.packages,
     required super.selectedPackage,
+    super.availableDays,
     required super.weeklySchedule,
     required super.weeklySlotsByDay,
     required super.loadingSlotDays,
@@ -206,6 +229,7 @@ class PtPackageBookingSuccess extends PtPackageBookingLoaded {
     required super.trainerId,
     required super.packages,
     required super.selectedPackage,
+    super.availableDays,
     required super.weeklySchedule,
     required super.weeklySlotsByDay,
     required super.loadingSlotDays,
@@ -222,10 +246,67 @@ class PtPackageBookingError extends PtPackageBookingLoaded {
     required super.trainerId,
     required super.packages,
     required super.selectedPackage,
+    super.availableDays,
     required super.weeklySchedule,
     required super.weeklySlotsByDay,
     required super.loadingSlotDays,
     required super.slotErrorsByDay,
     required this.message,
+  });
+}
+
+/// State emitted when POST /api/pt-sessions/request succeeds.
+class PtPackageTimeRequestSuccess extends PtPackageBookingLoaded {
+  final String requestedDay;
+
+  const PtPackageTimeRequestSuccess({
+    required super.trainerId,
+    required super.packages,
+    super.selectedPackage,
+    super.availableDays,
+    required super.weeklySchedule,
+    required super.weeklySlotsByDay,
+    required super.loadingSlotDays,
+    required super.slotErrorsByDay,
+    required this.requestedDay,
+  });
+}
+
+/// State emitted when POST /api/pt-sessions/request fails.
+class PtPackageTimeRequestError extends PtPackageBookingLoaded {
+  final String message;
+
+  const PtPackageTimeRequestError({
+    required super.trainerId,
+    required super.packages,
+    super.selectedPackage,
+    super.availableDays,
+    required super.weeklySchedule,
+    required super.weeklySlotsByDay,
+    required super.loadingSlotDays,
+    required super.slotErrorsByDay,
+    required this.message,
+  });
+}
+
+/// State emitted after booking is created with a payment method.
+///
+/// The payment sheet uses this to drive Stripe or redirect flow.
+/// isPending = true  → cash or waiting
+/// isStripe  = true  → present Stripe sheet
+/// isRedirect = true → launch browser redirect
+class PtPackageBookingPaymentReady extends PtPackageBookingLoaded {
+  final PtPackageBookingResponseEntity booking;
+
+  const PtPackageBookingPaymentReady({
+    required super.trainerId,
+    required super.packages,
+    super.selectedPackage,
+    super.availableDays,
+    required super.weeklySchedule,
+    required super.weeklySlotsByDay,
+    required super.loadingSlotDays,
+    required super.slotErrorsByDay,
+    required this.booking,
   });
 }

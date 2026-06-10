@@ -1,6 +1,8 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/training_videos_bloc.dart';
 import '../bloc/training_videos_event.dart';
@@ -29,63 +31,78 @@ class _TrainingVideosListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final profile = context.watch<AdminProfileCubit>().state;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Training Videos'),
-        centerTitle: false,
-      ),
-      drawer: AdminNavigationDrawer(
-        gymName:    profile.gymName,
-        branchName: profile.branchName,
-        adminName:  profile.adminName,
-        adminEmail: profile.adminEmail,
-        avatarUrl:  profile.avatarUrl,
-        initialActiveId: 'training_videos',
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: context.read<TrainingVideosBloc>(),
-              child: const AddTrainingVideoPage(),
-            ),
-          ),
-        ).then((_) {
-          // Refresh list after returning from add page
+    return BlocListener<TrainingVideosBloc, TrainingVideosState>(
+      listenWhen: (_, curr) =>
+          curr is DeleteVideoSuccess ||
+          curr is DeleteVideoError ||
+          curr is DeleteVideoLoading,
+      listener: (context, state) {
+        if (state is DeleteVideoSuccess) {
+          AppToast.success(context, AppLocalizations.of(context)!.admin_trainingVideos_deleteSuccess);
           context.read<TrainingVideosBloc>().add(LoadTrainingVideos());
-        }),
-        child: const Icon(Icons.add),
-      ),
-      body: BlocBuilder<TrainingVideosBloc, TrainingVideosState>(
-        buildWhen: (prev, curr) =>
-        curr is TrainingVideosLoading ||
-            curr is TrainingVideosLoaded ||
-            curr is TrainingVideosError,
-        builder: (context, state) {
-          if (state is TrainingVideosLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is TrainingVideosError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(state.message),
-                  TextButton(
-                    onPressed: () =>
-                        context.read<TrainingVideosBloc>().add(LoadTrainingVideos()),
-                    child: const Text('Retry'),
-                  ),
-                ],
+        } else if (state is DeleteVideoError) {
+          AppToast.error(context, state.message);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.navTrainingVideos),
+          centerTitle: false,
+        ),
+        drawer: AdminNavigationDrawer(
+          gymName:    profile.gymName,
+          branchName: profile.branchName,
+          adminName:  profile.adminName,
+          adminEmail: profile.adminEmail,
+          avatarUrl:  profile.avatarUrl,
+          initialActiveId: 'training_videos',
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<TrainingVideosBloc>(),
+                child: const AddTrainingVideoPage(),
               ),
-            );
-          }
-          if (state is TrainingVideosLoaded) {
-            return _LoadedBody(state: state);
-          }
-          return const SizedBox.shrink();
-        },
+            ),
+          ).then((_) {
+            context.read<TrainingVideosBloc>().add(LoadTrainingVideos());
+          }),
+          child: const Icon(Icons.add),
+        ),
+        body: BlocBuilder<TrainingVideosBloc, TrainingVideosState>(
+          buildWhen: (prev, curr) =>
+              curr is TrainingVideosLoading ||
+              curr is TrainingVideosLoaded ||
+              curr is TrainingVideosError ||
+              curr is DeleteVideoLoading,
+          builder: (context, state) {
+            if (state is TrainingVideosLoading || state is DeleteVideoLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is TrainingVideosError) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(state.message),
+                    TextButton(
+                      onPressed: () => context
+                          .read<TrainingVideosBloc>()
+                          .add(LoadTrainingVideos()),
+                      child: Text(AppLocalizations.of(context)!.retry),
+                    ),
+                  ],
+                ),
+              );
+            }
+            if (state is TrainingVideosLoaded) {
+              return _LoadedBody(state: state);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -98,6 +115,7 @@ class _LoadedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return CustomScrollView(
       slivers: [
         // Stats row
@@ -108,7 +126,7 @@ class _LoadedBody extends StatelessWidget {
               children: [
                 Expanded(
                   child: _StatCard(
-                    label: 'Total Videos',
+                    label: l10n.admin_trainingVideos_totalVideos,
                     value: '${state.stats.totalVideos}',
                     backgroundColor:
                     const Color(0xFFEDE7F6), // lavender/purple tint
@@ -119,7 +137,7 @@ class _LoadedBody extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _StatCard(
-                    label: 'Total Views',
+                    label: l10n.admin_trainingVideos_totalViews,
                     value: '${state.stats.totalViews}',
                     backgroundColor:
                     const Color(0xFFE0F2FE), // light blue tint
@@ -143,8 +161,8 @@ class _LoadedBody extends StatelessWidget {
         ),
         // Video list
         if (state.videos.isEmpty)
-          const SliverFillRemaining(
-            child: Center(child: Text('No videos found.')),
+          SliverFillRemaining(
+            child: Center(child: Text(l10n.admin_trainingVideos_noVideos)),
           )
         else
           SliverList(
@@ -223,6 +241,7 @@ class _CategoryDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return DropdownButtonFormField<int?>(
       value: selectedCategoryId,
       decoration: InputDecoration(
@@ -231,11 +250,11 @@ class _CategoryDropdown extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         isDense: true,
       ),
-      hint: const Text('All Categories'),
+      hint: Text(l10n.admin_trainingVideos_allCategories),
       items: [
-        const DropdownMenuItem<int?>(
+        DropdownMenuItem<int?>(
           value: null,
-          child: Text('All Categories'),
+          child: Text(l10n.admin_trainingVideos_allCategories),
         ),
         ...categories.map(
               (c) => DropdownMenuItem<int?>(

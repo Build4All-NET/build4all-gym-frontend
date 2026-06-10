@@ -6,6 +6,7 @@ class CreatePlanRequestModel {
   final String planType;
   final double price;
   final String billingCycle;
+  final int? customDurationDays;
   final String? description;
   final String status;
   final List<int> branchIds;
@@ -15,6 +16,8 @@ class CreatePlanRequestModel {
   final bool autoRenew;
   final bool isFeatured;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final PlanPromotionModel? promotion;
   final List<PlanFeatureModel> features;
 
@@ -23,6 +26,7 @@ class CreatePlanRequestModel {
     required this.planType,
     required this.price,
     required this.billingCycle,
+    this.customDurationDays,
     this.description,
     required this.status,
     required this.branchIds,
@@ -32,6 +36,8 @@ class CreatePlanRequestModel {
     this.autoRenew = false,
     this.isFeatured = false,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     this.promotion,
     this.features = const [],
   });
@@ -42,6 +48,7 @@ class CreatePlanRequestModel {
       'planType': planType,
       'price': price,
       'billingCycle': billingCycle,
+      if (customDurationDays != null) 'customDurationDays': customDurationDays,
       if (description != null) 'description': description,
       'status': status,
       'branchIds': branchIds,
@@ -52,6 +59,8 @@ class CreatePlanRequestModel {
       'autoRenew': autoRenew,
       'isFeatured': isFeatured,
       if (gracePeriodDays != null) 'gracePeriodDays': gracePeriodDays,
+      if (gymAccessStart != null) 'gymAccessStart': gymAccessStart,
+      if (gymAccessEnd != null) 'gymAccessEnd': gymAccessEnd,
       if (promotion != null) 'promotion': promotion!.toJson(),
       if (features.isNotEmpty)
         'features': features.map((f) => f.toJson()).toList(),

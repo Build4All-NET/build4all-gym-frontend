@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_members_bloc.dart';
 import '../widgets/member_card_widget.dart';
 import '../widgets/members_filter_bar_widget.dart';
@@ -147,7 +148,7 @@ class _MembersAppBar extends StatelessWidget {
 
           // Screen title — same style as dashboard's "Dashboard" text
           Text(
-            'Members',
+            AppLocalizations.of(context)!.navMembers,
             style: TextStyle(
               fontSize:   17,
               fontWeight: FontWeight.w700,
@@ -316,7 +317,7 @@ class _MembersBodyState extends State<_MembersBody> {
         if (loaded.members.isEmpty) {
           return Center(
             child: Text(
-              'No members found.',
+              AppLocalizations.of(context)!.admin_members_noMembers,
               style: TextStyle(
                 color:    cs.onSurface.withOpacity(0.4),
                 fontSize: 14,
@@ -367,7 +368,7 @@ class _MembersBodyState extends State<_MembersBody> {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),

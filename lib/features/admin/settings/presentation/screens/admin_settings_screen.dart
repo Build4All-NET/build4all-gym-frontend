@@ -2,13 +2,18 @@
 // lib/features/admin/settings/presentation/screens/admin_settings_screen.dart
 // ─────────────────────────────────────────────────────────────────────────────
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/localization/locale_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../../../common/settings/cubits/appearance_settings_cubit.dart';
 import '../../../../../../common/settings/widgets/appearance_section_widget.dart';
+
+import '../../../../../l10n/app_localizations.dart';
+
 import '../../../../../../common/settings/widgets/language_section_widget.dart';
 import '../../../../../../common/settings/widgets/settings_version_footer.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -23,28 +28,7 @@ class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final adminCubit = context.read<AdminSettingsCubit>();
-
-    // ── Provide AppearanceSettingsCubit scoped to this screen ─────────────────
-    // Seeded from the admin cubit's current selectedThemeMode so the widget
-    // shows the correct card on first render.
-    // BlocListener bridges taps in the widget back to AdminSettingsCubit
-    // (which owns dirty-state and the eventual Save call).
-    // AFTER
-    return BlocProvider<AppearanceSettingsCubit>(
-      create: (ctx) => AppearanceSettingsCubit(
-        initial: ctx.read<ThemeCubit>().state.selectedThemeMode,  // ✅ reads actual saved mode
-      ),
-      child: BlocListener<AppearanceSettingsCubit, ThemeMode>(
-        listener: (context, themeMode) {
-          adminCubit.setThemeMode(themeMode);                        // dirty tracking
-          context.read<ThemeCubit>().setThemeMode(themeMode);        // ✅ live preview
-        },
-        child: const _AdminSettingsBody(),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const _AdminSettingsBody();
 }
 
 // ─── Body extracted so build() above stays clean ──────────────────────────────
@@ -82,14 +66,14 @@ class _AdminSettingsBody extends StatelessWidget {
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: Text('Settings', style: tokens.typography.titleMedium),
+        title: Text(AppLocalizations.of(context)!.navSettings, style: tokens.typography.titleMedium),
         actions: [
           if (state.isDirty)
             Padding(
               padding: const EdgeInsets.only(right: 12),
               child: Chip(
-                label: const Text('Unsaved',
-                    style: TextStyle(
+                label: Text(AppLocalizations.of(context)!.admin_settings_unsaved,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.w600)),
@@ -117,7 +101,7 @@ class _AdminSettingsBody extends StatelessWidget {
                     child: TextField(
                       readOnly: true,
                       decoration: InputDecoration(
-                        hintText: 'Search settings...',
+                        hintText: AppLocalizations.of(context)!.admin_settings_searchHint,
                         prefixIcon: Icon(Icons.search, color: c.muted),
                         filled: true,
                         fillColor: c.surface,
@@ -140,10 +124,7 @@ class _AdminSettingsBody extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // ── 1. Appearance — no params; reads AppearanceSettingsCubit ─
-                  const AppearanceSectionWidget(),
-
-                  // ── 2. Language & Region ──────────────────────────────────
+                  // ── 1. Language & Region ──────────────────────────────────
                   LanguageSectionWidget(
                     selectedLocale: state.pendingLocale,
                     onLocaleChanged: (locale) =>
@@ -187,6 +168,8 @@ class _AdminSettingsBody extends StatelessWidget {
   Future<void> _onSave(
       BuildContext context, AdminSettingsCubit cubit) async {
     final state = cubit.state;
+    final l10n = AppLocalizations.of(context)!;
+
     final success = await cubit.saveSettings();
     if (!context.mounted) return;
 
@@ -198,16 +181,18 @@ class _AdminSettingsBody extends StatelessWidget {
       // ↑ Uncomment when GA-478 adds setThemeMode() to ThemeCubit.
 
       if (!context.mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Settings saved successfully'),
+        SnackBar(
+            content: Text(l10n.admin_settings_saveSuccess),
             backgroundColor: Colors.green),
       );
     } else {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content:
-            Text(cubit.state.errorMessage ?? 'Failed to save settings'),
+            Text(cubit.state.errorMessage ?? l10n.admin_settings_saveFailed),
             backgroundColor: Colors.red),
       );
     }
@@ -233,9 +218,11 @@ class _SaveChangesButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SafeArea(
+      top: false,
+      child: Container(
       color: c.background,
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       child: SizedBox(
         width: double.infinity,
         height: 52,
@@ -249,7 +236,7 @@ class _SaveChangesButton extends StatelessWidget {
                 color: Colors.white, strokeWidth: 2),
           )
               : const Icon(Icons.save_rounded, size: 20),
-          label: Text(isSaving ? 'Saving...' : 'Save Changes',
+          label: Text(isSaving ? AppLocalizations.of(context)!.admin_settings_saving : AppLocalizations.of(context)!.admin_settings_saveChanges,
               style: const TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w600)),
           style: ElevatedButton.styleFrom(
@@ -262,6 +249,7 @@ class _SaveChangesButton extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
@@ -301,9 +289,9 @@ class _LegalPoliciesStub extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Legal & Policies',
+                Text(AppLocalizations.of(context)!.admin_settings_legalTitle,
                     style: tokens.typography.titleMedium),
-                Text('Review our policies',
+                Text(AppLocalizations.of(context)!.admin_settings_legalSubtitle,
                     style: tokens.typography.bodySmall
                         .copyWith(color: c.muted)),
               ],

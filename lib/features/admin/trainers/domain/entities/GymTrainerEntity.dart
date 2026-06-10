@@ -1,12 +1,13 @@
 // FILE: lib/features/admin/trainers/domain/entities/gym_trainer_entity.dart
 
 class GymTrainerEntity {
-  final int     userId;
-  final String  fullName;
-  final String  phone;
-  final String  email;
-  final int?    profileFileId;
-  final String  assignedAt;   // ISO string — formatted in the UI
+  final int          userId;
+  final String       fullName;
+  final String       phone;
+  final String       email;
+  final int?         profileFileId;
+  final String       assignedAt;   // ISO string — formatted in the UI
+  final List<String> branchNames;
 
   const GymTrainerEntity({
     required this.userId,
@@ -15,6 +16,7 @@ class GymTrainerEntity {
     required this.email,
     this.profileFileId,
     required this.assignedAt,
+    this.branchNames = const [],
   });
 
   String get initials {

@@ -13,12 +13,13 @@
 import '../../domain/entities/GymTrainerEntity.dart';
 
 class GymTrainerModel {
-  final int     userId;
-  final String  fullName;
-  final String  phone;
-  final String  email;
-  final int?    profileFileId;
-  final String  assignedAt;
+  final int          userId;
+  final String       fullName;
+  final String       phone;
+  final String       email;
+  final int?         profileFileId;
+  final String       assignedAt;
+  final List<String> branchNames;
 
   const GymTrainerModel({
     required this.userId,
@@ -27,6 +28,7 @@ class GymTrainerModel {
     required this.email,
     this.profileFileId,
     required this.assignedAt,
+    this.branchNames = const [],
   });
 
   factory GymTrainerModel.fromJson(Map<String, dynamic> json) => GymTrainerModel(
@@ -36,6 +38,7 @@ class GymTrainerModel {
     email:         json['email']           as String? ?? '',
     profileFileId: (json['profileFileId'] as num?)?.toInt(),
     assignedAt:    json['assignedAt']      as String? ?? '',
+    branchNames:   List<String>.from(json['branchNames'] ?? []),
   );
 
   GymTrainerEntity toEntity() => GymTrainerEntity(
@@ -45,5 +48,6 @@ class GymTrainerModel {
     email:         email,
     profileFileId: profileFileId,
     assignedAt:    assignedAt,
+    branchNames:   branchNames,
   );
 }

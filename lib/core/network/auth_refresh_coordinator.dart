@@ -19,9 +19,12 @@ class AuthRefreshCoordinator {
   Completer<String>? _adminRefreshing;
 
   Dio _plain() {
+    // Refresh tokens are issued by the build4all auth platform (Env.apiBaseUrl),
+    // NOT the gym backend (g.appServerRoot). Using the wrong URL caused all
+    // refreshes to hit a 404 and silently force re-login every 15 minutes.
     return Dio(
       BaseOptions(
-        baseUrl: g.appServerRoot,
+        baseUrl: Env.apiBaseUrl,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

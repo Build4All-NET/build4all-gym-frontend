@@ -20,8 +20,24 @@ abstract class BranchRepository {
     required String phone,
     required String email,
     required String address,
-    required String openingTime,
-    required String closingTime,
+    String? openingTime,
+    String? closingTime,
+    bool isOpen24Hours = false,
     required String status,
   });
+
+  Future<Either<Failure, BranchEntity>> updateBranch({
+    required String branchId,
+    required String name,
+    required String city,
+    required String phone,
+    required String email,
+    required String address,
+    String? openingTime,
+    String? closingTime,
+    bool isOpen24Hours = false,
+    required String status,
+  });
+
+  Future<Either<Failure, void>> deleteBranch(String branchId);
 }

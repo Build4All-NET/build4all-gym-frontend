@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../domain/entities/pt_service_entity.dart';
 import '../bloc/services/pt_service_bloc.dart';
@@ -54,13 +55,13 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
     ));
   }
 
-  String _trainerName(int trainerId) {
+  String _trainerName(int trainerId, BuildContext context) {
     try {
       return widget.trainers
           .firstWhere((t) => t.trainerId == trainerId)
           .fullName;
     } catch (_) {
-      return 'Trainer #$trainerId';
+      return AppLocalizations.of(context)!.trainer_trainerNumber(trainerId);
     }
   }
 
@@ -89,7 +90,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
           backgroundColor: tokens.colors.background,
           appBar: AppBar(
             title: Text(
-              widget.isAdmin ? 'All PT Services' : 'My Services',
+              widget.isAdmin ? AppLocalizations.of(context)!.trainer_servicesAllTitle : AppLocalizations.of(context)!.trainer_servicesMyTitle,
               style: TextStyle(color: tokens.colors.label),
             ),
             backgroundColor: tokens.colors.surface,
@@ -101,13 +102,13 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
               ),
             ],
           ),
-          body: _buildBody(state, tokens),
+          body: _buildBody(context, state, tokens),
         );
       },
     );
   }
 
-  Widget _buildBody(PtServiceState state, dynamic tokens) {
+  Widget _buildBody(BuildContext context, PtServiceState state, dynamic tokens) {
     if (state is PtServiceLoading || state is PtServiceMutating) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -119,7 +120,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
           children: [
             Text(state.message),
             const SizedBox(height: 12),
-            ElevatedButton(onPressed: _load, child: const Text('Retry')),
+            ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)!.retry)),
           ],
         ),
       );
@@ -129,7 +130,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
         state is PtServiceLoaded ? state.services : <PtServiceEntity>[];
 
     if (services.isEmpty) {
-      return const Center(child: Text('No PT services found.'));
+      return Center(child: Text(AppLocalizations.of(context)!.trainer_noPtServicesFound));
     }
 
     return RefreshIndicator(
@@ -140,7 +141,7 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
         separatorBuilder: (_, __) => const SizedBox(height: 10),
         itemBuilder: (_, i) => _ServiceCard(
           service:     services[i],
-          trainerName: _trainerName(services[i].trainerId),
+          trainerName: _trainerName(services[i].trainerId, context),
           showBadge:   widget.isAdmin,
           onEdit:      (svc) => _showEditDialog(context, svc),
           onDelete:    (svc) => _confirmDelete(context, svc),
@@ -193,20 +194,20 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete Service'),
-        content: Text('Delete "${svc.name}"?'),
+        title: Text(AppLocalizations.of(context)!.trainer_deleteServiceTitle),
+        content: Text(AppLocalizations.of(context)!.trainer_deleteServiceMessage(svc.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.general_cancel),
           ),
           TextButton(
             onPressed: () {
               _bloc.add(PtServiceDeleteRequested(svc.serviceId));
               Navigator.pop(context);
             },
-            child: const Text('Delete',
-                style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.admin_members_actionDelete,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -265,7 +266,7 @@ class _ServiceCard extends StatelessWidget {
                       color: tokens.colors.muted.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text('Inactive',
+                    child: Text(AppLocalizations.of(context)!.trainer_inactiveBadge,
                         style: TextStyle(
                             color: tokens.colors.muted, fontSize: 11)),
                   ),
@@ -281,7 +282,7 @@ class _ServiceCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'By $trainerName',
+                  AppLocalizations.of(context)!.trainer_byName(trainerName),
                   style: TextStyle(
                     color: tokens.colors.primary,
                     fontSize: 11,
@@ -320,14 +321,14 @@ class _ServiceCard extends StatelessWidget {
                 TextButton.icon(
                   onPressed: () => onEdit(service),
                   icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Edit'),
+                  label: Text(AppLocalizations.of(context)!.admin_members_actionEdit),
                 ),
                 const SizedBox(width: 4),
                 TextButton.icon(
                   onPressed: () => onDelete(service),
                   icon: Icon(Icons.delete_outline,
                       size: 16, color: tokens.colors.danger),
-                  label: Text('Delete',
+                  label: Text(AppLocalizations.of(context)!.admin_members_actionDelete,
                       style: TextStyle(color: tokens.colors.danger)),
                 ),
               ],
@@ -406,7 +407,7 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
   Widget build(BuildContext context) {
     final isEdit = widget.initialService != null;
     return AlertDialog(
-      title: Text(isEdit ? 'Edit Service' : 'New PT Service'),
+      title: Text(isEdit ? AppLocalizations.of(context)!.trainer_editService : AppLocalizations.of(context)!.trainer_newPtService),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -417,7 +418,7 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
               if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
                 DropdownButtonFormField<int>(
                   value: _selectedTrainerId,
-                  hint: const Text('Assign to Trainer'),
+                  hint: Text(AppLocalizations.of(context)!.trainer_assignToTrainer),
                   items: widget.trainers.map((t) {
                     return DropdownMenuItem(
                       value: t.trainerId,
@@ -427,32 +428,32 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
                   onChanged: (v) =>
                       setState(() => _selectedTrainerId = v),
                   validator: (v) =>
-                  v == null ? 'Please select a trainer' : null,
+                  v == null ? AppLocalizations.of(context)!.trainer_selectTrainerRequired : null,
                 ),
                 const SizedBox(height: 10),
               ],
 
               // ── Name ────────────────────────────────────────────────────
-              _field(_name, 'Service Name',
+              _field(_name, AppLocalizations.of(context)!.trainer_serviceNameLabel,
                   validator: (v) =>
-                  v == null || v.isEmpty ? 'Required' : null),
+                  v == null || v.isEmpty ? AppLocalizations.of(context)!.trainer_requiredField : null),
 
               // ── Description ─────────────────────────────────────────────
-              _field(_description, 'Description (optional)'),
+              _field(_description, AppLocalizations.of(context)!.trainer_descriptionOptional),
 
               // ── Duration ─────────────────────────────────────────────────
-              _field(_duration, 'Duration (minutes)',
+              _field(_duration, AppLocalizations.of(context)!.trainer_durationMinutes,
                   keyboardType: TextInputType.number,
                   validator: (v) =>
-                  int.tryParse(v ?? '') == null ? 'Enter a number' : null),
+                  int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
 
               // ── Price ────────────────────────────────────────────────────
-              _field(_price, 'Price',
+              _field(_price, AppLocalizations.of(context)!.trainer_priceLabel,
                   keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
                   validator: (v) =>
                   double.tryParse(v ?? '') == null
-                      ? 'Enter a price'
+                      ? AppLocalizations.of(context)!.trainer_enterPrice
                       : null),
 
               // ── isActive toggle (edit mode only) ─────────────────────────
@@ -460,9 +461,9 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
               if (isEdit) ...[
                 const SizedBox(height: 4),
                 SwitchListTile(
-                  title: const Text('Active'),
+                  title: Text(AppLocalizations.of(context)!.trainer_activeLabel),
                   subtitle:
-                      const Text('Inactive services are hidden from members'),
+                      Text(AppLocalizations.of(context)!.trainer_inactiveHidden),
                   value: _isActive,
                   onChanged: (v) => setState(() => _isActive = v),
                   contentPadding: EdgeInsets.zero,
@@ -475,11 +476,11 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.general_cancel),
         ),
         ElevatedButton(
           onPressed: _submit,
-          child: const Text('Save'),
+          child: Text(AppLocalizations.of(context)!.editProfileSave),
         ),
       ],
     );
@@ -508,7 +509,7 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
     final trainerId = _selectedTrainerId ?? widget.defaultTrainerId;
     if (trainerId == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a trainer.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.trainer_selectTrainerSnackbar)),
       );
       return;
     }

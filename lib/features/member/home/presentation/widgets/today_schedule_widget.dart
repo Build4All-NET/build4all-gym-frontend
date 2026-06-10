@@ -109,7 +109,12 @@ class ScheduleItemCard extends StatelessWidget {
     final timeColor = isPm ? tokens.colors.danger : tokens.colors.primary;
 
     return Container(
-      height: 106,
+      /*
+   * Do not use fixed height here.
+   * Arabic text and small screens need more vertical space.
+   * Fixed height causes the yellow/black overflow warning.
+   */
+      constraints: const BoxConstraints(minHeight: 106),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: tokens.colors.surface,
@@ -165,7 +170,7 @@ class ScheduleItemCard extends StatelessWidget {
                           textAlign: isRtl ? TextAlign.end : TextAlign.start,
                           style: tokens.typography.titleMedium.copyWith(
                             color: tokens.colors.label,
-                            fontSize: 22,
+                            fontSize: 18,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -183,7 +188,8 @@ class ScheduleItemCard extends StatelessWidget {
                         SizedBox(height: tokens.spacing.sm),
                         Wrap(
                           alignment: isRtl ? WrapAlignment.end : WrapAlignment.start,
-                          spacing: tokens.spacing.md,
+                          spacing: tokens.spacing.sm,
+                          runSpacing: tokens.spacing.xs,
                           children: [
                             _ScheduleMetaItem(
                               icon: Icons.access_time_rounded,

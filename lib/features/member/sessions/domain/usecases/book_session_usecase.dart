@@ -6,7 +6,7 @@ class BookSessionUseCase {
 
   BookSessionUseCase(this.repository);
 
-  Future<BookSessionResultEntity> call(int sessionId) {
-    return repository.bookSession(sessionId);
+  Future<BookSessionResultEntity> call(int sessionId, {String? paymentMethod}) {
+    return repository.bookSession(sessionId, paymentMethod: paymentMethod);
   }
 }

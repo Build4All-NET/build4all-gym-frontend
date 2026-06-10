@@ -13,6 +13,7 @@ class UpdatePlanRequestModel {
   final String? planType;
   final double? price;
   final String? billingCycle;
+  final int? customDurationDays;
   final String? description;
   final String? status;
   final List<int>? branchIds;
@@ -22,6 +23,8 @@ class UpdatePlanRequestModel {
   final bool? autoRenew;
   final bool? isFeatured;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final PlanPromotionModel? promotion;
   final List<PlanFeatureModel>? features;
 
@@ -30,6 +33,7 @@ class UpdatePlanRequestModel {
     this.planType,
     this.price,
     this.billingCycle,
+    this.customDurationDays,
     this.description,
     this.status,
     this.branchIds,
@@ -39,6 +43,8 @@ class UpdatePlanRequestModel {
     this.autoRenew,
     this.isFeatured,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     this.promotion,
     this.features,
   });
@@ -49,6 +55,7 @@ class UpdatePlanRequestModel {
     if (planType != null) map['planType'] = planType;
     if (price != null) map['price'] = price;
     if (billingCycle != null) map['billingCycle'] = billingCycle;
+    if (customDurationDays != null) map['customDurationDays'] = customDurationDays;
     if (description != null) map['description'] = description;
     if (status != null) map['status'] = status;
     if (branchIds != null) map['branchIds'] = branchIds;
@@ -59,6 +66,8 @@ class UpdatePlanRequestModel {
     if (autoRenew != null) map['autoRenew'] = autoRenew;
     if (isFeatured != null) map['isFeatured'] = isFeatured;
     if (gracePeriodDays != null) map['gracePeriodDays'] = gracePeriodDays;
+    if (gymAccessStart != null) map['gymAccessStart'] = gymAccessStart;
+    if (gymAccessEnd != null) map['gymAccessEnd'] = gymAccessEnd;
     if (promotion != null) map['promotion'] = promotion!.toJson();
     if (features != null)
       map['features'] = features!.map((f) => f.toJson()).toList();

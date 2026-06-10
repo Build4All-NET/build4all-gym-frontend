@@ -1,7 +1,7 @@
 import '../../domain/entities/admin_branch_option_entity.dart';
 
 class AdminBranchOptionModel {
-  final int branchId;
+  final int    branchId;
   final String branchName;
 
   const AdminBranchOptionModel({
@@ -11,13 +11,13 @@ class AdminBranchOptionModel {
 
   factory AdminBranchOptionModel.fromJson(Map<String, dynamic> json) {
     return AdminBranchOptionModel(
-      branchId: json['branchId'] as int,
+      branchId:   (json['branchId'] as num).toInt(),
       branchName: json['branchName'] as String,
     );
   }
 
   AdminBranchOptionEntity toEntity() => AdminBranchOptionEntity(
-    branchId: branchId,
+    branchId:   branchId,
     branchName: branchName,
   );
 }

@@ -234,11 +234,13 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   getWeeklyAvailableSlots({
     required int trainerId,
     required String day,
+    int? packageId,
   }) async {
     try {
       final models = await _service.getWeeklyAvailableSlots(
         trainerId: trainerId,
         day: day,
+        packageId: packageId,
       );
 
       return (
@@ -385,39 +387,60 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   createPackageBooking({
     required int packageId,
     required List<Map<String, dynamic>> weeklySchedule,
+    String? paymentMethod,
   }) async {
     try {
       final model = await _service.createPackageBooking(
         PtPackageBookingRequestModel(
           packageId: packageId,
           weeklySchedule: weeklySchedule,
+          paymentMethod: paymentMethod,
         ),
       );
 
-      return (
-      data: model.toEntity(),
-      failure: null,
-      );
+      return (data: model.toEntity(), failure: null);
     } on UnauthorizedException {
-      return (
-      data: null,
-      failure: const AuthFailure('Session expired. Please log in again.'),
-      );
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
     } on ForbiddenException {
-      return (
-      data: null,
-      failure: const AuthFailure('Access denied.'),
-      );
+      return (data: null, failure: const AuthFailure('Access denied.'));
     } on ServerException catch (e) {
-      return (
-      data: null,
-      failure: ServerFailure(e.message),
-      );
+      return (data: null, failure: ServerFailure(e.message));
     } on NetworkException {
-      return (
-      data: null,
-      failure: const NetworkFailure('No internet connection.'),
-      );
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
+  @override
+  Future<({PtPackageBookingResponseEntity? data, Failure? failure})>
+  confirmPackagePayment(int bookingId) async {
+    try {
+      final model = await _service.confirmPackagePayment(bookingId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
+  @override
+  Future<({PtPackageBookingResponseEntity? data, Failure? failure})>
+  checkPackagePaymentStatus(int bookingId) async {
+    try {
+      final model = await _service.checkPackagePaymentStatus(bookingId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
     }
   }
 }

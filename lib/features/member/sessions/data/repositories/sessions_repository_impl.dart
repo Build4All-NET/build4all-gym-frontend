@@ -58,13 +58,20 @@ class SessionsRepositoryImpl implements SessionsRepository {
   }
 
   @override
-  Future<BookSessionResultEntity> bookSession(int sessionId) async {
-    final model = await _service.bookSession(sessionId);
+  Future<BookSessionResultEntity> bookSession(int sessionId, {String? paymentMethod}) async {
+    final model = await _service.bookSession(sessionId, paymentMethod: paymentMethod);
 
     return BookSessionResultEntity(
-      bookingId: model.bookingId,
-      status: model.status,
+      bookingId:        model.bookingId,
+      status:           model.status,
       waitlistPosition: model.waitlistPosition,
+      paymentStatus:    model.paymentStatus,
+      paymentMethod:    model.paymentMethod,
+      invoiceId:        model.invoiceId,
+      transactionId:    model.transactionId,
+      clientSecret:     model.clientSecret,
+      publishableKey:   model.publishableKey,
+      redirectUrl:      model.redirectUrl,
     );
   }
 
@@ -96,6 +103,8 @@ class SessionsRepositoryImpl implements SessionsRepository {
         description: model.description ?? 'No description available',
         benefits: model.benefits,
         equipment: model.equipment,
+        requiresMembership: model.requiresMembership,
+        memberHasActiveMembership: model.memberHasActiveMembership,
       );
   }
 }

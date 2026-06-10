@@ -11,12 +11,14 @@ part 'plan_form_state.dart';
 class PlanFormBloc extends Bloc<PlanFormEvent, PlanFormState> {
   final GetPlanTypesUseCase getPlanTypes;
   final GetBranchesUseCase getBranches;
+  final CreatePlanTypeUseCase createPlanType;
   final CreatePlanUseCase createPlan;
   final UpdatePlanUseCase updatePlan;
 
   PlanFormBloc({
     required this.getPlanTypes,
     required this.getBranches,
+    required this.createPlanType,
     required this.createPlan,
     required this.updatePlan,
   }) : super(PlanFormInitial()) {
@@ -27,9 +29,9 @@ class PlanFormBloc extends Bloc<PlanFormEvent, PlanFormState> {
 
   // ── Load types + branches for dropdowns ───────────────────────────────────
   Future<void> _onLoadFormData(
-      LoadFormDataEvent event,
-      Emitter<PlanFormState> emit,
-      ) async {
+    LoadFormDataEvent event,
+    Emitter<PlanFormState> emit,
+  ) async {
     emit(PlanFormDataLoading());
     try {
       final results = await Future.wait([
@@ -51,23 +53,26 @@ class PlanFormBloc extends Bloc<PlanFormEvent, PlanFormState> {
 
   // ── Create plan ───────────────────────────────────────────────────────────
   Future<void> _onSubmitCreate(
-      SubmitCreatePlanEvent event,
-      Emitter<PlanFormState> emit,
-      ) async {
+    SubmitCreatePlanEvent event,
+    Emitter<PlanFormState> emit,
+  ) async {
     final current = state;
     final types = current is PlanFormDataLoaded
         ? current.types
         : current is PlanFormError
-        ? current.types
-        : <String>[];
+            ? current.types
+            : <String>[];
     final branches = current is PlanFormDataLoaded
         ? current.branches
         : current is PlanFormError
-        ? current.branches
-        : <AdminBranchOptionEntity>[];
+            ? current.branches
+            : <AdminBranchOptionEntity>[];
 
     emit(PlanFormSubmitting(types: types, branches: branches));
     try {
+      if (event.isCustomType) {
+        await createPlanType(event.request.planType);
+      }
       await createPlan(event.request);
       emit(PlanFormSuccess(message: 'Plan created successfully'));
     } catch (e) {
@@ -81,20 +86,20 @@ class PlanFormBloc extends Bloc<PlanFormEvent, PlanFormState> {
 
   // ── Update plan ───────────────────────────────────────────────────────────
   Future<void> _onSubmitUpdate(
-      SubmitUpdatePlanEvent event,
-      Emitter<PlanFormState> emit,
-      ) async {
+    SubmitUpdatePlanEvent event,
+    Emitter<PlanFormState> emit,
+  ) async {
     final current = state;
     final types = current is PlanFormDataLoaded
         ? current.types
         : current is PlanFormError
-        ? current.types
-        : <String>[];
+            ? current.types
+            : <String>[];
     final branches = current is PlanFormDataLoaded
         ? current.branches
         : current is PlanFormError
-        ? current.branches
-        : <AdminBranchOptionEntity>[];
+            ? current.branches
+            : <AdminBranchOptionEntity>[];
 
     emit(PlanFormSubmitting(types: types, branches: branches));
     try {

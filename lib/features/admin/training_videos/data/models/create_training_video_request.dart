@@ -2,9 +2,10 @@ import 'dart:io';
 class CreateTrainingVideoRequest {
   final String title;
   final String? description;
-  final int categoryId;       // ✅ back to int
+  final int categoryId;
   final String videoUrl;
   final String? thumbnailUrl;
+  final File? thumbnailFile;
   final int durationSeconds;
   final int? branchId;
   final bool isPublished;
@@ -18,6 +19,7 @@ class CreateTrainingVideoRequest {
     required this.categoryId,
     required this.videoUrl,
     this.thumbnailUrl,
+    this.thumbnailFile,
     required this.durationSeconds,
     this.branchId,
     required this.isPublished,

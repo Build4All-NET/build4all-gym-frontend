@@ -183,6 +183,16 @@ class MemberPlansScreen extends StatelessWidget {
                               if (membershipState is MyMembershipLoaded) {
                                 return MyMembershipCardWidget(
                                   membership: membershipState.membership,
+                                  onRenew: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => PlanDetailScreenProvider(
+                                          planId: membershipState.membership.planId,
+                                          dio: dio,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               }
 
@@ -229,7 +239,6 @@ class MemberPlansScreen extends StatelessWidget {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                            final otherPlans = plans.skip(1).toList();
                             final plan = plans[index];
                             return PlanCardWidget(
                               plan: plan,

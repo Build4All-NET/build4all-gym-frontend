@@ -1,11 +1,14 @@
 // FILE: lib/features/admin/dashboard/presentation/screens/admin_dashboard_screen.dart
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/app_router.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
+import '../../../branches/presentation/widgets/create_first_branch_dialog.dart';
 import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
 import '../bloc/admin_dashboard_state.dart';
@@ -15,6 +18,7 @@ import '../widgets/text_metric_rows.dart';
 import '../widgets/quick_actions_section.dart';
 import '../widgets/recent_activity_feed.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -25,24 +29,13 @@ class AdminDashboardScreen extends StatefulWidget {
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ── Time period filter ─────────────────────────────────────────────────────
-  // The display labels shown in the DropdownButton.
-  final List<String> _periodOptions = ['Today', 'This Week', 'This Month', 'Custom'];
-
-  // Maps each display label to the API query-param value the BLoC sends.
-  final Map<String, String> _periodMap = {
-    'Today':      'today',
-    'This Week':  'week',
-    'This Month': 'month',
-    'Custom':     'custom',
-  };
-  String _selectedPeriodLabel = 'Today';
+  // API values — display labels are derived from l10n at build time.
+  final List<String> _periodKeys = ['today', 'week', 'month', 'custom'];
+  String _selectedPeriodKey = 'today';
 
   // ── Branch filter ──────────────────────────────────────────────────────────
-  //    We track only the selected branch ID (null = "All Branches").
-  //    The actual list of branches is loaded by BranchCubit from the backend
-  //    endpoint GET /api/admin/branches/options and rendered via BlocBuilder
-  //    inside _buildAppBar(). This is the same pattern AdminAppBar uses.
-  int? _selectedBranchId; // null → "All Branches"
+  int? _selectedBranchId;
+  bool _firstBranchDialogShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +44,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     final sp      = tokens.spacing;
     final card    = tokens.card;
     final profile = context.watch<AdminProfileCubit>().state;
+    final l10n    = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return BlocListener<BranchCubit, BranchState>(
+      listenWhen: (_, s) => s is BranchLoaded,
+      listener: (context, state) {
+        if (state is BranchLoaded &&
+            state.branches.isEmpty &&
+            !_firstBranchDialogShown) {
+          _firstBranchDialogShown = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) showCreateFirstBranchDialog(context);
+          });
+        }
+      },
+      child: Scaffold(
       drawer: AdminNavigationDrawer(
         gymName:         profile.gymName,
         branchName:      profile.branchName,
@@ -65,17 +71,18 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(context, c, sp, card),
-            _buildPeriodSelector(context, c, sp, card),
-            Expanded(child: _buildBody(context, c, sp)),
+            _buildAppBar(context, c, sp, card, l10n),
+            _buildPeriodSelector(context, c, sp, card, l10n),
+            Expanded(child: _buildBody(context, c, sp, l10n)),
           ],
         ),
+      ),
       ),
     );
   }
 
   // ── AppBar ─────────────────────────────────────────────────────────────────
-  Widget _buildAppBar(BuildContext context, dynamic c, dynamic sp, dynamic card) {
+  Widget _buildAppBar(BuildContext context, dynamic c, dynamic sp, dynamic card, AppLocalizations l10n) {
     return Container(
       color:   c.surface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -117,11 +124,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 // Derive the display name from the selected branch ID
                 // null _selectedBranchId → "All Branches"
                 final selectedName = _selectedBranchId == null
-                    ? 'All Branches'
+                    ? l10n.admin_dashboard_allBranches
                     : branches
                     .where((b) => b.id == _selectedBranchId)
                     .map((b) => b.name)
-                    .firstOrNull ?? 'All Branches';
+                    .firstOrNull ?? l10n.admin_dashboard_allBranches;
 
                 return PopupMenuButton<int?>(
                   offset: const Offset(0, 44),
@@ -129,10 +136,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       borderRadius: BorderRadius.circular(card.radius)),
                   color:     c.surface,
                   elevation: 8,
-                  // When a branch is picked, update state.
-                  // The BLoC doesn't filter by branch yet (backend API doesn't
-                  // accept branchId on this endpoint); selection is stored for
-                  // display only and future branch-aware filtering.
                   onSelected: (int? id) =>
                       setState(() => _selectedBranchId = id),
                   itemBuilder: (context) => [
@@ -143,7 +146,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         context,
                         c:          c,
                         icon:       Icons.business_rounded,
-                        name:       'All Branches',
+                        name:       l10n.admin_dashboard_allBranches,
                         isSelected: _selectedBranchId == null,
                       ),
                     ),
@@ -169,7 +172,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
 
           Text(
-            'Dashboard',
+            l10n.navDashboard,
             style: TextStyle(
               fontSize:   17,
               fontWeight: FontWeight.w700,
@@ -303,7 +306,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   // ── Period selector row (Today / This Week / This Month / Custom) ──────────
   Widget _buildPeriodSelector(
-      BuildContext context, dynamic c, dynamic sp, dynamic card) {
+      BuildContext context, dynamic c, dynamic sp, dynamic card, AppLocalizations l10n) {
     return Container(
       color:   c.surface,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -318,7 +321,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Time Period',
+              l10n.admin_dashboard_timePeriod,
               style: TextStyle(
                   fontSize:   13,
                   color:      c.muted,
@@ -326,7 +329,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: _selectedPeriodLabel,
+                value: _selectedPeriodKey,
                 icon:  Icon(Icons.keyboard_arrow_down_rounded,
                     color: c.body, size: 18),
                 isDense: true,
@@ -334,15 +337,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     fontSize:   13,
                     fontWeight: FontWeight.w600,
                     color:      c.label),
-                items: _periodOptions
-                    .map((p) => DropdownMenuItem(value: p, child: Text(p)))
-                    .toList(),
+                items: _periodKeys.map((key) {
+                  final label = {
+                    'today': l10n.admin_dashboard_today,
+                    'week':  l10n.admin_dashboard_thisWeek,
+                    'month': l10n.admin_dashboard_thisMonth,
+                    'custom': l10n.admin_dashboard_custom,
+                  }[key]!;
+                  return DropdownMenuItem(value: key, child: Text(label));
+                }).toList(),
                 onChanged: (value) {
                   if (value == null) return;
-                  setState(() => _selectedPeriodLabel = value);
-                  // Tell the BLoC to re-fetch with the new period
+                  setState(() => _selectedPeriodKey = value);
                   context.read<AdminDashboardBloc>().add(
-                    AdminDashboardPeriodChanged(period: _periodMap[value]!),
+                    AdminDashboardPeriodChanged(period: value),
                   );
                 },
               ),
@@ -354,7 +362,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   // ── Main body — delegates to BlocBuilder ───────────────────────────────────
-  Widget _buildBody(BuildContext context, dynamic c, dynamic sp) {
+  Widget _buildBody(BuildContext context, dynamic c, dynamic sp, AppLocalizations l10n) {
     return BlocBuilder<AdminDashboardBloc, AdminDashboardState>(
       builder: (context, state) {
         // ── Loading ──
@@ -400,7 +408,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),
                     ),
-                    child: const Text('Retry'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -437,17 +445,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   TextMetricRows(data: state.data),
                   const SizedBox(height: 20),
 
-                  // Quick Actions: Add Member, Record Payment, Add Plan,
+                  // Quick Actions: AI Assistant, Record Payment, Add Plan,
                   // Send Announcement
                   QuickActionsSection(
-                    onAddMember: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-                    onRecordPayment: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-                    onAddPlan: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
-                    onSendAnnouncement: () => ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Coming soon'))),
+                    onAiAssistant: () =>
+                        Navigator.pushNamed(context, AppRouter.adminAiAssistant),
+                    onRecordPayment: () => AppToast.info(context, 'Coming soon'),
+                    onAddPlan: () =>
+                        Navigator.pushNamed(context, AppRouter.adminPlans),
+                    onSendAnnouncement: () => AppToast.info(context, 'Coming soon'),
                   ),
                   const SizedBox(height: 20),
 

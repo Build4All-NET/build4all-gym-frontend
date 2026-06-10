@@ -49,13 +49,25 @@ class CategoryCreateError extends TrainingVideosState {
 }
 
 class CreateVideoLoading extends TrainingVideosState {}
-
 class CreateVideoSuccess extends TrainingVideosState {}
-
 class CreateVideoError extends TrainingVideosState {
   final String message;
   CreateVideoError(this.message);
 }
 
+class UpdateVideoLoading extends TrainingVideosState {}
+class UpdateVideoSuccess extends TrainingVideosState {}
+class UpdateVideoError extends TrainingVideosState {
+  final String message;
+  UpdateVideoError(this.message);
+}
 
-// rest of states unchanged
+class DeleteVideoLoading extends TrainingVideosState {}
+class DeleteVideoSuccess extends TrainingVideosState {
+  final int videoId;
+  DeleteVideoSuccess(this.videoId);
+}
+class DeleteVideoError extends TrainingVideosState {
+  final String message;
+  DeleteVideoError(this.message);
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../data/services/member_profile_service.dart';
 
@@ -200,7 +201,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                   Text(
                     'Help us personalise your experience. '
                     'Fields marked * are required.',
-                    style: TextStyle(color: c.error, fontSize: 12),
+                    style: TextStyle(color: c.label.withOpacity(0.7), fontSize: 12),
                   ),
                 ],
               ),
@@ -294,7 +295,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                         child: Row(
                           children: [
                             Icon(Icons.calendar_today_rounded,
-                                color: c.background, size: 18),
+                                color: _selectedDob != null ? c.primary : c.label.withOpacity(0.5), size: 18),
                             const SizedBox(width: 10),
                             Text(
                               _selectedDob != null
@@ -305,7 +306,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                               style: TextStyle(
                                 color: _selectedDob != null
                                     ? c.primary
-                                    : c.background,
+                                    : c.label.withOpacity(0.5),
                                 fontSize: 14,
                               ),
                             ),
@@ -415,7 +416,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
         ),
       ),
       hint: Text('Select branch',
-          style: TextStyle(color: c.background, fontSize: 14)),
+          style: TextStyle(color: c.label.withOpacity(0.5), fontSize: 14)),
       items: _branches
           .map((b) => DropdownMenuItem<int>(
                 value: b['id'] as int,
@@ -423,7 +424,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                     style: TextStyle(color: c.primary)),
               ))
           .toList(),
-      onChanged: (v) => setState(() => _selectedBranchId = v),
+      onChanged: (int? v) => setState(() => _selectedBranchId = v),
     );
   }
 
@@ -442,7 +443,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       style: TextStyle(color: c.primary, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: c.background, fontSize: 13),
+        hintStyle: TextStyle(color: c.label.withOpacity(0.5), fontSize: 13),
         filled: true,
         fillColor: c.background,
         contentPadding:
@@ -475,7 +476,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       style: TextStyle(color: c.primary, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: c.background, fontSize: 13),
+        hintStyle: TextStyle(color: c.label.withOpacity(0.5), fontSize: 13),
         filled: true,
         fillColor: c.background,
         contentPadding:

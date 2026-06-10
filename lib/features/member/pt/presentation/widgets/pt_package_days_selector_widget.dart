@@ -25,27 +25,19 @@ import '../bloc/pt_package_booking_event.dart';
 ///   }
 /// ]
 class PtPackageDaysSelectorWidget extends StatelessWidget {
-  /// New selected source of truth.
-  ///
-  /// Example:
-  /// [
-  ///   {
-  ///     "day": "MONDAY",
-  ///     "time": "09:00"
-  ///   }
-  /// ]
   final List<Map<String, dynamic>> weeklySchedule;
-
-  /// Selected package contains:
-  /// - minDaysPerWeek
-  /// - maxDaysPerWeek
-  /// These limits control how many weekdays the user can choose.
   final PtPackageEntity? selectedPackage;
+
+  // Weekday codes where the trainer has set availability.
+  // Days not in this list are shown grayed-out (trainer has no slots configured).
+  // Empty list means unknown → treat all days as available.
+  final List<String> availableDays;
 
   const PtPackageDaysSelectorWidget({
     super.key,
     required this.weeklySchedule,
     required this.selectedPackage,
+    this.availableDays = const [],
   });
 
   @override
@@ -86,28 +78,45 @@ class PtPackageDaysSelectorWidget extends StatelessWidget {
           runSpacing: tokens.spacing.sm,
           children: _weekdays.map((dayCode) {
             final selected = _isSelected(dayCode);
+            final trainerAvailable = _isTrainerAvailableOnDay(dayCode);
 
             return _DayChip(
               label: _weekdayLabel(l10n, dayCode),
               selected: selected,
-              onTap: () {
+              trainerAvailable: trainerAvailable,
+              onTap: () async {
                 final package = selectedPackage;
-
-                /// No package selected, no action.
                 if (package == null) return;
 
-                /// Frontend guard:
-                /// do not allow selecting more than maxDaysPerWeek.
-                ///
-                /// Backend also validates this.
+                // Day not in trainer's availability → jump straight to request.
+                if (!trainerAvailable) {
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: const TimeOfDay(hour: 9, minute: 0),
+                    helpText: l10n.ptRequestTimePickerHint,
+                    builder: (ctx, child) => Directionality(
+                      textDirection: Directionality.of(context),
+                      child: child!,
+                    ),
+                  );
+                  if (time != null && context.mounted) {
+                    context.read<PtPackageBookingBloc>().add(
+                      PtPackageTimeRequestSubmitted(
+                        day: dayCode,
+                        hour: time.hour,
+                        minute: time.minute,
+                      ),
+                    );
+                  }
+                  return;
+                }
+
                 if (!selected &&
                     weeklySchedule.length >= package.maxDaysPerWeek) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        l10n.ptPackageMaxDaysReached(
-                          package.maxDaysPerWeek,
-                        ),
+                        l10n.ptPackageMaxDaysReached(package.maxDaysPerWeek),
                       ),
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -115,16 +124,8 @@ class PtPackageDaysSelectorWidget extends StatelessWidget {
                   return;
                 }
 
-                /// Toggle this stable weekday in Bloc.
-                ///
-                /// Important:
-                /// - Send stable backend code.
-                /// - Do not send translated label.
-                /// - Do not send date.
                 context.read<PtPackageBookingBloc>().add(
-                  PtPackageDayToggled(
-                    day: dayCode,
-                  ),
+                  PtPackageDayToggled(day: dayCode),
                 );
               },
             );
@@ -147,13 +148,18 @@ class PtPackageDaysSelectorWidget extends StatelessWidget {
     'SUNDAY',
   ];
 
-  /// Checks if a backend day code is already selected.
   bool _isSelected(String dayCode) {
     final normalized = dayCode.trim().toUpperCase();
-
     return weeklySchedule.any(
-          (item) => item['day']?.toString().toUpperCase() == normalized,
+      (item) => item['day']?.toString().toUpperCase() == normalized,
     );
+  }
+
+  // Returns true when trainer has availability on this weekday.
+  // Empty availableDays = unknown → assume available.
+  bool _isTrainerAvailableOnDay(String dayCode) {
+    if (availableDays.isEmpty) return true;
+    return availableDays.contains(dayCode.trim().toUpperCase());
   }
 
   /// Converts stable backend weekday code to localized UI label.
@@ -187,20 +193,44 @@ class PtPackageDaysSelectorWidget extends StatelessWidget {
 }
 
 /// Single selectable weekday chip.
+///
+/// When [trainerAvailable] is false the chip renders in a muted style to
+/// signal that the trainer has no configured slots for this day; tapping it
+/// will open a time-picker so the member can send a custom request instead.
 class _DayChip extends StatelessWidget {
   final String label;
   final bool selected;
+  final bool trainerAvailable;
   final VoidCallback onTap;
 
   const _DayChip({
     required this.label,
     required this.selected,
+    required this.trainerAvailable,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+
+    final bgColor = selected
+        ? tokens.colors.primary
+        : trainerAvailable
+            ? tokens.colors.surface
+            : tokens.colors.border.withOpacity(0.12);
+
+    final borderColor = selected
+        ? tokens.colors.primary
+        : trainerAvailable
+            ? tokens.colors.border.withOpacity(0.35)
+            : tokens.colors.border.withOpacity(0.2);
+
+    final textColor = selected
+        ? tokens.colors.onPrimary
+        : trainerAvailable
+            ? tokens.colors.label
+            : tokens.colors.muted;
 
     return InkWell(
       onTap: onTap,
@@ -213,13 +243,9 @@ class _DayChip extends StatelessWidget {
           vertical: tokens.spacing.md,
         ),
         decoration: BoxDecoration(
-          color: selected ? tokens.colors.primary : tokens.colors.surface,
+          color: bgColor,
           borderRadius: BorderRadius.circular(18.0),
-          border: Border.all(
-            color: selected
-                ? tokens.colors.primary
-                : tokens.colors.border.withOpacity(0.35),
-          ),
+          border: Border.all(color: borderColor),
         ),
         child: Text(
           label,
@@ -227,7 +253,7 @@ class _DayChip extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: tokens.typography.bodySmall.copyWith(
-            color: selected ? tokens.colors.onPrimary : tokens.colors.label,
+            color: textColor,
             fontWeight: FontWeight.w900,
           ),
         ),

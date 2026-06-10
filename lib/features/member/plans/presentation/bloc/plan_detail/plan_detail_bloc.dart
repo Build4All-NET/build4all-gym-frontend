@@ -1,125 +1,192 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/usecases/check_payment_status_usecase.dart';
+import '../../../domain/usecases/checkout_usecase.dart';
+import '../../../domain/usecases/confirm_stripe_payment_usecase.dart';
+import '../../../domain/usecases/get_payment_methods_usecase.dart';
 import '../../../domain/usecases/get_plan_detail_usecase.dart';
 import '../../../domain/usecases/validate_coupon_usecase.dart';
 import 'plan_detail_event.dart';
 import 'plan_detail_state.dart';
 
-/// BLoC responsible for the plan detail screen.
-///
-/// It handles:
-/// - loading the selected plan details
-/// - validating coupon codes
-/// - clearing an applied coupon
-///
-/// This BLoC only calls domain usecases.
-/// It does not access datasource or repository directly.
 class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
   final GetPlanDetailUseCase getPlanDetail;
   final ValidateCouponUseCase validateCoupon;
+  final GetPaymentMethodsUseCase getPaymentMethods;
+  final CheckoutUseCase checkout;
+  final ConfirmStripePaymentUseCase confirmStripePayment;
+  final CheckPaymentStatusUseCase checkPaymentStatus;
 
   PlanDetailBloc({
     required this.getPlanDetail,
     required this.validateCoupon,
+    required this.getPaymentMethods,
+    required this.checkout,
+    required this.confirmStripePayment,
+    required this.checkPaymentStatus,
   }) : super(PlanDetailInitial()) {
     on<LoadPlanDetailEvent>(_onLoadPlanDetail);
     on<ApplyCouponEvent>(_onApplyCoupon);
     on<ClearCouponEvent>(_onClearCoupon);
+    on<LoadPaymentMethodsEvent>(_onLoadPaymentMethods);
+    on<SelectPaymentMethodEvent>(_onSelectPaymentMethod);
+    on<SubmitCheckoutEvent>(_onSubmitCheckout);
+    on<ConfirmStripePaymentEvent>(_onConfirmStripePayment);
+    on<CheckRedirectPaymentEvent>(_onCheckRedirectPayment);
   }
 
-  /// Handles loading the selected plan.
-  ///
-  /// Flow:
-  /// 1. Emit loading state
-  /// 2. Call GetPlanDetailUseCase with planId
-  /// 3. Emit loaded state if successful
-  /// 4. Emit error state if something fails
   Future<void> _onLoadPlanDetail(
-      LoadPlanDetailEvent event,
-      Emitter<PlanDetailState> emit,
-      ) async {
+    LoadPlanDetailEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
     emit(PlanDetailLoading());
-
     try {
       final plan = await getPlanDetail(event.planId);
-
-      emit(
-        PlanDetailLoaded(
-          plan: plan,
-        ),
-      );
+      emit(PlanDetailLoaded(plan: plan, isPaymentMethodsLoading: true));
+      add(LoadPaymentMethodsEvent());
     } catch (e) {
-      emit(
-        PlanDetailError(
-          message: e.toString(),
-        ),
-      );
+      emit(PlanDetailError(message: e.toString()));
     }
   }
 
-  /// Handles coupon validation.
-  ///
-  /// This does not reload the plan.
-  /// It only updates the coupon part of the loaded state.
-  Future<void> _onApplyCoupon(
-      ApplyCouponEvent event,
-      Emitter<PlanDetailState> emit,
-      ) async {
-    final currentState = state;
-
-    if (currentState is! PlanDetailLoaded) return;
-
-    // Show spinner only on the coupon button while validating.
-    emit(
-      PlanDetailLoaded(
-        plan: currentState.plan,
-        coupon: currentState.coupon,
-        isCouponValidating: true,
-      ),
-    );
+  Future<void> _onLoadPaymentMethods(
+    LoadPaymentMethodsEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    final current = state;
+    if (current is! PlanDetailLoaded) return;
 
     try {
-      final result = await validateCoupon(
-        event.couponCode,
-        event.planId,
-      );
-
-      emit(
-        PlanDetailLoaded(
-          plan: currentState.plan,
-          coupon: result,
-          isCouponValidating: false,
-        ),
-      );
-    } catch (e) {
-      // Keep the plan visible even if coupon validation fails.
-      emit(
-        PlanDetailLoaded(
-          plan: currentState.plan,
-          coupon: null,
-          isCouponValidating: false,
-        ),
-      );
+      final methods = await getPaymentMethods();
+      final firstMethod = methods.isNotEmpty ? methods.first.name : null;
+      emit(current.copyWith(
+        paymentMethods: methods,
+        isPaymentMethodsLoading: false,
+        selectedPaymentMethod: firstMethod,
+      ));
+    } catch (_) {
+      emit(current.copyWith(isPaymentMethodsLoading: false));
     }
   }
 
-  /// Handles clearing the coupon field.
-  ///
-  /// Removes coupon data while keeping the plan details visible.
-  void _onClearCoupon(
-      ClearCouponEvent event,
-      Emitter<PlanDetailState> emit,
-      ) {
-    final currentState = state;
+  void _onSelectPaymentMethod(
+    SelectPaymentMethodEvent event,
+    Emitter<PlanDetailState> emit,
+  ) {
+    final current = state;
+    if (current is! PlanDetailLoaded) return;
+    emit(current.copyWith(selectedPaymentMethod: event.methodName));
+  }
 
-    if (currentState is PlanDetailLoaded) {
-      emit(
-        PlanDetailLoaded(
-          plan: currentState.plan,
-          coupon: null,
-          isCouponValidating: false,
-        ),
+  Future<void> _onApplyCoupon(
+    ApplyCouponEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    final current = state;
+    if (current is! PlanDetailLoaded) return;
+
+    emit(current.copyWith(isCouponValidating: true));
+    try {
+      final result = await validateCoupon(event.couponCode, event.planId);
+      emit(current.copyWith(coupon: result, isCouponValidating: false));
+    } catch (_) {
+      emit(current.copyWith(clearCoupon: true, isCouponValidating: false));
+    }
+  }
+
+  void _onClearCoupon(ClearCouponEvent event, Emitter<PlanDetailState> emit) {
+    final current = state;
+    if (current is PlanDetailLoaded) {
+      emit(current.copyWith(clearCoupon: true));
+    }
+  }
+
+  Future<void> _onSubmitCheckout(
+    SubmitCheckoutEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    final current = state;
+    if (current is! PlanDetailLoaded) return;
+
+    emit(current.copyWith(isSubmitting: true));
+    try {
+      final result = await checkout(
+        planId: event.planId,
+        paymentMethod: event.paymentMethod,
+        couponCode: event.couponCode,
       );
+
+      // CASH: membership stays pending → show waiting sheet (existing behaviour)
+      if (!result.isStripe && !result.isRedirect) {
+        emit(PlanDetailCheckoutSuccess(result: result));
+        return;
+      }
+
+      // STRIPE / PAYPAL / MPGS: hand off to the screen for gateway UI
+      emit(PlanDetailOnlinePaymentReady(
+        previousState: current.copyWith(isSubmitting: false),
+        result: result,
+      ));
+    } catch (e) {
+      emit(PlanDetailCheckoutError(
+        previousState: current.copyWith(isSubmitting: false),
+        message: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onConfirmStripePayment(
+    ConfirmStripePaymentEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    emit(event.previousState.copyWith(isSubmitting: true));
+    try {
+      final status = await confirmStripePayment(
+        transactionId: event.pendingResult.transactionId!,
+        invoiceId:     event.pendingResult.invoiceId,
+      );
+      emit(PlanDetailCheckoutSuccess(
+        result: event.pendingResult.copyWithStatus(
+          status['membershipStatus'] ?? 'active',
+          status['paymentStatus']    ?? 'paid',
+        ),
+      ));
+    } catch (e) {
+      emit(PlanDetailCheckoutError(
+        previousState: event.previousState.copyWith(isSubmitting: false),
+        message: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onCheckRedirectPayment(
+    CheckRedirectPaymentEvent event,
+    Emitter<PlanDetailState> emit,
+  ) async {
+    emit(event.previousState.copyWith(isSubmitting: true));
+    try {
+      final status = await checkPaymentStatus(
+        membershipId: event.pendingResult.membershipId,
+      );
+      final ms = status['membershipStatus'] ?? 'pending';
+      if (ms.toLowerCase() == 'active') {
+        emit(PlanDetailCheckoutSuccess(
+          result: event.pendingResult.copyWithStatus(
+            ms,
+            status['paymentStatus'] ?? 'paid',
+          ),
+        ));
+      } else {
+        emit(PlanDetailCheckoutError(
+          previousState: event.previousState.copyWith(isSubmitting: false),
+          message: 'Payment not yet confirmed. Please try again in a moment.',
+        ));
+      }
+    } catch (e) {
+      emit(PlanDetailCheckoutError(
+        previousState: event.previousState.copyWith(isSubmitting: false),
+        message: e.toString(),
+      ));
     }
   }
 }

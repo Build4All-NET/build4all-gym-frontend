@@ -115,6 +115,8 @@ class MemberQrScreen extends StatelessWidget {
                             accessBranchName: state.accessBranchName,
                             accessStartTime: state.accessStartTime,
                             accessEndTime: state.accessEndTime,
+                            planGymAccessStart: state.planGymAccessStart,
+                            planGymAccessEnd: state.planGymAccessEnd,
 
                             isExpiringSoon: state.isExpiringSoon,
                             remainingSeconds: state.remainingSeconds,

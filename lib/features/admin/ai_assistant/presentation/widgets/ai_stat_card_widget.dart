@@ -34,6 +34,7 @@ class AiStatCardWidget extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Icon + trend badge row
           Row(
@@ -47,6 +48,8 @@ class AiStatCardWidget extends StatelessWidget {
           // Value (large)
           Text(
             card.value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -57,6 +60,8 @@ class AiStatCardWidget extends StatelessWidget {
           // Label
           Text(
             card.label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey.shade600,

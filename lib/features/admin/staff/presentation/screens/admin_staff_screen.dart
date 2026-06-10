@@ -1,5 +1,6 @@
 // FILE: lib/features/admin/staff/presentation/screens/admin_staff_screen.dart
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:build4allgym/features/admin/navigation/presentation/widgets/admin_navigation_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:build4allgym/features/admin/AppBar/presentation/admin_app_bar.da
 import 'package:build4allgym/features/admin/AppBar/presentation/branch_cubit.dart';
 
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../data/repositories/admin_staff_repository_impl.dart';
 import '../../data/services/admin_staff_service.dart';
 import '../../domain/usecases/create_staff_usecase.dart';
@@ -100,7 +102,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
           child: Column(
             children: [
               AdminAppBar(
-                title:             'Staff',
+                title:             AppLocalizations.of(context)!.navStaff,
                 selectedBranchId:  _selectedBranchId,
                 onBranchChanged:   _onBranchChanged,
                 onAddTap:          _openAddDialog,
@@ -111,28 +113,10 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                 child: BlocConsumer<AdminStaffBloc, AdminStaffState>(
                   listener: (context, state) {
                     if (state is StaffActionSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:         Text(_successMessage(state.actionType)),
-                          backgroundColor: c.success,
-                          behavior:        SnackBarBehavior.floating,
-                          margin:          const EdgeInsets.all(12),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                      );
+                      AppToast.success(context, _successMessage(state.actionType));
                     }
                     if (state is StaffActionError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:         Text(state.message),
-                          backgroundColor: c.danger,
-                          behavior:        SnackBarBehavior.floating,
-                          margin:          const EdgeInsets.all(12),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                      );
+                      AppToast.error(context, state.message);
                     }
                   },
                   builder: (context, state) {
@@ -159,7 +143,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                                   .add(StaffStarted(
                                   branchId: _selectedBranchId)),
                               icon:  const Icon(Icons.refresh),
-                              label: const Text('Retry'),
+                              label: Text(AppLocalizations.of(context)!.retry),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: c.primary,
                                 foregroundColor: c.onPrimary,
@@ -192,7 +176,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
                             child: loaded.staff.isEmpty
                                 ? Center(
                               child: Text(
-                                'No staff members found.',
+                                AppLocalizations.of(context)!.admin_staff_noStaff,
                                 style: TextStyle(color: c.muted),
                               ),
                             )
@@ -235,11 +219,12 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
   }
 
   String _successMessage(String actionType) {
+    final l10n = AppLocalizations.of(context)!;
     return switch (actionType) {
-      'create' => 'Staff member added successfully',
-      'update' => 'Staff member updated successfully',
-      'remove' => 'Staff member removed successfully',
-      _        => 'Action completed successfully',
+      'create' => l10n.admin_staff_addedSuccess,
+      'update' => l10n.admin_staff_updatedSuccess,
+      'remove' => l10n.admin_staff_removedSuccess,
+      _        => l10n.admin_staff_actionCompleted,
     };
   }
 }

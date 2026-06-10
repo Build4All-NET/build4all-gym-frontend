@@ -1,3 +1,4 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,13 +107,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       if (!mounted) return;
       Navigator.pop(context);
       widget.onConfigured();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.trainerName} is fully set up as a trainer.'),
-          backgroundColor: Colors.green.shade700,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      AppToast.success(context, '${widget.trainerName} is fully set up as a trainer.');
     } catch (e) {
       if (mounted) setState(() { _submitting = false; _error = 'Failed to save. Please try again.'; });
     }
@@ -120,7 +115,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens = context.watch<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final mq     = MediaQuery.of(context);
 
@@ -167,7 +162,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                             fontSize: 16,
                           )),
                       Text(widget.trainerName,
-                          style: TextStyle(color: c.onPrimary, fontSize: 12)),
+                          style: TextStyle(color: c.body, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -197,7 +192,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                       ? Center(child: CircularProgressIndicator(color: c.primary))
                       : _branches.isEmpty
                           ? Text('No branches found.',
-                              style: TextStyle(color: c.onPrimary, fontSize: 13))
+                              style: TextStyle(color: c.body, fontSize: 13))
                           : _branchChips(c),
                   const SizedBox(height: 20),
 
@@ -302,7 +297,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
           selectedColor: c.primary.withOpacity(0.2),
           checkmarkColor: c.primary,
           labelStyle: TextStyle(
-            color: selected ? c.primary : c.onPrimary,
+            color: selected ? c.primary : c.body,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
             fontSize: 13,
           ),
@@ -350,7 +345,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       style:           TextStyle(color: c.primary),
       decoration: InputDecoration(
         hintText:  hint,
-        hintStyle: TextStyle(color: c.onPrimary),
+        hintStyle: TextStyle(color: c.muted),
         filled:    true,
         fillColor: c.background,
         contentPadding:

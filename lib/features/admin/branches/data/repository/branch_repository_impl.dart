@@ -67,20 +67,22 @@ class BranchRepositoryImpl implements BranchRepository {
     required String phone,
     required String email,
     required String address,
-    required String openingTime,
-    required String closingTime,
+    String? openingTime,
+    String? closingTime,
+    bool isOpen24Hours = false,
     required String status,
   }) async {
     try {
       final request = CreateBranchRequestModel(
-        name:        name,
-        city:        city,
-        phone:       phone,
-        email:       email,
-        address:     address,
-        openingTime: openingTime,
-        closingTime: closingTime,
-        status:      status,
+        name:          name,
+        city:          city,
+        phone:         phone,
+        email:         email,
+        address:       address,
+        openingTime:   openingTime,
+        closingTime:   closingTime,
+        isOpen24Hours: isOpen24Hours,
+        status:        status,
       );
       final branch = await _service.createBranch(request);
       return Right(branch);
@@ -88,6 +90,60 @@ class BranchRepositoryImpl implements BranchRepository {
       return Left(const AuthFailure('Unauthorized. Please log in again.'));
     } on ForbiddenException {
       return Left(const ForbiddenFailure('You do not have permission to create a branch.'));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException {
+      return Left(const NetworkFailure('No internet connection. Please try again.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, BranchEntity>> updateBranch({
+    required String branchId,
+    required String name,
+    required String city,
+    required String phone,
+    required String email,
+    required String address,
+    String? openingTime,
+    String? closingTime,
+    bool isOpen24Hours = false,
+    required String status,
+  }) async {
+    try {
+      final request = CreateBranchRequestModel(
+        name:          name,
+        city:          city,
+        phone:         phone,
+        email:         email,
+        address:       address,
+        openingTime:   openingTime,
+        closingTime:   closingTime,
+        isOpen24Hours: isOpen24Hours,
+        status:        status,
+      );
+      final branch = await _service.updateBranch(branchId, request);
+      return Right(branch);
+    } on UnauthorizedException {
+      return Left(const AuthFailure('Unauthorized. Please log in again.'));
+    } on ForbiddenException {
+      return Left(const ForbiddenFailure('You do not have permission to update this branch.'));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException {
+      return Left(const NetworkFailure('No internet connection. Please try again.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteBranch(String branchId) async {
+    try {
+      await _service.deleteBranch(branchId);
+      return const Right(null);
+    } on UnauthorizedException {
+      return Left(const AuthFailure('Unauthorized. Please log in again.'));
+    } on ForbiddenException {
+      return Left(const ForbiddenFailure('You do not have permission to delete this branch.'));
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on NetworkException {

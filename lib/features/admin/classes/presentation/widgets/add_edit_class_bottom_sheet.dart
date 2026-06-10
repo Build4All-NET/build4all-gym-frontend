@@ -11,6 +11,8 @@ import '../../data/models/create_class_request_model.dart';
 import '../../data/models/update_class_request_model.dart';
 import '../../domain/entities/admin_class_card_entity.dart';
 import '../../domain/entities/class_form_option_item_entity.dart';
+import '../../../../../common/widgets/app_toast.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
 import '../bloc/admin_classes_state.dart';
@@ -151,7 +153,8 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   }
 
   Future<void> _showCreateTypeDialog() async {
-    final cs = Theme.of(context).colorScheme;
+    final cs   = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
     final durationCtrl = TextEditingController();
     final priceCtrl = TextEditingController(text: '0');
@@ -164,7 +167,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         builder: (ctx, setDialogState) => AlertDialog(
           backgroundColor: cs.surface,
           title: Text(
-            'New Class Type',
+            l10n.admin_classes_newTypeTitle,
             style: TextStyle(
                 fontWeight: FontWeight.w700, color: cs.onSurface),
           ),
@@ -241,7 +244,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: Text('Cancel',
+              child: Text(l10n.general_cancel,
                   style: TextStyle(color: cs.onSurface.withOpacity(0.6))),
             ),
             ElevatedButton(
@@ -260,10 +263,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 if (newType != null && ctx.mounted) {
                   Navigator.of(ctx).pop(newType);
                 } else if (ctx.mounted) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                    content: const Text('Failed to create class type'),
-                    backgroundColor: cs.error,
-                  ));
+                  AppToast.error(ctx, AppLocalizations.of(ctx)!.admin_classes_failedCreateType);
                 }
               },
               child: const Text('Create'),
@@ -316,12 +316,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       }
 
       if (r.statusCode == 409 && mounted) {
-        final cs = Theme.of(context).colorScheme;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              '$name already exists — select it from the dropdown'),
-          backgroundColor: const Color(0xFFFF9800), // semantic warning
-        ));
+        AppToast.info(context, '$name already exists — select it from the dropdown');
       }
       return null;
     } catch (_) {
@@ -353,10 +348,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         if (combined.isBefore(now2)) {
           setState(() => _selectedTime = null);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Previously selected time is now in the past — please re-select'),
-              duration: Duration(seconds: 3),
-            ));
+            AppToast.info(context, AppLocalizations.of(context)!.admin_classes_timeReset);
           }
         }
       }
@@ -382,9 +374,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           now.year, now.month, now.day, picked.hour, picked.minute);
       if (combined.isBefore(now)) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Time cannot be in the past'),
-          ));
+          AppToast.info(context, AppLocalizations.of(context)!.admin_classes_timePast);
         }
         return;
       }
@@ -394,29 +384,25 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   }
 
   void _onSave() {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_selectedDate == null || _selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select date and time')));
+      AppToast.info(context, l10n.admin_classes_selectDateTime);
       return;
     }
 
-    // Guard: combined date+time must not be in the past.
     final combined = DateTime(
         _selectedDate!.year, _selectedDate!.month, _selectedDate!.day,
         _selectedTime!.hour, _selectedTime!.minute);
     if (combined.isBefore(DateTime.now())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Class date and time cannot be in the past')));
+      AppToast.info(context, l10n.admin_classes_dateTimePast);
       return;
     }
 
     if (_selectedType == null ||
         _selectedTrainer == null ||
         _selectedBranch == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Please fill all required fields')));
+      AppToast.info(context, l10n.admin_classes_fillRequired);
       return;
     }
 
@@ -472,7 +458,8 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final cs   = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final mq = MediaQuery.of(context);
     final bottomInset = mq.viewInsets.bottom;
     final navBarHeight = mq.viewPadding.bottom;
@@ -510,7 +497,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 Row(
                   children: [
                     Text(
-                      _isEditMode ? 'Edit Class' : 'Add New Class',
+                      _isEditMode ? l10n.admin_classes_editTitle : l10n.admin_classes_addTitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -527,7 +514,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 20),
 
                 // ── Class Name ─────────────────────────────────────────────
-                _FieldLabel('Class Name *', cs),
+                _FieldLabel(l10n.admin_classes_nameLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _classNameCtrl,
@@ -562,11 +549,11 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                             children: [
                               Expanded(
                                   child:
-                                  _FieldLabel('Type / Activity *', cs)),
+                                  _FieldLabel(l10n.admin_classes_typeLabel, cs)),
                               TextButton.icon(
                                 icon: Icon(Icons.add,
                                     size: 14, color: cs.primary),
-                                label: Text('New Type',
+                                label: Text(l10n.admin_classes_newTypeButton,
                                     style: TextStyle(
                                         fontSize: 12, color: cs.primary)),
                                 onPressed: _showCreateTypeDialog,
@@ -579,25 +566,25 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                               cs: cs,
                               items: allTypes,
                               value: _selectedType,
-                              hint: 'Select type',
+                              hint: l10n.admin_classes_selectType,
                               onChanged: (v) =>
                                   setState(() => _selectedType = v)),
                           const SizedBox(height: 16),
-                          _FieldLabel('Trainer *', cs),
+                          _FieldLabel(l10n.admin_classes_trainerLabel, cs),
                           _buildDropdown(
                               cs: cs,
                               items: options.trainers,
                               value: _selectedTrainer,
-                              hint: 'Select trainer',
+                              hint: l10n.admin_classes_selectTrainer,
                               onChanged: (v) =>
                                   setState(() => _selectedTrainer = v)),
                           const SizedBox(height: 16),
-                          _FieldLabel('Branch *', cs),
+                          _FieldLabel(l10n.admin_classes_branchLabel, cs),
                           _buildDropdown(
                               cs: cs,
                               items: options.branches,
                               value: _selectedBranch,
-                              hint: 'Select branch',
+                              hint: l10n.admin_classes_selectBranch,
                               onChanged: (v) =>
                                   setState(() => _selectedBranch = v)),
                         ],
@@ -611,11 +598,11 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                           children: [
                             Expanded(
                                 child:
-                                _FieldLabel('Type / Activity *', cs)),
+                                _FieldLabel(l10n.admin_classes_typeLabel, cs)),
                             TextButton.icon(
                               icon: Icon(Icons.add,
                                   size: 14, color: cs.primary),
-                              label: Text('New Type',
+                              label: Text(l10n.admin_classes_newTypeButton,
                                   style: TextStyle(
                                       fontSize: 12, color: cs.primary)),
                               onPressed: _showCreateTypeDialog,
@@ -628,23 +615,23 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                             cs: cs,
                             items: [],
                             value: null,
-                            hint: 'Select type',
+                            hint: l10n.admin_classes_selectType,
                             onChanged: (_) {}),
                         const SizedBox(height: 16),
-                        _FieldLabel('Trainer *', cs),
+                        _FieldLabel(l10n.admin_classes_trainerLabel, cs),
                         _buildDropdown(
                             cs: cs,
                             items: [],
                             value: null,
-                            hint: 'Select trainer',
+                            hint: l10n.admin_classes_selectTrainer,
                             onChanged: (_) {}),
                         const SizedBox(height: 16),
-                        _FieldLabel('Branch *', cs),
+                        _FieldLabel(l10n.admin_classes_branchLabel, cs),
                         _buildDropdown(
                             cs: cs,
                             items: [],
                             value: null,
-                            hint: 'Select branch',
+                            hint: l10n.admin_classes_selectBranch,
                             onChanged: (_) {}),
                       ],
                     );
@@ -653,7 +640,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 16),
 
                 // ── Date ───────────────────────────────────────────────────
-                _FieldLabel('Date *', cs),
+                _FieldLabel(l10n.admin_classes_dateLabel, cs),
                 _buildTapField(
                   cs: cs,
                   hint: 'mm/dd/yyyy',
@@ -666,7 +653,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 16),
 
                 // ── Time ───────────────────────────────────────────────────
-                _FieldLabel('Time *', cs),
+                _FieldLabel(l10n.admin_classes_timeLabel, cs),
                 _buildTapField(
                   cs: cs,
                   hint: '--:--',
@@ -677,7 +664,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 16),
 
                 // ── Duration ───────────────────────────────────────────────
-                _FieldLabel('Duration (minutes) *', cs),
+                _FieldLabel(l10n.admin_classes_durationLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _durationCtrl,
@@ -693,7 +680,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 16),
 
                 // ── Capacity ───────────────────────────────────────────────
-                _FieldLabel('Capacity *', cs),
+                _FieldLabel(l10n.admin_classes_capacityLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _capacityCtrl,
@@ -709,7 +696,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 16),
 
                 // ── Room Name ──────────────────────────────────────────────
-                _FieldLabel('Room Name', cs),
+                _FieldLabel(l10n.admin_classes_roomLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _roomNameCtrl,
@@ -719,7 +706,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 const SizedBox(height: 16),
 
                 // ── Notes ──────────────────────────────────────────────────
-                _FieldLabel('Notes / Description', cs),
+                _FieldLabel(l10n.admin_classes_notesLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _notesCtrl,
@@ -744,7 +731,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                               borderRadius: BorderRadius.circular(12)),
                         ),
                         child: Text(
-                          'Cancel',
+                          l10n.general_cancel,
                           style: TextStyle(
                             color: cs.onSurface.withOpacity(0.6),
                             fontWeight: FontWeight.w600,
@@ -764,9 +751,9 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text(
-                          'Save Class',
-                          style: TextStyle(fontWeight: FontWeight.w700),
+                        child: Text(
+                          l10n.admin_classes_saveButton,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),

@@ -10,9 +10,10 @@ class CreateBranchRequestModel {
   final String phone;
   final String email;
   final String address;
-  final String openingTime;   // "HH:mm"
-  final String closingTime;   // "HH:mm"
-  final String status;        // "ACTIVE" | "INACTIVE"
+  final String? openingTime;   // null when isOpen24Hours is true
+  final String? closingTime;   // null when isOpen24Hours is true
+  final bool isOpen24Hours;
+  final String status;         // "ACTIVE" | "INACTIVE"
 
   const CreateBranchRequestModel({
     required this.name,
@@ -20,20 +21,21 @@ class CreateBranchRequestModel {
     required this.phone,
     required this.email,
     required this.address,
-    required this.openingTime,
-    required this.closingTime,
+    this.openingTime,
+    this.closingTime,
+    this.isOpen24Hours = false,
     this.status = 'ACTIVE',
   });
 
   Map<String, dynamic> toJson() => {
-    'name':        name,
-    'city':        city,
-    'phone':       phone,
-    'email':       email,
-    'address':     address,
-    'openingTime': openingTime,
-    'closingTime': closingTime,
-    'status':      status,
+    'name':          name,
+    'city':          city,
+    'phone':         phone,
+    'email':         email,
+    'address':       address,
+    if (openingTime != null) 'openingTime': openingTime,
+    if (closingTime != null) 'closingTime': closingTime,
+    'isOpen24Hours': isOpen24Hours,
+    'status':        status,
   };
 }
- 

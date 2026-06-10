@@ -7,6 +7,9 @@ class SessionBookingItemEntity {
   final int?    profileFileId;
   final String  status;
   final int?    waitlistPosition;
+  final String? paymentStatus;
+  final String? paymentMethod;
+  final int?    invoiceId;
 
   const SessionBookingItemEntity({
     required this.bookingId,
@@ -16,5 +19,12 @@ class SessionBookingItemEntity {
     this.profileFileId,
     required this.status,
     this.waitlistPosition,
+    this.paymentStatus,
+    this.paymentMethod,
+    this.invoiceId,
   });
+
+  bool get isCashPending =>
+      paymentMethod?.toUpperCase() == 'CASH' &&
+      (paymentStatus?.toUpperCase() == 'PENDING' || paymentStatus?.toUpperCase() == 'UNPAID');
 }

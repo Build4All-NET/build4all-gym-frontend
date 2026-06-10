@@ -1,5 +1,5 @@
 class AdminBranchOptionEntity {
-  final int branchId;
+  final int    branchId;
   final String branchName;
 
   const AdminBranchOptionEntity({

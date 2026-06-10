@@ -37,12 +37,23 @@ class SessionsService {
     return FilterOptionsModel.fromJson(response.data);
   }
 
-  Future<BookSessionModel> bookSession(int sessionId) async {
+  Future<BookSessionModel> bookSession(int sessionId, {String? paymentMethod}) async {
     final response = await _dio.post(
       '/api/member/sessions/$sessionId/book',
+      data: paymentMethod != null ? {'paymentMethod': paymentMethod} : null,
     );
 
     return BookSessionModel.fromJson(response.data);
+  }
+
+  Future<void> confirmBookingStripePayment({
+    required int transactionId,
+    required int invoiceId,
+  }) async {
+    await _dio.post(
+      '/api/member/payments/$transactionId/confirm',
+      data: {'invoiceId': invoiceId},
+    );
   }
 
   Future<void> cancelBooking(int bookingId) async {

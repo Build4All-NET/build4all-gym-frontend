@@ -11,11 +11,14 @@ class AdminPlanListItemEntity {
   final String? description;
   final double price;
   final String billingCycle;
+  final int? durationDays;
   final int memberCount;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
   final int? maxFreezesCount;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final List<String> branches;
   final List<int> branchIds;
 
@@ -36,13 +39,16 @@ class AdminPlanListItemEntity {
     this.description,
     required this.price,
     required this.billingCycle,
+    this.durationDays,
     required this.memberCount,
     this.allowedVisits,
     this.freezeDaysAllowance,
     this.maxFreezesCount,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     required this.branches,
-    this.branchIds = const [],
+    this.branchIds = const <int>[],
     this.promotionText,
     this.promotion,
     this.features = const [],

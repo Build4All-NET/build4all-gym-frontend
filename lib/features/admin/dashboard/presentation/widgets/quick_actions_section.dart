@@ -3,16 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class QuickActionsSection extends StatelessWidget {
-  final VoidCallback onAddMember;
+  final VoidCallback onAiAssistant;
   final VoidCallback onRecordPayment;
   final VoidCallback onAddPlan;
   final VoidCallback onSendAnnouncement;
 
   const QuickActionsSection({
     super.key,
-    required this.onAddMember,
+    required this.onAiAssistant,
     required this.onRecordPayment,
     required this.onAddPlan,
     required this.onSendAnnouncement,
@@ -23,6 +24,7 @@ class QuickActionsSection extends StatelessWidget {
     final tokens  = context.read<ThemeCubit>().state.tokens;
     final c       = tokens.colors;
     final card    = tokens.card;
+    final l10n    = AppLocalizations.of(context)!;
 
     final accentA = c.primary;
     final accentB = c.success;
@@ -35,7 +37,7 @@ class QuickActionsSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 14),
           child: Text(
-            'Quick Actions',
+            l10n.admin_dashboard_quickActions,
             style: TextStyle(
                 fontSize:   17,
                 fontWeight: FontWeight.w700,
@@ -57,11 +59,11 @@ class QuickActionsSection extends StatelessWidget {
           child: Column(
             children: [
               _ActionRow(
-                icon:      Icons.person_add_outlined,
+                icon:      Icons.psychology_outlined,
                 iconColor: accentA,
                 iconBg:    accentA.withOpacity(0.1),
-                label:     'Add Member',
-                onTap:     onAddMember,
+                label:     l10n.navAiAssistant,
+                onTap:     onAiAssistant,
                 isFirst:   true,
                 chevronColor: c.border,
                 labelColor:   c.body,
@@ -72,7 +74,7 @@ class QuickActionsSection extends StatelessWidget {
                 icon:        Icons.attach_money_rounded,
                 iconColor:   accentB,
                 iconBg:      accentB.withOpacity(0.1),
-                label:       'Record Payment',
+                label:       l10n.admin_dashboard_recordPayment,
                 onTap:       onRecordPayment,
                 chevronColor: c.border,
                 labelColor:  c.body,
@@ -83,7 +85,7 @@ class QuickActionsSection extends StatelessWidget {
                 icon:        Icons.credit_card_outlined,
                 iconColor:   accentC,
                 iconBg:      accentC.withOpacity(0.1),
-                label:       'Add Plan',
+                label:       l10n.admin_dashboard_addPlan,
                 onTap:       onAddPlan,
                 chevronColor: c.border,
                 labelColor:  c.body,
@@ -94,7 +96,7 @@ class QuickActionsSection extends StatelessWidget {
                 icon:        Icons.send_outlined,
                 iconColor:   accentD,
                 iconBg:      accentD.withOpacity(0.1),
-                label:       'Send Announcement',
+                label:       l10n.admin_dashboard_sendAnnouncement,
                 onTap:       onSendAnnouncement,
                 isLast:      true,
                 chevronColor: c.border,

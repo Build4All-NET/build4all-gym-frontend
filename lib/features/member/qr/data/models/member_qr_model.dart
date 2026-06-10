@@ -109,6 +109,9 @@ class MemberQrModel {
 
   final List<VisitRecordModel> recentVisits;
 
+  final String? planGymAccessStart;
+  final String? planGymAccessEnd;
+
   const MemberQrModel({
     required this.token,
     required this.expiresAt,
@@ -124,6 +127,8 @@ class MemberQrModel {
     required this.accessStartTime,
     required this.accessEndTime,
     required this.recentVisits,
+    this.planGymAccessStart,
+    this.planGymAccessEnd,
   });
 
   /// Converts backend JSON into MemberQrModel.
@@ -159,6 +164,8 @@ class MemberQrModel {
           .map(VisitRecordModel.fromJson)
           .toList()
           : const [],
+      planGymAccessStart: json['planGymAccessStart'] as String?,
+      planGymAccessEnd: json['planGymAccessEnd'] as String?,
     );
   }
 
@@ -179,6 +186,8 @@ class MemberQrModel {
       accessStartTime: accessStartTime,
       accessEndTime: accessEndTime,
       recentVisits: recentVisits.map((visit) => visit.toEntity()).toList(),
+      planGymAccessStart: planGymAccessStart,
+      planGymAccessEnd: planGymAccessEnd,
     );
   }
 }

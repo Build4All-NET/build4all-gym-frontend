@@ -31,7 +31,7 @@ class Env {
   /// WebSocket path appended to apiBaseUrl for real-time features.
   /// apiProjectBaseUrl this url for our backend gym
   static const apiProjectBaseUrl = String.fromEnvironment(
-    'PROJECT_API_BASE_URL',
+    'OVERRIDE_BASE_URL',
     defaultValue: 'http://192.168.1.12:8080',
   );
 

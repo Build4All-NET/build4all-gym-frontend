@@ -19,10 +19,12 @@ import 'package:build4allgym/features/member/profile_edit/data/repositories/memb
 import 'package:build4allgym/features/member/profile_edit/data/services/member_profile_edit_service.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/resend_email_change_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_password_reset_code_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_phone_verification_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_build4all_profile_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_profile_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_current_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_email_change_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_profile_phone_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_bloc.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_event.dart';
 import 'package:build4allgym/features/member/profile_edit/presentation/bloc/member_profile_edit_state.dart';
@@ -59,9 +61,11 @@ class MemberEditProfileScreen extends StatelessWidget {
         verifyCurrentPassword: VerifyCurrentPasswordUseCase(repository),
         sendPasswordResetCode: SendProfilePasswordResetCodeUseCase(repository),
         updatePassword: UpdateProfilePasswordUseCase(repository),
+        sendPhoneVerificationCode:
+        SendProfilePhoneVerificationCodeUseCase(repository),
+        verifyPhoneCode: VerifyProfilePhoneCodeUseCase(repository),
       ),
       child: _MemberEditProfileView(
-        account: account,
         profile: profile,
       ),
     );
@@ -69,11 +73,9 @@ class MemberEditProfileScreen extends StatelessWidget {
 }
 
 class _MemberEditProfileView extends StatefulWidget {
-  final MemberAccountEntity account;
   final MemberBuild4AllProfileEntity profile;
 
   const _MemberEditProfileView({
-    required this.account,
     required this.profile,
   });
 
@@ -88,13 +90,10 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _usernameController;
   late final TextEditingController _emailController;
-  late final TextEditingController _dateOfBirthController;
-  late final TextEditingController _addressController;
   late final TextEditingController _currentPasswordController;
   late final TextEditingController _newPasswordController;
 
   String _phoneCompleteNumber = '';
-  String? _selectedGender;
 
   bool _hideCurrentPassword = true;
   bool _hideNewPassword = true;
@@ -129,16 +128,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
     _phoneCompleteNumber = widget.profile.phoneNumber?.trim() ?? '';
 
-    _dateOfBirthController = TextEditingController(
-      text: widget.account.dateOfBirth ?? '',
-    );
-
-    _addressController = TextEditingController(
-      text: widget.account.address ?? '',
-    );
-
-    _selectedGender = _normalizeGender(widget.account.gender);
-
     _currentPasswordController = TextEditingController();
     _newPasswordController = TextEditingController();
   }
@@ -149,8 +138,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     _lastNameController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
-    _dateOfBirthController.dispose();
-    _addressController.dispose();
     _currentPasswordController.dispose();
     _newPasswordController.dispose();
     super.dispose();
@@ -161,11 +148,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final isArabic = _isArabic(context);
     final l10n = AppLocalizations.of(context)!;
-
-    final genderItems = <String, String>{
-      'MALE': l10n.editProfileMale,
-      'FEMALE': l10n.editProfileFemale,
-    };
 
     return BlocConsumer<MemberProfileEditBloc, MemberProfileEditState>(
       listener: _onProfileEditState,
@@ -279,34 +261,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                               },
                             ),
                             SizedBox(height: tokens.spacing.xl),
-                            _EditField(
-                              label: l10n.editProfileDateOfBirth,
-                              controller: _dateOfBirthController,
-                              icon: Icons.calendar_today_outlined,
-                              readOnly: true,
-                              onTap: loading ? null : _pickDate,
-                            ),
-                            SizedBox(height: tokens.spacing.md),
-                            _GenderDropdown(
-                              value: _selectedGender,
-                              label: l10n.editProfileGender,
-                              items: genderItems,
-                              onChanged: loading
-                                  ? null
-                                  : (value) {
-                                setState(() {
-                                  _selectedGender = value;
-                                });
-                              },
-                            ),
-                            SizedBox(height: tokens.spacing.md),
-                            _EditField(
-                              label: l10n.editProfileAddress,
-                              controller: _addressController,
-                              icon: Icons.location_on_outlined,
-                              keyboardType: TextInputType.streetAddress,
-                            ),
-                            SizedBox(height: tokens.spacing.xl),
                             _SectionTitle(
                               text: l10n.editProfileChangePassword,
                             ),
@@ -354,21 +308,21 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                               ),
                               validator: (value) {
                                 final newPassword = value?.trim() ?? '';
-                                final currentPassword =
-                                _currentPasswordController.text.trim();
 
-                                if (newPassword.isEmpty &&
-                                    currentPassword.isEmpty) {
+                                // If the user did not type a new password,
+                                // do not validate password change.
+                                //
+                                // Important:
+                                // Current password can be used for phone verification,
+                                // so it must NOT force new password to be required.
+                                if (newPassword.isEmpty) {
                                   return null;
                                 }
 
-                                if (currentPassword.isEmpty) {
-                                  return l10n
-                                      .editProfileCurrentPasswordRequired;
-                                }
+                                final currentPassword = _currentPasswordController.text.trim();
 
-                                if (newPassword.isEmpty) {
-                                  return l10n.editProfileNewPasswordRequired;
+                                if (currentPassword.isEmpty) {
+                                  return l10n.editProfileCurrentPasswordRequired;
                                 }
 
                                 if (newPassword.length < 6) {
@@ -376,8 +330,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                                 }
 
                                 if (newPassword == currentPassword) {
-                                  return l10n
-                                      .editProfilePasswordSameAsCurrent;
+                                  return l10n.editProfilePasswordSameAsCurrent;
                                 }
 
                                 return null;
@@ -477,8 +430,50 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
 
     if (state is MemberProfileEditSuccess) {
-      await _saveGymFields(context);
       _refreshAccountAndClose(context);
+      return;
+    }
+
+    if (state is MemberProfileEditPhoneVerificationRequired) {
+      final ok = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => MemberProfileEditOtpDialog(
+          title: 'Verify phone number',
+          sentToLabel: l10n.editProfileCodeSentTo,
+          destination: state.newPhoneNumber,
+          codeLabel: l10n.editProfileVerificationCode,
+          resendLabel: l10n.editProfileResend,
+          verifyLabel: l10n.editProfileVerify,
+          codeRequiredMessage: l10n.editProfileCodeRequired,
+          onVerify: (code) async {
+            final repository = MemberProfileEditRepositoryImpl(
+              MemberProfileEditService(),
+            );
+
+            await repository.verifyPhoneChangeCode(
+              phoneNumber: state.newPhoneNumber,
+              code: code,
+            );
+          },
+          onResend: () async {
+            final repository = MemberProfileEditRepositoryImpl(
+              MemberProfileEditService(),
+            );
+
+            await repository.sendPhoneChangeVerificationCode(
+              phoneNumber: state.newPhoneNumber,
+              password: _currentPasswordController.text,
+              ownerProjectLinkId: state.ownerProjectLinkId,
+            );
+          },
+        ),
+      );
+
+      if (ok == true && mounted) {
+        _submit(phoneAlreadyVerified: true);
+      }
+
       return;
     }
 
@@ -512,7 +507,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
 
       if (ok == true && mounted) {
-        await _saveGymFields(context);
         _refreshAccountAndClose(context);
       }
 
@@ -557,7 +551,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
 
       if (ok == true && mounted) {
-        await _saveGymFields(context);
         _refreshAccountAndClose(context);
       }
 
@@ -566,6 +559,11 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
     if (state is MemberProfileEditEmailVerified) {
       _showSnack(context, l10n.editProfileEmailVerified);
+      return;
+    }
+
+    if (state is MemberProfileEditPhoneVerified) {
+      _showSnack(context, 'Phone verified successfully');
       return;
     }
 
@@ -580,16 +578,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
   }
 
-  Future<void> _saveGymFields(BuildContext context) async {
-    context.read<MemberAccountBloc>().add(
-      MemberAccountProfileUpdateRequested(
-        dateOfBirth: _emptyToNull(_dateOfBirthController.text),
-        address: _emptyToNull(_addressController.text),
-        gender: _selectedGender,
-      ),
-    );
-  }
-
   void _refreshAccountAndClose(BuildContext context) {
     context.read<MemberAccountBloc>().add(const MemberAccountStarted());
 
@@ -599,8 +587,41 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
     Navigator.pop(context);
   }
+  String _normalizePhone(String? raw) {
+    var value = (raw ?? '').trim();
 
-  void _submit() {
+    if (value.isEmpty) return '';
+
+    value = value
+        .replaceAll(' ', '')
+        .replaceAll('-', '')
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll('.', '');
+
+    if (value.startsWith('00')) {
+      value = '+${value.substring(2)}';
+    }
+
+    if (value.startsWith('+9610')) {
+      value = '+961${value.substring(5)}';
+    }
+
+    if (RegExp(r'^0(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+      value = '+961${value.substring(1)}';
+    }
+
+    if (!value.startsWith('+')) {
+      if (RegExp(r'^(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+        value = '+961$value';
+      }
+    }
+
+    return value;
+  }
+  void _submit({
+    bool phoneAlreadyVerified = false,
+  }) {
     final l10n = AppLocalizations.of(context)!;
 
     FocusScope.of(context).unfocus();
@@ -626,6 +647,25 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
       return;
     }
+    final oldPhone = _normalizePhone(widget.profile.phoneNumber);
+    final newPhone = _normalizePhone(_phoneCompleteNumber);
+
+    final phoneChanged = oldPhone != newPhone;
+    final currentPasswordFilled =
+        _currentPasswordController.text.trim().isNotEmpty;
+    final newPasswordFilled =
+        _newPasswordController.text.trim().isNotEmpty;
+
+// Current password alone is not a valid action.
+// It is only used when changing phone or changing password.
+    if (currentPasswordFilled && !newPasswordFilled && !phoneChanged) {
+      _showSnack(
+        context,
+        l10n.editProfileNewPasswordRequired,
+        isError: true,
+      );
+      return;
+    }
 
     context.read<MemberProfileEditBloc>().add(
       MemberProfileEditSubmitted(
@@ -634,38 +674,16 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
         username: _usernameController.text.trim(),
         email: _emailController.text.trim(),
         phoneNumber: _phoneCompleteNumber.trim(),
-        dateOfBirth: _emptyToNull(_dateOfBirthController.text),
-        address: _emptyToNull(_addressController.text),
+        dateOfBirth: null,
+        address: null,
         currentEmail: widget.profile.email ?? '',
+        currentPhoneNumber: widget.profile.phoneNumber ?? '',
         currentPassword: _currentPasswordController.text,
         newPassword: _newPasswordController.text.trim(),
         ownerProjectLinkId: ownerProjectLinkId,
+        phoneAlreadyVerified: phoneAlreadyVerified,
       ),
     );
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-
-    final initialDate = DateTime.tryParse(_dateOfBirthController.text) ??
-        DateTime(now.year - 18, now.month, now.day);
-
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: now,
-    );
-
-    if (picked == null) return;
-
-    final yyyy = picked.year.toString().padLeft(4, '0');
-    final mm = picked.month.toString().padLeft(2, '0');
-    final dd = picked.day.toString().padLeft(2, '0');
-
-    setState(() {
-      _dateOfBirthController.text = '$yyyy-$mm-$dd';
-    });
   }
 
   String? _validateName(
@@ -696,24 +714,6 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     if (!ok) return l10n.editProfileInvalidEmail;
 
     return null;
-  }
-
-  String? _normalizeGender(String? value) {
-    final key = value?.trim().toUpperCase();
-
-    const allowed = {
-      'MALE',
-      'FEMALE',
-    };
-
-    if (key == null || key.isEmpty) return null;
-
-    return allowed.contains(key) ? key : null;
-  }
-
-  String? _emptyToNull(String value) {
-    final v = value.trim();
-    return v.isEmpty ? null : v;
   }
 
   void _showSnack(
@@ -972,108 +972,6 @@ class _PhoneField extends StatelessWidget {
     if (v.startsWith('+971')) return v.substring(4);
 
     return v;
-  }
-}
-
-class _GenderDropdown extends StatelessWidget {
-  final String? value;
-  final ValueChanged<String?>? onChanged;
-  final String label;
-  final Map<String, String> items;
-
-  const _GenderDropdown({
-    required this.value,
-    required this.onChanged,
-    required this.label,
-    required this.items,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
-    final isArabic = _isArabic(context);
-
-    return Column(
-      crossAxisAlignment:
-      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        _FieldLabel(text: label),
-        SizedBox(height: tokens.spacing.xs),
-        DropdownButtonFormField<String>(
-          value: value,
-          alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: tokens.colors.background,
-            prefixIcon: Icon(
-              Icons.wc_rounded,
-              color: tokens.colors.muted,
-              size: 20,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
-              borderSide: BorderSide(
-                color: tokens.colors.primary,
-                width: tokens.search.borderWidth,
-              ),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: tokens.spacing.md,
-              vertical: tokens.spacing.md,
-            ),
-          ),
-          hint: Align(
-            alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-            child: Text(
-              label,
-              textAlign: isArabic ? TextAlign.right : TextAlign.left,
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-            ),
-          ),
-          selectedItemBuilder: (context) {
-            return items.entries.map((entry) {
-              return Align(
-                alignment:
-                isArabic ? Alignment.centerRight : Alignment.centerLeft,
-                child: Text(
-                  entry.value,
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection:
-                  isArabic ? TextDirection.rtl : TextDirection.ltr,
-                ),
-              );
-            }).toList();
-          },
-          items: items.entries.map((entry) {
-            return DropdownMenuItem<String>(
-              value: entry.key,
-              child: SizedBox(
-                width: double.infinity,
-                child: Align(
-                  alignment:
-                  isArabic ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Text(
-                    entry.value,
-                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                    textDirection:
-                    isArabic ? TextDirection.rtl : TextDirection.ltr,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-        ),
-      ],
-    );
   }
 }
 

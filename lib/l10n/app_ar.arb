@@ -3,67 +3,46 @@
 
   "auth_welcomeBack": "مرحباً بعودتك",
   "@auth_welcomeBack": { "description": "Welcome message on login screen" },
-
   "auth_loginSubtitle": "سجل دخولك للوصول إلى حسابك",
   "@auth_loginSubtitle": { "description": "Subtitle text on login screen" },
-
   "auth_emailLabel": "البريد الإلكتروني",
   "@auth_emailLabel": { "description": "Label for email input field" },
-
   "auth_phoneLabel": "رقم الهاتف",
   "@auth_phoneLabel": { "description": "Label for phone number input field" },
-
   "auth_emailHint": "example@email.com",
   "@auth_emailHint": { "description": "Hint text for email input field" },
-
   "auth_phoneHint": "+961 12 345 678",
   "@auth_phoneHint": { "description": "Hint text for phone input field" },
-
   "auth_passwordLabel": "كلمة المرور",
   "@auth_passwordLabel": { "description": "Label for password input field" },
-
   "auth_passwordHint": "أدخل كلمة المرور",
   "@auth_passwordHint": { "description": "Hint text for password input field" },
-
   "auth_forgotPassword": "نسيت كلمة المرور؟",
   "@auth_forgotPassword": { "description": "Forgot password link text" },
-
   "auth_loginButton": "تسجيل الدخول",
   "@auth_loginButton": { "description": "Login button text" },
-
   "auth_continueWithGoogle": "متابعة باستخدام Google",
   "@auth_continueWithGoogle": { "description": "Google login button text" },
-
   "auth_continueWithApple": "متابعة باستخدام Apple",
   "@auth_continueWithApple": { "description": "Apple login button text" },
-
   "auth_noAccount": "ليس لديك حساب؟",
   "@auth_noAccount": { "description": "Text asking if user has no account" },
-
   "auth_createAccount": "إنشاء حساب جديد",
   "@auth_createAccount": { "description": "Create new account link text" },
-
   "auth_accountInactiveTitle": "الحساب غير نشط",
   "@auth_accountInactiveTitle": { "description": "Title for inactive account dialog" },
-
   "auth_accountInactiveMessage": "حسابك غير نشط. هل تريد إعادة تنشيطه؟",
   "@auth_accountInactiveMessage": { "description": "Message for inactive account dialog" },
-
   "auth_reactivate": "إعادة التنشيط",
   "@auth_reactivate": { "description": "Reactivate account button text" },
-
   "auth_accountInactive": "حسابك غير نشط.",
   "@auth_accountInactive": { "description": "Error message for inactive account" },
-
   "auth_accountDeletedRestorableMessage": "تم حذف حسابك. اتصل بالدعم لاستعادته.",
   "@auth_accountDeletedRestorableMessage": { "description": "Message when account is deleted but can be restored" },
-
   "auth_accountDeletedPermanentMessage": "تم حذف حسابك بشكل دائم.",
   "@auth_accountDeletedPermanentMessage": { "description": "Message when account is permanently deleted" },
-
   "auth_userNotFound": "لم يتم العثور على حساب بهذه البيانات.",
   "@auth_userNotFound": { "description": "Error message when user account is not found" },
-
   "auth_loginLocked": "محاولات فاشلة كثيرة. يرجى المحاولة لاحقاً.",
   "@auth_loginLocked": { "description": "Error message when login is locked" },
 
@@ -82,55 +61,46 @@
 
   "validation_emailRequired": "البريد الإلكتروني مطلوب",
   "@validation_emailRequired": { "description": "Validation message when email field is empty" },
-
   "validation_phoneRequired": "رقم الهاتف مطلوب",
   "@validation_phoneRequired": { "description": "Validation message when phone field is empty" },
-
   "validation_emailInvalid": "البريد الإلكتروني غير صالح",
   "@validation_emailInvalid": { "description": "Validation message when email format is invalid" },
-
   "validation_invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
-
   "validation_passwordRequired": "كلمة المرور مطلوبة",
   "@validation_passwordRequired": { "description": "Validation message when password field is empty" },
-
   "validation_invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
   "@validation_invalidCredentials": { "description": "Error message for invalid login credentials" },
-
   "validation_passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
   "validation_passwordsMismatch": "كلمتا المرور غير متطابقتين",
   "validation_codeRequired": "رمز التحقق مطلوب",
   "validation_invalidCode": "الرمز غير صحيح أو منتهي الصلاحية",
-
   "validation_emailAlreadyExists": "البريد الإلكتروني مسجل مسبقاً",
   "validation_phoneAlreadyExists": "رقم الهاتف مسجل مسبقاً",
+  "validation_passwordNoLetter": "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
+  "validation_passwordNoNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+  "validation_confirmPasswordRequired": "يرجى تأكيد كلمة المرور",
 
   "general_cancel": "إلغاء",
   "@general_cancel": { "description": "Cancel button text" },
-
   "general_or": "أو",
   "@general_or": { "description": "Or text for divider" },
-
   "general_optional": "اختياري",
+  "common_or": "أو",
 
   "error_somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
   "@error_somethingWentWrong": { "description": "Generic error message" },
-
   "error_serverError": "خطأ في الخادم. يرجى المحاولة لاحقاً.",
 
   "connection_reconnecting": "جارٍ الاتصال...",
   "connection_offline": "لا يوجد اتصال بالإنترنت",
   "@connection_offline": { "description": "Error message when device is offline" },
-
   "connection_issue": "مشكلة في الاتصال",
   "connection_timeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
 
   "authGateContinueAs": "تابع كـ",
   "@authGateContinueAs": { "description": "Title for role selection bottom sheet" },
-
   "authGateRoleAdminOwner": "مدير / مالك",
   "@authGateRoleAdminOwner": { "description": "Admin role option in role selection" },
-
   "authGateRoleUser": "مستخدم عادي",
   "@authGateRoleUser": { "description": "User role option in role selection" },
 
@@ -141,8 +111,6 @@
   "appAccessMessageExpired": "انتهى اشتراك هذا التطبيق. يرجى التواصل مع الدعم.",
   "appAccessMessageUnavailable": "هذا التطبيق غير متاح حالياً. يرجى المحاولة لاحقاً.",
   "appAccessRetry": "حاول مجدداً",
-
-  "common_or": "أو",
 
   "forgotPassword_title": "إعادة تعيين كلمة المرور",
   "forgotPassword_subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رمزاً.",
@@ -156,7 +124,6 @@
       "email": { "type": "String", "example": "user@example.com" }
     }
   },
-
   "forgotPassword_codeLabel": "الرمز",
   "forgotPassword_verify": "تحقق",
   "forgotPassword_resendCode": "إعادة إرسال الرمز",
@@ -165,39 +132,28 @@
   "forgotPassword_newPassword": "كلمة المرور الجديدة",
   "forgotPassword_confirmPassword": "تأكيد كلمة المرور",
   "forgotPassword_savePassword": "حفظ كلمة المرور",
-
   "forgotPassword_enterAllDigits": "يرجى إدخال جميع الأرقام",
   "forgotPassword_otpScreenTitle": "أدخل رمز التحقق",
   "forgotPassword_otpScreenSubtitle": "أدخل الرمز المرسل إلى بريدك الإلكتروني أو هاتفك",
-
   "forgotPassword_checkSms": "تحقق من الرسائل النصية",
   "forgotPassword_checkEmail": "تحقق من بريدك الإلكتروني",
   "forgotPassword_checkEmailOrSms": "تحقق من بريدك الإلكتروني أو الرسائل",
-
   "forgotPassword_codeExpiresIn": "ينتهي الرمز خلال {seconds} ثانية",
   "@forgotPassword_codeExpiresIn": {
     "placeholders": { "seconds": { "type": "int" } }
   },
-
   "forgotPassword_codeExpired": "انتهت صلاحية الرمز",
   "forgotPassword_verifyCode": "تحقق من الرمز",
   "forgotPassword_didntReceiveCode": "لم تستلم الرمز؟",
-
   "forgotPassword_emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
   "forgotPassword_emailOrPhoneHint": "أدخل بريدك الإلكتروني أو رقم هاتفك",
-
   "forgotPassword_fieldRequired": "هذا الحقل مطلوب",
   "forgotPassword_invalidEmailOrPhone": "البريد الإلكتروني أو رقم الهاتف غير صالح",
   "forgotPassword_sendOtp": "إرسال رمز التحقق",
-
   "forgotPassword_newPasswordScreenTitle": "تعيين كلمة مرور جديدة",
   "forgotPassword_newPasswordScreenSubtitle": "أدخل كلمة المرور الجديدة أدناه",
-
   "forgotPassword_passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
 
-  "validation_passwordNoLetter": "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
-  "validation_passwordNoNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
-  "validation_confirmPasswordRequired": "يرجى تأكيد كلمة المرور",
   "signup_title": "إنشاء حساب جديد",
   "signup_subtitle": "ابدأ رحلتك الرياضية معنا",
   "signup_step1Label": "معلومات الحساب",
@@ -209,6 +165,8 @@
   "signup_signIn": "تسجيل الدخول",
   "signup_termsAgreement": "بالمتابعة، أنت توافق على شروط الخدمة وسياسة الخصوصية",
   "signup_alreadyVerifiedResume": "تم التحقق من الحساب مسبقاً. جارٍ استكمال ملفك الشخصي.",
+  "signup_success": "تم التسجيل بنجاح. يمكنك الآن تسجيل الدخول.",
+
   "otp_title": "تأكيد الحساب",
   "otp_subtitle": "أدخل رمز التحقق المُرسل",
   "otp_step2Label": "التحقق من الهوية",
@@ -225,134 +183,57 @@
   "otp_debugTip": "للتجربة استخدم الرمز 1234",
 
   "completeProfile_title": "أكمل ملفك الشخصي",
-  "@completeProfile_title": {
-    "description": "Header title on sub-step 1 (name fields)"
-  },
-
+  "@completeProfile_title": { "description": "Header title on sub-step 1 (name fields)" },
   "completeProfile_subtitle": "أخبرنا المزيد عنك",
-  "@completeProfile_subtitle": {
-    "description": "Header subtitle on sub-step 1"
-  },
-
+  "@completeProfile_subtitle": { "description": "Header subtitle on sub-step 1" },
   "completeProfile_lastStepTitle": "آخر خطوة!",
-  "@completeProfile_lastStepTitle": {
-    "description": "Header title on sub-step 2 (username + profile type)"
-  },
-
+  "@completeProfile_lastStepTitle": { "description": "Header title on sub-step 2 (username + profile type)" },
   "completeProfile_lastStepSubtitle": "اختر اسم مستخدم فريد",
-  "@completeProfile_lastStepSubtitle": {
-    "description": "Header subtitle on sub-step 2"
-  },
-
+  "@completeProfile_lastStepSubtitle": { "description": "Header subtitle on sub-step 2" },
   "completeProfile_stepLabel": "المعلومات الشخصية",
-  "@completeProfile_stepLabel": {
-    "description": "Label shown in the step indicator — appended with (1/2) or (2/2)"
-  },
-
+  "@completeProfile_stepLabel": { "description": "Label shown in the step indicator" },
   "completeProfile_nameInstruction": "نحتاج إلى معرفة اسمك لتخصيص تجربتك",
-  "@completeProfile_nameInstruction": {
-    "description": "Helper text shown above the name fields"
-  },
-
+  "@completeProfile_nameInstruction": { "description": "Helper text shown above the name fields" },
   "completeProfile_firstName": "الاسم الأول",
-  "@completeProfile_firstName": {
-    "description": "Label for the first name input field"
-  },
-
+  "@completeProfile_firstName": { "description": "Label for the first name input field" },
   "completeProfile_firstNameHint": "أدخل اسمك الأول",
-  "@completeProfile_firstNameHint": {
-    "description": "Hint text inside the first name input"
-  },
-
+  "@completeProfile_firstNameHint": { "description": "Hint text inside the first name input" },
   "completeProfile_firstNameRequired": "الاسم الأول مطلوب",
-  "@completeProfile_firstNameRequired": {
-    "description": "Validation error when first name is empty"
-  },
-
+  "@completeProfile_firstNameRequired": { "description": "Validation error when first name is empty" },
   "completeProfile_lastName": "اسم العائلة",
-  "@completeProfile_lastName": {
-    "description": "Label for the last name input field"
-  },
-
+  "@completeProfile_lastName": { "description": "Label for the last name input field" },
   "completeProfile_lastNameHint": "أدخل اسم العائلة",
-  "@completeProfile_lastNameHint": {
-    "description": "Hint text inside the last name input"
-  },
-
+  "@completeProfile_lastNameHint": { "description": "Hint text inside the last name input" },
   "completeProfile_continueButton": "متابعة",
-  "@completeProfile_continueButton": {
-    "description": "Button label on sub-step 1 to advance to sub-step 2"
-  },
-
+  "@completeProfile_continueButton": { "description": "Button label on sub-step 1 to advance to sub-step 2" },
   "completeProfile_usernameInstruction": "اسمك المستخدم سيظهر في ملفك الشخصي",
-  "@completeProfile_usernameInstruction": {
-    "description": "Helper text shown above the username field"
-  },
-
+  "@completeProfile_usernameInstruction": { "description": "Helper text shown above the username field" },
   "completeProfile_username": "اسم المستخدم",
-  "@completeProfile_username": {
-    "description": "Label for the username input field"
-  },
-
+  "@completeProfile_username": { "description": "Label for the username input field" },
   "completeProfile_usernameRequired": "اسم المستخدم مطلوب",
-  "@completeProfile_usernameRequired": {
-    "description": "Validation error when username is empty"
-  },
-
+  "@completeProfile_usernameRequired": { "description": "Validation error when username is empty" },
   "completeProfile_usernameTooShort": "يجب أن يكون 3 أحرف على الأقل",
-  "@completeProfile_usernameTooShort": {
-    "description": "Validation error when username is shorter than 3 characters"
-  },
-
+  "@completeProfile_usernameTooShort": { "description": "Validation error when username is shorter than 3 characters" },
   "completeProfile_usernameInvalid": "أحرف وأرقام و _ و . فقط",
-  "@completeProfile_usernameInvalid": {
-    "description": "Validation error when username contains invalid characters"
-  },
-
+  "@completeProfile_usernameInvalid": { "description": "Validation error when username contains invalid characters" },
   "completeProfile_usernameTaken": "اسم المستخدم هذا محجوز بالفعل",
-  "@completeProfile_usernameTaken": {
-    "description": "Error shown when the API returns a username conflict"
-  },
-
+  "@completeProfile_usernameTaken": { "description": "Error shown when the API returns a username conflict" },
   "completeProfile_profileType": "نوع الملف الشخصي",
-  "@completeProfile_profileType": {
-    "description": "Label above the public/private profile selection"
-  },
-
+  "@completeProfile_profileType": { "description": "Label above the public/private profile selection" },
   "completeProfile_publicTitle": "حساب عام",
-  "@completeProfile_publicTitle": {
-    "description": "Title of the public profile option card"
-  },
-
+  "@completeProfile_publicTitle": { "description": "Title of the public profile option card" },
   "completeProfile_publicDescription": "يمكن لأي شخص رؤية ملفك الشخصي ونشاطك",
-  "@completeProfile_publicDescription": {
-    "description": "Description under the public profile option"
-  },
-
+  "@completeProfile_publicDescription": { "description": "Description under the public profile option" },
   "completeProfile_privateTitle": "حساب خاص",
-  "@completeProfile_privateTitle": {
-    "description": "Title of the private profile option card"
-  },
-
+  "@completeProfile_privateTitle": { "description": "Title of the private profile option card" },
   "completeProfile_privateDescription": "فقط أنت يمكنك رؤية معلوماتك ونشاطك",
-  "@completeProfile_privateDescription": {
-    "description": "Description under the private profile option"
-  },
-
+  "@completeProfile_privateDescription": { "description": "Description under the private profile option" },
   "completeProfile_settingsNote": "يمكنك تغيير هذه الإعدادات لاحقاً من الملف الشخصي",
-  "@completeProfile_settingsNote": {
-    "description": "Info box text below the profile type selector"
-  },
-
+  "@completeProfile_settingsNote": { "description": "Info box text below the profile type selector" },
   "completeProfile_finishButton": "إنهاء وبدء الاستخدام",
-  "@completeProfile_finishButton": {
-    "description": "Final submit button label on sub-step 2"
-  },
-
+  "@completeProfile_finishButton": { "description": "Final submit button label on sub-step 2" },
   "completeProfile_backButton": "العودة",
-  "@completeProfile_backButton": {
-    "description": "Back navigation link shown below the form"
-  },
+  "@completeProfile_backButton": { "description": "Back navigation link shown below the form" },
 
   "home_welcome": "مرحباً بك",
   "home_weightUpdated": "تم تحديث وزنك بنجاح",
@@ -375,27 +256,6 @@
   "home_membershipStatus": "حالة العضوية",
   "home_expiresOn": "تنتهي في",
   "home_renewNow": "تجديد الآن",
-  "memberBottomNavHome": "الرئيسية",
-  "memberBottomNavPlans": "الخطط",
-  "memberBottomNavQr": "QR",
-  "memberBottomNavClasses": "الحصص",
-  "memberBottomNavAccount": "حسابي",
-  "comingSoon": "قريباً",
-  "memberHomeTodaySchedule": "جدول اليوم",
-  "memberHomeViewAll": "عرض الكل",
-  "memberHomeWithTrainer": "مع {trainerName}",
-  "@memberHomeWithTrainer": {
-    "placeholders": {
-      "trainerName": {}
-    }
-  },
-  "memberHomeDurationMinutes": "{minutes} دقيقة",
-  "@memberHomeDurationMinutes": {
-    "placeholders": {
-      "minutes": {}
-    }
-  },
-  "memberHomeNoScheduleToday": "لا توجد حصص اليوم — استمتع بيوم راحة! 💪",
   "home_quoteOfTheDay": "مقولة اليوم",
   "home_progressTracking": "متابعة التقدم",
   "home_weightTrackerSubtitle": "كيف كان أسبوعك؟ خذ لحظة لتحديث وزنك وتتبع تقدمك نحو هدفك",
@@ -403,251 +263,44 @@
   "home_bookTrainer": "حجز مدرب",
   "home_checkInCode": "رمز الدخول",
   "home_paymentHistory": "سجل الدفعات",
-  "signup_success": "تم التسجيل بنجاح يمكنك تسجيل الدخول الان",
 
-    "mostPopular": "الأكثر شعبية",
-    "selectThisPlan": "اختر هذه الباقة",
-    "renew": "تجديد",
-    "planTypeGym": "جيم",
-    "planTypeClasses": "حصص",
-    "planTypeMixed": "مختلط",
-    "billingMonthly": "شهرياً",
-    "billingYearly": "سنوياً",
-    "billingWeekly": "أسبوعياً",
-    "membershipStatusActive": "نشط",
-    "membershipStatusFrozen": "مجمّد",
-    "membershipStatusExpired": "منتهي",
-    "remainingDays": "{days} يوم متبقي",
-    "@remainingDays": {
-      "placeholders": {
-        "days": {
-          "type": "int"
-        }
-      }
-    },
-    "membershipEndsAt": "ينتهي في {date}",
-    "@membershipEndsAt": {
-      "placeholders": {
-        "date": {
-          "type": "String"
-        }
-      }
-    },
-    "memberPlansTitle": "باقات العضوية",
-    "memberPlansSubtitle": "اختر الباقة المناسبة لأهدافك",
-    "memberPlansEmpty": "لا توجد باقات متاحة حالياً",
-    "retry": "إعادة المحاولة",
-    "back": "رجوع",
-    "checkoutComingSoon": "قريباً — ميزة إتمام الدفع قيد التطوير",
-    "planDuration": "المدة",
-    "visitLimit": "عدد الزيارات",
-    "unlimited": "غير محدود",
-    "freezeDays": "أيام التجميد",
-    "planFeatures": "المميزات",
-    "couponCode": "كود الخصم",
-    "enterCouponCode": "أدخل كود الخصم",
-    "apply": "تطبيق",
-    "couponAppliedFinalPrice": "✓ تم تطبيق الكوبون — السعر النهائي: {price} $",
-    "@couponAppliedFinalPrice": {
-      "placeholders": {
-        "price": {
-          "type": "String"
-        }
-      }
-    },
+  "memberBottomNavHome": "الرئيسية",
+  "memberBottomNavPlans": "الخطط",
+  "memberBottomNavQr": "QR",
+  "memberBottomNavClasses": "الحصص",
+  "memberBottomNavAccount": "حسابي",
+  "comingSoon": "قريباً",
 
-      "selectedPlan": "الخطة المختارة",
-          "baseAmount": "المبلغ الأساسي",
-          "totalAmount": "المجموع الكلي",
-          "planDetails": "تفاصيل الباقة",
-          "dayMonday": "الإثنين",
-          "dayTuesday": "الثلاثاء",
-          "dayWednesday": "الأربعاء",
-          "dayThursday": "الخميس",
-          "dayFriday": "الجمعة",
-          "daySaturday": "السبت",
-          "daySunday": "الأحد",
-          "memberSessionsDifficultyBeginner": "مبتدئ",
-          "memberSessionsDifficultyIntermediate": "متوسط",
-          "memberSessionsDifficultyAdvanced": "متقدم",
-          "memberSessionsBookNow": "احجز الآن",
-          "memberSessionsTitle": "الحصص الرياضية",
-          "memberSessionsSubtitle": "احجز مكانك في الحصة المفضلة",
-          "memberSessionsRoom": "قاعة {roomName}",
-          "@memberSessionsRoom": {
-            "placeholders": {
-              "roomName": { "type": "String" }
-            }
-          },
-          "memberSessionsMinute": "{minutes} دقيقة",
-          "@memberSessionsMinute": {
-            "placeholders": {
-              "minutes": { "type": "int" }
-            }
-          },
-          "memberSessionsSeatsAvailable": "{count} مقاعد",
-          "@memberSessionsSeatsAvailable": {
-            "placeholders": {
-              "count": { "type": "int" }
-            }
-          },
-          "memberSessionsLoading": "جارٍ تحميل الحصص...",
-          "memberSessionsEmpty": "لا توجد حصص متاحة",
-          "memberSessionsError": "تعذر تحميل الحصص",
-          "memberSessionsFilterTitle": "تصفية الحصص",
-          "memberSessionsFilterClassType": "نوع الحصة",
-          "memberSessionsFilterTrainer": "المدرب",
-          "memberSessionsFilterBranch": "الفرع",
-          "memberSessionsFilterReset": "إعادة تعيين",
-          "memberSessionsFilterApply": "تطبيق الفلتر",
-          "sessionDetailTimeLabel": "الوقت",
-          "sessionDetailDateLabel": "التاريخ",
-          "sessionDetailSeatsLabel": "المقاعد",
-          "sessionDetailSeatsRemaining": "{count} متبقي",
-          "sessionDetailLocationLabel": "المكان",
-          "sessionDetailAboutTitle": "عن الحصة",
-          "sessionDetailBenefitsTitle": "الفوائد",
-          "sessionDetailEquipmentTitle": "المعدات المطلوبة",
-          "sessionDetailBookNow": "احجز الآن",
-          "sessionDetailAlreadyBooked": "تم الحجز",
-          "sessionDetailWaitlisted": "في قائمة الانتظار",
-          "monthJanuary": "يناير", "monthFebruary": "فبراير", "monthMarch": "مارس",
-          "monthApril": "أبريل", "monthMay": "مايو", "monthJune": "يونيو",
-          "monthJuly": "يوليو", "monthAugust": "أغسطس", "monthSeptember": "سبتمبر",
-          "monthOctober": "أكتوبر", "monthNovember": "نوفمبر", "monthDecember": "ديسمبر",
+  "memberHomeTodaySchedule": "جدول اليوم",
+  "memberHomeViewAll": "عرض الكل",
+  "memberHomeWithTrainer": "مع {trainerName}",
+  "@memberHomeWithTrainer": { "placeholders": { "trainerName": {} } },
+  "memberHomeDurationMinutes": "{minutes} دقيقة",
+  "@memberHomeDurationMinutes": { "placeholders": { "minutes": {} } },
+  "memberHomeNoScheduleToday": "لا توجد حصص اليوم — استمتع بيوم راحة! 💪",
 
-
-          "memberSessionsFilterApply": "تطبيق الفلتر",
-
-  "navDashboard": "لوحة التحكم",
-  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
-
-  "navMembers": "الأعضاء",
-  "@navMembers": { "description": "Admin drawer — Members item" },
-
-  "navPlans": "الخطط",
-  "@navPlans": { "description": "Admin drawer — Plans item" },
-
-  "navStaff": "الموظفون",
-  "@navStaff": { "description": "Admin drawer — Staff item" },
-
-  "navPayments": "المدفوعات",
-  "@navPayments": { "description": "Admin drawer — Payments item" },
-
-  "navClasses": "الحصص",
-  "@navClasses": { "description": "Admin drawer — Classes item" },
-
-  "navAiAssistant": "المساعد الذكي",
-  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
-
-  "navSettings": "الإعدادات",
-  "@navSettings": { "description": "Admin drawer — Settings item" },
-
-  "navLogout": "تسجيل الخروج",
-  "@navLogout": { "description": "Admin drawer — Logout item" },
-
-  "logoutConfirmTitle": "تسجيل الخروج؟",
-  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
-
-  "logoutConfirmMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
-  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
-
-  "sectionCoreOwner": "القسم الرئيسي",
-  "@sectionCoreOwner": { "description": "Drawer section label" },
-
-  "sectionOperationsReception": "العمليات / الاستقبال",
-  "@sectionOperationsReception": { "description": "Drawer section label" },
-
-  "sectionTrainingPt": "التدريب / PT",
-  "@sectionTrainingPt": { "description": "Drawer section label" },
-
-  "navTrainers": "المدربون / PT",
-  "@navTrainers": { "description": "Drawer nav item" },
-
-  "navReceptionStaff": "موظفو الاستقبال",
-  "@navReceptionStaff": { "description": "Drawer nav item" },
-
-  "navGymProfile": "ملف الصالة",
-  "@navGymProfile": { "description": "Drawer nav item" },
-
-  "navBranches": "الفروع",
-  "@navBranches": { "description": "Drawer nav item" },
-
-  "navCheckins": "تسجيل الحضور",
-  "@navCheckins": { "description": "Drawer nav item" },
-
-  "navClassesPt": "الحصص والتدريب",
-  "@navClassesPt": { "description": "Drawer nav item" },
-
-  "navNotifications": "الإشعارات",
-  "@navNotifications": { "description": "Drawer nav item" },
-
-  "navPtSessions": "جلسات PT",
-  "@navPtSessions": { "description": "Drawer nav item" },
-
-  "navTrainingVideos": "فيديوهات التدريب",
-  "@navTrainingVideos": { "description": "Drawer nav item" },
-
-  "checkoutComingSoon": "الدفع قريباً",
-  "selectThisPlan": "اختر هذه الخطة",
-  "selectedPlan": "الخطة المختارة",
-  "baseAmount": "المبلغ الأساسي",
-  "totalAmount": "المبلغ الإجمالي",
-  "planDetails": "تفاصيل الخطة",
-  "planDuration": "مدة الخطة",
-  "visitLimit": "حد الزيارات",
-  "unlimited": "غير محدود",
-  "freezeDays": "أيام التجميد",
-  "planFeatures": "ميزات الخطة",
+  "mostPopular": "الأكثر شيوعاً",
+  "selectThisPlan": "اختيار هذه الخطة",
+  "renew": "تجديد",
+  "planTypeGym": "جيم",
+  "planTypeClasses": "حصص",
+  "planTypeMixed": "مختلط",
   "billingMonthly": "شهري",
   "billingYearly": "سنوي",
   "billingWeekly": "أسبوعي",
-  "couponCode": "رمز القسيمة",
-  "enterCouponCode": "أدخل رمز القسيمة",
-  "apply": "تطبيق",
-  "couponAppliedFinalPrice": "تم تطبيق القسيمة. السعر النهائي: {price}",
-  "@couponAppliedFinalPrice": {
-    "placeholders": {
-      "price": {}
-    }
-  },
-
-  "retry": "إعادة المحاولة",
-  "memberPlansTitle": "خطط الاشتراك",
-  "memberPlansSubtitle": "اختر الخطة الأنسب لرحلتك الرياضية",
-  "memberPlansEmpty": "لا توجد خطط اشتراك متاحة",
-
+  "membershipStatusActive": "نشط",
+  "membershipStatusFrozen": "مجمّد",
+  "membershipStatusExpired": "منتهي",
   "remainingDays": "متبقي {days} يوم",
-  "@remainingDays": {
-    "placeholders": {
-      "days": {}
-    }
-  },
-  "membershipEndsAt": "ينتهي في {date}",
-  "@membershipEndsAt": {
-    "placeholders": {
-      "date": {}
-    }
-  },
-  "renew": "تجديد",
-
-  "mostPopular": "الأكثر شيوعاً",
-
-  "retry": "إعادة المحاولة",
+  "@remainingDays": { "placeholders": { "days": { "type": "int" } } },
+  "membershipEndsAt": "تنتهي في {date}",
+  "@membershipEndsAt": { "placeholders": { "date": { "type": "String" } } },
   "memberPlansTitle": "خطط العضوية",
   "memberPlansSubtitle": "اختر الخطة المناسبة لك",
   "memberPlansEmpty": "لا توجد خطط متاحة",
-  "renew": "تجديد",
-  "mostPopular": "الأكثر شيوعاً",
-  "selectThisPlan": "اختيار هذه الخطة",
-  "billingMonthly": "شهري",
-  "billingYearly": "سنوي",
-  "billingWeekly": "أسبوعي",
+  "retry": "إعادة المحاولة",
+  "back": "رجوع",
   "checkoutComingSoon": "الدفع قريباً",
-  "selectedPlan": "الخطة المختارة",
-  "baseAmount": "المبلغ الأساسي",
-  "totalAmount": "المبلغ الإجمالي",
-  "planDetails": "تفاصيل الخطة",
   "planDuration": "مدة الخطة",
   "visitLimit": "حد الزيارات",
   "unlimited": "غير محدود",
@@ -656,36 +309,123 @@
   "couponCode": "رمز الخصم",
   "enterCouponCode": "أدخل رمز الخصم",
   "apply": "تطبيق",
+  "couponAppliedFinalPrice": "✓ تم تطبيق الكوبون — السعر النهائي: {price} $",
+  "@couponAppliedFinalPrice": { "placeholders": { "price": { "type": "String" } } },
+  "selectedPlan": "الخطة المختارة",
+  "baseAmount": "المبلغ الأساسي",
+  "totalAmount": "المبلغ الإجمالي",
+  "planDetails": "تفاصيل الخطة",
 
-  "remainingDays": "متبقي {days} يوم",
-  "@remainingDays": {
-    "placeholders": {
-      "days": {}
-    }
-  },
+  "dayMonday": "الإثنين",
+  "dayTuesday": "الثلاثاء",
+  "dayWednesday": "الأربعاء",
+  "dayThursday": "الخميس",
+  "dayFriday": "الجمعة",
+  "daySaturday": "السبت",
+  "daySunday": "الأحد",
 
-  "membershipEndsAt": "تنتهي في {date}",
-  "@membershipEndsAt": {
-    "placeholders": {
-      "date": {}
-    }
-  },
+  "memberSessionsDifficultyBeginner": "مبتدئ",
+  "memberSessionsDifficultyIntermediate": "متوسط",
+  "memberSessionsDifficultyAdvanced": "متقدم",
+  "memberSessionsBookNow": "احجز الآن",
+  "memberSessionsTitle": "الحصص الرياضية",
+  "memberSessionsSubtitle": "احجز مكانك في الحصة المفضلة",
+  "memberSessionsRoom": "قاعة {roomName}",
+  "@memberSessionsRoom": { "placeholders": { "roomName": { "type": "String" } } },
+  "memberSessionsMinute": "{minutes} دقيقة",
+  "@memberSessionsMinute": { "placeholders": { "minutes": { "type": "int" } } },
+  "memberSessionsSeatsAvailable": "{count} مقاعد",
+  "@memberSessionsSeatsAvailable": { "placeholders": { "count": { "type": "int" } } },
+  "memberSessionsLoading": "جارٍ تحميل الحصص...",
+  "memberSessionsEmpty": "لا توجد حصص متاحة",
+  "memberSessionsError": "تعذر تحميل الحصص",
+  "memberSessionsFilterTitle": "تصفية الحصص",
+  "memberSessionsFilterClassType": "نوع الحصة",
+  "memberSessionsFilterTrainer": "المدرب",
+  "memberSessionsFilterBranch": "الفرع",
+  "memberSessionsFilterReset": "إعادة تعيين",
+  "memberSessionsFilterApply": "تطبيق الفلتر",
 
+  "sessionDetailTimeLabel": "الوقت",
+  "sessionDetailDateLabel": "التاريخ",
+  "sessionDetailSeatsLabel": "المقاعد",
+  "sessionDetailSeatsRemaining": "{count} متبقي",
+  "@sessionDetailSeatsRemaining": { "placeholders": { "count": { "type": "int" } } },
+  "sessionDetailLocationLabel": "المكان",
+  "sessionDetailAboutTitle": "عن الحصة",
+  "sessionDetailBenefitsTitle": "الفوائد",
+  "sessionDetailEquipmentTitle": "المعدات المطلوبة",
+  "sessionDetailBookNow": "احجز الآن",
+  "sessionDetailAlreadyBooked": "تم الحجز",
+  "sessionDetailWaitlisted": "في قائمة الانتظار",
+  "sessionDetailMembershipRequired": "يلزم الاشتراك",
 
-  "membershipEndsAt": "تنتهي في {date}",
-  "@membershipEndsAt": {
-    "placeholders": {
-      "date": {}
-    }
-  },
+  "monthJanuary": "يناير",
+  "monthFebruary": "فبراير",
+  "monthMarch": "مارس",
+  "monthApril": "أبريل",
+  "monthMay": "مايو",
+  "monthJune": "يونيو",
+  "monthJuly": "يوليو",
+  "monthAugust": "أغسطس",
+  "monthSeptember": "سبتمبر",
+  "monthOctober": "أكتوبر",
+  "monthNovember": "نوفمبر",
+  "monthDecember": "ديسمبر",
 
-  "couponAppliedFinalPrice": "السعر النهائي: {price}",
-  "@couponAppliedFinalPrice": {
-    "placeholders": {
-      "price": {}
-    }
-  },
-  "back": "رجوع",
+  "navDashboard": "لوحة التحكم",
+  "@navDashboard": { "description": "Admin drawer — Dashboard item" },
+  "navMembers": "الأعضاء",
+  "@navMembers": { "description": "Admin drawer — Members item" },
+  "navPlans": "الخطط",
+  "@navPlans": { "description": "Admin drawer — Plans item" },
+  "navStaff": "الموظفون",
+  "@navStaff": { "description": "Admin drawer — Staff item" },
+  "navPayments": "المدفوعات",
+  "@navPayments": { "description": "Admin drawer — Payments item" },
+  "navClasses": "الحصص",
+  "@navClasses": { "description": "Admin drawer — Classes item" },
+  "navAiAssistant": "المساعد الذكي",
+  "@navAiAssistant": { "description": "Admin drawer — AI Assistant item" },
+  "navMembershipRequests": "طلبات الاشتراك",
+  "@navMembershipRequests": { "description": "Admin drawer — Membership Requests item" },
+  "navInvoices": "الفواتير",
+  "@navInvoices": { "description": "Admin drawer — Invoices item" },
+  "navSettings": "الإعدادات",
+  "@navSettings": { "description": "Admin drawer — Settings item" },
+  "navLogout": "تسجيل الخروج",
+  "@navLogout": { "description": "Admin drawer — Logout item" },
+  "logoutConfirmTitle": "تسجيل الخروج؟",
+  "@logoutConfirmTitle": { "description": "Logout confirmation dialog title" },
+  "logoutConfirmMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "@logoutConfirmMessage": { "description": "Logout confirmation dialog body" },
+  "sectionCoreOwner": "القسم الرئيسي",
+  "@sectionCoreOwner": { "description": "Drawer section label" },
+  "sectionOperationsReception": "العمليات / الاستقبال",
+  "@sectionOperationsReception": { "description": "Drawer section label" },
+  "sectionTrainingPt": "التدريب / PT",
+  "@sectionTrainingPt": { "description": "Drawer section label" },
+  "navTrainers": "المدربون / PT",
+  "@navTrainers": { "description": "Drawer nav item" },
+  "navReceptionStaff": "موظفو الاستقبال",
+  "@navReceptionStaff": { "description": "Drawer nav item" },
+  "navGymProfile": "ملف الصالة",
+  "@navGymProfile": { "description": "Drawer nav item" },
+  "navBranches": "الفروع",
+  "@navBranches": { "description": "Drawer nav item" },
+  "navCheckins": "تسجيل الحضور",
+  "@navCheckins": { "description": "Drawer nav item" },
+  "navClassesPt": "الحصص والتدريب",
+  "@navClassesPt": { "description": "Drawer nav item" },
+  "navNotifications": "الإشعارات",
+  "@navNotifications": { "description": "Drawer nav item" },
+  "navPtSessions": "جلسات PT",
+  "@navPtSessions": { "description": "Drawer nav item" },
+  "navTrainingVideos": "فيديوهات التدريب",
+  "@navTrainingVideos": { "description": "Drawer nav item" },
+  "navPtPackageBookings": "مدفوعات باقات PT",
+  "@navPtPackageBookings": { "description": "Drawer nav item — pending cash PT package bookings" },
+
   "accountProfileUpdateSuccess": "تم تحديث الملف الشخصي بنجاح",
   "accountStatExercises": "التمارين",
   "accountStatSessions": "الحصص",
@@ -711,33 +451,26 @@
   "accountSettings": "الإعدادات",
   "accountHelpSupport": "المساعدة والدعم",
   "appVersion": "النسخة",
+  "accountGender": "الجنس",
+  "accountGenderMale": "ذكر",
+  "accountGenderFemale": "أنثى",
+  "accountMemberSince": "عضو منذ {date}",
+  "@accountMemberSince": { "placeholders": { "date": { "type": "String" } } },
+  "accountMyInfo": "معلوماتي",
+
   "ptAll": "الكل",
   "ptFavorites": "المفضلة",
   "ptFavoritesWithCount": "المفضلة {count}",
-  "@ptFavoritesWithCount": {
-    "placeholders": { "count": { "type": "int" } }
-  },
+  "@ptFavoritesWithCount": { "placeholders": { "count": { "type": "int" } } },
   "ptPerSession": "/جلسة",
   "ptYearsExperience": "{years} سنوات خبرة",
-  "@ptYearsExperience": {
-    "placeholders": { "years": { "type": "int" } }
-  },
+  "@ptYearsExperience": { "placeholders": { "years": { "type": "int" } } },
   "ptReviews": "{count} تقييم",
-  "@ptReviews": {
-    "placeholders": { "count": { "type": "int" } }
-  },
+  "@ptReviews": { "placeholders": { "count": { "type": "int" } } },
   "ptScreenTitle": "المدربون الشخصيون",
   "ptScreenSubtitle": "اختر المدرب المناسب لأهدافك",
   "ptBookSession": "حجز جلسة",
   "ptNoTrainers": "لا يوجد مدربون متاحون",
-  "accountMemberSince": "عضو منذ {date}",
-  "@accountMemberSince": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "ptBookingChooseDate": "اختر التاريخ",
   "ptBookingChooseTime": "اختر الوقت",
   "ptBookingNoSlotsForDate": "لا توجد أوقات متاحة لهذا التاريخ.",
@@ -780,29 +513,30 @@
   "ptPackageSelectedDays": "الأيام المختارة",
   "ptPackageSelectedTime": "الوقت المختار",
   "ptPackageMaxSessionsReached": "لا يمكنك اختيار أيام أكثر من عدد جلسات الباقة",
-  "ptPackageDaysPerWeekRange": "Choose {min} to {max} days per week",
+  "ptPackageDaysPerWeekRange": "اختر من {min} إلى {max} أيام في الأسبوع",
   "@ptPackageDaysPerWeekRange": {
     "placeholders": {
       "min": { "type": "int" },
       "max": { "type": "int" }
     }
   },
-
-  "ptPackageDaysPerWeekExact": "Choose {count} day(s) per week",
-  "@ptPackageDaysPerWeekExact": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-
-  "ptPackageMaxDaysReached": "You cannot select more than {max} days per week",
-  "@ptPackageMaxDaysReached": {
-    "placeholders": {
-      "max": { "type": "int" }
-    }
-  },
+  "ptPackageDaysPerWeekExact": "اختر {count} يوم في الأسبوع",
+  "@ptPackageDaysPerWeekExact": { "placeholders": { "count": { "type": "int" } } },
+  "ptPackageMaxDaysReached": "لا يمكنك اختيار أكثر من {max} أيام في الأسبوع",
+  "@ptPackageMaxDaysReached": { "placeholders": { "max": { "type": "int" } } },
   "ptPackageNoAvailableSlots": "لا توجد أوقات متاحة",
   "ptWeeklySlotsFailed": "تعذر تحميل الأوقات المتاحة",
+  "ptRequestTimePickerHint": "اطلب وقتاً من المدرب",
+  "ptTimeRequestSuccess": "تم إرسال طلب الوقت إلى المدرب.",
+  "ptTimeRequestFailed": "تعذر إرسال طلب الوقت. يرجى المحاولة مجدداً.",
+  "ptBookingRequestSuccess": "تم إرسال الطلب إلى المدرب. بانتظار الموافقة.",
+  "ptBookingRequestThisTime": "طلب هذا الوقت",
+  "ptBookingBookSession": "حجز الجلسة",
+  "ptBookingRequestNote": "طلب العضو وقت تدريب غير متاح أو ممتلئ",
+  "ptBookingFullOrUnavailable": "هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.",
+  "ptBookingFailed": "تعذر تأكيد الحجز.",
+  "ptBookingRequestFailed": "تعذر إرسال الطلب.",
+
   "editProfileTitle": "تعديل الملف الشخصي",
   "editProfileSubtitle": "قم بتحديث معلوماتك الشخصية",
   "editProfileFullName": "الاسم الكامل",
@@ -818,16 +552,12 @@
   "editProfileNameRequired": "الاسم مطلوب",
   "editProfileEmailRequired": "البريد الإلكتروني مطلوب",
   "editProfileInvalidEmail": "البريد الإلكتروني غير صالح",
-  "accountGender": "الجنس",
-  "accountGenderMale": "ذكر",
-  "accountGenderFemale": "أنثى",
   "editProfileFirstName": "الاسم الأول",
   "editProfileLastName": "اسم العائلة",
   "editProfileUsername": "اسم المستخدم",
   "editProfileChangePassword": "تغيير كلمة المرور",
   "editProfileCurrentPassword": "كلمة المرور الحالية",
   "editProfileNewPassword": "كلمة المرور الجديدة",
-
   "editProfileRequired": "هذا الحقل مطلوب.",
   "editProfileUsernameRequired": "اسم المستخدم مطلوب.",
   "editProfileEmailRequiredMessage": "البريد الإلكتروني مطلوب.",
@@ -849,14 +579,6 @@
   "editProfileVerify": "تحقق",
   "editProfileCodeRequired": "رمز التحقق مطلوب.",
 
-    "ptBookingSuccess": "تم تأكيد الحجز بنجاح.",
-    "ptBookingRequestSuccess": "تم إرسال الطلب إلى المدرب. بانتظار الموافقة.",
-    "ptBookingRequestThisTime": "طلب هذا الوقت",
-    "ptBookingBookSession": "حجز الجلسة",
-    "ptBookingRequestNote": "طلب العضو وقت تدريب غير متاح أو ممتلئ",
-    "ptBookingFullOrUnavailable": "هذا الوقت ممتلئ أو غير متاح. أرسل طلبًا بدلًا من الحجز المباشر.",
-    "ptBookingFailed": "تعذر تأكيد الحجز.",
-    "ptBookingRequestFailed": "تعذر إرسال الطلب.",
   "memberQrTitle": "رمز الدخول",
   "memberQrSubtitle": "امسح الرمز عند الدخول للنادي",
   "memberQrActiveMembership": "عضوية نشطة",
@@ -871,26 +593,12 @@
   "memberQrToday": "اليوم",
   "memberQrYesterday": "أمس",
   "memberQrMinute": "{count} دقيقة",
-  "@memberQrMinute": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@memberQrMinute": { "placeholders": { "count": { "type": "int" } } },
   "memberQrHour": "{count} ساعة",
-  "@memberQrHour": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
+  "@memberQrHour": { "placeholders": { "count": { "type": "String" } } },
   "memberQrLoadError": "تعذر تحميل رمز الدخول",
   "memberQrRetry": "إعادة المحاولة",
-"aiAppBarTitle": "المساعد الذكي",
-    "@aiAppBarTitle": {"description": "AI assistant screen — AppBar title"},
-  "accountMyInfo": "معلوماتي",
+
   "myInfoTitle": "معلوماتي",
   "myInfoSubtitle": "حدّث معلومات ملفك الرياضي",
   "myInfoPreferredBranch": "الفرع المفضل",
@@ -900,6 +608,8 @@
   "myInfoGenderFemale": "أنثى",
   "myInfoGenderOther": "آخر",
   "myInfoGenderPreferNotToSay": "أفضل عدم الإجابة",
+  "myInfoAddress": "العنوان",
+  "myInfoAddressHint": "أدخل عنوانك",
   "myInfoDateOfBirth": "تاريخ الميلاد",
   "myInfoSelectDateOfBirth": "اختر تاريخ الميلاد",
   "myInfoHeightCm": "الطول (سم)",
@@ -914,38 +624,162 @@
   "myInfoSaveError": "فشل حفظ معلوماتك. حاول مرة أخرى.",
   "myInfoRequiredError": "الفرع المفضل والجنس وتاريخ الميلاد مطلوبة.",
 
-    "aiNewConversationTooltip": "محادثة جديدة",
-    "@aiNewConversationTooltip": {"description": "Tooltip on the reset/refresh icon button"},
+  "aiAppBarTitle": "المساعد الذكي",
+  "@aiAppBarTitle": { "description": "AI assistant screen — AppBar title" },
+  "aiNewConversationTooltip": "محادثة جديدة",
+  "@aiNewConversationTooltip": { "description": "Tooltip on the reset/refresh icon button" },
+  "aiHeroBannerTitle": "مساعد الرؤى الذكية",
+  "@aiHeroBannerTitle": { "description": "Hero banner main title" },
+  "aiHeroBannerSubtitle": "اسألني أي شيء عن صالتك",
+  "@aiHeroBannerSubtitle": { "description": "Hero banner subtitle" },
+  "aiHeroBannerBody": "احصل على تحليلات فورية ورؤى وتوصيات\nبناءً على بيانات صالتك.",
+  "@aiHeroBannerBody": { "description": "Hero banner body text" },
+  "aiSuggestedQuestionsHeader": "أسئلة مقترحة",
+  "@aiSuggestedQuestionsHeader": { "description": "Section header above suggested question chips" },
+  "aiRecentQueriesHeader": "الاستفسارات الأخيرة",
+  "@aiRecentQueriesHeader": { "description": "Section header above recent query list" },
+  "aiRecentQueryViewLabel": "عرض",
+  "@aiRecentQueryViewLabel": { "description": "Trailing label on a recent query row" },
+  "aiInputHint": "اسأل سؤالاً عن صالتك...",
+  "@aiInputHint": { "description": "Placeholder text in the chat input field" },
+  "aiFollowUpHeader": "قد تسأل أيضاً:",
+  "@aiFollowUpHeader": { "description": "Label above the follow-up question chips after an AI answer" },
+  "aiRetryButton": "إعادة المحاولة",
+  "@aiRetryButton": { "description": "Retry button in the error view" },
+  "aiErrorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "@aiErrorGeneric": { "description": "Generic error message shown in the error view" },
+  "aiErrorOffline": "عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مرة أخرى.",
+  "@aiErrorOffline": { "description": "Error appended to the conversation when a query call fails" },
 
-    "aiHeroBannerTitle": "مساعد الرؤى الذكية",
-    "@aiHeroBannerTitle": {"description": "Hero banner main title"},
+  "checkins_title": "تسجيل الحضور",
+  "checkins_scanQr": "مسح QR",
+  "checkins_scanSuccessMsg": "تم تسجيل الدخول بنجاح",
+  "checkins_activeNow": "نشط الآن",
+  "checkins_totalToday": "إجمالي اليوم",
+  "checkins_searchHint": "ابحث عن الأعضاء...",
+  "checkins_todayTitle": "حضور اليوم",
+  "checkins_noCheckins": "لا يوجد حضور اليوم",
+  "checkins_active": "نشط",
+  "checkins_checkedOut": "خرج",
+  "checkins_out": "خروج",
+  "checkins_freeze": "تجميد",
+  "checkins_block": "حجب",
+  "checkins_call": "اتصال",
+  "checkins_freezeTitle": "تجميد العضوية",
+  "checkins_fromDate": "من تاريخ",
+  "checkins_toDate": "إلى تاريخ",
+  "checkins_reasonHint": "السبب (اختياري)",
+  "checkins_confirm": "تأكيد",
+  "checkins_blockTitle": "حجب العضو",
+  "checkins_cancel": "إلغاء",
+  "checkins_blockConfirm": "حجب",
+  "checkins_scannerTitle": "مسح QR للعضو",
+  "sessionDetailBookingClosed": "انتهى وقت الحجز",
+  "booked": "محجوز",
+  "noActiveMembership": "لا توجد عضوية نشطة",
+   "membershipStatusCancelled": "الغاء",
+   "editProfileVerifyNewPhone": "تحقق من رقم الهاتف الجديد",
+   "editProfilePhoneVerified": "تم التحقق من رقم الهاتف بنجاح",
+     "memberBookingsTitle": "حجوزاتي",
+     "memberBookingsSubtitle": "حصصك وجلسات التدريب الشخصية",
+     "memberBookingsUpcomingTab": "الحصص القادمة",
+     "memberBookingsPreviousTab": "الحصص السابقة",
+     "memberBookingsEmptyUpcoming": "لا توجد حجوزات قادمة",
+     "memberBookingsEmptyPrevious": "لا توجد حجوزات سابقة",
+     "memberBookingsLoadFailed": "تعذر تحميل الحجوزات",
+     "memberBookingsCancelRequestSent": "تم إرسال طلب الإلغاء",
+     "memberBookingsCancelRequestFailed": "تعذر إرسال طلب الإلغاء",
+     "memberBookingsCancelButton": "إلغاء الحجز",
+     "memberBookingsReviewButton": "قيّم الحصة",
+     "memberBookingsCancelPending": "طلب الإلغاء قيد المراجعة",
+     "memberBookingsClassDefaultTitle": "حصة تدريبية",
+     "memberBookingsPtDefaultTitle": "جلسة تدريب شخصية",
+     "memberBookingsSessionProgress": "الجلسة {current} من {total}",
+     "@memberBookingsSessionProgress": {
+       "placeholders": {
+         "current": { "type": "int" },
+         "total": { "type": "int" }
+       }
+     },
 
-    "aiHeroBannerSubtitle": "اسألني أي شيء عن صالتك",
-    "@aiHeroBannerSubtitle": {"description": "Hero banner subtitle"},
+     "bookingStatusConfirmed": "مؤكد",
+     "bookingStatusWaitlisted": "قائمة الانتظار",
+     "bookingStatusPending": "قيد المراجعة",
+     "bookingStatusCancelRequested": "طلب الإلغاء قيد المراجعة",
+     "bookingStatusCancelled": "ملغاة",
+     "bookingStatusCompleted": "مكتمل",
+     "bookingStatusUnknown": "غير معروف",
+     "memberBookingsMinutes": "{count} دقيقة",
+     "@memberBookingsMinutes": {
+       "placeholders": { "count": { "type": "int" } }
+     },
+     "memberBookingsRatingTitle": "رأيك يهمنا",
+     "memberBookingsRatingLabelLow": "سيئة",
+     "memberBookingsRatingLabelHigh": "ممتازة",
+     "memberBookingsRateNowButton": "قيّم الآن",
 
-    "aiHeroBannerBody": "احصل على تحليلات فورية ورؤى وتوصيات\nبناءً على بيانات صالتك.",
-    "@aiHeroBannerBody": {"description": "Hero banner body text"},
 
-    "aiSuggestedQuestionsHeader": "أسئلة مقترحة",
-    "@aiSuggestedQuestionsHeader": {"description": "Section header above suggested question chips"},
+     "memberBookingsReviewSubmitted": "شكراً على تقييمك!",
+     "memberBookingsReviewFailed": "فشل إرسال التقييم. حاول مجدداً.",
 
-    "aiRecentQueriesHeader": "الاستفسارات الأخيرة",
-    "@aiRecentQueriesHeader": {"description": "Section header above recent query list"},
+     "memberInvoicesEmptySubtitle": "ستظهر دفعاتك المكتملة هنا.",
+     "memberInvoicesRetry": "إعادة المحاولة",
+     "memberInvoicesAll": "الكل",
+     "memberInvoicesAllTypes": "كل الأنواع",
 
-    "aiRecentQueryViewLabel": "عرض",
-    "@aiRecentQueryViewLabel": {"description": "Trailing label on a recent query row"},
+     "memberInvoicesStatusPaid": "مدفوع",
+     "memberInvoicesStatusPending": "معلّق",
+     "memberInvoicesStatusRefunded": "مسترجع",
+     "memberInvoicesStatusCancelled": "ملغي",
+     "memberInvoicesStatusRejected": "مرفوض",
+     "memberInvoicesStatusFailed": "فشل",
+     "memberInvoicesStatusUnknown": "غير معروف",
 
-    "aiInputHint": "اسأل سؤالاً عن صالتك...",
-    "@aiInputHint": {"description": "Placeholder text in the chat input field"},
+     "memberInvoicesTypePlans": "اشتراكات",
+     "memberInvoicesTypeClasses": "حصص",
+     "memberInvoicesTypePt": "مدرب خاص",
+     "memberInvoicesTypePtPackage": "باقة تدريب",
+     "memberInvoicesTypeDailyPass": "دخول يومي",
+     "memberInvoicesTypeOther": "أخرى",
 
-    "aiFollowUpHeader": "قد تسأل أيضاً:",
-    "@aiFollowUpHeader": {"description": "Label above the follow-up question chips after an AI answer"},
+     "memberInvoicesDetails": "عرض التفاصيل",
+     "memberInvoicesRefund": "استرجاع المبلغ",
+     "memberInvoicesRefundTitle": "طلب استرجاع",
+     "memberInvoicesRefundMessage": "سيتم إرسال طلب استرجاع إلى الإدارة. لن يتم استرجاع المبلغ مباشرة.",
+     "memberInvoicesRefundReason": "سبب الاسترجاع اختياري",
+     "memberInvoicesRefundSend": "إرسال الطلب",
+     "memberInvoicesRefundStatus": "طلب الاسترجاع",
 
-    "aiRetryButton": "إعادة المحاولة",
-    "@aiRetryButton": {"description": "Retry button in the error view"},
+     "memberInvoicesDate": "التاريخ",
+     "memberInvoicesBranch": "الفرع",
+     "memberInvoicesPaymentMethod": "طريقة الدفع",
+     "memberInvoicesPaid": "المدفوع",
+     "memberInvoicesDue": "المتبقي",
 
-    "aiErrorGeneric": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-    "@aiErrorGeneric": {"description": "Generic error message shown in the error view"},
+     "memberInvoicesPaymentCash": "نقداً",
+     "memberInvoicesPaymentCard": "بطاقة",
+     "memberInvoicesPaymentStripe": "Stripe",
+     "memberInvoicesPaymentBankTransfer": "تحويل مصرفي",
+     "memberInvoicesPaymentWallet": "محفظة",
+     "memberInvoicesPaymentOther": "أخرى",
+     "memberInvoiceDetailsTitle": "تفاصيل الفاتورة",
+     "memberInvoiceItems": "العناصر",
+     "memberInvoicePayments": "الدفعات",
+     "memberInvoiceSubtotal": "المجموع الفرعي",
+     "memberInvoiceDiscount": "الخصم",
+     "memberInvoiceTax": "الضريبة",
+     "memberInvoiceTotal": "المجموع",
+     "memberInvoiceInvoiceNumber": "رقم الفاتورة",
+     "memberInvoiceBranchAddress": "عنوان الفرع",
+     "memberInvoiceBranchPhone": "هاتف الفرع",
+     "memberInvoiceQty": "الكمية",
+     "memberInvoiceUnitPrice": "سعر الوحدة",
+     "memberInvoicesStatus": "الحالة",
+     "memberInvoicesType": "النوع",
+     "memberInvoiceDownloadPdf": "Download / Share PDF",
+     "memberInvoicePdfTitle": "Invoice",
+     "memberInvoicePdfFooter": "Thank you",
+     "memberInvoiceDescription": "Description",
 
     "aiErrorOffline": "عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مرة أخرى.",
     "@aiErrorOffline": {"description": "Error appended to the conversation when a query call fails"},
@@ -994,7 +828,466 @@
 
   "checkins_blockTitle": "حظر العضو",
   "checkins_cancel": "إلغاء",
-  "checkins_blockConfirm": "حظر"
+  "checkins_blockConfirm": "حظر",
+  "admin_dashboard_allBranches": "جميع الفروع",
+  "admin_dashboard_timePeriod": "الفترة الزمنية",
+  "admin_dashboard_today": "اليوم",
+  "admin_dashboard_thisWeek": "هذا الأسبوع",
+  "admin_dashboard_thisMonth": "هذا الشهر",
+  "admin_dashboard_custom": "مخصص",
+  "admin_dashboard_activeMembers": "الأعضاء النشطون",
+  "admin_dashboard_pendingRenewals": "التجديدات المعلقة",
+  "admin_dashboard_todayCheckins": "تسجيلات الدخول اليوم",
+  "admin_dashboard_upcomingPt": "جلسات PT القادمة",
+  "admin_dashboard_dueSoon": "مستحق قريباً",
+  "admin_dashboard_liveNow": "مباشر الآن",
+  "admin_dashboard_sessions": "الجلسات",
+  "admin_dashboard_attendance": "الحضور",
+  "admin_dashboard_paymentsCollected": "المدفوعات المحصلة",
+  "admin_dashboard_expiringPlans": "الخطط المنتهية",
+  "admin_dashboard_totalMembers": "إجمالي الأعضاء",
+  "admin_dashboard_next7Days": "الأيام السبعة القادمة",
+  "admin_dashboard_activeCount": "{count} نشط",
+  "admin_dashboard_quickActions": "الإجراءات السريعة",
+  "admin_dashboard_recordPayment": "تسجيل دفعة",
+  "admin_dashboard_addPlan": "إضافة خطة",
+  "admin_dashboard_sendAnnouncement": "إرسال إشعار",
+  "admin_dashboard_totalPlans": "إجمالي الخطط",
+  "admin_dashboard_canceled": "ملغى",
+  "admin_dashboard_churnRate": "معدل الإلغاء",
+  "admin_dashboard_monthlyRevenue": "الإيرادات الشهرية",
+  "admin_dashboard_last7Days": "آخر 7 أيام",
+  "admin_dashboard_recentActivity": "النشاط الأخير",
+  "admin_dashboard_viewAll": "عرض الكل",
+  "admin_dashboard_noRecentActivity": "لا يوجد نشاط حديث",
+
+  "admin_members_noMembers": "لا يوجد أعضاء.",
+  "admin_members_searchHint": "البحث بالاسم أو الهاتف أو رقم العضو",
+  "admin_members_filterAllStatus": "جميع الحالات",
+  "admin_members_filterInactive": "غير نشط",
+  "admin_members_filterBlocked": "محظور",
+  "admin_members_sortNewest": "الأحدث",
+  "admin_members_sortOldest": "الأقدم",
+  "admin_members_sortAlpha": "أبجدياً",
+  "admin_members_filterAllGender": "جميع الأجناس",
+  "admin_members_colPlan": "الخطة",
+  "admin_members_colDueAmount": "المبلغ المستحق",
+  "admin_members_colExpiry": "تاريخ الانتهاء",
+  "admin_members_colBranch": "الفرع",
+  "admin_members_actionWhatsApp": "واتساب",
+  "admin_members_actionAttendance": "الحضور",
+  "admin_members_actionRenew": "تجديد",
+  "admin_members_actionUnblock": "إلغاء الحظر",
+  "admin_members_actionBlock": "حظر",
+  "admin_members_actionDelete": "حذف",
+  "admin_members_actionEdit": "تعديل",
+  "admin_members_actionCall": "اتصال",
+  "admin_members_actionSms": "رسالة",
+  "admin_members_blockTitle": "حظر العضو",
+  "admin_members_blockHint": "أدخل سبب الحظر",
+  "admin_members_deleteTitle": "حذف العضو",
+  "admin_members_deleteMessage": "حذف {name} نهائياً؟ لا يمكن التراجع عن هذا.",
+  "admin_members_statusNoPlan": "لا توجد خطة",
+  "admin_members_statusInactive": "غير نشط",
+  "admin_members_detailTitle": "تفاصيل العضو",
+  "admin_members_membershipPackageTitle": "باقة العضوية",
+  "admin_members_packagePlanName": "اسم الخطة",
+  "admin_members_packageTotalAmount": "المبلغ الإجمالي",
+  "admin_members_packageDiscount": "الخصم",
+  "admin_members_packagePurchaseDate": "تاريخ الشراء",
+  "admin_members_packagePaidAmount": "المبلغ المدفوع",
+  "admin_members_packageDueAmount": "المبلغ المستحق",
+  "admin_members_packageRemainingDays": "الأيام المتبقية",
+  "admin_members_packageDays": "{count} أيام",
+
+  "admin_trainers_removeRoleTitle": "إزالة دور المدرب",
+  "admin_trainers_removeRoleMessage": "سيفقد {name} دور المدرب وسيرى لوحة العضو عند الدخول التالي.",
+  "admin_trainers_remove": "إزالة",
+  "admin_trainers_addTrainer": "إضافة مدرب",
+  "admin_trainers_loadError": "لا يمكن تحميل المدربين",
+  "admin_trainers_emptyTitle": "لا يوجد مدربون بعد",
+  "admin_trainers_emptyMessage": "اضغط على \"إضافة مدرب\" لترقية عضو إلى دور المدرب.",
+  "admin_trainers_badgeLabel": "مدرب",
+  "admin_trainers_removeTooltip": "إزالة دور المدرب",
+
+  "admin_plans_deleteTitle": "حذف الخطة",
+  "admin_plans_deleteMessage": "هل أنت متأكد من حذف هذه الخطة؟",
+  "admin_plans_delete": "حذف",
+  "admin_plans_allTypes": "جميع الأنواع",
+  "admin_plans_searchHint": "البحث عن خطط...",
+  "admin_plans_noPlans": "لا توجد خطط",
+  "admin_plans_editTitle": "تعديل الخطة",
+  "admin_plans_addTitle": "إضافة خطة جديدة",
+  "admin_plans_createPlan": "إنشاء خطة",
+
+  "admin_staff_noStaff": "لا يوجد موظفون.",
+  "admin_staff_addedSuccess": "تمت إضافة الموظف بنجاح",
+  "admin_staff_updatedSuccess": "تم تحديث الموظف بنجاح",
+  "admin_staff_removedSuccess": "تم إزالة الموظف بنجاح",
+  "admin_staff_actionCompleted": "تم تنفيذ الإجراء بنجاح",
+  "admin_staff_editTitle": "تعديل الموظف",
+  "admin_staff_addTitle": "إضافة موظف جديد",
+  "admin_staff_fullName": "الاسم الكامل *",
+  "admin_staff_email": "البريد الإلكتروني *",
+  "admin_staff_phone": "رقم الهاتف *",
+  "admin_staff_role": "الدور *",
+  "admin_staff_branchAssignment": "تعيين الفرع *",
+  "admin_staff_password": "كلمة المرور",
+  "admin_staff_saveStaff": "حفظ الموظف",
+  "admin_staff_editProfile": "تعديل الملف الشخصي",
+  "admin_staff_removeTitle": "إزالة الموظف",
+  "admin_staff_removeMessage": "هل أنت متأكد من إزالة {name}؟ لا يمكن التراجع عن هذا.",
+  "admin_staff_fullNameHint": "أدخل الاسم الكامل",
+  "admin_staff_emailHint": "أدخل البريد الإلكتروني",
+  "admin_staff_phoneHint": "أدخل رقم الهاتف",
+  "admin_staff_selectRole": "اختر الدور",
+  "admin_staff_selectBranch": "اختر الفرع",
+  "admin_staff_autoGeneratePassword": "اتركه فارغاً لإنشاء كلمة مرور آمنة تلقائياً",
+
+  "admin_settings_unsaved": "غير محفوظ",
+  "admin_settings_searchHint": "البحث في الإعدادات...",
+  "admin_settings_legalTitle": "القانونية والسياسات",
+  "admin_settings_legalSubtitle": "راجع سياساتنا",
+  "admin_settings_saveSuccess": "تم حفظ الإعدادات بنجاح",
+  "admin_settings_saving": "جارٍ الحفظ...",
+  "admin_settings_saveChanges": "حفظ التغييرات",
+  "admin_settings_saveFailed": "فشل في حفظ الإعدادات",
+
+  "admin_branches_activeBranches": "الفروع النشطة",
+  "admin_branches_totalMembers": "إجمالي الأعضاء",
+  "admin_branches_monthlyRevenue": "الإيرادات الشهرية",
+  "admin_branches_searchHint": "البحث باسم الفرع أو الموقع.",
+  "admin_branches_allStatus": "جميع الحالات",
+  "admin_branches_statusActive": "نشط",
+  "admin_branches_statusInactive": "غير نشط",
+  "admin_branches_noFound": "لا توجد فروع",
+
+  "admin_trainingVideos_deleteSuccess": "تم حذف الفيديو",
+  "admin_trainingVideos_totalVideos": "إجمالي الفيديوهات",
+  "admin_trainingVideos_totalViews": "إجمالي المشاهدات",
+  "admin_trainingVideos_noVideos": "لا توجد فيديوهات.",
+  "admin_trainingVideos_allCategories": "جميع الفئات",
+
+  "admin_classes_noClasses": "لا توجد حصص مجدولة لهذا اليوم",
+  "admin_classes_reactivateTitle": "إعادة تفعيل الحصة",
+  "admin_classes_reactivateMessage": "استعادة هذه الحصة للجدول؟ سيتمكن الأعضاء من حجزها مجدداً.",
+  "admin_classes_reactivateConfirm": "نعم، إعادة التفعيل",
+  "admin_classes_cancelTitle": "إلغاء الحصة",
+  "admin_classes_cancelMessage": "هل أنت متأكد من إلغاء هذه الحصة؟ سيتم إشعار جميع الأعضاء المحجوزين.",
+  "admin_classes_keepClass": "إبقاء الحصة",
+  "admin_classes_cancelConfirm": "نعم، إلغاء",
+  "admin_classes_createdSuccess": "تم إنشاء الحصة بنجاح",
+  "admin_classes_updatedSuccess": "تم تحديث الحصة بنجاح",
+  "admin_classes_cancelledSuccess": "تم إلغاء الحصة",
+  "admin_classes_reactivatedSuccess": "تم إعادة تفعيل الحصة بنجاح",
+
+  "admin_membershipRequests_title": "طلبات الاشتراك",
+  "admin_membershipRequests_retry": "إعادة المحاولة",
+  "admin_membershipRequests_noPending": "لا توجد طلبات معلقة",
+  "admin_membershipRequests_noPendingDesc": "سيظهر هنا أي طلب دفع نقدي جديد",
+  "admin_membershipRequests_pendingBadge": "معلق",
+  "admin_membershipRequests_plan": "الخطة",
+  "admin_membershipRequests_branch": "الفرع",
+  "admin_membershipRequests_amount": "المبلغ",
+  "admin_membershipRequests_reject": "رفض",
+  "admin_membershipRequests_approve": "موافقة",
+  "admin_membershipRequests_approveTitle": "تأكيد استلام الدفع",
+  "admin_membershipRequests_notesHint": "ملاحظة (اختياري)",
+  "admin_membershipRequests_approveButton": "موافقة — تم استلام {amount}",
+  "admin_membershipRequests_subscriptionInfo": "الاشتراك: {plan}\nالمبلغ:$ {amount}",
+  "admin_membershipRequests_rejectTitle": "رفض الطلب",
+  "admin_membershipRequests_rejectHint": "سبب الرفض (إلزامي)",
+  "admin_membershipRequests_rejectButton": "رفض الطلب",
+  "admin_membershipRequests_enterReason": "يرجى إدخال سبب الرفض",
+
+  "membershipStatusPending": "قيد الانتظار",
+  "membershipStatusBlocked": "محظور",
+  "membershipStatusInactive": "غير نشط",
+  "genderMale": "ذكر",
+  "genderFemale": "أنثى",
+  "genderOther": "آخر",
+
+  "admin_invoices_filterAll": "الكل",
+  "admin_invoices_filterPaid": "مدفوع",
+  "admin_invoices_filterPending": "معلق",
+  "admin_invoices_filterOverdue": "متأخر",
+  "admin_invoices_filterCancelled": "ملغى",
+  "admin_invoices_typeAll": "كل الأنواع",
+  "admin_invoices_typePlans": "الخطط",
+  "admin_invoices_typeClasses": "الدروس",
+  "admin_invoices_typePt": "PT",
+  "admin_invoices_noInvoices": "لا توجد فواتير",
+  "admin_invoices_emptyDesc": "ستظهر الفواتير هنا بعد اكتمال المدفوعات.",
+  "admin_invoices_noFilteredInvoices": "لا توجد فواتير {status}.",
+  "@admin_invoices_noFilteredInvoices": { "placeholders": { "status": { "type": "String" } } },
+  "admin_invoices_invoiceLabel": "فاتورة",
+  "admin_invoices_downloadPdf": "تنزيل / مشاركة PDF",
+
+  "admin_classes_addTitle": "إضافة درس جديد",
+  "admin_classes_editTitle": "تعديل الدرس",
+  "admin_classes_nameLabel": "اسم الدرس *",
+  "admin_classes_typeLabel": "النوع / النشاط *",
+  "admin_classes_newTypeButton": "نوع جديد",
+  "admin_classes_trainerLabel": "المدرب *",
+  "admin_classes_branchLabel": "الفرع *",
+  "admin_classes_dateLabel": "التاريخ *",
+  "admin_classes_timeLabel": "الوقت *",
+  "admin_classes_durationLabel": "المدة (بالدقائق) *",
+  "admin_classes_capacityLabel": "السعة *",
+  "admin_classes_roomLabel": "اسم القاعة",
+  "admin_classes_notesLabel": "ملاحظات / وصف",
+  "admin_classes_saveButton": "حفظ الدرس",
+  "admin_classes_selectType": "اختر النوع",
+  "admin_classes_selectTrainer": "اختر المدرب",
+  "admin_classes_selectBranch": "اختر الفرع",
+  "admin_classes_newTypeTitle": "نوع درس جديد",
+  "admin_classes_failedCreateType": "فشل في إنشاء نوع الدرس",
+  "admin_classes_timePast": "لا يمكن اختيار وقت مضى",
+  "admin_classes_timeReset": "الوقت المحدد سابقاً مضى — يرجى إعادة الاختيار",
+  "admin_classes_selectDateTime": "يرجى تحديد التاريخ والوقت",
+  "admin_classes_dateTimePast": "لا يمكن أن يكون تاريخ ووقت الدرس في الماضي",
+  "admin_classes_fillRequired": "يرجى تعبئة جميع الحقول المطلوبة",
+  "admin_classes_sessionBookingsTitle": "حجوزات الجلسة",
+  "admin_classes_paymentConfirmed": "تم تأكيد الدفع",
+  "admin_classes_bookingRejected": "تم رفض الحجز",
+  "admin_classes_noBookings": "لا توجد حجوزات بعد",
+  "admin_classes_noPhone": "لا يوجد هاتف",
+  "admin_classes_statusPending": "معلق",
+  "admin_classes_statusBooked": "محجوز",
+  "admin_classes_rejectBooking": "رفض",
+  "admin_classes_confirmPayment": "تأكيد الدفع",
+
+  "admin_settings_accountTitle": "الحساب والأمان",
+  "admin_settings_accountSubtitle": "إدارة أمان حسابك",
+  "admin_settings_changePassword": "تغيير كلمة المرور",
+  "admin_settings_changePasswordSubtitle": "تحديث كلمة مرور حسابك",
+  "admin_settings_biometricLogin": "تسجيل الدخول البيومتري",
+  "admin_settings_biometricSubtitle": "استخدام بصمة الإصبع أو التعرف على الوجه",
+  "admin_settings_twoFactor": "التحقق الثنائي",
+  "admin_settings_twoFactorSubtitle": "إضافة طبقة أمان إضافية",
+  "admin_settings_businessTitle": "قواعد العمل",
+  "admin_settings_adminOnly": "للمشرف فقط",
+  "admin_settings_businessSubtitle": "تهيئة منطق العضوية والدروس",
+  "admin_settings_subscriptionRules": "قواعد الاشتراك",
+  "admin_settings_ownerOnly": "فقط المالك يمكنه تغيير قواعد العمل",
+  "admin_settings_allowClassWithoutMembership": "السماح بالاشتراك في الدروس بدون عضوية",
+  "admin_settings_allowClassWithoutMembershipDesc": "يمكن للمستخدمين الانضمام إلى الدروس بدون شراء خطة",
+  "admin_settings_requireMembershipForClass": "اشتراط العضوية للاشتراك في الدروس",
+  "admin_settings_requireMembershipForClassDesc": "يجب أن يكون لدى المستخدمين عضوية نشطة للاشتراك في الدروس",
+  "admin_settings_allowMembershipWithoutClass": "السماح بالعضوية بدون التسجيل في الدروس",
+  "admin_settings_allowMembershipWithoutClassDesc": "يمكن للأعضاء شراء الخطط دون التسجيل في أي درس",
+  "admin_settings_allowBothIndependently": "السماح بكليهما بشكل مستقل",
+  "admin_settings_allowBothIndependentlyDesc": "يمكن شراء العضويات والدروس بشكل منفصل",
+  "admin_settings_dangerTitle": "المنطقة الخطرة",
+  "admin_settings_dangerSubtitle": "إجراءات لا يمكن التراجع عنها",
+  "admin_settings_logOut": "تسجيل الخروج",
+  "admin_settings_deleteAccount": "حذف الحساب",
+  "admin_settings_logOutMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "admin_settings_deleteAccountMessage": "سيتم حذف حسابك نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+  "admin_settings_delete": "حذف",
+
+  "settings_appearanceTitle": "المظهر",
+  "settings_appearanceSubtitle": "تخصيص تجربتك البصرية",
+  "settings_lightMode": "الوضع الفاتح",
+  "settings_lightModeSubtitle": "واجهة نظيفة ومضيئة",
+  "settings_darkMode": "الوضع الداكن",
+  "settings_darkModeSubtitle": "مريح للعيون",
+  "settings_systemDefault": "افتراضي النظام",
+  "settings_systemDefaultSubtitle": "يطابق إعدادات جهازك",
+
+  "trainer_ptDashboardAllTitle": "لوحة تحكم PT (جميع المدربين)",
+  "trainer_ptDashboardTitle": "لوحة تحكم المدرب",
+  "trainer_todaySessions": "جلسات اليوم",
+  "trainer_cancelledNoShow": "ملغى / لم يحضر",
+  "trainer_todayScheduleHeader": "جدول اليوم",
+  "trainer_noServicesScheduled": "لا توجد خدمات مجدولة لليوم.",
+  "trainer_byName": "بواسطة {name}",
+  "@trainer_byName": { "placeholders": { "name": { "type": "String" } } },
+  "trainer_confirmedBadge": "مؤكد",
+  "trainer_createPackage": "إنشاء باقة",
+  "trainer_addAvailabilityButton": "إضافة توفر",
+  "trainer_addPtService": "إضافة خدمة PT",
+  "trainer_createSession": "إنشاء جلسة",
+  "trainer_pendingRequests": "الطلبات المعلقة",
+  "trainer_noPendingRequests": "لا توجد طلبات معلقة.",
+  "trainer_declineButton": "رفض",
+  "trainer_acceptButton": "قبول",
+  "trainer_upcomingClients": "العملاء القادمون",
+  "trainer_noUpcomingClients": "لا يوجد عملاء قادمون.",
+  "trainer_sessionOfTotal": "جلسة {current}/{total}",
+  "@trainer_sessionOfTotal": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "trainer_servicesAllTitle": "جميع خدمات PT",
+  "trainer_servicesMyTitle": "خدماتي",
+  "trainer_noPtServicesFound": "لا توجد خدمات PT.",
+  "trainer_deleteServiceTitle": "حذف الخدمة",
+  "trainer_deleteServiceMessage": "حذف \"{name}\"؟",
+  "@trainer_deleteServiceMessage": { "placeholders": { "name": { "type": "String" } } },
+  "trainer_inactiveBadge": "غير نشط",
+  "trainer_editService": "تعديل الخدمة",
+  "trainer_newPtService": "خدمة PT جديدة",
+  "trainer_assignToTrainer": "تعيين للمدرب",
+  "trainer_selectTrainerRequired": "يرجى اختيار مدرب",
+  "trainer_serviceNameLabel": "اسم الخدمة",
+  "trainer_requiredField": "مطلوب",
+  "trainer_descriptionOptional": "الوصف (اختياري)",
+  "trainer_durationMinutes": "المدة (بالدقائق)",
+  "trainer_enterNumber": "أدخل رقماً",
+  "trainer_priceLabel": "السعر",
+  "trainer_enterPrice": "أدخل سعراً",
+  "trainer_activeLabel": "نشط",
+  "trainer_inactiveHidden": "الخدمات غير النشطة مخفية عن الأعضاء",
+  "trainer_selectTrainerSnackbar": "يرجى اختيار مدرب.",
+  "trainer_packagesAllTitle": "جميع الباقات",
+  "trainer_packagesMyTitle": "باقاتي",
+  "trainer_showDeactivated": "عرض المعطلة",
+  "trainer_noPackagesFound": "لا توجد باقات.",
+  "trainer_deactivatedPackages": "الباقات المعطلة",
+  "trainer_noDeactivatedPackages": "لا توجد باقات معطلة.",
+  "trainer_deactivatePackageTitle": "تعطيل الباقة",
+  "trainer_deactivatePackageMessage": "تعطيل \"{name}\"؟",
+  "@trainer_deactivatePackageMessage": { "placeholders": { "name": { "type": "String" } } },
+  "trainer_deactivateButton": "تعطيل",
+  "trainer_reactivatePackageTitle": "إعادة تفعيل الباقة",
+  "trainer_reactivatePackageMessage": "إعادة تفعيل \"{name}\"؟ ستصبح مرئية للأعضاء مجدداً.",
+  "@trainer_reactivatePackageMessage": { "placeholders": { "name": { "type": "String" } } },
+  "trainer_reactivateButton": "إعادة تفعيل",
+  "trainer_maxConcurrent": "حد أقصى {count} متزامن",
+  "@trainer_maxConcurrent": { "placeholders": { "count": { "type": "int" } } },
+  "trainer_editPackage": "تعديل الباقة",
+  "trainer_newPackage": "باقة جديدة",
+  "trainer_packageNameLabel": "اسم الباقة",
+  "trainer_packageTypeLabel": "نوع الباقة *",
+  "trainer_numberOfSessions": "عدد الجلسات",
+  "trainer_sessionDurationMin": "مدة الجلسة (دقيقة)",
+  "trainer_daysAvailable": "الأيام المتاحة (فترة الصلاحية) *",
+  "trainer_minDaysWeek": "الحد الأدنى للأيام/الأسبوع",
+  "trainer_maxDaysWeek": "الحد الأقصى للأيام/الأسبوع",
+  "trainer_maxConcurrentSessions": "الحد الأقصى للجلسات المتزامنة",
+  "trainer_salePriceOptional": "سعر الخصم (اختياري)",
+  "trainer_linkedPtServiceOptional": "خدمة PT المرتبطة (اختياري)",
+  "trainer_noneOption": "لا شيء",
+  "trainer_uncheckDeactivate": "قم بإلغاء التحديد لتعطيل هذه الباقة",
+  "trainer_trainerNumber": "المدرب #{id}",
+  "@trainer_trainerNumber": { "placeholders": { "id": { "type": "int" } } },
+  "trainer_schedulesAllTitle": "جميع الجداول",
+  "trainer_schedulesMyTitle": "توفري",
+  "trainer_noAvailabilityFound": "لا توجد خانات توفر.",
+  "trainer_recurringWeekly": "أسبوعي متكرر",
+  "trainer_oneTimeDate": "مرة واحدة: {date}",
+  "@trainer_oneTimeDate": { "placeholders": { "date": { "type": "String" } } },
+  "trainer_oneTime": "مرة واحدة",
+  "trainer_deleteSlotTitle": "حذف الخانة",
+  "trainer_deleteSlotMessage": "إزالة خانة {start}–{end}؟",
+  "@trainer_deleteSlotMessage": {
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "trainer_addAvailabilitySlotTitle": "إضافة خانة توفر",
+  "trainer_dayOfWeek": "يوم الأسبوع",
+  "trainer_startTime": "وقت البداية",
+  "trainer_endTime": "وقت النهاية",
+  "trainer_recurringWeeklyToggle": "متكرر (أسبوعياً)",
+  "trainer_specificDate": "تاريخ محدد *",
+  "trainer_requiredForOneTime": "مطلوب للخانات الفردية",
+  "trainer_pickDate": "اختر تاريخاً",
+  "trainer_pickSpecificDate": "يرجى اختيار تاريخ محدد للخانات الفردية.",
+  "trainer_addButton": "إضافة",
+  "trainer_dayFullMonday": "الاثنين",
+  "trainer_dayFullTuesday": "الثلاثاء",
+  "trainer_dayFullWednesday": "الأربعاء",
+  "trainer_dayFullThursday": "الخميس",
+  "trainer_dayFullFriday": "الجمعة",
+  "trainer_dayFullSaturday": "السبت",
+  "trainer_dayFullSunday": "الأحد",
+  "trainer_sessionsAllTitle": "جميع الجلسات",
+  "trainer_sessionsTitle": "الجلسات",
+  "trainer_bookSession": "حجز جلسة",
+  "trainer_sessionAccepted": "✅ تم قبول طلب الجلسة.",
+  "trainer_sessionCompleted": "✅ تم تسجيل الجلسة كمكتملة.",
+  "trainer_sessionBooked": "✅ تم حجز الجلسة بنجاح.",
+  "trainer_sessionDeclined": "تم رفض طلب الجلسة.",
+  "trainer_sessionCancelled": "تم إلغاء الجلسة.",
+  "trainer_sessionNoShow": "تم تسجيل الجلسة كغياب.",
+  "trainer_sessionUpdated": "تم تحديث الجلسة.",
+  "trainer_tabToday": "اليوم",
+  "trainer_tabUpcoming": "القادمة",
+  "trainer_tabCompleted": "المكتملة",
+  "trainer_noServicesUpcoming": "لا توجد خدمات قادمة.",
+  "trainer_noServicesCompleted": "لا توجد خدمات مكتملة بعد.",
+  "trainer_loadTrainersError": "تعذر تحميل المدربين. يرجى التحقق من الاتصال والمحاولة مجدداً.",
+  "trainer_idNotFound": "لم يُعثر على معرف المدرب في الملف الشخصي.\nيرجى تسجيل الخروج وإعادة الدخول.",
+  "trainer_navDashboard": "لوحة التحكم",
+  "trainer_navSessions": "الجلسات",
+  "trainer_navPackages": "الباقات",
+  "trainer_navSchedule": "الجدول",
+  "trainer_navMore": "المزيد",
+  "trainer_ptSession": "جلسة PT",
+  "trainer_completeButton": "إكمال",
+  "trainer_cancelSessionButton": "إلغاء",
+  "trainer_declineRequestTitle": "رفض الطلب",
+  "trainer_declineRequestMessage": "هل أنت متأكد أنك تريد رفض طلب الجلسة هذا؟",
+  "trainer_keepButton": "الاحتفاظ",
+  "trainer_cancelSessionTitle": "إلغاء الجلسة",
+  "trainer_cancelSessionMessage": "هل أنت متأكد أنك تريد إلغاء هذه الجلسة؟",
+  "trainer_cancelSessionConfirm": "إلغاء الجلسة",
+  "trainer_statusRequested": "مطلوب",
+  "trainer_statusCompleted": "مكتمل",
+  "trainer_statusCancelled": "ملغى",
+  "trainer_statusNoShow": "غائب",
+  "trainer_statusScheduled": "مجدول",
+  "trainer_sessionProgress": "تقدم الجلسة",
+  "trainer_selectTimeSlot": "يرجى اختيار خانة وقت أو تحديد الوقت يدوياً.",
+  "trainer_enterValidMemberId": "أدخل معرف عضو صحيح.",
+  "trainer_noAvailabilityCustomTime": "لا يوجد توفر لهذا اليوم. يمكنك تحديد وقت مخصص أدناه.",
+  "trainer_tapSlotToSelect": "اضغط على خانة لاختيارها.",
+  "trainer_memberIdLabel": "معرف العضو *",
+  "trainer_enterMemberUserId": "أدخل معرف المستخدم للعضو",
+  "trainer_enterValidMemberIdValidation": "أدخل معرف عضو صحيح",
+  "trainer_memberPackageIdOptional": "معرف باقة العضو (اختياري)",
+  "trainer_linkSessionToPackage": "ربط هذه الجلسة بباقة PT الخاصة بالعضو.",
+  "trainer_selectDate": "اختر تاريخاً",
+  "trainer_selectTimeLabel": "اختر وقتاً",
+  "trainer_bookingId": "معرف الحجز",
+  "trainer_paymentStatusLabel": "حالة الدفع",
+  "trainer_confirmCashPayment": "تأكيد استلام الدفع النقدي",
+  "trainer_confirming": "جاري التأكيد...",
+  "trainer_noPendingCashPayments": "لا توجد مدفوعات نقدية معلقة",
+  "trainer_allPtPackagesConfirmed": "جميع باقات PT تم تأكيد دفعها",
+  "trainer_leaveBlankIfNone": "اتركه فارغاً إن لم يكن هناك",
+  "trainer_validNumberError": "أدخل رقماً صحيحاً",
+  "trainer_serviceOptionalLabel": "الخدمة (اختياري)",
+  "trainer_noService": "بدون خدمة",
+  "trainer_notesOptionalLabel": "ملاحظات (اختياري)",
+  "trainer_notesHint": "مثل: التركيز على الجزء العلوي",
+  "trainer_pickTime": "اختر وقتاً",
+  "trainer_calendarAvailable": "متاح",
+  "trainer_calendarSelected": "محدد",
+  "trainer_cashPaymentConfirmed": "تم تأكيد الدفع وتفعيل الحصص.",
+  "trainer_dateLabel": "التاريخ",
+  "myInfoAddress": "العنوان",
+  "myInfoAddressHint": "أدخل عنوانك",
+  "promotionPrice": "بعد العرض",
+  "settingsTitle": "الإعدادات",
+  "settingsUnsaved": "غير محفوظ",
+  "settingsUnexpectedError": "حدث خطأ غير متوقع",
+  "settingsTryAgain": "حاول مرة أخرى",
+  "settingsSavedSuccessfully": "تم حفظ الإعدادات بنجاح",
+  "settingsSaveFailed": "فشل حفظ الإعدادات",
+  "settingsSaving": "جارٍ الحفظ...",
+  "settingsSaveChanges": "حفظ التغييرات",
+  "settingsLanguageRegionTitle": "اللغة والمنطقة",
+  "settingsLanguageRegionSubtitle": "اختر لغتك المفضلة",
+  "settingsLanguageEnglish": "الإنجليزية",
+  "settingsLanguageEnglishSubtitle": "اللغة الافتراضية",
+  "settingsLanguageArabic": "العربية",
+  "settingsLanguageArabicSubtitle": "اللغة العربية",
+  "settingsLanguageSystemDefault": "لغة الجهاز",
+  "settingsLanguageSystemDefaultSubtitle": "استخدام لغة الجهاز"
 }
-
-

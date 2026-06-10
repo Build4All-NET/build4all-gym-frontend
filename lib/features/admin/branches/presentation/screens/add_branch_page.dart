@@ -1,15 +1,15 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// FILE: pages/add_branch_page.dart  (GA-429)
-// ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/branches_bloc.dart';
+import '../../domain/entity/branch_detail_entity.dart';
 import '../../domain/usecase/create_branch_usecase.dart';
+import '../../domain/usecase/update_branch_usecase.dart';
 import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
 
 class AddBranchPage extends StatefulWidget {
-  const AddBranchPage({super.key});
+  final BranchDetailEntity? existing;
+  const AddBranchPage({super.key, this.existing});
 
   @override
   State<AddBranchPage> createState() => _AddBranchPageState();
@@ -18,16 +18,33 @@ class AddBranchPage extends StatefulWidget {
 class _AddBranchPageState extends State<AddBranchPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
-  final _nameCtrl    = TextEditingController();
-  final _cityCtrl    = TextEditingController();
-  final _phoneCtrl   = TextEditingController();
-  final _emailCtrl   = TextEditingController();
-  final _addressCtrl = TextEditingController();
+  late final TextEditingController _nameCtrl;
+  late final TextEditingController _cityCtrl;
+  late final TextEditingController _phoneCtrl;
+  late final TextEditingController _emailCtrl;
+  late final TextEditingController _addressCtrl;
 
-  String? _openingTime;   // HH:mm
-  String? _closingTime;   // HH:mm
+  String? _openingTime;
+  String? _closingTime;
+  bool    _isOpen24Hours = false;
   String  _status = 'ACTIVE';
+
+  bool get _isEdit => widget.existing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.existing;
+    _nameCtrl      = TextEditingController(text: e?.name ?? '');
+    _cityCtrl      = TextEditingController(text: e?.city ?? '');
+    _phoneCtrl     = TextEditingController(text: e?.phone ?? '');
+    _emailCtrl     = TextEditingController(text: e?.email ?? '');
+    _addressCtrl   = TextEditingController(text: e?.address ?? '');
+    _openingTime   = e?.openingTime;
+    _closingTime   = e?.closingTime;
+    _isOpen24Hours = e?.isOpen24Hours ?? false;
+    _status        = e?.status ?? 'ACTIVE';
+  }
 
   @override
   void dispose() {
@@ -47,9 +64,9 @@ class _AddBranchPageState extends State<AddBranchPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: const BackButton(color: Color(0xFF1A1A2E)),
-        title: const Text(
-          'Add Branch',
-          style: TextStyle(
+        title: Text(
+          _isEdit ? 'Edit Branch' : 'Add Branch',
+          style: const TextStyle(
               color: Color(0xFF1A1A2E),
               fontWeight: FontWeight.w700,
               fontSize: 18),
@@ -57,17 +74,29 @@ class _AddBranchPageState extends State<AddBranchPage> {
       ),
       body: BlocListener<BranchesBloc, BranchesState>(
         listenWhen: (_, curr) =>
-        curr is BranchCreated || curr is BranchCreateError,
+            curr is BranchCreated ||
+            curr is BranchCreateError ||
+            curr is BranchUpdated ||
+            curr is BranchUpdateError,
         listener: (ctx, state) {
-          if (state is BranchCreated) {
+          if (state is BranchCreated || state is BranchUpdated) {
             ScaffoldMessenger.of(ctx).showSnackBar(
-              const SnackBar(
-                content: Text('Branch created successfully'),
-                backgroundColor: Color(0xFF10B981),
+              SnackBar(
+                content: Text(_isEdit
+                    ? 'Branch updated successfully'
+                    : 'Branch created successfully'),
+                backgroundColor: const Color(0xFF10B981),
               ),
             );
-            Navigator.pop(ctx, true); // true = reload the list
+            Navigator.pop(ctx, true);
           } else if (state is BranchCreateError) {
+            ScaffoldMessenger.of(ctx).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+          } else if (state is BranchUpdateError) {
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -90,7 +119,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
                     label: 'Branch Name',
                     hint: 'e.g. Mumbai Central',
                     validator: (v) =>
-                    v == null || v.isEmpty ? 'Branch name is required' : null,
+                        v == null || v.isEmpty ? 'Branch name is required' : null,
                   ),
                   const SizedBox(height: 12),
                   _buildField(
@@ -98,7 +127,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
                     label: 'City / Location',
                     hint: 'e.g. Mumbai',
                     validator: (v) =>
-                    v == null || v.isEmpty ? 'City is required' : null,
+                        v == null || v.isEmpty ? 'City is required' : null,
                   ),
                 ]),
                 const SizedBox(height: 12),
@@ -111,7 +140,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
                     hint: '+91 98765 43210',
                     keyboardType: TextInputType.phone,
                     validator: (v) =>
-                    v == null || v.isEmpty ? 'Phone is required' : null,
+                        v == null || v.isEmpty ? 'Phone is required' : null,
                   ),
                   const SizedBox(height: 12),
                   _buildField(
@@ -133,45 +162,55 @@ class _AddBranchPageState extends State<AddBranchPage> {
                     hint: '123 MG Road, Mumbai',
                     maxLines: 3,
                     validator: (v) =>
-                    v == null || v.isEmpty ? 'Address is required' : null,
+                        v == null || v.isEmpty ? 'Address is required' : null,
                   ),
                 ]),
                 const SizedBox(height: 12),
                 _FormCard(children: [
                   const _SectionTitle('Operating Hours'),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _TimePicker(
-                          label: 'Opening Time',
-                          value: _openingTime,
-                          onPicked: (t) =>
-                              setState(() => _openingTime = t),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _TimePicker(
-                          label: 'Closing Time',
-                          value: _closingTime,
-                          onPicked: (t) =>
-                              setState(() => _closingTime = t),
-                        ),
-                      ),
-                    ],
+                  _Open24Toggle(
+                    value: _isOpen24Hours,
+                    onChanged: (v) => setState(() {
+                      _isOpen24Hours = v;
+                      if (v) {
+                        _openingTime = null;
+                        _closingTime = null;
+                      }
+                    }),
                   ),
-                  if (_openingTime != null &&
-                      _closingTime != null &&
-                      !_closingAfterOpening())
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Closing time must be after opening time',
-                        style:
-                        TextStyle(color: Colors.red, fontSize: 12),
-                      ),
+                  if (!_isOpen24Hours) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _TimePicker(
+                            label: 'Opening Time',
+                            value: _openingTime,
+                            onPicked: (t) => setState(() => _openingTime = t),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _TimePicker(
+                            label: 'Closing Time',
+                            value: _closingTime,
+                            onPicked: (t) => setState(() => _closingTime = t),
+                          ),
+                        ),
+                      ],
                     ),
+                    if (_openingTime != null &&
+                        _closingTime != null &&
+                        !_closingAfterOpening())
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Closing time must be after opening time',
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
                 ]),
                 const SizedBox(height: 12),
                 _FormCard(children: [
@@ -181,10 +220,8 @@ class _AddBranchPageState extends State<AddBranchPage> {
                     value: _status,
                     decoration: _dropdownDecoration(),
                     items: const [
-                      DropdownMenuItem(
-                          value: 'ACTIVE', child: Text('Active')),
-                      DropdownMenuItem(
-                          value: 'INACTIVE', child: Text('Inactive')),
+                      DropdownMenuItem(value: 'ACTIVE', child: Text('Active')),
+                      DropdownMenuItem(value: 'INACTIVE', child: Text('Inactive')),
                     ],
                     onChanged: (v) => setState(() => _status = v ?? 'ACTIVE'),
                   ),
@@ -192,7 +229,8 @@ class _AddBranchPageState extends State<AddBranchPage> {
                 const SizedBox(height: 24),
                 BlocBuilder<BranchesBloc, BranchesState>(
                   builder: (context, state) {
-                    final isLoading = state is BranchCreating;
+                    final isLoading =
+                        state is BranchCreating || state is BranchUpdating;
                     return SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -206,18 +244,16 @@ class _AddBranchPageState extends State<AddBranchPage> {
                         ),
                         child: isLoading
                             ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2),
-                        )
-                            : const Text(
-                          'Create Branch',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600),
-                        ),
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2),
+                              )
+                            : Text(
+                                _isEdit ? 'Save Changes' : 'Create Branch',
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
                       ),
                     );
                   },
@@ -235,40 +271,62 @@ class _AddBranchPageState extends State<AddBranchPage> {
     final valid = _formKey.currentState?.validate() ?? false;
     if (!valid) return;
 
-    if (_openingTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an opening time')),
-      );
-      return;
-    }
-    if (_closingTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a closing time')),
-      );
-      return;
-    }
-    if (!_closingAfterOpening()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Closing time must be after opening time')),
-      );
-      return;
+    if (!_isOpen24Hours) {
+      if (_openingTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select an opening time')),
+        );
+        return;
+      }
+      if (_closingTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a closing time')),
+        );
+        return;
+      }
+      if (!_closingAfterOpening()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Closing time must be after opening time')),
+        );
+        return;
+      }
     }
 
-    context.read<BranchesBloc>().add(
-      SubmitCreateBranch(
-        CreateBranchParams(
-          name: _nameCtrl.text.trim(),
-          city: _cityCtrl.text.trim(),
-          phone: _phoneCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          address: _addressCtrl.text.trim(),
-          openingTime: _openingTime!,
-          closingTime: _closingTime!,
-          status: _status,
-        ),
-      ),
-    );
+    if (_isEdit) {
+      context.read<BranchesBloc>().add(
+            SubmitUpdateBranch(
+              UpdateBranchParams(
+                branchId:      widget.existing!.branchId,
+                name:          _nameCtrl.text.trim(),
+                city:          _cityCtrl.text.trim(),
+                phone:         _phoneCtrl.text.trim(),
+                email:         _emailCtrl.text.trim(),
+                address:       _addressCtrl.text.trim(),
+                openingTime:   _isOpen24Hours ? null : _openingTime,
+                closingTime:   _isOpen24Hours ? null : _closingTime,
+                isOpen24Hours: _isOpen24Hours,
+                status:        _status,
+              ),
+            ),
+          );
+    } else {
+      context.read<BranchesBloc>().add(
+            SubmitCreateBranch(
+              CreateBranchParams(
+                name:          _nameCtrl.text.trim(),
+                city:          _cityCtrl.text.trim(),
+                phone:         _phoneCtrl.text.trim(),
+                email:         _emailCtrl.text.trim(),
+                address:       _addressCtrl.text.trim(),
+                openingTime:   _isOpen24Hours ? null : _openingTime,
+                closingTime:   _isOpen24Hours ? null : _closingTime,
+                isOpen24Hours: _isOpen24Hours,
+                status:        _status,
+              ),
+            ),
+          );
+    }
   }
 
   bool _closingAfterOpening() {
@@ -306,7 +364,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
           borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         contentPadding:
-        const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       ),
     );
   }
@@ -322,12 +380,11 @@ class _AddBranchPageState extends State<AddBranchPage> {
         borderSide: BorderSide(color: Colors.grey[300]!),
       ),
       contentPadding:
-      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );
   }
 }
 
-// ── Supporting form widgets ───────────────────────────────────────────────────
 class _FormCard extends StatelessWidget {
   final List<Widget> children;
   const _FormCard({required this.children});
@@ -370,6 +427,56 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
+class _Open24Toggle extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  const _Open24Toggle({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: value ? const Color(0xFFEFF6FF) : const Color(0xFFF9FAFB),
+          border: Border.all(
+            color: value ? const Color(0xFF3B82F6) : Colors.grey.shade300,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.wb_sunny_outlined,
+              size: 18,
+              color: value ? const Color(0xFF2563EB) : Colors.grey.shade500,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Open 24 Hours',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: value
+                      ? const Color(0xFF1D4ED8)
+                      : const Color(0xFF374151),
+                ),
+              ),
+            ),
+            Switch(
+              value: value,
+              onChanged: onChanged,
+              activeColor: const Color(0xFF2563EB),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _TimePicker extends StatelessWidget {
   final String label;
   final String? value;
@@ -387,7 +494,6 @@ class _TimePicker extends StatelessWidget {
           initialTime: TimeOfDay.now(),
         );
         if (picked != null) {
-          // Convert to HH:mm string
           final h = picked.hour.toString().padLeft(2, '0');
           final m = picked.minute.toString().padLeft(2, '0');
           onPicked('$h:$m');

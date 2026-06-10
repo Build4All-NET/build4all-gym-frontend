@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -27,7 +28,7 @@ import '../bloc/sessions/trainer_pt_sessions_event.dart';
 import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerDashboardScreen extends StatelessWidget {
-  final ValueChanged<int>  onTabSwitch;
+  final ValueChanged<int>     onTabSwitch;
   final ValueChanged<int?> onBranchChanged;
   final bool               isAdmin;
   final List<AdminTrainerCardModel> trainers;
@@ -63,7 +64,7 @@ class TrainerDashboardScreen extends StatelessWidget {
         child: SafeArea(
           bottom: false,
           child: AdminAppBar(
-            title: isAdmin ? 'PT Dashboard (All Trainers)' : 'Trainer Dashboard',
+            title: isAdmin ? AppLocalizations.of(context)!.trainer_ptDashboardAllTitle : AppLocalizations.of(context)!.trainer_ptDashboardTitle,
             selectedBranchId: context.watch<AdminProfileCubit>().state.branchId,
             onBranchChanged:  onBranchChanged,
             notificationCount: 0,
@@ -135,7 +136,7 @@ class TrainerDashboardScreen extends StatelessWidget {
                         }
                       },
                       icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
+                      label: Text(AppLocalizations.of(context)!.retry),
                     ),
                   ],
                 ),
@@ -194,7 +195,13 @@ class TrainerDashboardScreen extends StatelessWidget {
             branchId:   effectiveBranchId,
           ),
           const SizedBox(height: 24),
-          _UpcomingClientsSection(sessions: sessions, tokens: tokens, isAdmin: isAdmin),
+          _UpcomingClientsSection(sessions: state.upcomingSessions, tokens: tokens, isAdmin: isAdmin),
+          const SizedBox(height: 24),
+          _PendingRequestsSection(
+            requests: state.requestedSessions,
+            tokens:   tokens,
+            isAdmin:  isAdmin,
+          ),
         ],
       ),
     );
@@ -230,13 +237,13 @@ class _StatCardsGrid extends StatelessWidget {
       childAspectRatio: 1.55,
       children: [
         _StatCard(icon: Icons.calendar_month_outlined, value: '${stats.total}',
-            label: 'Today Sessions', gradient: [c.primary, primaryLight]),
+            label: AppLocalizations.of(context)!.trainer_todaySessions, gradient: [c.primary, primaryLight]),
         _StatCard(icon: Icons.check_circle_outline, value: '${stats.completed}',
-            label: 'Completed', gradient: [c.success, successLight]),
+            label: AppLocalizations.of(context)!.trainer_tabCompleted, gradient: [c.success, successLight]),
         _StatCard(icon: Icons.access_time_rounded, value: '${stats.scheduled}',
-            label: 'Upcoming', gradient: [warningBase, warningLight]),
+            label: AppLocalizations.of(context)!.trainer_tabUpcoming, gradient: [warningBase, warningLight]),
         _StatCard(icon: Icons.cancel_outlined, value: '$cancelled',
-            label: 'Cancelled / No-Show', gradient: [mutedBase, mutedLight]),
+            label: AppLocalizations.of(context)!.trainer_cancelledNoShow, gradient: [mutedBase, mutedLight]),
       ],
     );
   }
@@ -266,22 +273,28 @@ class _StatCard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(16),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment:  MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, color: Colors.white.withOpacity(0.9), size: 26),
+          Icon(icon, color: Colors.white.withOpacity(0.9), size: 22),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(value,
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(value,
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold, fontSize: 26)),
+              ),
               const SizedBox(height: 2),
               Text(label,
+                  maxLines:  2,
+                  overflow:  TextOverflow.ellipsis,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.85), fontSize: 12)),
+                      color: Colors.white.withOpacity(0.85), fontSize: 11)),
             ],
           ),
         ],
@@ -323,7 +336,7 @@ class _TodayScheduleSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Today's Schedule",
+            Text(AppLocalizations.of(context)!.trainer_todayScheduleHeader,
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: c.label)),
             Text(DateFormat('EEEE, MMM d').format(DateTime.now()),
                 style: TextStyle(fontSize: 12, color: c.muted)),
@@ -334,7 +347,7 @@ class _TodayScheduleSection extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Center(
-              child: Text('No services scheduled for today.',
+              child: Text(AppLocalizations.of(context)!.trainer_noServicesScheduled,
                   style: TextStyle(color: c.muted, fontSize: 14)),
             ),
           )
@@ -403,7 +416,7 @@ class _ScheduleRow extends StatelessWidget {
                           Text(session.displayName,
                               style: TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 14, color: c.label)),
-                          Text(session.serviceName ?? session.notes ?? 'PT Session',
+                          Text(session.serviceName ?? session.notes ?? AppLocalizations.of(context)!.trainer_ptSession,
                               style: TextStyle(fontSize: 12, color: c.muted)),
                           // Trainer badge for admin
                           if (isAdmin &&
@@ -417,7 +430,7 @@ class _ScheduleRow extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                'By ${session.trainerName}',
+                                AppLocalizations.of(context)!.trainer_byName(session.trainerName!),
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
@@ -462,7 +475,7 @@ class _ScheduleRow extends StatelessWidget {
                     if (session.isScheduled) ...[
                       const SizedBox(width: 6),
                       _StatusBadge(
-                        label: 'CONFIRMED',
+                        label: AppLocalizations.of(context)!.trainer_confirmedBadge,
                         bg: c.primary.withOpacity(0.1),
                         fg: c.primary,
                       ),
@@ -548,31 +561,32 @@ class _QuickActionsSection extends StatelessWidget {
         ? trainers.first.trainerId
         : trainerId;
 
+    final l10n = AppLocalizations.of(context)!;
     final items = <_QAItem>[
       _QAItem(
         icon: Icons.inventory_2_outlined,
-        label: 'Create Package',
+        label: l10n.trainer_createPackage,
         bg:        c.primary.withOpacity(0.08),
         iconColor: c.primary,
         onTap:     () => onTabSwitch(2),
       ),
       _QAItem(
         icon: Icons.calendar_month_outlined,
-        label: 'Add Availability',
+        label: l10n.trainer_addAvailabilityButton,
         bg:        c.success.withOpacity(0.08),
         iconColor: c.success,
         onTap:     () => onTabSwitch(3),
       ),
       _QAItem(
         icon: Icons.sports_gymnastics_rounded,
-        label: 'Add PT Service',
+        label: l10n.trainer_addPtService,
         bg:        Color.lerp(c.danger, c.primary, 0.5)!.withOpacity(0.1),
         iconColor: Color.lerp(c.danger, c.primary, 0.5)!,
         onTap:     () => onTabSwitch(4),
       ),
       _QAItem(
         icon: Icons.event_available_outlined,
-        label: 'Create Session',
+        label: l10n.trainer_createSession,
         bg:        Color.lerp(c.primary, c.label, 0.3)!.withOpacity(0.1),
         iconColor: Color.lerp(c.primary, c.label, 0.3)!,
         onTap: () {
@@ -594,7 +608,7 @@ class _QuickActionsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Quick Actions',
+        Text(AppLocalizations.of(context)!.admin_dashboard_quickActions,
             style: TextStyle(
                 fontSize: 17, fontWeight: FontWeight.bold, color: c.label)),
         const SizedBox(height: 12),
@@ -668,6 +682,215 @@ class _QACard extends StatelessWidget {
   }
 }
 
+// ── Pending Requests ───────────────────────────────────────────────────────────
+
+class _PendingRequestsSection extends StatelessWidget {
+  final List<PtSessionEntity> requests;
+  final AppThemeTokens         tokens;
+  final bool                   isAdmin;
+  const _PendingRequestsSection({
+    required this.requests,
+    required this.tokens,
+    required this.isAdmin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = tokens.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(AppLocalizations.of(context)!.trainer_pendingRequests,
+                style: TextStyle(
+                    fontSize: 17, fontWeight: FontWeight.bold, color: c.label)),
+            if (requests.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color:        const Color(0xFFEF4444),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${requests.length}',
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (requests.isEmpty)
+          Container(
+            width:   double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            decoration: BoxDecoration(
+              color:        c.surface,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Center(
+              child: Text(AppLocalizations.of(context)!.trainer_noPendingRequests,
+                  style: TextStyle(color: c.muted, fontSize: 14)),
+            ),
+          )
+        else
+          ...requests.map(
+            (req) => _RequestCard(request: req, tokens: tokens, isAdmin: isAdmin),
+          ),
+      ],
+    );
+  }
+}
+
+class _RequestCard extends StatelessWidget {
+  final PtSessionEntity request;
+  final AppThemeTokens  tokens;
+  final bool            isAdmin;
+  const _RequestCard({
+    super.key,
+    required this.request,
+    required this.tokens,
+    required this.isAdmin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c   = tokens.colors;
+    final bloc = context.read<TrainerPtSessionsBloc>();
+
+    return Container(
+      margin:  const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color:        c.surface,
+        borderRadius: BorderRadius.circular(14),
+        border:       Border.all(color: const Color(0xFFEF4444).withOpacity(0.25)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width:  42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEF4444).withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  request.initials,
+                  style: const TextStyle(
+                      color: Color(0xFFEF4444),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(request.displayName,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: c.label)),
+                    Text(
+                      request.serviceName ?? request.notes ?? AppLocalizations.of(context)!.trainer_ptSession,
+                      style: TextStyle(fontSize: 12, color: c.muted),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (isAdmin &&
+                        request.trainerName != null &&
+                        request.trainerName!.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color:        c.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.trainer_byName(request.trainerName!),
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: c.primary),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color:        const Color(0xFFEF4444).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  DateFormat('MMM d, h:mm a').format(request.startTime),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFEF4444)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => bloc.add(
+                      PtSessionDeclineRequested(sessionId: request.ptSessionId)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFEF4444),
+                    side: const BorderSide(color: Color(0xFFEF4444)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.trainer_declineButton, style: const TextStyle(fontSize: 13)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => bloc.add(
+                      PtSessionAcceptRequested(sessionId: request.ptSessionId)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF22C55E),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.trainer_acceptButton, style: const TextStyle(fontSize: 13)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ── Upcoming Clients ───────────────────────────────────────────────────────────
 
 class _UpcomingClientsSection extends StatelessWidget {
@@ -688,10 +911,11 @@ class _UpcomingClientsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = tokens.colors;
-    final now      = DateTime.now();
+    final c   = tokens.colors;
+    final now = DateTime.now();
+    final tomorrowStart = DateTime(now.year, now.month, now.day + 1);
     final upcoming = sessions
-        .where((s) => s.isScheduled && s.startTime.isAfter(now))
+        .where((s) => !s.startTime.isBefore(tomorrowStart))
         .toList()
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
@@ -701,12 +925,12 @@ class _UpcomingClientsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Upcoming Clients',
+            Text(AppLocalizations.of(context)!.trainer_upcomingClients,
                 style: TextStyle(
                     fontSize: 17, fontWeight: FontWeight.bold, color: c.label)),
             TextButton.icon(
               onPressed: () {},
-              icon:  Text('View All', style: TextStyle(fontSize: 13, color: c.primary)),
+              icon:  Text(AppLocalizations.of(context)!.admin_dashboard_viewAll, style: TextStyle(fontSize: 13, color: c.primary)),
               label: Icon(Icons.chevron_right_rounded, size: 18, color: c.primary),
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
             ),
@@ -722,7 +946,7 @@ class _UpcomingClientsSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Center(
-              child: Text('No upcoming clients.',
+              child: Text(AppLocalizations.of(context)!.trainer_noUpcomingClients,
                   style: TextStyle(color: c.muted, fontSize: 14)),
             ),
           )
@@ -774,7 +998,7 @@ class _UpcomingClientsSection extends StatelessWidget {
                               fontSize: 13,
                               color: c.label)),
                       Text(
-                          session.serviceName ?? session.notes ?? 'PT Session',
+                          session.serviceName ?? session.notes ?? AppLocalizations.of(context)!.trainer_ptSession,
                           textAlign: TextAlign.center,
                           maxLines:  1,
                           overflow:  TextOverflow.ellipsis,
@@ -809,8 +1033,7 @@ class _UpcomingClientsSection extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            'Session ${session.sessionIndex}/'
-                                '${session.totalPackageSessions}',
+                            AppLocalizations.of(context)!.trainer_sessionOfTotal(session.sessionIndex!, session.totalPackageSessions!),
                             style: TextStyle(fontSize: 10, color: c.primary),
                           ),
                         ),

@@ -8,7 +8,7 @@ import '../runtime/runtime_config_service.dart';
 import 'remote_theme_dto.dart';
 import 'app_theme_tokens.dart';
 import 'app_theme_builder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// shared_preferences removed — theme is always light;
 
 class ThemeState {
   final ThemeData themeData;
@@ -48,8 +48,8 @@ class ThemeState {
       themeData: AppThemeBuilder.build(tokens),
       tokens: tokens,
       isLoaded: false,
-      menuType: 'bottom', // default
-      selectedThemeMode: ThemeMode.system,
+      menuType: 'bottom',
+      selectedThemeMode: ThemeMode.light,
     );
   }
 }
@@ -64,18 +64,7 @@ class ThemeCubit extends Cubit<ThemeState> {
   }
 
   Future<void> loadTheme() async {
-    // ── Always load the saved theme mode first ────────────────────────────────
-    final prefs = await SharedPreferences.getInstance();
-    final savedModeName = prefs.getString('settings_theme_mode');
-    if (savedModeName != null) {
-      final savedMode = ThemeMode.values.firstWhere(
-            (m) => m.name == savedModeName,
-        orElse: () => ThemeMode.system,
-      );
-      emit(state.copyWith(selectedThemeMode: savedMode));
-    }
-
-    // ── Then apply the visual theme from env or runtime ───────────────────────
+    // ── Apply the visual theme from env or runtime ────────────────────────────
     final envB64 = Env.themeJsonB64.trim();
     if (envB64.isNotEmpty) {
       _applyThemeFromB64(envB64, source: 'ENV');
@@ -125,10 +114,7 @@ class ThemeCubit extends Cubit<ThemeState> {
       print('Theme apply failed ($source): $e');
     }
   }
-  Future<void> setThemeMode(ThemeMode mode) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('settings_theme_mode', mode.name);
-    emit(state.copyWith(selectedThemeMode: mode));
-  }
+  void setThemeMode(ThemeMode mode) =>
+      emit(state.copyWith(selectedThemeMode: ThemeMode.light));
 
 }

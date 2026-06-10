@@ -12,11 +12,14 @@ class AdminPlanListItemModel {
   final String? description;
   final double price;
   final String billingCycle;
+  final int? durationDays;
   final int memberCount;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
   final int? maxFreezesCount;
   final int? gracePeriodDays;
+  final String? gymAccessStart;
+  final String? gymAccessEnd;
   final List<String> branches;
   final List<int> branchIds;
   final String? promotionText;
@@ -33,13 +36,16 @@ class AdminPlanListItemModel {
     this.description,
     required this.price,
     required this.billingCycle,
+    this.durationDays,
     required this.memberCount,
     this.allowedVisits,
     this.freezeDaysAllowance,
     this.maxFreezesCount,
     this.gracePeriodDays,
+    this.gymAccessStart,
+    this.gymAccessEnd,
     required this.branches,
-    this.branchIds = const [],
+    this.branchIds = const <int>[],
     this.promotionText,
     this.promotion,
     this.features = const [],
@@ -56,11 +62,14 @@ class AdminPlanListItemModel {
       description: json['description'] as String?,
       price: (json['price'] as num).toDouble(),
       billingCycle: json['billingCycle'] as String,
+      durationDays: json['durationDays'] as int?,
       memberCount: json['memberCount'] as int,
       allowedVisits: json['allowedVisits'] as int?,
       freezeDaysAllowance: json['freezeDaysAllowance'] as int?,
       maxFreezesCount: json['maxFreezesCount'] as int?,
       gracePeriodDays: json['gracePeriodDays'] as int?,
+      gymAccessStart: json['gymAccessStart'] as String?,
+      gymAccessEnd: json['gymAccessEnd'] as String?,
       branches: (json['branches'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -92,11 +101,14 @@ class AdminPlanListItemModel {
         description: description,
         price: price,
         billingCycle: billingCycle,
+        durationDays: durationDays,
         memberCount: memberCount,
         allowedVisits: allowedVisits,
         freezeDaysAllowance: freezeDaysAllowance,
         maxFreezesCount: maxFreezesCount,
         gracePeriodDays: gracePeriodDays,
+        gymAccessStart: gymAccessStart,
+        gymAccessEnd: gymAccessEnd,
         branches: branches,
         branchIds: branchIds,
         promotionText: promotionText,

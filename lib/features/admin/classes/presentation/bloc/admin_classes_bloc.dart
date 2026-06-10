@@ -18,6 +18,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/cancel_class_request_model.dart';
 import '../../domain/usecases/cancel_class_usecase.dart';
+import '../../domain/usecases/confirm_booking_payment_usecase.dart';
+import '../../domain/usecases/reject_booking_usecase.dart';
 import '../../domain/usecases/create_class_usecase.dart';
 import '../../domain/usecases/get_class_form_options_usecase.dart';
 import '../../domain/usecases/get_classes_by_date_usecase.dart';
@@ -28,7 +30,6 @@ import 'admin_classes_event.dart';
 import 'admin_classes_state.dart';
 class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
 
-  // All 6 usecases injected via constructor
   final GetClassesByDateUseCase      _getClassesByDate;
   final GetClassFormOptionsUseCase   _getClassFormOptions;
   final CreateClassUseCase           _createClass;
@@ -36,6 +37,8 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
   final CancelClassUseCase           _cancelClass;
   final ReactivateClassUseCase       _reactivateClass;
   final GetSessionBookingsUseCase    _getSessionBookings;
+  final ConfirmBookingPaymentUseCase _confirmBookingPayment;
+  final RejectBookingUseCase         _rejectBooking;
 
   // The date the admin is currently viewing — persisted across events
   // so after a mutation we can refresh the right date's list
@@ -49,13 +52,17 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     required CancelClassUseCase           cancelClass,
     required ReactivateClassUseCase       reactivateClass,
     required GetSessionBookingsUseCase    getSessionBookings,
-  })  : _getClassesByDate    = getClassesByDate,
-        _getClassFormOptions  = getClassFormOptions,
-        _createClass          = createClass,
-        _updateClass          = updateClass,
-        _cancelClass          = cancelClass,
-        _reactivateClass      = reactivateClass,
-        _getSessionBookings   = getSessionBookings,
+    required ConfirmBookingPaymentUseCase confirmBookingPayment,
+    required RejectBookingUseCase         rejectBooking,
+  })  : _getClassesByDate      = getClassesByDate,
+        _getClassFormOptions    = getClassFormOptions,
+        _createClass            = createClass,
+        _updateClass            = updateClass,
+        _cancelClass            = cancelClass,
+        _reactivateClass        = reactivateClass,
+        _getSessionBookings     = getSessionBookings,
+        _confirmBookingPayment  = confirmBookingPayment,
+        _rejectBooking          = rejectBooking,
         super(ClassesInitial()) {
 
     on<ClassesStarted>(_onClassesStarted);
@@ -66,6 +73,8 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     on<ClassCancelRequested>(_onClassCancelRequested);
     on<ClassReactivateRequested>(_onClassReactivateRequested);
     on<SessionBookingsRequested>(_onSessionBookingsRequested);
+    on<ConfirmBookingPaymentRequested>(_onConfirmBookingPayment);
+    on<RejectBookingRequested>(_onRejectBooking);
   }
 
   // ── ClassesStarted ──────────────────────────────────────────────────────
@@ -186,6 +195,34 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
         sessionId: event.sessionId,
         message:   e.toString(), // show real error on screen too
       ));
+    }
+  }
+
+  // ── ConfirmBookingPaymentRequested ──────────────────────────────────────────
+  Future<void> _onConfirmBookingPayment(
+      ConfirmBookingPaymentRequested event, Emitter<AdminClassesState> emit) async {
+    try {
+      await _confirmBookingPayment(event.bookingId);
+      // Reload bookings for this session to reflect updated payment status
+      final bookings = await _getSessionBookings(event.sessionId);
+      emit(SessionBookingsLoaded(event.sessionId, bookings, wasPaymentConfirmed: true));
+    } catch (e) {
+      emit(SessionBookingsError(
+        sessionId: event.sessionId,
+        message: e.toString(),
+      ));
+    }
+  }
+
+  // ── RejectBookingRequested ──────────────────────────────────────────────────
+  Future<void> _onRejectBooking(
+      RejectBookingRequested event, Emitter<AdminClassesState> emit) async {
+    try {
+      await _rejectBooking(event.bookingId);
+      final bookings = await _getSessionBookings(event.sessionId);
+      emit(SessionBookingsLoaded(event.sessionId, bookings, wasBookingRejected: true));
+    } catch (e) {
+      emit(SessionBookingsError(sessionId: event.sessionId, message: e.toString()));
     }
   }
 

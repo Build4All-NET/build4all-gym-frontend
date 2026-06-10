@@ -1,8 +1,10 @@
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_classes_bloc.dart';
@@ -49,21 +51,22 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
 
   void _showReactivateConfirmation(BuildContext context, int sessionId) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
-        title: Text('Reactivate Class',
+        title: Text(l10n.admin_classes_reactivateTitle,
             style: TextStyle(
                 fontWeight: FontWeight.w700, color: cs.onSurface)),
         content: Text(
-          'Restore this class to scheduled? Members will be able to book it again.',
+          l10n.admin_classes_reactivateMessage,
           style: TextStyle(color: cs.onSurface.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Cancel',
+            child: Text(l10n.general_cancel,
                 style: TextStyle(color: cs.onSurface.withOpacity(0.6))),
           ),
           ElevatedButton(
@@ -77,7 +80,7 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
               backgroundColor: const Color(0xFF4CAF50),
               foregroundColor: Colors.white,
             ),
-            child: const Text('Yes, Reactivate'),
+            child: Text(l10n.admin_classes_reactivateConfirm),
           ),
         ],
       ),
@@ -86,21 +89,22 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
 
   void _showCancelConfirmation(BuildContext context, int sessionId) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
-        title: Text('Cancel Class',
+        title: Text(l10n.admin_classes_cancelTitle,
             style: TextStyle(
                 fontWeight: FontWeight.w700, color: cs.onSurface)),
         content: Text(
-          'Are you sure you want to cancel this class? All booked members will be notified.',
+          l10n.admin_classes_cancelMessage,
           style: TextStyle(color: cs.onSurface.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Keep Class',
+            child: Text(l10n.admin_classes_keepClass,
                 style: TextStyle(color: cs.onSurface.withOpacity(0.6))),
           ),
           ElevatedButton(
@@ -114,7 +118,7 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
               backgroundColor: cs.error,
               foregroundColor: cs.onError,
             ),
-            child: const Text('Yes, Cancel'),
+            child: Text(l10n.admin_classes_cancelConfirm),
           ),
         ],
       ),
@@ -156,27 +160,21 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
             if (state is ClassesLoaded) _lastLoadedState = state;
 
             if (state is ClassActionSuccess) {
-              final messages = {
-                'created':     'Class created successfully',
-                'updated':     'Class updated successfully',
-                'cancelled':   'Class cancelled',
-                'reactivated': 'Class reactivated successfully',
+              final l10n = AppLocalizations.of(context)!;
+              final message = switch (state.actionType) {
+                'created'     => l10n.admin_classes_createdSuccess,
+                'updated'     => l10n.admin_classes_updatedSuccess,
+                'cancelled'   => l10n.admin_classes_cancelledSuccess,
+                'reactivated' => l10n.admin_classes_reactivatedSuccess,
+                _             => 'Done',
               };
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:         Text(messages[state.actionType] ?? 'Done'),
-                backgroundColor: cs.primary,
-                behavior:        SnackBarBehavior.floating,
-              ));
+              AppToast.success(context, message);
               // BLoC already refreshes the list internally with the correct date —
               // do NOT dispatch another ClassesStarted here or it overwrites to today.
             }
 
             if (state is ClassActionError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:         Text(state.message),
-                backgroundColor: cs.error,            // ← was Color(0xFFF44336)
-                behavior:        SnackBarBehavior.floating,
-              ));
+              AppToast.error(context, state.message);
             }
           },
           builder: (context, state) {
@@ -187,7 +185,7 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AdminAppBar(
-                  title:            'Classes',
+                  title:            AppLocalizations.of(context)!.navClasses,
                   selectedBranchId: _selectedBranchId,
                   onBranchChanged:  _onBranchChanged,
                   onAddTap:         _openAddClassSheet,
@@ -219,7 +217,7 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
                               backgroundColor: cs.primary,
                               foregroundColor: cs.onPrimary,
                             ),
-                            child: const Text('Retry'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),
@@ -253,7 +251,7 @@ class _AdminClassesScreenState extends State<AdminClassesScreen> {
                                   color: cs.onSurface.withOpacity(0.3)), // ← was Color(0xFFBDBDBD)
                               const SizedBox(height: 12),
                               Text(
-                                'No classes scheduled for this day',
+                                AppLocalizations.of(context)!.admin_classes_noClasses,
                                 style: TextStyle(
                                   color:    cs.onSurface.withOpacity(0.4), // ← was Color(0xFF9E9E9E)
                                   fontSize: 14,

@@ -64,6 +64,18 @@ const _operationsItems = [
     route: '/admin/payments',
   ),
   NavigationItem(
+    id: 'membership_requests',
+    iconData: Icons.pending_actions_outlined,
+    labelKey: 'navMembershipRequests',
+    route: '/admin/membership-requests',
+  ),
+  NavigationItem(
+    id: 'invoices',
+    iconData: Icons.receipt_long_outlined,
+    labelKey: 'navInvoices',
+    route: '/admin/invoices',
+  ),
+  NavigationItem(
     id: 'classes_pt',
     iconData: Icons.calendar_month_outlined,
     labelKey: 'navClassesPt',
@@ -84,6 +96,12 @@ const _trainingItems = [
     iconData: Icons.fitness_center_outlined,
     labelKey: 'navPtSessions',
     route: '/admin/pt-services',
+  ),
+  NavigationItem(
+    id: 'pt_package_bookings',
+    iconData: Icons.assignment_turned_in_outlined,
+    labelKey: 'navPtPackageBookings',
+    route: '/admin/pt-package-bookings',
   ),
   NavigationItem(
     id: 'training_videos',

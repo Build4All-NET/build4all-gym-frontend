@@ -3,6 +3,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../domain/usecase/create_branch_usecase.dart';
+import '../../domain/usecase/update_branch_usecase.dart';
 
 abstract class BranchesEvent extends Equatable {
   const BranchesEvent();
@@ -45,4 +46,20 @@ class SubmitCreateBranch extends BranchesEvent {
   const SubmitCreateBranch(this.params);
   @override
   List<Object?> get props => [params];
+}
+
+// Submit the Edit Branch form
+class SubmitUpdateBranch extends BranchesEvent {
+  final UpdateBranchParams params;
+  const SubmitUpdateBranch(this.params);
+  @override
+  List<Object?> get props => [params];
+}
+
+// Delete a branch
+class DeleteBranch extends BranchesEvent {
+  final String branchId;
+  const DeleteBranch(this.branchId);
+  @override
+  List<Object?> get props => [branchId];
 }

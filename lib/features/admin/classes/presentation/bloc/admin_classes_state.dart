@@ -108,12 +108,20 @@ class SessionBookingsLoading extends AdminClassesState {
 }
 
 class SessionBookingsLoaded extends AdminClassesState {
-  final int                         sessionId;
+  final int                            sessionId;
   final List<SessionBookingItemEntity> bookings;
-  const SessionBookingsLoaded(this.sessionId, this.bookings);
+  final bool wasPaymentConfirmed;
+  final bool wasBookingRejected;
+
+  const SessionBookingsLoaded(
+    this.sessionId,
+    this.bookings, {
+    this.wasPaymentConfirmed = false,
+    this.wasBookingRejected  = false,
+  });
 
   @override
-  List<Object?> get props => [sessionId, bookings];
+  List<Object?> get props => [sessionId, bookings, wasPaymentConfirmed, wasBookingRejected];
 }
 
 // admin_classes_state.dart

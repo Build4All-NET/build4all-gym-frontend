@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/admin_members_bloc.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class MembersSearchBarWidget extends StatefulWidget {
   const MembersSearchBarWidget({super.key});
@@ -42,7 +43,7 @@ class _MembersSearchBarWidgetState extends State<MembersSearchBarWidget> {
         style: TextStyle(color: cs.onSurface, fontSize: 14),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.search, color: cs.onSurface.withOpacity(0.4), size: 20),
-          hintText:  'Search by Name, Phone, Member Code',
+          hintText:  AppLocalizations.of(context)!.admin_members_searchHint,
           hintStyle: TextStyle(color: cs.onSurface.withOpacity(0.4), fontSize: 14),
           filled:    true,
           fillColor: cs.surfaceVariant, // ← theme

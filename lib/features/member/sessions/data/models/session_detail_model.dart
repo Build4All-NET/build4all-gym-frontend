@@ -18,6 +18,8 @@ class SessionDetailModel {
   final String? description;
   final List<String> benefits;
   final List<String> equipment;
+  final bool requiresMembership;
+  final bool memberHasActiveMembership;
 
   SessionDetailModel({
     required this.sessionId,
@@ -39,6 +41,8 @@ class SessionDetailModel {
     this.description,
     required this.benefits,
     required this.equipment,
+    this.requiresMembership = false,
+    this.memberHasActiveMembership = true,
   });
 
   factory SessionDetailModel.fromJson(Map<String, dynamic> json) {
@@ -66,6 +70,8 @@ class SessionDetailModel {
       branchName: json['branchName'] as String?,
       benefits: List<String>.from(json['benefits'] ?? []),
       equipment: List<String>.from(json['equipment'] ?? []),
+      requiresMembership: json['requiresMembership'] as bool? ?? false,
+      memberHasActiveMembership: json['memberHasActiveMembership'] as bool? ?? true,
     );
   }
 
@@ -90,6 +96,8 @@ class SessionDetailModel {
       'description': description,
       'benefits': benefits,
       'equipment': equipment,
+      'requiresMembership': requiresMembership,
+      'memberHasActiveMembership': memberHasActiveMembership,
     };
   }
 }

@@ -76,19 +76,23 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
   }
 
   Future<void> _load() async {
-    String? token       = await const AdminTokenStore().getToken();
-    String? tenantIdStr = await const AdminTokenStore().getTenantId();
+    // Role is read directly from AdminTokenStore where it was written at login:
+    //   admin login  → role saved as "OWNER" / "ADMIN" / "MANAGER"
+    //   user-only login → role reset to "user" so stale admin role is gone
+    final storedRole = (await const AdminTokenStore().getRole() ?? '').toUpperCase().replaceFirst('ROLE_', '');
+    final isAdmin    = storedRole == 'OWNER' || storedRole == 'ADMIN' || storedRole == 'MANAGER';
+
+    final adminTok = await const AdminTokenStore().getToken();
+    final userTok  = await const AuthTokenStore().getToken();
+
+    // For profile data (name, email, etc.) prefer admin token when admin,
+    // otherwise use the gym user token.
+    final token = (isAdmin && adminTok != null && adminTok.isNotEmpty)
+        ? adminTok
+        : (userTok != null && userTok.isNotEmpty ? userTok : adminTok);
 
     if (token == null || token.isEmpty) {
-      token       = await const AuthTokenStore().getToken();
-      tenantIdStr = await const AuthTokenStore().getTenantId();
-      debugPrint('🔑 AdminProfileCubit: using AuthTokenStore');
-    } else {
-      debugPrint('🔑 AdminProfileCubit: using AdminTokenStore');
-    }
-
-    if (token == null || token.isEmpty) {
-      debugPrint('❌ AdminProfileCubit: no token found in either store');
+      debugPrint('❌ AdminProfileCubit: no token found');
       return;
     }
 
@@ -98,30 +102,17 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
       return;
     }
 
-    debugPrint('🔍 AdminProfileCubit: JWT claims keys = ${claims.keys.toList()}');
-
+    final tenantIdStr = await const AdminTokenStore().getTenantId()
+        ?? await const AuthTokenStore().getTenantId();
     final branchId = tenantIdStr != null ? int.tryParse(tenantIdStr) : null;
 
-    // Prefer the user token's userId for gym-member operations (e.g. trainerId).
-    // When the admin token is in use, its userId is the admin account ID, not the
-    // gym member ID that trainer/PT endpoints expect.
     int? userId = JwtUtils.userIdFromToken(token);
-    final userTok = await const AuthTokenStore().getToken();
     if (userTok != null && userTok.isNotEmpty && userTok != token) {
       userId = JwtUtils.userIdFromToken(userTok) ?? userId;
     }
 
-    // Backend JWT may use a 'roles' list ["ROLE_TRAINER"] or a singular 'role' string.
-    String rawRole = '';
-    final rolesList = claims['roles'];
-    if (rolesList is List && rolesList.isNotEmpty) {
-      rawRole = rolesList.first.toString();
-    } else {
-      rawRole = claims['role'] as String? ?? '';
-    }
-    final role = rawRole.toUpperCase().replaceFirst('ROLE_', '');
-
-    debugPrint('🔑 AdminProfileCubit: JWT role="$role", userId=$userId, tenantId=$tenantIdStr');
+    final role = isAdmin ? storedRole : 'USER';
+    debugPrint('🔑 AdminProfileCubit: storedRole="$storedRole" role="$role" isAdmin=$isAdmin');
 
     emit(AdminProfile(
       adminName:  claims['name']       as String? ?? 'Admin',
@@ -135,7 +126,12 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
       gymRoles:   [],
     ));
 
-    await _fetchGymRole(token);
+    // OWNER/ADMIN/MANAGER do not carry gym-specific roles.
+    // Skipping the fetch also prevents picking up stale AuthTokenStore tokens
+    // left behind from a previous trainer/reception session.
+    if (!isAdmin) {
+      await _fetchGymRole(token);
+    }
   }
 
   Future<void> _fetchGymRole(String adminToken) async {

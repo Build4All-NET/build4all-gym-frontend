@@ -11,29 +11,38 @@ class SessionBookingItemModel {
   final int     userId;
   final String  fullName;
   final String?  phone;
-  final int?    profileFileId;    // nullable — member may have no photo
-  final String  status;           // "BOOKED" or "WAITLISTED"
-  final int?    waitlistPosition; // null when status = "BOOKED"
+  final int?    profileFileId;
+  final String  status;
+  final int?    waitlistPosition;
+  final String? paymentStatus;
+  final String? paymentMethod;
+  final int?    invoiceId;
 
   const SessionBookingItemModel({
     required this.bookingId,
     required this.userId,
     required this.fullName,
-     this.phone,
+    this.phone,
     this.profileFileId,
     required this.status,
     this.waitlistPosition,
+    this.paymentStatus,
+    this.paymentMethod,
+    this.invoiceId,
   });
 
   factory SessionBookingItemModel.fromJson(Map<String, dynamic> json) {
     return SessionBookingItemModel(
-      bookingId:        json['bookingId']        as int,
-      userId:           json['userId']           as int,
+      bookingId:        (json['bookingId']        as num?)?.toInt() ?? 0,
+      userId:           (json['userId']           as num?)?.toInt() ?? 0,
       fullName:         json['fullName']         as String? ?? 'Unknown',
       phone:            json['phone']            as String? ?? '',
-      profileFileId:    json['profileFileId']    as int?,
+      profileFileId:    (json['profileFileId']   as num?)?.toInt(),
       status:           json['status']           as String? ?? 'BOOKED',
-      waitlistPosition: json['waitlistPosition'] as int?,
+      waitlistPosition: (json['waitlistPosition'] as num?)?.toInt(),
+      paymentStatus:    json['paymentStatus']    as String?,
+      paymentMethod:    json['paymentMethod']    as String?,
+      invoiceId:        (json['invoiceId']       as num?)?.toInt(),
     );
   }
 
@@ -45,5 +54,8 @@ class SessionBookingItemModel {
     'profileFileId':    profileFileId,
     'status':           status,
     'waitlistPosition': waitlistPosition,
+    'paymentStatus':    paymentStatus,
+    'paymentMethod':    paymentMethod,
+    'invoiceId':        invoiceId,
   };
 }

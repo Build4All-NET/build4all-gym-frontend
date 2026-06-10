@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../domain/entities/admin_plan_list_item_entity.dart';
-import '../../domain/entities/admin_branch_option_entity.dart';
 import '../../domain/usecases/admin_plans_usecases.dart';
 import '../../data/services/admin_plans_remote_service.dart';
 import '../../data/repositories/admin_plans_repository_impl.dart';
@@ -29,28 +28,18 @@ class PlanFormBottomSheet {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => BlocProvider(
-        create: (_) => PlanFormBloc(
-          getPlanTypes: GetPlanTypesUseCase(
-            repository: AdminPlansRepositoryImpl(
-              remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-            ),
-          ),
-          getBranches: GetBranchesUseCase(
-            repository: AdminPlansRepositoryImpl(
-              remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-            ),
-          ),
-          createPlan: CreatePlanUseCase(
-            repository: AdminPlansRepositoryImpl(
-              remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-            ),
-          ),
-          updatePlan: UpdatePlanUseCase(
-            repository: AdminPlansRepositoryImpl(
-              remoteDatasource: AdminPlansRemoteDatasourceImpl(),
-            ),
-          ),
-        )..add(LoadFormDataEvent()),
+        create: (_) {
+          final repo = AdminPlansRepositoryImpl(
+            remoteDatasource: AdminPlansRemoteDatasourceImpl(),
+          );
+          return PlanFormBloc(
+            getPlanTypes: GetPlanTypesUseCase(repository: repo),
+            getBranches:  GetBranchesUseCase(repository: repo),
+            createPlanType: CreatePlanTypeUseCase(repository: repo),
+            createPlan:   CreatePlanUseCase(repository: repo),
+            updatePlan:   UpdatePlanUseCase(repository: repo),
+          )..add(LoadFormDataEvent());
+        },
         child: _PlanFormContent(
           existingPlan: existingPlan,
           onSuccess: onSuccess,
@@ -104,12 +93,19 @@ class _PlanFormContentState extends State<_PlanFormContent> {
   late final TextEditingController _gracePeriodController;
 
   String? _selectedType;
+  bool _isCustomType = false;
+  late final TextEditingController _customTypeController;
   String? _selectedBillingCycle;
+  late final TextEditingController _customDurationController;
   String? _selectedStatus;
-  List<int> _selectedBranchIds = [];
   bool _unlimitedVisits = true;
   bool _autoRenew = false;
   bool _isFeatured = false;
+
+  // Access time restriction
+  bool _restrictAccessHours = false;
+  TimeOfDay _accessStart = const TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _accessEnd   = const TimeOfDay(hour: 12, minute: 0);
 
   // Features
   final List<_FeatureRow> _featureRows = [];
@@ -150,13 +146,22 @@ class _PlanFormContentState extends State<_PlanFormContent> {
         text: plan?.gracePeriodDays?.toString() ?? '');
 
     _selectedType = plan?.planType;
+    _customTypeController = TextEditingController();
     _selectedBillingCycle = _normaliseCycle(plan?.billingCycle);
+    _customDurationController = TextEditingController(
+      text: plan?.durationDays?.toString() ?? '',
+    );
     _selectedStatus =
         plan != null ? (plan.isActive ? 'active' : 'inactive') : null;
-    _selectedBranchIds = List<int>.from(plan?.branchIds ?? []);
     _unlimitedVisits = plan?.allowedVisits == null;
     _autoRenew = plan?.autoRenew ?? false;
     _isFeatured = plan?.isFeatured ?? false;
+
+    if (plan?.gymAccessStart != null && plan?.gymAccessEnd != null) {
+      _restrictAccessHours = true;
+      _accessStart = _parseTime(plan!.gymAccessStart!);
+      _accessEnd   = _parseTime(plan.gymAccessEnd!);
+    }
 
     // Pre-populate features
     if (plan != null) {
@@ -194,6 +199,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
   @override
   void dispose() {
     _nameController.dispose();
+    _customTypeController.dispose();
+    _customDurationController.dispose();
     _priceController.dispose();
     _descriptionController.dispose();
     _allowedVisitsController.dispose();
@@ -207,63 +214,6 @@ class _PlanFormContentState extends State<_PlanFormContent> {
       row.dispose();
     }
     super.dispose();
-  }
-
-  // ── Branch multi-select dialog ─────────────────────────────────────────────
-
-  void _showBranchSelector(List<AdminBranchOptionEntity> branches) {
-    final c = context.read<ThemeCubit>().state.tokens.colors;
-    final tempSelected = List<int>.from(_selectedBranchIds);
-
-    showDialog(
-      context: context,
-      builder: (_) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: c.surface,
-          title: Text('Select Branches',
-              style: TextStyle(
-                  color: c.label, fontWeight: FontWeight.w700)),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView(
-              shrinkWrap: true,
-              children: branches
-                  .map((b) => CheckboxListTile(
-                        title: Text(b.branchName,
-                            style:
-                                TextStyle(color: c.label, fontSize: 14)),
-                        value: tempSelected.contains(b.branchId),
-                        activeColor: c.primary,
-                        onChanged: (v) => setDialogState(() {
-                          if (v == true) {
-                            tempSelected.add(b.branchId);
-                          } else {
-                            tempSelected.remove(b.branchId);
-                          }
-                        }),
-                      ))
-                  .toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text('Cancel', style: TextStyle(color: c.muted)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() => _selectedBranchIds = tempSelected);
-                Navigator.of(ctx).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: c.primary,
-                  foregroundColor: c.onPrimary),
-              child: const Text('Done'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   // ── Date picker helper ─────────────────────────────────────────────────────
@@ -288,10 +238,48 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     }
   }
 
+  // ── Time helpers ───────────────────────────────────────────────────────────
+
+  TimeOfDay _parseTime(String hhmm) {
+    final parts = hhmm.split(':');
+    return TimeOfDay(
+      hour: int.tryParse(parts[0]) ?? 0,
+      minute: int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0,
+    );
+  }
+
+  String _formatTime(TimeOfDay t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+  Future<void> _pickAccessTime({required bool isStart}) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: isStart ? _accessStart : _accessEnd,
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStart) {
+          _accessStart = picked;
+        } else {
+          _accessEnd = picked;
+        }
+      });
+    }
+  }
+
   // ── Submit ─────────────────────────────────────────────────────────────────
 
-  void _submit(List<String> types, List<AdminBranchOptionEntity> branches) {
+  void _submit(List<String> types) {
     if (!_formKey.currentState!.validate()) return;
+
+    final effectiveType = _isCustomType
+        ? _customTypeController.text.trim()
+        : _selectedType;
+
+    final isCustomCycle = _selectedBillingCycle == 'custom';
+    final customDurationDays = isCustomCycle
+        ? int.tryParse(_customDurationController.text.trim())
+        : null;
 
     final price = double.tryParse(_priceController.text.trim()) ?? 0.0;
     final allowedVisits = _unlimitedVisits
@@ -300,6 +288,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     final freezeDays = int.tryParse(_freezeDaysController.text.trim());
     final maxFreezes = int.tryParse(_maxFreezesController.text.trim());
     final gracePeriod = int.tryParse(_gracePeriodController.text.trim());
+    final gymAccessStart = _restrictAccessHours ? _formatTime(_accessStart) : null;
+    final gymAccessEnd   = _restrictAccessHours ? _formatTime(_accessEnd)   : null;
 
     // Build features list
     final featureModels = _featureRows
@@ -341,21 +331,23 @@ class _PlanFormContentState extends State<_PlanFormContent> {
               planId: widget.existingPlan!.planId,
               request: UpdatePlanRequestModel(
                 name: _nameController.text.trim(),
-                planType: _selectedType,
+                planType: effectiveType,
                 price: price,
                 billingCycle: _selectedBillingCycle,
+                customDurationDays: customDurationDays,
                 description: _descriptionController.text.trim().isEmpty
                     ? null
                     : _descriptionController.text.trim(),
                 status: _selectedStatus,
-                branchIds:
-                    _selectedBranchIds.isEmpty ? null : _selectedBranchIds,
+                branchIds: null,
                 allowedVisits: allowedVisits,
                 freezeDaysAllowance: freezeDays,
                 maxFreezesCount: maxFreezes,
                 autoRenew: _autoRenew,
                 isFeatured: _isFeatured,
                 gracePeriodDays: gracePeriod,
+                gymAccessStart: gymAccessStart ?? '',
+                gymAccessEnd: gymAccessEnd ?? '',
                 promotion: promoModel,
                 features: featureModels,
               ),
@@ -364,22 +356,26 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     } else {
       context.read<PlanFormBloc>().add(
             SubmitCreatePlanEvent(
+              isCustomType: _isCustomType,
               request: CreatePlanRequestModel(
                 name: _nameController.text.trim(),
-                planType: _selectedType!,
+                planType: effectiveType!,
                 price: price,
                 billingCycle: _selectedBillingCycle!,
+                customDurationDays: customDurationDays,
                 description: _descriptionController.text.trim().isEmpty
                     ? null
                     : _descriptionController.text.trim(),
                 status: _selectedStatus!,
-                branchIds: _selectedBranchIds,
+                branchIds: const <int>[],
                 allowedVisits: allowedVisits,
                 freezeDaysAllowance: freezeDays,
                 maxFreezesCount: maxFreezes,
                 autoRenew: _autoRenew,
                 isFeatured: _isFeatured,
                 gracePeriodDays: gracePeriod,
+                gymAccessStart: gymAccessStart,
+                gymAccessEnd: gymAccessEnd,
                 promotion: promoModel,
                 features: featureModels,
               ),
@@ -422,14 +418,6 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                 : state is PlanFormError
                     ? state.types
                     : <String>[];
-
-        final branches = state is PlanFormDataLoaded
-            ? state.branches
-            : state is PlanFormSubmitting
-                ? state.branches
-                : state is PlanFormError
-                    ? state.branches
-                    : <AdminBranchOptionEntity>[];
 
         final isSubmitting = state is PlanFormSubmitting;
 
@@ -483,16 +471,87 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   const SizedBox(height: 12),
 
                   _FormLabel('Type / Activity *', c),
-                  DropdownButtonFormField<String>(
-                    value: _selectedType,
-                    decoration: _inputDec('Select type', c),
-                    items: types
-                        .map((t) =>
-                            DropdownMenuItem(value: t, child: Text(t)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _selectedType = v),
-                    validator: (v) => v == null ? 'Required' : null,
-                  ),
+                  if (_isCustomType) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _customTypeController,
+                            style: TextStyle(color: c.label),
+                            textCapitalization: TextCapitalization.words,
+                            decoration: _inputDec('Enter type (e.g. Yoga)', c),
+                            validator: (v) => _isCustomType &&
+                                    (v == null || v.trim().isEmpty)
+                                ? 'Required'
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => setState(() {
+                            _isCustomType = false;
+                            _customTypeController.clear();
+                            _selectedType = null;
+                          }),
+                          child: Container(
+                            padding: const EdgeInsets.all(11),
+                            decoration: BoxDecoration(
+                              color: c.background,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: c.border.withOpacity(0.3)),
+                            ),
+                            child: Icon(Icons.close_rounded,
+                                size: 18, color: c.muted),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else ...[
+                    DropdownButtonFormField<String>(
+                      value: _selectedType,
+                      decoration: _inputDec('Select type', c),
+                      items: [
+                        // Keep current value in the list while types are still
+                        // loading, so Flutter's assertion (value must be in items)
+                        // never fires during the edit-plan flow.
+                        if (_selectedType != null &&
+                            !types.contains(_selectedType))
+                          DropdownMenuItem(
+                              value: _selectedType!,
+                              child: Text(_selectedType!)),
+                        ...types.map((t) =>
+                            DropdownMenuItem(value: t, child: Text(t))),
+                        DropdownMenuItem(
+                          value: '__new__',
+                          child: Row(
+                            children: [
+                              Icon(Icons.add_rounded,
+                                  size: 16, color: c.primary),
+                              const SizedBox(width: 6),
+                              Text('Add new type…',
+                                  style: TextStyle(
+                                      color: c.primary,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14)),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onChanged: (v) {
+                        if (v == '__new__') {
+                          setState(() {
+                            _isCustomType = true;
+                            _selectedType = null;
+                          });
+                        } else {
+                          setState(() => _selectedType = v);
+                        }
+                      },
+                      validator: (v) =>
+                          !_isCustomType && v == null ? 'Required' : null,
+                    ),
+                  ],
                   const SizedBox(height: 12),
 
                   Row(
@@ -532,8 +591,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               items: _billingCycles
                                   .map((cyc) => DropdownMenuItem(
                                         value: cyc,
-                                        child:
-                                            Text(_formatCycle(cyc)),
+                                        child: Text(_formatCycle(cyc)),
                                       ))
                                   .toList(),
                               onChanged: (v) => setState(
@@ -546,6 +604,25 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                       ),
                     ],
                   ),
+                  if (_selectedBillingCycle == 'custom') ...[
+                    const SizedBox(height: 10),
+                    _FormLabel('Custom Duration (days) *', c),
+                    TextFormField(
+                      controller: _customDurationController,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(color: c.label),
+                      decoration: _inputDec('e.g. 45', c),
+                      validator: (v) {
+                        if (_selectedBillingCycle == 'custom' &&
+                            (v == null || v.trim().isEmpty))
+                          return 'Enter number of days';
+                        if (_selectedBillingCycle == 'custom' &&
+                            int.tryParse(v!.trim()) == null)
+                          return 'Must be a whole number';
+                        return null;
+                      },
+                    ),
+                  ],
                   const SizedBox(height: 12),
 
                   Row(
@@ -586,61 +663,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   ),
 
                   // ════════════════════════════════════════════════════════
-                  // SECTION 2: Branches
-                  // ════════════════════════════════════════════════════════
-                  _sectionHeader(
-                      'Available Branches', Icons.location_on_outlined, c),
-
-                  GestureDetector(
-                    onTap: branches.isEmpty
-                        ? null
-                        : () => _showBranchSelector(branches),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: c.background,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: c.border.withOpacity(0.3),
-                        ),
-                      ),
-                      child: _selectedBranchIds.isEmpty
-                          ? Text(
-                              branches.isEmpty
-                                  ? 'Loading branches...'
-                                  : 'Tap to select branches',
-                              style:
-                                  TextStyle(color: c.muted, fontSize: 14),
-                            )
-                          : Wrap(
-                              spacing: 6,
-                              runSpacing: 6,
-                              children: branches
-                                  .where((b) => _selectedBranchIds
-                                      .contains(b.branchId))
-                                  .map((b) => _BranchChip(
-                                        label: b.branchName,
-                                        color: c.primary,
-                                        onRemove: () => setState(() =>
-                                            _selectedBranchIds
-                                                .remove(b.branchId)),
-                                      ))
-                                  .toList(),
-                            ),
-                    ),
-                  ),
-                  if (_selectedBranchIds.isEmpty && branches.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4, left: 4),
-                      child: Text('Select at least one branch',
-                          style: TextStyle(
-                              fontSize: 11, color: c.error)),
-                    ),
-
-                  // ════════════════════════════════════════════════════════
-                  // SECTION 3: Membership Settings
+                  // SECTION 2: Membership Settings
                   // ════════════════════════════════════════════════════════
                   _sectionHeader('Membership Settings',
                       Icons.settings_outlined, c),
@@ -770,6 +793,75 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                       ],
                     ),
                   ),
+
+                  // ════════════════════════════════════════════════════════
+                  // SECTION 3b: Access Hours Restriction
+                  // ════════════════════════════════════════════════════════
+                  _sectionHeader(
+                      'Access Hours', Icons.access_time_rounded, c),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: c.background,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: c.border.withOpacity(0.25)),
+                    ),
+                    child: SwitchListTile(
+                      title: Text('Restrict Entry Hours',
+                          style: TextStyle(
+                              color: c.label,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
+                      subtitle: Text(
+                          _restrictAccessHours
+                              ? 'Members can only enter between the times below'
+                              : 'Members can enter at any time',
+                          style: TextStyle(color: c.muted, fontSize: 12)),
+                      value: _restrictAccessHours,
+                      activeColor: c.primary,
+                      onChanged: (v) =>
+                          setState(() => _restrictAccessHours = v),
+                    ),
+                  ),
+
+                  if (_restrictAccessHours) ...[
+                    const SizedBox(height: 12),
+                    _FormLabel('Allowed Entry Window', c),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _FormLabel('From', c),
+                              GestureDetector(
+                                onTap: () => _pickAccessTime(isStart: true),
+                                child: _timeField(_accessStart, c),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _FormLabel('Until', c),
+                              GestureDetector(
+                                onTap: () => _pickAccessTime(isStart: false),
+                                child: _timeField(_accessEnd, c),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Members with booked sessions or PT can always enter during their session window.',
+                      style: TextStyle(color: c.muted, fontSize: 11),
+                    ),
+                  ],
 
                   // ════════════════════════════════════════════════════════
                   // SECTION 4: Plan Features
@@ -999,7 +1091,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     child: ElevatedButton(
                       onPressed: isSubmitting
                           ? null
-                          : () => _submit(types, branches),
+                          : () => _submit(types),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: c.success,
                         foregroundColor: c.onPrimary,
@@ -1086,6 +1178,30 @@ class _PlanFormContentState extends State<_PlanFormContent> {
     );
   }
 
+  Widget _timeField(TimeOfDay time, ColorTokens c) {
+    final label =
+        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: c.background,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: c.border.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.schedule_rounded, size: 15, color: c.muted),
+          const SizedBox(width: 6),
+          Text(label,
+              style: TextStyle(
+                  color: c.label,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
   Widget _dateField(DateTime? date, String placeholder, ColorTokens c,
       {required bool isStart}) {
     return Container(
@@ -1164,48 +1280,6 @@ class _PlanFormContentState extends State<_PlanFormContent> {
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: c.error, width: 1.5),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _BranchChip extends StatelessWidget {
-  final String label;
-  final Color color;
-  final VoidCallback onRemove;
-
-  const _BranchChip(
-      {required this.label,
-      required this.color,
-      required this.onRemove});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: color,
-                  fontWeight: FontWeight.w600)),
-          const SizedBox(width: 4),
-          GestureDetector(
-            onTap: onRemove,
-            child:
-                Icon(Icons.close_rounded, size: 14, color: color),
-          ),
-        ],
       ),
     );
   }

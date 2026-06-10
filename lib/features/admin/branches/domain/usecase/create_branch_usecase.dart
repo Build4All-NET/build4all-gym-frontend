@@ -12,8 +12,9 @@ class CreateBranchParams {
   final String phone;
   final String email;
   final String address;
-  final String openingTime;
-  final String closingTime;
+  final String? openingTime;
+  final String? closingTime;
+  final bool isOpen24Hours;
   final String status;
 
   const CreateBranchParams({
@@ -22,8 +23,9 @@ class CreateBranchParams {
     required this.phone,
     required this.email,
     required this.address,
-    required this.openingTime,
-    required this.closingTime,
+    this.openingTime,
+    this.closingTime,
+    this.isOpen24Hours = false,
     this.status = 'ACTIVE',
   });
 }
@@ -42,6 +44,7 @@ class CreateBranchUseCase {
       address: params.address,
       openingTime: params.openingTime,
       closingTime: params.closingTime,
+      isOpen24Hours: params.isOpen24Hours,
       status: params.status,
     );
   }

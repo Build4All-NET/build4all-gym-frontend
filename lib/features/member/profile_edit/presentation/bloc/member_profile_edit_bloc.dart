@@ -2,26 +2,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/resend_email_change_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_password_reset_code_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/send_profile_phone_verification_code_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_build4all_profile_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/update_profile_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_current_password_usecase.dart';
 import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_email_change_usecase.dart';
+import 'package:build4allgym/features/member/profile_edit/domain/usecases/verify_profile_phone_code_usecase.dart';
 
 import 'member_profile_edit_event.dart';
 import 'member_profile_edit_state.dart';
 
 /// Bloc responsible for the Build4All part of Edit Profile.
 ///
-/// It does NOT update Gym backend fields directly.
-/// Gym-only fields such as dateOfBirth/address stay handled by MemberAccountBloc.
-///
-/// Responsibilities here:
-/// - Update Build4All profile: firstName, lastName, username, email, phoneNumber.
-/// - Trigger email verification state when email changes.
-/// - Verify email OTP.
-/// - Check current password before password change.
-/// - Send password reset code.
-/// - Update password through Build4All reset/update-password flow.
+/// Important flow:
+/// - Normal profile fields update directly.
+/// - Email change still uses email OTP.
+/// - Password change still uses current-password check + password OTP.
+/// - Phone change uses:
+///   1. current password check
+///   2. send phone OTP
+///   3. verify phone OTP in dialog
+///   4. resubmit profile update with phoneAlreadyVerified = true
 class MemberProfileEditBloc
     extends Bloc<MemberProfileEditEvent, MemberProfileEditState> {
   final UpdateBuild4AllProfileUseCase updateBuild4AllProfile;
@@ -31,6 +32,9 @@ class MemberProfileEditBloc
   final SendProfilePasswordResetCodeUseCase sendPasswordResetCode;
   final UpdateProfilePasswordUseCase updatePassword;
 
+  final SendProfilePhoneVerificationCodeUseCase sendPhoneVerificationCode;
+  final VerifyProfilePhoneCodeUseCase verifyPhoneCode;
+
   MemberProfileEditBloc({
     required this.updateBuild4AllProfile,
     required this.verifyEmailChange,
@@ -38,6 +42,8 @@ class MemberProfileEditBloc
     required this.verifyCurrentPassword,
     required this.sendPasswordResetCode,
     required this.updatePassword,
+    required this.sendPhoneVerificationCode,
+    required this.verifyPhoneCode,
   }) : super(const MemberProfileEditInitial()) {
     on<MemberProfileEditSubmitted>(_onSubmitted);
     on<MemberProfileEditEmailCodeSubmitted>(_onEmailCodeSubmitted);
@@ -48,18 +54,20 @@ class MemberProfileEditBloc
     );
   }
 
-  /// Handles the main Save button.
+  /// Main Save button flow.
   ///
-  /// Flow:
-  /// 1. Validate/update Build4All profile fields.
-  /// 2. If password fields are filled:
-  ///    - check current password using Build4All login
-  ///    - send reset code
-  ///    - ask UI to open OTP dialog
-  /// 3. If email changed:
-  ///    - Build4All profile update should trigger email OTP
-  ///    - ask UI to open OTP dialog
-  /// 4. Otherwise emit success.
+  /// Phone update rule:
+  /// If the phone number changed, we do NOT update the profile immediately.
+  /// First:
+  /// - current password must be entered
+  /// - current password must be correct
+  /// - phone OTP is sent to the new number
+  /// - UI opens OTP dialog
+  ///
+  /// After OTP is verified, the screen submits again with:
+  /// phoneAlreadyVerified = true
+  ///
+  /// Only then we call updateBuild4AllProfile() and actually save the phone.
   Future<void> _onSubmitted(
       MemberProfileEditSubmitted event,
       Emitter<MemberProfileEditState> emit,
@@ -70,22 +78,85 @@ class MemberProfileEditBloc
       final oldEmail = event.currentEmail.trim();
       final newEmail = event.email.trim();
 
+      final oldPhone = _normalizePhone(event.currentPhoneNumber);
+      final newPhone = _normalizePhone(event.phoneNumber);
+      final phoneChanged = oldPhone != newPhone;
+
       final wantsPasswordChange = event.newPassword.trim().isNotEmpty;
 
-      // Build4All profile update:
-      // firstName, lastName, username, email, phoneNumber.
+      // ---------------------------------------------------------------------
+      // PHONE CHANGE SECURITY FLOW
+      // ---------------------------------------------------------------------
       //
-      // If email changed, Build4All should mark it pending and send OTP.
+      // If phone changed and OTP was not already verified:
+      // 1. Require current password.
+      // 2. Verify current password using the same login-based check.
+      // 3. Send OTP to the new phone number.
+      // 4. Stop here and ask UI to open the OTP dialog.
+      //
+      // We do this BEFORE updateBuild4AllProfile()
+      // because the phone must not be saved before OTP verification.
+      // ---------------------------------------------------------------------
+      if (phoneChanged && !event.phoneAlreadyVerified) {
+        if (newPhone.isEmpty) {
+          emit(const MemberProfileEditError('Phone number is required.'));
+          return;
+        }
+
+        if (event.currentPassword.trim().isEmpty) {
+          emit(
+            const MemberProfileEditError(
+              'Current password is required to change phone number.',
+            ),
+          );
+          return;
+        }
+
+        await verifyCurrentPassword(
+          email: oldEmail,
+          currentPassword: event.currentPassword,
+          ownerProjectLinkId: event.ownerProjectLinkId,
+        );
+
+        await sendPhoneVerificationCode(
+          phoneNumber: newPhone,
+          password: event.currentPassword,
+          ownerProjectLinkId: event.ownerProjectLinkId,
+        );
+
+        emit(
+          MemberProfileEditPhoneVerificationRequired(
+            newPhoneNumber: newPhone,
+            ownerProjectLinkId: event.ownerProjectLinkId,
+          ),
+        );
+        return;
+      }
+
+      // ---------------------------------------------------------------------
+      // PROFILE UPDATE
+      // ---------------------------------------------------------------------
+      //
+      // Runs immediately when phone did not change.
+      // Runs after OTP verification when phone changed.
+      // ---------------------------------------------------------------------
       await updateBuild4AllProfile(
         firstName: event.firstName,
         lastName: event.lastName,
         username: event.username,
         email: newEmail,
-        phoneNumber: event.phoneNumber,
+        phoneNumber: newPhone,
       );
 
-      // Password change is handled through the reset-code/update-password flow.
-      // We first verify the current password using the Build4All login endpoint.
+      // ---------------------------------------------------------------------
+      // PASSWORD CHANGE FLOW
+      // ---------------------------------------------------------------------
+      //
+      // Password is still protected by:
+      // - current password check
+      // - OTP sent to email
+      // - OTP dialog
+      // ---------------------------------------------------------------------
       if (wantsPasswordChange) {
         if (event.currentPassword.trim().isEmpty) {
           emit(const MemberProfileEditError('Current password is required.'));
@@ -136,8 +207,13 @@ class MemberProfileEditBloc
         return;
       }
 
-      // If the user changed email, Build4All should have sent a verification code.
-      // The UI opens the same e-commerce-style OTP dialog.
+      // ---------------------------------------------------------------------
+      // EMAIL CHANGE FLOW
+      // ---------------------------------------------------------------------
+      //
+      // Build4All profile update should trigger email verification.
+      // UI opens OTP dialog after this state.
+      // ---------------------------------------------------------------------
       if (newEmail.toLowerCase() != oldEmail.toLowerCase()) {
         emit(MemberProfileEditEmailVerificationRequired(newEmail: newEmail));
         return;
@@ -177,7 +253,7 @@ class MemberProfileEditBloc
     }
   }
 
-  /// Verifies the password reset code and saves the new password in Build4All.
+  /// Verifies the password reset code and saves the new password.
   Future<void> _onPasswordCodeSubmitted(
       MemberProfileEditPasswordCodeSubmitted event,
       Emitter<MemberProfileEditState> emit,
@@ -213,6 +289,54 @@ class MemberProfileEditBloc
     } catch (e) {
       emit(MemberProfileEditError(_cleanError(e)));
     }
+  }
+
+  /// Normalizes phone numbers so we compare actual values, not formatting.
+  ///
+  /// Examples:
+  /// - "03 123 456" becomes "+9613123456"
+  /// - "03123456" becomes "+9613123456"
+  /// - "+961 3 123 456" becomes "+9613123456"
+  /// - "00961 3 123 456" becomes "+9613123456"
+  String _normalizePhone(String? raw) {
+    var value = (raw ?? '').trim();
+
+    if (value.isEmpty) return '';
+
+    value = value
+        .replaceAll(' ', '')
+        .replaceAll('-', '')
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll('.', '');
+
+    if (value.startsWith('00')) {
+      value = '+${value.substring(2)}';
+    }
+
+    // Remove duplicated Lebanese leading zero:
+    // +96103123456 -> +9613123456
+    if (value.startsWith('+9610')) {
+      value = '+961${value.substring(5)}';
+    }
+
+    // Local Lebanese mobile:
+    // 03123456 -> +9613123456
+    if (RegExp(r'^0(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+      value = '+961${value.substring(1)}';
+    }
+
+    // Local Lebanese mobile without 0:
+    // 3123456 / 71123456 -> +961...
+    if (!value.startsWith('+')) {
+      if (RegExp(r'^(3)\d{6}$').hasMatch(value)) {
+        value = '+961$value';
+      } else if (RegExp(r'^(70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+        value = '+961$value';
+      }
+    }
+
+    return value;
   }
 
   /// Converts raw exceptions into user-readable messages.

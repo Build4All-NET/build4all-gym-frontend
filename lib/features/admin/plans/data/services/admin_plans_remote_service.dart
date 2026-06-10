@@ -18,6 +18,7 @@ abstract class AdminPlansRemoteDatasource {
   Future<List<AdminPlanListItemModel>> getPlans({String? type, String? search});
   Future<List<String>> getPlanTypes();
   Future<List<AdminBranchOptionModel>> getBranches();
+  Future<String> createPlanType(String name);
   Future<void> createPlan(CreatePlanRequestModel request);
   Future<void> updatePlan(int planId, UpdatePlanRequestModel request);
   Future<void> deletePlan(int planId);
@@ -102,6 +103,24 @@ class AdminPlansRemoteDatasourceImpl implements AdminPlansRemoteDatasource {
     return list
         .map((e) => AdminBranchOptionModel.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  // ── POST /api/admin/plans/types ───────────────────────────────────────────
+  @override
+  Future<String> createPlanType(String name) async {
+    final headers = await _authHeaders();
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/admin/plans/types'),
+      headers: headers,
+      body: jsonEncode({'name': name}),
+    );
+    if (response.statusCode == 409) {
+      // Type already exists — that's fine, just use the name
+      return name;
+    }
+    _checkStatus(response);
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    return body['name'] as String;
   }
 
 // ── POST /api/admin/plans ─────────────────────────────────────────────────

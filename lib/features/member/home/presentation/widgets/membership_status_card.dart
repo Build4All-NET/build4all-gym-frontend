@@ -9,9 +9,18 @@ import '../../domain/entities/membership_card.dart';
 class MembershipStatusCard extends StatelessWidget {
   final MembershipCard membership;
 
+  /*
+   * Called when member clicks Renew from Home.
+   *
+   * Home does not open payment directly.
+   * It only navigates to the Plans tab/screen.
+   */
+  final VoidCallback? onRenew;
+
   const MembershipStatusCard({
     super.key,
     required this.membership,
+    this.onRenew,
   });
 
   @override
@@ -21,8 +30,19 @@ class MembershipStatusCard extends StatelessWidget {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     final status = membership.status.toLowerCase().trim();
-    final showRenewButton = membership.canRenew || status == 'expired';
-    final localizedPlanName = _localizedPlanName(membership.planName, status, l10n);
+    final bool hasNoActiveMembership = status == 'no_active_membership';
+
+    /*
+     * Renewal rule:
+     * Renew appears ONLY when the current membership is expired.
+     */
+    final showRenewButton = status == 'expired';
+
+    final localizedPlanName = _localizedPlanName(
+      membership.planName,
+      status,
+      l10n,
+    );
 
     final iconColumn = IntrinsicWidth(
       child: Column(
@@ -49,17 +69,11 @@ class MembershipStatusCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
+
           if (showRenewButton)
             InkWell(
               borderRadius: BorderRadius.circular(999),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.comingSoon),
-                    backgroundColor: tokens.colors.primary,
-                  ),
-                );
-              },
+              onTap: onRenew,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 decoration: BoxDecoration(
@@ -97,9 +111,8 @@ class MembershipStatusCard extends StatelessWidget {
         padding: const EdgeInsets.only(left: 8),
         child: Column(
           // RTL → stretch so TextAlign.right works | LTR → start as normal
-          crossAxisAlignment: isRtl
-              ? CrossAxisAlignment.stretch
-              : CrossAxisAlignment.start,
+          crossAxisAlignment:
+          isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
@@ -122,30 +135,35 @@ class MembershipStatusCard extends StatelessWidget {
                 height: 1.0,
               ),
             ),
-            Column(
-              crossAxisAlignment: isRtl
-                  ? CrossAxisAlignment.stretch
-                  : CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.home_expiresOn,
-                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                  style: tokens.typography.bodySmall.copyWith(
-                    color: tokens.colors.onPrimary.withOpacity(0.82),
-                    fontWeight: FontWeight.w500,
+            Visibility(
+              visible: !hasNoActiveMembership,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: Column(
+                crossAxisAlignment:
+                isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.home_expiresOn,
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: tokens.colors.onPrimary.withOpacity(0.82),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                SizedBox(height: tokens.spacing.xs),
-                Text(
-                  membership.expirationDate,
-                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                  style: tokens.typography.bodyMedium.copyWith(
-                    color: tokens.colors.onPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
+                  SizedBox(height: tokens.spacing.xs),
+                  Text(
+                    membership.expirationDate,
+                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                    style: tokens.typography.bodyMedium.copyWith(
+                      color: tokens.colors.onPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -179,22 +197,30 @@ class MembershipStatusCard extends StatelessWidget {
       String status,
       AppLocalizations l10n,
       ) {
-    final normalized = planName.toLowerCase().trim();
+    final normalizedPlanName = planName.toLowerCase().trim();
+    final normalizedStatus = status.toLowerCase().trim();
 
-    if (normalized.isEmpty ||
-        normalized == 'no active membership' ||
-        normalized == 'no membership' ||
-        normalized == 'none') {
+    if (normalizedStatus == 'no_active_membership' ||
+        normalizedPlanName.isEmpty ||
+        normalizedPlanName == 'no active membership' ||
+        normalizedPlanName == 'no membership' ||
+        normalizedPlanName == 'none') {
+      return l10n.noActiveMembership;
+    }
+
+    if (normalizedStatus == 'expired') {
       return l10n.membershipStatusExpired;
     }
 
-    switch (normalized) {
-      case 'active':
-        return l10n.membershipStatusActive;
+    if (normalizedStatus == 'active') {
+      return planName;
+    }
+
+    switch (normalizedStatus) {
       case 'frozen':
         return l10n.membershipStatusFrozen;
-      case 'expired':
-        return l10n.membershipStatusExpired;
+      case 'cancelled':
+        return l10n.membershipStatusCancelled;
       default:
         return planName;
     }

@@ -5,11 +5,13 @@
 // FAB opens MemberPickerForTrainerSheet to add more.
 // Remove button on each card revokes the role.
 
+import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
@@ -38,6 +40,7 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
   // ── Remove with confirmation ───────────────────────────────────────────────
 
   Future<void> _confirmRemove(GymTrainerEntity trainer) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) {
@@ -45,16 +48,16 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
         return AlertDialog(
           backgroundColor: c.surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('Remove Trainer Role',
+          title: Text(l10n.admin_trainers_removeRoleTitle,
               style: TextStyle(color: c.primary, fontWeight: FontWeight.bold)),
           content: Text(
-            '${trainer.fullName} will lose the Trainer role and see the Member dashboard on next login.',
+            l10n.admin_trainers_removeRoleMessage(trainer.fullName),
             style: TextStyle(color: c.error),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel', style: TextStyle(color: c.error)),
+              child: Text(l10n.general_cancel, style: TextStyle(color: c.error)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
@@ -63,8 +66,8 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('Remove',
-                  style: TextStyle(color: Colors.white)),
+              child: Text(l10n.admin_trainers_remove,
+                  style: const TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -97,7 +100,7 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
         preferredSize: const Size.fromHeight(64),
         child: SafeArea(
           bottom: false,
-          child: AdminAppBar(title: 'Trainers'),
+          child: AdminAppBar(title: AppLocalizations.of(context)!.navTrainers),
         ),
       ),
 
@@ -114,19 +117,14 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
         ),
         backgroundColor: c.primary,
         icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
-        label: const Text('Add Trainer',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+        label: Text(AppLocalizations.of(context)!.admin_trainers_addTrainer,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
       ),
 
       body: BlocConsumer<GymTrainersCubit, GymTrainersState>(
         listener: (context, state) {
           if (state is GymTrainerRemoveError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red.shade700,
-              ),
-            );
+            AppToast.error(context, state.message);
           }
         },
         builder: (context, state) {
@@ -143,7 +141,7 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
                 children: [
                   Icon(Icons.wifi_off_rounded, color: c.error, size: 48),
                   const SizedBox(height: 12),
-                  Text('Could not load trainers',
+                  Text(AppLocalizations.of(context)!.admin_trainers_loadError,
                       style: TextStyle(color: c.primary, fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(state.message,
@@ -153,7 +151,7 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
                   ElevatedButton.icon(
                     onPressed: () => context.read<GymTrainersCubit>().load(),
                     icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('Retry'),
+                    label: Text(AppLocalizations.of(context)!.retry),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: c.primary,
                         foregroundColor: Colors.white),
@@ -178,14 +176,14 @@ class _AdminGymTrainersScreenState extends State<AdminGymTrainersScreen> {
                   Icon(Icons.sports_outlined,
                       color: c.error, size: 56),
                   const SizedBox(height: 16),
-                  Text('No Trainers Yet',
+                  Text(AppLocalizations.of(context)!.admin_trainers_emptyTitle,
                       style: TextStyle(
                           color: c.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap "Add Trainer" to promote a member\nto the Trainer role.',
+                    AppLocalizations.of(context)!.admin_trainers_emptyMessage,
                     style: TextStyle(color: c.error, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -305,6 +303,22 @@ class _TrainerCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                  if (trainer.branchNames.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on_outlined, color: c.muted, size: 13),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            trainer.branchNames.join(', '),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: c.muted, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 3),
                   Row(
                     children: [
@@ -329,7 +343,7 @@ class _TrainerCard extends StatelessWidget {
                 color: c.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Text('TRAINER',
+              child: Text(AppLocalizations.of(context)!.admin_trainers_badgeLabel,
                   style: TextStyle(
                       color: c.primary,
                       fontSize: 10,
@@ -346,7 +360,7 @@ class _TrainerCard extends StatelessWidget {
                 : IconButton(
               icon: Icon(Icons.person_remove_outlined,
                   color: Colors.red.shade400, size: 22),
-              tooltip: 'Remove Trainer Role',
+              tooltip: AppLocalizations.of(context)!.admin_trainers_removeTooltip,
               onPressed: onRemove,
             ),
           ],
