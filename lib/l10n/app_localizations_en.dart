@@ -1440,4 +1440,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myInfoRequiredError => 'Preferred branch, gender and date of birth are required.';
+
+  @override
+  String get aiHeroBannerTitle => 'AI Assistant';
+
+  @override
+  String get aiHeroBannerSubtitle => 'Your intelligent gym management companion';
+
+  @override
+  String get aiHeroBannerBody => 'Ask questions about members, revenue, attendance, performance, and business insights.';
+
+  @override
+  String get aiSuggestedQuestionsHeader => 'Suggested Questions';
+
+  @override
+  String get aiAppBarTitle => 'AI Assistant';
+
+  @override
+  String get aiNewConversationTooltip => 'New Conversation';
+
+  @override
+  String get aiInputHint => 'Ask anything about your gym...';
+
+  @override
+  String get aiRetryButton => 'Try Again';
+
+  @override
+  String get aiFollowUpHeader => 'Suggested Follow-up Questions';
+
+  @override
+  String get aiRecentQueriesHeader => 'Recent Queries';
+
+  @override
+  String get aiRecentQueryViewLabel => 'View';
+
+  @override
+  String get aiErrorOffline => 'Unable to get a response. Please try again.';
+
+  @override
+  String get checkins_title => 'Check-ins';
+
+  @override
+  String get checkins_scanQr => 'Scan QR Code';
+
+  @override
+  String get checkins_scanSuccessMsg => 'checked in successfully';
+
+  @override
+  String get checkins_scannerTitle => 'Scan Member QR Code';
+
+  @override
+  String get checkins_activeNow => 'Active Now';
+
+  @override
+  String get checkins_totalToday => 'Total Today';
+
+  @override
+  String get checkins_todayTitle => 'Today\'s Check-ins';
+
+  @override
+  String get checkins_noCheckins => 'No check-ins found today';
+
+  @override
+  String get checkins_searchHint => 'Search members...';
+
+  @override
+  String get checkins_out => 'Out';
+
+  @override
+  String get checkins_freeze => 'Freeze';
+
+  @override
+  String get checkins_block => 'Block';
+
+  @override
+  String get checkins_call => 'Call';
+
+  @override
+  String get checkins_active => 'Active';
+
+  @override
+  String get checkins_checkedOut => 'Checked Out';
+
+  @override
+  String get checkins_freezeTitle => 'Freeze Membership';
+
+  @override
+  String get checkins_fromDate => 'From Date';
+
+  @override
+  String get checkins_toDate => 'To Date';
+
+  @override
+  String get checkins_reasonHint => 'Enter reason...';
+
+  @override
+  String get checkins_confirm => 'Confirm';
+
+  @override
+  String get checkins_blockTitle => 'Block Member';
+
+  @override
+  String get checkins_cancel => 'Cancel';
+
+  @override
+  String get checkins_blockConfirm => 'Block';
 }

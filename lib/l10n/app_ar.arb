@@ -912,7 +912,7 @@
   "myInfoUpdatedSuccessfully": "تم تحديث معلوماتي بنجاح",
   "myInfoLoadError": "فشل تحميل معلوماتك. حاول مرة أخرى.",
   "myInfoSaveError": "فشل حفظ معلوماتك. حاول مرة أخرى.",
-  "myInfoRequiredError": "الفرع المفضل والجنس وتاريخ الميلاد مطلوبة."
+  "myInfoRequiredError": "الفرع المفضل والجنس وتاريخ الميلاد مطلوبة.",
 
     "aiNewConversationTooltip": "محادثة جديدة",
     "@aiNewConversationTooltip": {"description": "Tooltip on the reset/refresh icon button"},
@@ -948,7 +948,53 @@
     "@aiErrorGeneric": {"description": "Generic error message shown in the error view"},
 
     "aiErrorOffline": "عذراً، لم أتمكن من معالجة طلبك. يرجى المحاولة مرة أخرى.",
-    "@aiErrorOffline": {"description": "Error appended to the conversation when a query call fails"}
+    "@aiErrorOffline": {"description": "Error appended to the conversation when a query call fails"},
+
+  "aiHeroBannerTitle": "المساعد الذكي",
+  "aiHeroBannerSubtitle": "مساعدك الذكي لإدارة النادي",
+  "aiHeroBannerBody": "اسأل عن الأعضاء والإيرادات والحضور والأداء وتحليلات الأعمال.",
+
+  "aiSuggestedQuestionsHeader": "الأسئلة المقترحة",
+
+  "aiAppBarTitle": "المساعد الذكي",
+  "aiNewConversationTooltip": "محادثة جديدة",
+  "aiInputHint": "اسأل أي شيء عن النادي...",
+  "aiRetryButton": "إعادة المحاولة",
+  "aiFollowUpHeader": "أسئلة متابعة مقترحة",
+  "aiRecentQueriesHeader": "الاستفسارات الأخيرة",
+  "aiRecentQueryViewLabel": "عرض",
+  "aiErrorOffline": "تعذر الحصول على رد. يرجى المحاولة مرة أخرى.",
+  "checkins_title": "تسجيلات الدخول",
+  "checkins_scanQr": "مسح رمز QR",
+  "checkins_scanSuccessMsg": "تم تسجيل دخوله بنجاح",
+
+  "checkins_scannerTitle": "مسح رمز العضو",
+
+  "checkins_activeNow": "النشطون الآن",
+  "checkins_totalToday": "إجمالي اليوم",
+
+  "checkins_todayTitle": "تسجيلات دخول اليوم",
+  "checkins_noCheckins": "لا توجد تسجيلات دخول اليوم",
+
+  "checkins_searchHint": "ابحث عن عضو...",
+
+  "checkins_out": "تسجيل خروج",
+  "checkins_freeze": "تجميد",
+  "checkins_block": "حظر",
+  "checkins_call": "اتصال",
+
+  "checkins_active": "نشط",
+  "checkins_checkedOut": "تم تسجيل الخروج",
+
+  "checkins_freezeTitle": "تجميد الاشتراك",
+  "checkins_fromDate": "من تاريخ",
+  "checkins_toDate": "إلى تاريخ",
+  "checkins_reasonHint": "أدخل السبب...",
+  "checkins_confirm": "تأكيد",
+
+  "checkins_blockTitle": "حظر العضو",
+  "checkins_cancel": "إلغاء",
+  "checkins_blockConfirm": "حظر"
 }
 
 

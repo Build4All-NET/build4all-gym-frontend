@@ -2872,6 +2872,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferred branch, gender and date of birth are required.'**
   String get myInfoRequiredError;
+
+  /// No description provided for @aiHeroBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiHeroBannerTitle;
+
+  /// No description provided for @aiHeroBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your intelligent gym management companion'**
+  String get aiHeroBannerSubtitle;
+
+  /// No description provided for @aiHeroBannerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions about members, revenue, attendance, performance, and business insights.'**
+  String get aiHeroBannerBody;
+
+  /// No description provided for @aiSuggestedQuestionsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested Questions'**
+  String get aiSuggestedQuestionsHeader;
+
+  /// No description provided for @aiAppBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiAppBarTitle;
+
+  /// No description provided for @aiNewConversationTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'New Conversation'**
+  String get aiNewConversationTooltip;
+
+  /// No description provided for @aiInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything about your gym...'**
+  String get aiInputHint;
+
+  /// No description provided for @aiRetryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get aiRetryButton;
+
+  /// No description provided for @aiFollowUpHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested Follow-up Questions'**
+  String get aiFollowUpHeader;
+
+  /// No description provided for @aiRecentQueriesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Queries'**
+  String get aiRecentQueriesHeader;
+
+  /// No description provided for @aiRecentQueryViewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get aiRecentQueryViewLabel;
+
+  /// No description provided for @aiErrorOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to get a response. Please try again.'**
+  String get aiErrorOffline;
+
+  /// No description provided for @checkins_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins'**
+  String get checkins_title;
+
+  /// No description provided for @checkins_scanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get checkins_scanQr;
+
+  /// No description provided for @checkins_scanSuccessMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'checked in successfully'**
+  String get checkins_scanSuccessMsg;
+
+  /// No description provided for @checkins_scannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Member QR Code'**
+  String get checkins_scannerTitle;
+
+  /// No description provided for @checkins_activeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Now'**
+  String get checkins_activeNow;
+
+  /// No description provided for @checkins_totalToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Today'**
+  String get checkins_totalToday;
+
+  /// No description provided for @checkins_todayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Check-ins'**
+  String get checkins_todayTitle;
+
+  /// No description provided for @checkins_noCheckins.
+  ///
+  /// In en, this message translates to:
+  /// **'No check-ins found today'**
+  String get checkins_noCheckins;
+
+  /// No description provided for @checkins_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search members...'**
+  String get checkins_searchHint;
+
+  /// No description provided for @checkins_out.
+  ///
+  /// In en, this message translates to:
+  /// **'Out'**
+  String get checkins_out;
+
+  /// No description provided for @checkins_freeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze'**
+  String get checkins_freeze;
+
+  /// No description provided for @checkins_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get checkins_block;
+
+  /// No description provided for @checkins_call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get checkins_call;
+
+  /// No description provided for @checkins_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get checkins_active;
+
+  /// No description provided for @checkins_checkedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked Out'**
+  String get checkins_checkedOut;
+
+  /// No description provided for @checkins_freezeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze Membership'**
+  String get checkins_freezeTitle;
+
+  /// No description provided for @checkins_fromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date'**
+  String get checkins_fromDate;
+
+  /// No description provided for @checkins_toDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To Date'**
+  String get checkins_toDate;
+
+  /// No description provided for @checkins_reasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reason...'**
+  String get checkins_reasonHint;
+
+  /// No description provided for @checkins_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get checkins_confirm;
+
+  /// No description provided for @checkins_blockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block Member'**
+  String get checkins_blockTitle;
+
+  /// No description provided for @checkins_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get checkins_cancel;
+
+  /// No description provided for @checkins_blockConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get checkins_blockConfirm;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

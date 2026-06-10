@@ -1440,4 +1440,109 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get myInfoRequiredError => 'الفرع المفضل والجنس وتاريخ الميلاد مطلوبة.';
+
+  @override
+  String get aiHeroBannerTitle => 'المساعد الذكي';
+
+  @override
+  String get aiHeroBannerSubtitle => 'مساعدك الذكي لإدارة النادي';
+
+  @override
+  String get aiHeroBannerBody => 'اسأل عن الأعضاء والإيرادات والحضور والأداء وتحليلات الأعمال.';
+
+  @override
+  String get aiSuggestedQuestionsHeader => 'الأسئلة المقترحة';
+
+  @override
+  String get aiAppBarTitle => 'المساعد الذكي';
+
+  @override
+  String get aiNewConversationTooltip => 'محادثة جديدة';
+
+  @override
+  String get aiInputHint => 'اسأل أي شيء عن النادي...';
+
+  @override
+  String get aiRetryButton => 'إعادة المحاولة';
+
+  @override
+  String get aiFollowUpHeader => 'أسئلة متابعة مقترحة';
+
+  @override
+  String get aiRecentQueriesHeader => 'الاستفسارات الأخيرة';
+
+  @override
+  String get aiRecentQueryViewLabel => 'عرض';
+
+  @override
+  String get aiErrorOffline => 'تعذر الحصول على رد. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get checkins_title => 'تسجيلات الدخول';
+
+  @override
+  String get checkins_scanQr => 'مسح رمز QR';
+
+  @override
+  String get checkins_scanSuccessMsg => 'تم تسجيل دخوله بنجاح';
+
+  @override
+  String get checkins_scannerTitle => 'مسح رمز العضو';
+
+  @override
+  String get checkins_activeNow => 'النشطون الآن';
+
+  @override
+  String get checkins_totalToday => 'إجمالي اليوم';
+
+  @override
+  String get checkins_todayTitle => 'تسجيلات دخول اليوم';
+
+  @override
+  String get checkins_noCheckins => 'لا توجد تسجيلات دخول اليوم';
+
+  @override
+  String get checkins_searchHint => 'ابحث عن عضو...';
+
+  @override
+  String get checkins_out => 'تسجيل خروج';
+
+  @override
+  String get checkins_freeze => 'تجميد';
+
+  @override
+  String get checkins_block => 'حظر';
+
+  @override
+  String get checkins_call => 'اتصال';
+
+  @override
+  String get checkins_active => 'نشط';
+
+  @override
+  String get checkins_checkedOut => 'تم تسجيل الخروج';
+
+  @override
+  String get checkins_freezeTitle => 'تجميد الاشتراك';
+
+  @override
+  String get checkins_fromDate => 'من تاريخ';
+
+  @override
+  String get checkins_toDate => 'إلى تاريخ';
+
+  @override
+  String get checkins_reasonHint => 'أدخل السبب...';
+
+  @override
+  String get checkins_confirm => 'تأكيد';
+
+  @override
+  String get checkins_blockTitle => 'حظر العضو';
+
+  @override
+  String get checkins_cancel => 'إلغاء';
+
+  @override
+  String get checkins_blockConfirm => 'حظر';
 }
