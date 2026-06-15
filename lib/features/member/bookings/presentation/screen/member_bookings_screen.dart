@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
+import '../../domain/entities/member_booking_entity.dart';
 import '../../domain/usecases/get_member_bookings_usecase.dart';
 import '../../domain/usecases/request_member_booking_cancel_usecase.dart';
 import '../bloc/member_bookings_bloc.dart';
@@ -513,9 +514,13 @@ class _MemberBookingsView extends StatelessWidget {
                             booking: booking,
                             actionLoading: isActionLoading,
                             onCancelTap: () {
-                              context.read<MemberBookingsBloc>().add(
-                                MemberBookingCancelRequested(booking),
-                              );
+                              if (booking.isPt) {
+                                _showPtCancelOptions(context, booking);
+                              } else {
+                                context.read<MemberBookingsBloc>().add(
+                                  MemberBookingCancelRequested(booking),
+                                );
+                              }
                             },
                             onReviewTap: () {
                               final title = (booking.title != null && booking.title!.trim().isNotEmpty)
@@ -552,6 +557,27 @@ class _MemberBookingsView extends StatelessWidget {
     );
   }
 
+  void _showPtCancelOptions(BuildContext context, MemberBookingEntity booking) {
+    final bloc = context.read<MemberBookingsBloc>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => BlocProvider.value(
+        value: context.read<ThemeCubit>(),
+        child: _PtCancelOptionsSheet(
+          booking: booking,
+          onCancelOnly: () {
+            bloc.add(MemberBookingCancelRequested(booking));
+          },
+          onReschedule: (DateTime newDate) {
+            bloc.add(MemberBookingCancelRequested(booking, requestedNewDate: newDate));
+          },
+        ),
+      ),
+    );
+  }
+
   String _currentTab(MemberBookingsState state) {
     if (state is MemberBookingsLoaded) return state.tab;
     if (state is MemberBookingsLoading) return state.tab;
@@ -570,6 +596,9 @@ class _MemberBookingsView extends StatelessWidget {
       case 'memberBookingsCancelRequestSent':
         return l10n.memberBookingsCancelRequestSent;
 
+      case 'memberBookingsRescheduleRequestSent':
+        return l10n.memberBookingsRescheduleRequestSent;
+
       case 'memberBookingsCancelRequestFailed':
         return l10n.memberBookingsCancelRequestFailed;
 
@@ -585,6 +614,238 @@ class _MemberBookingsView extends StatelessWidget {
       default:
         return l10n.memberBookingsLoadFailed;
     }
+  }
+}
+
+/*
+ * Bottom sheet shown for PT session cancel actions.
+ *
+ * Gives the member two choices:
+ * 1. Cancel only — sends cancel request with no new date.
+ * 2. Request reschedule — lets member pick a preferred new date,
+ *    then sends cancel request with that date attached.
+ *
+ * For class bookings, cancellation goes directly without this sheet.
+ */
+class _PtCancelOptionsSheet extends StatefulWidget {
+  final MemberBookingEntity booking;
+  final VoidCallback onCancelOnly;
+  final void Function(DateTime newDate) onReschedule;
+
+  const _PtCancelOptionsSheet({
+    required this.booking,
+    required this.onCancelOnly,
+    required this.onReschedule,
+  });
+
+  @override
+  State<_PtCancelOptionsSheet> createState() => _PtCancelOptionsSheetState();
+}
+
+class _PtCancelOptionsSheetState extends State<_PtCancelOptionsSheet> {
+  DateTime? _selectedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final bottomPadding =
+        MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: tokens.colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        tokens.spacing.xl,
+        tokens.spacing.lg,
+        tokens.spacing.xl,
+        tokens.spacing.xl + bottomPadding,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: tokens.colors.border.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          SizedBox(height: tokens.spacing.xl),
+          Text(
+            l10n.memberBookingsCancelOptionsTitle,
+            textAlign: isRtl ? TextAlign.right : TextAlign.left,
+            style: tokens.typography.titleMedium.copyWith(
+              color: tokens.colors.label,
+              fontWeight: FontWeight.w900,
+              fontSize: 20,
+            ),
+          ),
+          SizedBox(height: tokens.spacing.lg),
+
+          /*
+           * Option 1: Cancel only.
+           */
+          _OptionTile(
+            icon: Icons.cancel_outlined,
+            iconColor: tokens.colors.danger,
+            title: l10n.memberBookingsCancelOnlyOption,
+            subtitle: l10n.memberBookingsCancelOnlyDesc,
+            tokens: tokens,
+            onTap: () {
+              Navigator.of(context).pop();
+              widget.onCancelOnly();
+            },
+          ),
+
+          SizedBox(height: tokens.spacing.md),
+
+          /*
+           * Option 2: Cancel + reschedule.
+           * Shows date picker row when tapped.
+           */
+          _OptionTile(
+            icon: Icons.event_repeat_rounded,
+            iconColor: tokens.colors.primary,
+            title: l10n.memberBookingsRescheduleOption,
+            subtitle: _selectedDate != null
+                ? _formatDate(context, _selectedDate!)
+                : l10n.memberBookingsRescheduleDesc,
+            tokens: tokens,
+            onTap: () async {
+              final picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now().add(const Duration(days: 1)),
+                firstDate: DateTime.now().add(const Duration(days: 1)),
+                lastDate: DateTime.now().add(const Duration(days: 90)),
+              );
+              if (picked != null) {
+                setState(() => _selectedDate = picked);
+              }
+            },
+          ),
+
+          if (_selectedDate != null) ...[
+            SizedBox(height: tokens.spacing.md),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onReschedule(_selectedDate!);
+                },
+                icon: Icon(Icons.send_rounded, color: tokens.colors.onPrimary, size: 18),
+                label: Text(
+                  l10n.memberBookingsRescheduleOption,
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: tokens.colors.onPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: tokens.colors.primary,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(tokens.button.radius),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(BuildContext context, DateTime date) {
+    final material = MaterialLocalizations.of(context);
+    return material.formatMediumDate(date);
+  }
+}
+
+class _OptionTile extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final dynamic tokens;
+  final VoidCallback onTap;
+
+  const _OptionTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.tokens,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(tokens.card.radius),
+      child: Container(
+        padding: EdgeInsets.all(tokens.spacing.md),
+        decoration: BoxDecoration(
+          color: tokens.colors.background,
+          borderRadius: BorderRadius.circular(tokens.card.radius),
+          border: Border.all(color: tokens.colors.border.withOpacity(0.3)),
+        ),
+        child: Row(
+          textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.10),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            SizedBox(width: tokens.spacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: tokens.typography.bodyMedium.copyWith(
+                      color: tokens.colors.label,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: tokens.typography.bodySmall.copyWith(
+                      color: tokens.colors.muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              isRtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+              color: tokens.colors.muted,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

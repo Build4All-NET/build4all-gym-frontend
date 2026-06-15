@@ -325,6 +325,12 @@ class _MemberInvoicesListScreenState extends State<MemberInvoicesListScreen> {
     );
   }
 
+  bool _isCancelledSessionBooking(MemberInvoiceSummaryEntity invoice) {
+    if (invoice.status.toLowerCase() != 'cancelled') return false;
+    final type = invoice.type?.toLowerCase() ?? '';
+    return type == 'class' || type == 'pt' || type == 'pt_package';
+  }
+
   /// Builds the list of invoice cards.
   Widget _buildList({
     required dynamic tokens,
@@ -347,7 +353,9 @@ class _MemberInvoicesListScreenState extends State<MemberInvoicesListScreen> {
           localeName: localeName,
           isRequestingRefund: requestingInvoiceId == invoice.invoiceId,
           onDetails: () => _openDetails(invoice),
-          onRefund: invoice.canRequestRefund ? () => _confirmRefund(invoice) : null,
+          onRefund: invoice.canRequestRefund && !_isCancelledSessionBooking(invoice)
+              ? () => _confirmRefund(invoice)
+              : null,
         );
       },
     );

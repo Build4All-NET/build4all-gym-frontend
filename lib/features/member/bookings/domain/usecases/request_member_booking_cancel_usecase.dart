@@ -13,11 +13,14 @@ class RequestMemberBookingCancelUseCase {
 
   RequestMemberBookingCancelUseCase(this.repository);
 
-  Future<void> call(MemberBookingEntity booking) {
+  Future<void> call(MemberBookingEntity booking, {DateTime? requestedNewDate}) {
     if (booking.isClass) {
       return repository.requestClassCancel(booking.bookingId);
     }
 
-    return repository.requestPtCancel(booking.effectivePtSessionId);
+    return repository.requestPtCancel(
+      booking.effectivePtSessionId,
+      requestedNewDate: requestedNewDate,
+    );
   }
 }

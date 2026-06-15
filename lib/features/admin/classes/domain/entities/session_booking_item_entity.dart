@@ -27,4 +27,6 @@ class SessionBookingItemEntity {
   bool get isCashPending =>
       paymentMethod?.toUpperCase() == 'CASH' &&
       (paymentStatus?.toUpperCase() == 'PENDING' || paymentStatus?.toUpperCase() == 'UNPAID');
+
+  bool get isCancelRequested => status.toUpperCase() == 'CANCEL_REQUESTED';
 }

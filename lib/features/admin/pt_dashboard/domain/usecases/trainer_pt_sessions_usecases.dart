@@ -129,3 +129,15 @@ class DeclineSessionRequestUseCase {
   }) =>
       _repository.declineRequest(sessionId: sessionId);
 }
+
+// ── 10. Decline CANCEL_REQUESTED (keep session → SCHEDULED) ─────────────────
+
+class DeclineCancelRequestUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const DeclineCancelRequestUseCase(this._repository);
+
+  Future<({PtSessionEntity? data, Failure? failure})> call({
+    required int sessionId,
+  }) =>
+      _repository.declineCancelRequest(sessionId: sessionId);
+}

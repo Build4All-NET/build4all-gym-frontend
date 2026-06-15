@@ -128,3 +128,24 @@ class RejectBookingRequested extends AdminClassesEvent {
   @override
   List<Object?> get props => [bookingId, sessionId];
 }
+// ── ApproveCancellationRequested ───────────────────────────────────────────
+// Dispatched when admin taps "Approve" on a CANCEL_REQUESTED booking.
+class ApproveCancellationRequested extends AdminClassesEvent {
+  final int bookingId;
+  final int sessionId;
+  const ApproveCancellationRequested({required this.bookingId, required this.sessionId});
+
+  @override
+  List<Object?> get props => [bookingId, sessionId];
+}
+
+// ── DeclineCancellationRequested ───────────────────────────────────────────
+// Dispatched when admin taps "Keep" on a CANCEL_REQUESTED booking.
+class DeclineCancellationRequested extends AdminClassesEvent {
+  final int bookingId;
+  final int sessionId;
+  const DeclineCancellationRequested({required this.bookingId, required this.sessionId});
+
+  @override
+  List<Object?> get props => [bookingId, sessionId];
+}

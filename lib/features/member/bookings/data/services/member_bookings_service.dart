@@ -77,10 +77,16 @@ class MemberBookingsService {
    * This does not cancel directly.
    * Backend changes status:
    * SCHEDULED -> CANCEL_REQUESTED
+   *
+   * If requestedNewDate is provided, the member is also requesting
+   * a reschedule to that date. Backend stores it for the trainer to review.
    */
-  Future<void> requestPtCancel(int ptSessionId) async {
+  Future<void> requestPtCancel(int ptSessionId, {DateTime? requestedNewDate}) async {
     await _dio.post(
       '/api/member/bookings/pt/$ptSessionId/cancel-request',
+      data: requestedNewDate != null
+          ? {'requestedNewDate': requestedNewDate.toIso8601String().substring(0, 19)}
+          : null,
     );
   }
   /*

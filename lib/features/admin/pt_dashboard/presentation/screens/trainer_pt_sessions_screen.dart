@@ -205,13 +205,15 @@ class _SessionsView extends StatelessWidget {
   String _successMsg(BuildContext context, String actionType) {
     final l10n = AppLocalizations.of(context)!;
     switch (actionType) {
-      case 'accepted':  return l10n.trainer_sessionAccepted;
-      case 'declined':  return l10n.trainer_sessionDeclined;
-      case 'completed': return l10n.trainer_sessionCompleted;
-      case 'cancelled': return l10n.trainer_sessionCancelled;
-      case 'no_show':   return l10n.trainer_sessionNoShow;
-      case 'created':   return l10n.trainer_sessionBooked;
-      default:          return l10n.trainer_sessionUpdated;
+      case 'accepted':       return l10n.trainer_sessionAccepted;
+      case 'declined':       return l10n.trainer_sessionDeclined;
+      case 'completed':      return l10n.trainer_sessionCompleted;
+      case 'cancelled':      return l10n.trainer_sessionCancelled;
+      case 'no_show':        return l10n.trainer_sessionNoShow;
+      case 'created':        return l10n.trainer_sessionBooked;
+      case 'cancel_approved': return l10n.trainer_cancelRequestApproved;
+      case 'cancel_declined': return l10n.trainer_cancelRequestDeclined;
+      default:               return l10n.trainer_sessionUpdated;
     }
   }
 }

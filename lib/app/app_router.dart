@@ -30,6 +30,8 @@ import '../features/admin/classes/domain/usecases/reject_booking_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
 import '../features/admin/classes/domain/usecases/reactivate_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
+import '../features/admin/classes/domain/usecases/approve_cancellation_usecase.dart';
+import '../features/admin/classes/domain/usecases/decline_cancellation_usecase.dart';
 import '../features/admin/classes/presentation/bloc/admin_classes_bloc.dart';
 import '../features/admin/classes/presentation/bloc/admin_classes_event.dart';
 import '../features/admin/classes/presentation/screens/admin_classes_screen.dart';
@@ -608,6 +610,9 @@ class AppRouter {
                     getRequests: GetMembershipRequestsUseCase(mrRepo),
                     approve: ApproveMembershipRequestUseCase(mrRepo),
                     reject: RejectMembershipRequestUseCase(mrRepo),
+                    getRefundRequests: GetRefundRequestsUseCase(mrRepo),
+                    approveRefund: ApproveRefundRequestUseCase(mrRepo),
+                    rejectRefund: RejectRefundRequestUseCase(mrRepo),
                   ),
                 ),
               ],
@@ -635,6 +640,8 @@ class AppRouter {
                     getSessionBookings:     GetSessionBookingsUseCase(classesRepo),
                     confirmBookingPayment:  ConfirmBookingPaymentUseCase(classesRepo),
                     rejectBooking:          RejectBookingUseCase(classesRepo),
+                    approveCancellation:    ApproveCancellationUseCase(classesRepo),
+                    declineCancellation:    DeclineCancellationUseCase(classesRepo),
                   )..add(ClassesStarted(DateTime.now())),
                 ),
               ],

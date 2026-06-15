@@ -168,6 +168,79 @@ class SessionCardWidget extends StatelessWidget {
                   ),
                 ],
 
+                // ── Cancel request info + action buttons ─────────────────────
+                if (session.isCancelRequested) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF7ED),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFFFDBA74), width: 1),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.info_outline_rounded,
+                                size: 14, color: Color(0xFFEA580C)),
+                            const SizedBox(width: 6),
+                            Text(
+                              AppLocalizations.of(context)!.trainer_statusCancelRequested,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFEA580C),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (session.requestedNewDate != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            AppLocalizations.of(context)!.trainer_memberRequestedDate(
+                              DateFormat('EEE, MMM d, yyyy').format(session.requestedNewDate!),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF78350F),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (isLoading)
+                        const SizedBox(
+                          width: 24, height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      else ...[
+                        _ActionButton(
+                          label: AppLocalizations.of(context)!.trainer_keepSessionButton,
+                          icon: Icons.event_available_rounded,
+                          color: const Color(0xFF4F46E5),
+                          outlined: true,
+                          onTap: () => _confirmDeclineCancel(context),
+                        ),
+                        const SizedBox(width: 8),
+                        _ActionButton(
+                          label: AppLocalizations.of(context)!.trainer_approveCancelButton,
+                          icon: Icons.check_circle_outline,
+                          color: const Color(0xFFEF4444),
+                          onTap: () => _confirmApproveCancel(context),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+
                 // ── Accept / Decline buttons (REQUESTED only) ───────────────
                 if (session.isRequested) ...[
                   const SizedBox(height: 12),
@@ -283,6 +356,70 @@ class SessionCardWidget extends StatelessWidget {
     );
   }
 
+  void _confirmApproveCancel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(l10n.trainer_approveCancelTitle),
+        content: Text(l10n.trainer_approveCancelMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.trainer_keepButton),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<TrainerPtSessionsBloc>().add(
+                PtSessionCancelApproved(sessionId: session.ptSessionId),
+              );
+            },
+            child: Text(l10n.trainer_approveCancelButton),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeclineCancel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(l10n.trainer_declineCancelTitle),
+        content: Text(l10n.trainer_declineCancelMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.trainer_keepButton),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4F46E5),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<TrainerPtSessionsBloc>().add(
+                PtSessionCancelDeclined(sessionId: session.ptSessionId),
+              );
+            },
+            child: Text(l10n.trainer_keepSessionButton),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _confirmCancel(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
@@ -356,6 +493,8 @@ class _StatusBadge extends StatelessWidget {
     switch (status) {
       case 'REQUESTED':
         bg = const Color(0xFFFFF7ED); fg = const Color(0xFFEA580C); label = l10n.trainer_statusRequested; break;
+      case 'CANCEL_REQUESTED':
+        bg = const Color(0xFFFEF3C7); fg = const Color(0xFFB45309); label = l10n.trainer_statusCancelRequested; break;
       case 'COMPLETED':
         bg = const Color(0xFFD1FAE5); fg = const Color(0xFF059669); label = l10n.trainer_statusCompleted; break;
       case 'CANCELLED':

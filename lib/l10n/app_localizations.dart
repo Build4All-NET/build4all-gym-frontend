@@ -1889,6 +1889,36 @@ abstract class AppLocalizations {
   /// **'PT Package Payments'**
   String get navPtPackageBookings;
 
+  /// No description provided for @ptPkgPayments_cashTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash Payments'**
+  String get ptPkgPayments_cashTab;
+
+  /// No description provided for @ptPkgPayments_refundTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Requests'**
+  String get ptPkgPayments_refundTab;
+
+  /// No description provided for @ptPkgPayments_noPendingRefunds.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending PT package refund requests'**
+  String get ptPkgPayments_noPendingRefunds;
+
+  /// No description provided for @ptPkgPayments_noPendingRefundsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'PT package refund requests will appear here'**
+  String get ptPkgPayments_noPendingRefundsDesc;
+
+  /// No description provided for @ptPkgPayments_refundBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Refund'**
+  String get ptPkgPayments_refundBadge;
+
   /// No description provided for @accountProfileUpdateSuccess.
   ///
   /// In en, this message translates to:
@@ -3353,6 +3383,48 @@ abstract class AppLocalizations {
   /// **'Failed to submit review. Please try again.'**
   String get memberBookingsReviewFailed;
 
+  /// No description provided for @memberBookingsCancelOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Options'**
+  String get memberBookingsCancelOptionsTitle;
+
+  /// No description provided for @memberBookingsCancelOnlyOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel session'**
+  String get memberBookingsCancelOnlyOption;
+
+  /// No description provided for @memberBookingsCancelOnlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this session without rescheduling'**
+  String get memberBookingsCancelOnlyDesc;
+
+  /// No description provided for @memberBookingsRescheduleOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Request reschedule'**
+  String get memberBookingsRescheduleOption;
+
+  /// No description provided for @memberBookingsRescheduleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel and propose a new date'**
+  String get memberBookingsRescheduleDesc;
+
+  /// No description provided for @memberBookingsSelectNewDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select preferred date'**
+  String get memberBookingsSelectNewDate;
+
+  /// No description provided for @memberBookingsRescheduleRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule request sent'**
+  String get memberBookingsRescheduleRequestSent;
+
   /// No description provided for @memberInvoicesTitle.
   ///
   /// In en, this message translates to:
@@ -4649,6 +4721,132 @@ abstract class AppLocalizations {
   /// **'Please enter a rejection reason'**
   String get admin_membershipRequests_enterReason;
 
+  /// No description provided for @admin_membershipRequests_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Requests'**
+  String get admin_membershipRequests_tab;
+
+  /// No description provided for @admin_refundRequests_tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Requests'**
+  String get admin_refundRequests_tab;
+
+  /// No description provided for @admin_refundRequests_noPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending refund requests'**
+  String get admin_refundRequests_noPending;
+
+  /// No description provided for @admin_refundRequests_noPendingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Member refund requests will appear here'**
+  String get admin_refundRequests_noPendingDesc;
+
+  /// No description provided for @admin_refundRequests_pendingBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Refund'**
+  String get admin_refundRequests_pendingBadge;
+
+  /// No description provided for @admin_refundRequests_requestedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested Amount'**
+  String get admin_refundRequests_requestedAmount;
+
+  /// No description provided for @admin_refundRequests_reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Reason'**
+  String get admin_refundRequests_reason;
+
+  /// No description provided for @admin_refundRequests_reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get admin_refundRequests_reject;
+
+  /// No description provided for @admin_refundRequests_process.
+  ///
+  /// In en, this message translates to:
+  /// **'Process'**
+  String get admin_refundRequests_process;
+
+  /// No description provided for @admin_refundRequests_processTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Refund'**
+  String get admin_refundRequests_processTitle;
+
+  /// No description provided for @admin_refundRequests_refundAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Amount'**
+  String get admin_refundRequests_refundAmount;
+
+  /// No description provided for @admin_refundRequests_refundAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to refund'**
+  String get admin_refundRequests_refundAmountHint;
+
+  /// No description provided for @admin_refundRequests_deductionAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deduction (Fee)'**
+  String get admin_refundRequests_deductionAmount;
+
+  /// No description provided for @admin_refundRequests_deductionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Deduction amount (optional)'**
+  String get admin_refundRequests_deductionHint;
+
+  /// No description provided for @admin_refundRequests_adminNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin note (optional)'**
+  String get admin_refundRequests_adminNoteHint;
+
+  /// No description provided for @admin_refundRequests_approveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Refund — \$ {amount}'**
+  String admin_refundRequests_approveButton(String amount);
+
+  /// No description provided for @admin_refundRequests_rejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Refund Request'**
+  String get admin_refundRequests_rejectTitle;
+
+  /// No description provided for @admin_refundRequests_rejectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection reason (required)'**
+  String get admin_refundRequests_rejectHint;
+
+  /// No description provided for @admin_refundRequests_rejectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Request'**
+  String get admin_refundRequests_rejectButton;
+
+  /// No description provided for @admin_refundRequests_enterReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a rejection reason'**
+  String get admin_refundRequests_enterReason;
+
+  /// No description provided for @admin_refundRequests_enterAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid refund amount'**
+  String get admin_refundRequests_enterAmount;
+
   /// No description provided for @membershipStatusPending.
   ///
   /// In en, this message translates to:
@@ -4967,6 +5165,36 @@ abstract class AppLocalizations {
   /// **'Confirm Pay'**
   String get admin_classes_confirmPayment;
 
+  /// No description provided for @admin_classes_statusCancelRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Requested'**
+  String get admin_classes_statusCancelRequested;
+
+  /// No description provided for @admin_classes_approveCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get admin_classes_approveCancellation;
+
+  /// No description provided for @admin_classes_declineCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get admin_classes_declineCancellation;
+
+  /// No description provided for @admin_classes_cancellationApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation approved'**
+  String get admin_classes_cancellationApproved;
+
+  /// No description provided for @admin_classes_cancellationDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation declined'**
+  String get admin_classes_cancellationDeclined;
+
   /// No description provided for @admin_settings_accountTitle.
   ///
   /// In en, this message translates to:
@@ -5092,6 +5320,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Memberships and classes can be purchased separately'**
   String get admin_settings_allowBothIndependentlyDesc;
+
+  /// No description provided for @admin_settings_allowPtBookingWithoutMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow PT booking without membership'**
+  String get admin_settings_allowPtBookingWithoutMembership;
+
+  /// No description provided for @admin_settings_allowPtBookingWithoutMembershipDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Members can book personal training sessions without an active membership plan'**
+  String get admin_settings_allowPtBookingWithoutMembershipDesc;
 
   /// No description provided for @admin_settings_dangerTitle.
   ///
@@ -5951,6 +6191,66 @@ abstract class AppLocalizations {
   /// **'scheduled'**
   String get trainer_statusScheduled;
 
+  /// No description provided for @trainer_statusCancelRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'cancel requested'**
+  String get trainer_statusCancelRequested;
+
+  /// No description provided for @trainer_approveCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get trainer_approveCancelButton;
+
+  /// No description provided for @trainer_keepSessionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Session'**
+  String get trainer_keepSessionButton;
+
+  /// No description provided for @trainer_cancelRequestApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation approved'**
+  String get trainer_cancelRequestApproved;
+
+  /// No description provided for @trainer_cancelRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Session kept, request declined'**
+  String get trainer_cancelRequestDeclined;
+
+  /// No description provided for @trainer_approveCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Cancellation'**
+  String get trainer_approveCancelTitle;
+
+  /// No description provided for @trainer_approveCancelMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The session will be cancelled and the member will be notified.'**
+  String get trainer_approveCancelMessage;
+
+  /// No description provided for @trainer_declineCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline Cancellation'**
+  String get trainer_declineCancelTitle;
+
+  /// No description provided for @trainer_declineCancelMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The session will remain scheduled and the member\'s request will be declined.'**
+  String get trainer_declineCancelMessage;
+
+  /// No description provided for @trainer_memberRequestedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Member proposed: {date}'**
+  String trainer_memberRequestedDate(String date);
+
   /// No description provided for @trainer_sessionProgress.
   ///
   /// In en, this message translates to:
@@ -6118,6 +6418,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Payment confirmed and sessions activated.'**
   String get trainer_cashPaymentConfirmed;
+
+  /// No description provided for @trainer_rejectCashPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get trainer_rejectCashPayment;
+
+  /// No description provided for @trainer_rejecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejecting...'**
+  String get trainer_rejecting;
+
+  /// No description provided for @trainer_cashPaymentRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment rejected.'**
+  String get trainer_cashPaymentRejected;
+
+  /// No description provided for @trainer_rejectPaymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Payment'**
+  String get trainer_rejectPaymentTitle;
+
+  /// No description provided for @trainer_rejectPaymentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for rejection'**
+  String get trainer_rejectPaymentHint;
+
+  /// No description provided for @trainer_rejectPaymentReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason'**
+  String get trainer_rejectPaymentReasonRequired;
 
   /// No description provided for @trainer_dateLabel.
   ///

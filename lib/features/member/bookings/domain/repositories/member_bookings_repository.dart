@@ -13,7 +13,7 @@ abstract class MemberBookingsRepository {
 
   Future<void> requestClassCancel(int bookingId);
 
-  Future<void> requestPtCancel(int ptSessionId);
+  Future<void> requestPtCancel(int ptSessionId, {DateTime? requestedNewDate});
   Future<void> submitClassReview({
     required int bookingId,
     required int rating,

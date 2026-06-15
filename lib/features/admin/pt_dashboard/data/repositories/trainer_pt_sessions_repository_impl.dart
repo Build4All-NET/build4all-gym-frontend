@@ -211,4 +211,24 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
       return (data: null, failure: const NetworkFailure('No internet connection.'));
     }
   }
+
+  // ── Decline CANCEL_REQUESTED → back to SCHEDULED ───────────────────────────
+
+  @override
+  Future<({PtSessionEntity? data, Failure? failure})> declineCancelRequest({
+    required int sessionId,
+  }) async {
+    try {
+      final model = await _service.declineCancelRequest(sessionId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
 }

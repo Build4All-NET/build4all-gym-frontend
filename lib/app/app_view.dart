@@ -32,7 +32,6 @@ class MyAppView extends StatelessWidget {
 
               themeMode: themeState.selectedThemeMode,
               theme: AppThemeBuilder.build(themeState.tokens),
-              darkTheme: AppThemeBuilder.buildDark(themeState.tokens),
 
               locale: locale,
               localizationsDelegates:

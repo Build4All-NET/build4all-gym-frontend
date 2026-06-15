@@ -64,4 +64,9 @@ abstract class TrainerPtSessionsRepository {
   Future<({PtSessionEntity? data, Failure? failure})> declineRequest({
     required int sessionId,
   });
+
+  /// PATCH /api/trainer/pt-sessions/{id}/decline-cancel  (CANCEL_REQUESTED → SCHEDULED)
+  Future<({PtSessionEntity? data, Failure? failure})> declineCancelRequest({
+    required int sessionId,
+  });
 }

@@ -702,43 +702,6 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   ],
                   const SizedBox(height: 12),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _FormLabel('Freeze Days', c),
-                            TextFormField(
-                              controller: _freezeDaysController,
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(color: c.label),
-                              decoration:
-                                  _inputDec('Days allowed to freeze', c),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _FormLabel('Max Freeze Periods', c),
-                            TextFormField(
-                              controller: _maxFreezesController,
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(color: c.label),
-                              decoration:
-                                  _inputDec('Max times to freeze', c),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
                   _FormLabel('Grace Period (Days)', c),
                   TextFormField(
                     controller: _gracePeriodController,

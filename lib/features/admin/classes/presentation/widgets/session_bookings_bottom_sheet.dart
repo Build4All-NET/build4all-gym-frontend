@@ -33,10 +33,14 @@ class SessionBookingsBottomSheet extends StatelessWidget {
           listener: (lCtx, state) {
             if (state is SessionBookingsLoaded && state.sessionId == sessionId) {
               final l10n = AppLocalizations.of(lCtx)!;
-            if (state.wasPaymentConfirmed) {
+              if (state.wasPaymentConfirmed) {
                 AppToast.success(lCtx, l10n.admin_classes_paymentConfirmed);
               } else if (state.wasBookingRejected) {
                 AppToast.success(lCtx, l10n.admin_classes_bookingRejected);
+              } else if (state.wasCancellationApproved) {
+                AppToast.success(lCtx, l10n.admin_classes_cancellationApproved);
+              } else if (state.wasCancellationDeclined) {
+                AppToast.success(lCtx, l10n.admin_classes_cancellationDeclined);
               }
             }
           },
@@ -206,16 +210,21 @@ class _MemberRow extends StatelessWidget {
         .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '')
         .join();
 
-    final isWaitlisted = booking.status == 'WAITLISTED';
-    final isPending = booking.status == 'PENDING';
+    final isWaitlisted      = booking.status == 'WAITLISTED';
+    final isPending         = booking.status == 'PENDING';
+    final isCancelRequested = booking.isCancelRequested;
 
-    final chipBg = isPending
+    final chipBg = isCancelRequested
+        ? Colors.deepOrange.withValues(alpha: 0.12)
+        : isPending
         ? Colors.orange.withValues(alpha: 0.12)
         : isWaitlisted
         ? c.danger.withValues(alpha: 0.12)
         : c.success.withValues(alpha: 0.12);
 
-    final chipText = isPending
+    final chipText = isCancelRequested
+        ? Colors.deepOrange.shade800
+        : isPending
         ? Colors.orange.shade800
         : isWaitlisted
         ? c.danger
@@ -281,7 +290,9 @@ class _MemberRow extends StatelessWidget {
                 child: Builder(builder: (ctx) {
                   final l10n = AppLocalizations.of(ctx)!;
                   return Text(
-                    isPending
+                    isCancelRequested
+                        ? l10n.admin_classes_statusCancelRequested
+                        : isPending
                         ? l10n.admin_classes_statusPending
                         : isWaitlisted
                         ? 'Waitlist ${booking.waitlistPosition ?? ''}'
@@ -313,6 +324,73 @@ class _MemberRow extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                ),
+              ],
+
+              // Approve + Keep buttons (cancel requested only)
+              if (isCancelRequested) ...[
+                const SizedBox(height: 6),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: 72,
+                      child: OutlinedButton(
+                        onPressed: () =>
+                            context.read<AdminClassesBloc>().add(
+                              DeclineCancellationRequested(
+                                bookingId: booking.bookingId,
+                                sessionId: sessionId,
+                              ),
+                            ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: c.primary,
+                          side: BorderSide(color: c.primary),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.admin_classes_declineCancellation,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SizedBox(
+                      height: 30,
+                      width: 84,
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            context.read<AdminClassesBloc>().add(
+                              ApproveCancellationRequested(
+                                bookingId: booking.bookingId,
+                                sessionId: sessionId,
+                              ),
+                            ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.admin_classes_approveCancellation,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
 

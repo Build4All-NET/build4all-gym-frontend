@@ -33,6 +33,7 @@ class TrainerPtSessionsBloc
   final UpdateSessionStatusUseCase _updateStatus;
   final AcceptSessionRequestUseCase _acceptRequest;
   final DeclineSessionRequestUseCase _declineRequest;
+  final DeclineCancelRequestUseCase _declineCancelRequest;
 
   DateTime _selectedDate = DateTime.now();
 
@@ -60,6 +61,7 @@ class TrainerPtSessionsBloc
     required UpdateSessionStatusUseCase updateStatus,
     required AcceptSessionRequestUseCase acceptRequest,
     required DeclineSessionRequestUseCase declineRequest,
+    required DeclineCancelRequestUseCase declineCancelRequest,
   })  : _getSessions = getSessions,
         _getStats = getStats,
         _getUpcoming = getUpcoming,
@@ -68,6 +70,7 @@ class TrainerPtSessionsBloc
         _updateStatus = updateStatus,
         _acceptRequest = acceptRequest,
         _declineRequest = declineRequest,
+        _declineCancelRequest = declineCancelRequest,
         super(const PtSessionsInitial()) {
 
     on<PtSessionsStarted>(_onStarted);
@@ -76,6 +79,8 @@ class TrainerPtSessionsBloc
     on<PtSessionStatusUpdateRequested>(_onStatusUpdate);
     on<PtSessionAcceptRequested>(_onAcceptRequest);
     on<PtSessionDeclineRequested>(_onDeclineRequest);
+    on<PtSessionCancelApproved>(_onCancelApproved);
+    on<PtSessionCancelDeclined>(_onCancelDeclined);
     on<PtSessionCreateRequested>(_onCreate);
   }
 
@@ -278,6 +283,73 @@ class TrainerPtSessionsBloc
 
     final updatedState = current.copyWith(requestedSessions: updatedRequests);
     emit(PtSessionActionSuccess(actionType: 'declined', updatedState: updatedState));
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Approve CANCEL_REQUESTED → CANCELLED
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onCancelApproved(
+      PtSessionCancelApproved event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _updateStatus(
+      sessionId: event.sessionId,
+      status: 'CANCELLED',
+    );
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to approve cancellation.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    final updatedSessions = current.sessions.map((s) =>
+        s.ptSessionId == event.sessionId ? result.data! : s).toList();
+    final updatedState = current.copyWith(sessions: updatedSessions);
+
+    emit(PtSessionActionSuccess(actionType: 'cancel_approved', updatedState: updatedState));
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Decline CANCEL_REQUESTED → back to SCHEDULED
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onCancelDeclined(
+      PtSessionCancelDeclined event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _declineCancelRequest(sessionId: event.sessionId);
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to decline cancellation request.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    final updatedSessions = current.sessions.map((s) =>
+        s.ptSessionId == event.sessionId ? result.data! : s).toList();
+    final updatedState = current.copyWith(sessions: updatedSessions);
+
+    emit(PtSessionActionSuccess(actionType: 'cancel_declined', updatedState: updatedState));
     emit(updatedState);
   }
 

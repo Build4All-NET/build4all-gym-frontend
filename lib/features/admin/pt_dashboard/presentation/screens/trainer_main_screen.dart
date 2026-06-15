@@ -80,14 +80,15 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final service    = TrainerPtSessionsService();
     final repository = TrainerPtSessionsRepositoryImpl(service: service);
     _sessionsBloc = TrainerPtSessionsBloc(
-      getSessions:    GetSessionsByDateUseCase(repository),
-      getStats:       GetSessionStatsUseCase(repository),
-      getUpcoming:    GetUpcomingSessionsUseCase(repository),
-      getRequests:    GetSessionRequestsUseCase(repository),
-      createSession:  CreateSessionUseCase(repository),
-      updateStatus:   UpdateSessionStatusUseCase(repository),
-      acceptRequest:  AcceptSessionRequestUseCase(repository),
-      declineRequest: DeclineSessionRequestUseCase(repository),
+      getSessions:          GetSessionsByDateUseCase(repository),
+      getStats:             GetSessionStatsUseCase(repository),
+      getUpcoming:          GetUpcomingSessionsUseCase(repository),
+      getRequests:          GetSessionRequestsUseCase(repository),
+      createSession:        CreateSessionUseCase(repository),
+      updateStatus:         UpdateSessionStatusUseCase(repository),
+      acceptRequest:        AcceptSessionRequestUseCase(repository),
+      declineRequest:       DeclineSessionRequestUseCase(repository),
+      declineCancelRequest: DeclineCancelRequestUseCase(repository),
     );
     _blocInitialized = true;
   }

@@ -200,6 +200,34 @@ class AdminClassesService {
     }
   }
 
+  // ── PATCH /api/admin/classes/bookings/{bookingId}/approve-cancellation ────
+  Future<void> approveCancellation(int bookingId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/classes/bookings/$bookingId/approve-cancellation');
+    try {
+      final response = await _client.patch(uri, headers: headers, body: '{}');
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── PATCH /api/admin/classes/bookings/{bookingId}/decline-cancellation ────
+  Future<void> declineCancellation(int bookingId) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/classes/bookings/$bookingId/decline-cancellation');
+    try {
+      final response = await _client.patch(uri, headers: headers, body: '{}');
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── PATCH /api/admin/classes/bookings/{bookingId}/reject ──────────────────
   Future<void> rejectBooking(int bookingId) async {
     final headers = await _headers();
