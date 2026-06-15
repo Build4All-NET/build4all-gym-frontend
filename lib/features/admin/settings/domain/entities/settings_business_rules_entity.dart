@@ -25,11 +25,15 @@ class SettingsBusinessRulesEntity {
   /// Memberships and classes can be purchased as separate, independent transactions.
   final bool allowBothIndependently;
 
+  /// Members can book a PT package without an active membership plan.
+  final bool allowPtBookingWithoutMembership;
+
   const SettingsBusinessRulesEntity({
     required this.allowClassWithoutMembership,
     required this.requireMembershipForClass,
     required this.allowMembershipWithoutClass,
     required this.allowBothIndependently,
+    required this.allowPtBookingWithoutMembership,
   });
 
   /// Default factory — mirrors the defaults defined in the backend GymSettings entity.
@@ -38,6 +42,7 @@ class SettingsBusinessRulesEntity {
     requireMembershipForClass: false,
     allowMembershipWithoutClass: true,
     allowBothIndependently: true,
+    allowPtBookingWithoutMembership: false,
   );
 
   /// Returns a new entity with only the provided fields changed.
@@ -46,6 +51,7 @@ class SettingsBusinessRulesEntity {
     bool? requireMembershipForClass,
     bool? allowMembershipWithoutClass,
     bool? allowBothIndependently,
+    bool? allowPtBookingWithoutMembership,
   }) {
     return SettingsBusinessRulesEntity(
       allowClassWithoutMembership:
@@ -56,6 +62,8 @@ class SettingsBusinessRulesEntity {
       allowMembershipWithoutClass ?? this.allowMembershipWithoutClass,
       allowBothIndependently:
       allowBothIndependently ?? this.allowBothIndependently,
+      allowPtBookingWithoutMembership:
+      allowPtBookingWithoutMembership ?? this.allowPtBookingWithoutMembership,
     );
   }
 }

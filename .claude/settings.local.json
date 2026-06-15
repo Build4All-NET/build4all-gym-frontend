@@ -153,8 +153,11 @@
       "Bash(powershell -NoProfile -Command \"Get-ChildItem -Path 'lib\\\\features\\\\member' -Directory | Select-Object -ExpandProperty Name\")",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\" -Recurse -Directory)",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\monir\\\\eclipse-workspace\\\\build4all-gym-backend\\\\src\\\\main\\\\resources\\\\db\\\\migration\" | Where-Object { $_.Name -match \"V20|V111|V112\" })",
-      "Bash(mvn install *)"
-
+      "Bash(mvn install *)",
+      "Bash(xargs grep -l \"refund\")",
+      "Bash(xargs grep -l \"Refund\")",
+      "Bash(xargs grep -l \"refund\" -i)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\" -Directory)"
     ]
   }
 }

@@ -121,6 +121,7 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
     bool? requireMembershipForClass,
     bool? allowMembershipWithoutClass,
     bool? allowBothIndependently,
+    bool? allowPtBookingWithoutMembership,
   }) {
     final current = state.businessRules ?? SettingsBusinessRulesEntity.defaults();
     emit(state.copyWith(
@@ -129,6 +130,7 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
         requireMembershipForClass: requireMembershipForClass,
         allowMembershipWithoutClass: allowMembershipWithoutClass,
         allowBothIndependently: allowBothIndependently,
+        allowPtBookingWithoutMembership: allowPtBookingWithoutMembership,
       ),
     ));
     _markDirty();

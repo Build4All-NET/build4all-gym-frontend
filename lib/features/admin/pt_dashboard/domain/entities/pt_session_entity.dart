@@ -46,7 +46,7 @@ class PtSessionEntity {
   final DateTime startTime;
   final DateTime endTime;
 
-  /// SCHEDULED | COMPLETED | CANCELLED | NO_SHOW
+  /// SCHEDULED | COMPLETED | CANCELLED | NO_SHOW | CANCEL_REQUESTED
   final String status;
 
   /// UNPAID | PARTIAL | PAID | REFUNDED — nullable
@@ -54,6 +54,10 @@ class PtSessionEntity {
 
   final String? notes;
   final DateTime? createdAt;
+
+  /// Set when a member requested a reschedule along with their cancel request.
+  /// The trainer sees this to decide whether to honour it.
+  final DateTime? requestedNewDate;
 
   const PtSessionEntity({
     required this.ptSessionId,
@@ -73,6 +77,7 @@ class PtSessionEntity {
     this.paymentStatus,
     this.notes,
     this.createdAt,
+    this.requestedNewDate,
   });
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -84,6 +89,7 @@ class PtSessionEntity {
   bool get isCompleted => status == 'COMPLETED';
   bool get isCancelled => status == 'CANCELLED';
   bool get isNoShow => status == 'NO_SHOW';
+  bool get isCancelRequested => status == 'CANCEL_REQUESTED';
 
   bool get isPaid => paymentStatus == 'PAID';
 
@@ -106,6 +112,7 @@ class PtSessionEntity {
     String? serviceName,
     int? trainerId,
     String? trainerName,
+    DateTime? requestedNewDate,
   }) {
     return PtSessionEntity(
       ptSessionId: ptSessionId,
@@ -125,6 +132,7 @@ class PtSessionEntity {
       paymentStatus: paymentStatus ?? this.paymentStatus,
       notes: notes,
       createdAt: createdAt,
+      requestedNewDate: requestedNewDate ?? this.requestedNewDate,
     );
   }
 }

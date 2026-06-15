@@ -135,6 +135,30 @@ class PtSessionDeclineRequested extends TrainerPtSessionsEvent {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Approve CANCEL_REQUESTED → CANCELLED
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionCancelApproved extends TrainerPtSessionsEvent {
+  final int sessionId;
+  const PtSessionCancelApproved({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Decline CANCEL_REQUESTED → back to SCHEDULED
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionCancelDeclined extends TrainerPtSessionsEvent {
+  final int sessionId;
+  const PtSessionCancelDeclined({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Create session
 // ─────────────────────────────────────────────────────────────────────────────
 

@@ -930,6 +930,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navPtPackageBookings => 'PT Package Payments';
 
   @override
+  String get ptPkgPayments_cashTab => 'Cash Payments';
+
+  @override
+  String get ptPkgPayments_refundTab => 'Refund Requests';
+
+  @override
+  String get ptPkgPayments_noPendingRefunds => 'No pending PT package refund requests';
+
+  @override
+  String get ptPkgPayments_noPendingRefundsDesc => 'PT package refund requests will appear here';
+
+  @override
+  String get ptPkgPayments_refundBadge => 'PT Refund';
+
+  @override
   String get accountProfileUpdateSuccess => 'Profile updated successfully';
 
   @override
@@ -1686,6 +1701,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memberBookingsReviewFailed => 'Failed to submit review. Please try again.';
 
   @override
+  String get memberBookingsCancelOptionsTitle => 'Session Options';
+
+  @override
+  String get memberBookingsCancelOnlyOption => 'Cancel session';
+
+  @override
+  String get memberBookingsCancelOnlyDesc => 'Cancel this session without rescheduling';
+
+  @override
+  String get memberBookingsRescheduleOption => 'Request reschedule';
+
+  @override
+  String get memberBookingsRescheduleDesc => 'Cancel and propose a new date';
+
+  @override
+  String get memberBookingsSelectNewDate => 'Select preferred date';
+
+  @override
+  String get memberBookingsRescheduleRequestSent => 'Reschedule request sent';
+
+  @override
   String get memberInvoicesTitle => 'Payment History';
 
   @override
@@ -2348,6 +2384,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_membershipRequests_enterReason => 'Please enter a rejection reason';
 
   @override
+  String get admin_membershipRequests_tab => 'Membership Requests';
+
+  @override
+  String get admin_refundRequests_tab => 'Refund Requests';
+
+  @override
+  String get admin_refundRequests_noPending => 'No pending refund requests';
+
+  @override
+  String get admin_refundRequests_noPendingDesc => 'Member refund requests will appear here';
+
+  @override
+  String get admin_refundRequests_pendingBadge => 'Pending Refund';
+
+  @override
+  String get admin_refundRequests_requestedAmount => 'Requested Amount';
+
+  @override
+  String get admin_refundRequests_reason => 'Member Reason';
+
+  @override
+  String get admin_refundRequests_reject => 'Reject';
+
+  @override
+  String get admin_refundRequests_process => 'Process';
+
+  @override
+  String get admin_refundRequests_processTitle => 'Process Refund';
+
+  @override
+  String get admin_refundRequests_refundAmount => 'Refund Amount';
+
+  @override
+  String get admin_refundRequests_refundAmountHint => 'Amount to refund';
+
+  @override
+  String get admin_refundRequests_deductionAmount => 'Deduction (Fee)';
+
+  @override
+  String get admin_refundRequests_deductionHint => 'Deduction amount (optional)';
+
+  @override
+  String get admin_refundRequests_adminNoteHint => 'Admin note (optional)';
+
+  @override
+  String admin_refundRequests_approveButton(String amount) {
+    return 'Approve Refund — \$ $amount';
+  }
+
+  @override
+  String get admin_refundRequests_rejectTitle => 'Reject Refund Request';
+
+  @override
+  String get admin_refundRequests_rejectHint => 'Rejection reason (required)';
+
+  @override
+  String get admin_refundRequests_rejectButton => 'Reject Request';
+
+  @override
+  String get admin_refundRequests_enterReason => 'Please enter a rejection reason';
+
+  @override
+  String get admin_refundRequests_enterAmount => 'Please enter a valid refund amount';
+
+  @override
   String get membershipStatusPending => 'Pending';
 
   @override
@@ -2509,6 +2610,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_classes_confirmPayment => 'Confirm Pay';
 
   @override
+  String get admin_classes_statusCancelRequested => 'Cancel Requested';
+
+  @override
+  String get admin_classes_approveCancellation => 'Approve';
+
+  @override
+  String get admin_classes_declineCancellation => 'Keep';
+
+  @override
+  String get admin_classes_cancellationApproved => 'Cancellation approved';
+
+  @override
+  String get admin_classes_cancellationDeclined => 'Cancellation declined';
+
+  @override
   String get admin_settings_accountTitle => 'Account & Security';
 
   @override
@@ -2570,6 +2686,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_settings_allowBothIndependentlyDesc => 'Memberships and classes can be purchased separately';
+
+  @override
+  String get admin_settings_allowPtBookingWithoutMembership => 'Allow PT booking without membership';
+
+  @override
+  String get admin_settings_allowPtBookingWithoutMembershipDesc => 'Members can book personal training sessions without an active membership plan';
 
   @override
   String get admin_settings_dangerTitle => 'Danger Zone';
@@ -3019,6 +3141,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_statusScheduled => 'scheduled';
 
   @override
+  String get trainer_statusCancelRequested => 'cancel requested';
+
+  @override
+  String get trainer_approveCancelButton => 'Approve';
+
+  @override
+  String get trainer_keepSessionButton => 'Keep Session';
+
+  @override
+  String get trainer_cancelRequestApproved => 'Cancellation approved';
+
+  @override
+  String get trainer_cancelRequestDeclined => 'Session kept, request declined';
+
+  @override
+  String get trainer_approveCancelTitle => 'Approve Cancellation';
+
+  @override
+  String get trainer_approveCancelMessage => 'The session will be cancelled and the member will be notified.';
+
+  @override
+  String get trainer_declineCancelTitle => 'Decline Cancellation';
+
+  @override
+  String get trainer_declineCancelMessage => 'The session will remain scheduled and the member\'s request will be declined.';
+
+  @override
+  String trainer_memberRequestedDate(String date) {
+    return 'Member proposed: $date';
+  }
+
+  @override
   String get trainer_sessionProgress => 'Session Progress';
 
   @override
@@ -3101,6 +3255,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainer_cashPaymentConfirmed => 'Payment confirmed and sessions activated.';
+
+  @override
+  String get trainer_rejectCashPayment => 'Reject';
+
+  @override
+  String get trainer_rejecting => 'Rejecting...';
+
+  @override
+  String get trainer_cashPaymentRejected => 'Payment rejected.';
+
+  @override
+  String get trainer_rejectPaymentTitle => 'Reject Payment';
+
+  @override
+  String get trainer_rejectPaymentHint => 'Reason for rejection';
+
+  @override
+  String get trainer_rejectPaymentReasonRequired => 'Please enter a reason';
 
   @override
   String get trainer_dateLabel => 'Date';

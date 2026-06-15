@@ -262,6 +262,29 @@ class TrainerPtSessionsService {
     }
   }
 
+  // ── PATCH decline cancel request (CANCEL_REQUESTED → SCHEDULED) ─────────
+
+  Future<PtSessionModel> declineCancelRequest(int sessionId) async {
+    final headers = _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/decline-cancel',
+    );
+
+    try {
+      final response = await _client.patch(uri, headers: headers);
+      debugPrint('DECLINE CANCEL REQUEST STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        return PtSessionModel.fromJson(decoded['data'] as Map<String, dynamic>);
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── PATCH update status ───────────────────────────────────────────────────
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {

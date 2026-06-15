@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/entities/admin_refund_request_entity.dart';
 import '../../domain/entities/membership_request_entity.dart';
 import '../../domain/usecases/membership_requests_usecases.dart';
 
@@ -12,18 +13,29 @@ class AdminMembershipRequestsBloc
   final GetMembershipRequestsUseCase _getRequests;
   final ApproveMembershipRequestUseCase _approve;
   final RejectMembershipRequestUseCase _reject;
+  final GetRefundRequestsUseCase _getRefundRequests;
+  final ApproveRefundRequestUseCase _approveRefund;
+  final RejectRefundRequestUseCase _rejectRefund;
 
   AdminMembershipRequestsBloc({
     required GetMembershipRequestsUseCase getRequests,
     required ApproveMembershipRequestUseCase approve,
     required RejectMembershipRequestUseCase reject,
+    required GetRefundRequestsUseCase getRefundRequests,
+    required ApproveRefundRequestUseCase approveRefund,
+    required RejectRefundRequestUseCase rejectRefund,
   })  : _getRequests = getRequests,
         _approve = approve,
         _reject = reject,
+        _getRefundRequests = getRefundRequests,
+        _approveRefund = approveRefund,
+        _rejectRefund = rejectRefund,
         super(AdminMembershipRequestsInitial()) {
     on<LoadMembershipRequestsEvent>(_onLoad);
     on<ApproveMembershipRequestEvent>(_onApprove);
     on<RejectMembershipRequestEvent>(_onReject);
+    on<ApproveRefundRequestEvent>(_onApproveRefund);
+    on<RejectRefundRequestEvent>(_onRejectRefund);
   }
 
   Future<void> _onLoad(
@@ -32,8 +44,19 @@ class AdminMembershipRequestsBloc
   ) async {
     emit(AdminMembershipRequestsLoading());
     try {
-      final requests = await _getRequests();
-      emit(AdminMembershipRequestsLoaded(requests: requests));
+      final results = await Future.wait([
+        _getRequests(),
+        _getRefundRequests(),
+      ]);
+      final allRefunds = results[1] as List<AdminRefundRequestEntity>;
+      // PT_PACKAGE refunds are handled in the PT Package Payments screen
+      final nonPtRefunds = allRefunds
+          .where((r) => r.type != 'PT_PACKAGE')
+          .toList();
+      emit(AdminMembershipRequestsLoaded(
+        requests: results[0] as List<MembershipRequestEntity>,
+        refundRequests: nonPtRefunds,
+      ));
     } catch (e) {
       emit(AdminMembershipRequestsError(_extractMessage(e)));
     }
@@ -46,21 +69,35 @@ class AdminMembershipRequestsBloc
     final current = state;
     if (current is! AdminMembershipRequestsLoaded) return;
     emit(AdminMembershipRequestsLoaded(
-        requests: current.requests, actingOnId: event.requestId));
+      requests: current.requests,
+      refundRequests: current.refundRequests,
+      actingOnId: event.requestId,
+    ));
     try {
       final invoiceId =
           await _approve(event.requestId, event.amountPaid, notes: event.notes);
       final updated =
           current.requests.where((r) => r.requestId != event.requestId).toList();
       emit(AdminMembershipRequestsActionSuccess(
-          requests: updated,
-          message: 'تمت الموافقة على الطلب',
-          invoiceId: invoiceId));
-      emit(AdminMembershipRequestsLoaded(requests: updated));
+        requests: updated,
+        refundRequests: current.refundRequests,
+        message: 'تمت الموافقة على الطلب',
+        invoiceId: invoiceId,
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: updated,
+        refundRequests: current.refundRequests,
+      ));
     } catch (e) {
       emit(AdminMembershipRequestsActionFailure(
-          requests: current.requests, message: _extractMessage(e)));
-      emit(AdminMembershipRequestsLoaded(requests: current.requests));
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+        message: _extractMessage(e),
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+      ));
     }
   }
 
@@ -71,18 +108,114 @@ class AdminMembershipRequestsBloc
     final current = state;
     if (current is! AdminMembershipRequestsLoaded) return;
     emit(AdminMembershipRequestsLoaded(
-        requests: current.requests, actingOnId: event.requestId));
+      requests: current.requests,
+      refundRequests: current.refundRequests,
+      actingOnId: event.requestId,
+    ));
     try {
       await _reject(event.requestId, event.reason);
       final updated =
           current.requests.where((r) => r.requestId != event.requestId).toList();
       emit(AdminMembershipRequestsActionSuccess(
-          requests: updated, message: 'تم رفض الطلب'));
-      emit(AdminMembershipRequestsLoaded(requests: updated));
+        requests: updated,
+        refundRequests: current.refundRequests,
+        message: 'تم رفض الطلب',
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: updated,
+        refundRequests: current.refundRequests,
+      ));
     } catch (e) {
       emit(AdminMembershipRequestsActionFailure(
-          requests: current.requests, message: 'حدث خطأ، حاول مجدداً'));
-      emit(AdminMembershipRequestsLoaded(requests: current.requests));
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+        message: 'حدث خطأ، حاول مجدداً',
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+      ));
+    }
+  }
+
+  Future<void> _onApproveRefund(
+    ApproveRefundRequestEvent event,
+    Emitter<AdminMembershipRequestsState> emit,
+  ) async {
+    final current = state;
+    if (current is! AdminMembershipRequestsLoaded) return;
+    emit(AdminMembershipRequestsLoaded(
+      requests: current.requests,
+      refundRequests: current.refundRequests,
+      actingOnRefundId: event.refundId,
+    ));
+    try {
+      await _approveRefund(
+        event.refundId,
+        event.refundAmount,
+        deductionAmount: event.deductionAmount,
+        adminNote: event.adminNote,
+      );
+      final updated = current.refundRequests
+          .where((r) => r.refundId != event.refundId)
+          .toList();
+      emit(AdminMembershipRequestsActionSuccess(
+        requests: current.requests,
+        refundRequests: updated,
+        message: 'تمت الموافقة على طلب الاسترداد',
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: current.requests,
+        refundRequests: updated,
+      ));
+    } catch (e) {
+      emit(AdminMembershipRequestsActionFailure(
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+        message: _extractMessage(e),
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+      ));
+    }
+  }
+
+  Future<void> _onRejectRefund(
+    RejectRefundRequestEvent event,
+    Emitter<AdminMembershipRequestsState> emit,
+  ) async {
+    final current = state;
+    if (current is! AdminMembershipRequestsLoaded) return;
+    emit(AdminMembershipRequestsLoaded(
+      requests: current.requests,
+      refundRequests: current.refundRequests,
+      actingOnRefundId: event.refundId,
+    ));
+    try {
+      await _rejectRefund(event.refundId, event.reason);
+      final updated = current.refundRequests
+          .where((r) => r.refundId != event.refundId)
+          .toList();
+      emit(AdminMembershipRequestsActionSuccess(
+        requests: current.requests,
+        refundRequests: updated,
+        message: 'تم رفض طلب الاسترداد',
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: current.requests,
+        refundRequests: updated,
+      ));
+    } catch (e) {
+      emit(AdminMembershipRequestsActionFailure(
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+        message: _extractMessage(e),
+      ));
+      emit(AdminMembershipRequestsLoaded(
+        requests: current.requests,
+        refundRequests: current.refundRequests,
+      ));
     }
   }
 

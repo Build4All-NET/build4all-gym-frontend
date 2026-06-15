@@ -162,4 +162,24 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
       rethrow;
     }
   }
+
+  // ── approveCancellation ────────────────────────────────────────────────────
+  @override
+  Future<void> approveCancellation(int bookingId) async {
+    try {
+      await _service.approveCancellation(bookingId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // ── declineCancellation ────────────────────────────────────────────────────
+  @override
+  Future<void> declineCancellation(int bookingId) async {
+    try {
+      await _service.declineCancellation(bookingId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

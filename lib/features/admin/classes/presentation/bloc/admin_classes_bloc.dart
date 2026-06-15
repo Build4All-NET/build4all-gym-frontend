@@ -20,6 +20,8 @@ import '../../data/models/cancel_class_request_model.dart';
 import '../../domain/usecases/cancel_class_usecase.dart';
 import '../../domain/usecases/confirm_booking_payment_usecase.dart';
 import '../../domain/usecases/reject_booking_usecase.dart';
+import '../../domain/usecases/approve_cancellation_usecase.dart';
+import '../../domain/usecases/decline_cancellation_usecase.dart';
 import '../../domain/usecases/create_class_usecase.dart';
 import '../../domain/usecases/get_class_form_options_usecase.dart';
 import '../../domain/usecases/get_classes_by_date_usecase.dart';
@@ -39,6 +41,8 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
   final GetSessionBookingsUseCase    _getSessionBookings;
   final ConfirmBookingPaymentUseCase _confirmBookingPayment;
   final RejectBookingUseCase         _rejectBooking;
+  final ApproveCancellationUseCase   _approveCancellation;
+  final DeclineCancellationUseCase   _declineCancellation;
 
   // The date the admin is currently viewing — persisted across events
   // so after a mutation we can refresh the right date's list
@@ -54,6 +58,8 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     required GetSessionBookingsUseCase    getSessionBookings,
     required ConfirmBookingPaymentUseCase confirmBookingPayment,
     required RejectBookingUseCase         rejectBooking,
+    required ApproveCancellationUseCase   approveCancellation,
+    required DeclineCancellationUseCase   declineCancellation,
   })  : _getClassesByDate      = getClassesByDate,
         _getClassFormOptions    = getClassFormOptions,
         _createClass            = createClass,
@@ -63,6 +69,8 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
         _getSessionBookings     = getSessionBookings,
         _confirmBookingPayment  = confirmBookingPayment,
         _rejectBooking          = rejectBooking,
+        _approveCancellation    = approveCancellation,
+        _declineCancellation    = declineCancellation,
         super(ClassesInitial()) {
 
     on<ClassesStarted>(_onClassesStarted);
@@ -75,6 +83,8 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     on<SessionBookingsRequested>(_onSessionBookingsRequested);
     on<ConfirmBookingPaymentRequested>(_onConfirmBookingPayment);
     on<RejectBookingRequested>(_onRejectBooking);
+    on<ApproveCancellationRequested>(_onApproveCancellation);
+    on<DeclineCancellationRequested>(_onDeclineCancellation);
   }
 
   // ── ClassesStarted ──────────────────────────────────────────────────────
@@ -221,6 +231,30 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
       await _rejectBooking(event.bookingId);
       final bookings = await _getSessionBookings(event.sessionId);
       emit(SessionBookingsLoaded(event.sessionId, bookings, wasBookingRejected: true));
+    } catch (e) {
+      emit(SessionBookingsError(sessionId: event.sessionId, message: e.toString()));
+    }
+  }
+
+  // ── ApproveCancellationRequested ────────────────────────────────────────────
+  Future<void> _onApproveCancellation(
+      ApproveCancellationRequested event, Emitter<AdminClassesState> emit) async {
+    try {
+      await _approveCancellation(event.bookingId);
+      final bookings = await _getSessionBookings(event.sessionId);
+      emit(SessionBookingsLoaded(event.sessionId, bookings, wasCancellationApproved: true));
+    } catch (e) {
+      emit(SessionBookingsError(sessionId: event.sessionId, message: e.toString()));
+    }
+  }
+
+  // ── DeclineCancellationRequested ────────────────────────────────────────────
+  Future<void> _onDeclineCancellation(
+      DeclineCancellationRequested event, Emitter<AdminClassesState> emit) async {
+    try {
+      await _declineCancellation(event.bookingId);
+      final bookings = await _getSessionBookings(event.sessionId);
+      emit(SessionBookingsLoaded(event.sessionId, bookings, wasCancellationDeclined: true));
     } catch (e) {
       emit(SessionBookingsError(sessionId: event.sessionId, message: e.toString()));
     }

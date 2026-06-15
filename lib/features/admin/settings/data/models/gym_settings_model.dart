@@ -22,12 +22,14 @@ class GymSettingsModel {
   final bool requireMembershipForClass;
   final bool allowMembershipWithoutClass;
   final bool allowBothIndependently;
+  final bool allowPtBookingWithoutMembership;
 
   const GymSettingsModel({
     required this.allowClassWithoutMembership,
     required this.requireMembershipForClass,
     required this.allowMembershipWithoutClass,
     required this.allowBothIndependently,
+    required this.allowPtBookingWithoutMembership,
   });
 
   // ── JSON deserialization ────────────────────────────────────────────────────
@@ -44,6 +46,8 @@ class GymSettingsModel {
         json['allowMembershipWithoutClass'] as bool? ?? true,
         allowBothIndependently:
         json['allowBothIndependently'] as bool? ?? true,
+        allowPtBookingWithoutMembership:
+        json['allowPtBookingWithoutMembership'] as bool? ?? false,
       );
 
   // ── JSON serialization ──────────────────────────────────────────────────────
@@ -54,6 +58,7 @@ class GymSettingsModel {
     'requireMembershipForClass': requireMembershipForClass,
     'allowMembershipWithoutClass': allowMembershipWithoutClass,
     'allowBothIndependently': allowBothIndependently,
+    'allowPtBookingWithoutMembership': allowPtBookingWithoutMembership,
   };
 
   // ── Mapping helpers ─────────────────────────────────────────────────────────
@@ -64,6 +69,7 @@ class GymSettingsModel {
     requireMembershipForClass: requireMembershipForClass,
     allowMembershipWithoutClass: allowMembershipWithoutClass,
     allowBothIndependently: allowBothIndependently,
+    allowPtBookingWithoutMembership: allowPtBookingWithoutMembership,
   );
 
   /// Converts a domain entity → data model (for the repository to serialize before PUT).
@@ -73,5 +79,6 @@ class GymSettingsModel {
         requireMembershipForClass: entity.requireMembershipForClass,
         allowMembershipWithoutClass: entity.allowMembershipWithoutClass,
         allowBothIndependently: entity.allowBothIndependently,
+        allowPtBookingWithoutMembership: entity.allowPtBookingWithoutMembership,
       );
 }

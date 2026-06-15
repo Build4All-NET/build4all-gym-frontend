@@ -45,4 +45,10 @@ abstract class AdminClassesRepository {
 
   // Rejects a PENDING booking (sets it to CANCELLED)
   Future<void> rejectBooking(int bookingId);
+
+  // Approves a CANCEL_REQUESTED booking → CANCELLED
+  Future<void> approveCancellation(int bookingId);
+
+  // Declines a CANCEL_REQUESTED booking → reverts to BOOKED
+  Future<void> declineCancellation(int bookingId);
 }

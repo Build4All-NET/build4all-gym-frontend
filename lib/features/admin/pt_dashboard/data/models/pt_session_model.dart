@@ -38,6 +38,7 @@ class PtSessionModel {
   final String? paymentStatus;
   final String? notes;
   final DateTime? createdAt;
+  final DateTime? requestedNewDate;
 
   const PtSessionModel({
     required this.ptSessionId,
@@ -54,6 +55,7 @@ class PtSessionModel {
     this.paymentStatus,
     this.notes,
     this.createdAt,
+    this.requestedNewDate,
   });
 
   factory PtSessionModel.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,9 @@ class PtSessionModel {
       notes:             json['notes']              as String?,
       createdAt:         json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+      requestedNewDate:  json['requestedNewDate'] != null
+          ? DateTime.tryParse(json['requestedNewDate'] as String)
           : null,
     );
   }
@@ -96,6 +101,7 @@ class PtSessionModel {
       paymentStatus:     paymentStatus,
       notes:             notes,
       createdAt:         createdAt,
+      requestedNewDate:  requestedNewDate,
     );
   }
 }

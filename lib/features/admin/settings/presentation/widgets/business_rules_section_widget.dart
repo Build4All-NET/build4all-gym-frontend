@@ -233,6 +233,17 @@ class _BusinessRulesSectionWidgetState
           tokens: tokens,
           c: c,
         ),
+        Divider(height: 1, color: c.border.withOpacity(0.15)),
+        _ToggleRow(
+          label: l10n.admin_settings_allowPtBookingWithoutMembership,
+          subtitle: l10n.admin_settings_allowPtBookingWithoutMembershipDesc,
+          value: rules.allowPtBookingWithoutMembership,
+          isOwner: _isOwner,
+          onChanged: (v) =>
+              cubit.updateBusinessRule(allowPtBookingWithoutMembership: v),
+          tokens: tokens,
+          c: c,
+        ),
       ],
     );
   }

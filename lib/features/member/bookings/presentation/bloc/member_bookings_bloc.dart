@@ -78,15 +78,22 @@ class MemberBookingsBloc extends Bloc<MemberBookingsEvent, MemberBookingsState> 
     );
 
     try {
-      await requestCancelUseCase(event.booking);
+      await requestCancelUseCase(
+        event.booking,
+        requestedNewDate: event.requestedNewDate,
+      );
 
       final refreshed = await getMemberBookingsUseCase(tab: _currentTab);
+
+      final messageKey = event.requestedNewDate != null
+          ? 'memberBookingsRescheduleRequestSent'
+          : 'memberBookingsCancelRequestSent';
 
       emit(
         MemberBookingsLoaded(
           bookings: refreshed,
           tab: _currentTab,
-          messageKey: 'memberBookingsCancelRequestSent',
+          messageKey: messageKey,
         ),
       );
     } catch (_) {

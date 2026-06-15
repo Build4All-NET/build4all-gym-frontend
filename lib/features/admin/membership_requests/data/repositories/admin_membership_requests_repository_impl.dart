@@ -1,3 +1,4 @@
+import '../../domain/entities/admin_refund_request_entity.dart';
 import '../../domain/entities/membership_request_entity.dart';
 import '../../domain/repositories/admin_membership_requests_repository.dart';
 import '../models/membership_request_card_model.dart';
@@ -25,5 +26,23 @@ class AdminMembershipRequestsRepositoryImpl
   @override
   Future<void> rejectRequest(int requestId, String reason) async {
     await _service.rejectRequest(requestId, reason);
+  }
+
+  @override
+  Future<List<AdminRefundRequestEntity>> getRefundRequests(
+      {String status = 'pending'}) async {
+    return _service.getRefundRequests(status: status);
+  }
+
+  @override
+  Future<void> approveRefundRequest(int refundId, double refundAmount,
+      {double? deductionAmount, String? adminNote}) async {
+    await _service.approveRefundRequest(refundId, refundAmount,
+        deductionAmount: deductionAmount, adminNote: adminNote);
+  }
+
+  @override
+  Future<void> rejectRefundRequest(int refundId, String reason) async {
+    await _service.rejectRefundRequest(refundId, reason);
   }
 }

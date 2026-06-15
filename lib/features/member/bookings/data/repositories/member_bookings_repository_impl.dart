@@ -30,8 +30,8 @@ class MemberBookingsRepositoryImpl implements MemberBookingsRepository {
   }
 
   @override
-  Future<void> requestPtCancel(int ptSessionId) {
-    return _service.requestPtCancel(ptSessionId);
+  Future<void> requestPtCancel(int ptSessionId, {DateTime? requestedNewDate}) {
+    return _service.requestPtCancel(ptSessionId, requestedNewDate: requestedNewDate);
   }
 
   MemberBookingEntity _toEntity(MemberBookingModel model) {

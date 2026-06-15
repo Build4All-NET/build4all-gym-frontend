@@ -930,6 +930,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navPtPackageBookings => 'مدفوعات باقات PT';
 
   @override
+  String get ptPkgPayments_cashTab => 'المدفوعات النقدية';
+
+  @override
+  String get ptPkgPayments_refundTab => 'طلبات الاسترداد';
+
+  @override
+  String get ptPkgPayments_noPendingRefunds => 'لا توجد طلبات استرداد معلقة للباقات';
+
+  @override
+  String get ptPkgPayments_noPendingRefundsDesc => 'ستظهر طلبات استرداد باقات PT هنا';
+
+  @override
+  String get ptPkgPayments_refundBadge => 'استرداد PT';
+
+  @override
   String get accountProfileUpdateSuccess => 'تم تحديث الملف الشخصي بنجاح';
 
   @override
@@ -1686,10 +1701,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberBookingsReviewFailed => 'فشل إرسال التقييم. حاول مجدداً.';
 
   @override
-  String get memberInvoicesTitle => 'Payment History';
+  String get memberBookingsCancelOptionsTitle => 'خيارات الجلسة';
 
   @override
-  String get memberInvoicesEmptyTitle => 'No payments found';
+  String get memberBookingsCancelOnlyOption => 'إلغاء الجلسة';
+
+  @override
+  String get memberBookingsCancelOnlyDesc => 'إلغاء هذه الجلسة دون إعادة الجدولة';
+
+  @override
+  String get memberBookingsRescheduleOption => 'طلب إعادة الجدولة';
+
+  @override
+  String get memberBookingsRescheduleDesc => 'إلغاء واقتراح تاريخ جديد';
+
+  @override
+  String get memberBookingsSelectNewDate => 'اختر التاريخ المفضل';
+
+  @override
+  String get memberBookingsRescheduleRequestSent => 'تم إرسال طلب إعادة الجدولة';
+
+  @override
+  String get memberInvoicesTitle => 'سجل المدفوعات';
+
+  @override
+  String get memberInvoicesEmptyTitle => 'لا توجد مدفوعات';
 
   @override
   String get memberInvoicesEmptySubtitle => 'ستظهر دفعاتك المكتملة هنا.';
@@ -2348,6 +2384,71 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_membershipRequests_enterReason => 'يرجى إدخال سبب الرفض';
 
   @override
+  String get admin_membershipRequests_tab => 'طلبات الاشتراك';
+
+  @override
+  String get admin_refundRequests_tab => 'طلبات الاسترداد';
+
+  @override
+  String get admin_refundRequests_noPending => 'لا توجد طلبات استرداد معلقة';
+
+  @override
+  String get admin_refundRequests_noPendingDesc => 'ستظهر طلبات استرداد الأعضاء هنا';
+
+  @override
+  String get admin_refundRequests_pendingBadge => 'استرداد معلق';
+
+  @override
+  String get admin_refundRequests_requestedAmount => 'المبلغ المطلوب';
+
+  @override
+  String get admin_refundRequests_reason => 'سبب العضو';
+
+  @override
+  String get admin_refundRequests_reject => 'رفض';
+
+  @override
+  String get admin_refundRequests_process => 'معالجة';
+
+  @override
+  String get admin_refundRequests_processTitle => 'معالجة طلب الاسترداد';
+
+  @override
+  String get admin_refundRequests_refundAmount => 'مبلغ الاسترداد';
+
+  @override
+  String get admin_refundRequests_refundAmountHint => 'المبلغ المراد استرداده';
+
+  @override
+  String get admin_refundRequests_deductionAmount => 'الخصم (رسوم الإلغاء)';
+
+  @override
+  String get admin_refundRequests_deductionHint => 'مبلغ الخصم (اختياري)';
+
+  @override
+  String get admin_refundRequests_adminNoteHint => 'ملاحظة الإدارة (اختيارية)';
+
+  @override
+  String admin_refundRequests_approveButton(String amount) {
+    return 'الموافقة على الاسترداد — \$ $amount';
+  }
+
+  @override
+  String get admin_refundRequests_rejectTitle => 'رفض طلب الاسترداد';
+
+  @override
+  String get admin_refundRequests_rejectHint => 'سبب الرفض (مطلوب)';
+
+  @override
+  String get admin_refundRequests_rejectButton => 'رفض الطلب';
+
+  @override
+  String get admin_refundRequests_enterReason => 'يرجى إدخال سبب الرفض';
+
+  @override
+  String get admin_refundRequests_enterAmount => 'يرجى إدخال مبلغ استرداد صحيح';
+
+  @override
   String get membershipStatusPending => 'قيد الانتظار';
 
   @override
@@ -2509,6 +2610,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_classes_confirmPayment => 'تأكيد الدفع';
 
   @override
+  String get admin_classes_statusCancelRequested => 'طلب إلغاء';
+
+  @override
+  String get admin_classes_approveCancellation => 'موافقة';
+
+  @override
+  String get admin_classes_declineCancellation => 'رفض';
+
+  @override
+  String get admin_classes_cancellationApproved => 'تم قبول الإلغاء';
+
+  @override
+  String get admin_classes_cancellationDeclined => 'تم رفض الإلغاء';
+
+  @override
   String get admin_settings_accountTitle => 'الحساب والأمان';
 
   @override
@@ -2570,6 +2686,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_settings_allowBothIndependentlyDesc => 'يمكن شراء العضويات والدروس بشكل منفصل';
+
+  @override
+  String get admin_settings_allowPtBookingWithoutMembership => 'السماح بحجز التدريب الشخصي بدون عضوية';
+
+  @override
+  String get admin_settings_allowPtBookingWithoutMembershipDesc => 'يمكن للأعضاء حجز جلسات التدريب الشخصي بدون خطة عضوية نشطة';
 
   @override
   String get admin_settings_dangerTitle => 'المنطقة الخطرة';
@@ -3019,6 +3141,38 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_statusScheduled => 'مجدول';
 
   @override
+  String get trainer_statusCancelRequested => 'طلب إلغاء';
+
+  @override
+  String get trainer_approveCancelButton => 'موافقة';
+
+  @override
+  String get trainer_keepSessionButton => 'الاحتفاظ بالجلسة';
+
+  @override
+  String get trainer_cancelRequestApproved => 'تمت الموافقة على الإلغاء';
+
+  @override
+  String get trainer_cancelRequestDeclined => 'تم رفض الإلغاء، ستبقى الجلسة مجدولة';
+
+  @override
+  String get trainer_approveCancelTitle => 'الموافقة على الإلغاء';
+
+  @override
+  String get trainer_approveCancelMessage => 'سيتم إلغاء الجلسة وإشعار العضو.';
+
+  @override
+  String get trainer_declineCancelTitle => 'رفض الإلغاء';
+
+  @override
+  String get trainer_declineCancelMessage => 'ستبقى الجلسة مجدولة وسيتم رفض طلب العضو.';
+
+  @override
+  String trainer_memberRequestedDate(String date) {
+    return 'اقتراح العضو: $date';
+  }
+
+  @override
   String get trainer_sessionProgress => 'تقدم الجلسة';
 
   @override
@@ -3101,6 +3255,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_cashPaymentConfirmed => 'تم تأكيد الدفع وتفعيل الحصص.';
+
+  @override
+  String get trainer_rejectCashPayment => 'رفض';
+
+  @override
+  String get trainer_rejecting => 'جاري الرفض...';
+
+  @override
+  String get trainer_cashPaymentRejected => 'تم رفض الدفع.';
+
+  @override
+  String get trainer_rejectPaymentTitle => 'رفض الدفع';
+
+  @override
+  String get trainer_rejectPaymentHint => 'سبب الرفض';
+
+  @override
+  String get trainer_rejectPaymentReasonRequired => 'يرجى إدخال السبب';
 
   @override
   String get trainer_dateLabel => 'التاريخ';
