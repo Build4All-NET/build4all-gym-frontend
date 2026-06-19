@@ -62,6 +62,7 @@ class AdminMembersService {
     String sort   = 'newest',
     int page      = 1,
     int size      = 10,
+    bool includeStaff = false,
   }) async {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/members')
@@ -73,6 +74,7 @@ class AdminMembersService {
       if (status.isNotEmpty) 'status': status,
       if (gender.isNotEmpty) 'gender': gender,
       if (search.isNotEmpty) 'search': search,
+      if (includeStaff) 'includeStaff': 'true',
     });
     try {
       final response = await _client.get(uri, headers: headers);

@@ -1298,7 +1298,7 @@ abstract class AppLocalizations {
   /// No description provided for @membershipStatusActive.
   ///
   /// In en, this message translates to:
-  /// **'Active'**
+  /// **'Active Membership'**
   String get membershipStatusActive;
 
   /// No description provided for @membershipStatusFrozen.
@@ -4862,7 +4862,7 @@ abstract class AppLocalizations {
   /// No description provided for @membershipStatusInactive.
   ///
   /// In en, this message translates to:
-  /// **'Inactive'**
+  /// **'Inactive Membership'**
   String get membershipStatusInactive;
 
   /// No description provided for @genderMale.

@@ -619,7 +619,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get billingWeekly => 'أسبوعي';
 
   @override
-  String get membershipStatusActive => 'نشط';
+  String get membershipStatusActive => 'عضوية نشطة';
 
   @override
   String get membershipStatusFrozen => 'مجمّد';
@@ -2455,7 +2455,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get membershipStatusBlocked => 'محظور';
 
   @override
-  String get membershipStatusInactive => 'غير نشط';
+  String get membershipStatusInactive => 'عضوية غير نشطة';
 
   @override
   String get genderMale => 'ذكر';

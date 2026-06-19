@@ -157,7 +157,22 @@
       "Bash(xargs grep -l \"refund\")",
       "Bash(xargs grep -l \"Refund\")",
       "Bash(xargs grep -l \"refund\" -i)",
-      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\" -Directory)"
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\monir\\\\AndroidStudioProjects\\\\build4all-gym-frontend\" -Directory)",
+      "Bash(./mvnw.cmd -q -o compile)",
+      "Bash(./mvnw.cmd -o compile)",
+      "Bash(echo \"EXIT:$?\")",
+      "Read(//tmp/**)",
+      "Bash(./mvnw -q -o compile -pl .)",
+      "Bash(./mvnw -q compile)",
+      "Bash(xargs grep -il \"roles\")",
+      "Bash(xargs grep -l \"roles\")",
+      "Bash(xargs -I{} echo {})",
+      "Skill(run)",
+      "Bash(xargs -I{} sh -c 'echo \"== {} ==\"; head -5 \"{}\"')",
+      "Bash(flutter devices *)",
+      "Bash(command -v chromium-cli)",
+      "Bash(xargs grep -l \"gym_user_roles\\\\|GymUserRole\")",
+      "Bash(git log *)"
     ]
   }
 }

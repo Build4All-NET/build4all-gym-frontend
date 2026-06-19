@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
-import '../../../../../core/config/env.dart';
 import '../../../../../core/network/globals.dart';
 import '../models/payment_method_config_model.dart';
 
 class AdminPaymentConfigService {
-  Dio get _dio => appDio ?? Dio(BaseOptions(baseUrl: Env.apiProjectBaseUrl));
+  Dio get _dio => appDio ?? Dio(BaseOptions(baseUrl: appServerRoot));
 
-  String _url(String path) => '${Env.apiProjectBaseUrl}$path';
+  String _url(String path) => '$appServerRoot$path';
 
   Future<List<PaymentMethodConfigModel>> getPaymentMethods() async {
     final response = await _dio.get(_url('/api/admin/payment-methods'));

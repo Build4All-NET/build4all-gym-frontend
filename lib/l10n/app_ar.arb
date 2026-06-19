@@ -288,7 +288,7 @@
   "billingMonthly": "شهري",
   "billingYearly": "سنوي",
   "billingWeekly": "أسبوعي",
-  "membershipStatusActive": "نشط",
+  "membershipStatusActive": "عضوية نشطة",
   "membershipStatusFrozen": "مجمّد",
   "membershipStatusExpired": "منتهي",
   "remainingDays": "متبقي {days} يوم",
@@ -1039,7 +1039,7 @@
 
   "membershipStatusPending": "قيد الانتظار",
   "membershipStatusBlocked": "محظور",
-  "membershipStatusInactive": "غير نشط",
+  "membershipStatusInactive": "عضوية غير نشطة",
   "genderMale": "ذكر",
   "genderFemale": "أنثى",
   "genderOther": "آخر",

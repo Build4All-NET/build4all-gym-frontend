@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../core/config/env.dart';
+import '../../../../../core/network/globals.dart' as g;
 import '../../../../auth/data/services/admin_token_store.dart';
+import '../../../../auth/data/services/auth_token_store.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   final String videoUrl;
@@ -34,6 +36,21 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
     _initializeVideo();
   }
 
+  // Mirrors AuthedHttpClient's token resolution: prefer the in-memory
+  // runtime token (works for both admin and trainer/member sessions),
+  // then fall back to the persisted stores.
+  Future<String?> _resolveToken() async {
+    final runtime = g.readAuthToken().trim();
+    if (runtime.isNotEmpty) {
+      return runtime.toLowerCase().startsWith('bearer ')
+          ? runtime.substring(7).trim()
+          : runtime;
+    }
+    final admin = (await const AdminTokenStore().getToken())?.trim() ?? '';
+    if (admin.isNotEmpty) return admin;
+    return (await const AuthTokenStore().getToken())?.trim();
+  }
+
   Future<void> _initializeVideo() async {
     try {
       final projecturl = Env.apiProjectBaseUrl;
@@ -41,7 +58,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
           ? widget.videoUrl
           : '$projecturl${widget.videoUrl}';
 
-      final token = await const AdminTokenStore().getToken();
+      final token = await _resolveToken();
       if (token == null || token.isEmpty) {
         setState(() {
           _loading = false;
