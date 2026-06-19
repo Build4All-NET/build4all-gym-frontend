@@ -1905,6 +1905,111 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_dashboard_custom => 'مخصص';
 
   @override
+  String get admin_dashboard_tabMembership => 'العضوية';
+
+  @override
+  String get admin_dashboard_tabPayments => 'المدفوعات';
+
+  @override
+  String get admin_dashboard_tabAttendance => 'الحضور';
+
+  @override
+  String get admin_dashboard_cardHint => 'اضغط على البطاقة لمزيد من المعلومات.';
+
+  @override
+  String get admin_dashboard_comingSoon => 'قريباً';
+
+  @override
+  String get admin_dashboard_lastMonth => 'الشهر الماضي';
+
+  @override
+  String get admin_dashboard_last3Months => 'آخر 3 أشهر';
+
+  @override
+  String get admin_dashboard_sectionToday => 'اليوم';
+
+  @override
+  String get admin_dashboard_sectionAttendance => 'الحضور';
+
+  @override
+  String get admin_dashboard_sectionMembershipExpiry => 'انتهاء العضوية';
+
+  @override
+  String get admin_dashboard_sectionPtPlanExpiry => 'انتهاء خطة التدريب';
+
+  @override
+  String get admin_dashboard_sectionTodaysCollection => 'تحصيل اليوم';
+
+  @override
+  String get admin_dashboard_attendance => 'الحضور';
+
+  @override
+  String get admin_dashboard_birthdays => 'أعياد الميلاد';
+
+  @override
+  String get admin_dashboard_expiresToday => 'تنتهي اليوم';
+
+  @override
+  String get admin_dashboard_ptExpiringToday => 'خطة تدريب تنتهي اليوم';
+
+  @override
+  String get admin_dashboard_monthlyCheckins => 'تسجيلات الدخول الشهرية';
+
+  @override
+  String get admin_dashboard_uniqueMembersAttended => 'أعضاء فريدون حضروا';
+
+  @override
+  String get admin_dashboard_expiring1to3 => 'تنتهي (1–3 أيام)';
+
+  @override
+  String get admin_dashboard_expiring4to7 => 'تنتهي (4–7 أيام)';
+
+  @override
+  String get admin_dashboard_expiring8to15 => 'تنتهي (8–15 يوم)';
+
+  @override
+  String get admin_dashboard_ptExpiring1to7 => 'تدريب ينتهي (1–7 أيام)';
+
+  @override
+  String get admin_dashboard_ptExpiring8to15 => 'تدريب ينتهي (8–15 يوم)';
+
+  @override
+  String get admin_dashboard_recordAttendance => 'تسجيل الحضور';
+
+  @override
+  String get admin_dashboard_membershipCollectedToday => 'اشتراكات محصّلة اليوم';
+
+  @override
+  String get admin_dashboard_admissionFees => 'رسوم التسجيل';
+
+  @override
+  String get admin_dashboard_membershipCollected => 'اشتراكات محصّلة';
+
+  @override
+  String get admin_dashboard_membershipDue => 'اشتراكات مستحقة';
+
+  @override
+  String get admin_dashboard_ptDue => 'تدريب مستحق';
+
+  @override
+  String get admin_dashboard_servicePaid => 'خدمات مدفوعة';
+
+  @override
+  String get admin_dashboard_serviceDue => 'خدمات مستحقة';
+
+  @override
+  String get admin_dashboard_expense => 'المصاريف';
+
+  @override
+  String get admin_dashboard_upcomingPtSessions => 'جلسات تدريب قادمة';
+
+  @override
+  String get admin_dashboard_attendanceGrowth => 'نمو الحضور';
+
+  @override
+  String get admin_dashboard_absentMembers => 'أعضاء غائبون';
+
+  @override
   String get admin_dashboard_activeMembers => 'الأعضاء النشطون';
 
   @override
@@ -3327,4 +3432,97 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'استخدام لغة الجهاز';
+
+  @override
+  String get branchDialog_setupTitle => 'أنشئ فرعك الأول';
+
+  @override
+  String get branchDialog_setupSubtitle => 'أنشئ موقع الجيم الرئيسي لتبدأ إدارة الأعضاء والخطط وتسجيلات الدخول والمزيد.';
+
+  @override
+  String get branchDialog_sectionBasic => 'المعلومات الأساسية';
+
+  @override
+  String get branchDialog_name => 'اسم الفرع';
+
+  @override
+  String get branchDialog_nameHint => 'مثال: الجيم الرئيسي – وسط المدينة';
+
+  @override
+  String get branchDialog_nameRequired => 'اسم الفرع مطلوب';
+
+  @override
+  String get branchDialog_city => 'المدينة';
+
+  @override
+  String get branchDialog_cityHint => 'مثال: بيروت';
+
+  @override
+  String get branchDialog_cityRequired => 'المدينة مطلوبة';
+
+  @override
+  String get branchDialog_sectionContact => 'معلومات التواصل';
+
+  @override
+  String get branchDialog_phone => 'الهاتف';
+
+  @override
+  String get branchDialog_phoneHint => '+961 70 000 000';
+
+  @override
+  String get branchDialog_phoneRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get branchDialog_email => 'البريد الإلكتروني';
+
+  @override
+  String get branchDialog_emailHint => 'branch@yourgym.com';
+
+  @override
+  String get branchDialog_emailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get branchDialog_emailInvalid => 'أدخل بريداً إلكترونياً صحيحاً';
+
+  @override
+  String get branchDialog_address => 'العنوان';
+
+  @override
+  String get branchDialog_addressHint => 'شارع الرئيسي، وسط المدينة';
+
+  @override
+  String get branchDialog_addressRequired => 'العنوان مطلوب';
+
+  @override
+  String get branchDialog_sectionHours => 'ساعات العمل';
+
+  @override
+  String get branchDialog_open24 => 'مفتوح 24 ساعة';
+
+  @override
+  String get branchDialog_open24Sub => 'الفرع مفتوح دائماً';
+
+  @override
+  String get branchDialog_opening => 'الافتتاح';
+
+  @override
+  String get branchDialog_closing => 'الإغلاق';
+
+  @override
+  String get branchDialog_tapToSet => 'اضغط للتحديد';
+
+  @override
+  String get branchDialog_closingAfterOpening => 'وقت الإغلاق يجب أن يكون بعد وقت الافتتاح';
+
+  @override
+  String get branchDialog_selectOpening => 'الرجاء تحديد وقت الافتتاح';
+
+  @override
+  String get branchDialog_selectClosing => 'الرجاء تحديد وقت الإغلاق';
+
+  @override
+  String get branchDialog_create => 'إنشاء الفرع';
+
+  @override
+  String get branchDialog_createdSuccess => 'تم إنشاء الفرع بنجاح!';
 }

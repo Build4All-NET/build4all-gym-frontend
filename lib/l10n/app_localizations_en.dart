@@ -1905,6 +1905,111 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_dashboard_custom => 'Custom';
 
   @override
+  String get admin_dashboard_tabMembership => 'Membership';
+
+  @override
+  String get admin_dashboard_tabPayments => 'Payments';
+
+  @override
+  String get admin_dashboard_tabAttendance => 'Attendance';
+
+  @override
+  String get admin_dashboard_cardHint => 'Tap the card for additional information.';
+
+  @override
+  String get admin_dashboard_comingSoon => 'coming soon';
+
+  @override
+  String get admin_dashboard_lastMonth => 'Last Month';
+
+  @override
+  String get admin_dashboard_last3Months => 'Last 3 Months';
+
+  @override
+  String get admin_dashboard_sectionToday => 'Today';
+
+  @override
+  String get admin_dashboard_sectionAttendance => 'Attendance';
+
+  @override
+  String get admin_dashboard_sectionMembershipExpiry => 'Membership Expiry';
+
+  @override
+  String get admin_dashboard_sectionPtPlanExpiry => 'PT Plan Expiry';
+
+  @override
+  String get admin_dashboard_sectionTodaysCollection => 'Today\'s Collection';
+
+  @override
+  String get admin_dashboard_attendance => 'Attendance';
+
+  @override
+  String get admin_dashboard_birthdays => 'Birthdays';
+
+  @override
+  String get admin_dashboard_expiresToday => 'Expires Today';
+
+  @override
+  String get admin_dashboard_ptExpiringToday => 'PT Plan Expiring Today';
+
+  @override
+  String get admin_dashboard_monthlyCheckins => 'Monthly Check-ins';
+
+  @override
+  String get admin_dashboard_uniqueMembersAttended => 'Unique Members Attended';
+
+  @override
+  String get admin_dashboard_expiring1to3 => 'Expiring (1–3d)';
+
+  @override
+  String get admin_dashboard_expiring4to7 => 'Expiring (4–7d)';
+
+  @override
+  String get admin_dashboard_expiring8to15 => 'Expiring (8–15d)';
+
+  @override
+  String get admin_dashboard_ptExpiring1to7 => 'PT Expiring (1–7d)';
+
+  @override
+  String get admin_dashboard_ptExpiring8to15 => 'PT Expiring (8–15d)';
+
+  @override
+  String get admin_dashboard_recordAttendance => 'Record Attendance';
+
+  @override
+  String get admin_dashboard_membershipCollectedToday => 'Membership Collected Today';
+
+  @override
+  String get admin_dashboard_admissionFees => 'Admission Fees';
+
+  @override
+  String get admin_dashboard_membershipCollected => 'Membership Collected';
+
+  @override
+  String get admin_dashboard_membershipDue => 'Membership Due';
+
+  @override
+  String get admin_dashboard_ptDue => 'PT Due';
+
+  @override
+  String get admin_dashboard_servicePaid => 'Service Paid';
+
+  @override
+  String get admin_dashboard_serviceDue => 'Service Due';
+
+  @override
+  String get admin_dashboard_expense => 'Expense';
+
+  @override
+  String get admin_dashboard_upcomingPtSessions => 'Upcoming PT Sessions';
+
+  @override
+  String get admin_dashboard_attendanceGrowth => 'Attendance Growth';
+
+  @override
+  String get admin_dashboard_absentMembers => 'Absent Members';
+
+  @override
   String get admin_dashboard_activeMembers => 'Active Members';
 
   @override
@@ -3327,4 +3432,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'Use device language';
+
+  @override
+  String get branchDialog_setupTitle => 'Set Up Your First Branch';
+
+  @override
+  String get branchDialog_setupSubtitle => 'Create your main gym location to start managing members, plans, check-ins, and more.';
+
+  @override
+  String get branchDialog_sectionBasic => 'Basic Information';
+
+  @override
+  String get branchDialog_name => 'Branch Name';
+
+  @override
+  String get branchDialog_nameHint => 'e.g. Main Gym – Downtown';
+
+  @override
+  String get branchDialog_nameRequired => 'Branch name is required';
+
+  @override
+  String get branchDialog_city => 'City';
+
+  @override
+  String get branchDialog_cityHint => 'e.g. Cairo';
+
+  @override
+  String get branchDialog_cityRequired => 'City is required';
+
+  @override
+  String get branchDialog_sectionContact => 'Contact';
+
+  @override
+  String get branchDialog_phone => 'Phone';
+
+  @override
+  String get branchDialog_phoneHint => '+20 100 000 0000';
+
+  @override
+  String get branchDialog_phoneRequired => 'Phone is required';
+
+  @override
+  String get branchDialog_email => 'Email';
+
+  @override
+  String get branchDialog_emailHint => 'branch@yourgym.com';
+
+  @override
+  String get branchDialog_emailRequired => 'Email is required';
+
+  @override
+  String get branchDialog_emailInvalid => 'Enter a valid email address';
+
+  @override
+  String get branchDialog_address => 'Address';
+
+  @override
+  String get branchDialog_addressHint => '123 Main St, Downtown';
+
+  @override
+  String get branchDialog_addressRequired => 'Address is required';
+
+  @override
+  String get branchDialog_sectionHours => 'Operating Hours';
+
+  @override
+  String get branchDialog_open24 => 'Open 24 Hours';
+
+  @override
+  String get branchDialog_open24Sub => 'Branch is always open';
+
+  @override
+  String get branchDialog_opening => 'Opening';
+
+  @override
+  String get branchDialog_closing => 'Closing';
+
+  @override
+  String get branchDialog_tapToSet => 'Tap to set';
+
+  @override
+  String get branchDialog_closingAfterOpening => 'Closing time must be after opening time';
+
+  @override
+  String get branchDialog_selectOpening => 'Please select an opening time';
+
+  @override
+  String get branchDialog_selectClosing => 'Please select a closing time';
+
+  @override
+  String get branchDialog_create => 'Create Branch';
+
+  @override
+  String get branchDialog_createdSuccess => 'Branch created successfully!';
 }
