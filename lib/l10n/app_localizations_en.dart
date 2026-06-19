@@ -3609,4 +3609,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sectionTools => 'Tools';
+
+  @override
+  String get admin_classes_sectionDetails => 'Class Details';
+
+  @override
+  String get admin_classes_sectionSchedule => 'Schedule';
+
+  @override
+  String get admin_classes_sectionCapacityRoom => 'Capacity & Room';
+
+  @override
+  String get admin_classes_sectionNotes => 'Notes';
+
+  @override
+  String get admin_classes_required => 'Required';
+
+  @override
+  String get admin_classes_mustBeNumber => 'Must be a number';
+
+  @override
+  String get admin_classes_nameHint => 'e.g. Morning Yoga Flow';
+
+  @override
+  String get admin_classes_durationHint => 'e.g. 60';
+
+  @override
+  String get admin_classes_capacityHint => 'Maximum participants';
+
+  @override
+  String get admin_classes_roomHint => 'e.g. Hall 1, 2nd Floor';
+
+  @override
+  String get admin_classes_notesHint => 'e.g. Additional class notes';
+
+  @override
+  String get admin_classes_createTypeButton => 'Create';
+
+  @override
+  String get admin_classes_typeExists => 'This type already exists — select it from the list';
+
+  @override
+  String get admin_classes_typeNameLabel => 'Name *';
+
+  @override
+  String get admin_classes_typeNameHint => 'e.g. Yoga, CrossFit';
+
+  @override
+  String get admin_classes_typeDurationLabel => 'Duration (minutes) *';
+
+  @override
+  String get admin_classes_typeDifficultyLabel => 'Difficulty Level';
+
+  @override
+  String get admin_classes_typePriceLabel => 'Price';
+
+  @override
+  String get admin_classes_diffBeginner => 'Beginner';
+
+  @override
+  String get admin_classes_diffIntermediate => 'Intermediate';
+
+  @override
+  String get admin_classes_diffAdvanced => 'Advanced';
 }

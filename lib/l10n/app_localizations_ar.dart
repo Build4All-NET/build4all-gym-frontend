@@ -3609,4 +3609,67 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sectionTools => 'أدوات';
+
+  @override
+  String get admin_classes_sectionDetails => 'تفاصيل الحصة';
+
+  @override
+  String get admin_classes_sectionSchedule => 'الموعد';
+
+  @override
+  String get admin_classes_sectionCapacityRoom => 'السعة والقاعة';
+
+  @override
+  String get admin_classes_sectionNotes => 'ملاحظات';
+
+  @override
+  String get admin_classes_required => 'مطلوب';
+
+  @override
+  String get admin_classes_mustBeNumber => 'يجب أن يكون رقماً';
+
+  @override
+  String get admin_classes_nameHint => 'مثال: يوغا الصباح';
+
+  @override
+  String get admin_classes_durationHint => 'مثال: 60';
+
+  @override
+  String get admin_classes_capacityHint => 'أقصى عدد مشاركين';
+
+  @override
+  String get admin_classes_roomHint => 'مثال: القاعة 1، الطابق 2';
+
+  @override
+  String get admin_classes_notesHint => 'مثال: ملاحظات إضافية';
+
+  @override
+  String get admin_classes_createTypeButton => 'إنشاء';
+
+  @override
+  String get admin_classes_typeExists => 'هذا النوع موجود مسبقاً — اختره من القائمة';
+
+  @override
+  String get admin_classes_typeNameLabel => 'الاسم *';
+
+  @override
+  String get admin_classes_typeNameHint => 'مثال: يوغا، كروس فيت';
+
+  @override
+  String get admin_classes_typeDurationLabel => 'المدة (دقائق) *';
+
+  @override
+  String get admin_classes_typeDifficultyLabel => 'مستوى الصعوبة';
+
+  @override
+  String get admin_classes_typePriceLabel => 'السعر';
+
+  @override
+  String get admin_classes_diffBeginner => 'مبتدئ';
+
+  @override
+  String get admin_classes_diffIntermediate => 'متوسط';
+
+  @override
+  String get admin_classes_diffAdvanced => 'متقدم';
 }

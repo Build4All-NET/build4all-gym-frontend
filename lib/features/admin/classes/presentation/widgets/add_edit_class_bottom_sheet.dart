@@ -178,51 +178,57 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _dialogLabel('Name *', cs),
+                  _dialogLabel(l10n.admin_classes_typeNameLabel, cs),
                   const SizedBox(height: 4),
                   TextFormField(
                     controller: nameCtrl,
                     style: TextStyle(color: cs.onSurface),
-                    decoration: _dialogDeco('e.g. Yoga, CrossFit', cs),
-                    validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    decoration: _dialogDeco(l10n.admin_classes_typeNameHint, cs),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.admin_classes_required
+                        : null,
                   ),
                   const SizedBox(height: 12),
-                  _dialogLabel('Duration (minutes) *', cs),
+                  _dialogLabel(l10n.admin_classes_typeDurationLabel, cs),
                   const SizedBox(height: 4),
                   TextFormField(
                     controller: durationCtrl,
                     keyboardType: TextInputType.number,
                     style: TextStyle(color: cs.onSurface),
-                    decoration: _dialogDeco('e.g. 60', cs),
+                    decoration: _dialogDeco(l10n.admin_classes_durationHint, cs),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Required';
-                      if (int.tryParse(v.trim()) == null)
-                        return 'Must be a number';
+                      if (v == null || v.trim().isEmpty) {
+                        return l10n.admin_classes_required;
+                      }
+                      if (int.tryParse(v.trim()) == null) {
+                        return l10n.admin_classes_mustBeNumber;
+                      }
                       return null;
                     },
                   ),
                   const SizedBox(height: 12),
-                  _dialogLabel('Difficulty Level', cs),
+                  _dialogLabel(l10n.admin_classes_typeDifficultyLabel, cs),
                   const SizedBox(height: 4),
                   DropdownButtonFormField<String>(
                     value: difficulty,
                     style: TextStyle(color: cs.onSurface),
                     decoration: _dialogDeco('', cs),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
-                          value: 'BEGINNER', child: Text('Beginner')),
+                          value: 'BEGINNER',
+                          child: Text(l10n.admin_classes_diffBeginner)),
                       DropdownMenuItem(
                           value: 'INTERMEDIATE',
-                          child: Text('Intermediate')),
+                          child: Text(l10n.admin_classes_diffIntermediate)),
                       DropdownMenuItem(
-                          value: 'ADVANCED', child: Text('Advanced')),
+                          value: 'ADVANCED',
+                          child: Text(l10n.admin_classes_diffAdvanced)),
                     ],
                     onChanged: (v) =>
                         setDialogState(() => difficulty = v ?? 'BEGINNER'),
                   ),
                   const SizedBox(height: 12),
-                  _dialogLabel('Price', cs),
+                  _dialogLabel(l10n.admin_classes_typePriceLabel, cs),
                   const SizedBox(height: 4),
                   TextFormField(
                     controller: priceCtrl,
@@ -232,8 +238,9 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                     decoration: _dialogDeco('0.00', cs),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return null;
-                      if (double.tryParse(v.trim()) == null)
-                        return 'Must be a number';
+                      if (double.tryParse(v.trim()) == null) {
+                        return l10n.admin_classes_mustBeNumber;
+                      }
                       return null;
                     },
                   ),
@@ -266,7 +273,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                   AppToast.error(ctx, AppLocalizations.of(ctx)!.admin_classes_failedCreateType);
                 }
               },
-              child: const Text('Create'),
+              child: Text(AppLocalizations.of(ctx)!.admin_classes_createTypeButton),
             ),
           ],
         ),
@@ -316,7 +323,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       }
 
       if (r.statusCode == 409 && mounted) {
-        AppToast.info(context, '$name already exists — select it from the dropdown');
+        AppToast.info(context, AppLocalizations.of(context)!.admin_classes_typeExists);
       }
       return null;
     } catch (_) {
@@ -513,14 +520,18 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 ),
                 const SizedBox(height: 20),
 
+                // ── Section: Class Details ─────────────────────────────────
+                _SectionHeader(l10n.admin_classes_sectionDetails, cs),
+
                 // ── Class Name ─────────────────────────────────────────────
                 _FieldLabel(l10n.admin_classes_nameLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _classNameCtrl,
-                  hint: 'e.g., Morning Yoga Flow',
-                  validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Required' : null,
+                  hint: l10n.admin_classes_nameHint,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? l10n.admin_classes_required
+                      : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -639,6 +650,9 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 ),
                 const SizedBox(height: 16),
 
+                // ── Section: Schedule ──────────────────────────────────────
+                _SectionHeader(l10n.admin_classes_sectionSchedule, cs),
+
                 // ── Date ───────────────────────────────────────────────────
                 _FieldLabel(l10n.admin_classes_dateLabel, cs),
                 _buildTapField(
@@ -668,28 +682,37 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 _buildTextField(
                   cs: cs,
                   controller: _durationCtrl,
-                  hint: 'e.g., 60',
+                  hint: l10n.admin_classes_durationHint,
                   keyboardType: TextInputType.number,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (int.tryParse(v.trim()) == null)
-                      return 'Must be a number';
+                    if (v == null || v.trim().isEmpty) {
+                      return l10n.admin_classes_required;
+                    }
+                    if (int.tryParse(v.trim()) == null) {
+                      return l10n.admin_classes_mustBeNumber;
+                    }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
+
+                // ── Section: Capacity & Room ───────────────────────────────
+                _SectionHeader(l10n.admin_classes_sectionCapacityRoom, cs),
 
                 // ── Capacity ───────────────────────────────────────────────
                 _FieldLabel(l10n.admin_classes_capacityLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _capacityCtrl,
-                  hint: 'Maximum participants',
+                  hint: l10n.admin_classes_capacityHint,
                   keyboardType: TextInputType.number,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (int.tryParse(v.trim()) == null)
-                      return 'Must be a number';
+                    if (v == null || v.trim().isEmpty) {
+                      return l10n.admin_classes_required;
+                    }
+                    if (int.tryParse(v.trim()) == null) {
+                      return l10n.admin_classes_mustBeNumber;
+                    }
                     return null;
                   },
                 ),
@@ -700,17 +723,20 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 _buildTextField(
                   cs: cs,
                   controller: _roomNameCtrl,
-                  hint: 'e.g., Hall 1, 2nd Floor',
+                  hint: l10n.admin_classes_roomHint,
                   validator: null,
                 ),
                 const SizedBox(height: 16),
+
+                // ── Section: Notes ─────────────────────────────────────────
+                _SectionHeader(l10n.admin_classes_sectionNotes, cs),
 
                 // ── Notes ──────────────────────────────────────────────────
                 _FieldLabel(l10n.admin_classes_notesLabel, cs),
                 _buildTextField(
                   cs: cs,
                   controller: _notesCtrl,
-                  hint: 'e.g., Additional class notes',
+                  hint: l10n.admin_classes_notesHint,
                   maxLines: 3,
                   validator: null,
                 ),
@@ -919,6 +945,30 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
             ),
             Icon(icon, size: 18, color: cs.onSurface.withOpacity(0.4)),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Groups related fields under a small section heading so the long form
+/// reads as a few clear steps instead of one wall of inputs.
+class _SectionHeader extends StatelessWidget {
+  final String text;
+  final ColorScheme cs;
+  const _SectionHeader(this.text, this.cs);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        text.toUpperCase(),
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.6,
+          color: cs.primary,
         ),
       ),
     );

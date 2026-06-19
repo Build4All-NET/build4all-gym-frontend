@@ -7066,6 +7066,69 @@ abstract class AppLocalizations {
 
   /// No description provided for @sectionTools.
   String get sectionTools;
+
+  /// No description provided for @admin_classes_sectionDetails.
+  String get admin_classes_sectionDetails;
+
+  /// No description provided for @admin_classes_sectionSchedule.
+  String get admin_classes_sectionSchedule;
+
+  /// No description provided for @admin_classes_sectionCapacityRoom.
+  String get admin_classes_sectionCapacityRoom;
+
+  /// No description provided for @admin_classes_sectionNotes.
+  String get admin_classes_sectionNotes;
+
+  /// No description provided for @admin_classes_required.
+  String get admin_classes_required;
+
+  /// No description provided for @admin_classes_mustBeNumber.
+  String get admin_classes_mustBeNumber;
+
+  /// No description provided for @admin_classes_nameHint.
+  String get admin_classes_nameHint;
+
+  /// No description provided for @admin_classes_durationHint.
+  String get admin_classes_durationHint;
+
+  /// No description provided for @admin_classes_capacityHint.
+  String get admin_classes_capacityHint;
+
+  /// No description provided for @admin_classes_roomHint.
+  String get admin_classes_roomHint;
+
+  /// No description provided for @admin_classes_notesHint.
+  String get admin_classes_notesHint;
+
+  /// No description provided for @admin_classes_createTypeButton.
+  String get admin_classes_createTypeButton;
+
+  /// No description provided for @admin_classes_typeExists.
+  String get admin_classes_typeExists;
+
+  /// No description provided for @admin_classes_typeNameLabel.
+  String get admin_classes_typeNameLabel;
+
+  /// No description provided for @admin_classes_typeNameHint.
+  String get admin_classes_typeNameHint;
+
+  /// No description provided for @admin_classes_typeDurationLabel.
+  String get admin_classes_typeDurationLabel;
+
+  /// No description provided for @admin_classes_typeDifficultyLabel.
+  String get admin_classes_typeDifficultyLabel;
+
+  /// No description provided for @admin_classes_typePriceLabel.
+  String get admin_classes_typePriceLabel;
+
+  /// No description provided for @admin_classes_diffBeginner.
+  String get admin_classes_diffBeginner;
+
+  /// No description provided for @admin_classes_diffIntermediate.
+  String get admin_classes_diffIntermediate;
+
+  /// No description provided for @admin_classes_diffAdvanced.
+  String get admin_classes_diffAdvanced;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
