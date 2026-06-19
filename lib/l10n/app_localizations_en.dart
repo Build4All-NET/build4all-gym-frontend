@@ -1905,6 +1905,111 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_dashboard_custom => 'Custom';
 
   @override
+  String get admin_dashboard_tabMembership => 'Membership';
+
+  @override
+  String get admin_dashboard_tabPayments => 'Payments';
+
+  @override
+  String get admin_dashboard_tabAttendance => 'Attendance';
+
+  @override
+  String get admin_dashboard_cardHint => 'Tap the card for additional information.';
+
+  @override
+  String get admin_dashboard_comingSoon => 'coming soon';
+
+  @override
+  String get admin_dashboard_lastMonth => 'Last Month';
+
+  @override
+  String get admin_dashboard_last3Months => 'Last 3 Months';
+
+  @override
+  String get admin_dashboard_sectionToday => 'Today';
+
+  @override
+  String get admin_dashboard_sectionAttendance => 'Attendance';
+
+  @override
+  String get admin_dashboard_sectionMembershipExpiry => 'Membership Expiry';
+
+  @override
+  String get admin_dashboard_sectionPtPlanExpiry => 'PT Plan Expiry';
+
+  @override
+  String get admin_dashboard_sectionTodaysCollection => 'Today\'s Collection';
+
+  @override
+  String get admin_dashboard_attendance => 'Attendance';
+
+  @override
+  String get admin_dashboard_birthdays => 'Birthdays';
+
+  @override
+  String get admin_dashboard_expiresToday => 'Expires Today';
+
+  @override
+  String get admin_dashboard_ptExpiringToday => 'PT Plan Expiring Today';
+
+  @override
+  String get admin_dashboard_monthlyCheckins => 'Monthly Check-ins';
+
+  @override
+  String get admin_dashboard_uniqueMembersAttended => 'Unique Members Attended';
+
+  @override
+  String get admin_dashboard_expiring1to3 => 'Expiring (1–3d)';
+
+  @override
+  String get admin_dashboard_expiring4to7 => 'Expiring (4–7d)';
+
+  @override
+  String get admin_dashboard_expiring8to15 => 'Expiring (8–15d)';
+
+  @override
+  String get admin_dashboard_ptExpiring1to7 => 'PT Expiring (1–7d)';
+
+  @override
+  String get admin_dashboard_ptExpiring8to15 => 'PT Expiring (8–15d)';
+
+  @override
+  String get admin_dashboard_recordAttendance => 'Record Attendance';
+
+  @override
+  String get admin_dashboard_membershipCollectedToday => 'Membership Collected Today';
+
+  @override
+  String get admin_dashboard_admissionFees => 'Admission Fees';
+
+  @override
+  String get admin_dashboard_membershipCollected => 'Membership Collected';
+
+  @override
+  String get admin_dashboard_membershipDue => 'Membership Due';
+
+  @override
+  String get admin_dashboard_ptDue => 'PT Due';
+
+  @override
+  String get admin_dashboard_servicePaid => 'Service Paid';
+
+  @override
+  String get admin_dashboard_serviceDue => 'Service Due';
+
+  @override
+  String get admin_dashboard_expense => 'Expense';
+
+  @override
+  String get admin_dashboard_upcomingPtSessions => 'Upcoming PT Sessions';
+
+  @override
+  String get admin_dashboard_attendanceGrowth => 'Attendance Growth';
+
+  @override
+  String get admin_dashboard_absentMembers => 'Absent Members';
+
+  @override
   String get admin_dashboard_activeMembers => 'Active Members';
 
   @override

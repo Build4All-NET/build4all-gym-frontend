@@ -58,8 +58,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   String _money(num v) => '₹${v.toStringAsFixed(0)}';
 
-  void _comingSoon(String feature) =>
-      AppToast.info(context, '$feature — coming soon');
+  void _comingSoon(String feature) {
+    final l10n = AppLocalizations.of(context)!;
+    AppToast.info(context, '$feature — ${l10n.admin_dashboard_comingSoon}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +98,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             child: Column(
               children: [
                 _buildAppBar(context, c, l10n),
-                _buildTabBar(c),
-                _buildHint(c),
+                _buildTabBar(c, l10n),
+                _buildHint(c, l10n),
                 Expanded(child: _buildBody(context, c, l10n)),
               ],
             ),
@@ -174,7 +176,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   // ── TabBar ───────────────────────────────────────────────────────────────
-  Widget _buildTabBar(dynamic c) {
+  Widget _buildTabBar(dynamic c, AppLocalizations l10n) {
     return Container(
       color: c.surface,
       child: TabBar(
@@ -186,22 +188,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
         unselectedLabelStyle:
             const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        tabs: const [
-          Tab(text: 'Membership'),
-          Tab(text: 'Payments'),
-          Tab(text: 'Attendance'),
+        tabs: [
+          Tab(text: l10n.admin_dashboard_tabMembership),
+          Tab(text: l10n.admin_dashboard_tabPayments),
+          Tab(text: l10n.admin_dashboard_tabAttendance),
         ],
       ),
     );
   }
 
-  Widget _buildHint(dynamic c) {
+  Widget _buildHint(dynamic c, AppLocalizations l10n) {
     return Container(
       width: double.infinity,
       color: c.background,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Text(
-        'Tap the card for additional information.',
+        l10n.admin_dashboard_cardHint,
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 13, color: c.muted),
       ),
@@ -261,9 +263,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         if (state is AdminDashboardLoaded) {
           return TabBarView(
             children: [
-              _membershipTab(context, c, state.data),
-              _paymentsTab(context, c, state.data),
-              _attendanceTab(context, c, state.data),
+              _membershipTab(context, c, l10n, state.data),
+              _paymentsTab(context, c, l10n, state.data),
+              _attendanceTab(context, c, l10n, state.data),
             ],
           );
         }
@@ -302,8 +304,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ════════════════════════════════════════════════════════════════════════
   // TAB 1 — MEMBERSHIP
   // ════════════════════════════════════════════════════════════════════════
-  Widget _membershipTab(
-      BuildContext context, dynamic c, AdminDashboardSummary d) {
+  Widget _membershipTab(BuildContext context, dynamic c,
+      AppLocalizations l10n, AdminDashboardSummary d) {
     return RefreshIndicator(
       color: c.primary,
       onRefresh: () async => context
@@ -315,96 +317,99 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionHeader(c, 'Today – ${_todayLabel()}'),
+            _sectionHeader(
+                c, '${l10n.admin_dashboard_sectionToday} – ${_todayLabel()}'),
             _grid([
               DashboardMetricCard(
                 value: '${d.checkins.todayCheckins}',
-                label: 'Attendance',
+                label: l10n.admin_dashboard_attendance,
                 icon: Icons.event_available_rounded,
                 onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Birthdays',
+                label: l10n.admin_dashboard_birthdays,
                 icon: Icons.cake_rounded,
-                onTap: () => _comingSoon('Birthdays'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_birthdays),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Expires Today',
+                label: l10n.admin_dashboard_expiresToday,
                 icon: Icons.event_busy_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('Expires Today'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_expiresToday),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'PT Plan Expiring Today',
+                label: l10n.admin_dashboard_ptExpiringToday,
                 icon: Icons.event_busy_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('PT Plan Expiring Today'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_ptExpiringToday),
               ),
             ]),
-            _sectionHeader(c, 'Attendance – ${_monthLabel()}'),
+            _sectionHeader(c,
+                '${l10n.admin_dashboard_sectionAttendance} – ${_monthLabel()}'),
             _grid([
               DashboardMetricCard(
                 value: '${d.checkins.attendanceCount}',
-                label: 'Monthly Check-ins',
+                label: l10n.admin_dashboard_monthlyCheckins,
                 icon: Icons.event_available_rounded,
                 onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Unique Members Attended',
+                label: l10n.admin_dashboard_uniqueMembersAttended,
                 icon: Icons.groups_rounded,
-                onTap: () => _comingSoon('Unique Members Attended'),
+                onTap: () =>
+                    _comingSoon(l10n.admin_dashboard_uniqueMembersAttended),
               ),
             ]),
-            _sectionHeader(c, 'Membership Expiry'),
+            _sectionHeader(c, l10n.admin_dashboard_sectionMembershipExpiry),
             _grid([
               DashboardMetricCard(
                 value: '0',
-                label: 'Expiring (1–3d)',
+                label: l10n.admin_dashboard_expiring1to3,
                 icon: Icons.timelapse_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('Expiring (1–3d)'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_expiring1to3),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Expiring (4–7d)',
+                label: l10n.admin_dashboard_expiring4to7,
                 icon: Icons.timelapse_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('Expiring (4–7d)'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_expiring4to7),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Expiring (8–15d)',
+                label: l10n.admin_dashboard_expiring8to15,
                 icon: Icons.timelapse_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('Expiring (8–15d)'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_expiring8to15),
               ),
             ]),
-            _sectionHeader(c, 'PT Plan Expiry'),
+            _sectionHeader(c, l10n.admin_dashboard_sectionPtPlanExpiry),
             _grid([
               DashboardMetricCard(
                 value: '0',
-                label: 'PT Expiring (1–7d)',
+                label: l10n.admin_dashboard_ptExpiring1to7,
                 icon: Icons.fitness_center_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('PT Plan Expiry'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_sectionPtPlanExpiry),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'PT Expiring (8–15d)',
+                label: l10n.admin_dashboard_ptExpiring8to15,
                 icon: Icons.fitness_center_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('PT Plan Expiry'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_sectionPtPlanExpiry),
               ),
             ]),
             const SizedBox(height: 20),
             _primaryButton(
               c,
               icon: Icons.assignment_turned_in_rounded,
-              label: 'Record Attendance',
+              label: l10n.admin_dashboard_recordAttendance,
               onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
             ),
           ],
@@ -416,8 +421,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ════════════════════════════════════════════════════════════════════════
   // TAB 2 — PAYMENTS
   // ════════════════════════════════════════════════════════════════════════
-  Widget _paymentsTab(
-      BuildContext context, dynamic c, AdminDashboardSummary d) {
+  Widget _paymentsTab(BuildContext context, dynamic c, AppLocalizations l10n,
+      AdminDashboardSummary d) {
     final rev = d.revenue;
     return RefreshIndicator(
       color: c.primary,
@@ -430,66 +435,69 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionHeader(c, "Today's Collection – ${_todayLabel()}"),
+            _sectionHeader(c,
+                '${l10n.admin_dashboard_sectionTodaysCollection} – ${_todayLabel()}'),
             DashboardMetricCard(
               value: _money(rev?.paymentsCollected ?? 0),
-              label: 'Membership Collected Today',
+              label: l10n.admin_dashboard_membershipCollectedToday,
               icon: Icons.payments_rounded,
               highlighted: true,
-              onTap: () => _comingSoon('Membership Collected Today'),
+              onTap: () =>
+                  _comingSoon(l10n.admin_dashboard_membershipCollectedToday),
             ),
             _sectionHeader(c, _monthLabel()),
-            _paymentsPeriodSegment(c),
+            _paymentsPeriodSegment(c, l10n),
             const SizedBox(height: 12),
             _grid([
               DashboardMetricCard(
                 value: _money(0),
-                label: 'Admission Fees',
+                label: l10n.admin_dashboard_admissionFees,
                 icon: Icons.how_to_reg_rounded,
-                onTap: () => _comingSoon('Admission Fees'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_admissionFees),
               ),
               DashboardMetricCard(
                 value: _money(rev?.monthlyRevenue ?? 0),
-                label: 'Membership Collected',
+                label: l10n.admin_dashboard_membershipCollected,
                 icon: Icons.account_balance_wallet_rounded,
-                onTap: () => _comingSoon('Membership Collected'),
+                onTap: () =>
+                    _comingSoon(l10n.admin_dashboard_membershipCollected),
               ),
               DashboardMetricCard(
                 value: _money(0),
-                label: 'Membership Due',
+                label: l10n.admin_dashboard_membershipDue,
                 icon: Icons.wallet_rounded,
                 valueColor: c.danger,
                 highlighted: true,
-                onTap: () => _comingSoon('Membership Due'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_membershipDue),
               ),
               DashboardMetricCard(
                 value: _money(0),
-                label: 'PT Due',
+                label: l10n.admin_dashboard_ptDue,
                 icon: Icons.wallet_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('PT Due'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_ptDue),
               ),
               DashboardMetricCard(
                 value: _money(0),
-                label: 'Service Paid',
+                label: l10n.admin_dashboard_servicePaid,
                 icon: Icons.receipt_long_rounded,
-                onTap: () => _comingSoon('Service Paid'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_servicePaid),
               ),
               DashboardMetricCard(
                 value: _money(0),
-                label: 'Service Due',
+                label: l10n.admin_dashboard_serviceDue,
                 icon: Icons.receipt_long_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('Service Due'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_serviceDue),
               ),
             ]),
             const SizedBox(height: 12),
             DashboardMetricCard(
               value: _money(0),
-              label: 'Expense',
+              label: l10n.admin_dashboard_expense,
               icon: Icons.money_off_rounded,
               valueColor: c.danger,
-              onTap: () => _comingSoon('Expense'),
+              onTap: () => _comingSoon(l10n.admin_dashboard_expense),
             ),
           ],
         ),
@@ -497,8 +505,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  Widget _paymentsPeriodSegment(dynamic c) {
-    const labels = ['This Month', 'Last Month', 'Last 3 Months', 'Custom'];
+  Widget _paymentsPeriodSegment(dynamic c, AppLocalizations l10n) {
+    final labels = [
+      l10n.admin_dashboard_thisMonth,
+      l10n.admin_dashboard_lastMonth,
+      l10n.admin_dashboard_last3Months,
+      l10n.admin_dashboard_custom,
+    ];
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -543,8 +556,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ════════════════════════════════════════════════════════════════════════
   // TAB 3 — ATTENDANCE
   // ════════════════════════════════════════════════════════════════════════
-  Widget _attendanceTab(
-      BuildContext context, dynamic c, AdminDashboardSummary d) {
+  Widget _attendanceTab(BuildContext context, dynamic c, AppLocalizations l10n,
+      AdminDashboardSummary d) {
     final growth = d.checkins.attendanceGrowth;
     return RefreshIndicator(
       color: c.primary,
@@ -557,55 +570,59 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionHeader(c, 'Today – ${_todayLabel()}'),
+            _sectionHeader(
+                c, '${l10n.admin_dashboard_sectionToday} – ${_todayLabel()}'),
             _grid([
               DashboardMetricCard(
                 value: '${d.checkins.todayCheckins}',
-                label: "Today's Check-ins",
+                label: l10n.admin_dashboard_todayCheckins,
                 icon: Icons.event_available_rounded,
                 onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
               ),
               DashboardMetricCard(
                 value: '${d.checkins.upcomingPTSessions}',
-                label: 'Upcoming PT Sessions',
+                label: l10n.admin_dashboard_upcomingPtSessions,
                 icon: Icons.fitness_center_rounded,
-                onTap: () => _comingSoon('Upcoming PT Sessions'),
+                onTap: () =>
+                    _comingSoon(l10n.admin_dashboard_upcomingPtSessions),
               ),
             ]),
-            _sectionHeader(c, 'Attendance – ${_monthLabel()}'),
+            _sectionHeader(c,
+                '${l10n.admin_dashboard_sectionAttendance} – ${_monthLabel()}'),
             _grid([
               DashboardMetricCard(
                 value: '${d.checkins.attendanceCount}',
-                label: 'Monthly Check-ins',
+                label: l10n.admin_dashboard_monthlyCheckins,
                 icon: Icons.event_available_rounded,
                 onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
               ),
               DashboardMetricCard(
                 value: '${growth >= 0 ? '+' : ''}${growth.toStringAsFixed(0)}%',
-                label: 'Attendance Growth',
+                label: l10n.admin_dashboard_attendanceGrowth,
                 icon: Icons.trending_up_rounded,
                 valueColor: growth >= 0 ? c.success : c.danger,
-                onTap: () => _comingSoon('Attendance Growth'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_attendanceGrowth),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Unique Members Attended',
+                label: l10n.admin_dashboard_uniqueMembersAttended,
                 icon: Icons.groups_rounded,
-                onTap: () => _comingSoon('Unique Members Attended'),
+                onTap: () =>
+                    _comingSoon(l10n.admin_dashboard_uniqueMembersAttended),
               ),
               DashboardMetricCard(
                 value: '0',
-                label: 'Absent Members',
+                label: l10n.admin_dashboard_absentMembers,
                 icon: Icons.person_off_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon('Absent Members'),
+                onTap: () => _comingSoon(l10n.admin_dashboard_absentMembers),
               ),
             ]),
             const SizedBox(height: 20),
             _primaryButton(
               c,
               icon: Icons.assignment_turned_in_rounded,
-              label: 'Record Attendance',
+              label: l10n.admin_dashboard_recordAttendance,
               onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
             ),
           ],

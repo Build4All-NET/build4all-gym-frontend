@@ -3791,6 +3791,111 @@ abstract class AppLocalizations {
   /// **'Custom'**
   String get admin_dashboard_custom;
 
+  /// No description provided for @admin_dashboard_tabMembership.
+  String get admin_dashboard_tabMembership;
+
+  /// No description provided for @admin_dashboard_tabPayments.
+  String get admin_dashboard_tabPayments;
+
+  /// No description provided for @admin_dashboard_tabAttendance.
+  String get admin_dashboard_tabAttendance;
+
+  /// No description provided for @admin_dashboard_cardHint.
+  String get admin_dashboard_cardHint;
+
+  /// No description provided for @admin_dashboard_comingSoon.
+  String get admin_dashboard_comingSoon;
+
+  /// No description provided for @admin_dashboard_lastMonth.
+  String get admin_dashboard_lastMonth;
+
+  /// No description provided for @admin_dashboard_last3Months.
+  String get admin_dashboard_last3Months;
+
+  /// No description provided for @admin_dashboard_sectionToday.
+  String get admin_dashboard_sectionToday;
+
+  /// No description provided for @admin_dashboard_sectionAttendance.
+  String get admin_dashboard_sectionAttendance;
+
+  /// No description provided for @admin_dashboard_sectionMembershipExpiry.
+  String get admin_dashboard_sectionMembershipExpiry;
+
+  /// No description provided for @admin_dashboard_sectionPtPlanExpiry.
+  String get admin_dashboard_sectionPtPlanExpiry;
+
+  /// No description provided for @admin_dashboard_sectionTodaysCollection.
+  String get admin_dashboard_sectionTodaysCollection;
+
+  /// No description provided for @admin_dashboard_attendance.
+  String get admin_dashboard_attendance;
+
+  /// No description provided for @admin_dashboard_birthdays.
+  String get admin_dashboard_birthdays;
+
+  /// No description provided for @admin_dashboard_expiresToday.
+  String get admin_dashboard_expiresToday;
+
+  /// No description provided for @admin_dashboard_ptExpiringToday.
+  String get admin_dashboard_ptExpiringToday;
+
+  /// No description provided for @admin_dashboard_monthlyCheckins.
+  String get admin_dashboard_monthlyCheckins;
+
+  /// No description provided for @admin_dashboard_uniqueMembersAttended.
+  String get admin_dashboard_uniqueMembersAttended;
+
+  /// No description provided for @admin_dashboard_expiring1to3.
+  String get admin_dashboard_expiring1to3;
+
+  /// No description provided for @admin_dashboard_expiring4to7.
+  String get admin_dashboard_expiring4to7;
+
+  /// No description provided for @admin_dashboard_expiring8to15.
+  String get admin_dashboard_expiring8to15;
+
+  /// No description provided for @admin_dashboard_ptExpiring1to7.
+  String get admin_dashboard_ptExpiring1to7;
+
+  /// No description provided for @admin_dashboard_ptExpiring8to15.
+  String get admin_dashboard_ptExpiring8to15;
+
+  /// No description provided for @admin_dashboard_recordAttendance.
+  String get admin_dashboard_recordAttendance;
+
+  /// No description provided for @admin_dashboard_membershipCollectedToday.
+  String get admin_dashboard_membershipCollectedToday;
+
+  /// No description provided for @admin_dashboard_admissionFees.
+  String get admin_dashboard_admissionFees;
+
+  /// No description provided for @admin_dashboard_membershipCollected.
+  String get admin_dashboard_membershipCollected;
+
+  /// No description provided for @admin_dashboard_membershipDue.
+  String get admin_dashboard_membershipDue;
+
+  /// No description provided for @admin_dashboard_ptDue.
+  String get admin_dashboard_ptDue;
+
+  /// No description provided for @admin_dashboard_servicePaid.
+  String get admin_dashboard_servicePaid;
+
+  /// No description provided for @admin_dashboard_serviceDue.
+  String get admin_dashboard_serviceDue;
+
+  /// No description provided for @admin_dashboard_expense.
+  String get admin_dashboard_expense;
+
+  /// No description provided for @admin_dashboard_upcomingPtSessions.
+  String get admin_dashboard_upcomingPtSessions;
+
+  /// No description provided for @admin_dashboard_attendanceGrowth.
+  String get admin_dashboard_attendanceGrowth;
+
+  /// No description provided for @admin_dashboard_absentMembers.
+  String get admin_dashboard_absentMembers;
+
   /// No description provided for @admin_dashboard_activeMembers.
   ///
   /// In en, this message translates to:

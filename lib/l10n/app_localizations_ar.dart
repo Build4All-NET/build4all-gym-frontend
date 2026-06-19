@@ -1905,6 +1905,111 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_dashboard_custom => 'مخصص';
 
   @override
+  String get admin_dashboard_tabMembership => 'العضوية';
+
+  @override
+  String get admin_dashboard_tabPayments => 'المدفوعات';
+
+  @override
+  String get admin_dashboard_tabAttendance => 'الحضور';
+
+  @override
+  String get admin_dashboard_cardHint => 'اضغط على البطاقة لمزيد من المعلومات.';
+
+  @override
+  String get admin_dashboard_comingSoon => 'قريباً';
+
+  @override
+  String get admin_dashboard_lastMonth => 'الشهر الماضي';
+
+  @override
+  String get admin_dashboard_last3Months => 'آخر 3 أشهر';
+
+  @override
+  String get admin_dashboard_sectionToday => 'اليوم';
+
+  @override
+  String get admin_dashboard_sectionAttendance => 'الحضور';
+
+  @override
+  String get admin_dashboard_sectionMembershipExpiry => 'انتهاء العضوية';
+
+  @override
+  String get admin_dashboard_sectionPtPlanExpiry => 'انتهاء خطة التدريب';
+
+  @override
+  String get admin_dashboard_sectionTodaysCollection => 'تحصيل اليوم';
+
+  @override
+  String get admin_dashboard_attendance => 'الحضور';
+
+  @override
+  String get admin_dashboard_birthdays => 'أعياد الميلاد';
+
+  @override
+  String get admin_dashboard_expiresToday => 'تنتهي اليوم';
+
+  @override
+  String get admin_dashboard_ptExpiringToday => 'خطة تدريب تنتهي اليوم';
+
+  @override
+  String get admin_dashboard_monthlyCheckins => 'تسجيلات الدخول الشهرية';
+
+  @override
+  String get admin_dashboard_uniqueMembersAttended => 'أعضاء فريدون حضروا';
+
+  @override
+  String get admin_dashboard_expiring1to3 => 'تنتهي (1–3 أيام)';
+
+  @override
+  String get admin_dashboard_expiring4to7 => 'تنتهي (4–7 أيام)';
+
+  @override
+  String get admin_dashboard_expiring8to15 => 'تنتهي (8–15 يوم)';
+
+  @override
+  String get admin_dashboard_ptExpiring1to7 => 'تدريب ينتهي (1–7 أيام)';
+
+  @override
+  String get admin_dashboard_ptExpiring8to15 => 'تدريب ينتهي (8–15 يوم)';
+
+  @override
+  String get admin_dashboard_recordAttendance => 'تسجيل الحضور';
+
+  @override
+  String get admin_dashboard_membershipCollectedToday => 'اشتراكات محصّلة اليوم';
+
+  @override
+  String get admin_dashboard_admissionFees => 'رسوم التسجيل';
+
+  @override
+  String get admin_dashboard_membershipCollected => 'اشتراكات محصّلة';
+
+  @override
+  String get admin_dashboard_membershipDue => 'اشتراكات مستحقة';
+
+  @override
+  String get admin_dashboard_ptDue => 'تدريب مستحق';
+
+  @override
+  String get admin_dashboard_servicePaid => 'خدمات مدفوعة';
+
+  @override
+  String get admin_dashboard_serviceDue => 'خدمات مستحقة';
+
+  @override
+  String get admin_dashboard_expense => 'المصاريف';
+
+  @override
+  String get admin_dashboard_upcomingPtSessions => 'جلسات تدريب قادمة';
+
+  @override
+  String get admin_dashboard_attendanceGrowth => 'نمو الحضور';
+
+  @override
+  String get admin_dashboard_absentMembers => 'أعضاء غائبون';
+
+  @override
   String get admin_dashboard_activeMembers => 'الأعضاء النشطون';
 
   @override
