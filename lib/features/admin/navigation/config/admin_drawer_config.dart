@@ -76,6 +76,12 @@ const _operationsItems = [
     route: '/admin/invoices',
   ),
   NavigationItem(
+    id: 'expenses',
+    iconData: Icons.payments_outlined,
+    labelKey: 'navExpenses',
+    route: '/admin/expenses',
+  ),
+  NavigationItem(
     id: 'classes_pt',
     iconData: Icons.calendar_month_outlined,
     labelKey: 'navClassesPt',

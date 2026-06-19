@@ -46,6 +46,7 @@ class AdminPaymentConfigCubit extends Cubit<AdminPaymentConfigState> {
       emit(AdminPaymentConfigLoaded(methods: newList));
     } catch (e) {
       emit(AdminPaymentConfigLoaded(methods: current.methods));
+      rethrow;
     }
   }
 

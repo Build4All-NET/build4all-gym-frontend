@@ -61,6 +61,20 @@ class MemberStats {
   // Shown as "-0.3% vs last month" (green = improved).
   final double churnRateVsLastMonth;
 
+  // ── Members whose date of birth is today (year-agnostic) ──────────
+  final int birthdaysToday;
+
+  // ── Active memberships ending today / in these day ranges ─────────
+  final int expiringToday;
+  final int expiring1to3Days;
+  final int expiring4to7Days;
+  final int expiring8to15Days;
+
+  // ── Active PT packages ending today / in these day ranges ─────────
+  final int ptExpiringToday;
+  final int ptExpiring1to7Days;
+  final int ptExpiring8to15Days;
+
   // Constructor — const makes instances immutable and compile-time safe
   const MemberStats({
     required this.activeMembers,
@@ -71,5 +85,13 @@ class MemberStats {
     required this.canceledLast7Days,
     required this.churnRate,
     required this.churnRateVsLastMonth,
+    required this.birthdaysToday,
+    required this.expiringToday,
+    required this.expiring1to3Days,
+    required this.expiring4to7Days,
+    required this.expiring8to15Days,
+    required this.ptExpiringToday,
+    required this.ptExpiring1to7Days,
+    required this.ptExpiring8to15Days,
   });
 }

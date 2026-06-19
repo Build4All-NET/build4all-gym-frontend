@@ -84,7 +84,6 @@ class _BranchesListPageState extends State<BranchesListPage> {
 
             // ➤ Notifications (optional)
             notificationCount: 0,
-            onNotificationTap: () {},
 
             // ➤ Extra actions (optional)
             actions: const [],

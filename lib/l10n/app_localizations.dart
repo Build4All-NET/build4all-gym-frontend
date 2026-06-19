@@ -1787,6 +1787,12 @@ abstract class AppLocalizations {
   /// **'Invoices'**
   String get navInvoices;
 
+  /// Admin drawer — Expenses item
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get navExpenses;
+
   /// Admin drawer — Settings item
   ///
   /// In en, this message translates to:
@@ -3792,105 +3798,207 @@ abstract class AppLocalizations {
   String get admin_dashboard_custom;
 
   /// No description provided for @admin_dashboard_tabMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
   String get admin_dashboard_tabMembership;
 
   /// No description provided for @admin_dashboard_tabPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
   String get admin_dashboard_tabPayments;
 
   /// No description provided for @admin_dashboard_tabAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
   String get admin_dashboard_tabAttendance;
 
   /// No description provided for @admin_dashboard_cardHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the card for additional information.'**
   String get admin_dashboard_cardHint;
 
   /// No description provided for @admin_dashboard_comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'coming soon'**
   String get admin_dashboard_comingSoon;
 
   /// No description provided for @admin_dashboard_lastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Month'**
   String get admin_dashboard_lastMonth;
 
   /// No description provided for @admin_dashboard_last3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 3 Months'**
   String get admin_dashboard_last3Months;
 
   /// No description provided for @admin_dashboard_sectionToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
   String get admin_dashboard_sectionToday;
 
   /// No description provided for @admin_dashboard_sectionAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
   String get admin_dashboard_sectionAttendance;
 
   /// No description provided for @admin_dashboard_sectionMembershipExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Expiry'**
   String get admin_dashboard_sectionMembershipExpiry;
 
   /// No description provided for @admin_dashboard_sectionPtPlanExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Plan Expiry'**
   String get admin_dashboard_sectionPtPlanExpiry;
 
   /// No description provided for @admin_dashboard_sectionTodaysCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Collection'**
   String get admin_dashboard_sectionTodaysCollection;
 
   /// No description provided for @admin_dashboard_birthdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthdays'**
   String get admin_dashboard_birthdays;
 
   /// No description provided for @admin_dashboard_expiresToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires Today'**
   String get admin_dashboard_expiresToday;
 
   /// No description provided for @admin_dashboard_ptExpiringToday.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Plan Expiring Today'**
   String get admin_dashboard_ptExpiringToday;
 
   /// No description provided for @admin_dashboard_monthlyCheckins.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Check-ins'**
   String get admin_dashboard_monthlyCheckins;
 
   /// No description provided for @admin_dashboard_uniqueMembersAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'Unique Members Attended'**
   String get admin_dashboard_uniqueMembersAttended;
 
   /// No description provided for @admin_dashboard_expiring1to3.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring (1–3d)'**
   String get admin_dashboard_expiring1to3;
 
   /// No description provided for @admin_dashboard_expiring4to7.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring (4–7d)'**
   String get admin_dashboard_expiring4to7;
 
   /// No description provided for @admin_dashboard_expiring8to15.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring (8–15d)'**
   String get admin_dashboard_expiring8to15;
 
   /// No description provided for @admin_dashboard_ptExpiring1to7.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Expiring (1–7d)'**
   String get admin_dashboard_ptExpiring1to7;
 
   /// No description provided for @admin_dashboard_ptExpiring8to15.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Expiring (8–15d)'**
   String get admin_dashboard_ptExpiring8to15;
 
   /// No description provided for @admin_dashboard_recordAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Attendance'**
   String get admin_dashboard_recordAttendance;
 
   /// No description provided for @admin_dashboard_membershipCollectedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Collected Today'**
   String get admin_dashboard_membershipCollectedToday;
 
   /// No description provided for @admin_dashboard_admissionFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Fees'**
   String get admin_dashboard_admissionFees;
 
   /// No description provided for @admin_dashboard_membershipCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Collected'**
   String get admin_dashboard_membershipCollected;
 
   /// No description provided for @admin_dashboard_membershipDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Due'**
   String get admin_dashboard_membershipDue;
 
   /// No description provided for @admin_dashboard_ptDue.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Due'**
   String get admin_dashboard_ptDue;
 
   /// No description provided for @admin_dashboard_servicePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Paid'**
   String get admin_dashboard_servicePaid;
 
   /// No description provided for @admin_dashboard_serviceDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Due'**
   String get admin_dashboard_serviceDue;
 
   /// No description provided for @admin_dashboard_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
   String get admin_dashboard_expense;
 
   /// No description provided for @admin_dashboard_upcomingPtSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming PT Sessions'**
   String get admin_dashboard_upcomingPtSessions;
 
   /// No description provided for @admin_dashboard_attendanceGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance Growth'**
   String get admin_dashboard_attendanceGrowth;
 
   /// No description provided for @admin_dashboard_absentMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent Members'**
   String get admin_dashboard_absentMembers;
 
   /// No description provided for @admin_dashboard_activeMembers.
@@ -4378,6 +4486,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Plan'**
   String get admin_plans_createPlan;
+
+  /// No description provided for @admin_expenses_deleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Expense'**
+  String get admin_expenses_deleteTitle;
+
+  /// No description provided for @admin_expenses_deleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this expense?'**
+  String get admin_expenses_deleteMessage;
+
+  /// No description provided for @admin_expenses_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get admin_expenses_delete;
+
+  /// No description provided for @admin_expenses_allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get admin_expenses_allCategories;
+
+  /// No description provided for @admin_expenses_searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search expenses...'**
+  String get admin_expenses_searchHint;
+
+  /// No description provided for @admin_expenses_noExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses found'**
+  String get admin_expenses_noExpenses;
 
   /// No description provided for @admin_staff_noStaff.
   ///
@@ -6666,97 +6810,202 @@ abstract class AppLocalizations {
   String get settingsLanguageSystemDefaultSubtitle;
 
   /// No description provided for @branchDialog_setupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up Your First Branch'**
   String get branchDialog_setupTitle;
 
   /// No description provided for @branchDialog_setupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your main gym location to start managing members, plans, check-ins, and more.'**
   String get branchDialog_setupSubtitle;
 
   /// No description provided for @branchDialog_sectionBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
   String get branchDialog_sectionBasic;
 
   /// No description provided for @branchDialog_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Name'**
   String get branchDialog_name;
 
   /// No description provided for @branchDialog_nameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Main Gym – Downtown'**
   String get branchDialog_nameHint;
 
   /// No description provided for @branchDialog_nameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch name is required'**
   String get branchDialog_nameRequired;
 
   /// No description provided for @branchDialog_city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
   String get branchDialog_city;
 
   /// No description provided for @branchDialog_cityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Cairo'**
   String get branchDialog_cityHint;
 
   /// No description provided for @branchDialog_cityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'City is required'**
   String get branchDialog_cityRequired;
 
   /// No description provided for @branchDialog_sectionContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
   String get branchDialog_sectionContact;
 
   /// No description provided for @branchDialog_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
   String get branchDialog_phone;
 
   /// No description provided for @branchDialog_phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'+20 100 000 0000'**
   String get branchDialog_phoneHint;
 
   /// No description provided for @branchDialog_phoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone is required'**
   String get branchDialog_phoneRequired;
 
   /// No description provided for @branchDialog_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
   String get branchDialog_email;
 
   /// No description provided for @branchDialog_emailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'branch@yourgym.com'**
   String get branchDialog_emailHint;
 
   /// No description provided for @branchDialog_emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
   String get branchDialog_emailRequired;
 
   /// No description provided for @branchDialog_emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
   String get branchDialog_emailInvalid;
 
   /// No description provided for @branchDialog_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
   String get branchDialog_address;
 
   /// No description provided for @branchDialog_addressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'123 Main St, Downtown'**
   String get branchDialog_addressHint;
 
   /// No description provided for @branchDialog_addressRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Address is required'**
   String get branchDialog_addressRequired;
 
   /// No description provided for @branchDialog_sectionHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Operating Hours'**
   String get branchDialog_sectionHours;
 
   /// No description provided for @branchDialog_open24.
+  ///
+  /// In en, this message translates to:
+  /// **'Open 24 Hours'**
   String get branchDialog_open24;
 
   /// No description provided for @branchDialog_open24Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch is always open'**
   String get branchDialog_open24Sub;
 
   /// No description provided for @branchDialog_opening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening'**
   String get branchDialog_opening;
 
   /// No description provided for @branchDialog_closing.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing'**
   String get branchDialog_closing;
 
   /// No description provided for @branchDialog_tapToSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to set'**
   String get branchDialog_tapToSet;
 
   /// No description provided for @branchDialog_closingAfterOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing time must be after opening time'**
   String get branchDialog_closingAfterOpening;
 
   /// No description provided for @branchDialog_selectOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an opening time'**
   String get branchDialog_selectOpening;
 
   /// No description provided for @branchDialog_selectClosing.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a closing time'**
   String get branchDialog_selectClosing;
 
   /// No description provided for @branchDialog_create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Branch'**
   String get branchDialog_create;
 
   /// No description provided for @branchDialog_createdSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch created successfully!'**
   String get branchDialog_createdSuccess;
+
+  /// No description provided for @branchDialog_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get branchDialog_next;
+
+  /// No description provided for @branchDialog_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get branchDialog_back;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

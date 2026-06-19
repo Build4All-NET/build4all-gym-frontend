@@ -68,7 +68,6 @@ class TrainerDashboardScreen extends StatelessWidget {
             selectedBranchId: context.watch<AdminProfileCubit>().state.branchId,
             onBranchChanged:  onBranchChanged,
             notificationCount: 0,
-            onNotificationTap: () {},
             actions: [
               Builder(builder: (context) {
                 final name     = context.watch<AdminProfileCubit>().state.adminName;
@@ -228,13 +227,17 @@ class _StatCardsGrid extends StatelessWidget {
     final cancelled = (stats.total - stats.completed - stats.scheduled)
         .clamp(0, stats.total);
 
-    return GridView.count(
-      crossAxisCount:   2,
-      shrinkWrap:       true,
-      physics:          const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 12,
-      mainAxisSpacing:  12,
-      childAspectRatio: 1.55,
+    return GridView(
+      shrinkWrap: true,
+      physics:    const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount:   2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing:  12,
+        // Fixed height (not childAspectRatio) so the 2-line label never
+        // gets squeezed into overflow on narrow screens.
+        mainAxisExtent: 116,
+      ),
       children: [
         _StatCard(icon: Icons.calendar_month_outlined, value: '${stats.total}',
             label: AppLocalizations.of(context)!.trainer_todaySessions, gradient: [c.primary, primaryLight]),
@@ -612,13 +615,17 @@ class _QuickActionsSection extends StatelessWidget {
             style: TextStyle(
                 fontSize: 17, fontWeight: FontWeight.bold, color: c.label)),
         const SizedBox(height: 12),
-        GridView.count(
-          crossAxisCount:   2,
-          shrinkWrap:       true,
-          physics:          const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing:  12,
-          childAspectRatio: 1.75,
+        GridView(
+          shrinkWrap: true,
+          physics:    const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:   2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing:  12,
+            // Fixed height (not childAspectRatio) so the label never gets
+            // squeezed into overflow on narrow screens.
+            mainAxisExtent: 100,
+          ),
           children: items
               .map((item) => _QACard(item: item, tokens: tokens))
               .toList(),
@@ -673,6 +680,8 @@ class _QACard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(item.label,
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     fontSize: 12, fontWeight: FontWeight.w600, color: c.label)),
           ],

@@ -19,6 +19,7 @@ class AuthFailure {
 abstract class AuthRepository {
   Future<Either<AuthFailure, void>> sendVerificationCode({
     String? email,
+    String? phoneNumber,
     required String password,
     required int ownerProjectLinkId,
   });

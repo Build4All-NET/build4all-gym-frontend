@@ -155,6 +155,7 @@ class AdminDrawerItemWidget extends StatelessWidget {
       case 'navPayments':           return l10n.navPayments;
       case 'navMembershipRequests': return l10n.navMembershipRequests;
       case 'navInvoices':           return l10n.navInvoices;
+      case 'navExpenses':           return l10n.navExpenses;
       case 'navClassesPt':          return l10n.navClassesPt;
       case 'navNotifications':      return l10n.navNotifications;
       case 'navPtSessions':         return l10n.navPtSessions;

@@ -32,10 +32,22 @@ class Revenue {
   // Shown as "+15% vs last month" (green = growing).
   final double monthlyRevenueVsLastMonth;
 
+  // ── Outstanding (unpaid/partial/overdue) amount on membership invoices ──
+  final double membershipDue;
+
+  // ── Outstanding (unpaid/partial/overdue) amount on PT invoices ────────
+  final double ptDue;
+
+  // ── Total operating expenses logged for the current calendar month ────
+  final double monthlyExpense;
+
   const Revenue({
     required this.paymentsCollected,
     required this.paymentsGrowth,
     required this.monthlyRevenue,
     required this.monthlyRevenueVsLastMonth,
+    required this.membershipDue,
+    required this.ptDue,
+    required this.monthlyExpense,
   });
 }

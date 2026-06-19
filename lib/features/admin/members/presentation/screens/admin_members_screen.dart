@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/app_router.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -231,45 +232,48 @@ class _NotificationBell extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Stack(
-      children: [
-        Container(
-          width:  36,
-          height: 36,
-          decoration: BoxDecoration(
-            color:        cs.surfaceVariant,
-            borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed(AppRouter.adminNotifications),
+      child: Stack(
+        children: [
+          Container(
+            width:  36,
+            height: 36,
+            decoration: BoxDecoration(
+              color:        cs.surfaceVariant,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.notifications_none_rounded,
+              color: cs.onSurfaceVariant,
+              size:  18,
+            ),
           ),
-          child: Icon(
-            Icons.notifications_none_rounded,
-            color: cs.onSurfaceVariant,
-            size:  18,
-          ),
-        ),
-        if (_count > 0)
-          Positioned(
-            top:   2,
-            right: 2,
-            child: Container(
-              width:  16,
-              height: 16,
-              decoration: BoxDecoration(
-                color: cs.error,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  _count > 99 ? '99+' : '$_count',
-                  style: const TextStyle(
-                    color:      Colors.white,
-                    fontSize:   9,
-                    fontWeight: FontWeight.w700,
+          if (_count > 0)
+            Positioned(
+              top:   2,
+              right: 2,
+              child: Container(
+                width:  16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: cs.error,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    _count > 99 ? '99+' : '$_count',
+                    style: const TextStyle(
+                      color:      Colors.white,
+                      fontSize:   9,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

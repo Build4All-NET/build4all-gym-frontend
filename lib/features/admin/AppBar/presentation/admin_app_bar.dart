@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/app/app_router.dart';
 import '../data/models/branch_option_model.dart';
 import 'branch_cubit.dart';
 
@@ -79,7 +80,8 @@ class AdminAppBar extends StatelessWidget {
           const SizedBox(width: 6),
           _NotificationBell(
             count: notificationCount,
-            onTap: onNotificationTap,
+            onTap: onNotificationTap ??
+                () => Navigator.of(context).pushNamed(AppRouter.adminNotifications),
           ),
         ],
       ),
