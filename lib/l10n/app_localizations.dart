@@ -7045,6 +7045,27 @@ abstract class AppLocalizations {
 
   /// No description provided for @reports_noData.
   String get reports_noData;
+
+  /// No description provided for @sectionOverview.
+  String get sectionOverview;
+
+  /// No description provided for @sectionMembers.
+  String get sectionMembers;
+
+  /// No description provided for @sectionFrontDesk.
+  String get sectionFrontDesk;
+
+  /// No description provided for @sectionTrainingClasses.
+  String get sectionTrainingClasses;
+
+  /// No description provided for @sectionFinance.
+  String get sectionFinance;
+
+  /// No description provided for @sectionSetup.
+  String get sectionSetup;
+
+  /// No description provided for @sectionTools.
+  String get sectionTools;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

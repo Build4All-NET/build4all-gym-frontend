@@ -1438,5 +1438,12 @@
   "reports_collectedOverTime": "المحصّل عبر الوقت",
   "reports_expenseByCategory": "المصاريف حسب الفئة",
   "reports_checkinsOverTime": "الحضور عبر الوقت",
-  "reports_noData": "لا توجد بيانات لهذه الفترة"
+  "reports_noData": "لا توجد بيانات لهذه الفترة",
+  "sectionOverview": "نظرة عامة",
+  "sectionMembers": "الأعضاء",
+  "sectionFrontDesk": "الاستقبال",
+  "sectionTrainingClasses": "التدريب والحصص",
+  "sectionFinance": "المالية",
+  "sectionSetup": "الإعداد",
+  "sectionTools": "أدوات"
 }

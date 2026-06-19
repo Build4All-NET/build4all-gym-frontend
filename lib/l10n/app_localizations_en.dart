@@ -3588,4 +3588,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reports_noData => 'No data for this period';
+
+  @override
+  String get sectionOverview => 'Overview';
+
+  @override
+  String get sectionMembers => 'Members';
+
+  @override
+  String get sectionFrontDesk => 'Front Desk';
+
+  @override
+  String get sectionTrainingClasses => 'Training & Classes';
+
+  @override
+  String get sectionFinance => 'Finance';
+
+  @override
+  String get sectionSetup => 'Setup';
+
+  @override
+  String get sectionTools => 'Tools';
 }

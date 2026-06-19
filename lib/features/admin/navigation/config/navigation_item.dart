@@ -10,12 +10,21 @@ class NavigationItem {
   final String route;
   final bool isDestructive; // true → red color (used for Logout)
 
+  // ── Role visibility ─────────────────────────────────────────────────────────
+  // Admin/Owner always sees every item. These flags additionally expose an item
+  // to staff gym-roles, so display grouping can change freely without affecting
+  // what TRAINER / RECEPTION users are allowed to see.
+  final bool trainer;   // visible to TRAINER staff
+  final bool reception; // visible to RECEPTION staff
+
   const NavigationItem({
     required this.id,
     required this.iconData,
     required this.labelKey,
     required this.route,
     this.isDestructive = false,
+    this.trainer = false,
+    this.reception = false,
   });
 }
 

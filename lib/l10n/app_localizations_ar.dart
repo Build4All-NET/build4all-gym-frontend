@@ -3588,4 +3588,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reports_noData => 'لا توجد بيانات لهذه الفترة';
+
+  @override
+  String get sectionOverview => 'نظرة عامة';
+
+  @override
+  String get sectionMembers => 'الأعضاء';
+
+  @override
+  String get sectionFrontDesk => 'الاستقبال';
+
+  @override
+  String get sectionTrainingClasses => 'التدريب والحصص';
+
+  @override
+  String get sectionFinance => 'المالية';
+
+  @override
+  String get sectionSetup => 'الإعداد';
+
+  @override
+  String get sectionTools => 'أدوات';
 }

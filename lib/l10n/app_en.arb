@@ -1464,5 +1464,12 @@
   "reports_collectedOverTime": "Collected Over Time",
   "reports_expenseByCategory": "Expense by Category",
   "reports_checkinsOverTime": "Check-ins Over Time",
-  "reports_noData": "No data for this period"
+  "reports_noData": "No data for this period",
+  "sectionOverview": "Overview",
+  "sectionMembers": "Members",
+  "sectionFrontDesk": "Front Desk",
+  "sectionTrainingClasses": "Training & Classes",
+  "sectionFinance": "Finance",
+  "sectionSetup": "Setup",
+  "sectionTools": "Tools"
 }
