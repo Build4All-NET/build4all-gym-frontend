@@ -3827,9 +3827,6 @@ abstract class AppLocalizations {
   /// No description provided for @admin_dashboard_sectionTodaysCollection.
   String get admin_dashboard_sectionTodaysCollection;
 
-  /// No description provided for @admin_dashboard_attendance.
-  String get admin_dashboard_attendance;
-
   /// No description provided for @admin_dashboard_birthdays.
   String get admin_dashboard_birthdays;
 

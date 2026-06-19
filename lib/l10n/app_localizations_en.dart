@@ -1941,9 +1941,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_dashboard_sectionTodaysCollection => 'Today\'s Collection';
 
   @override
-  String get admin_dashboard_attendance => 'Attendance';
-
-  @override
   String get admin_dashboard_birthdays => 'Birthdays';
 
   @override
