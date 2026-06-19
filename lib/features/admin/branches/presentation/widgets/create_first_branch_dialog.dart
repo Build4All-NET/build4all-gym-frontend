@@ -108,9 +108,14 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
-    // Keyboard-aware: reserve room for the keyboard via insetPadding so the
-    // Dialog shrinks and the form scrolls above it (no overflow).
-    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    // Keyboard-aware sizing: cap the dialog to the height left above the
+    // keyboard (and status bar / margins) so the form scrolls above it and
+    // the focused field stays visible — no overflow, no collapse.
+    final media = MediaQuery.of(context);
+    final availableHeight = media.size.height -
+        media.padding.top -
+        media.viewInsets.bottom -
+        48;
 
     return BlocListener<BranchesBloc, BranchesState>(
       listenWhen: (_, s) => s is BranchCreated || s is BranchCreateError,
@@ -124,12 +129,17 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
         }
       },
       child: Dialog(
-        insetPadding: EdgeInsets.fromLTRB(16, 24, 16, 24 + keyboard),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         backgroundColor: c.surface,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         clipBehavior: Clip.antiAlias,
-        child: Column(
+        child: ConstrainedBox(
+          // Bound the dialog height to the space left ABOVE the keyboard so the
+          // Flexible scroll view gets a real (non-zero) height and the focused
+          // field auto-scrolls into view instead of vanishing.
+          constraints: BoxConstraints(maxHeight: availableHeight),
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               _Header(),
@@ -266,6 +276,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
               _Footer(onSubmit: _submit),
             ],
           ),
+        ),
       ),
     );
   }
