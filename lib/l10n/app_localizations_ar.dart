@@ -1941,9 +1941,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_dashboard_sectionTodaysCollection => 'تحصيل اليوم';
 
   @override
-  String get admin_dashboard_attendance => 'الحضور';
-
-  @override
   String get admin_dashboard_birthdays => 'أعياد الميلاد';
 
   @override
