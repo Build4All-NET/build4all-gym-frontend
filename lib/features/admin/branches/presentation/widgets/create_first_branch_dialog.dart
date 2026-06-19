@@ -13,6 +13,7 @@ import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 /// Shows a non-dismissible dialog so the admin must create the first branch
 /// before using the app. On success, reloads [BranchCubit] so the AppBar
@@ -106,6 +107,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   @override
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     final media = MediaQuery.of(context);
     // Keyboard-aware: leave room for the keyboard so fields stay visible and
     // the form scrolls above it instead of being covered/cramped.
@@ -118,7 +120,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
         if (state is BranchCreated) {
           Navigator.of(ctx).pop();
           widget.onBranchCreated();
-          AppToast.success(context, 'Branch created successfully!');
+          AppToast.success(context, l10n.branchDialog_createdSuccess);
         } else if (state is BranchCreateError) {
           AppToast.error(ctx, state.message);
         }
@@ -143,58 +145,58 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _sectionLabel(c, 'Basic Information'),
+                        _sectionLabel(c, l10n.branchDialog_sectionBasic),
                         const SizedBox(height: 10),
                         _field(
                           c: c,
                           ctrl: _nameCtrl,
-                          label: 'Branch Name',
-                          hint: 'e.g. Main Gym – Downtown',
+                          label: l10n.branchDialog_name,
+                          hint: l10n.branchDialog_nameHint,
                           icon: Icons.store_mall_directory_outlined,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Branch name is required'
+                              ? l10n.branchDialog_nameRequired
                               : null,
                         ),
                         const SizedBox(height: 12),
                         _field(
                           c: c,
                           ctrl: _cityCtrl,
-                          label: 'City',
-                          hint: 'e.g. Cairo',
+                          label: l10n.branchDialog_city,
+                          hint: l10n.branchDialog_cityHint,
                           icon: Icons.location_city_outlined,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'City is required'
+                              ? l10n.branchDialog_cityRequired
                               : null,
                         ),
                         const SizedBox(height: 20),
-                        _sectionLabel(c, 'Contact'),
+                        _sectionLabel(c, l10n.branchDialog_sectionContact),
                         const SizedBox(height: 10),
                         _field(
                           c: c,
                           ctrl: _phoneCtrl,
-                          label: 'Phone',
-                          hint: '+20 100 000 0000',
+                          label: l10n.branchDialog_phone,
+                          hint: l10n.branchDialog_phoneHint,
                           icon: Icons.phone_outlined,
                           keyboard: TextInputType.phone,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Phone is required'
+                              ? l10n.branchDialog_phoneRequired
                               : null,
                         ),
                         const SizedBox(height: 12),
                         _field(
                           c: c,
                           ctrl: _emailCtrl,
-                          label: 'Email',
-                          hint: 'branch@yourgym.com',
+                          label: l10n.branchDialog_email,
+                          hint: l10n.branchDialog_emailHint,
                           icon: Icons.email_outlined,
                           keyboard: TextInputType.emailAddress,
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Email is required';
+                              return l10n.branchDialog_emailRequired;
                             }
                             if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
                                 .hasMatch(v.trim())) {
-                              return 'Enter a valid email address';
+                              return l10n.branchDialog_emailInvalid;
                             }
                             return null;
                           },
@@ -203,16 +205,16 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
                         _field(
                           c: c,
                           ctrl: _addressCtrl,
-                          label: 'Address',
-                          hint: '123 Main St, Downtown',
+                          label: l10n.branchDialog_address,
+                          hint: l10n.branchDialog_addressHint,
                           icon: Icons.place_outlined,
                           maxLines: 2,
                           validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Address is required'
+                              ? l10n.branchDialog_addressRequired
                               : null,
                         ),
                         const SizedBox(height: 20),
-                        _sectionLabel(c, 'Operating Hours'),
+                        _sectionLabel(c, l10n.branchDialog_sectionHours),
                         const SizedBox(height: 10),
                         _Open24HoursTile(
                           value: _isOpen24Hours,
@@ -230,7 +232,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
                             children: [
                               Expanded(
                                 child: _TimeTile(
-                                  label: 'Opening',
+                                  label: l10n.branchDialog_opening,
                                   value: _openingTime,
                                   onPicked: (t) =>
                                       setState(() => _openingTime = t),
@@ -239,7 +241,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _TimeTile(
-                                  label: 'Closing',
+                                  label: l10n.branchDialog_closing,
                                   value: _closingTime,
                                   onPicked: (t) =>
                                       setState(() => _closingTime = t),
@@ -253,7 +255,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
                             Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
-                                'Closing time must be after opening time',
+                                l10n.branchDialog_closingAfterOpening,
                                 style:
                                     TextStyle(color: c.danger, fontSize: 12),
                               ),
@@ -338,17 +340,18 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
+    final l10n = AppLocalizations.of(context)!;
     if (!_isOpen24Hours) {
       if (_openingTime == null) {
-        _snack('Please select an opening time');
+        _snack(l10n.branchDialog_selectOpening);
         return;
       }
       if (_closingTime == null) {
-        _snack('Please select a closing time');
+        _snack(l10n.branchDialog_selectClosing);
         return;
       }
       if (!_isClosingAfterOpening()) {
-        _snack('Closing time must be after opening time');
+        _snack(l10n.branchDialog_closingAfterOpening);
         return;
       }
     }
@@ -393,6 +396,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
@@ -423,7 +427,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'Set Up Your First Branch',
+            l10n.branchDialog_setupTitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: c.onPrimary,
@@ -433,7 +437,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Create your main gym location to start managing\nmembers, plans, check-ins, and more.',
+            l10n.branchDialog_setupSubtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: c.onPrimary.withOpacity(0.85),
@@ -491,9 +495,9 @@ class _Footer extends StatelessWidget {
                       child: CircularProgressIndicator(
                           color: c.onPrimary, strokeWidth: 2.2),
                     )
-                  : const Text(
-                      'Create Branch',
-                      style: TextStyle(
+                  : Text(
+                      AppLocalizations.of(context)!.branchDialog_create,
+                      style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w600),
                     ),
             ),
@@ -514,6 +518,7 @@ class _Open24HoursTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => onChanged(!value),
       child: Container(
@@ -538,7 +543,7 @@ class _Open24HoursTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Open 24 Hours',
+                    l10n.branchDialog_open24,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -547,7 +552,7 @@ class _Open24HoursTile extends StatelessWidget {
                   ),
                   if (value)
                     Text(
-                      'Branch is always open',
+                      l10n.branchDialog_open24Sub,
                       style: TextStyle(fontSize: 11, color: c.muted),
                     ),
                 ],
@@ -581,6 +586,7 @@ class _TimeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     final active = value != null;
     return GestureDetector(
       onTap: () async {
@@ -625,7 +631,7 @@ class _TimeTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    value ?? 'Tap to set',
+                    value ?? l10n.branchDialog_tapToSet,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

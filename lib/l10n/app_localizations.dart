@@ -6667,6 +6667,99 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use device language'**
   String get settingsLanguageSystemDefaultSubtitle;
+
+  /// No description provided for @branchDialog_setupTitle.
+  String get branchDialog_setupTitle;
+
+  /// No description provided for @branchDialog_setupSubtitle.
+  String get branchDialog_setupSubtitle;
+
+  /// No description provided for @branchDialog_sectionBasic.
+  String get branchDialog_sectionBasic;
+
+  /// No description provided for @branchDialog_name.
+  String get branchDialog_name;
+
+  /// No description provided for @branchDialog_nameHint.
+  String get branchDialog_nameHint;
+
+  /// No description provided for @branchDialog_nameRequired.
+  String get branchDialog_nameRequired;
+
+  /// No description provided for @branchDialog_city.
+  String get branchDialog_city;
+
+  /// No description provided for @branchDialog_cityHint.
+  String get branchDialog_cityHint;
+
+  /// No description provided for @branchDialog_cityRequired.
+  String get branchDialog_cityRequired;
+
+  /// No description provided for @branchDialog_sectionContact.
+  String get branchDialog_sectionContact;
+
+  /// No description provided for @branchDialog_phone.
+  String get branchDialog_phone;
+
+  /// No description provided for @branchDialog_phoneHint.
+  String get branchDialog_phoneHint;
+
+  /// No description provided for @branchDialog_phoneRequired.
+  String get branchDialog_phoneRequired;
+
+  /// No description provided for @branchDialog_email.
+  String get branchDialog_email;
+
+  /// No description provided for @branchDialog_emailHint.
+  String get branchDialog_emailHint;
+
+  /// No description provided for @branchDialog_emailRequired.
+  String get branchDialog_emailRequired;
+
+  /// No description provided for @branchDialog_emailInvalid.
+  String get branchDialog_emailInvalid;
+
+  /// No description provided for @branchDialog_address.
+  String get branchDialog_address;
+
+  /// No description provided for @branchDialog_addressHint.
+  String get branchDialog_addressHint;
+
+  /// No description provided for @branchDialog_addressRequired.
+  String get branchDialog_addressRequired;
+
+  /// No description provided for @branchDialog_sectionHours.
+  String get branchDialog_sectionHours;
+
+  /// No description provided for @branchDialog_open24.
+  String get branchDialog_open24;
+
+  /// No description provided for @branchDialog_open24Sub.
+  String get branchDialog_open24Sub;
+
+  /// No description provided for @branchDialog_opening.
+  String get branchDialog_opening;
+
+  /// No description provided for @branchDialog_closing.
+  String get branchDialog_closing;
+
+  /// No description provided for @branchDialog_tapToSet.
+  String get branchDialog_tapToSet;
+
+  /// No description provided for @branchDialog_closingAfterOpening.
+  String get branchDialog_closingAfterOpening;
+
+  /// No description provided for @branchDialog_selectOpening.
+  String get branchDialog_selectOpening;
+
+  /// No description provided for @branchDialog_selectClosing.
+  String get branchDialog_selectClosing;
+
+  /// No description provided for @branchDialog_create.
+  String get branchDialog_create;
+
+  /// No description provided for @branchDialog_createdSuccess.
+  String get branchDialog_createdSuccess;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

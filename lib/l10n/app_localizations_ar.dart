@@ -3432,4 +3432,97 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsLanguageSystemDefaultSubtitle => 'استخدام لغة الجهاز';
+
+  @override
+  String get branchDialog_setupTitle => 'أنشئ فرعك الأول';
+
+  @override
+  String get branchDialog_setupSubtitle => 'أنشئ موقع الجيم الرئيسي لتبدأ إدارة الأعضاء والخطط وتسجيلات الدخول والمزيد.';
+
+  @override
+  String get branchDialog_sectionBasic => 'المعلومات الأساسية';
+
+  @override
+  String get branchDialog_name => 'اسم الفرع';
+
+  @override
+  String get branchDialog_nameHint => 'مثال: الجيم الرئيسي – وسط المدينة';
+
+  @override
+  String get branchDialog_nameRequired => 'اسم الفرع مطلوب';
+
+  @override
+  String get branchDialog_city => 'المدينة';
+
+  @override
+  String get branchDialog_cityHint => 'مثال: بيروت';
+
+  @override
+  String get branchDialog_cityRequired => 'المدينة مطلوبة';
+
+  @override
+  String get branchDialog_sectionContact => 'معلومات التواصل';
+
+  @override
+  String get branchDialog_phone => 'الهاتف';
+
+  @override
+  String get branchDialog_phoneHint => '+961 70 000 000';
+
+  @override
+  String get branchDialog_phoneRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get branchDialog_email => 'البريد الإلكتروني';
+
+  @override
+  String get branchDialog_emailHint => 'branch@yourgym.com';
+
+  @override
+  String get branchDialog_emailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get branchDialog_emailInvalid => 'أدخل بريداً إلكترونياً صحيحاً';
+
+  @override
+  String get branchDialog_address => 'العنوان';
+
+  @override
+  String get branchDialog_addressHint => 'شارع الرئيسي، وسط المدينة';
+
+  @override
+  String get branchDialog_addressRequired => 'العنوان مطلوب';
+
+  @override
+  String get branchDialog_sectionHours => 'ساعات العمل';
+
+  @override
+  String get branchDialog_open24 => 'مفتوح 24 ساعة';
+
+  @override
+  String get branchDialog_open24Sub => 'الفرع مفتوح دائماً';
+
+  @override
+  String get branchDialog_opening => 'الافتتاح';
+
+  @override
+  String get branchDialog_closing => 'الإغلاق';
+
+  @override
+  String get branchDialog_tapToSet => 'اضغط للتحديد';
+
+  @override
+  String get branchDialog_closingAfterOpening => 'وقت الإغلاق يجب أن يكون بعد وقت الافتتاح';
+
+  @override
+  String get branchDialog_selectOpening => 'الرجاء تحديد وقت الافتتاح';
+
+  @override
+  String get branchDialog_selectClosing => 'الرجاء تحديد وقت الإغلاق';
+
+  @override
+  String get branchDialog_create => 'إنشاء الفرع';
+
+  @override
+  String get branchDialog_createdSuccess => 'تم إنشاء الفرع بنجاح!';
 }
