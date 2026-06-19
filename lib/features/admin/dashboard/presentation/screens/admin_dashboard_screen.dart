@@ -77,8 +77,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             state.branches.isEmpty &&
             !_firstBranchDialogShown) {
           _firstBranchDialogShown = true;
+          final p = context.read<AdminProfileCubit>().state;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) showCreateFirstBranchDialog(context);
+            if (mounted) {
+              showCreateFirstBranchDialog(
+                context,
+                initialName: p.gymName,
+                initialEmail: p.adminEmail,
+              );
+            }
           });
         }
       },
@@ -288,16 +295,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
       );
 
-  /// 2-column grid of metric cards.
+  /// 2-column grid of metric cards. Uses a fixed card height (mainAxisExtent)
+  /// so cards stay consistent and never overflow regardless of screen width.
   Widget _grid(List<Widget> cards) {
-    return GridView.count(
-      crossAxisCount: 2,
+    return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.55,
-      children: cards,
+      itemCount: cards.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        mainAxisExtent: 104,
+      ),
+      itemBuilder: (_, i) => cards[i],
     );
   }
 

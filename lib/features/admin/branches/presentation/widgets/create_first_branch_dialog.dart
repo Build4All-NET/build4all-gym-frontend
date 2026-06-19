@@ -12,11 +12,21 @@ import '../bloc/branches_bloc.dart';
 import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 
 /// Shows a non-dismissible dialog so the admin must create the first branch
 /// before using the app. On success, reloads [BranchCubit] so the AppBar
 /// dropdown reflects the new branch immediately.
-Future<void> showCreateFirstBranchDialog(BuildContext context) {
+///
+/// [initialName] / [initialEmail] / [initialCity] pre-fill the form with data
+/// we already know about the gym/admin (e.g. the gym name and admin email) so
+/// the owner doesn't retype information the app already has.
+Future<void> showCreateFirstBranchDialog(
+  BuildContext context, {
+  String? initialName,
+  String? initialEmail,
+  String? initialCity,
+}) {
   final branchCubit = context.read<BranchCubit>();
   final repo = BranchRepositoryImpl();
 
@@ -27,12 +37,15 @@ Future<void> showCreateFirstBranchDialog(BuildContext context) {
       create: (_) => BranchesBloc(
         getBranchesUseCase: GetBranchesUseCase(repo),
         getBranchDetailUseCase: GetBranchDetailUseCase(repo),
-        createBranchUseCase: CreateBranchUseCase(repo), 
-        updateBranchUseCase: UpdateBranchUseCase(repo), 
+        createBranchUseCase: CreateBranchUseCase(repo),
+        updateBranchUseCase: UpdateBranchUseCase(repo),
         deleteBranchUseCase: DeleteBranchUseCase(repo),
       ),
       child: _CreateFirstBranchDialog(
         onBranchCreated: () => branchCubit.reload(),
+        initialName: initialName,
+        initialEmail: initialEmail,
+        initialCity: initialCity,
       ),
     ),
   );
@@ -41,8 +54,16 @@ Future<void> showCreateFirstBranchDialog(BuildContext context) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _CreateFirstBranchDialog extends StatefulWidget {
-  const _CreateFirstBranchDialog({required this.onBranchCreated});
+  const _CreateFirstBranchDialog({
+    required this.onBranchCreated,
+    this.initialName,
+    this.initialEmail,
+    this.initialCity,
+  });
   final VoidCallback onBranchCreated;
+  final String? initialName;
+  final String? initialEmail;
+  final String? initialCity;
 
   @override
   State<_CreateFirstBranchDialog> createState() =>
@@ -52,15 +73,24 @@ class _CreateFirstBranchDialog extends StatefulWidget {
 class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameCtrl    = TextEditingController();
-  final _cityCtrl    = TextEditingController();
-  final _phoneCtrl   = TextEditingController();
-  final _emailCtrl   = TextEditingController();
+  late final TextEditingController _nameCtrl;
+  late final TextEditingController _cityCtrl;
+  final _phoneCtrl = TextEditingController();
+  late final TextEditingController _emailCtrl;
   final _addressCtrl = TextEditingController();
 
   String? _openingTime;
   String? _closingTime;
-  bool    _isOpen24Hours = false;
+  bool _isOpen24Hours = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill with data we already have so the owner doesn't retype it.
+    _nameCtrl = TextEditingController(text: widget.initialName ?? '');
+    _cityCtrl = TextEditingController(text: widget.initialCity ?? '');
+    _emailCtrl = TextEditingController(text: widget.initialEmail ?? '');
+  }
 
   @override
   void dispose() {
@@ -72,9 +102,16 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
     super.dispose();
   }
 
-  // ── Build ────────────────────────────────────────────────────────────────────
+  // ── Build ──────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
+    final media = MediaQuery.of(context);
+    // Keyboard-aware: leave room for the keyboard so fields stay visible and
+    // the form scrolls above it instead of being covered/cramped.
+    final keyboard = media.viewInsets.bottom;
+    final maxHeight = media.size.height - media.padding.top - 48 - keyboard;
+
     return BlocListener<BranchesBloc, BranchesState>(
       listenWhen: (_, s) => s is BranchCreated || s is BranchCreateError,
       listener: (ctx, state) {
@@ -87,142 +124,150 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
         }
       },
       child: Dialog(
-        insetPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+        insetPadding: EdgeInsets.fromLTRB(16, 24, 16, 24 + keyboard),
+        backgroundColor: c.surface,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         clipBehavior: Clip.antiAlias,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Header(),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionLabel('Basic Information'),
-                      const SizedBox(height: 10),
-                      _field(
-                        ctrl: _nameCtrl,
-                        label: 'Branch Name',
-                        hint: 'e.g. Main Gym – Downtown',
-                        icon: Icons.store_mall_directory_outlined,
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Branch name is required'
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                      _field(
-                        ctrl: _cityCtrl,
-                        label: 'City',
-                        hint: 'e.g. Cairo',
-                        icon: Icons.location_city_outlined,
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'City is required'
-                            : null,
-                      ),
-                      const SizedBox(height: 20),
-                      _sectionLabel('Contact'),
-                      const SizedBox(height: 10),
-                      _field(
-                        ctrl: _phoneCtrl,
-                        label: 'Phone',
-                        hint: '+20 100 000 0000',
-                        icon: Icons.phone_outlined,
-                        keyboard: TextInputType.phone,
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Phone is required'
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                      _field(
-                        ctrl: _emailCtrl,
-                        label: 'Email',
-                        hint: 'branch@yourgym.com',
-                        icon: Icons.email_outlined,
-                        keyboard: TextInputType.emailAddress,
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'Email is required';
-                          }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                              .hasMatch(v.trim())) {
-                            return 'Enter a valid email address';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      _field(
-                        ctrl: _addressCtrl,
-                        label: 'Address',
-                        hint: '123 Main St, Downtown',
-                        icon: Icons.place_outlined,
-                        maxLines: 2,
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Address is required'
-                            : null,
-                      ),
-                      const SizedBox(height: 20),
-                      _sectionLabel('Operating Hours'),
-                      const SizedBox(height: 10),
-                      _Open24HoursTile(
-                        value: _isOpen24Hours,
-                        onChanged: (v) => setState(() {
-                          _isOpen24Hours = v;
-                          if (v) {
-                            _openingTime = null;
-                            _closingTime = null;
-                          }
-                        }),
-                      ),
-                      if (!_isOpen24Hours) ...[
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _Header(),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _sectionLabel(c, 'Basic Information'),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _TimeTile(
-                                label: 'Opening',
-                                value: _openingTime,
-                                onPicked: (t) =>
-                                    setState(() => _openingTime = t),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _TimeTile(
-                                label: 'Closing',
-                                value: _closingTime,
-                                onPicked: (t) =>
-                                    setState(() => _closingTime = t),
-                              ),
-                            ),
-                          ],
+                        _field(
+                          c: c,
+                          ctrl: _nameCtrl,
+                          label: 'Branch Name',
+                          hint: 'e.g. Main Gym – Downtown',
+                          icon: Icons.store_mall_directory_outlined,
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? 'Branch name is required'
+                              : null,
                         ),
-                        if (_openingTime != null &&
-                            _closingTime != null &&
-                            !_isClosingAfterOpening())
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              'Closing time must be after opening time',
-                              style: TextStyle(
-                                  color: Colors.red[600], fontSize: 12),
-                            ),
+                        const SizedBox(height: 12),
+                        _field(
+                          c: c,
+                          ctrl: _cityCtrl,
+                          label: 'City',
+                          hint: 'e.g. Cairo',
+                          icon: Icons.location_city_outlined,
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? 'City is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 20),
+                        _sectionLabel(c, 'Contact'),
+                        const SizedBox(height: 10),
+                        _field(
+                          c: c,
+                          ctrl: _phoneCtrl,
+                          label: 'Phone',
+                          hint: '+20 100 000 0000',
+                          icon: Icons.phone_outlined,
+                          keyboard: TextInputType.phone,
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? 'Phone is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 12),
+                        _field(
+                          c: c,
+                          ctrl: _emailCtrl,
+                          label: 'Email',
+                          hint: 'branch@yourgym.com',
+                          icon: Icons.email_outlined,
+                          keyboard: TextInputType.emailAddress,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return 'Email is required';
+                            }
+                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                .hasMatch(v.trim())) {
+                              return 'Enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _field(
+                          c: c,
+                          ctrl: _addressCtrl,
+                          label: 'Address',
+                          hint: '123 Main St, Downtown',
+                          icon: Icons.place_outlined,
+                          maxLines: 2,
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? 'Address is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 20),
+                        _sectionLabel(c, 'Operating Hours'),
+                        const SizedBox(height: 10),
+                        _Open24HoursTile(
+                          value: _isOpen24Hours,
+                          onChanged: (v) => setState(() {
+                            _isOpen24Hours = v;
+                            if (v) {
+                              _openingTime = null;
+                              _closingTime = null;
+                            }
+                          }),
+                        ),
+                        if (!_isOpen24Hours) ...[
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _TimeTile(
+                                  label: 'Opening',
+                                  value: _openingTime,
+                                  onPicked: (t) =>
+                                      setState(() => _openingTime = t),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _TimeTile(
+                                  label: 'Closing',
+                                  value: _closingTime,
+                                  onPicked: (t) =>
+                                      setState(() => _closingTime = t),
+                                ),
+                              ),
+                            ],
                           ),
+                          if (_openingTime != null &&
+                              _closingTime != null &&
+                              !_isClosingAfterOpening())
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Closing time must be after opening time',
+                                style:
+                                    TextStyle(color: c.danger, fontSize: 12),
+                              ),
+                            ),
+                        ],
+                        const SizedBox(height: 24),
                       ],
-                      const SizedBox(height: 24),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            _Footer(onSubmit: _submit),
-          ],
+              _Footer(onSubmit: _submit),
+            ],
+          ),
         ),
       ),
     );
@@ -230,16 +275,17 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
-  Widget _sectionLabel(String text) => Text(
+  Widget _sectionLabel(dynamic c, String text) => Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF6B7280),
+            color: c.muted,
             letterSpacing: 0.5),
       );
 
   Widget _field({
+    required dynamic c,
     required TextEditingController ctrl,
     required String label,
     required String hint,
@@ -253,28 +299,35 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
       validator: validator,
       keyboardType: keyboard,
       maxLines: maxLines,
+      style: TextStyle(color: c.label, fontSize: 14),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(icon, size: 18, color: const Color(0xFF9CA3AF)),
-        hintStyle:
-            const TextStyle(color: Color(0xFFD1D5DB), fontSize: 13),
+        labelStyle: TextStyle(color: c.muted),
+        floatingLabelStyle: TextStyle(color: c.primary),
+        prefixIcon: Icon(icon, size: 18, color: c.muted),
+        hintStyle: TextStyle(color: c.muted.withOpacity(0.6), fontSize: 13),
+        filled: true,
+        fillColor: c.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          borderSide: BorderSide(color: c.border.withOpacity(0.4)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          borderSide: BorderSide(color: c.border.withOpacity(0.4)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide:
-              const BorderSide(color: Color(0xFF3B82F6), width: 1.5),
+          borderSide: BorderSide(color: c.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderSide: BorderSide(color: c.danger),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: c.danger, width: 1.5),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -303,15 +356,15 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
     context.read<BranchesBloc>().add(
           SubmitCreateBranch(
             CreateBranchParams(
-              name:          _nameCtrl.text.trim(),
-              city:          _cityCtrl.text.trim(),
-              phone:         _phoneCtrl.text.trim(),
-              email:         _emailCtrl.text.trim(),
-              address:       _addressCtrl.text.trim(),
-              openingTime:   _isOpen24Hours ? null : _openingTime,
-              closingTime:   _isOpen24Hours ? null : _closingTime,
+              name: _nameCtrl.text.trim(),
+              city: _cityCtrl.text.trim(),
+              phone: _phoneCtrl.text.trim(),
+              email: _emailCtrl.text.trim(),
+              address: _addressCtrl.text.trim(),
+              openingTime: _isOpen24Hours ? null : _openingTime,
+              closingTime: _isOpen24Hours ? null : _closingTime,
               isOpen24Hours: _isOpen24Hours,
-              status:        'ACTIVE',
+              status: 'ACTIVE',
             ),
           ),
         );
@@ -327,6 +380,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
       final p = t.split(':');
       return int.parse(p[0]) * 60 + int.parse(p[1]);
     }
+
     return toMins(_closingTime!) > toMins(_openingTime!);
   }
 }
@@ -338,12 +392,16 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
 class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF1D4ED8), Color(0xFF3B82F6)],
+          colors: [
+            c.primary,
+            Color.lerp(c.primary, Colors.white, 0.18) ?? c.primary,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -354,21 +412,21 @@ class _Header extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.store_mall_directory_rounded,
-              color: Colors.white,
+              color: c.onPrimary,
               size: 34,
             ),
           ),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'Set Up Your First Branch',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white,
+              color: c.onPrimary,
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -378,7 +436,7 @@ class _Header extends StatelessWidget {
             'Create your main gym location to start managing\nmembers, plans, check-ins, and more.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: c.onPrimary.withOpacity(0.85),
               fontSize: 13,
               height: 1.45,
             ),
@@ -397,14 +455,15 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: c.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -418,20 +477,19 @@ class _Footer extends StatelessWidget {
             child: ElevatedButton(
               onPressed: isLoading ? null : onSubmit,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                disabledBackgroundColor:
-                    const Color(0xFF93C5FD),
-                foregroundColor: Colors.white,
+                backgroundColor: c.primary,
+                disabledBackgroundColor: c.primary.withOpacity(0.5),
+                foregroundColor: c.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
               child: isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2.2),
+                          color: c.onPrimary, strokeWidth: 2.2),
                     )
                   : const Text(
                       'Create Branch',
@@ -455,16 +513,15 @@ class _Open24HoursTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
     return GestureDetector(
       onTap: () => onChanged(!value),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: value ? const Color(0xFFEFF6FF) : const Color(0xFFF9FAFB),
+          color: value ? c.primary.withOpacity(0.08) : c.background,
           border: Border.all(
-            color: value
-                ? const Color(0xFF93C5FD)
-                : const Color(0xFFE5E7EB),
+            color: value ? c.primary.withOpacity(0.5) : c.border.withOpacity(0.4),
           ),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -473,9 +530,7 @@ class _Open24HoursTile extends StatelessWidget {
             Icon(
               Icons.wb_sunny_outlined,
               size: 18,
-              color: value
-                  ? const Color(0xFF2563EB)
-                  : const Color(0xFF9CA3AF),
+              color: value ? c.primary : c.muted,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -487,16 +542,13 @@ class _Open24HoursTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: value
-                          ? const Color(0xFF1D4ED8)
-                          : const Color(0xFF374151),
+                      color: value ? c.primary : c.label,
                     ),
                   ),
                   if (value)
-                    const Text(
+                    Text(
                       'Branch is always open',
-                      style: TextStyle(
-                          fontSize: 11, color: Color(0xFF6B7280)),
+                      style: TextStyle(fontSize: 11, color: c.muted),
                     ),
                 ],
               ),
@@ -504,7 +556,7 @@ class _Open24HoursTile extends StatelessWidget {
             Switch(
               value: value,
               onChanged: onChanged,
-              activeColor: const Color(0xFF2563EB),
+              activeColor: c.primary,
             ),
           ],
         ),
@@ -528,6 +580,8 @@ class _TimeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
+    final active = value != null;
     return GestureDetector(
       onTap: () async {
         final picked = await showTimePicker(
@@ -541,16 +595,11 @@ class _TimeTile extends StatelessWidget {
         }
       },
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          color: value != null
-              ? const Color(0xFFEFF6FF)
-              : const Color(0xFFF9FAFB),
+          color: active ? c.primary.withOpacity(0.08) : c.background,
           border: Border.all(
-            color: value != null
-                ? const Color(0xFF93C5FD)
-                : const Color(0xFFE5E7EB),
+            color: active ? c.primary.withOpacity(0.5) : c.border.withOpacity(0.4),
           ),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -559,36 +608,34 @@ class _TimeTile extends StatelessWidget {
             Icon(
               Icons.access_time_rounded,
               size: 18,
-              color: value != null
-                  ? const Color(0xFF2563EB)
-                  : const Color(0xFF9CA3AF),
+              color: active ? c.primary : c.muted,
             ),
             const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: value != null
-                        ? const Color(0xFF1D4ED8)
-                        : const Color(0xFF9CA3AF),
-                    fontWeight: FontWeight.w500,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: active ? c.primary : c.muted,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value ?? 'Tap to set',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: value != null
-                        ? const Color(0xFF1E3A8A)
-                        : const Color(0xFFD1D5DB),
+                  const SizedBox(height: 2),
+                  Text(
+                    value ?? 'Tap to set',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: active ? c.label : c.muted.withOpacity(0.7),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
