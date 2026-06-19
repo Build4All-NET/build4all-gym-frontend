@@ -108,11 +108,9 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
-    final media = MediaQuery.of(context);
-    // Keyboard-aware: leave room for the keyboard so fields stay visible and
-    // the form scrolls above it instead of being covered/cramped.
-    final keyboard = media.viewInsets.bottom;
-    final maxHeight = media.size.height - media.padding.top - 48 - keyboard;
+    // Keyboard-aware: reserve room for the keyboard via insetPadding so the
+    // Dialog shrinks and the form scrolls above it (no overflow).
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
 
     return BlocListener<BranchesBloc, BranchesState>(
       listenWhen: (_, s) => s is BranchCreated || s is BranchCreateError,
@@ -131,9 +129,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         clipBehavior: Clip.antiAlias,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxHeight),
-          child: Column(
+        child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               _Header(),
@@ -270,7 +266,6 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
               _Footer(onSubmit: _submit),
             ],
           ),
-        ),
       ),
     );
   }
