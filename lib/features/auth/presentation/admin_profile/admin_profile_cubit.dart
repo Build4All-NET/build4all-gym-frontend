@@ -32,6 +32,12 @@ class AdminProfile {
   bool get isAdminRole     => role == 'ADMIN' || role == 'OWNER' || role == 'MANAGER';
   bool get hasMultipleGymRoles => gymRoles.length > 1;
 
+  /// False while the async /api/user/gym-role fetch is still in flight for a
+  /// non-admin login. Screens that branch on isTrainerRole/isReceptionRole
+  /// must wait for this to be true, otherwise they briefly see gymRoles=[]
+  /// (looks like "no trainer/reception role") before the real roles arrive.
+  final bool gymRolesLoaded;
+
   const AdminProfile({
     required this.adminName,
     required this.adminEmail,
@@ -42,9 +48,10 @@ class AdminProfile {
     this.userId,
     this.role     = '',
     this.gymRoles = const [],
+    this.gymRolesLoaded = false,
   });
 
-  AdminProfile copyWith({List<String>? gymRoles}) => AdminProfile(
+  AdminProfile copyWith({List<String>? gymRoles, bool? gymRolesLoaded}) => AdminProfile(
     adminName:  adminName,
     adminEmail: adminEmail,
     gymName:    gymName,
@@ -54,6 +61,7 @@ class AdminProfile {
     userId:     userId,
     role:       role,
     gymRoles:   gymRoles ?? this.gymRoles,
+    gymRolesLoaded: gymRolesLoaded ?? this.gymRolesLoaded,
   );
 
   static const empty = AdminProfile(
@@ -65,6 +73,7 @@ class AdminProfile {
     userId:     null,
     role:       '',
     gymRoles:   [],
+    gymRolesLoaded: false,
   );
 }
 
@@ -124,6 +133,9 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
       userId:     userId,
       role:       role,
       gymRoles:   [],
+      // ADMIN/OWNER/MANAGER never fetch gym roles below, so there's nothing
+      // to wait for. Everyone else stays "not loaded" until _fetchGymRole finishes.
+      gymRolesLoaded: isAdmin,
     ));
 
     // OWNER/ADMIN/MANAGER do not carry gym-specific roles.
@@ -171,16 +183,19 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
         }
 
         debugPrint('✅ gymRoles resolved to: $rolesList');
-        emit(state.copyWith(gymRoles: rolesList));
+        emit(state.copyWith(gymRoles: rolesList, gymRolesLoaded: true));
       } else {
         debugPrint('⚠️ gym-role unexpected status ${response.statusCode}: ${response.data}');
+        emit(state.copyWith(gymRolesLoaded: true));
       }
     } on DioException catch (e) {
       debugPrint('❌ gym-role DioException: ${e.type} | ${e.response?.statusCode} | ${e.message}');
       debugPrint('   Request URL: ${e.requestOptions.uri}');
       debugPrint('   Request headers: ${e.requestOptions.headers}');
+      emit(state.copyWith(gymRolesLoaded: true));
     } catch (e) {
       debugPrint('❌ gym-role unexpected error: $e');
+      emit(state.copyWith(gymRolesLoaded: true));
     }
   }
 }

@@ -805,7 +805,10 @@ class _ComingSoonScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        leading: BackButton(onPressed: () => Navigator.of(context).pop()),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

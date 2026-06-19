@@ -81,6 +81,8 @@ class _MemberPickerForReceptionSheetState
         search:   _searchController.text.trim(),
         size:     30,
         page:     1,
+        // includeStaff defaults to false — exclude owners/admins/trainers/reception
+        // from the picker so only plain members can be promoted.
       );
       final items = (raw['items'] as List<dynamic>? ?? [])
           .map((j) => MemberCardModel.fromJson(j as Map<String, dynamic>))
@@ -175,7 +177,7 @@ class _MemberPickerForReceptionSheetState
                           fontSize: 16,
                         )),
                     Text('Pick a member to assign the Reception role',
-                        style: TextStyle(color: c.onPrimary, fontSize: 12)),
+                        style: TextStyle(color: c.muted, fontSize: 12)),
                   ],
                 ),
               ],
@@ -190,11 +192,11 @@ class _MemberPickerForReceptionSheetState
               style: TextStyle(color: c.primary),
               decoration: InputDecoration(
                 hintText: 'Search by name or phone…',
-                hintStyle: TextStyle(color: c.onPrimary),
-                prefixIcon: Icon(Icons.search_rounded, color: c.onPrimary),
+                hintStyle: TextStyle(color: c.muted),
+                prefixIcon: Icon(Icons.search_rounded, color: c.muted),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                  icon: Icon(Icons.clear_rounded, color: c.onPrimary),
+                  icon: Icon(Icons.clear_rounded, color: c.muted),
                   onPressed: () {
                     _searchController.clear();
                     _fetchMembers();
@@ -270,10 +272,10 @@ class _MemberPickerForReceptionSheetState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.wifi_off_rounded, color: c.onPrimary, size: 40),
+            Icon(Icons.wifi_off_rounded, color: c.muted, size: 40),
             const SizedBox(height: 8),
             Text('Could not load members',
-                style: TextStyle(color: c.onPrimary)),
+                style: TextStyle(color: c.muted)),
             const SizedBox(height: 8),
             TextButton(onPressed: _fetchMembers, child: const Text('Retry')),
           ],
@@ -283,7 +285,7 @@ class _MemberPickerForReceptionSheetState
     if (_members.isEmpty) {
       return Center(
         child: Text('No members found',
-            style: TextStyle(color: c.onPrimary)),
+            style: TextStyle(color: c.muted)),
       );
     }
 
@@ -349,7 +351,7 @@ class _MemberPickerForReceptionSheetState
                             ? member.phone
                             : member.memberCode,
                         style:
-                        TextStyle(color: c.onPrimary, fontSize: 12),
+                        TextStyle(color: c.muted, fontSize: 12),
                       ),
                     ],
                   ),
@@ -384,7 +386,7 @@ class _MemberPickerForReceptionSheetState
                   isPending
                       ? Icons.expand_less_rounded
                       : Icons.chevron_right_rounded,
-                  color: c.onPrimary,
+                  color: c.muted,
                   size: 20,
                 ),
               ],
@@ -428,7 +430,7 @@ class _MemberPickerForReceptionSheetState
                     minimumSize: Size.zero,
                   ),
                   child: Text('Cancel',
-                      style: TextStyle(color: c.onPrimary, fontSize: 13)),
+                      style: TextStyle(color: c.muted, fontSize: 13)),
                 ),
 
                 ElevatedButton(

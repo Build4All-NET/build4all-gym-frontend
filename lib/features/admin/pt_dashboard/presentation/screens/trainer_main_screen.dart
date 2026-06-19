@@ -61,6 +61,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
   int  _trainerId  = 0;   // 0 = admin all-trainers mode
   bool _isAdmin    = true;
   bool _roleLoaded = false;
+  bool _gymRolesLoaded = false;
   final AdminTokenStore _token = AdminTokenStore();
 
   List<AdminTrainerCardModel> _trainers      = [];
@@ -132,8 +133,9 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     }
 
     setState(() {
-      _tenantId = parsedTenantId;
-      _isAdmin  = effectiveIsAdmin;
+      _tenantId       = parsedTenantId;
+      _isAdmin        = effectiveIsAdmin;
+      _gymRolesLoaded = profile.gymRolesLoaded;
     });
 
     if (isTrainer) {
@@ -233,7 +235,8 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final effectiveBranchId = _effectiveBranchId(context);
     return BlocListener<AdminProfileCubit, AdminProfile>(
       listenWhen: (prev, curr) =>
-      prev.role != curr.role || prev.userId != curr.userId || prev.branchId != curr.branchId || prev.gymRole != curr.gymRole,
+      prev.role != curr.role || prev.userId != curr.userId || prev.branchId != curr.branchId ||
+      prev.gymRole != curr.gymRole || prev.gymRolesLoaded != curr.gymRolesLoaded,
       listener: (_, profile) => _syncTrainerFromProfile(profile),
       child: BlocProvider.value(
         value: _sessionsBloc,
@@ -246,6 +249,14 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     // Role not yet decoded -> show spinner
     if (!_roleLoaded) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    // Gym role (trainer/reception) still being fetched from the backend ->
+    // spinner, not the "trainer ID not found" error. Without this, a
+    // trainer briefly looks like a plain member (gymRoles still empty)
+    // right after login and flashes the error before the real role arrives.
+    if (!_isAdmin && !_gymRolesLoaded) {
+      return _buildResolving();
     }
 
     // Admin: trainers still loading -> spinner

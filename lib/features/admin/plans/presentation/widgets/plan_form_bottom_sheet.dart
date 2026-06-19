@@ -447,12 +447,29 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    _isEditMode ? 'Edit Plan' : 'Add New Plan',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: c.label),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _isEditMode ? 'Edit Plan' : 'Add New Plan',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: c.label),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: c.background,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close_rounded,
+                              size: 20, color: c.muted),
+                        ),
+                      ),
+                    ],
                   ),
 
                   // ════════════════════════════════════════════════════════

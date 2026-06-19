@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../data/services/member_profile_service.dart';
 
@@ -39,6 +38,28 @@ class ProfileCompletionDialog extends StatefulWidget {
 
 class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
   final _service = MemberProfileService();
+
+  // ── Wizard state ───────────────────────────────────────────────────────────
+  int _currentStep = 0;
+  static const _stepCount = 4;
+  static const _stepTitles = [
+    'Your Branch',
+    'About You',
+    'Body Metrics',
+    'Emergency Contact',
+  ];
+  static const _stepSubtitles = [
+    "Pick the branch you'll usually train at.",
+    'A few details to personalise your plan.',
+    'Optional — helps us tailor your experience.',
+    'Optional — who should we contact if needed?',
+  ];
+  static const _stepIcons = [
+    Icons.storefront_rounded,
+    Icons.account_circle_outlined,
+    Icons.monitor_weight_outlined,
+    Icons.contact_phone_outlined,
+  ];
 
   // ── Form state ─────────────────────────────────────────────────────────────
   final _heightController = TextEditingController();
@@ -121,16 +142,49 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
     if (picked != null) setState(() => _selectedDob = picked);
   }
 
+  bool get _isLastStep => _currentStep == _stepCount - 1;
+
+  bool get _canProceedFromCurrentStep {
+    switch (_currentStep) {
+      case 0:
+        return _selectedBranchId != null;
+      case 1:
+        return _selectedGender != null && _selectedDob != null;
+      default:
+        return true;
+    }
+  }
+
   bool get _canSubmit =>
       _selectedBranchId != null &&
       _selectedGender   != null &&
       _selectedDob      != null;
 
-  Future<void> _submit() async {
-    if (!_canSubmit) {
-      setState(() => _error = 'Please fill in Branch, Gender and Date of Birth.');
+  void _goNext() {
+    if (!_canProceedFromCurrentStep) {
+      setState(() => _error = _currentStep == 0
+          ? 'Please select your preferred branch.'
+          : 'Please select your gender and date of birth.');
       return;
     }
+    setState(() => _error = null);
+    if (_isLastStep) {
+      _submit();
+    } else {
+      setState(() => _currentStep++);
+    }
+  }
+
+  void _goBack() {
+    if (_currentStep == 0) return;
+    setState(() {
+      _currentStep--;
+      _error = null;
+    });
+  }
+
+  Future<void> _submit() async {
+    if (!_canSubmit) return;
     setState(() { _submitting = true; _error = null; });
 
     try {
@@ -166,228 +220,423 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
     return Dialog(
       backgroundColor: c.surface,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: mq.size.height * 0.88),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Header ───────────────────────────────────────────────────────
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-              decoration: BoxDecoration(
-                color: c.primary.withOpacity(0.08),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20)),
+            _buildHeader(c),
+            if (_error != null) _buildErrorBanner(c),
+            Flexible(
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 280),
+                curve: Curves.easeInOutCubic,
+                alignment: Alignment.topCenter,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: KeyedSubtree(
+                    key: ValueKey(_currentStep),
+                    child: _buildCurrentStep(c),
+                  ),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            ),
+            _buildFooter(c),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Header ───────────────────────────────────────────────────────────────
+  Widget _buildHeader(dynamic c) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [c.primary.withOpacity(0.14), c.primary.withOpacity(0.02)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.person_outline_rounded, color: c.primary, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'Complete Your Profile',
+                style: TextStyle(
+                  color: c.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildStepIndicator(c),
+          const SizedBox(height: 16),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 220),
+            child: Row(
+              key: ValueKey(_currentStep),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: c.primary.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(_stepIcons[_currentStep], color: c.primary, size: 19),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.person_outline_rounded,
-                          color: c.primary, size: 24),
-                      const SizedBox(width: 10),
-                      Text('Complete Your Profile',
-                          style: TextStyle(
-                            color: c.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          )),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _stepTitles[_currentStep],
+                              style: TextStyle(
+                                color: c.label,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                              ),
+                            ),
+                          ),
+                          if (_currentStep >= 2)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: c.muted.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'Optional',
+                                style: TextStyle(
+                                  color: c.muted,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _stepSubtitles[_currentStep],
+                        style: TextStyle(
+                            color: c.label.withOpacity(0.6), fontSize: 12),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepIndicator(dynamic c) {
+    return Row(
+      children: List.generate(_stepCount * 2 - 1, (i) {
+        if (i.isOdd) {
+          final lineIndex = i ~/ 2;
+          final filled = lineIndex < _currentStep;
+          return Expanded(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              height: 2,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              color: filled ? c.primary : c.border.withOpacity(0.25),
+            ),
+          );
+        }
+        final stepIndex = i ~/ 2;
+        final completed = stepIndex < _currentStep;
+        final active = stepIndex == _currentStep;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          width: 26,
+          height: 26,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: completed || active ? c.primary : c.background,
+            border: Border.all(
+              color: completed || active ? c.primary : c.border.withOpacity(0.4),
+              width: 1.5,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: completed
+              ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+              : Text(
+                  '${stepIndex + 1}',
+                  style: TextStyle(
+                    color: active ? Colors.white : c.label.withOpacity(0.5),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
+                ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildErrorBanner(dynamic c) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: (c.error ?? Colors.red).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: (c.error ?? Colors.red).withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline_rounded, color: c.error ?? Colors.red, size: 16),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(_error!,
+                style: TextStyle(color: c.error ?? Colors.red, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Step pages ──────────────────────────────────────────────────────────
+  Widget _buildCurrentStep(dynamic c) {
+    switch (_currentStep) {
+      case 0:
+        return _buildBranchStep(c);
+      case 1:
+        return _buildAboutStep(c);
+      case 2:
+        return _buildBodyStep(c);
+      default:
+        return _buildEmergencyStep(c);
+    }
+  }
+
+  Widget _buildBranchStep(dynamic c) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _label('Preferred Branch *', c),
+          const SizedBox(height: 8),
+          _loadingBranches
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: CircularProgressIndicator(
+                        color: c.primary, strokeWidth: 2),
+                  ))
+              : _branchDropdown(c),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutStep(dynamic c) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _label('Gender *', c),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _genders.map((g) {
+              final selected = _selectedGender == g;
+              return ChoiceChip(
+                label: Text(_genderLabels[g]!),
+                selected: selected,
+                onSelected: (_) => setState(() => _selectedGender = g),
+                selectedColor: c.primary.withOpacity(0.2),
+                labelStyle: TextStyle(
+                  color: selected ? c.primary : c.label,
+                  fontSize: 12,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                backgroundColor: c.background,
+                side: BorderSide(
+                    color: selected ? c.primary : c.border.withOpacity(0.3)),
+                shape:
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 20),
+          _label('Date of Birth *', c),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: () => _pickDob(c),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: c.background,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: _selectedDob != null
+                        ? c.primary
+                        : c.border.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.calendar_today_rounded,
+                      color: _selectedDob != null
+                          ? c.primary
+                          : c.label.withOpacity(0.5),
+                      size: 18),
+                  const SizedBox(width: 10),
                   Text(
-                    'Help us personalise your experience. '
-                    'Fields marked * are required.',
-                    style: TextStyle(color: c.label.withOpacity(0.7), fontSize: 12),
+                    _selectedDob != null
+                        ? '${_selectedDob!.year}-'
+                          '${_selectedDob!.month.toString().padLeft(2, '0')}-'
+                          '${_selectedDob!.day.toString().padLeft(2, '0')}'
+                        : 'Select date of birth',
+                    style: TextStyle(
+                      color: _selectedDob != null
+                          ? c.primary
+                          : c.label.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            // ── Scrollable fields ─────────────────────────────────────────────
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+  Widget _buildBodyStep(dynamic c) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (_error != null) ...[
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: (c.error ?? Colors.red).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(_error!,
-                            style: TextStyle(
-                                color: c.error ?? Colors.red, fontSize: 12)),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-
-                    // ── Preferred Branch * ──────────────────────────────────
-                    _label('Preferred Branch *', c),
+                    _label('Height (cm)', c),
                     const SizedBox(height: 8),
-                    _loadingBranches
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: CircularProgressIndicator(
-                                  color: c.primary, strokeWidth: 2),
-                            ))
-                        : _branchDropdown(c),
-                    const SizedBox(height: 16),
-
-                    // ── Gender * ────────────────────────────────────────────
-                    _label('Gender *', c),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: _genders.map((g) {
-                        final selected = _selectedGender == g;
-                        return ChoiceChip(
-                          label: Text(_genderLabels[g]!),
-                          selected: selected,
-                          onSelected: (_) =>
-                              setState(() => _selectedGender = g),
-                          selectedColor: c.primary.withOpacity(0.2),
-                          labelStyle: TextStyle(
-                            color: selected ? c.primary : c.label,
-                            fontSize: 12,
-                            fontWeight: selected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                          backgroundColor: c.background,
-                          side: BorderSide(
-                              color: selected
-                                  ? c.primary
-                                  : c.border.withOpacity(0.3)),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // ── Date of Birth * ─────────────────────────────────────
-                    _label('Date of Birth *', c),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: () => _pickDob(c),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: c.background,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: _selectedDob != null
-                                  ? c.primary
-                                  : c.border.withOpacity(0.3)),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.calendar_today_rounded,
-                                color: _selectedDob != null ? c.primary : c.label.withOpacity(0.5), size: 18),
-                            const SizedBox(width: 10),
-                            Text(
-                              _selectedDob != null
-                                  ? '${_selectedDob!.year}-'
-                                    '${_selectedDob!.month.toString().padLeft(2, '0')}-'
-                                    '${_selectedDob!.day.toString().padLeft(2, '0')}'
-                                  : 'Select date of birth',
-                              style: TextStyle(
-                                color: _selectedDob != null
-                                    ? c.primary
-                                    : c.label.withOpacity(0.5),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // ── Height & Weight ─────────────────────────────────────
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _label('Height (cm)', c),
-                              const SizedBox(height: 8),
-                              _numField(_heightController, 'e.g. 175', c),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _label('Weight (kg)', c),
-                              const SizedBox(height: 8),
-                              _numField(_weightController, 'e.g. 70', c),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // ── Emergency Contact ───────────────────────────────────
-                    _label('Emergency Contact Name', c),
-                    const SizedBox(height: 8),
-                    _textField(_emergencyNameController, 'Full name', c),
-                    const SizedBox(height: 12),
-                    _label('Emergency Contact Phone', c),
-                    const SizedBox(height: 8),
-                    _textField(_emergencyPhoneController, 'Phone number', c,
-                        keyboardType: TextInputType.phone),
-                    const SizedBox(height: 8),
+                    _numField(_heightController, 'e.g. 175', c),
                   ],
                 ),
               ),
-            ),
-
-            // ── Footer ───────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: (_submitting || !_canSubmit) ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: c.primary,
-                    disabledBackgroundColor: c.primary.withOpacity(0.4),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: _submitting
-                      ? const SizedBox(
-                          width: 20, height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
-                      : const Text('Save & Continue',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _label('Weight (kg)', c),
+                    const SizedBox(height: 8),
+                    _numField(_weightController, 'e.g. 70', c),
+                  ],
                 ),
               ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmergencyStep(dynamic c) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _label('Emergency Contact Name', c),
+          const SizedBox(height: 8),
+          _textField(_emergencyNameController, 'Full name', c),
+          const SizedBox(height: 16),
+          _label('Emergency Contact Phone', c),
+          const SizedBox(height: 8),
+          _textField(_emergencyPhoneController, 'Phone number', c,
+              keyboardType: TextInputType.phone),
+        ],
+      ),
+    );
+  }
+
+  // ── Footer ──────────────────────────────────────────────────────────────
+  Widget _buildFooter(dynamic c) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+      child: Row(
+        children: [
+          if (_currentStep > 0)
+            Expanded(
+              child: OutlinedButton(
+                onPressed: _submitting ? null : _goBack,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: c.border.withOpacity(0.4)),
+                  shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text('Back',
+                    style:
+                        TextStyle(color: c.label, fontWeight: FontWeight.w600)),
+              ),
             ),
-          ],
-        ),
+          if (_currentStep > 0) const SizedBox(width: 12),
+          Expanded(
+            flex: _currentStep > 0 ? 2 : 1,
+            child: ElevatedButton(
+              onPressed: _submitting ? null : _goNext,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: c.primary,
+                disabledBackgroundColor: c.primary.withOpacity(0.4),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                elevation: 0,
+                shape:
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: _submitting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white))
+                  : Text(
+                      _isLastStep ? 'Save & Continue' : 'Next',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }

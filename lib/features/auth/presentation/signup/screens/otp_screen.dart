@@ -119,6 +119,12 @@ class _OtpScreenState extends State<OtpScreen> {
       _focusNodes[index - 1].requestFocus();
     }
     setState(() {});
+
+    // Dismiss the keyboard once all digits are entered so the verify
+    // button is immediately visible without the user needing to scroll.
+    if (_code.length == _boxCount) {
+      FocusScope.of(context).unfocus();
+    }
   }
 
   // ─── verify ───────────────────────────────────────────────────────────────
@@ -470,44 +476,42 @@ class _OtpScreenState extends State<OtpScreen> {
                                 // Debug tip — only in debug builds
                                 _DebugTipBox(tokens: tokens),
                                 SizedBox(height: sp.lg),
+
+                                // "← Back to registration" — now part of the
+                                // same scrollable region as the verify button
+                                // so it stays reachable when the keyboard is up.
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: c.muted,
+                                    padding:         EdgeInsets.zero,
+                                    minimumSize:     const Size(0, 0),
+                                    tapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_back_ios_new_rounded,
+                                        size:  13,
+                                        color: c.muted,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        l.otp_backToSignup,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color:    c.muted,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: sp.md),
                               ],
                             ),
-                          ),
-                        ),
-                      ),
-
-                      // "← Back to registration" — outside card
-                      Container(
-                        color: c.surface,
-                        padding:
-                        EdgeInsets.symmetric(vertical: sp.md),
-                        child: TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: TextButton.styleFrom(
-                            foregroundColor: c.muted,
-                            padding:         EdgeInsets.zero,
-                            minimumSize:     const Size(0, 0),
-                            tapTargetSize:
-                            MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.arrow_back_ios_new_rounded,
-                                size:  13,
-                                color: c.muted,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                l.otp_backToSignup,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color:    c.muted,
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ),

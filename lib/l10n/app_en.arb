@@ -288,7 +288,7 @@
   "billingMonthly": "Monthly",
   "billingYearly": "Yearly",
   "billingWeekly": "Weekly",
-  "membershipStatusActive": "Active",
+  "membershipStatusActive": "Active Membership",
   "membershipStatusFrozen": "Frozen",
   "membershipStatusExpired": "Expired",
   "remainingDays": "{days} days remaining",
@@ -1060,7 +1060,7 @@
 
   "membershipStatusPending": "Pending",
   "membershipStatusBlocked": "Blocked",
-  "membershipStatusInactive": "Inactive",
+  "membershipStatusInactive": "Inactive Membership",
   "genderMale": "Male",
   "genderFemale": "Female",
   "genderOther": "Other",

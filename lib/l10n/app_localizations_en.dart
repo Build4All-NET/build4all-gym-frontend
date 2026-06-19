@@ -619,7 +619,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billingWeekly => 'Weekly';
 
   @override
-  String get membershipStatusActive => 'Active';
+  String get membershipStatusActive => 'Active Membership';
 
   @override
   String get membershipStatusFrozen => 'Frozen';
@@ -2455,7 +2455,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get membershipStatusBlocked => 'Blocked';
 
   @override
-  String get membershipStatusInactive => 'Inactive';
+  String get membershipStatusInactive => 'Inactive Membership';
 
   @override
   String get genderMale => 'Male';
