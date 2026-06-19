@@ -54,6 +54,11 @@ import '../features/admin/expenses/data/services/admin_expenses_remote_service.d
 import '../features/admin/expenses/domain/usecases/admin_expenses_usecases.dart';
 import '../features/admin/expenses/presentation/bloc/admin_expenses/admin_expenses_bloc.dart';
 import '../features/admin/expenses/presentation/screens/admin_expenses_screen.dart';
+import '../features/admin/reports/data/repositories/admin_reports_repository_impl.dart';
+import '../features/admin/reports/data/services/admin_reports_remote_service.dart';
+import '../features/admin/reports/domain/usecases/admin_reports_usecases.dart';
+import '../features/admin/reports/presentation/bloc/admin_reports/admin_reports_bloc.dart';
+import '../features/admin/reports/presentation/screens/admin_reports_screen.dart';
 import '../features/admin/pt_dashboard/data/repositories/trainer_pt_sessions_repository_impl.dart';
 import '../features/admin/pt_dashboard/data/services/availability_service.dart';
 import '../features/admin/pt_dashboard/data/services/pt_service_service.dart';
@@ -206,6 +211,7 @@ class AppRouter {
   static const String adminCheckins      = '/admin/checkins';
   static const String adminPayments      = '/admin/payments';
   static const String adminExpenses      = '/admin/expenses';
+  static const String adminReports       = '/admin/reports';
   static const String adminClasses       = '/admin/classes';
   static const String adminNotifications = '/admin/notifications';
 
@@ -443,6 +449,28 @@ class AppRouter {
                 ),
               ],
               child: const AdminExpensesScreen(),
+            ),
+          ),
+        );
+
+    // ── Admin: Reports ─────────────────────────────────────────────────────
+      case adminReports:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            BlocProvider(
+              create: (_) => AdminReportsBloc(
+                getFinancial: GetFinancialReportUseCase(
+                  repository: AdminReportsRepositoryImpl(
+                    remoteDatasource: AdminReportsRemoteDatasourceImpl(),
+                  ),
+                ),
+                getAttendance: GetAttendanceReportUseCase(
+                  repository: AdminReportsRepositoryImpl(
+                    remoteDatasource: AdminReportsRemoteDatasourceImpl(),
+                  ),
+                ),
+              )..add(const LoadReportsEvent()),
+              child: const AdminReportsScreen(),
             ),
           ),
         );

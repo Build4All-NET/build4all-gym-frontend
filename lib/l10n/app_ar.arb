@@ -1425,5 +1425,18 @@
   "branchDialog_create": "إنشاء الفرع",
   "branchDialog_createdSuccess": "تم إنشاء الفرع بنجاح!",
   "branchDialog_next": "التالي",
-  "branchDialog_back": "رجوع"
+  "branchDialog_back": "رجوع",
+  "navReports": "التقارير",
+  "reports_tabFinancial": "المالية",
+  "reports_tabAttendance": "الحضور",
+  "reports_collected": "المحصّل",
+  "reports_expense": "المصاريف",
+  "reports_net": "الصافي",
+  "reports_totalCheckins": "إجمالي تسجيلات الدخول",
+  "reports_uniqueMembers": "أعضاء فريدون",
+  "reports_avgPerDay": "المعدّل / يوم",
+  "reports_collectedOverTime": "المحصّل عبر الوقت",
+  "reports_expenseByCategory": "المصاريف حسب الفئة",
+  "reports_checkinsOverTime": "الحضور عبر الوقت",
+  "reports_noData": "لا توجد بيانات لهذه الفترة"
 }

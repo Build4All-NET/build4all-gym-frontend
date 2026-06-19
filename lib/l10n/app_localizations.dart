@@ -7006,6 +7006,45 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get branchDialog_back;
+
+  /// No description provided for @navReports.
+  String get navReports;
+
+  /// No description provided for @reports_tabFinancial.
+  String get reports_tabFinancial;
+
+  /// No description provided for @reports_tabAttendance.
+  String get reports_tabAttendance;
+
+  /// No description provided for @reports_collected.
+  String get reports_collected;
+
+  /// No description provided for @reports_expense.
+  String get reports_expense;
+
+  /// No description provided for @reports_net.
+  String get reports_net;
+
+  /// No description provided for @reports_totalCheckins.
+  String get reports_totalCheckins;
+
+  /// No description provided for @reports_uniqueMembers.
+  String get reports_uniqueMembers;
+
+  /// No description provided for @reports_avgPerDay.
+  String get reports_avgPerDay;
+
+  /// No description provided for @reports_collectedOverTime.
+  String get reports_collectedOverTime;
+
+  /// No description provided for @reports_expenseByCategory.
+  String get reports_expenseByCategory;
+
+  /// No description provided for @reports_checkinsOverTime.
+  String get reports_checkinsOverTime;
+
+  /// No description provided for @reports_noData.
+  String get reports_noData;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

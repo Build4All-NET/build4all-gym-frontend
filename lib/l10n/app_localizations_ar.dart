@@ -3549,4 +3549,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get branchDialog_back => 'رجوع';
+
+  @override
+  String get navReports => 'التقارير';
+
+  @override
+  String get reports_tabFinancial => 'المالية';
+
+  @override
+  String get reports_tabAttendance => 'الحضور';
+
+  @override
+  String get reports_collected => 'المحصّل';
+
+  @override
+  String get reports_expense => 'المصاريف';
+
+  @override
+  String get reports_net => 'الصافي';
+
+  @override
+  String get reports_totalCheckins => 'إجمالي تسجيلات الدخول';
+
+  @override
+  String get reports_uniqueMembers => 'أعضاء فريدون';
+
+  @override
+  String get reports_avgPerDay => 'المعدّل / يوم';
+
+  @override
+  String get reports_collectedOverTime => 'المحصّل عبر الوقت';
+
+  @override
+  String get reports_expenseByCategory => 'المصاريف حسب الفئة';
+
+  @override
+  String get reports_checkinsOverTime => 'الحضور عبر الوقت';
+
+  @override
+  String get reports_noData => 'لا توجد بيانات لهذه الفترة';
 }

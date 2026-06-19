@@ -3549,4 +3549,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get branchDialog_back => 'Back';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get reports_tabFinancial => 'Financial';
+
+  @override
+  String get reports_tabAttendance => 'Attendance';
+
+  @override
+  String get reports_collected => 'Collected';
+
+  @override
+  String get reports_expense => 'Expense';
+
+  @override
+  String get reports_net => 'Net';
+
+  @override
+  String get reports_totalCheckins => 'Total Check-ins';
+
+  @override
+  String get reports_uniqueMembers => 'Unique Members';
+
+  @override
+  String get reports_avgPerDay => 'Avg / Day';
+
+  @override
+  String get reports_collectedOverTime => 'Collected Over Time';
+
+  @override
+  String get reports_expenseByCategory => 'Expense by Category';
+
+  @override
+  String get reports_checkinsOverTime => 'Check-ins Over Time';
+
+  @override
+  String get reports_noData => 'No data for this period';
 }

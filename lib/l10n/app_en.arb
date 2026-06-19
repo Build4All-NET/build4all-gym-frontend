@@ -1451,5 +1451,18 @@
   "branchDialog_create": "Create Branch",
   "branchDialog_createdSuccess": "Branch created successfully!",
   "branchDialog_next": "Next",
-  "branchDialog_back": "Back"
+  "branchDialog_back": "Back",
+  "navReports": "Reports",
+  "reports_tabFinancial": "Financial",
+  "reports_tabAttendance": "Attendance",
+  "reports_collected": "Collected",
+  "reports_expense": "Expense",
+  "reports_net": "Net",
+  "reports_totalCheckins": "Total Check-ins",
+  "reports_uniqueMembers": "Unique Members",
+  "reports_avgPerDay": "Avg / Day",
+  "reports_collectedOverTime": "Collected Over Time",
+  "reports_expenseByCategory": "Expense by Category",
+  "reports_checkinsOverTime": "Check-ins Over Time",
+  "reports_noData": "No data for this period"
 }
