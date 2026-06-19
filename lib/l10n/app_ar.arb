@@ -391,6 +391,8 @@
   "@navMembershipRequests": { "description": "Admin drawer — Membership Requests item" },
   "navInvoices": "الفواتير",
   "@navInvoices": { "description": "Admin drawer — Invoices item" },
+  "navExpenses": "المصروفات",
+  "@navExpenses": { "description": "Admin drawer — Expenses item" },
   "navSettings": "الإعدادات",
   "@navSettings": { "description": "Admin drawer — Settings item" },
   "navLogout": "تسجيل الخروج",
@@ -968,6 +970,13 @@
   "admin_plans_addTitle": "إضافة خطة جديدة",
   "admin_plans_createPlan": "إنشاء خطة",
 
+  "admin_expenses_deleteTitle": "حذف المصروف",
+  "admin_expenses_deleteMessage": "هل أنت متأكد أنك تريد حذف هذا المصروف؟",
+  "admin_expenses_delete": "حذف",
+  "admin_expenses_allCategories": "جميع الفئات",
+  "admin_expenses_searchHint": "البحث عن المصروفات...",
+  "admin_expenses_noExpenses": "لا توجد مصروفات",
+
   "admin_staff_noStaff": "لا يوجد موظفون.",
   "admin_staff_addedSuccess": "تمت إضافة الموظف بنجاح",
   "admin_staff_updatedSuccess": "تم تحديث الموظف بنجاح",
@@ -1414,5 +1423,7 @@
   "branchDialog_selectOpening": "الرجاء تحديد وقت الافتتاح",
   "branchDialog_selectClosing": "الرجاء تحديد وقت الإغلاق",
   "branchDialog_create": "إنشاء الفرع",
-  "branchDialog_createdSuccess": "تم إنشاء الفرع بنجاح!"
+  "branchDialog_createdSuccess": "تم إنشاء الفرع بنجاح!",
+  "branchDialog_next": "التالي",
+  "branchDialog_back": "رجوع"
 }

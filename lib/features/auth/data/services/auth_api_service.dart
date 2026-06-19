@@ -86,6 +86,7 @@ class AuthApiService {
     required String password,
     required int ownerProjectLinkId,
     String? email,
+    String? phoneNumber,
   }) async {
     final uri = _uri('/api/auth/send-verification');
 
@@ -95,7 +96,8 @@ class AuthApiService {
     final body = <String, dynamic>{
       'password': password,
       'ownerProjectLinkId': ownerProjectLinkId,
-      'email':email
+      if (email != null) 'email': email,
+      if (phoneNumber != null) 'phoneNumber': phoneNumber,
     };
 
     try {

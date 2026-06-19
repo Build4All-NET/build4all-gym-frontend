@@ -397,6 +397,8 @@
   "@navMembershipRequests": { "description": "Admin drawer — Membership Requests item" },
   "navInvoices": "Invoices",
   "@navInvoices": { "description": "Admin drawer — Invoices item" },
+  "navExpenses": "Expenses",
+  "@navExpenses": { "description": "Admin drawer — Expenses item" },
   "navSettings": "Settings",
   "@navSettings": { "description": "Admin drawer — Settings item" },
   "navLogout": "Logout",
@@ -981,6 +983,13 @@
   "admin_plans_addTitle": "Add New Plan",
   "admin_plans_createPlan": "Create Plan",
 
+  "admin_expenses_deleteTitle": "Delete Expense",
+  "admin_expenses_deleteMessage": "Are you sure you want to delete this expense?",
+  "admin_expenses_delete": "Delete",
+  "admin_expenses_allCategories": "All Categories",
+  "admin_expenses_searchHint": "Search expenses...",
+  "admin_expenses_noExpenses": "No expenses found",
+
   "admin_staff_noStaff": "No staff members found.",
   "admin_staff_addedSuccess": "Staff member added successfully",
   "admin_staff_updatedSuccess": "Staff member updated successfully",
@@ -1440,5 +1449,7 @@
   "branchDialog_selectOpening": "Please select an opening time",
   "branchDialog_selectClosing": "Please select a closing time",
   "branchDialog_create": "Create Branch",
-  "branchDialog_createdSuccess": "Branch created successfully!"
+  "branchDialog_createdSuccess": "Branch created successfully!",
+  "branchDialog_next": "Next",
+  "branchDialog_back": "Back"
 }

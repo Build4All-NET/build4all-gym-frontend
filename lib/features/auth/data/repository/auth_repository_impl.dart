@@ -14,12 +14,14 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<AuthFailure, void>> sendVerificationCode({
     String? email,
+    String? phoneNumber,
     required String password,
     required int ownerProjectLinkId,
   }) async {
     try {
       await _api.sendVerificationCode(
         email: email,
+        phoneNumber: phoneNumber,
         password: password,
         ownerProjectLinkId: ownerProjectLinkId,
       );

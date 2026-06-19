@@ -309,9 +309,7 @@ class _MethodCard extends StatelessWidget {
                   Switch(
                   value: method.tenantEnabled,
                   activeColor: c.primary, //  works
-                  onChanged: (value) => context
-                      .read<AdminPaymentConfigCubit>()
-                      .toggleMethod(method, value),
+                  onChanged: (value) => _toggle(context, method, value),
                 ),
               ],
             ),
@@ -390,6 +388,19 @@ class _MethodCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _toggle(
+      BuildContext context, PaymentMethodConfigModel method, bool value) async {
+    try {
+      await context.read<AdminPaymentConfigCubit>().toggleMethod(method, value);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not update ${method.displayName}: $e')),
+        );
+      }
+    }
   }
 
   void _openConfigSheet(BuildContext context) {

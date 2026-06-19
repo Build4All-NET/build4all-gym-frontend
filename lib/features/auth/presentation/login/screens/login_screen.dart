@@ -13,6 +13,7 @@ import 'package:build4allgym/l10n/app_localizations.dart';
 
 import '../../signup/screens/signup_screen.dart';
 import '../../../../forgotpassword/presentation/screens/forgot_password_screen.dart';
+import '../../widgets/method_toggle.dart';
 
 class UserLoginScreen extends StatefulWidget {
   final AppConfig appConfig;
@@ -47,10 +48,15 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     final value = _identifierCtrl.text.trim();
     final pass = _passwordCtrl.text;
 
-    // ✅ Unified login (no more phone/email distinction)
-    context.read<AuthBloc>().add(
-      AuthLoginSubmitted(email: value, password: pass),
-    );
+    if (_usePhone) {
+      context.read<AuthBloc>().add(
+        AuthPhoneLoginSubmitted(phone: value, password: pass),
+      );
+    } else {
+      context.read<AuthBloc>().add(
+        AuthLoginSubmitted(email: value, password: pass),
+      );
+    }
   }
 
   // ─── navigation helpers ─────────────────────────────────────────────────────
@@ -222,6 +228,18 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                     SizedBox(height: sp.xs),
 
                                     // ── Email / Phone toggle ──
+                                    MethodToggle(
+                                      usePhone: _usePhone,
+                                      tokens: tokens,
+                                      emailLabel: l.auth_emailLabel,
+                                      phoneLabel: l.auth_phoneLabel,
+                                      onChanged: (val) => setState(() {
+                                        _usePhone = val;
+                                        _identifierCtrl.clear();
+                                      }),
+                                    ),
+                                    SizedBox(height: sp.md),
+
                                     Text(
                                       _usePhone ? l.auth_phoneLabel : l.auth_emailLabel,
                                       style: TextStyle(
@@ -302,6 +320,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         }
                                         if (!_usePhone && !v.contains('@')) {
                                           return l.validation_emailInvalid;
+                                        }
+                                        if (_usePhone && v.trim().length < 7) {
+                                          return l.validation_phoneRequired;
                                         }
                                         return null;
                                       },

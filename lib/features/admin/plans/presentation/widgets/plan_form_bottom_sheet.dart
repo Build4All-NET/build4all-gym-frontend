@@ -13,6 +13,7 @@ import '../../data/models/UpdatePlanRequestModel.dart';
 import '../../data/models/plan_feature_model.dart';
 import '../../data/models/plan_promotion_model.dart';
 import '../bloc/plan_form/plan_form_bloc.dart';
+import '../../../../../common/widgets/form_section_kit.dart';
 
 class PlanFormBottomSheet {
   static void show(
@@ -20,12 +21,13 @@ class PlanFormBottomSheet {
     AdminPlanListItemEntity? existingPlan,
     required VoidCallback onSuccess,
   }) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: c.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => BlocProvider(
         create: (_) {

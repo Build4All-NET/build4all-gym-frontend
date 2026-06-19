@@ -879,6 +879,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navInvoices => 'الفواتير';
 
   @override
+  String get navExpenses => 'المصروفات';
+
+  @override
   String get navSettings => 'الإعدادات';
 
   @override
@@ -2258,6 +2261,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_plans_createPlan => 'إنشاء خطة';
 
   @override
+  String get admin_expenses_deleteTitle => 'حذف المصروف';
+
+  @override
+  String get admin_expenses_deleteMessage => 'هل أنت متأكد أنك تريد حذف هذا المصروف؟';
+
+  @override
+  String get admin_expenses_delete => 'حذف';
+
+  @override
+  String get admin_expenses_allCategories => 'جميع الفئات';
+
+  @override
+  String get admin_expenses_searchHint => 'البحث عن المصروفات...';
+
+  @override
+  String get admin_expenses_noExpenses => 'لا توجد مصروفات';
+
+  @override
   String get admin_staff_noStaff => 'لا يوجد موظفون.';
 
   @override
@@ -3522,4 +3543,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get branchDialog_createdSuccess => 'تم إنشاء الفرع بنجاح!';
+
+  @override
+  String get branchDialog_next => 'التالي';
+
+  @override
+  String get branchDialog_back => 'رجوع';
 }

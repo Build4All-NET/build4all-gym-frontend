@@ -879,6 +879,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navInvoices => 'Invoices';
 
   @override
+  String get navExpenses => 'Expenses';
+
+  @override
   String get navSettings => 'Settings';
 
   @override
@@ -2258,6 +2261,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_plans_createPlan => 'Create Plan';
 
   @override
+  String get admin_expenses_deleteTitle => 'Delete Expense';
+
+  @override
+  String get admin_expenses_deleteMessage => 'Are you sure you want to delete this expense?';
+
+  @override
+  String get admin_expenses_delete => 'Delete';
+
+  @override
+  String get admin_expenses_allCategories => 'All Categories';
+
+  @override
+  String get admin_expenses_searchHint => 'Search expenses...';
+
+  @override
+  String get admin_expenses_noExpenses => 'No expenses found';
+
+  @override
   String get admin_staff_noStaff => 'No staff members found.';
 
   @override
@@ -3522,4 +3543,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get branchDialog_createdSuccess => 'Branch created successfully!';
+
+  @override
+  String get branchDialog_next => 'Next';
+
+  @override
+  String get branchDialog_back => 'Back';
 }

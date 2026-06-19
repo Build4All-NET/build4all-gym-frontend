@@ -72,7 +72,12 @@ class _CreateFirstBranchDialog extends StatefulWidget {
 }
 
 class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
-  final _formKey = GlobalKey<FormState>();
+  static const _totalSteps = 3;
+
+  int _step = 1;
+
+  final _step1Key = GlobalKey<FormState>();
+  final _step2Key = GlobalKey<FormState>();
 
   late final TextEditingController _nameCtrl;
   late final TextEditingController _cityCtrl;
@@ -103,6 +108,24 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
     super.dispose();
   }
 
+  // ── Step navigation ─────────────────────────────────────────────────────────
+
+  void _goNext() {
+    if (_step == 1) {
+      if (!(_step1Key.currentState?.validate() ?? false)) return;
+      setState(() => _step = 2);
+    } else if (_step == 2) {
+      if (!(_step2Key.currentState?.validate() ?? false)) return;
+      setState(() => _step = 3);
+    } else {
+      _submit();
+    }
+  }
+
+  void _goBack() {
+    if (_step > 1) setState(() => _step--);
+  }
+
   // ── Build ──────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -130,156 +153,218 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         clipBehavior: Clip.antiAlias,
         child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _Header(),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _sectionLabel(c, l10n.branchDialog_sectionBasic),
-                        const SizedBox(height: 10),
-                        _field(
-                          c: c,
-                          ctrl: _nameCtrl,
-                          label: l10n.branchDialog_name,
-                          hint: l10n.branchDialog_nameHint,
-                          icon: Icons.store_mall_directory_outlined,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? l10n.branchDialog_nameRequired
-                              : null,
-                        ),
-                        const SizedBox(height: 12),
-                        _field(
-                          c: c,
-                          ctrl: _cityCtrl,
-                          label: l10n.branchDialog_city,
-                          hint: l10n.branchDialog_cityHint,
-                          icon: Icons.location_city_outlined,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? l10n.branchDialog_cityRequired
-                              : null,
-                        ),
-                        const SizedBox(height: 20),
-                        _sectionLabel(c, l10n.branchDialog_sectionContact),
-                        const SizedBox(height: 10),
-                        _field(
-                          c: c,
-                          ctrl: _phoneCtrl,
-                          label: l10n.branchDialog_phone,
-                          hint: l10n.branchDialog_phoneHint,
-                          icon: Icons.phone_outlined,
-                          keyboard: TextInputType.phone,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? l10n.branchDialog_phoneRequired
-                              : null,
-                        ),
-                        const SizedBox(height: 12),
-                        _field(
-                          c: c,
-                          ctrl: _emailCtrl,
-                          label: l10n.branchDialog_email,
-                          hint: l10n.branchDialog_emailHint,
-                          icon: Icons.email_outlined,
-                          keyboard: TextInputType.emailAddress,
-                          validator: (v) {
-                            if (v == null || v.trim().isEmpty) {
-                              return l10n.branchDialog_emailRequired;
-                            }
-                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                .hasMatch(v.trim())) {
-                              return l10n.branchDialog_emailInvalid;
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _field(
-                          c: c,
-                          ctrl: _addressCtrl,
-                          label: l10n.branchDialog_address,
-                          hint: l10n.branchDialog_addressHint,
-                          icon: Icons.place_outlined,
-                          maxLines: 2,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? l10n.branchDialog_addressRequired
-                              : null,
-                        ),
-                        const SizedBox(height: 20),
-                        _sectionLabel(c, l10n.branchDialog_sectionHours),
-                        const SizedBox(height: 10),
-                        _Open24HoursTile(
-                          value: _isOpen24Hours,
-                          onChanged: (v) => setState(() {
-                            _isOpen24Hours = v;
-                            if (v) {
-                              _openingTime = null;
-                              _closingTime = null;
-                            }
-                          }),
-                        ),
-                        if (!_isOpen24Hours) ...[
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _TimeTile(
-                                  label: l10n.branchDialog_opening,
-                                  value: _openingTime,
-                                  onPicked: (t) =>
-                                      setState(() => _openingTime = t),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _TimeTile(
-                                  label: l10n.branchDialog_closing,
-                                  value: _closingTime,
-                                  onPicked: (t) =>
-                                      setState(() => _closingTime = t),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (_openingTime != null &&
-                              _closingTime != null &&
-                              !_isClosingAfterOpening())
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                l10n.branchDialog_closingAfterOpening,
-                                style:
-                                    TextStyle(color: c.danger, fontSize: 12),
-                              ),
-                            ),
-                        ],
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                  ),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Header(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: _StepIndicator(
+                currentStep: _step,
+                totalSteps: _totalSteps,
+                stepLabel: _stepLabel(l10n),
+                icon: _stepIcon(),
+              ),
+            ),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  transitionBuilder: (child, anim) =>
+                      FadeTransition(opacity: anim, child: child),
+                  child: _buildStepContent(c, l10n),
                 ),
               ),
-              _Footer(onSubmit: _submit),
-            ],
+            ),
+            const SizedBox(height: 4),
+            _Footer(
+              step: _step,
+              totalSteps: _totalSteps,
+              onBack: _goBack,
+              onNext: _goNext,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Step content ─────────────────────────────────────────────────────────
+
+  String _stepLabel(AppLocalizations l10n) {
+    switch (_step) {
+      case 1:
+        return l10n.branchDialog_sectionBasic;
+      case 2:
+        return l10n.branchDialog_sectionContact;
+      default:
+        return l10n.branchDialog_sectionHours;
+    }
+  }
+
+  IconData _stepIcon() {
+    switch (_step) {
+      case 1:
+        return Icons.store_mall_directory_outlined;
+      case 2:
+        return Icons.contact_phone_outlined;
+      default:
+        return Icons.access_time_rounded;
+    }
+  }
+
+  Widget _buildStepContent(dynamic c, AppLocalizations l10n) {
+    switch (_step) {
+      case 1:
+        return _basicStep(c, l10n);
+      case 2:
+        return _contactStep(c, l10n);
+      default:
+        return _hoursStep(c, l10n);
+    }
+  }
+
+  Widget _basicStep(dynamic c, AppLocalizations l10n) {
+    return Form(
+      key: _step1Key,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _field(
+            c: c,
+            ctrl: _nameCtrl,
+            label: l10n.branchDialog_name,
+            hint: l10n.branchDialog_nameHint,
+            icon: Icons.store_mall_directory_outlined,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? l10n.branchDialog_nameRequired
+                : null,
           ),
+          const SizedBox(height: 12),
+          _field(
+            c: c,
+            ctrl: _cityCtrl,
+            label: l10n.branchDialog_city,
+            hint: l10n.branchDialog_cityHint,
+            icon: Icons.location_city_outlined,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? l10n.branchDialog_cityRequired
+                : null,
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _contactStep(dynamic c, AppLocalizations l10n) {
+    return Form(
+      key: _step2Key,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _field(
+            c: c,
+            ctrl: _phoneCtrl,
+            label: l10n.branchDialog_phone,
+            hint: l10n.branchDialog_phoneHint,
+            icon: Icons.phone_outlined,
+            keyboard: TextInputType.phone,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? l10n.branchDialog_phoneRequired
+                : null,
+          ),
+          const SizedBox(height: 12),
+          _field(
+            c: c,
+            ctrl: _emailCtrl,
+            label: l10n.branchDialog_email,
+            hint: l10n.branchDialog_emailHint,
+            icon: Icons.email_outlined,
+            keyboard: TextInputType.emailAddress,
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) {
+                return l10n.branchDialog_emailRequired;
+              }
+              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v.trim())) {
+                return l10n.branchDialog_emailInvalid;
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          _field(
+            c: c,
+            ctrl: _addressCtrl,
+            label: l10n.branchDialog_address,
+            hint: l10n.branchDialog_addressHint,
+            icon: Icons.place_outlined,
+            maxLines: 2,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? l10n.branchDialog_addressRequired
+                : null,
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _hoursStep(dynamic c, AppLocalizations l10n) {
+    return KeyedSubtree(
+      key: const ValueKey('hours-step'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _Open24HoursTile(
+            value: _isOpen24Hours,
+            onChanged: (v) => setState(() {
+              _isOpen24Hours = v;
+              if (v) {
+                _openingTime = null;
+                _closingTime = null;
+              }
+            }),
+          ),
+          if (!_isOpen24Hours) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _TimeTile(
+                    label: l10n.branchDialog_opening,
+                    value: _openingTime,
+                    onPicked: (t) => setState(() => _openingTime = t),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _TimeTile(
+                    label: l10n.branchDialog_closing,
+                    value: _closingTime,
+                    onPicked: (t) => setState(() => _closingTime = t),
+                  ),
+                ),
+              ],
+            ),
+            if (_openingTime != null &&
+                _closingTime != null &&
+                !_isClosingAfterOpening())
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  l10n.branchDialog_closingAfterOpening,
+                  style: TextStyle(color: c.danger, fontSize: 12),
+                ),
+              ),
+          ],
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
-
-  Widget _sectionLabel(dynamic c, String text) => Text(
-        text,
-        style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: c.muted,
-            letterSpacing: 0.5),
-      );
 
   Widget _field({
     required dynamic c,
@@ -333,8 +418,6 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   }
 
   void _submit() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-
     final l10n = AppLocalizations.of(context)!;
     if (!_isOpen24Hours) {
       if (_openingTime == null) {
@@ -448,13 +531,99 @@ class _Header extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _Footer extends StatelessWidget {
-  const _Footer({required this.onSubmit});
-  final VoidCallback onSubmit;
+class _StepIndicator extends StatelessWidget {
+  const _StepIndicator({
+    required this.currentStep,
+    required this.totalSteps,
+    required this.stepLabel,
+    required this.icon,
+  });
+
+  final int currentStep;
+  final int totalSteps;
+  final String stepLabel;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final stepText = isAr
+        ? 'الخطوة $currentStep من $totalSteps'
+        : 'Step $currentStep of $totalSteps';
+    final progress = currentStep / totalSteps;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: c.primary.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.border.withOpacity(0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 16, color: c.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    stepLabel,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: c.label,
+                    ),
+                  ),
+                ],
+              ),
+              Text(stepText, style: TextStyle(fontSize: 12, color: c.muted)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 220),
+              tween: Tween(begin: 0, end: progress),
+              builder: (_, value, __) => LinearProgressIndicator(
+                value: value,
+                backgroundColor: c.primary.withOpacity(0.12),
+                valueColor: AlwaysStoppedAnimation<Color>(c.primary),
+                minHeight: 5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Footer extends StatelessWidget {
+  const _Footer({
+    required this.step,
+    required this.totalSteps,
+    required this.onBack,
+    required this.onNext,
+  });
+
+  final int step;
+  final int totalSteps;
+  final VoidCallback onBack;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
+    final isLastStep = step == totalSteps;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
@@ -468,36 +637,66 @@ class _Footer extends StatelessWidget {
           ),
         ],
       ),
-      child: BlocBuilder<BranchesBloc, BranchesState>(
-        builder: (context, state) {
-          final isLoading = state is BranchCreating;
-          return SizedBox(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: isLoading ? null : onSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: c.primary,
-                disabledBackgroundColor: c.primary.withOpacity(0.5),
-                foregroundColor: c.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        children: [
+          if (step > 1) ...[
+            Expanded(
+              child: SizedBox(
+                height: 50,
+                child: OutlinedButton(
+                  onPressed: onBack,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: c.label,
+                    side: BorderSide(color: c.border.withOpacity(0.5)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    l10n.branchDialog_back,
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
               ),
-              child: isLoading
-                  ? SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                          color: c.onPrimary, strokeWidth: 2.2),
-                    )
-                  : Text(
-                      AppLocalizations.of(context)!.branchDialog_create,
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
             ),
-          );
-        },
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: BlocBuilder<BranchesBloc, BranchesState>(
+                builder: (context, state) {
+                  final isLoading = isLastStep && state is BranchCreating;
+                  return ElevatedButton(
+                    onPressed: isLoading ? null : onNext,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: c.primary,
+                      disabledBackgroundColor: c.primary.withOpacity(0.5),
+                      foregroundColor: c.onPrimary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: isLoading
+                        ? SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                                color: c.onPrimary, strokeWidth: 2.2),
+                          )
+                        : Text(
+                            isLastStep
+                                ? l10n.branchDialog_create
+                                : l10n.branchDialog_next,
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

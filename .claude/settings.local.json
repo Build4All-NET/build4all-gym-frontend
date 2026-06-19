@@ -172,7 +172,30 @@
       "Bash(flutter devices *)",
       "Bash(command -v chromium-cli)",
       "Bash(xargs grep -l \"gym_user_roles\\\\|GymUserRole\")",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Bash(ls mvnw*)",
+      "Bash(ls pom.xml)",
+      "Bash(./mvnw -q -o compile)",
+      "Bash(echo \"EXIT_CODE=$?\")",
+      "Bash(flutter test *)",
+      "Bash(flutter --version)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8080/actuator/health)",
+      "Bash(netstat -ano)",
+      "Bash(xargs grep -l \"GetIt\\\\|get_it\")",
+      "Bash(grep -E \"\\\\.\\(java|kotlin\\)$\")",
+      "Bash(xargs grep -l -i \"expense\\\\|cost\")",
+      "Bash(curl *)",
+      "Bash(git status *)",
+      "Bash(git check-ignore *)",
+      "Bash(flutter run *)",
+      "Bash(tee /tmp/flutter_run.log)",
+      "Bash(echo \"launched with PID $!\")",
+      "Bash(pip show *)",
+      "Bash(npm ls *)",
+      "Bash(where chrome.exe)",
+      "Bash(tasklist)",
+      "Bash(tasklist *)",
+      "PowerShell(Get-Process *)"
     ]
   }
 }

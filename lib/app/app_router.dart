@@ -49,6 +49,11 @@ import '../features/admin/plans/data/services/admin_plans_remote_service.dart';
 import '../features/admin/plans/domain/usecases/admin_plans_usecases.dart' hide GetBranchesUseCase;
 import '../features/admin/plans/presentation/bloc/admin_plans/admin_plans_bloc.dart';
 import '../features/admin/plans/presentation/screens/admin_plans_screen.dart';
+import '../features/admin/expenses/data/repositories/admin_expenses_repository_impl.dart';
+import '../features/admin/expenses/data/services/admin_expenses_remote_service.dart';
+import '../features/admin/expenses/domain/usecases/admin_expenses_usecases.dart';
+import '../features/admin/expenses/presentation/bloc/admin_expenses/admin_expenses_bloc.dart';
+import '../features/admin/expenses/presentation/screens/admin_expenses_screen.dart';
 import '../features/admin/pt_dashboard/data/repositories/trainer_pt_sessions_repository_impl.dart';
 import '../features/admin/pt_dashboard/data/services/availability_service.dart';
 import '../features/admin/pt_dashboard/data/services/pt_service_service.dart';
@@ -200,6 +205,7 @@ class AppRouter {
   // ─── Admin: Operations / Reception ────────────────────────────────────────
   static const String adminCheckins      = '/admin/checkins';
   static const String adminPayments      = '/admin/payments';
+  static const String adminExpenses      = '/admin/expenses';
   static const String adminClasses       = '/admin/classes';
   static const String adminNotifications = '/admin/notifications';
 
@@ -399,6 +405,44 @@ class AppRouter {
                 ),
               ],
               child: const AdminPlansScreen(),
+            ),
+          ),
+        );
+
+    // ── Admin: Expenses ────────────────────────────────────────────────────
+
+      case adminExpenses:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => AdminExpensesBloc(
+                    getStats: GetExpenseStatsUseCase(
+                      repository: AdminExpensesRepositoryImpl(
+                        remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    getExpenses: GetExpensesUseCase(
+                      repository: AdminExpensesRepositoryImpl(
+                        remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    getCategories: GetExpenseCategoriesUseCase(
+                      repository: AdminExpensesRepositoryImpl(
+                        remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    deleteExpense: DeleteExpenseUseCase(
+                      repository: AdminExpensesRepositoryImpl(
+                        remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                  )..add(LoadAdminExpensesEvent()),
+                ),
+              ],
+              child: const AdminExpensesScreen(),
             ),
           ),
         );
@@ -807,7 +851,10 @@ class _ComingSoonScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        leading: BackButton(onPressed: () => Navigator.of(context).pop()),
+        leading: BackButton(
+          onPressed: () => Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppRouter.adminDashboard, (route) => false),
+        ),
       ),
       body: Center(
         child: Column(

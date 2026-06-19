@@ -12,7 +12,8 @@ class SendVerificationCode {
     required int ownerProjectLinkId,
   }) {
     return repo.sendVerificationCode(
-      email: email!.isNotEmpty ? email : phoneNumber,
+      email: (email != null && email.isNotEmpty) ? email : null,
+      phoneNumber: (phoneNumber != null && phoneNumber.isNotEmpty) ? phoneNumber : null,
       password: password,
       ownerProjectLinkId: ownerProjectLinkId,
     );

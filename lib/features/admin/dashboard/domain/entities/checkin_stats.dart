@@ -39,10 +39,18 @@ class CheckinStats {
   // Gives the owner a heads-up on upcoming trainer load.
   final int upcomingPTSessions;
 
+  // ── Distinct members who checked in at least once during the period ──
+  final int uniqueMembersAttended;
+
+  // ── Active members who did NOT check in during the period ────────────
+  final int absentMembers;
+
   const CheckinStats({
     required this.todayCheckins,
     required this.attendanceCount,
     required this.attendanceGrowth,
     required this.upcomingPTSessions,
+    required this.uniqueMembersAttended,
+    required this.absentMembers,
   });
 }
