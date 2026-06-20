@@ -1,3 +1,5 @@
+// FILE: lib/features/admin/expenses/presentation/widgets/expense_form_bottom_sheet.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +7,6 @@ import 'package:intl/intl.dart';
 import '../../../../../common/widgets/app_toast.dart';
 import '../../../../../common/widgets/form_section_kit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
-import '../../../../../l10n/app_localizations.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
 import '../../domain/entities/expense_entity.dart';
 import '../../domain/usecases/admin_expenses_usecases.dart';
@@ -13,6 +14,17 @@ import '../../data/repositories/admin_expenses_repository_impl.dart';
 import '../../data/services/admin_expenses_remote_service.dart';
 import '../../data/models/create_expense_request_model.dart';
 import '../../data/models/update_expense_request_model.dart';
+
+const List<String> kExpenseCategories = [
+  'rent',
+  'salary',
+  'equipment',
+  'maintenance',
+  'utilities',
+  'marketing',
+  'supplies',
+  'other',
+];
 
 String formatExpenseCategory(String category) {
   if (category.isEmpty) return category;
@@ -27,10 +39,9 @@ class ExpenseFormBottomSheet {
     required VoidCallback onSuccess,
   }) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
-    // showModalBottomSheet mounts its content on the root Overlay, which is
-    // not a descendant of this route's MultiBlocProvider — BranchCubit has to
-    // be captured here and re-provided explicitly into the sheet's subtree.
+
     final branchCubit = context.read<BranchCubit>();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -49,8 +60,6 @@ class ExpenseFormBottomSheet {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _ExpenseFormContent extends StatefulWidget {
   final ExpenseEntity? existingExpense;
@@ -76,8 +85,6 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
 
   late DateTime _expenseDate;
   String? _selectedCategory;
-  bool _isCustomCategory = false;
-  late final TextEditingController _customCategoryController;
   int? _selectedBranchId;
 
   bool _isSubmitting = false;
@@ -88,6 +95,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
       remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
     ),
   );
+
   final _updateExpenseUseCase = UpdateExpenseUseCase(
     repository: AdminExpensesRepositoryImpl(
       remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
@@ -99,13 +107,20 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
   @override
   void initState() {
     super.initState();
+
     final expense = widget.existingExpense;
 
     _titleController = TextEditingController(text: expense?.title ?? '');
-    _descriptionController = TextEditingController(text: expense?.description ?? '');
-    _amountController = TextEditingController(text: expense?.amount.toString() ?? '');
+    _descriptionController = TextEditingController(
+      text: expense?.description ?? '',
+    );
+    _amountController = TextEditingController(
+      text: expense?.amount.toString() ?? '',
+    );
+
     _expenseDate = expense?.expenseDate ?? DateTime.now();
-    _selectedCategory = expense?.category ?? kExpenseCategories.first;
+
+    _selectedCategory = expense?.category ?? widget.availableCategories.first;
     _selectedBranchId = expense?.branchId;
   }
 
@@ -124,6 +139,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
+
     if (picked != null) {
       setState(() => _expenseDate = picked);
     }
@@ -131,9 +147,11 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
     if (_selectedBranchId == null) {
-      setState(() =>
-          _errorMessage = AppLocalizations.of(context)!.admin_expenses_selectBranchError);
+      setState(() {
+        _errorMessage = 'Please select a branch';
+      });
       return;
     }
 
@@ -173,14 +191,16 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
       }
 
       if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
+
       Navigator.of(context).pop();
+
       AppToast.success(
         context,
         _isEditMode
-            ? l10n.admin_expenses_updatedSuccess
-            : l10n.admin_expenses_addedSuccess,
+            ? 'Expense updated successfully'
+            : 'Expense added successfully',
       );
+
       widget.onSuccess();
     } catch (e) {
       setState(() {
@@ -194,7 +214,6 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
   Widget build(BuildContext context) {
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c = tokens.colors;
-    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -213,36 +232,43 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
               FormSheetHandle(c),
               const SizedBox(height: 16),
               FormSheetHeader(
-                title: _isEditMode
-                    ? l10n.admin_expenses_editTitle
-                    : l10n.admin_expenses_addTitle,
+                title: _isEditMode ? 'Edit Expense' : 'Add Expense',
                 icon: Icons.receipt_long_outlined,
                 c: c,
                 onClose: () => Navigator.of(context).pop(),
               ),
-
-              FormSectionHeader(title: l10n.admin_expenses_sectionDetails, icon: Icons.info_outline_rounded, c: c),
-
-              FormFieldLabel(l10n.admin_expenses_titleLabel, c),
+              FormSectionHeader(
+                title: 'Expense Details',
+                icon: Icons.info_outline_rounded,
+                c: c,
+              ),
+              FormFieldLabel('Title *', c),
               TextFormField(
                 controller: _titleController,
                 style: TextStyle(color: c.label),
-                decoration: formInputDecoration(hint: l10n.admin_expenses_titleHint, c: c),
-                validator: (v) => v == null || v.trim().isEmpty
-                    ? l10n.admin_expenses_required
-                    : null,
+                decoration: formInputDecoration(
+                  hint: 'e.g. Electricity bill',
+                  c: c,
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) {
+                    return 'Required';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
-
-              FormFieldLabel(l10n.admin_expenses_descriptionLabel, c),
+              FormFieldLabel('Description', c),
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 2,
                 style: TextStyle(color: c.label),
-                decoration: formInputDecoration(hint: l10n.admin_expenses_descriptionHint, c: c),
+                decoration: formInputDecoration(
+                  hint: 'Optional notes',
+                  c: c,
+                ),
               ),
               const SizedBox(height: 12),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -250,10 +276,13 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FormFieldLabel(l10n.admin_expenses_amountLabel, c),
+                        FormFieldLabel('Amount *', c),
                         TextFormField(
                           controller: _amountController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType:
+                              const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                           style: TextStyle(color: c.label),
                           decoration: formInputDecoration(
                             hint: '0.00',
@@ -262,12 +291,15 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                           ),
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return l10n.admin_expenses_required;
+                              return 'Required';
                             }
+
                             final parsed = double.tryParse(v.trim());
+
                             if (parsed == null || parsed <= 0) {
-                              return l10n.admin_expenses_invalidAmount;
+                              return 'Invalid amount';
                             }
+
                             return null;
                           },
                         ),
@@ -279,7 +311,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FormFieldLabel(l10n.admin_expenses_dateLabel, c),
+                        FormFieldLabel('Date *', c),
                         FormPickerField(
                           icon: Icons.calendar_today_outlined,
                           label: DateFormat('dd MMM yyyy').format(_expenseDate),
@@ -293,50 +325,90 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                 ],
               ),
               const SizedBox(height: 12),
-
-              FormFieldLabel(l10n.admin_expenses_categoryLabel, c),
+              FormFieldLabel('Category *', c),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: formInputDecoration(hint: l10n.admin_expenses_selectCategory, c: c),
-                items: kExpenseCategories
-                    .map((cat) => DropdownMenuItem(value: cat, child: Text(formatExpenseCategory(cat))))
+                decoration: formInputDecoration(
+                  hint: 'Select category',
+                  c: c,
+                ),
+                items: widget.availableCategories
+                    .map(
+                      (cat) => DropdownMenuItem<String>(
+                        value: cat,
+                        child: Text(formatExpenseCategory(cat)),
+                      ),
+                    )
                     .toList(),
-                onChanged: (v) => setState(() => _selectedCategory = v),
-                validator: (v) => v == null ? l10n.admin_expenses_required : null,
+                onChanged: (v) {
+                  setState(() => _selectedCategory = v);
+                },
+                validator: (v) {
+                  if (v == null) {
+                    return 'Required';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
-
-              FormFieldLabel(l10n.admin_expenses_branchLabel, c),
+              FormFieldLabel('Branch *', c),
               BlocBuilder<BranchCubit, BranchState>(
                 builder: (context, state) {
                   if (state is BranchLoaded) {
                     final branches = state.branches;
+
                     final hasSelected = _selectedBranchId != null &&
                         branches.any((b) => b.id == _selectedBranchId);
+
                     return DropdownButtonFormField<int>(
                       value: hasSelected ? _selectedBranchId : null,
-                      decoration: formInputDecoration(hint: l10n.admin_expenses_selectBranch, c: c),
+                      decoration: formInputDecoration(
+                        hint: 'Select branch',
+                        c: c,
+                      ),
                       items: branches
-                          .map((b) => DropdownMenuItem(value: b.id, child: Text(b.name)))
+                          .map(
+                            (b) => DropdownMenuItem<int>(
+                              value: b.id,
+                              child: Text(b.name),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (v) => setState(() => _selectedBranchId = v),
-                      validator: (v) => v == null ? l10n.admin_expenses_required : null,
+                      onChanged: (v) {
+                        setState(() => _selectedBranchId = v);
+                      },
+                      validator: (v) {
+                        if (v == null) {
+                          return 'Required';
+                        }
+                        return null;
+                      },
                     );
                   }
+
                   if (state is BranchError) {
-                    return Text(state.message, style: TextStyle(color: c.danger, fontSize: 12));
+                    return Text(
+                      state.message,
+                      style: TextStyle(
+                        color: c.danger,
+                        fontSize: 12,
+                      ),
+                    );
                   }
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: SizedBox(
                       height: 18,
                       width: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: c.primary),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: c.primary,
+                      ),
                     ),
                   );
                 },
               ),
-
               if (_errorMessage != null) ...[
                 const SizedBox(height: 12),
                 Container(
@@ -345,16 +417,15 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                     color: c.danger.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(_errorMessage!, style: TextStyle(color: c.danger)),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: c.danger),
+                  ),
                 ),
               ],
-
               const SizedBox(height: 24),
-
               FormPrimaryButton(
-                label: _isEditMode
-                    ? l10n.admin_expenses_saveChanges
-                    : l10n.admin_expenses_addTitle,
+                label: _isEditMode ? 'Save Changes' : 'Add Expense',
                 background: c.primary,
                 foreground: c.onPrimary,
                 loading: _isSubmitting,
