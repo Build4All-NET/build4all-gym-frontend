@@ -3549,4 +3549,430 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get branchDialog_back => 'رجوع';
+
+  @override
+  String get navReports => 'التقارير';
+
+  @override
+  String get reports_tabFinancial => 'المالية';
+
+  @override
+  String get reports_tabAttendance => 'الحضور';
+
+  @override
+  String get reports_collected => 'المحصّل';
+
+  @override
+  String get reports_expense => 'المصاريف';
+
+  @override
+  String get reports_net => 'الصافي';
+
+  @override
+  String get reports_totalCheckins => 'إجمالي تسجيلات الدخول';
+
+  @override
+  String get reports_uniqueMembers => 'أعضاء فريدون';
+
+  @override
+  String get reports_avgPerDay => 'المعدّل / يوم';
+
+  @override
+  String get reports_collectedOverTime => 'المحصّل عبر الوقت';
+
+  @override
+  String get reports_expenseByCategory => 'المصاريف حسب الفئة';
+
+  @override
+  String get reports_checkinsOverTime => 'الحضور عبر الوقت';
+
+  @override
+  String get reports_noData => 'لا توجد بيانات لهذه الفترة';
+
+  @override
+  String get sectionOverview => 'نظرة عامة';
+
+  @override
+  String get sectionMembers => 'الأعضاء';
+
+  @override
+  String get sectionFrontDesk => 'الاستقبال';
+
+  @override
+  String get sectionTrainingClasses => 'التدريب والحصص';
+
+  @override
+  String get sectionFinance => 'المالية';
+
+  @override
+  String get sectionSetup => 'الإعداد';
+
+  @override
+  String get sectionTools => 'أدوات';
+
+  @override
+  String get admin_classes_sectionDetails => 'تفاصيل الحصة';
+
+  @override
+  String get admin_classes_sectionSchedule => 'الموعد';
+
+  @override
+  String get admin_classes_sectionCapacityRoom => 'السعة والقاعة';
+
+  @override
+  String get admin_classes_sectionNotes => 'ملاحظات';
+
+  @override
+  String get admin_classes_required => 'مطلوب';
+
+  @override
+  String get admin_classes_mustBeNumber => 'يجب أن يكون رقماً';
+
+  @override
+  String get admin_classes_nameHint => 'مثال: يوغا الصباح';
+
+  @override
+  String get admin_classes_durationHint => 'مثال: 60';
+
+  @override
+  String get admin_classes_capacityHint => 'أقصى عدد مشاركين';
+
+  @override
+  String get admin_classes_roomHint => 'مثال: القاعة 1، الطابق 2';
+
+  @override
+  String get admin_classes_notesHint => 'مثال: ملاحظات إضافية';
+
+  @override
+  String get admin_classes_createTypeButton => 'إنشاء';
+
+  @override
+  String get admin_classes_typeExists => 'هذا النوع موجود مسبقاً — اختره من القائمة';
+
+  @override
+  String get admin_classes_typeNameLabel => 'الاسم *';
+
+  @override
+  String get admin_classes_typeNameHint => 'مثال: يوغا، كروس فيت';
+
+  @override
+  String get admin_classes_typeDurationLabel => 'المدة (دقائق) *';
+
+  @override
+  String get admin_classes_typeDifficultyLabel => 'مستوى الصعوبة';
+
+  @override
+  String get admin_classes_typePriceLabel => 'السعر';
+
+  @override
+  String get admin_classes_diffBeginner => 'مبتدئ';
+
+  @override
+  String get admin_classes_diffIntermediate => 'متوسط';
+
+  @override
+  String get admin_classes_diffAdvanced => 'متقدم';
+
+  @override
+  String get admin_expenses_addTitle => 'إضافة مصروف';
+
+  @override
+  String get admin_expenses_editTitle => 'تعديل مصروف';
+
+  @override
+  String get admin_expenses_sectionDetails => 'تفاصيل المصروف';
+
+  @override
+  String get admin_expenses_titleLabel => 'العنوان *';
+
+  @override
+  String get admin_expenses_titleHint => 'مثال: فاتورة الكهرباء';
+
+  @override
+  String get admin_expenses_required => 'مطلوب';
+
+  @override
+  String get admin_expenses_descriptionLabel => 'الوصف';
+
+  @override
+  String get admin_expenses_descriptionHint => 'ملاحظات اختيارية';
+
+  @override
+  String get admin_expenses_amountLabel => 'المبلغ *';
+
+  @override
+  String get admin_expenses_invalidAmount => 'مبلغ غير صالح';
+
+  @override
+  String get admin_expenses_dateLabel => 'التاريخ *';
+
+  @override
+  String get admin_expenses_categoryLabel => 'الفئة *';
+
+  @override
+  String get admin_expenses_selectCategory => 'اختر الفئة';
+
+  @override
+  String get admin_expenses_branchLabel => 'الفرع *';
+
+  @override
+  String get admin_expenses_selectBranch => 'اختر الفرع';
+
+  @override
+  String get admin_expenses_selectBranchError => 'الرجاء اختيار فرع';
+
+  @override
+  String get admin_expenses_addedSuccess => 'تمت إضافة المصروف بنجاح';
+
+  @override
+  String get admin_expenses_updatedSuccess => 'تم تعديل المصروف بنجاح';
+
+  @override
+  String get admin_expenses_saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get admin_staff_addSubtitle => 'املأ التفاصيل لإضافة موظف جديد للجيم';
+
+  @override
+  String get admin_staff_sectionPersonal => 'المعلومات الشخصية';
+
+  @override
+  String get admin_staff_fullNameLabel => 'الاسم الكامل';
+
+  @override
+  String get admin_staff_fullNameRequired => 'الاسم الكامل مطلوب';
+
+  @override
+  String get admin_staff_emailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get admin_staff_emailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get admin_staff_emailInvalid => 'أدخل بريداً إلكترونياً صحيحاً';
+
+  @override
+  String get admin_staff_phoneLabel => 'رقم الهاتف';
+
+  @override
+  String get admin_staff_phoneRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get admin_staff_roleLabel => 'الدور';
+
+  @override
+  String get admin_staff_roleRequired => 'الدور مطلوب';
+
+  @override
+  String get admin_staff_branchLabel => 'الفرع';
+
+  @override
+  String get admin_staff_branchRequired => 'الفرع مطلوب';
+
+  @override
+  String get admin_staff_passwordLabel => 'كلمة المرور';
+
+  @override
+  String get admin_staff_passwordHint => 'توليد تلقائي أو أدخلها';
+
+  @override
+  String get admin_staff_passwordHelp => 'اتركها فارغة لتوليد كلمة مرور آمنة تلقائياً';
+
+  @override
+  String get admin_staff_addButton => 'إضافة موظف';
+
+  @override
+  String get admin_staff_saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get admin_plans_sectionBasic => 'معلومات أساسية';
+
+  @override
+  String get admin_plans_sectionMembership => 'إعدادات العضوية';
+
+  @override
+  String get admin_plans_sectionAccessHours => 'ساعات الدخول';
+
+  @override
+  String get admin_plans_sectionFeatures => 'مميزات الخطة';
+
+  @override
+  String get admin_plans_sectionPromotion => 'العرض الترويجي';
+
+  @override
+  String get admin_plans_required => 'مطلوب';
+
+  @override
+  String get admin_plans_invalid => 'غير صالح';
+
+  @override
+  String get admin_plans_nameLabel => 'اسم الخطة *';
+
+  @override
+  String get admin_plans_typeLabel => 'النوع / النشاط *';
+
+  @override
+  String get admin_plans_typeHint => 'أدخل النوع (مثال: يوغا)';
+
+  @override
+  String get admin_plans_selectType => 'اختر النوع';
+
+  @override
+  String get admin_plans_addNewType => 'إضافة نوع جديد…';
+
+  @override
+  String get admin_plans_priceLabel => 'السعر *';
+
+  @override
+  String get admin_plans_durationLabel => 'المدة *';
+
+  @override
+  String get admin_plans_customDurationLabel => 'مدة مخصصة (أيام) *';
+
+  @override
+  String get admin_plans_enterDays => 'أدخل عدد الأيام';
+
+  @override
+  String get admin_plans_mustBeWhole => 'يجب أن يكون رقماً صحيحاً';
+
+  @override
+  String get admin_plans_statusLabel => 'الحالة *';
+
+  @override
+  String get admin_plans_descriptionLabel => 'الوصف';
+
+  @override
+  String get admin_plans_descriptionHint => 'وصف اختياري للخطة';
+
+  @override
+  String get admin_plans_allowedVisits => 'الزيارات المسموحة';
+
+  @override
+  String get admin_plans_unlimited => 'غير محدودة';
+
+  @override
+  String get admin_plans_limited => 'محدودة';
+
+  @override
+  String get admin_plans_numberOfVisits => 'عدد الزيارات';
+
+  @override
+  String get admin_plans_enterVisitCount => 'أدخل عدد الزيارات';
+
+  @override
+  String get admin_plans_gracePeriod => 'فترة السماح (أيام)';
+
+  @override
+  String get admin_plans_gracePeriodHint => 'أيام بعد الانتهاء قبل التعليق';
+
+  @override
+  String get admin_plans_autoRenew => 'تجديد تلقائي';
+
+  @override
+  String get admin_plans_autoRenewSub => 'تجديد تلقائي عند الانتهاء';
+
+  @override
+  String get admin_plans_featured => 'خطة مميزة';
+
+  @override
+  String get admin_plans_featuredSub => 'إبراز في شاشة تصفّح الأعضاء';
+
+  @override
+  String get admin_plans_restrictHours => 'تقييد ساعات الدخول';
+
+  @override
+  String get admin_plans_restrictOn => 'يمكن للأعضاء الدخول فقط بين الأوقات أدناه';
+
+  @override
+  String get admin_plans_restrictOff => 'يمكن للأعضاء الدخول في أي وقت';
+
+  @override
+  String get admin_plans_entryWindow => 'نافذة الدخول المسموحة';
+
+  @override
+  String get admin_plans_from => 'من';
+
+  @override
+  String get admin_plans_until => 'حتى';
+
+  @override
+  String get admin_plans_accessNote => 'الأعضاء الذين لديهم حصص محجوزة أو تدريب شخصي يمكنهم الدخول دائماً خلال وقت جلستهم.';
+
+  @override
+  String get admin_plans_featuresHint => 'أضف مميزات سيراها الأعضاء على هذه الخطة (مثال: مسبح، واي فاي)';
+
+  @override
+  String get admin_plans_featureHint => 'الميزة (مثال: واي فاي)';
+
+  @override
+  String get admin_plans_valueOptional => 'القيمة (اختياري)';
+
+  @override
+  String get admin_plans_addFeature => 'إضافة ميزة';
+
+  @override
+  String get admin_plans_hasPromotion => 'يوجد عرض فعّال';
+
+  @override
+  String get admin_plans_promoTitle => 'عنوان العرض *';
+
+  @override
+  String get admin_plans_titleRequired => 'العنوان مطلوب';
+
+  @override
+  String get admin_plans_promoDescription => 'وصف العرض';
+
+  @override
+  String get admin_plans_optionalDetails => 'تفاصيل اختيارية';
+
+  @override
+  String get admin_plans_promoTitleHint => 'مثال: عرض الصيف';
+
+  @override
+  String get admin_plans_discountType => 'نوع الخصم';
+
+  @override
+  String get admin_plans_fixedAmount => 'مبلغ ثابت';
+
+  @override
+  String get admin_plans_percentage => 'نسبة مئوية %';
+
+  @override
+  String get admin_plans_discountPercent => 'الخصم %';
+
+  @override
+  String get admin_plans_discountAmount => 'مبلغ الخصم';
+
+  @override
+  String get admin_plans_startDate => 'تاريخ البدء';
+
+  @override
+  String get admin_plans_noStartDate => 'لا يوجد تاريخ بدء';
+
+  @override
+  String get admin_plans_endDate => 'تاريخ الانتهاء';
+
+  @override
+  String get admin_plans_noEndDate => 'لا يوجد تاريخ انتهاء';
+
+  @override
+  String get admin_plans_noEndDateNote => 'بدون تاريخ انتهاء = يبقى العرض فعّالاً حتى إلغائه يدوياً';
+
+  @override
+  String get admin_plans_saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get admin_plans_durOneTime => 'مرة واحدة';
+
+  @override
+  String get admin_plans_durCustom => 'مخصص';
+
+  @override
+  String get admin_plans_nameHint => 'مثال: ذهبي شهري';
+
+  @override
+  String get admin_plans_customDurationHint => 'مثال: 45';
+
+  @override
+  String get admin_dashboard_viewReports => 'شوف التقارير التفصيلية';
 }

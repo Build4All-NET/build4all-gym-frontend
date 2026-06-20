@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../../common/widgets/app_toast.dart';
 import '../../../../../common/widgets/form_section_kit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
 import '../../domain/entities/expense_entity.dart';
 import '../../domain/usecases/admin_expenses_usecases.dart';
@@ -131,7 +132,8 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedBranchId == null) {
-      setState(() => _errorMessage = 'Please select a branch');
+      setState(() =>
+          _errorMessage = AppLocalizations.of(context)!.admin_expenses_selectBranchError);
       return;
     }
 
@@ -171,10 +173,13 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
       }
 
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       Navigator.of(context).pop();
       AppToast.success(
         context,
-        _isEditMode ? 'Expense updated successfully' : 'Expense added successfully',
+        _isEditMode
+            ? l10n.admin_expenses_updatedSuccess
+            : l10n.admin_expenses_addedSuccess,
       );
       widget.onSuccess();
     } catch (e) {
@@ -189,6 +194,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
   Widget build(BuildContext context) {
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -207,29 +213,33 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
               FormSheetHandle(c),
               const SizedBox(height: 16),
               FormSheetHeader(
-                title: _isEditMode ? 'Edit Expense' : 'Add Expense',
+                title: _isEditMode
+                    ? l10n.admin_expenses_editTitle
+                    : l10n.admin_expenses_addTitle,
                 icon: Icons.receipt_long_outlined,
                 c: c,
                 onClose: () => Navigator.of(context).pop(),
               ),
 
-              FormSectionHeader(title: 'Expense Details', icon: Icons.info_outline_rounded, c: c),
+              FormSectionHeader(title: l10n.admin_expenses_sectionDetails, icon: Icons.info_outline_rounded, c: c),
 
-              FormFieldLabel('Title *', c),
+              FormFieldLabel(l10n.admin_expenses_titleLabel, c),
               TextFormField(
                 controller: _titleController,
                 style: TextStyle(color: c.label),
-                decoration: formInputDecoration(hint: 'e.g. Electricity bill', c: c),
-                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                decoration: formInputDecoration(hint: l10n.admin_expenses_titleHint, c: c),
+                validator: (v) => v == null || v.trim().isEmpty
+                    ? l10n.admin_expenses_required
+                    : null,
               ),
               const SizedBox(height: 12),
 
-              FormFieldLabel('Description', c),
+              FormFieldLabel(l10n.admin_expenses_descriptionLabel, c),
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 2,
                 style: TextStyle(color: c.label),
-                decoration: formInputDecoration(hint: 'Optional notes', c: c),
+                decoration: formInputDecoration(hint: l10n.admin_expenses_descriptionHint, c: c),
               ),
               const SizedBox(height: 12),
 
@@ -240,7 +250,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FormFieldLabel('Amount *', c),
+                        FormFieldLabel(l10n.admin_expenses_amountLabel, c),
                         TextFormField(
                           controller: _amountController,
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -251,9 +261,13 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                             prefixIcon: Icons.attach_money_rounded,
                           ),
                           validator: (v) {
-                            if (v == null || v.trim().isEmpty) return 'Required';
+                            if (v == null || v.trim().isEmpty) {
+                              return l10n.admin_expenses_required;
+                            }
                             final parsed = double.tryParse(v.trim());
-                            if (parsed == null || parsed <= 0) return 'Invalid amount';
+                            if (parsed == null || parsed <= 0) {
+                              return l10n.admin_expenses_invalidAmount;
+                            }
                             return null;
                           },
                         ),
@@ -265,7 +279,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FormFieldLabel('Date *', c),
+                        FormFieldLabel(l10n.admin_expenses_dateLabel, c),
                         FormPickerField(
                           icon: Icons.calendar_today_outlined,
                           label: DateFormat('dd MMM yyyy').format(_expenseDate),
@@ -280,19 +294,19 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
               ),
               const SizedBox(height: 12),
 
-              FormFieldLabel('Category *', c),
+              FormFieldLabel(l10n.admin_expenses_categoryLabel, c),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: formInputDecoration(hint: 'Select category', c: c),
+                decoration: formInputDecoration(hint: l10n.admin_expenses_selectCategory, c: c),
                 items: kExpenseCategories
                     .map((cat) => DropdownMenuItem(value: cat, child: Text(formatExpenseCategory(cat))))
                     .toList(),
                 onChanged: (v) => setState(() => _selectedCategory = v),
-                validator: (v) => v == null ? 'Required' : null,
+                validator: (v) => v == null ? l10n.admin_expenses_required : null,
               ),
               const SizedBox(height: 12),
 
-              FormFieldLabel('Branch *', c),
+              FormFieldLabel(l10n.admin_expenses_branchLabel, c),
               BlocBuilder<BranchCubit, BranchState>(
                 builder: (context, state) {
                   if (state is BranchLoaded) {
@@ -301,12 +315,12 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                         branches.any((b) => b.id == _selectedBranchId);
                     return DropdownButtonFormField<int>(
                       value: hasSelected ? _selectedBranchId : null,
-                      decoration: formInputDecoration(hint: 'Select branch', c: c),
+                      decoration: formInputDecoration(hint: l10n.admin_expenses_selectBranch, c: c),
                       items: branches
                           .map((b) => DropdownMenuItem(value: b.id, child: Text(b.name)))
                           .toList(),
                       onChanged: (v) => setState(() => _selectedBranchId = v),
-                      validator: (v) => v == null ? 'Required' : null,
+                      validator: (v) => v == null ? l10n.admin_expenses_required : null,
                     );
                   }
                   if (state is BranchError) {
@@ -338,7 +352,9 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
               const SizedBox(height: 24),
 
               FormPrimaryButton(
-                label: _isEditMode ? 'Save Changes' : 'Add Expense',
+                label: _isEditMode
+                    ? l10n.admin_expenses_saveChanges
+                    : l10n.admin_expenses_addTitle,
                 background: c.primary,
                 foreground: c.onPrimary,
                 loading: _isSubmitting,

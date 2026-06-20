@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -390,6 +391,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
 
@@ -453,7 +455,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _isEditMode ? 'Edit Plan' : 'Add New Plan',
+                        _isEditMode ? l10n.admin_plans_editTitle : l10n.admin_plans_addTitle,
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -477,19 +479,19 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   // ════════════════════════════════════════════════════════
                   // SECTION 1: Basic Info
                   // ════════════════════════════════════════════════════════
-                  _sectionHeader('Basic Info', Icons.info_outline_rounded, c),
+                  _sectionHeader(l10n.admin_plans_sectionBasic, Icons.info_outline_rounded, c),
 
-                  _FormLabel('Plan Name *', c),
+                  _FormLabel(l10n.admin_plans_nameLabel, c),
                   TextFormField(
                     controller: _nameController,
                     style: TextStyle(color: c.label),
-                    decoration: _inputDec('e.g. Gold Monthly', c),
+                    decoration: _inputDec(l10n.admin_plans_nameHint, c),
                     validator: (v) =>
-                        v == null || v.trim().isEmpty ? 'Required' : null,
+                        v == null || v.trim().isEmpty ? l10n.admin_plans_required : null,
                   ),
                   const SizedBox(height: 12),
 
-                  _FormLabel('Type / Activity *', c),
+                  _FormLabel(l10n.admin_plans_typeLabel, c),
                   if (_isCustomType) ...[
                     Row(
                       children: [
@@ -498,10 +500,10 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                             controller: _customTypeController,
                             style: TextStyle(color: c.label),
                             textCapitalization: TextCapitalization.words,
-                            decoration: _inputDec('Enter type (e.g. Yoga)', c),
+                            decoration: _inputDec(l10n.admin_plans_typeHint, c),
                             validator: (v) => _isCustomType &&
                                     (v == null || v.trim().isEmpty)
-                                ? 'Required'
+                                ? l10n.admin_plans_required
                                 : null,
                           ),
                         ),
@@ -529,7 +531,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   ] else ...[
                     DropdownButtonFormField<String>(
                       value: _selectedType,
-                      decoration: _inputDec('Select type', c),
+                      decoration: _inputDec(l10n.admin_plans_selectType, c),
                       items: [
                         // Keep current value in the list while types are still
                         // loading, so Flutter's assertion (value must be in items)
@@ -548,7 +550,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               Icon(Icons.add_rounded,
                                   size: 16, color: c.primary),
                               const SizedBox(width: 6),
-                              Text('Add new type…',
+                              Text(l10n.admin_plans_addNewType,
                                   style: TextStyle(
                                       color: c.primary,
                                       fontWeight: FontWeight.w600,
@@ -568,7 +570,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                         }
                       },
                       validator: (v) =>
-                          !_isCustomType && v == null ? 'Required' : null,
+                          !_isCustomType && v == null ? l10n.admin_plans_required : null,
                     ),
                   ],
                   const SizedBox(height: 12),
@@ -579,7 +581,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _FormLabel('Price *', c),
+                            _FormLabel(l10n.admin_plans_priceLabel, c),
                             TextFormField(
                               controller: _priceController,
                               keyboardType:
@@ -589,9 +591,9 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               decoration: _inputDec('49.99', c),
                               validator: (v) {
                                 if (v == null || v.trim().isEmpty)
-                                  return 'Required';
+                                  return l10n.admin_plans_required;
                                 if (double.tryParse(v.trim()) == null)
-                                  return 'Invalid';
+                                  return l10n.admin_plans_invalid;
                                 return null;
                               },
                             ),
@@ -603,7 +605,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _FormLabel('Duration *', c),
+                            _FormLabel(l10n.admin_plans_durationLabel, c),
                             DropdownButtonFormField<String>(
                               value: _selectedBillingCycle,
                               decoration: _inputDec('Duration', c),
@@ -616,7 +618,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               onChanged: (v) => setState(
                                   () => _selectedBillingCycle = v),
                               validator: (v) =>
-                                  v == null ? 'Required' : null,
+                                  v == null ? l10n.admin_plans_required : null,
                             ),
                           ],
                         ),
@@ -625,19 +627,19 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   ),
                   if (_selectedBillingCycle == 'custom') ...[
                     const SizedBox(height: 10),
-                    _FormLabel('Custom Duration (days) *', c),
+                    _FormLabel(l10n.admin_plans_customDurationLabel, c),
                     TextFormField(
                       controller: _customDurationController,
                       keyboardType: TextInputType.number,
                       style: TextStyle(color: c.label),
-                      decoration: _inputDec('e.g. 45', c),
+                      decoration: _inputDec(l10n.admin_plans_customDurationHint, c),
                       validator: (v) {
                         if (_selectedBillingCycle == 'custom' &&
                             (v == null || v.trim().isEmpty))
-                          return 'Enter number of days';
+                          return l10n.admin_plans_enterDays;
                         if (_selectedBillingCycle == 'custom' &&
                             int.tryParse(v!.trim()) == null)
-                          return 'Must be a whole number';
+                          return l10n.admin_plans_mustBeWhole;
                         return null;
                       },
                     ),
@@ -650,7 +652,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _FormLabel('Status *', c),
+                            _FormLabel(l10n.admin_plans_statusLabel, c),
                             DropdownButtonFormField<String>(
                               value: _selectedStatus,
                               decoration: _inputDec('Status', c),
@@ -664,7 +666,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               onChanged: (v) =>
                                   setState(() => _selectedStatus = v),
                               validator: (v) =>
-                                  v == null ? 'Required' : null,
+                                  v == null ? l10n.admin_plans_required : null,
                             ),
                           ],
                         ),
@@ -673,31 +675,31 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   ),
                   const SizedBox(height: 12),
 
-                  _FormLabel('Description', c),
+                  _FormLabel(l10n.admin_plans_descriptionLabel, c),
                   TextFormField(
                     controller: _descriptionController,
                     maxLines: 2,
                     style: TextStyle(color: c.label),
-                    decoration: _inputDec('Optional plan description', c),
+                    decoration: _inputDec(l10n.admin_plans_descriptionHint, c),
                   ),
 
                   // ════════════════════════════════════════════════════════
                   // SECTION 2: Membership Settings
                   // ════════════════════════════════════════════════════════
-                  _sectionHeader('Membership Settings',
+                  _sectionHeader(l10n.admin_plans_sectionMembership,
                       Icons.settings_outlined, c),
 
-                  _FormLabel('Allowed Visits', c),
+                  _FormLabel(l10n.admin_plans_allowedVisits, c),
                   Row(
                     children: [
                       Expanded(
-                          child: _toggleButton('Unlimited', _unlimitedVisits,
+                          child: _toggleButton(l10n.admin_plans_unlimited, _unlimitedVisits,
                               () => setState(() => _unlimitedVisits = true),
                               c)),
                       const SizedBox(width: 10),
                       Expanded(
                           child: _toggleButton(
-                              'Limited',
+                              l10n.admin_plans_limited,
                               !_unlimitedVisits,
                               () =>
                                   setState(() => _unlimitedVisits = false),
@@ -710,24 +712,24 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                       controller: _allowedVisitsController,
                       keyboardType: TextInputType.number,
                       style: TextStyle(color: c.label),
-                      decoration: _inputDec('Number of visits', c),
+                      decoration: _inputDec(l10n.admin_plans_numberOfVisits, c),
                       validator: (v) {
                         if (!_unlimitedVisits &&
                             (v == null || v.trim().isEmpty))
-                          return 'Enter visit count';
+                          return l10n.admin_plans_enterVisitCount;
                         return null;
                       },
                     ),
                   ],
                   const SizedBox(height: 12),
 
-                  _FormLabel('Grace Period (Days)', c),
+                  _FormLabel(l10n.admin_plans_gracePeriod, c),
                   TextFormField(
                     controller: _gracePeriodController,
                     keyboardType: TextInputType.number,
                     style: TextStyle(color: c.label),
                     decoration:
-                        _inputDec('Days after expiry before suspension', c),
+                        _inputDec(l10n.admin_plans_gracePeriodHint, c),
                   ),
                   const SizedBox(height: 12),
 
@@ -741,12 +743,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: Text('Auto Renew',
+                          title: Text(l10n.admin_plans_autoRenew,
                               style: TextStyle(
                                   color: c.label,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500)),
-                          subtitle: Text('Renew automatically on expiry',
+                          subtitle: Text(l10n.admin_plans_autoRenewSub,
                               style: TextStyle(
                                   color: c.muted, fontSize: 12)),
                           value: _autoRenew,
@@ -758,13 +760,13 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                             height: 1,
                             color: c.border.withOpacity(0.2)),
                         SwitchListTile(
-                          title: Text('Featured Plan',
+                          title: Text(l10n.admin_plans_featured,
                               style: TextStyle(
                                   color: c.label,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500)),
                           subtitle: Text(
-                              'Highlight on member browse screen',
+                              l10n.admin_plans_featuredSub,
                               style: TextStyle(
                                   color: c.muted, fontSize: 12)),
                           value: _isFeatured,
@@ -780,7 +782,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   // SECTION 3b: Access Hours Restriction
                   // ════════════════════════════════════════════════════════
                   _sectionHeader(
-                      'Access Hours', Icons.access_time_rounded, c),
+                      l10n.admin_plans_sectionAccessHours, Icons.access_time_rounded, c),
 
                   Container(
                     decoration: BoxDecoration(
@@ -789,15 +791,15 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                       border: Border.all(color: c.border.withOpacity(0.25)),
                     ),
                     child: SwitchListTile(
-                      title: Text('Restrict Entry Hours',
+                      title: Text(l10n.admin_plans_restrictHours,
                           style: TextStyle(
                               color: c.label,
                               fontSize: 14,
                               fontWeight: FontWeight.w500)),
                       subtitle: Text(
                           _restrictAccessHours
-                              ? 'Members can only enter between the times below'
-                              : 'Members can enter at any time',
+                              ? l10n.admin_plans_restrictOn
+                              : l10n.admin_plans_restrictOff,
                           style: TextStyle(color: c.muted, fontSize: 12)),
                       value: _restrictAccessHours,
                       activeColor: c.primary,
@@ -808,14 +810,14 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
                   if (_restrictAccessHours) ...[
                     const SizedBox(height: 12),
-                    _FormLabel('Allowed Entry Window', c),
+                    _FormLabel(l10n.admin_plans_entryWindow, c),
                     Row(
                       children: [
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _FormLabel('From', c),
+                              _FormLabel(l10n.admin_plans_from, c),
                               GestureDetector(
                                 onTap: () => _pickAccessTime(isStart: true),
                                 child: _timeField(_accessStart, c),
@@ -828,7 +830,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _FormLabel('Until', c),
+                              _FormLabel(l10n.admin_plans_until, c),
                               GestureDetector(
                                 onTap: () => _pickAccessTime(isStart: false),
                                 child: _timeField(_accessEnd, c),
@@ -840,7 +842,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Members with booked sessions or PT can always enter during their session window.',
+                      l10n.admin_plans_accessNote,
                       style: TextStyle(color: c.muted, fontSize: 11),
                     ),
                   ],
@@ -849,13 +851,13 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   // SECTION 4: Plan Features
                   // ════════════════════════════════════════════════════════
                   _sectionHeader(
-                      'Plan Features', Icons.check_circle_outline_rounded, c),
+                      l10n.admin_plans_sectionFeatures, Icons.check_circle_outline_rounded, c),
 
                   if (_featureRows.isEmpty)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Text(
-                          'Add features members will see on this plan (e.g. "Pool Access", "WiFi")',
+                          l10n.admin_plans_featuresHint,
                           style:
                               TextStyle(color: c.muted, fontSize: 12)),
                     ),
@@ -873,7 +875,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               controller: row.name,
                               style: TextStyle(color: c.label),
                               decoration:
-                                  _inputDec('Feature (e.g. WiFi)', c),
+                                  _inputDec(l10n.admin_plans_featureHint, c),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -883,7 +885,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                               controller: row.value,
                               style: TextStyle(color: c.label),
                               decoration:
-                                  _inputDec('Value (optional)', c),
+                                  _inputDec(l10n.admin_plans_valueOptional, c),
                             ),
                           ),
                           const SizedBox(width: 4),
@@ -905,7 +907,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                         setState(() => _featureRows.add(_FeatureRow())),
                     icon: Icon(Icons.add_circle_outline_rounded,
                         size: 18, color: c.primary),
-                    label: Text('Add Feature',
+                    label: Text(l10n.admin_plans_addFeature,
                         style: TextStyle(
                             color: c.primary, fontSize: 13)),
                   ),
@@ -914,12 +916,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                   // SECTION 5: Promotion
                   // ════════════════════════════════════════════════════════
                   _sectionHeader(
-                      'Promotion', Icons.local_offer_outlined, c),
+                      l10n.admin_plans_sectionPromotion, Icons.local_offer_outlined, c),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Has Active Promotion',
+                      Text(l10n.admin_plans_hasPromotion,
                           style: TextStyle(
                               color: c.label,
                               fontSize: 14,
@@ -935,37 +937,37 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
                   if (_hasPromotion) ...[
                     const SizedBox(height: 8),
-                    _FormLabel('Promotion Title *', c),
+                    _FormLabel(l10n.admin_plans_promoTitle, c),
                     TextFormField(
                       controller: _promoTitleController,
                       style: TextStyle(color: c.label),
                       decoration:
-                          _inputDec('e.g. Summer Special', c),
+                          _inputDec(l10n.admin_plans_promoTitleHint, c),
                       validator: (v) {
                         if (_hasPromotion &&
                             (v == null || v.trim().isEmpty))
-                          return 'Title required';
+                          return l10n.admin_plans_titleRequired;
                         return null;
                       },
                     ),
                     const SizedBox(height: 12),
 
-                    _FormLabel('Promotion Description', c),
+                    _FormLabel(l10n.admin_plans_promoDescription, c),
                     TextFormField(
                       controller: _promoDescController,
                       maxLines: 2,
                       style: TextStyle(color: c.label),
                       decoration:
-                          _inputDec('Optional details', c),
+                          _inputDec(l10n.admin_plans_optionalDetails, c),
                     ),
                     const SizedBox(height: 12),
 
-                    _FormLabel('Discount Type', c),
+                    _FormLabel(l10n.admin_plans_discountType, c),
                     Row(
                       children: [
                         Expanded(
                           child: _toggleButton(
-                              'Fixed Amount',
+                              l10n.admin_plans_fixedAmount,
                               _promoDiscountType == 'fixed',
                               () => setState(
                                   () => _promoDiscountType = 'fixed'),
@@ -974,7 +976,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _toggleButton(
-                              'Percentage %',
+                              l10n.admin_plans_percentage,
                               _promoDiscountType == 'percentage',
                               () => setState(
                                   () => _promoDiscountType = 'percentage'),
@@ -986,8 +988,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
 
                     _FormLabel(
                         _promoDiscountType == 'percentage'
-                            ? 'Discount %'
-                            : 'Discount Amount',
+                            ? l10n.admin_plans_discountPercent
+                            : l10n.admin_plans_discountAmount,
                         c),
                     TextFormField(
                       controller: _promoDiscountValueController,
@@ -1010,12 +1012,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                             crossAxisAlignment:
                                 CrossAxisAlignment.start,
                             children: [
-                              _FormLabel('Start Date', c),
+                              _FormLabel(l10n.admin_plans_startDate, c),
                               GestureDetector(
                                 onTap: () => _pickDate(
                                     isStart: true, c: c),
                                 child: _dateField(
-                                    _promoStartDate, 'No start date', c,
+                                    _promoStartDate, l10n.admin_plans_noStartDate, c,
                                     isStart: true),
                               ),
                             ],
@@ -1027,12 +1029,12 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                             crossAxisAlignment:
                                 CrossAxisAlignment.start,
                             children: [
-                              _FormLabel('End Date', c),
+                              _FormLabel(l10n.admin_plans_endDate, c),
                               GestureDetector(
                                 onTap: () => _pickDate(
                                     isStart: false, c: c),
                                 child: _dateField(
-                                    _promoEndDate, 'No end date', c,
+                                    _promoEndDate, l10n.admin_plans_noEndDate, c,
                                     isStart: false),
                               ),
                             ],
@@ -1044,7 +1046,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
-                          'No end date = promotion stays active until manually deactivated',
+                          l10n.admin_plans_noEndDateNote,
                           style: TextStyle(
                               color: c.muted, fontSize: 11),
                         ),
@@ -1093,8 +1095,8 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                             )
                           : Text(
                               _isEditMode
-                                  ? 'Save Changes'
-                                  : 'Create Plan',
+                                  ? l10n.admin_plans_saveChanges
+                                  : l10n.admin_plans_createPlan,
                               style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),

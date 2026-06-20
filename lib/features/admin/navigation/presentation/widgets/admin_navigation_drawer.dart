@@ -94,13 +94,23 @@ class _DrawerBody extends StatelessWidget {
     // isAdminRole (OWNER/ADMIN/MANAGER JWT role) → all sections.
     // Staff gym roles (TRAINER / RECEPTION) → only their section(s)
 
-    final visibleSections = adminDrawerSections.where((section) {
+    // Item-level visibility: Admin/Owner sees everything; staff see only items
+    // flagged for their gym-role. Sections with no visible items are dropped so
+    // their header doesn't show empty.
+    bool canSee(NavigationItem item) {
       if (profile.isAdminRole) return true;
-      if (section.labelKey == 'sectionCoreOwner') return false;
-      if (section.labelKey == 'sectionTrainingPt') return profile.isTrainerRole;
-      if (section.labelKey == 'sectionOperationsReception') return profile.isReceptionRole;
+      if (profile.isTrainerRole && item.trainer) return true;
+      if (profile.isReceptionRole && item.reception) return true;
       return false;
-    }).toList();
+    }
+
+    final visibleSections = adminDrawerSections
+        .map((section) => DrawerSection(
+              labelKey: section.labelKey,
+              items: section.items.where(canSee).toList(),
+            ))
+        .where((section) => section.items.isNotEmpty)
+        .toList();
 
     return Drawer(
       width:           255,
@@ -234,6 +244,14 @@ class _SectionLabel extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     final label = switch (labelKey) {
+      'sectionOverview'            => l10n.sectionOverview,
+      'sectionMembers'            => l10n.sectionMembers,
+      'sectionFrontDesk'          => l10n.sectionFrontDesk,
+      'sectionTrainingClasses'    => l10n.sectionTrainingClasses,
+      'sectionFinance'            => l10n.sectionFinance,
+      'sectionSetup'              => l10n.sectionSetup,
+      'sectionTools'              => l10n.sectionTools,
+      // Legacy keys (kept for backward-compat if referenced elsewhere)
       'sectionCoreOwner'           => l10n.sectionCoreOwner,
       'sectionOperationsReception' => l10n.sectionOperationsReception,
       'sectionTrainingPt'          => l10n.sectionTrainingPt,
