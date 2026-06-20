@@ -3594,4 +3594,430 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get branchDialog_back => 'Back';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get reports_tabFinancial => 'Financial';
+
+  @override
+  String get reports_tabAttendance => 'Attendance';
+
+  @override
+  String get reports_collected => 'Collected';
+
+  @override
+  String get reports_expense => 'Expense';
+
+  @override
+  String get reports_net => 'Net';
+
+  @override
+  String get reports_totalCheckins => 'Total Check-ins';
+
+  @override
+  String get reports_uniqueMembers => 'Unique Members';
+
+  @override
+  String get reports_avgPerDay => 'Avg / Day';
+
+  @override
+  String get reports_collectedOverTime => 'Collected Over Time';
+
+  @override
+  String get reports_expenseByCategory => 'Expense by Category';
+
+  @override
+  String get reports_checkinsOverTime => 'Check-ins Over Time';
+
+  @override
+  String get reports_noData => 'No data for this period';
+
+  @override
+  String get sectionOverview => 'Overview';
+
+  @override
+  String get sectionMembers => 'Members';
+
+  @override
+  String get sectionFrontDesk => 'Front Desk';
+
+  @override
+  String get sectionTrainingClasses => 'Training & Classes';
+
+  @override
+  String get sectionFinance => 'Finance';
+
+  @override
+  String get sectionSetup => 'Setup';
+
+  @override
+  String get sectionTools => 'Tools';
+
+  @override
+  String get admin_classes_sectionDetails => 'Class Details';
+
+  @override
+  String get admin_classes_sectionSchedule => 'Schedule';
+
+  @override
+  String get admin_classes_sectionCapacityRoom => 'Capacity & Room';
+
+  @override
+  String get admin_classes_sectionNotes => 'Notes';
+
+  @override
+  String get admin_classes_required => 'Required';
+
+  @override
+  String get admin_classes_mustBeNumber => 'Must be a number';
+
+  @override
+  String get admin_classes_nameHint => 'e.g. Morning Yoga Flow';
+
+  @override
+  String get admin_classes_durationHint => 'e.g. 60';
+
+  @override
+  String get admin_classes_capacityHint => 'Maximum participants';
+
+  @override
+  String get admin_classes_roomHint => 'e.g. Hall 1, 2nd Floor';
+
+  @override
+  String get admin_classes_notesHint => 'e.g. Additional class notes';
+
+  @override
+  String get admin_classes_createTypeButton => 'Create';
+
+  @override
+  String get admin_classes_typeExists => 'This type already exists — select it from the list';
+
+  @override
+  String get admin_classes_typeNameLabel => 'Name *';
+
+  @override
+  String get admin_classes_typeNameHint => 'e.g. Yoga, CrossFit';
+
+  @override
+  String get admin_classes_typeDurationLabel => 'Duration (minutes) *';
+
+  @override
+  String get admin_classes_typeDifficultyLabel => 'Difficulty Level';
+
+  @override
+  String get admin_classes_typePriceLabel => 'Price';
+
+  @override
+  String get admin_classes_diffBeginner => 'Beginner';
+
+  @override
+  String get admin_classes_diffIntermediate => 'Intermediate';
+
+  @override
+  String get admin_classes_diffAdvanced => 'Advanced';
+
+  @override
+  String get admin_expenses_addTitle => 'Add Expense';
+
+  @override
+  String get admin_expenses_editTitle => 'Edit Expense';
+
+  @override
+  String get admin_expenses_sectionDetails => 'Expense Details';
+
+  @override
+  String get admin_expenses_titleLabel => 'Title *';
+
+  @override
+  String get admin_expenses_titleHint => 'e.g. Electricity bill';
+
+  @override
+  String get admin_expenses_required => 'Required';
+
+  @override
+  String get admin_expenses_descriptionLabel => 'Description';
+
+  @override
+  String get admin_expenses_descriptionHint => 'Optional notes';
+
+  @override
+  String get admin_expenses_amountLabel => 'Amount *';
+
+  @override
+  String get admin_expenses_invalidAmount => 'Invalid amount';
+
+  @override
+  String get admin_expenses_dateLabel => 'Date *';
+
+  @override
+  String get admin_expenses_categoryLabel => 'Category *';
+
+  @override
+  String get admin_expenses_selectCategory => 'Select category';
+
+  @override
+  String get admin_expenses_branchLabel => 'Branch *';
+
+  @override
+  String get admin_expenses_selectBranch => 'Select branch';
+
+  @override
+  String get admin_expenses_selectBranchError => 'Please select a branch';
+
+  @override
+  String get admin_expenses_addedSuccess => 'Expense added successfully';
+
+  @override
+  String get admin_expenses_updatedSuccess => 'Expense updated successfully';
+
+  @override
+  String get admin_expenses_saveChanges => 'Save Changes';
+
+  @override
+  String get admin_staff_addSubtitle => 'Fill in the details to add a new staff member to your gym';
+
+  @override
+  String get admin_staff_sectionPersonal => 'Personal Information';
+
+  @override
+  String get admin_staff_fullNameLabel => 'Full Name';
+
+  @override
+  String get admin_staff_fullNameRequired => 'Full name is required';
+
+  @override
+  String get admin_staff_emailLabel => 'Email Address';
+
+  @override
+  String get admin_staff_emailRequired => 'Email is required';
+
+  @override
+  String get admin_staff_emailInvalid => 'Enter a valid email address';
+
+  @override
+  String get admin_staff_phoneLabel => 'Phone Number';
+
+  @override
+  String get admin_staff_phoneRequired => 'Phone number is required';
+
+  @override
+  String get admin_staff_roleLabel => 'Role';
+
+  @override
+  String get admin_staff_roleRequired => 'Role is required';
+
+  @override
+  String get admin_staff_branchLabel => 'Branch Assignment';
+
+  @override
+  String get admin_staff_branchRequired => 'Branch is required';
+
+  @override
+  String get admin_staff_passwordLabel => 'Password';
+
+  @override
+  String get admin_staff_passwordHint => 'Auto-generate or enter';
+
+  @override
+  String get admin_staff_passwordHelp => 'Leave empty to auto-generate a secure password';
+
+  @override
+  String get admin_staff_addButton => 'Add Staff Member';
+
+  @override
+  String get admin_staff_saveChanges => 'Save Changes';
+
+  @override
+  String get admin_plans_sectionBasic => 'Basic Info';
+
+  @override
+  String get admin_plans_sectionMembership => 'Membership Settings';
+
+  @override
+  String get admin_plans_sectionAccessHours => 'Access Hours';
+
+  @override
+  String get admin_plans_sectionFeatures => 'Plan Features';
+
+  @override
+  String get admin_plans_sectionPromotion => 'Promotion';
+
+  @override
+  String get admin_plans_required => 'Required';
+
+  @override
+  String get admin_plans_invalid => 'Invalid';
+
+  @override
+  String get admin_plans_nameLabel => 'Plan Name *';
+
+  @override
+  String get admin_plans_typeLabel => 'Type / Activity *';
+
+  @override
+  String get admin_plans_typeHint => 'Enter type (e.g. Yoga)';
+
+  @override
+  String get admin_plans_selectType => 'Select type';
+
+  @override
+  String get admin_plans_addNewType => 'Add new type…';
+
+  @override
+  String get admin_plans_priceLabel => 'Price *';
+
+  @override
+  String get admin_plans_durationLabel => 'Duration *';
+
+  @override
+  String get admin_plans_customDurationLabel => 'Custom Duration (days) *';
+
+  @override
+  String get admin_plans_enterDays => 'Enter number of days';
+
+  @override
+  String get admin_plans_mustBeWhole => 'Must be a whole number';
+
+  @override
+  String get admin_plans_statusLabel => 'Status *';
+
+  @override
+  String get admin_plans_descriptionLabel => 'Description';
+
+  @override
+  String get admin_plans_descriptionHint => 'Optional plan description';
+
+  @override
+  String get admin_plans_allowedVisits => 'Allowed Visits';
+
+  @override
+  String get admin_plans_unlimited => 'Unlimited';
+
+  @override
+  String get admin_plans_limited => 'Limited';
+
+  @override
+  String get admin_plans_numberOfVisits => 'Number of visits';
+
+  @override
+  String get admin_plans_enterVisitCount => 'Enter visit count';
+
+  @override
+  String get admin_plans_gracePeriod => 'Grace Period (Days)';
+
+  @override
+  String get admin_plans_gracePeriodHint => 'Days after expiry before suspension';
+
+  @override
+  String get admin_plans_autoRenew => 'Auto Renew';
+
+  @override
+  String get admin_plans_autoRenewSub => 'Renew automatically on expiry';
+
+  @override
+  String get admin_plans_featured => 'Featured Plan';
+
+  @override
+  String get admin_plans_featuredSub => 'Highlight on member browse screen';
+
+  @override
+  String get admin_plans_restrictHours => 'Restrict Entry Hours';
+
+  @override
+  String get admin_plans_restrictOn => 'Members can only enter between the times below';
+
+  @override
+  String get admin_plans_restrictOff => 'Members can enter at any time';
+
+  @override
+  String get admin_plans_entryWindow => 'Allowed Entry Window';
+
+  @override
+  String get admin_plans_from => 'From';
+
+  @override
+  String get admin_plans_until => 'Until';
+
+  @override
+  String get admin_plans_accessNote => 'Members with booked sessions or PT can always enter during their session window.';
+
+  @override
+  String get admin_plans_featuresHint => 'Add features members will see on this plan (e.g. Pool Access, WiFi)';
+
+  @override
+  String get admin_plans_featureHint => 'Feature (e.g. WiFi)';
+
+  @override
+  String get admin_plans_valueOptional => 'Value (optional)';
+
+  @override
+  String get admin_plans_addFeature => 'Add Feature';
+
+  @override
+  String get admin_plans_hasPromotion => 'Has Active Promotion';
+
+  @override
+  String get admin_plans_promoTitle => 'Promotion Title *';
+
+  @override
+  String get admin_plans_titleRequired => 'Title required';
+
+  @override
+  String get admin_plans_promoDescription => 'Promotion Description';
+
+  @override
+  String get admin_plans_optionalDetails => 'Optional details';
+
+  @override
+  String get admin_plans_promoTitleHint => 'e.g. Summer Special';
+
+  @override
+  String get admin_plans_discountType => 'Discount Type';
+
+  @override
+  String get admin_plans_fixedAmount => 'Fixed Amount';
+
+  @override
+  String get admin_plans_percentage => 'Percentage %';
+
+  @override
+  String get admin_plans_discountPercent => 'Discount %';
+
+  @override
+  String get admin_plans_discountAmount => 'Discount Amount';
+
+  @override
+  String get admin_plans_startDate => 'Start Date';
+
+  @override
+  String get admin_plans_noStartDate => 'No start date';
+
+  @override
+  String get admin_plans_endDate => 'End Date';
+
+  @override
+  String get admin_plans_noEndDate => 'No end date';
+
+  @override
+  String get admin_plans_noEndDateNote => 'No end date = promotion stays active until manually deactivated';
+
+  @override
+  String get admin_plans_saveChanges => 'Save Changes';
+
+  @override
+  String get admin_plans_durOneTime => 'One Time';
+
+  @override
+  String get admin_plans_durCustom => 'Custom';
+
+  @override
+  String get admin_plans_nameHint => 'e.g. Gold Monthly';
+
+  @override
+  String get admin_plans_customDurationHint => 'e.g. 45';
+
+  @override
+  String get admin_dashboard_viewReports => 'View detailed reports';
 }

@@ -41,6 +41,15 @@ class Revenue {
   // ── Total operating expenses logged for the current calendar month ────
   final double monthlyExpense;
 
+  // Admission fees collected this month (invoice item_type 'admission')
+  final double admissionFees;
+
+  // Generic service fees collected this month (invoice item_type 'service')
+  final double servicePaid;
+
+  // Outstanding due for generic services
+  final double serviceDue;
+
   const Revenue({
     required this.paymentsCollected,
     required this.paymentsGrowth,
@@ -49,5 +58,8 @@ class Revenue {
     required this.membershipDue,
     required this.ptDue,
     required this.monthlyExpense,
+    required this.admissionFees,
+    required this.servicePaid,
+    required this.serviceDue,
   });
 }

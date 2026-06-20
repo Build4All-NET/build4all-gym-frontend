@@ -7096,6 +7096,429 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get branchDialog_back;
+
+  /// No description provided for @navReports.
+  String get navReports;
+
+  /// No description provided for @reports_tabFinancial.
+  String get reports_tabFinancial;
+
+  /// No description provided for @reports_tabAttendance.
+  String get reports_tabAttendance;
+
+  /// No description provided for @reports_collected.
+  String get reports_collected;
+
+  /// No description provided for @reports_expense.
+  String get reports_expense;
+
+  /// No description provided for @reports_net.
+  String get reports_net;
+
+  /// No description provided for @reports_totalCheckins.
+  String get reports_totalCheckins;
+
+  /// No description provided for @reports_uniqueMembers.
+  String get reports_uniqueMembers;
+
+  /// No description provided for @reports_avgPerDay.
+  String get reports_avgPerDay;
+
+  /// No description provided for @reports_collectedOverTime.
+  String get reports_collectedOverTime;
+
+  /// No description provided for @reports_expenseByCategory.
+  String get reports_expenseByCategory;
+
+  /// No description provided for @reports_checkinsOverTime.
+  String get reports_checkinsOverTime;
+
+  /// No description provided for @reports_noData.
+  String get reports_noData;
+
+  /// No description provided for @sectionOverview.
+  String get sectionOverview;
+
+  /// No description provided for @sectionMembers.
+  String get sectionMembers;
+
+  /// No description provided for @sectionFrontDesk.
+  String get sectionFrontDesk;
+
+  /// No description provided for @sectionTrainingClasses.
+  String get sectionTrainingClasses;
+
+  /// No description provided for @sectionFinance.
+  String get sectionFinance;
+
+  /// No description provided for @sectionSetup.
+  String get sectionSetup;
+
+  /// No description provided for @sectionTools.
+  String get sectionTools;
+
+  /// No description provided for @admin_classes_sectionDetails.
+  String get admin_classes_sectionDetails;
+
+  /// No description provided for @admin_classes_sectionSchedule.
+  String get admin_classes_sectionSchedule;
+
+  /// No description provided for @admin_classes_sectionCapacityRoom.
+  String get admin_classes_sectionCapacityRoom;
+
+  /// No description provided for @admin_classes_sectionNotes.
+  String get admin_classes_sectionNotes;
+
+  /// No description provided for @admin_classes_required.
+  String get admin_classes_required;
+
+  /// No description provided for @admin_classes_mustBeNumber.
+  String get admin_classes_mustBeNumber;
+
+  /// No description provided for @admin_classes_nameHint.
+  String get admin_classes_nameHint;
+
+  /// No description provided for @admin_classes_durationHint.
+  String get admin_classes_durationHint;
+
+  /// No description provided for @admin_classes_capacityHint.
+  String get admin_classes_capacityHint;
+
+  /// No description provided for @admin_classes_roomHint.
+  String get admin_classes_roomHint;
+
+  /// No description provided for @admin_classes_notesHint.
+  String get admin_classes_notesHint;
+
+  /// No description provided for @admin_classes_createTypeButton.
+  String get admin_classes_createTypeButton;
+
+  /// No description provided for @admin_classes_typeExists.
+  String get admin_classes_typeExists;
+
+  /// No description provided for @admin_classes_typeNameLabel.
+  String get admin_classes_typeNameLabel;
+
+  /// No description provided for @admin_classes_typeNameHint.
+  String get admin_classes_typeNameHint;
+
+  /// No description provided for @admin_classes_typeDurationLabel.
+  String get admin_classes_typeDurationLabel;
+
+  /// No description provided for @admin_classes_typeDifficultyLabel.
+  String get admin_classes_typeDifficultyLabel;
+
+  /// No description provided for @admin_classes_typePriceLabel.
+  String get admin_classes_typePriceLabel;
+
+  /// No description provided for @admin_classes_diffBeginner.
+  String get admin_classes_diffBeginner;
+
+  /// No description provided for @admin_classes_diffIntermediate.
+  String get admin_classes_diffIntermediate;
+
+  /// No description provided for @admin_classes_diffAdvanced.
+  String get admin_classes_diffAdvanced;
+
+  /// No description provided for @admin_expenses_addTitle.
+  String get admin_expenses_addTitle;
+
+  /// No description provided for @admin_expenses_editTitle.
+  String get admin_expenses_editTitle;
+
+  /// No description provided for @admin_expenses_sectionDetails.
+  String get admin_expenses_sectionDetails;
+
+  /// No description provided for @admin_expenses_titleLabel.
+  String get admin_expenses_titleLabel;
+
+  /// No description provided for @admin_expenses_titleHint.
+  String get admin_expenses_titleHint;
+
+  /// No description provided for @admin_expenses_required.
+  String get admin_expenses_required;
+
+  /// No description provided for @admin_expenses_descriptionLabel.
+  String get admin_expenses_descriptionLabel;
+
+  /// No description provided for @admin_expenses_descriptionHint.
+  String get admin_expenses_descriptionHint;
+
+  /// No description provided for @admin_expenses_amountLabel.
+  String get admin_expenses_amountLabel;
+
+  /// No description provided for @admin_expenses_invalidAmount.
+  String get admin_expenses_invalidAmount;
+
+  /// No description provided for @admin_expenses_dateLabel.
+  String get admin_expenses_dateLabel;
+
+  /// No description provided for @admin_expenses_categoryLabel.
+  String get admin_expenses_categoryLabel;
+
+  /// No description provided for @admin_expenses_selectCategory.
+  String get admin_expenses_selectCategory;
+
+  /// No description provided for @admin_expenses_branchLabel.
+  String get admin_expenses_branchLabel;
+
+  /// No description provided for @admin_expenses_selectBranch.
+  String get admin_expenses_selectBranch;
+
+  /// No description provided for @admin_expenses_selectBranchError.
+  String get admin_expenses_selectBranchError;
+
+  /// No description provided for @admin_expenses_addedSuccess.
+  String get admin_expenses_addedSuccess;
+
+  /// No description provided for @admin_expenses_updatedSuccess.
+  String get admin_expenses_updatedSuccess;
+
+  /// No description provided for @admin_expenses_saveChanges.
+  String get admin_expenses_saveChanges;
+
+  /// No description provided for @admin_staff_addSubtitle.
+  String get admin_staff_addSubtitle;
+
+  /// No description provided for @admin_staff_sectionPersonal.
+  String get admin_staff_sectionPersonal;
+
+  /// No description provided for @admin_staff_fullNameLabel.
+  String get admin_staff_fullNameLabel;
+
+  /// No description provided for @admin_staff_fullNameRequired.
+  String get admin_staff_fullNameRequired;
+
+  /// No description provided for @admin_staff_emailLabel.
+  String get admin_staff_emailLabel;
+
+  /// No description provided for @admin_staff_emailRequired.
+  String get admin_staff_emailRequired;
+
+  /// No description provided for @admin_staff_emailInvalid.
+  String get admin_staff_emailInvalid;
+
+  /// No description provided for @admin_staff_phoneLabel.
+  String get admin_staff_phoneLabel;
+
+  /// No description provided for @admin_staff_phoneRequired.
+  String get admin_staff_phoneRequired;
+
+  /// No description provided for @admin_staff_roleLabel.
+  String get admin_staff_roleLabel;
+
+  /// No description provided for @admin_staff_roleRequired.
+  String get admin_staff_roleRequired;
+
+  /// No description provided for @admin_staff_branchLabel.
+  String get admin_staff_branchLabel;
+
+  /// No description provided for @admin_staff_branchRequired.
+  String get admin_staff_branchRequired;
+
+  /// No description provided for @admin_staff_passwordLabel.
+  String get admin_staff_passwordLabel;
+
+  /// No description provided for @admin_staff_passwordHint.
+  String get admin_staff_passwordHint;
+
+  /// No description provided for @admin_staff_passwordHelp.
+  String get admin_staff_passwordHelp;
+
+  /// No description provided for @admin_staff_addButton.
+  String get admin_staff_addButton;
+
+  /// No description provided for @admin_staff_saveChanges.
+  String get admin_staff_saveChanges;
+
+  /// No description provided for @admin_plans_sectionBasic.
+  String get admin_plans_sectionBasic;
+
+  /// No description provided for @admin_plans_sectionMembership.
+  String get admin_plans_sectionMembership;
+
+  /// No description provided for @admin_plans_sectionAccessHours.
+  String get admin_plans_sectionAccessHours;
+
+  /// No description provided for @admin_plans_sectionFeatures.
+  String get admin_plans_sectionFeatures;
+
+  /// No description provided for @admin_plans_sectionPromotion.
+  String get admin_plans_sectionPromotion;
+
+  /// No description provided for @admin_plans_required.
+  String get admin_plans_required;
+
+  /// No description provided for @admin_plans_invalid.
+  String get admin_plans_invalid;
+
+  /// No description provided for @admin_plans_nameLabel.
+  String get admin_plans_nameLabel;
+
+  /// No description provided for @admin_plans_typeLabel.
+  String get admin_plans_typeLabel;
+
+  /// No description provided for @admin_plans_typeHint.
+  String get admin_plans_typeHint;
+
+  /// No description provided for @admin_plans_selectType.
+  String get admin_plans_selectType;
+
+  /// No description provided for @admin_plans_addNewType.
+  String get admin_plans_addNewType;
+
+  /// No description provided for @admin_plans_priceLabel.
+  String get admin_plans_priceLabel;
+
+  /// No description provided for @admin_plans_durationLabel.
+  String get admin_plans_durationLabel;
+
+  /// No description provided for @admin_plans_customDurationLabel.
+  String get admin_plans_customDurationLabel;
+
+  /// No description provided for @admin_plans_enterDays.
+  String get admin_plans_enterDays;
+
+  /// No description provided for @admin_plans_mustBeWhole.
+  String get admin_plans_mustBeWhole;
+
+  /// No description provided for @admin_plans_statusLabel.
+  String get admin_plans_statusLabel;
+
+  /// No description provided for @admin_plans_descriptionLabel.
+  String get admin_plans_descriptionLabel;
+
+  /// No description provided for @admin_plans_descriptionHint.
+  String get admin_plans_descriptionHint;
+
+  /// No description provided for @admin_plans_allowedVisits.
+  String get admin_plans_allowedVisits;
+
+  /// No description provided for @admin_plans_unlimited.
+  String get admin_plans_unlimited;
+
+  /// No description provided for @admin_plans_limited.
+  String get admin_plans_limited;
+
+  /// No description provided for @admin_plans_numberOfVisits.
+  String get admin_plans_numberOfVisits;
+
+  /// No description provided for @admin_plans_enterVisitCount.
+  String get admin_plans_enterVisitCount;
+
+  /// No description provided for @admin_plans_gracePeriod.
+  String get admin_plans_gracePeriod;
+
+  /// No description provided for @admin_plans_gracePeriodHint.
+  String get admin_plans_gracePeriodHint;
+
+  /// No description provided for @admin_plans_autoRenew.
+  String get admin_plans_autoRenew;
+
+  /// No description provided for @admin_plans_autoRenewSub.
+  String get admin_plans_autoRenewSub;
+
+  /// No description provided for @admin_plans_featured.
+  String get admin_plans_featured;
+
+  /// No description provided for @admin_plans_featuredSub.
+  String get admin_plans_featuredSub;
+
+  /// No description provided for @admin_plans_restrictHours.
+  String get admin_plans_restrictHours;
+
+  /// No description provided for @admin_plans_restrictOn.
+  String get admin_plans_restrictOn;
+
+  /// No description provided for @admin_plans_restrictOff.
+  String get admin_plans_restrictOff;
+
+  /// No description provided for @admin_plans_entryWindow.
+  String get admin_plans_entryWindow;
+
+  /// No description provided for @admin_plans_from.
+  String get admin_plans_from;
+
+  /// No description provided for @admin_plans_until.
+  String get admin_plans_until;
+
+  /// No description provided for @admin_plans_accessNote.
+  String get admin_plans_accessNote;
+
+  /// No description provided for @admin_plans_featuresHint.
+  String get admin_plans_featuresHint;
+
+  /// No description provided for @admin_plans_featureHint.
+  String get admin_plans_featureHint;
+
+  /// No description provided for @admin_plans_valueOptional.
+  String get admin_plans_valueOptional;
+
+  /// No description provided for @admin_plans_addFeature.
+  String get admin_plans_addFeature;
+
+  /// No description provided for @admin_plans_hasPromotion.
+  String get admin_plans_hasPromotion;
+
+  /// No description provided for @admin_plans_promoTitle.
+  String get admin_plans_promoTitle;
+
+  /// No description provided for @admin_plans_titleRequired.
+  String get admin_plans_titleRequired;
+
+  /// No description provided for @admin_plans_promoDescription.
+  String get admin_plans_promoDescription;
+
+  /// No description provided for @admin_plans_optionalDetails.
+  String get admin_plans_optionalDetails;
+
+  /// No description provided for @admin_plans_promoTitleHint.
+  String get admin_plans_promoTitleHint;
+
+  /// No description provided for @admin_plans_discountType.
+  String get admin_plans_discountType;
+
+  /// No description provided for @admin_plans_fixedAmount.
+  String get admin_plans_fixedAmount;
+
+  /// No description provided for @admin_plans_percentage.
+  String get admin_plans_percentage;
+
+  /// No description provided for @admin_plans_discountPercent.
+  String get admin_plans_discountPercent;
+
+  /// No description provided for @admin_plans_discountAmount.
+  String get admin_plans_discountAmount;
+
+  /// No description provided for @admin_plans_startDate.
+  String get admin_plans_startDate;
+
+  /// No description provided for @admin_plans_noStartDate.
+  String get admin_plans_noStartDate;
+
+  /// No description provided for @admin_plans_endDate.
+  String get admin_plans_endDate;
+
+  /// No description provided for @admin_plans_noEndDate.
+  String get admin_plans_noEndDate;
+
+  /// No description provided for @admin_plans_noEndDateNote.
+  String get admin_plans_noEndDateNote;
+
+  /// No description provided for @admin_plans_saveChanges.
+  String get admin_plans_saveChanges;
+
+  /// No description provided for @admin_plans_durOneTime.
+  String get admin_plans_durOneTime;
+
+  /// No description provided for @admin_plans_durCustom.
+  String get admin_plans_durCustom;
+
+  String get admin_plans_nameHint;
+
+  String get admin_plans_customDurationHint;
+
+  String get admin_dashboard_viewReports;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

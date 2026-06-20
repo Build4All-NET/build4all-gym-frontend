@@ -60,6 +60,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
   void _showDeleteDialog(int expenseId) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -73,12 +74,27 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.read<AdminExpensesBloc>().add(DeleteExpenseEvent(expenseId: expenseId));
+              context
+                  .read<AdminExpensesBloc>()
+                  .add(DeleteExpenseEvent(expenseId: expenseId));
             },
-            child: Text(l10n.admin_expenses_delete, style: TextStyle(color: c.danger)),
+            child: Text(
+              l10n.admin_expenses_delete,
+              style: TextStyle(color: c.danger),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  void _openAddExpenseSheet() {
+    ExpenseFormBottomSheet.show(
+      context,
+      availableCategories: _currentCategories(),
+      onSuccess: () {
+        context.read<AdminExpensesBloc>().add(RefreshExpensesEvent());
+      },
     );
   }
 
@@ -105,11 +121,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
           children: [
             AdminAppBar(
               title: l10n.navExpenses,
-              onAddTap: () => ExpenseFormBottomSheet.show(
-                context,
-                availableCategories: _currentCategories(),
-                onSuccess: () => context.read<AdminExpensesBloc>().add(RefreshExpensesEvent()),
-              ),
+              onAddTap: _openAddExpenseSheet,
               notificationCount: 0,
             ),
             Expanded(
@@ -121,7 +133,9 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                 },
                 builder: (context, state) {
                   if (state is AdminExpensesLoading) {
-                    return Center(child: CircularProgressIndicator(color: c.primary));
+                    return Center(
+                      child: CircularProgressIndicator(color: c.primary),
+                    );
                   }
 
                   if (state is AdminExpensesError) {
@@ -129,14 +143,24 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.error_outline, size: 48, color: c.muted),
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: c.muted,
+                          ),
                           const SizedBox(height: 12),
-                          Text(state.message,
-                              textAlign: TextAlign.center, style: TextStyle(color: c.muted)),
+                          Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: c.muted),
+                          ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () =>
-                                context.read<AdminExpensesBloc>().add(LoadAdminExpensesEvent()),
+                            onPressed: () {
+                              context
+                                  .read<AdminExpensesBloc>()
+                                  .add(LoadAdminExpensesEvent());
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: c.primary,
                               foregroundColor: c.onPrimary,
@@ -151,7 +175,6 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                   if (state is AdminExpensesLoaded) {
                     return Column(
                       children: [
-                        // ── Filter + Search ────────────────────────────────
                         Container(
                           color: c.surface,
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -169,25 +192,47 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                     value: state.activeCategoryFilter,
                                     isExpanded: true,
                                     underline: const SizedBox.shrink(),
-                                    hint: Text(l10n.admin_expenses_allCategories,
-                                        style: TextStyle(fontSize: 13, color: c.muted)),
-                                    dropdownColor: c.surface,
-                                    style: TextStyle(fontSize: 13, color: c.label),
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: null,
-                                        child: Text(l10n.admin_expenses_allCategories,
-                                            style: TextStyle(fontSize: 13, color: c.label)),
+                                    hint: Text(
+                                      l10n.admin_expenses_allCategories,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: c.muted,
                                       ),
-                                      ...state.categories.map((cat) => DropdownMenuItem(
-                                            value: cat,
-                                            child: Text(formatExpenseCategory(cat),
-                                                style: TextStyle(fontSize: 13, color: c.label)),
-                                          )),
+                                    ),
+                                    dropdownColor: c.surface,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: c.label,
+                                    ),
+                                    items: [
+                                      DropdownMenuItem<String?>(
+                                        value: null,
+                                        child: Text(
+                                          l10n.admin_expenses_allCategories,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: c.label,
+                                          ),
+                                        ),
+                                      ),
+                                      ...state.categories.map(
+                                        (cat) => DropdownMenuItem<String?>(
+                                          value: cat,
+                                          child: Text(
+                                            formatExpenseCategory(cat),
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: c.label,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
-                                    onChanged: (v) => context
-                                        .read<AdminExpensesBloc>()
-                                        .add(FilterByCategoryEvent(category: v)),
+                                    onChanged: (v) {
+                                      context
+                                          .read<AdminExpensesBloc>()
+                                          .add(FilterByCategoryEvent(category: v));
+                                    },
                                   ),
                                 ),
                               ),
@@ -197,14 +242,25 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                 child: TextField(
                                   controller: _searchController,
                                   onChanged: _onSearchChanged,
-                                  style: TextStyle(fontSize: 13, color: c.label),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: c.label,
+                                  ),
                                   decoration: InputDecoration(
                                     hintText: l10n.admin_expenses_searchHint,
-                                    hintStyle: TextStyle(fontSize: 13, color: c.muted),
-                                    prefixIcon: Icon(Icons.search, size: 18, color: c.muted),
+                                    hintStyle: TextStyle(
+                                      fontSize: 13,
+                                      color: c.muted,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      size: 18,
+                                      color: c.muted,
+                                    ),
                                     filled: true,
                                     fillColor: c.background,
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(vertical: 10),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide.none,
@@ -215,12 +271,14 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                             ],
                           ),
                         ),
-
                         Expanded(
                           child: RefreshIndicator(
                             color: c.primary,
-                            onRefresh: () async =>
-                                context.read<AdminExpensesBloc>().add(RefreshExpensesEvent()),
+                            onRefresh: () async {
+                              context
+                                  .read<AdminExpensesBloc>()
+                                  .add(RefreshExpensesEvent());
+                            },
                             child: ListView(
                               children: [
                                 ExpenseStatsCardWidget(stats: state.stats),
@@ -228,25 +286,36 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(40),
                                     child: Center(
-                                      child: Text(l10n.admin_expenses_noExpenses,
-                                          style: TextStyle(color: c.muted)),
+                                      child: Text(
+                                        l10n.admin_expenses_noExpenses,
+                                        style: TextStyle(color: c.muted),
+                                      ),
                                     ),
                                   )
                                 else
-                                  ...state.expenses.map((expense) => AdminExpenseCardWidget(
-                                        expense: expense,
-                                        isDeleting: state.isDeletingExpense &&
-                                            state.deletingExpenseId == expense.expenseId,
-                                        onEdit: () => ExpenseFormBottomSheet.show(
+                                  ...state.expenses.map(
+                                    (expense) => AdminExpenseCardWidget(
+                                      expense: expense,
+                                      isDeleting: state.isDeletingExpense &&
+                                          state.deletingExpenseId ==
+                                              expense.expenseId,
+                                      onEdit: () {
+                                        ExpenseFormBottomSheet.show(
                                           context,
                                           existingExpense: expense,
                                           availableCategories: state.categories,
-                                          onSuccess: () => context
-                                              .read<AdminExpensesBloc>()
-                                              .add(RefreshExpensesEvent()),
-                                        ),
-                                        onDelete: () => _showDeleteDialog(expense.expenseId),
-                                      )),
+                                          onSuccess: () {
+                                            context
+                                                .read<AdminExpensesBloc>()
+                                                .add(RefreshExpensesEvent());
+                                          },
+                                        );
+                                      },
+                                      onDelete: () {
+                                        _showDeleteDialog(expense.expenseId);
+                                      },
+                                    ),
+                                  ),
                                 const SizedBox(height: 80),
                               ],
                             ),
@@ -264,11 +333,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => ExpenseFormBottomSheet.show(
-          context,
-          availableCategories: _currentCategories(),
-          onSuccess: () => context.read<AdminExpensesBloc>().add(RefreshExpensesEvent()),
-        ),
+        onPressed: _openAddExpenseSheet,
         backgroundColor: c.success,
         child: Icon(Icons.add, color: c.onPrimary),
       ),
