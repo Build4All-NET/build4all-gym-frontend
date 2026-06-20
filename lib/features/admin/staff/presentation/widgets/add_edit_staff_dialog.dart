@@ -147,7 +147,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 hint: l10n.admin_staff_fullNameHint,
                 validator: (v) =>
                 (v == null || v.trim().isEmpty) && !_isEditMode
-                    ? 'Full name is required'
+                    ? l10n.admin_staff_fullNameRequired
                     : null,
               ),
               const SizedBox(height: 14),
@@ -161,12 +161,12 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 keyboardType: TextInputType.emailAddress,
                 validator: (v) {
                   if ((v == null || v.trim().isEmpty) && !_isEditMode) {
-                    return 'Email is required';
+                    return l10n.admin_staff_emailRequired;
                   }
                   if (v != null && v.isNotEmpty) {
                     final emailRegex = RegExp(r'^[\w.]+@[\w]+\.[a-zA-Z]+$');
                     if (!emailRegex.hasMatch(v.trim())) {
-                      return 'Enter a valid email address';
+                      return l10n.admin_staff_emailInvalid;
                     }
                   }
                   return null;
@@ -183,7 +183,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 keyboardType: TextInputType.phone,
                 validator: (v) =>
                 (v == null || v.trim().isEmpty) && !_isEditMode
-                    ? 'Phone number is required'
+                    ? l10n.admin_staff_phoneRequired
                     : null,
               ),
               const SizedBox(height: 14),
@@ -202,7 +202,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                     .toList(),
                 onChanged: (v) => setState(() => _selectedRole = v),
                 validator: (v) =>
-                v == null && !_isEditMode ? 'Role is required' : null,
+                v == null && !_isEditMode ? l10n.admin_staff_roleRequired : null,
                 decoration: _inputDecoration(c),
                 icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
               ),
@@ -225,7 +225,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                     .toList(),
                 onChanged: (v) => setState(() => _selectedBranchId = v),
                 validator: (v) =>
-                v == null && !_isEditMode ? 'Branch is required' : null,
+                v == null && !_isEditMode ? l10n.admin_staff_branchRequired : null,
                 decoration: _inputDecoration(c),
                 icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
               ),

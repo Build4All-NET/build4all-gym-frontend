@@ -3672,4 +3672,115 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_classes_diffAdvanced => 'متقدم';
+
+  @override
+  String get admin_expenses_addTitle => 'إضافة مصروف';
+
+  @override
+  String get admin_expenses_editTitle => 'تعديل مصروف';
+
+  @override
+  String get admin_expenses_sectionDetails => 'تفاصيل المصروف';
+
+  @override
+  String get admin_expenses_titleLabel => 'العنوان *';
+
+  @override
+  String get admin_expenses_titleHint => 'مثال: فاتورة الكهرباء';
+
+  @override
+  String get admin_expenses_required => 'مطلوب';
+
+  @override
+  String get admin_expenses_descriptionLabel => 'الوصف';
+
+  @override
+  String get admin_expenses_descriptionHint => 'ملاحظات اختيارية';
+
+  @override
+  String get admin_expenses_amountLabel => 'المبلغ *';
+
+  @override
+  String get admin_expenses_invalidAmount => 'مبلغ غير صالح';
+
+  @override
+  String get admin_expenses_dateLabel => 'التاريخ *';
+
+  @override
+  String get admin_expenses_categoryLabel => 'الفئة *';
+
+  @override
+  String get admin_expenses_selectCategory => 'اختر الفئة';
+
+  @override
+  String get admin_expenses_branchLabel => 'الفرع *';
+
+  @override
+  String get admin_expenses_selectBranch => 'اختر الفرع';
+
+  @override
+  String get admin_expenses_selectBranchError => 'الرجاء اختيار فرع';
+
+  @override
+  String get admin_expenses_addedSuccess => 'تمت إضافة المصروف بنجاح';
+
+  @override
+  String get admin_expenses_updatedSuccess => 'تم تعديل المصروف بنجاح';
+
+  @override
+  String get admin_expenses_saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get admin_staff_addSubtitle => 'املأ التفاصيل لإضافة موظف جديد للجيم';
+
+  @override
+  String get admin_staff_sectionPersonal => 'المعلومات الشخصية';
+
+  @override
+  String get admin_staff_fullNameLabel => 'الاسم الكامل';
+
+  @override
+  String get admin_staff_fullNameRequired => 'الاسم الكامل مطلوب';
+
+  @override
+  String get admin_staff_emailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get admin_staff_emailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get admin_staff_emailInvalid => 'أدخل بريداً إلكترونياً صحيحاً';
+
+  @override
+  String get admin_staff_phoneLabel => 'رقم الهاتف';
+
+  @override
+  String get admin_staff_phoneRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get admin_staff_roleLabel => 'الدور';
+
+  @override
+  String get admin_staff_roleRequired => 'الدور مطلوب';
+
+  @override
+  String get admin_staff_branchLabel => 'الفرع';
+
+  @override
+  String get admin_staff_branchRequired => 'الفرع مطلوب';
+
+  @override
+  String get admin_staff_passwordLabel => 'كلمة المرور';
+
+  @override
+  String get admin_staff_passwordHint => 'توليد تلقائي أو أدخلها';
+
+  @override
+  String get admin_staff_passwordHelp => 'اتركها فارغة لتوليد كلمة مرور آمنة تلقائياً';
+
+  @override
+  String get admin_staff_addButton => 'إضافة موظف';
+
+  @override
+  String get admin_staff_saveChanges => 'حفظ التغييرات';
 }

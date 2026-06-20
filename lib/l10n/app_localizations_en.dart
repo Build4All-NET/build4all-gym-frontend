@@ -3672,4 +3672,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_classes_diffAdvanced => 'Advanced';
+
+  @override
+  String get admin_expenses_addTitle => 'Add Expense';
+
+  @override
+  String get admin_expenses_editTitle => 'Edit Expense';
+
+  @override
+  String get admin_expenses_sectionDetails => 'Expense Details';
+
+  @override
+  String get admin_expenses_titleLabel => 'Title *';
+
+  @override
+  String get admin_expenses_titleHint => 'e.g. Electricity bill';
+
+  @override
+  String get admin_expenses_required => 'Required';
+
+  @override
+  String get admin_expenses_descriptionLabel => 'Description';
+
+  @override
+  String get admin_expenses_descriptionHint => 'Optional notes';
+
+  @override
+  String get admin_expenses_amountLabel => 'Amount *';
+
+  @override
+  String get admin_expenses_invalidAmount => 'Invalid amount';
+
+  @override
+  String get admin_expenses_dateLabel => 'Date *';
+
+  @override
+  String get admin_expenses_categoryLabel => 'Category *';
+
+  @override
+  String get admin_expenses_selectCategory => 'Select category';
+
+  @override
+  String get admin_expenses_branchLabel => 'Branch *';
+
+  @override
+  String get admin_expenses_selectBranch => 'Select branch';
+
+  @override
+  String get admin_expenses_selectBranchError => 'Please select a branch';
+
+  @override
+  String get admin_expenses_addedSuccess => 'Expense added successfully';
+
+  @override
+  String get admin_expenses_updatedSuccess => 'Expense updated successfully';
+
+  @override
+  String get admin_expenses_saveChanges => 'Save Changes';
+
+  @override
+  String get admin_staff_addSubtitle => 'Fill in the details to add a new staff member to your gym';
+
+  @override
+  String get admin_staff_sectionPersonal => 'Personal Information';
+
+  @override
+  String get admin_staff_fullNameLabel => 'Full Name';
+
+  @override
+  String get admin_staff_fullNameRequired => 'Full name is required';
+
+  @override
+  String get admin_staff_emailLabel => 'Email Address';
+
+  @override
+  String get admin_staff_emailRequired => 'Email is required';
+
+  @override
+  String get admin_staff_emailInvalid => 'Enter a valid email address';
+
+  @override
+  String get admin_staff_phoneLabel => 'Phone Number';
+
+  @override
+  String get admin_staff_phoneRequired => 'Phone number is required';
+
+  @override
+  String get admin_staff_roleLabel => 'Role';
+
+  @override
+  String get admin_staff_roleRequired => 'Role is required';
+
+  @override
+  String get admin_staff_branchLabel => 'Branch Assignment';
+
+  @override
+  String get admin_staff_branchRequired => 'Branch is required';
+
+  @override
+  String get admin_staff_passwordLabel => 'Password';
+
+  @override
+  String get admin_staff_passwordHint => 'Auto-generate or enter';
+
+  @override
+  String get admin_staff_passwordHelp => 'Leave empty to auto-generate a secure password';
+
+  @override
+  String get admin_staff_addButton => 'Add Staff Member';
+
+  @override
+  String get admin_staff_saveChanges => 'Save Changes';
 }

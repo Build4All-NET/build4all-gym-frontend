@@ -7129,6 +7129,117 @@ abstract class AppLocalizations {
 
   /// No description provided for @admin_classes_diffAdvanced.
   String get admin_classes_diffAdvanced;
+
+  /// No description provided for @admin_expenses_addTitle.
+  String get admin_expenses_addTitle;
+
+  /// No description provided for @admin_expenses_editTitle.
+  String get admin_expenses_editTitle;
+
+  /// No description provided for @admin_expenses_sectionDetails.
+  String get admin_expenses_sectionDetails;
+
+  /// No description provided for @admin_expenses_titleLabel.
+  String get admin_expenses_titleLabel;
+
+  /// No description provided for @admin_expenses_titleHint.
+  String get admin_expenses_titleHint;
+
+  /// No description provided for @admin_expenses_required.
+  String get admin_expenses_required;
+
+  /// No description provided for @admin_expenses_descriptionLabel.
+  String get admin_expenses_descriptionLabel;
+
+  /// No description provided for @admin_expenses_descriptionHint.
+  String get admin_expenses_descriptionHint;
+
+  /// No description provided for @admin_expenses_amountLabel.
+  String get admin_expenses_amountLabel;
+
+  /// No description provided for @admin_expenses_invalidAmount.
+  String get admin_expenses_invalidAmount;
+
+  /// No description provided for @admin_expenses_dateLabel.
+  String get admin_expenses_dateLabel;
+
+  /// No description provided for @admin_expenses_categoryLabel.
+  String get admin_expenses_categoryLabel;
+
+  /// No description provided for @admin_expenses_selectCategory.
+  String get admin_expenses_selectCategory;
+
+  /// No description provided for @admin_expenses_branchLabel.
+  String get admin_expenses_branchLabel;
+
+  /// No description provided for @admin_expenses_selectBranch.
+  String get admin_expenses_selectBranch;
+
+  /// No description provided for @admin_expenses_selectBranchError.
+  String get admin_expenses_selectBranchError;
+
+  /// No description provided for @admin_expenses_addedSuccess.
+  String get admin_expenses_addedSuccess;
+
+  /// No description provided for @admin_expenses_updatedSuccess.
+  String get admin_expenses_updatedSuccess;
+
+  /// No description provided for @admin_expenses_saveChanges.
+  String get admin_expenses_saveChanges;
+
+  /// No description provided for @admin_staff_addSubtitle.
+  String get admin_staff_addSubtitle;
+
+  /// No description provided for @admin_staff_sectionPersonal.
+  String get admin_staff_sectionPersonal;
+
+  /// No description provided for @admin_staff_fullNameLabel.
+  String get admin_staff_fullNameLabel;
+
+  /// No description provided for @admin_staff_fullNameRequired.
+  String get admin_staff_fullNameRequired;
+
+  /// No description provided for @admin_staff_emailLabel.
+  String get admin_staff_emailLabel;
+
+  /// No description provided for @admin_staff_emailRequired.
+  String get admin_staff_emailRequired;
+
+  /// No description provided for @admin_staff_emailInvalid.
+  String get admin_staff_emailInvalid;
+
+  /// No description provided for @admin_staff_phoneLabel.
+  String get admin_staff_phoneLabel;
+
+  /// No description provided for @admin_staff_phoneRequired.
+  String get admin_staff_phoneRequired;
+
+  /// No description provided for @admin_staff_roleLabel.
+  String get admin_staff_roleLabel;
+
+  /// No description provided for @admin_staff_roleRequired.
+  String get admin_staff_roleRequired;
+
+  /// No description provided for @admin_staff_branchLabel.
+  String get admin_staff_branchLabel;
+
+  /// No description provided for @admin_staff_branchRequired.
+  String get admin_staff_branchRequired;
+
+  /// No description provided for @admin_staff_passwordLabel.
+  String get admin_staff_passwordLabel;
+
+  /// No description provided for @admin_staff_passwordHint.
+  String get admin_staff_passwordHint;
+
+  /// No description provided for @admin_staff_passwordHelp.
+  String get admin_staff_passwordHelp;
+
+  /// No description provided for @admin_staff_addButton.
+  String get admin_staff_addButton;
+
+  /// No description provided for @admin_staff_saveChanges.
+  String get admin_staff_saveChanges;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
