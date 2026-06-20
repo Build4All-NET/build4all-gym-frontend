@@ -24,9 +24,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../common/widgets/app_toast.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../data/models/pt_service_model.dart';
 import '../../data/services/pt_service_service.dart';
 import '../../domain/entities/pt_package_entity.dart';
@@ -34,6 +37,7 @@ import '../bloc/packages/pt_package_bloc.dart';
 import '../bloc/packages/pt_package_state.dart';
 import '../bloc/packages/pt_package_bloc.dart'
     hide PtPackageBloc, PtPackageState, PtPackageError, PtPackageLoading, PtPackageMutating, PtPackageLoaded;
+import '../widgets/pt_form_dialog_kit.dart';
 
 // ── Package type options (must match backend enum) ────────────────────────────
 const _kPackageTypes = ['INDIVIDUAL', 'GROUP', 'ONLINE', 'CORPORATE'];
@@ -101,9 +105,17 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
     }
   }
 
+  /// Only Admin/Owner/Manager can create/edit/deactivate packages — the
+  /// backend rejects writes from anyone else (e.g. Reception, who can still
+  /// view this screen in admin-mode). Checks the real JWT role, not the loose
+  /// "admin-mode view" flag (widget.isAdmin), which also covers Reception.
+  bool _canManage(BuildContext context) =>
+      context.read<AdminProfileCubit>().state.isAdminRole;
+
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final canManage = _canManage(context);
 
     return BlocConsumer<PtPackageBloc, PtPackageState>(
       listener: (ctx, state) {
@@ -132,19 +144,20 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
             backgroundColor: tokens.colors.surface,
             elevation: 0,
             actions: [
-              IconButton(
-                icon: Icon(Icons.add, color: tokens.colors.primary),
-                onPressed: () => _showCreateDialog(context, tokens),
-              ),
+              if (canManage)
+                IconButton(
+                  icon: Icon(Icons.add, color: tokens.colors.primary),
+                  onPressed: () => _showCreateDialog(context, tokens),
+                ),
             ],
           ),
-          body: _buildBody(context, state, tokens),
+          body: _buildBody(context, state, tokens, canManage),
         );
       },
     );
   }
 
-  Widget _buildBody(BuildContext context, PtPackageState state, dynamic tokens) {
+  Widget _buildBody(BuildContext context, PtPackageState state, dynamic tokens, bool canManage) {
     if (state is PtPackageLoading || state is PtPackageMutating || state is PtPackageMutationSuccess) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -210,8 +223,8 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
                 package:     pkg,
                 trainerName: _trainerName(pkg.trainerId, context),
                 showBadge:   widget.isAdmin,
-                onEdit:      (p) => _showEditDialog(context, p, tokens),
-                onDeactivate:(p) => _confirmDeactivate(context, p),
+                onEdit:      canManage ? (p) => _showEditDialog(context, p, tokens) : null,
+                onDeactivate: canManage ? (p) => _confirmDeactivate(context, p) : null,
                 onReactivate: null,
               ),
             ),
@@ -249,7 +262,7 @@ class _TrainerPackagesScreenState extends State<TrainerPackagesScreen> {
                   showBadge:   widget.isAdmin,
                   onEdit:      null,
                   onDeactivate: null,
-                  onReactivate: (p) => _confirmReactivate(context, p),
+                  onReactivate: canManage ? (p) => _confirmReactivate(context, p) : null,
                 ),
               ),
             ),
@@ -658,182 +671,212 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.initialPackage != null;
-    return AlertDialog(
-      title: Text(isEdit ? AppLocalizations.of(context)!.trainer_editPackage : AppLocalizations.of(context)!.trainer_newPackage),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ── Trainer picker (admin only) ────────────────────────────
-                if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
-                  DropdownButtonFormField<int>(
-                    value: _selectedTrainerId,
-                    hint: Text(AppLocalizations.of(context)!.trainer_assignToTrainer),
-                    items: widget.trainers.map((t) {
-                      return DropdownMenuItem(
-                        value: t.trainerId,
-                        child: Text(t.fullName),
-                      );
-                    }).toList(),
-                    onChanged: (v) =>
-                        setState(() => _selectedTrainerId = v),
-                    validator: (v) =>
-                    v == null ? AppLocalizations.of(context)!.trainer_selectTrainerRequired : null,
-                  ),
-                  const SizedBox(height: 12),
-                ],
+    final l10n   = AppLocalizations.of(context)!;
+    final c      = context.read<ThemeCubit>().state.tokens.colors;
 
-                // ── Package Name ───────────────────────────────────────────
-                _field(_name, AppLocalizations.of(context)!.trainer_packageNameLabel,
-                    validator: (v) =>
-                    v == null || v.isEmpty ? AppLocalizations.of(context)!.trainer_requiredField : null),
+    return PtFormDialogScaffold(
+      header: PtDialogHeader(
+        icon:     Icons.card_membership_rounded,
+        title:    isEdit ? l10n.trainer_editPackage : l10n.trainer_newPackage,
+        subtitle: isEdit ? l10n.trainer_editPackageSubtitle : l10n.trainer_newPackageSubtitle,
+        onClose:  () => Navigator.pop(context),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Trainer picker (admin only) ────────────────────────────
+            if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
+              DropdownButtonFormField<int>(
+                value: _selectedTrainerId,
+                decoration: ptFieldDecoration(c,
+                    label: l10n.trainer_assignToTrainer,
+                    icon: Icons.person_outline_rounded),
+                icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
+                items: widget.trainers.map((t) {
+                  return DropdownMenuItem(
+                    value: t.trainerId,
+                    child: Text(t.fullName),
+                  );
+                }).toList(),
+                onChanged: (v) =>
+                    setState(() => _selectedTrainerId = v),
+                validator: (v) =>
+                v == null ? l10n.trainer_selectTrainerRequired : null,
+              ),
+              const SizedBox(height: 14),
+            ],
 
-                // ── Package Type (NOT NULL in DB) ──────────────────────────
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: DropdownButtonFormField<String>(
-                    value: _packageType,
-                    decoration:
-                        InputDecoration(labelText: AppLocalizations.of(context)!.trainer_packageTypeLabel),
-                    items: _kPackageTypes.map((t) {
-                      return DropdownMenuItem(value: t, child: Text(t));
-                    }).toList(),
-                    onChanged: (v) =>
-                        setState(() => _packageType = v ?? _kPackageTypes.first),
-                    validator: (v) =>
-                    v == null || v.isEmpty ? AppLocalizations.of(context)!.trainer_requiredField : null,
-                  ),
-                ),
-
-                // ── Number of Sessions ─────────────────────────────────────
-                _field(_sessions, AppLocalizations.of(context)!.trainer_numberOfSessions,
-                    keyboardType: TextInputType.number,
-                    validator: (v) =>
-                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-
-                // ── Session Duration ───────────────────────────────────────
-                _field(_duration, AppLocalizations.of(context)!.trainer_sessionDurationMin,
-                    keyboardType: TextInputType.number,
-                    validator: (v) =>
-                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-
-                // ── Days Available (validity, NOT NULL in DB) ──────────────
-                _field(_daysAvailable, AppLocalizations.of(context)!.trainer_daysAvailable,
-                    keyboardType: TextInputType.number,
-                    validator: (v) =>
-                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-
-                // ── Min / Max Days per Week ────────────────────────────────
-                _field(_minDays, AppLocalizations.of(context)!.trainer_minDaysWeek,
-                    keyboardType: TextInputType.number,
-                    validator: (v) =>
-                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-                _field(_maxDays, AppLocalizations.of(context)!.trainer_maxDaysWeek,
-                    keyboardType: TextInputType.number,
-                    validator: (v) =>
-                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-
-                // ── Max Concurrent Sessions (nullable in DB) ───────────────
-                _field(_maxConcurrent, AppLocalizations.of(context)!.trainer_maxConcurrentSessions,
-                    keyboardType: TextInputType.number,
-                    validator: (v) =>
-                    int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-
-                // ── Price / Sale Price ─────────────────────────────────────
-                _field(_price, AppLocalizations.of(context)!.trainer_priceLabel,
-                    keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                    validator: (v) =>
-                    double.tryParse(v ?? '') == null
-                        ? AppLocalizations.of(context)!.trainer_enterPrice
-                        : null),
-                _field(_salePrice, AppLocalizations.of(context)!.trainer_salePriceOptional,
-                    keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true)),
-
-                // ── PT Service (FK → pt_services, nullable) ────────────────
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _servicesLoading
-                      ? const Center(
-                          child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2)))
-                      : DropdownButtonFormField<int?>(
-                          value: _selectedServiceId,
-                          decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)!.trainer_linkedPtServiceOptional),
-                          hint: Text(AppLocalizations.of(context)!.trainer_noneOption),
-                          items: [
-                            DropdownMenuItem<int?>(
-                                value: null, child: Text(AppLocalizations.of(context)!.trainer_noneOption)),
-                            ..._services.map((s) => DropdownMenuItem<int?>(
-                                value: s.serviceId,
-                                child: Text(s.name))),
-                          ],
-                          onChanged: (v) =>
-                              setState(() => _selectedServiceId = v),
-                        ),
-                ),
-
-                // ── isActive toggle (edit mode only) ──────────────────────
-                if (isEdit) ...[
-                  SwitchListTile(
-                    title: Text(AppLocalizations.of(context)!.trainer_activeLabel),
-                    subtitle: Text(AppLocalizations.of(context)!.trainer_uncheckDeactivate),
-                    value: _isActive,
-                    onChanged: (v) => setState(() => _isActive = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ],
-              ],
+            // ── Basic info ──────────────────────────────────────────────
+            PtSectionLabel(icon: Icons.info_outline_rounded, text: l10n.trainer_sectionBasicInfo),
+            _field(c, _name, l10n.trainer_packageNameLabel,
+                icon: Icons.badge_outlined,
+                validator: (v) =>
+                v == null || v.isEmpty ? l10n.trainer_requiredField : null),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: DropdownButtonFormField<String>(
+                value: _packageType,
+                decoration: ptFieldDecoration(c,
+                    label: l10n.trainer_packageTypeLabel,
+                    icon: Icons.category_outlined),
+                icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
+                items: _kPackageTypes.map((t) {
+                  return DropdownMenuItem(value: t, child: Text(t));
+                }).toList(),
+                onChanged: (v) =>
+                    setState(() => _packageType = v ?? _kPackageTypes.first),
+                validator: (v) =>
+                v == null || v.isEmpty ? l10n.trainer_requiredField : null,
+              ),
             ),
-          ),
+
+            // ── Sessions & schedule ─────────────────────────────────────
+            PtSectionLabel(icon: Icons.event_repeat_rounded, text: l10n.trainer_sectionSessionsSchedule),
+            _fieldRow(
+              _field(c, _sessions, l10n.trainer_numberOfSessions,
+                  icon: Icons.fitness_center_rounded,
+                  keyboardType: TextInputType.number,
+                  validator: (v) =>
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+              _field(c, _duration, l10n.trainer_sessionDurationMin,
+                  icon: Icons.timer_outlined,
+                  keyboardType: TextInputType.number,
+                  validator: (v) =>
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+            ),
+            _fieldRow(
+              _field(c, _minDays, l10n.trainer_minDaysWeek,
+                  icon: Icons.calendar_view_week_outlined,
+                  keyboardType: TextInputType.number,
+                  validator: (v) =>
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+              _field(c, _maxDays, l10n.trainer_maxDaysWeek,
+                  icon: Icons.calendar_view_week_outlined,
+                  keyboardType: TextInputType.number,
+                  validator: (v) =>
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+            ),
+            _fieldRow(
+              _field(c, _daysAvailable, l10n.trainer_daysAvailable,
+                  icon: Icons.event_available_outlined,
+                  keyboardType: TextInputType.number,
+                  validator: (v) =>
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+              _field(c, _maxConcurrent, l10n.trainer_maxConcurrentSessions,
+                  icon: Icons.groups_outlined,
+                  keyboardType: TextInputType.number,
+                  validator: (v) =>
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+            ),
+
+            // ── Pricing ──────────────────────────────────────────────────
+            PtSectionLabel(icon: Icons.payments_outlined, text: l10n.trainer_sectionPricing),
+            _fieldRow(
+              _field(c, _price, l10n.trainer_priceLabel,
+                  icon: Icons.attach_money_rounded,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: (v) =>
+                  double.tryParse(v ?? '') == null
+                      ? l10n.trainer_enterPrice
+                      : null),
+              _field(c, _salePrice, l10n.trainer_salePriceOptional,
+                  icon: Icons.sell_outlined,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+            ),
+
+            // ── PT Service (FK → pt_services, required) ─────────────────
+            // Required: the package's session commission % is resolved
+            // from this service's commissionPercentage.
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _servicesLoading
+                  ? const Center(
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2)))
+                  : DropdownButtonFormField<int?>(
+                      value: _selectedServiceId,
+                      decoration: ptFieldDecoration(c,
+                          label: l10n.trainer_linkedPtServiceRequired,
+                          icon: Icons.link_rounded),
+                      icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
+                      items: _services
+                          .map((s) => DropdownMenuItem<int?>(
+                              value: s.serviceId,
+                              child: Text(s.name)))
+                          .toList(),
+                      onChanged: (v) =>
+                          setState(() => _selectedServiceId = v),
+                      validator: (v) =>
+                          v == null ? l10n.trainer_selectServiceRequired : null,
+                    ),
+            ),
+
+            // ── isActive toggle (edit mode only) ──────────────────────
+            if (isEdit)
+              PtSwitchCard(
+                icon: Icons.toggle_on_outlined,
+                title: l10n.trainer_activeLabel,
+                subtitle: l10n.trainer_uncheckDeactivate,
+                value: _isActive,
+                onChanged: (v) => setState(() => _isActive = v),
+              ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.general_cancel),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: Text(AppLocalizations.of(context)!.editProfileSave),
-        ),
-      ],
+      footer: PtDialogFooter(
+        cancelLabel: l10n.general_cancel,
+        submitLabel: isEdit ? l10n.editProfileSave : l10n.trainer_createPackage,
+        submitIcon:  isEdit ? Icons.check_rounded : Icons.add_rounded,
+        onCancel:    () => Navigator.pop(context),
+        onSubmit:    _submit,
+      ),
+    );
+  }
+
+  Widget _fieldRow(Widget left, Widget right) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 12),
+          Expanded(child: right),
+        ],
+      ),
     );
   }
 
   Widget _field(
+      ColorTokens c,
       TextEditingController ctrl,
       String label, {
+        required IconData icon,
         TextInputType? keyboardType,
         String? Function(String?)? validator,
       }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextFormField(
-        controller:   ctrl,
-        keyboardType: keyboardType,
-        decoration:   InputDecoration(labelText: label),
-        validator:    validator,
-      ),
+    return TextFormField(
+      controller:   ctrl,
+      keyboardType: keyboardType,
+      style:        TextStyle(fontSize: 14, color: c.label),
+      decoration:   ptFieldDecoration(c, label: label, icon: icon),
+      validator:    validator,
     );
   }
 
   void _submit() {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     final trainerId = _selectedTrainerId ?? widget.defaultTrainerId;
     if (trainerId == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.trainer_selectTrainerSnackbar)),
-      );
+      AppToast.error(context, l10n.trainer_selectTrainerSnackbar);
       return;
     }
 
@@ -851,8 +894,7 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
       'price':                  double.parse(_price.text.trim()),
       if (_salePrice.text.isNotEmpty)
         'salePrice': double.parse(_salePrice.text.trim()),
-      if (_selectedServiceId != null)
-        'ptServiceId': _selectedServiceId,              // ← was missing
+      'ptServiceId': _selectedServiceId,                // ← now required
       if (isEdit) 'isActive': _isActive,               // ← edit-only
     };
 

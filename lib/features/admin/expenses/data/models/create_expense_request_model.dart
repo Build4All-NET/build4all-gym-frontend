@@ -7,6 +7,7 @@ class CreateExpenseRequestModel {
   final DateTime expenseDate;
   final String category;
   final int branchId;
+  final int? trainerId;
 
   const CreateExpenseRequestModel({
     required this.title,
@@ -15,6 +16,7 @@ class CreateExpenseRequestModel {
     required this.expenseDate,
     required this.category,
     required this.branchId,
+    this.trainerId,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class CreateExpenseRequestModel {
       'expenseDate': DateFormat('yyyy-MM-dd').format(expenseDate),
       'category': category,
       'branchId': branchId,
+      if (trainerId != null) 'trainerId': trainerId,
     };
   }
 }

@@ -14,6 +14,7 @@ class PtServiceModel {
   final String? description;
   final int durationMinutes;
   final double price;
+  final double commissionPercentage;
   final bool isActive;
   final int trainerId;
   final int tenantId;
@@ -24,6 +25,7 @@ class PtServiceModel {
     this.description,
     required this.durationMinutes,
     required this.price,
+    required this.commissionPercentage,
     required this.isActive,
     required this.trainerId,
     required this.tenantId,
@@ -38,6 +40,7 @@ class PtServiceModel {
       description:     json['description'] as String?,
       durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 60,
       price:           (json['price'] as num?)?.toDouble() ?? 0.0,
+      commissionPercentage: (json['commissionPercentage'] as num?)?.toDouble() ?? 0.0,
       isActive:        (json['isActive'] as bool?) ?? true,
       trainerId:       (json['trainerId'] as num?)?.toInt() ?? 0,
       tenantId:        (json['tenantId']  as num?)?.toInt() ?? 0,
@@ -53,6 +56,7 @@ class PtServiceModel {
       description:     description,
       durationMinutes: durationMinutes,
       price:           price,
+      commissionPercentage: commissionPercentage,
       isActive:        isActive,
       trainerId:       trainerId,
       tenantId:        tenantId,

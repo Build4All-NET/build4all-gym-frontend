@@ -12,6 +12,7 @@ class PtServiceEntity {
   final String? description;
   final int durationMinutes;
   final double price;
+  final double commissionPercentage;
   final bool isActive;
   final int trainerId;
   final String? trainerName;    // resolved in screen from trainers list
@@ -23,6 +24,7 @@ class PtServiceEntity {
     this.description,
     required this.durationMinutes,
     required this.price,
+    required this.commissionPercentage,
     required this.isActive,
     required this.trainerId,
     this.trainerName,
@@ -39,6 +41,7 @@ class PtServiceEntity {
       description: description,
       durationMinutes: durationMinutes,
       price: price,
+      commissionPercentage: commissionPercentage,
       isActive: isActive ?? this.isActive,
       trainerId: trainerId,
       trainerName: trainerName ?? this.trainerName,

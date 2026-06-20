@@ -31,16 +31,21 @@ import '../bloc/availability/availability_bloc.dart';
 import '../bloc/services/pt_service_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../../data/repositories/pt_package_repository_impl.dart';
+import '../../data/repositories/trainer_income_repository_impl.dart';
 import '../../data/repositories/trainer_pt_sessions_repository_impl.dart';
 import '../../data/services/pt_package_service.dart';
+import '../../data/services/trainer_income_service.dart';
 import '../../data/services/trainer_pt_sessions_service.dart';
 import '../../domain/usecases/pt_package_usecases.dart';
+import '../../domain/usecases/trainer_income_usecases.dart';
 import '../../domain/usecases/trainer_pt_sessions_usecases.dart';
+import '../bloc/income/trainer_income_bloc.dart';
 import '../bloc/packages/pt_package_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
 
 import 'trainer_dashboard_screen.dart';
+import 'trainer_income_screen.dart';
 import 'trainer_packages_screen.dart';
 import 'trainer_pt_sessions_screen.dart';
 import 'trainer_schedule_screen.dart';
@@ -87,6 +92,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       getRequests:          GetSessionRequestsUseCase(repository),
       createSession:        CreateSessionUseCase(repository),
       updateStatus:         UpdateSessionStatusUseCase(repository),
+      markPaid:             MarkSessionPaidUseCase(repository),
       acceptRequest:        AcceptSessionRequestUseCase(repository),
       declineRequest:       DeclineSessionRequestUseCase(repository),
       declineCancelRequest: DeclineCancelRequestUseCase(repository),
@@ -394,12 +400,18 @@ class _MainShell extends StatelessWidget {
     final cs = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
 
+    // Trainers manage their own sessions/schedule and see their income, but
+    // Packages and Services ("More") are Admin/Owner-only — those tabs are
+    // simply not built for a trainer.
     final navItems = <_NavItem>[
       _NavItem(icon: Icons.grid_view_rounded,      label: l10n.trainer_navDashboard),
       _NavItem(icon: Icons.calendar_today_rounded, label: l10n.trainer_navSessions),
-      _NavItem(icon: Icons.inventory_2_outlined,   label: l10n.trainer_navPackages),
+      if (isAdmin)
+        _NavItem(icon: Icons.inventory_2_outlined, label: l10n.trainer_navPackages),
       _NavItem(icon: Icons.schedule_rounded,       label: l10n.trainer_navSchedule),
-      _NavItem(icon: Icons.people_outline_rounded, label: l10n.trainer_navMore),
+      if (isAdmin)
+        _NavItem(icon: Icons.people_outline_rounded, label: l10n.trainer_navMore),
+      _NavItem(icon: Icons.payments_outlined,      label: l10n.trainer_navIncome),
     ];
 
     final bodies = <Widget>[
@@ -420,22 +432,23 @@ class _MainShell extends StatelessWidget {
         trainers:  trainers,
       ),
 
-      BlocProvider(
-        create: (_) => PtPackageBloc(
-          getPackages:         GetPtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          getInactivePackages: GetInactivePtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          createPackage:       CreatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          updatePackage:       UpdatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
-          deactivatePackage:   DeactivatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+      if (isAdmin)
+        BlocProvider(
+          create: (_) => PtPackageBloc(
+            getPackages:         GetPtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+            getInactivePackages: GetInactivePtPackagesUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+            createPackage:       CreatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+            updatePackage:       UpdatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+            deactivatePackage:   DeactivatePtPackageUseCase(PtPackageRepositoryImpl(service: PtPackageService())),
+          ),
+          child: TrainerPackagesScreen(
+            tenantId:  tenantId,
+            branchId:  branchId,
+            trainerId: trainerId,
+            isAdmin:   isAdmin,
+            trainers:  trainers,
+          ),
         ),
-        child: TrainerPackagesScreen(
-          tenantId:  tenantId,
-          branchId:  branchId,
-          trainerId: trainerId,
-          isAdmin:   isAdmin,
-          trainers:  trainers,
-        ),
-      ),
 
       BlocProvider(
         create: (_) => AvailabilityBloc(
@@ -452,22 +465,36 @@ class _MainShell extends StatelessWidget {
         ),
       ),
 
-      BlocProvider(
-        create: (_) => PtServiceBloc(
-          getServices:    GetPtServicesUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
-          createService:  CreatePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
-          updateService:  UpdatePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
-          deleteService:  DeletePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+      if (isAdmin)
+        BlocProvider(
+          create: (_) => PtServiceBloc(
+            getServices:    GetPtServicesUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+            createService:  CreatePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+            updateService:  UpdatePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+            deleteService:  DeletePtServiceUseCase(PtServiceRepositoryImpl(service: PtServiceService())),
+          ),
+          child: TrainerServicesScreen(
+            key:       ValueKey('services_${branchId}_${isAdmin ? 0 : trainerId}'),
+            tenantId:  tenantId,
+            trainerId: trainerId,
+            isAdmin:   isAdmin,
+            trainers:  trainers,
+          ),
         ),
-        child: TrainerServicesScreen(
-          key:       ValueKey('services_${branchId}_${isAdmin ? 0 : trainerId}'),
-          tenantId:  tenantId,
+
+      BlocProvider(
+        create: (_) => TrainerIncomeBloc(
+          getIncome: GetTrainerIncomeUseCase(
+              TrainerIncomeRepositoryImpl(service: TrainerIncomeService())),
+        ),
+        child: TrainerIncomeScreen(
+          key:       ValueKey('income_${branchId}_${isAdmin ? 0 : trainerId}'),
+          branchId:  branchId,
           trainerId: trainerId,
           isAdmin:   isAdmin,
           trainers:  trainers,
         ),
       ),
-
     ];
 
     return Scaffold(

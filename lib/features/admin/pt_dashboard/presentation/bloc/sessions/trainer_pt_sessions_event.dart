@@ -111,6 +111,18 @@ class PtSessionStatusUpdateRequested
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Mark a standalone session as paid (Admin/Owner/Manager only)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionMarkPaidRequested extends TrainerPtSessionsEvent {
+  final int sessionId;
+  const PtSessionMarkPaidRequested({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Accept REQUESTED session (REQUESTED → SCHEDULED)
 // ─────────────────────────────────────────────────────────────────────────────
 

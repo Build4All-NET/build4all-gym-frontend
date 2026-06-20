@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../domain/entities/pt_session_entity.dart';
 import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
@@ -30,6 +31,16 @@ class SessionCardWidget extends StatelessWidget {
     required this.session,
     this.isAdmin = false,
   });
+
+  /// Standalone (non-package) sessions don't get paid automatically the way
+  /// package sessions do — Admin/Owner/Manager can record payment manually.
+  /// Uses the real JWT role (not the loose "admin-mode view" flag, which also
+  /// covers reception) since the backend endpoint is Admin/Owner/Manager only.
+  bool _canMarkPaid(BuildContext context) =>
+      context.read<AdminProfileCubit>().state.isAdminRole &&
+      session.serviceId != null &&
+      session.memberPtPackageId == null &&
+      !session.isPaid;
 
   @override
   Widget build(BuildContext context) {
@@ -288,6 +299,17 @@ class SessionCardWidget extends StatelessWidget {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       else ...[
+                        if (_canMarkPaid(context)) ...[
+                          _ActionButton(
+                            label: l10n.trainer_markAsPaidButton,
+                            icon:  Icons.attach_money_rounded,
+                            color: const Color(0xFF059669),
+                            outlined: true,
+                            onTap: () => context.read<TrainerPtSessionsBloc>().add(
+                                PtSessionMarkPaidRequested(sessionId: session.ptSessionId)),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                         _ActionButton(
                           label: l10n.trainer_completeButton,
                           icon:  Icons.check_circle_outline,
@@ -304,6 +326,34 @@ class SessionCardWidget extends StatelessWidget {
                           onTap:    () => _confirmCancel(context),
                         ),
                       ],
+                    ],
+                  ),
+                ],
+
+                // ── Payment badge + Mark Paid (COMPLETED standalone sessions) ─
+                if (session.isCompleted &&
+                    session.serviceId != null &&
+                    session.memberPtPackageId == null) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      if (session.paymentStatus != null)
+                        _PaymentBadge(paymentStatus: session.paymentStatus!),
+                      const Spacer(),
+                      if (isLoading)
+                        const SizedBox(
+                          width: 24, height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      else if (_canMarkPaid(context))
+                        _ActionButton(
+                          label: l10n.trainer_markAsPaidButton,
+                          icon:  Icons.attach_money_rounded,
+                          color: const Color(0xFF059669),
+                          outlined: true,
+                          onTap: () => context.read<TrainerPtSessionsBloc>().add(
+                              PtSessionMarkPaidRequested(sessionId: session.ptSessionId)),
+                        ),
                     ],
                   ),
                 ],

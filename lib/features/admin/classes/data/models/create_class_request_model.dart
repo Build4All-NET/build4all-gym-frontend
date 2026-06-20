@@ -18,6 +18,7 @@ class CreateClassRequestModel {
   final int     capacity;
   final String? roomName;        // optional
   final String? notes;           // optional — BRD 8.2.10
+  final double? commissionPercentage; // optional (0-100) — trainer's cut of this class
 
   const CreateClassRequestModel({
     required this.className,
@@ -30,6 +31,7 @@ class CreateClassRequestModel {
     required this.capacity,
     this.roomName,
     this.notes,
+    this.commissionPercentage,
   });
 
   Map<String, dynamic> toJson() {
@@ -46,6 +48,7 @@ class CreateClassRequestModel {
     // Only include optional fields when they have a value
     if (roomName != null) map['roomName'] = roomName;
     if (notes    != null) map['notes']    = notes;
+    if (commissionPercentage != null) map['commissionPercentage'] = commissionPercentage;
     return map;
   }
 }

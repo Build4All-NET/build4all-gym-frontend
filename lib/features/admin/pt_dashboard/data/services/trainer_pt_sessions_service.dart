@@ -285,6 +285,38 @@ class TrainerPtSessionsService {
     }
   }
 
+  // ── PATCH mark payment status (Admin/Owner/Manager only) ─────────────────
+  //
+  // Used for standalone (non-package) sessions: records that cash/charge
+  // was collected at the office for that one-off session.
+
+  Future<PtSessionModel> markPaymentPaid(int sessionId) async {
+    final headers = _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/payment-status',
+    );
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: headers,
+        body: jsonEncode({'paymentStatus': 'PAID'}),
+      );
+      debugPrint('MARK PAID STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        return PtSessionModel.fromJson(decoded['data'] as Map<String, dynamic>);
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException ||
+          e is ForbiddenException ||
+          e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── PATCH update status ───────────────────────────────────────────────────
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {

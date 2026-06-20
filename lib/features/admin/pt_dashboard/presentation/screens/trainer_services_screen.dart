@@ -12,11 +12,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../common/widgets/app_toast.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
+import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../domain/entities/pt_service_entity.dart';
 import '../bloc/services/pt_service_bloc.dart';
+import '../widgets/pt_form_dialog_kit.dart';
 
 class TrainerServicesScreen extends StatefulWidget {
   final int  tenantId;
@@ -65,9 +69,17 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
     }
   }
 
+  /// Only Admin/Owner/Manager can create/edit/delete services — the backend
+  /// rejects writes from anyone else (e.g. Reception, who can still view this
+  /// screen in admin-mode). Checks the real JWT role, not the loose
+  /// "admin-mode view" flag (widget.isAdmin), which also covers Reception.
+  bool _canManage(BuildContext context) =>
+      context.read<AdminProfileCubit>().state.isAdminRole;
+
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final canManage = _canManage(context);
 
     return BlocConsumer<PtServiceBloc, PtServiceState>(
       listener: (ctx, state) {
@@ -96,19 +108,20 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
             backgroundColor: tokens.colors.surface,
             elevation: 0,
             actions: [
-              IconButton(
-                icon: Icon(Icons.add, color: tokens.colors.primary),
-                onPressed: () => _showCreateDialog(context),
-              ),
+              if (canManage)
+                IconButton(
+                  icon: Icon(Icons.add, color: tokens.colors.primary),
+                  onPressed: () => _showCreateDialog(context),
+                ),
             ],
           ),
-          body: _buildBody(context, state, tokens),
+          body: _buildBody(context, state, tokens, canManage),
         );
       },
     );
   }
 
-  Widget _buildBody(BuildContext context, PtServiceState state, dynamic tokens) {
+  Widget _buildBody(BuildContext context, PtServiceState state, dynamic tokens, bool canManage) {
     if (state is PtServiceLoading || state is PtServiceMutating) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -143,8 +156,8 @@ class _TrainerServicesScreenState extends State<TrainerServicesScreen> {
           service:     services[i],
           trainerName: _trainerName(services[i].trainerId, context),
           showBadge:   widget.isAdmin,
-          onEdit:      (svc) => _showEditDialog(context, svc),
-          onDelete:    (svc) => _confirmDelete(context, svc),
+          onEdit:      canManage ? (svc) => _showEditDialog(context, svc) : null,
+          onDelete:    canManage ? (svc) => _confirmDelete(context, svc) : null,
         ),
       ),
     );
@@ -221,8 +234,8 @@ class _ServiceCard extends StatelessWidget {
   final PtServiceEntity service;
   final String trainerName;
   final bool showBadge;
-  final void Function(PtServiceEntity) onEdit;
-  final void Function(PtServiceEntity) onDelete;
+  final void Function(PtServiceEntity)? onEdit;
+  final void Function(PtServiceEntity)? onDelete;
 
   const _ServiceCard({
     required this.service,
@@ -312,27 +325,41 @@ class _ServiceCard extends StatelessWidget {
                 Text('\$${service.price.toStringAsFixed(2)}',
                     style: TextStyle(
                         color: tokens.colors.body, fontSize: 13)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton.icon(
-                  onPressed: () => onEdit(service),
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: Text(AppLocalizations.of(context)!.admin_members_actionEdit),
-                ),
+                const SizedBox(width: 16),
+                Icon(Icons.percent_rounded,
+                    size: 14, color: tokens.colors.muted),
                 const SizedBox(width: 4),
-                TextButton.icon(
-                  onPressed: () => onDelete(service),
-                  icon: Icon(Icons.delete_outline,
-                      size: 16, color: tokens.colors.danger),
-                  label: Text(AppLocalizations.of(context)!.admin_members_actionDelete,
-                      style: TextStyle(color: tokens.colors.danger)),
+                Text(
+                  AppLocalizations.of(context)!
+                      .trainer_commissionValue(service.commissionPercentage.toStringAsFixed(1)),
+                  style: TextStyle(
+                      color: tokens.colors.body, fontSize: 13),
                 ),
               ],
             ),
+            if (onEdit != null || onDelete != null) ...[
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (onEdit != null)
+                    TextButton.icon(
+                      onPressed: () => onEdit!(service),
+                      icon: const Icon(Icons.edit, size: 16),
+                      label: Text(AppLocalizations.of(context)!.admin_members_actionEdit),
+                    ),
+                  if (onEdit != null && onDelete != null) const SizedBox(width: 4),
+                  if (onDelete != null)
+                    TextButton.icon(
+                      onPressed: () => onDelete!(service),
+                      icon: Icon(Icons.delete_outline,
+                          size: 16, color: tokens.colors.danger),
+                      label: Text(AppLocalizations.of(context)!.admin_members_actionDelete,
+                          style: TextStyle(color: tokens.colors.danger)),
+                    ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -372,6 +399,7 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
   late final TextEditingController _description;
   late final TextEditingController _duration;
   late final TextEditingController _price;
+  late final TextEditingController _commissionPercentage;
   int?  _selectedTrainerId;
   bool  _isActive = true;       // ← NEW: maps to pt_services.is_active
 
@@ -385,6 +413,8 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
         text: s != null ? '${s.durationMinutes}' : '60');
     _price       = TextEditingController(
         text: s != null ? '${s.price}' : '');
+    _commissionPercentage = TextEditingController(
+        text: s != null ? '${s.commissionPercentage}' : '0');
     final trainerStillActive =
         widget.trainers.any((t) => t.trainerId == widget.defaultTrainerId);
     _selectedTrainerId =
@@ -400,117 +430,153 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
     _description.dispose();
     _duration.dispose();
     _price.dispose();
+    _commissionPercentage.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.initialService != null;
-    return AlertDialog(
-      title: Text(isEdit ? AppLocalizations.of(context)!.trainer_editService : AppLocalizations.of(context)!.trainer_newPtService),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ── Trainer picker (admin only) ──────────────────────────────
-              if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
-                DropdownButtonFormField<int>(
-                  value: _selectedTrainerId,
-                  hint: Text(AppLocalizations.of(context)!.trainer_assignToTrainer),
-                  items: widget.trainers.map((t) {
-                    return DropdownMenuItem(
-                      value: t.trainerId,
-                      child: Text(t.fullName),
-                    );
-                  }).toList(),
-                  onChanged: (v) =>
-                      setState(() => _selectedTrainerId = v),
-                  validator: (v) =>
-                  v == null ? AppLocalizations.of(context)!.trainer_selectTrainerRequired : null,
-                ),
-                const SizedBox(height: 10),
-              ],
+    final l10n   = AppLocalizations.of(context)!;
+    final c      = context.read<ThemeCubit>().state.tokens.colors;
 
-              // ── Name ────────────────────────────────────────────────────
-              _field(_name, AppLocalizations.of(context)!.trainer_serviceNameLabel,
-                  validator: (v) =>
-                  v == null || v.isEmpty ? AppLocalizations.of(context)!.trainer_requiredField : null),
+    return PtFormDialogScaffold(
+      header: PtDialogHeader(
+        icon:     Icons.design_services_rounded,
+        title:    isEdit ? l10n.trainer_editService : l10n.trainer_newPtService,
+        subtitle: isEdit ? l10n.trainer_editServiceSubtitle : l10n.trainer_newServiceSubtitle,
+        onClose:  () => Navigator.pop(context),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Trainer picker (admin only) ──────────────────────────────
+            if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
+              DropdownButtonFormField<int>(
+                value: _selectedTrainerId,
+                decoration: ptFieldDecoration(c,
+                    label: l10n.trainer_assignToTrainer,
+                    icon: Icons.person_outline_rounded),
+                icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
+                items: widget.trainers.map((t) {
+                  return DropdownMenuItem(
+                    value: t.trainerId,
+                    child: Text(t.fullName),
+                  );
+                }).toList(),
+                onChanged: (v) =>
+                    setState(() => _selectedTrainerId = v),
+                validator: (v) =>
+                v == null ? l10n.trainer_selectTrainerRequired : null,
+              ),
+              const SizedBox(height: 14),
+            ],
 
-              // ── Description ─────────────────────────────────────────────
-              _field(_description, AppLocalizations.of(context)!.trainer_descriptionOptional),
+            // ── Basic info ──────────────────────────────────────────────
+            PtSectionLabel(icon: Icons.info_outline_rounded, text: l10n.trainer_sectionBasicInfo),
+            _field(c, _name, l10n.trainer_serviceNameLabel,
+                icon: Icons.badge_outlined,
+                validator: (v) =>
+                v == null || v.isEmpty ? l10n.trainer_requiredField : null),
+            const SizedBox(height: 12),
+            _field(c, _description, l10n.trainer_descriptionOptional,
+                icon: Icons.notes_rounded,
+                maxLines: 2),
+            const SizedBox(height: 12),
 
-              // ── Duration ─────────────────────────────────────────────────
-              _field(_duration, AppLocalizations.of(context)!.trainer_durationMinutes,
+            // ── Pricing ──────────────────────────────────────────────────
+            PtSectionLabel(icon: Icons.payments_outlined, text: l10n.trainer_sectionPricing),
+            _fieldRow(
+              _field(c, _duration, l10n.trainer_durationMinutes,
+                  icon: Icons.timer_outlined,
                   keyboardType: TextInputType.number,
                   validator: (v) =>
-                  int.tryParse(v ?? '') == null ? AppLocalizations.of(context)!.trainer_enterNumber : null),
-
-              // ── Price ────────────────────────────────────────────────────
-              _field(_price, AppLocalizations.of(context)!.trainer_priceLabel,
-                  keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+              _field(c, _price, l10n.trainer_priceLabel,
+                  icon: Icons.attach_money_rounded,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   validator: (v) =>
                   double.tryParse(v ?? '') == null
-                      ? AppLocalizations.of(context)!.trainer_enterPrice
+                      ? l10n.trainer_enterPrice
                       : null),
+            ),
+            _field(c, _commissionPercentage, l10n.trainer_commissionPercentageLabel,
+                icon: Icons.percent_rounded,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: (v) {
+                  final n = double.tryParse(v ?? '');
+                  if (n == null) return l10n.trainer_enterNumber;
+                  if (n < 0 || n > 100) return l10n.trainer_commissionRangeError;
+                  return null;
+                }),
+            const SizedBox(height: 12),
 
-              // ── isActive toggle (edit mode only) ─────────────────────────
-              // Maps to pt_services.is_active (boolean) in the DB.
-              if (isEdit) ...[
-                const SizedBox(height: 4),
-                SwitchListTile(
-                  title: Text(AppLocalizations.of(context)!.trainer_activeLabel),
-                  subtitle:
-                      Text(AppLocalizations.of(context)!.trainer_inactiveHidden),
-                  value: _isActive,
-                  onChanged: (v) => setState(() => _isActive = v),
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ],
-            ],
-          ),
+            // ── isActive toggle (edit mode only) ─────────────────────────
+            // Maps to pt_services.is_active (boolean) in the DB.
+            if (isEdit)
+              PtSwitchCard(
+                icon: Icons.visibility_outlined,
+                title: l10n.trainer_activeLabel,
+                subtitle: l10n.trainer_inactiveHidden,
+                value: _isActive,
+                onChanged: (v) => setState(() => _isActive = v),
+              ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.general_cancel),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: Text(AppLocalizations.of(context)!.editProfileSave),
-        ),
-      ],
+      footer: PtDialogFooter(
+        cancelLabel: l10n.general_cancel,
+        submitLabel: isEdit ? l10n.editProfileSave : l10n.trainer_addPtService,
+        submitIcon:  isEdit ? Icons.check_rounded : Icons.add_rounded,
+        onCancel:    () => Navigator.pop(context),
+        onSubmit:    _submit,
+      ),
+    );
+  }
+
+  Widget _fieldRow(Widget left, Widget right) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 12),
+          Expanded(child: right),
+        ],
+      ),
     );
   }
 
   Widget _field(
+      ColorTokens c,
       TextEditingController ctrl,
       String label, {
+        required IconData icon,
         TextInputType? keyboardType,
+        int maxLines = 1,
         String? Function(String?)? validator,
       }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextFormField(
-        controller:   ctrl,
-        keyboardType: keyboardType,
-        decoration:   InputDecoration(labelText: label),
-        validator:    validator,
-      ),
+    return TextFormField(
+      controller:   ctrl,
+      keyboardType: keyboardType,
+      maxLines:     maxLines,
+      style:        TextStyle(fontSize: 14, color: c.label),
+      decoration:   ptFieldDecoration(c, label: label, icon: icon),
+      validator:    validator,
     );
   }
 
   void _submit() {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
 
     final trainerId = _selectedTrainerId ?? widget.defaultTrainerId;
     if (trainerId == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.trainer_selectTrainerSnackbar)),
-      );
+      AppToast.error(context, l10n.trainer_selectTrainerSnackbar);
       return;
     }
 
@@ -521,6 +587,7 @@ class _ServiceFormDialogState extends State<_ServiceFormDialog> {
       'description':     _description.text.trim(),
       'durationMinutes': int.parse(_duration.text.trim()),
       'price':           double.parse(_price.text.trim()),
+      'commissionPercentage': double.parse(_commissionPercentage.text.trim()),
       // isActive only sent for edit — create always defaults to true
       if (isEdit) 'isActive': _isActive,
     };

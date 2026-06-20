@@ -197,7 +197,8 @@
       "Bash(tasklist *)",
       "PowerShell(Get-Process *)",
       "Bash(ls mvnw* gradlew*)",
-      "Bash(ls pom.xml build.gradle*)"
+      "Bash(ls pom.xml build.gradle*)",
+      "Bash(sort -t: -k2)"
     ]
   }
 }

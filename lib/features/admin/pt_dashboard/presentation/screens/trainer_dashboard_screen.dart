@@ -565,28 +565,42 @@ class _QuickActionsSection extends StatelessWidget {
         : trainerId;
 
     final l10n = AppLocalizations.of(context)!;
+
+    // Tab order differs by role (see TrainerMainScreen._MainShell):
+    //   Admin:   0 Dashboard, 1 Sessions, 2 Packages, 3 Schedule, 4 Services, 5 Income
+    //   Trainer: 0 Dashboard, 1 Sessions, 2 Schedule, 3 Income (no Packages/Services)
     final items = <_QAItem>[
-      _QAItem(
-        icon: Icons.inventory_2_outlined,
-        label: l10n.trainer_createPackage,
-        bg:        c.primary.withOpacity(0.08),
-        iconColor: c.primary,
-        onTap:     () => onTabSwitch(2),
-      ),
+      if (isAdmin)
+        _QAItem(
+          icon: Icons.inventory_2_outlined,
+          label: l10n.trainer_createPackage,
+          bg:        c.primary.withOpacity(0.08),
+          iconColor: c.primary,
+          onTap:     () => onTabSwitch(2),
+        ),
       _QAItem(
         icon: Icons.calendar_month_outlined,
         label: l10n.trainer_addAvailabilityButton,
         bg:        c.success.withOpacity(0.08),
         iconColor: c.success,
-        onTap:     () => onTabSwitch(3),
+        onTap:     () => onTabSwitch(isAdmin ? 3 : 2),
       ),
-      _QAItem(
-        icon: Icons.sports_gymnastics_rounded,
-        label: l10n.trainer_addPtService,
-        bg:        Color.lerp(c.danger, c.primary, 0.5)!.withOpacity(0.1),
-        iconColor: Color.lerp(c.danger, c.primary, 0.5)!,
-        onTap:     () => onTabSwitch(4),
-      ),
+      if (isAdmin)
+        _QAItem(
+          icon: Icons.sports_gymnastics_rounded,
+          label: l10n.trainer_addPtService,
+          bg:        Color.lerp(c.danger, c.primary, 0.5)!.withOpacity(0.1),
+          iconColor: Color.lerp(c.danger, c.primary, 0.5)!,
+          onTap:     () => onTabSwitch(4),
+        ),
+      if (!isAdmin)
+        _QAItem(
+          icon: Icons.payments_outlined,
+          label: l10n.trainer_navIncome,
+          bg:        Color.lerp(c.danger, c.primary, 0.5)!.withOpacity(0.1),
+          iconColor: Color.lerp(c.danger, c.primary, 0.5)!,
+          onTap:     () => onTabSwitch(3),
+        ),
       _QAItem(
         icon: Icons.event_available_outlined,
         label: l10n.trainer_createSession,

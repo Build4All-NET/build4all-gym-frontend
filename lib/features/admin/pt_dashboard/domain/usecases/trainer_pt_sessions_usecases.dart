@@ -80,6 +80,18 @@ class UpdateSessionStatusUseCase {
       _repository.updateStatus(sessionId: sessionId, status: status);
 }
 
+// ── 4a. Mark a standalone session as paid (Admin/Owner/Manager) ────────────
+
+class MarkSessionPaidUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const MarkSessionPaidUseCase(this._repository);
+
+  Future<({PtSessionEntity? data, Failure? failure})> call({
+    required int sessionId,
+  }) =>
+      _repository.markPaymentPaid(sessionId: sessionId);
+}
+
 // ── 5. Get all upcoming sessions (Upcoming tab) ─────────────────────────────
 
 class GetUpcomingSessionsUseCase {

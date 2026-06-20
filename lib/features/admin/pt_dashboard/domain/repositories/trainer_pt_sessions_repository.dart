@@ -43,6 +43,12 @@ abstract class TrainerPtSessionsRepository {
     required String status, // COMPLETED | CANCELLED | NO_SHOW
   });
 
+  /// PATCH /api/trainer/pt-sessions/{id}/payment-status — Admin/Owner/Manager
+  /// only. Records that a standalone (non-package) session has been paid for.
+  Future<({PtSessionEntity? data, Failure? failure})> markPaymentPaid({
+    required int sessionId,
+  });
+
   /// GET /api/trainer/pt-sessions/upcoming?branchId=&[trainerId=]
   Future<({List<PtSessionEntity>? data, Failure? failure})> getUpcoming({
     required int branchId,
