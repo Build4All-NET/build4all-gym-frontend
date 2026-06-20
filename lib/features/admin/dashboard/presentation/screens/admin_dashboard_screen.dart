@@ -463,10 +463,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             const SizedBox(height: 12),
             _grid([
               DashboardMetricCard(
-                value: _money(0),
+                value: _money(rev?.admissionFees ?? 0),
                 label: l10n.admin_dashboard_admissionFees,
                 icon: Icons.how_to_reg_rounded,
-                onTap: () => _comingSoon(l10n.admin_dashboard_admissionFees),
+                onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
                 value: _money(rev?.monthlyRevenue ?? 0),
@@ -490,17 +490,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(0),
+                value: _money(rev?.servicePaid ?? 0),
                 label: l10n.admin_dashboard_servicePaid,
                 icon: Icons.receipt_long_rounded,
-                onTap: () => _comingSoon(l10n.admin_dashboard_servicePaid),
+                onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(0),
+                value: _money(rev?.serviceDue ?? 0),
                 label: l10n.admin_dashboard_serviceDue,
                 icon: Icons.receipt_long_rounded,
                 valueColor: c.danger,
-                onTap: () => _comingSoon(l10n.admin_dashboard_serviceDue),
+                onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
             ]),
             const SizedBox(height: 12),
