@@ -457,19 +457,24 @@ class AppRouter {
       case adminReports:
         return MaterialPageRoute(
           builder: (_) => _withProfile(
-            BlocProvider(
-              create: (_) => AdminReportsBloc(
-                getFinancial: GetFinancialReportUseCase(
-                  repository: AdminReportsRepositoryImpl(
-                    remoteDatasource: AdminReportsRemoteDatasourceImpl(),
-                  ),
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => AdminReportsBloc(
+                    getFinancial: GetFinancialReportUseCase(
+                      repository: AdminReportsRepositoryImpl(
+                        remoteDatasource: AdminReportsRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    getAttendance: GetAttendanceReportUseCase(
+                      repository: AdminReportsRepositoryImpl(
+                        remoteDatasource: AdminReportsRemoteDatasourceImpl(),
+                      ),
+                    ),
+                  )..add(const LoadReportsEvent()),
                 ),
-                getAttendance: GetAttendanceReportUseCase(
-                  repository: AdminReportsRepositoryImpl(
-                    remoteDatasource: AdminReportsRemoteDatasourceImpl(),
-                  ),
-                ),
-              )..add(const LoadReportsEvent()),
+              ],
               child: const AdminReportsScreen(),
             ),
           ),
