@@ -9,7 +9,15 @@ class GetAdminDashboardUseCase {
 
   Future<({AdminDashboardSummary? data, Failure? failure})> call({
     String period = 'today',
+    String revenuePeriod = 'this_month',
+    String? revenueStartDate,
+    String? revenueEndDate,
   }) {
-    return repository.getDashboardSummary(period: period);
+    return repository.getDashboardSummary(
+      period: period,
+      revenuePeriod: revenuePeriod,
+      revenueStartDate: revenueStartDate,
+      revenueEndDate: revenueEndDate,
+    );
   }
 }

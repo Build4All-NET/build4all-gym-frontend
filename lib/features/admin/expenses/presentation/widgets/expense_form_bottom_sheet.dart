@@ -104,8 +104,20 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
     _descriptionController = TextEditingController(text: expense?.description ?? '');
     _amountController = TextEditingController(text: expense?.amount.toString() ?? '');
     _expenseDate = expense?.expenseDate ?? DateTime.now();
-    _selectedCategory = expense?.category ?? kExpenseCategories.first;
     _selectedBranchId = expense?.branchId;
+
+    // If editing an expense whose category isn't in the known list (shouldn't
+    // normally happen since the backend list includes every in-use category,
+    // but guards against a stale list), fall back to custom-entry mode.
+    final knownCategory = expense != null && widget.availableCategories.contains(expense.category);
+    if (expense != null && !knownCategory) {
+      _isCustomCategory = true;
+      _customCategoryController = TextEditingController(text: formatExpenseCategory(expense.category));
+    } else {
+      _customCategoryController = TextEditingController();
+      _selectedCategory = expense?.category ??
+          (widget.availableCategories.isNotEmpty ? widget.availableCategories.first : null);
+    }
   }
 
   @override
@@ -113,6 +125,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
     _titleController.dispose();
     _descriptionController.dispose();
     _amountController.dispose();
+    _customCategoryController.dispose();
     super.dispose();
   }
 
@@ -134,6 +147,13 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
       setState(() => _errorMessage = 'Please select a branch');
       return;
     }
+    final effectiveCategory = _isCustomCategory
+        ? _customCategoryController.text.trim().toLowerCase()
+        : _selectedCategory;
+    if (effectiveCategory == null || effectiveCategory.isEmpty) {
+      setState(() => _errorMessage = 'Please enter a category');
+      return;
+    }
 
     final amount = double.tryParse(_amountController.text.trim()) ?? 0;
     final title = _titleController.text.trim();
@@ -153,7 +173,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
             description: description.isEmpty ? null : description,
             amount: amount,
             expenseDate: _expenseDate,
-            category: _selectedCategory!,
+            category: effectiveCategory,
             branchId: _selectedBranchId!,
           ),
         );
@@ -164,7 +184,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
             description: description.isEmpty ? null : description,
             amount: amount,
             expenseDate: _expenseDate,
-            category: _selectedCategory!,
+            category: effectiveCategory,
             branchId: _selectedBranchId!,
           ),
         );
@@ -281,15 +301,74 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
               const SizedBox(height: 12),
 
               FormFieldLabel('Category *', c),
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                decoration: formInputDecoration(hint: 'Select category', c: c),
-                items: kExpenseCategories
-                    .map((cat) => DropdownMenuItem(value: cat, child: Text(formatExpenseCategory(cat))))
-                    .toList(),
-                onChanged: (v) => setState(() => _selectedCategory = v),
-                validator: (v) => v == null ? 'Required' : null,
-              ),
+              if (_isCustomCategory) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _customCategoryController,
+                        textCapitalization: TextCapitalization.words,
+                        style: TextStyle(color: c.label),
+                        decoration: formInputDecoration(hint: 'Enter category (e.g. Marketing)', c: c),
+                        validator: (v) => _isCustomCategory && (v == null || v.trim().isEmpty)
+                            ? 'Required'
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        _isCustomCategory = false;
+                        _customCategoryController.clear();
+                        _selectedCategory = widget.availableCategories.isNotEmpty
+                            ? widget.availableCategories.first
+                            : null;
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                          color: c.background,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: c.border.withOpacity(0.3)),
+                        ),
+                        child: Icon(Icons.close_rounded, size: 18, color: c.muted),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else ...[
+                DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  decoration: formInputDecoration(hint: 'Select category', c: c),
+                  items: [
+                    ...widget.availableCategories.map((cat) =>
+                        DropdownMenuItem(value: cat, child: Text(formatExpenseCategory(cat)))),
+                    DropdownMenuItem(
+                      value: '__new__',
+                      child: Row(
+                        children: [
+                          Icon(Icons.add_rounded, size: 16, color: c.primary),
+                          const SizedBox(width: 6),
+                          Text('Add new category…',
+                              style: TextStyle(
+                                  color: c.primary, fontWeight: FontWeight.w600, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    if (v == '__new__') {
+                      setState(() {
+                        _isCustomCategory = true;
+                        _selectedCategory = null;
+                      });
+                    } else {
+                      setState(() => _selectedCategory = v);
+                    }
+                  },
+                  validator: (v) => !_isCustomCategory && v == null ? 'Required' : null,
+                ),
+              ],
               const SizedBox(height: 12),
 
               FormFieldLabel('Branch *', c),

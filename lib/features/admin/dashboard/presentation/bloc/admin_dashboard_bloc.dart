@@ -44,6 +44,7 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
     on<AdminDashboardLoadRequested>(_onLoadRequested);
     on<AdminDashboardRefreshRequested>(_onRefreshRequested);
     on<AdminDashboardPeriodChanged>(_onPeriodChanged);
+    on<AdminDashboardRevenuePeriodChanged>(_onRevenuePeriodChanged);
   }
 
   /*
@@ -72,17 +73,31 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
 
     // Execute use case to fetch data
     // Use case returns a Result object containing either data or failure
-    final result = await getAdminDashboardUseCase(period: event.period);
+    final result = await getAdminDashboardUseCase(
+      period: event.period,
+      revenuePeriod: event.revenuePeriod,
+      revenueStartDate: event.revenueStartDate,
+      revenueEndDate: event.revenueEndDate,
+    );
 
     // Check if data fetch was successful
     if (result.data != null) {
       // Success: emit loaded state with dashboard data
-      emit(AdminDashboardLoaded(data: result.data!, period: event.period));
+      emit(AdminDashboardLoaded(
+        data: result.data!,
+        period: event.period,
+        revenuePeriod: event.revenuePeriod,
+        revenueStartDate: event.revenueStartDate,
+        revenueEndDate: event.revenueEndDate,
+      ));
     } else {
       // Failure: emit error state with error message
       emit(AdminDashboardError(
         message: result.failure?.message ?? 'Unknown error occurred',
         period: event.period,
+        revenuePeriod: event.revenuePeriod,
+        revenueStartDate: event.revenueStartDate,
+        revenueEndDate: event.revenueEndDate,
       ));
     }
   }
@@ -109,11 +124,22 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
       Emitter<AdminDashboardState> emit,
       ) async {
     // Silent refresh - no loading state to prevent UI flicker
-    final result = await getAdminDashboardUseCase(period: event.period);
+    final result = await getAdminDashboardUseCase(
+      period: event.period,
+      revenuePeriod: event.revenuePeriod,
+      revenueStartDate: event.revenueStartDate,
+      revenueEndDate: event.revenueEndDate,
+    );
 
     if (result.data != null) {
       // Success: update UI with fresh data
-      emit(AdminDashboardLoaded(data: result.data!, period: event.period));
+      emit(AdminDashboardLoaded(
+        data: result.data!,
+        period: event.period,
+        revenuePeriod: event.revenuePeriod,
+        revenueStartDate: event.revenueStartDate,
+        revenueEndDate: event.revenueEndDate,
+      ));
     }
     // On failure: stay on current state silently
     // This prevents error messages during background refresh
@@ -154,6 +180,48 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
       emit(AdminDashboardError(
         message: result.failure?.message ?? 'Failed to load data for selected period',
         period: event.period,
+      ));
+    }
+  }
+
+  /*
+   * HANDLER: Revenue Period Changed
+   *
+   * Triggered when:
+   * - User taps a segment on the Payments tab's period control
+   *   (This Month / Last Month / Last 3 Months / Custom)
+   *
+   * Same flow as _onPeriodChanged, but only the revenue window changes —
+   * the dashboard-wide `period` (used by checkins) is carried through as-is.
+   */
+  Future<void> _onRevenuePeriodChanged(
+      AdminDashboardRevenuePeriodChanged event,
+      Emitter<AdminDashboardState> emit,
+      ) async {
+    emit(AdminDashboardLoading());
+
+    final result = await getAdminDashboardUseCase(
+      period: event.period,
+      revenuePeriod: event.revenuePeriod,
+      revenueStartDate: event.revenueStartDate,
+      revenueEndDate: event.revenueEndDate,
+    );
+
+    if (result.data != null) {
+      emit(AdminDashboardLoaded(
+        data: result.data!,
+        period: event.period,
+        revenuePeriod: event.revenuePeriod,
+        revenueStartDate: event.revenueStartDate,
+        revenueEndDate: event.revenueEndDate,
+      ));
+    } else {
+      emit(AdminDashboardError(
+        message: result.failure?.message ?? 'Failed to load data for selected period',
+        period: event.period,
+        revenuePeriod: event.revenuePeriod,
+        revenueStartDate: event.revenueStartDate,
+        revenueEndDate: event.revenueEndDate,
       ));
     }
   }

@@ -82,6 +82,12 @@ const _operationsItems = [
     route: '/admin/expenses',
   ),
   NavigationItem(
+    id: 'balance_sheet',
+    iconData: Icons.account_balance_outlined,
+    labelKey: 'navBalanceSheet',
+    route: '/admin/balance-sheet',
+  ),
+  NavigationItem(
     id: 'classes_pt',
     iconData: Icons.calendar_month_outlined,
     labelKey: 'navClassesPt',

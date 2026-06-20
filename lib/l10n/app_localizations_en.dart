@@ -882,6 +882,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navExpenses => 'Expenses';
 
   @override
+  String get navBalanceSheet => 'Balance Sheet';
+
+  @override
   String get navSettings => 'Settings';
 
   @override
@@ -2277,6 +2280,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_expenses_noExpenses => 'No expenses found';
+
+  @override
+  String get balance_sheet_netProfit => 'Net Profit';
+
+  @override
+  String get balance_sheet_collection => 'Collection';
+
+  @override
+  String get balance_sheet_expense => 'Expense';
+
+  @override
+  String get balance_sheet_collectionTab => 'Collection';
+
+  @override
+  String get balance_sheet_expenseTab => 'Expense';
+
+  @override
+  String get balance_sheet_filterToday => 'Today';
+
+  @override
+  String get balance_sheet_filterThisWeek => 'This Week';
+
+  @override
+  String get balance_sheet_filterThisMonth => 'This Month';
+
+  @override
+  String get balance_sheet_filterThisYear => 'This Year';
+
+  @override
+  String get balance_sheet_filterAllTime => 'All Time';
+
+  @override
+  String get balance_sheet_filterCustom => 'Custom';
+
+  @override
+  String get balance_sheet_noCollections => 'No collections in this period';
+
+  @override
+  String get balance_sheet_noExpenses => 'No expenses in this period';
+
+  @override
+  String get balance_sheet_selectDateRange => 'Select date range';
 
   @override
   String get admin_staff_noStaff => 'No staff members found.';

@@ -58,10 +58,22 @@ abstract class AdminDashboardEvent extends Equatable {
 class AdminDashboardLoadRequested extends AdminDashboardEvent {
   final String period;
 
-  const AdminDashboardLoadRequested({this.period = 'today'});
+  // Drives the Payments-tab segment control (This Month / Last Month /
+  // Last 3 Months / Custom). revenueStartDate/revenueEndDate are ISO dates
+  // ('yyyy-MM-dd'), only sent to the backend when revenuePeriod = 'custom'.
+  final String revenuePeriod;
+  final String? revenueStartDate;
+  final String? revenueEndDate;
+
+  const AdminDashboardLoadRequested({
+    this.period = 'today',
+    this.revenuePeriod = 'this_month',
+    this.revenueStartDate,
+    this.revenueEndDate,
+  });
 
   @override
-  List<Object?> get props => [period];
+  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate];
 }
 
 /*
@@ -91,11 +103,19 @@ class AdminDashboardLoadRequested extends AdminDashboardEvent {
  */
 class AdminDashboardRefreshRequested extends AdminDashboardEvent {
   final String period;
+  final String revenuePeriod;
+  final String? revenueStartDate;
+  final String? revenueEndDate;
 
-  const AdminDashboardRefreshRequested({this.period = 'today'});
+  const AdminDashboardRefreshRequested({
+    this.period = 'today',
+    this.revenuePeriod = 'this_month',
+    this.revenueStartDate,
+    this.revenueEndDate,
+  });
 
   @override
-  List<Object?> get props => [period];
+  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate];
 }
 
 /*
@@ -131,4 +151,33 @@ class AdminDashboardPeriodChanged extends AdminDashboardEvent {
 
   @override
   List<Object?> get props => [period];
+}
+
+/*
+ * EVENT: Revenue Period Changed
+ *
+ * Triggered when:
+ * - User taps a segment on the Payments tab's period control
+ *   (This Month / Last Month / Last 3 Months / Custom)
+ *
+ * Purpose:
+ * Reload the dashboard with the Payments-tab figures (Membership Collected,
+ * Expense) recalculated for the newly selected window. `period` is carried
+ * through unchanged so the dashboard-wide filter isn't disturbed.
+ */
+class AdminDashboardRevenuePeriodChanged extends AdminDashboardEvent {
+  final String period;
+  final String revenuePeriod;
+  final String? revenueStartDate;
+  final String? revenueEndDate;
+
+  const AdminDashboardRevenuePeriodChanged({
+    this.period = 'today',
+    required this.revenuePeriod,
+    this.revenueStartDate,
+    this.revenueEndDate,
+  });
+
+  @override
+  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate];
 }

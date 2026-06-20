@@ -12,9 +12,17 @@ class AdminDashboardRepositoryImpl implements AdminDashboardRepository {
   @override
   Future<({AdminDashboardSummary? data, Failure? failure})> getDashboardSummary({
     String period = 'today',
+    String revenuePeriod = 'this_month',
+    String? revenueStartDate,
+    String? revenueEndDate,
   }) async {
     try {
-      final model = await remoteDatasource.getDashboardSummary(period: period);
+      final model = await remoteDatasource.getDashboardSummary(
+        period: period,
+        revenuePeriod: revenuePeriod,
+        revenueStartDate: revenueStartDate,
+        revenueEndDate: revenueEndDate,
+      );
       return (data: model.toEntity(), failure: null);
     } on UnauthorizedException {
       return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));

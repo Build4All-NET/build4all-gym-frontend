@@ -121,13 +121,24 @@ class AdminDashboardLoaded extends AdminDashboardState {
   final AdminDashboardSummary data;
   final String period;
 
+  // Currently selected Payments-tab segment (This Month / Last Month /
+  // Last 3 Months / Custom) — kept here (not on the entity) so pull-to-refresh
+  // and retry reuse the user's selection instead of resetting to default.
+  final String revenuePeriod;
+  final String? revenueStartDate;
+  final String? revenueEndDate;
+
   const AdminDashboardLoaded({
     required this.data,
     required this.period,
+    this.revenuePeriod = 'this_month',
+    this.revenueStartDate,
+    this.revenueEndDate,
   });
 
   @override
-  List<Object?> get props => [data, period];
+  List<Object?> get props =>
+      [data, period, revenuePeriod, revenueStartDate, revenueEndDate];
 }
 
 /*
@@ -163,12 +174,19 @@ class AdminDashboardLoaded extends AdminDashboardState {
 class AdminDashboardError extends AdminDashboardState {
   final String message;
   final String period;
+  final String revenuePeriod;
+  final String? revenueStartDate;
+  final String? revenueEndDate;
 
   const AdminDashboardError({
     required this.message,
     required this.period,
+    this.revenuePeriod = 'this_month',
+    this.revenueStartDate,
+    this.revenueEndDate,
   });
 
   @override
-  List<Object?> get props => [message, period];
+  List<Object?> get props =>
+      [message, period, revenuePeriod, revenueStartDate, revenueEndDate];
 }

@@ -54,6 +54,8 @@ import '../features/admin/expenses/data/services/admin_expenses_remote_service.d
 import '../features/admin/expenses/domain/usecases/admin_expenses_usecases.dart';
 import '../features/admin/expenses/presentation/bloc/admin_expenses/admin_expenses_bloc.dart';
 import '../features/admin/expenses/presentation/screens/admin_expenses_screen.dart';
+import '../features/admin/balance_sheet/presentation/cubit/balance_sheet_cubit.dart';
+import '../features/admin/balance_sheet/presentation/screens/admin_balance_sheet_screen.dart';
 import '../features/admin/pt_dashboard/data/repositories/trainer_pt_sessions_repository_impl.dart';
 import '../features/admin/pt_dashboard/data/services/availability_service.dart';
 import '../features/admin/pt_dashboard/data/services/pt_service_service.dart';
@@ -206,6 +208,7 @@ class AppRouter {
   static const String adminCheckins      = '/admin/checkins';
   static const String adminPayments      = '/admin/payments';
   static const String adminExpenses      = '/admin/expenses';
+  static const String adminBalanceSheet  = '/admin/balance-sheet';
   static const String adminClasses       = '/admin/classes';
   static const String adminNotifications = '/admin/notifications';
 
@@ -443,6 +446,33 @@ class AppRouter {
                 ),
               ],
               child: const AdminExpensesScreen(),
+            ),
+          ),
+        );
+
+    // ── Admin: Balance Sheet ────────────────────────────────────────────────
+
+      case adminBalanceSheet:
+        final balanceSheetExpensesRepo = AdminExpensesRepositoryImpl(
+          remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
+        );
+        final balanceSheetInvoicesRepo = AdminInvoiceRepositoryImpl(
+          AdminInvoiceService(),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => BalanceSheetCubit(
+                    getExpenses: GetExpensesUseCase(repository: balanceSheetExpensesRepo),
+                    listInvoices: ListInvoicesUseCase(balanceSheetInvoicesRepo),
+                  ),
+                ),
+              ],
+              child: const AdminBalanceSheetScreen(),
             ),
           ),
         );

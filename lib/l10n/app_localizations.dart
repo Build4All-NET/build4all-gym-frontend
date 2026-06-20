@@ -1793,6 +1793,12 @@ abstract class AppLocalizations {
   /// **'Expenses'**
   String get navExpenses;
 
+  /// Admin drawer — Balance Sheet item
+  ///
+  /// In en, this message translates to:
+  /// **'Balance Sheet'**
+  String get navBalanceSheet;
+
   /// Admin drawer — Settings item
   ///
   /// In en, this message translates to:
@@ -4522,6 +4528,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No expenses found'**
   String get admin_expenses_noExpenses;
+
+  /// No description provided for @balance_sheet_netProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Profit'**
+  String get balance_sheet_netProfit;
+
+  /// No description provided for @balance_sheet_collection.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get balance_sheet_collection;
+
+  /// No description provided for @balance_sheet_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get balance_sheet_expense;
+
+  /// No description provided for @balance_sheet_collectionTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get balance_sheet_collectionTab;
+
+  /// No description provided for @balance_sheet_expenseTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get balance_sheet_expenseTab;
+
+  /// No description provided for @balance_sheet_filterToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get balance_sheet_filterToday;
+
+  /// No description provided for @balance_sheet_filterThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get balance_sheet_filterThisWeek;
+
+  /// No description provided for @balance_sheet_filterThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get balance_sheet_filterThisMonth;
+
+  /// No description provided for @balance_sheet_filterThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This Year'**
+  String get balance_sheet_filterThisYear;
+
+  /// No description provided for @balance_sheet_filterAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get balance_sheet_filterAllTime;
+
+  /// No description provided for @balance_sheet_filterCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get balance_sheet_filterCustom;
+
+  /// No description provided for @balance_sheet_noCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'No collections in this period'**
+  String get balance_sheet_noCollections;
+
+  /// No description provided for @balance_sheet_noExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses in this period'**
+  String get balance_sheet_noExpenses;
+
+  /// No description provided for @balance_sheet_selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date range'**
+  String get balance_sheet_selectDateRange;
 
   /// No description provided for @admin_staff_noStaff.
   ///

@@ -882,6 +882,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navExpenses => 'المصروفات';
 
   @override
+  String get navBalanceSheet => 'الميزانية العمومية';
+
+  @override
   String get navSettings => 'الإعدادات';
 
   @override
@@ -2277,6 +2280,48 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_expenses_noExpenses => 'لا توجد مصروفات';
+
+  @override
+  String get balance_sheet_netProfit => 'صافي الربح';
+
+  @override
+  String get balance_sheet_collection => 'التحصيل';
+
+  @override
+  String get balance_sheet_expense => 'المصروفات';
+
+  @override
+  String get balance_sheet_collectionTab => 'التحصيل';
+
+  @override
+  String get balance_sheet_expenseTab => 'المصروفات';
+
+  @override
+  String get balance_sheet_filterToday => 'اليوم';
+
+  @override
+  String get balance_sheet_filterThisWeek => 'هذا الأسبوع';
+
+  @override
+  String get balance_sheet_filterThisMonth => 'هذا الشهر';
+
+  @override
+  String get balance_sheet_filterThisYear => 'هذا العام';
+
+  @override
+  String get balance_sheet_filterAllTime => 'كل الوقت';
+
+  @override
+  String get balance_sheet_filterCustom => 'مخصص';
+
+  @override
+  String get balance_sheet_noCollections => 'لا توجد تحصيلات في هذه الفترة';
+
+  @override
+  String get balance_sheet_noExpenses => 'لا توجد مصروفات في هذه الفترة';
+
+  @override
+  String get balance_sheet_selectDateRange => 'اختر النطاق الزمني';
 
   @override
   String get admin_staff_noStaff => 'لا يوجد موظفون.';

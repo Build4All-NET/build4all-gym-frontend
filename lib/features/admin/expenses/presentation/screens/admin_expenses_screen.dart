@@ -50,6 +50,13 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
     });
   }
 
+  // Used by callers outside the BlocConsumer's builder (AppBar, FAB) where
+  // the loaded state isn't directly in scope.
+  List<String> _currentCategories() {
+    final state = context.read<AdminExpensesBloc>().state;
+    return state is AdminExpensesLoaded ? state.categories : <String>[];
+  }
+
   void _showDeleteDialog(int expenseId) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
@@ -100,6 +107,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
               title: l10n.navExpenses,
               onAddTap: () => ExpenseFormBottomSheet.show(
                 context,
+                availableCategories: _currentCategories(),
                 onSuccess: () => context.read<AdminExpensesBloc>().add(RefreshExpensesEvent()),
               ),
               notificationCount: 0,
@@ -171,7 +179,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                         child: Text(l10n.admin_expenses_allCategories,
                                             style: TextStyle(fontSize: 13, color: c.label)),
                                       ),
-                                      ...kExpenseCategories.map((cat) => DropdownMenuItem(
+                                      ...state.categories.map((cat) => DropdownMenuItem(
                                             value: cat,
                                             child: Text(formatExpenseCategory(cat),
                                                 style: TextStyle(fontSize: 13, color: c.label)),
@@ -232,6 +240,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                         onEdit: () => ExpenseFormBottomSheet.show(
                                           context,
                                           existingExpense: expense,
+                                          availableCategories: state.categories,
                                           onSuccess: () => context
                                               .read<AdminExpensesBloc>()
                                               .add(RefreshExpensesEvent()),
@@ -257,6 +266,7 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => ExpenseFormBottomSheet.show(
           context,
+          availableCategories: _currentCategories(),
           onSuccess: () => context.read<AdminExpensesBloc>().add(RefreshExpensesEvent()),
         ),
         backgroundColor: c.success,
