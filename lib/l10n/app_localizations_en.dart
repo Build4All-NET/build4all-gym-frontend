@@ -3972,4 +3972,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_plans_customDurationHint => 'e.g. 45';
+
+  @override
+  String get admin_dashboard_viewReports => 'View detailed reports';
 }

@@ -511,6 +511,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               valueColor: c.danger,
               onTap: () => Navigator.pushNamed(context, AppRouter.adminExpenses),
             ),
+            const SizedBox(height: 4),
+            _viewReportsLink(context, c, l10n),
           ],
         ),
       ),
@@ -635,7 +637,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               label: l10n.admin_dashboard_recordAttendance,
               onTap: () => Navigator.pushNamed(context, AppRouter.adminCheckins),
             ),
+            const SizedBox(height: 4),
+            _viewReportsLink(context, c, l10n),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ── "View detailed reports" link ───────────────────────────────────────────
+  // Connects the at-a-glance dashboard to the Reports screen (period analysis +
+  // charts) so the two don't feel like duplicates of each other.
+  Widget _viewReportsLink(BuildContext context, dynamic c, AppLocalizations l10n) {
+    return Align(
+      alignment: AlignmentDirectional.centerEnd,
+      child: TextButton.icon(
+        onPressed: () => Navigator.pushNamed(context, AppRouter.adminReports),
+        icon: Icon(Icons.bar_chart_rounded, size: 18, color: c.primary),
+        label: Text(
+          l10n.admin_dashboard_viewReports,
+          style: TextStyle(
+              color: c.primary, fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ),
     );

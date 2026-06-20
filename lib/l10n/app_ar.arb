@@ -1566,5 +1566,6 @@
   "admin_plans_durOneTime": "مرة واحدة",
   "admin_plans_durCustom": "مخصص",
   "admin_plans_nameHint": "مثال: ذهبي شهري",
-  "admin_plans_customDurationHint": "مثال: 45"
+  "admin_plans_customDurationHint": "مثال: 45",
+  "admin_dashboard_viewReports": "شوف التقارير التفصيلية"
 }

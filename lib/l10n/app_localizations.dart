@@ -7427,6 +7427,8 @@ abstract class AppLocalizations {
   String get admin_plans_nameHint;
 
   String get admin_plans_customDurationHint;
+
+  String get admin_dashboard_viewReports;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -3972,4 +3972,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_plans_customDurationHint => 'مثال: 45';
+
+  @override
+  String get admin_dashboard_viewReports => 'شوف التقارير التفصيلية';
 }

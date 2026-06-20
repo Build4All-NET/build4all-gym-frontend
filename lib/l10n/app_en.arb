@@ -1592,5 +1592,6 @@
   "admin_plans_durOneTime": "One Time",
   "admin_plans_durCustom": "Custom",
   "admin_plans_nameHint": "e.g. Gold Monthly",
-  "admin_plans_customDurationHint": "e.g. 45"
+  "admin_plans_customDurationHint": "e.g. 45",
+  "admin_dashboard_viewReports": "View detailed reports"
 }
