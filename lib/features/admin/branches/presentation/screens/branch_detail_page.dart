@@ -7,6 +7,7 @@ import '../bloc/branches_bloc.dart';
 import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
 import 'add_branch_page.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class BranchDetailPage extends StatefulWidget {
   final String branchId;
@@ -27,15 +28,16 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: const BackButton(color: Color(0xFF1A1A2E)),
-        title: const Text(
-          'Branch Detail',
-          style: TextStyle(
+        title: Text(
+          l10n.admin_branches_detailTitle,
+          style: const TextStyle(
               color: Color(0xFF1A1A2E),
               fontWeight: FontWeight.w700,
               fontSize: 18),
@@ -81,9 +83,9 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
         listener: (context, state) {
           if (state is BranchDeleted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Branch deleted successfully'),
-                backgroundColor: Color(0xFF10B981),
+              SnackBar(
+                content: Text(l10n.admin_branches_deletedSuccess),
+                backgroundColor: const Color(0xFF10B981),
               ),
             );
             Navigator.pop(context, true);
@@ -181,7 +183,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            d.isActive ? 'Active' : 'Inactive',
+                            d.isActive ? l10n.admin_branches_statusActive : l10n.admin_branches_statusInactive,
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -198,19 +200,19 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                       _ContactRow(
                           icon: Icons.phone_outlined,
                           color: const Color(0xFF3B82F6),
-                          label: 'PHONE',
+                          label: l10n.admin_branches_phoneLabel,
                           value: d.phone!),
                     if (d.email != null) ...[
                       const Divider(height: 20),
                       _ContactRow(
                           icon: Icons.email_outlined,
                           color: const Color(0xFF8B5CF6),
-                          label: 'EMAIL',
+                          label: l10n.admin_branches_emailLabel,
                           value: d.email!),
                     ],
                     if (d.address != null) ...[
                       const Divider(height: 20),
-                      _LabelValue(label: 'ADDRESS', value: d.address!),
+                      _LabelValue(label: l10n.admin_branches_addressLabel, value: d.address!),
                     ],
                   ]),
                   const SizedBox(height: 12),
@@ -222,7 +224,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                           icon: Icons.people,
                           color: const Color(0xFF3B82F6),
                           count: d.memberCount,
-                          label: 'Members',
+                          label: l10n.navMembers,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -231,7 +233,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                           icon: Icons.fitness_center,
                           color: const Color(0xFF8B5CF6),
                           count: d.trainerCount,
-                          label: 'Trainers',
+                          label: l10n.admin_branches_trainers,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -240,7 +242,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                           icon: Icons.manage_accounts,
                           color: const Color(0xFF10B981),
                           count: d.staffCount,
-                          label: 'Staff',
+                          label: l10n.navStaff,
                         ),
                       ),
                     ],
@@ -269,7 +271,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  'Monthly Revenue',
+                                  l10n.admin_branches_monthlyRevenue,
                                   style: TextStyle(
                                       color: Colors.grey[500],
                                       fontSize: 11),
@@ -285,7 +287,10 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                               ],
                             ),
                             const SizedBox(width: 4),
-                            const Icon(Icons.chevron_right,
+                            Icon(
+                                Directionality.of(context) == TextDirection.rtl
+                                    ? Icons.chevron_left
+                                    : Icons.chevron_right,
                                 color: Colors.grey),
                           ],
                         ),
@@ -304,16 +309,16 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
   }
 
   void _confirmDelete(BuildContext context, String branchName) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Branch'),
-        content: Text(
-            'Are you sure you want to delete "$branchName"?\n\nThis cannot be undone.'),
+        title: Text(l10n.admin_branches_deleteTitle),
+        content: Text(l10n.admin_branches_deleteConfirmMessage(branchName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.general_cancel),
           ),
           TextButton(
             onPressed: () {
@@ -321,7 +326,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
               context.read<BranchesBloc>().add(DeleteBranch(widget.branchId));
             },
             style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
-            child: const Text('Delete'),
+            child: Text(l10n.admin_branches_deleteAction),
           ),
         ],
       ),

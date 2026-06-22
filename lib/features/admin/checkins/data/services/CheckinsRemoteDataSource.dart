@@ -9,8 +9,7 @@
 // ENDPOINTS:
 //   GET  /api/admin/checkins/today?branchId=&search=
 //   POST /api/admin/checkins/scan?branchId=
-//   PATCH /api/admin/checkins/{checkinId}/checkout
-//   POST  /api/admin/members/{userId}/freeze
+//   PATCH /api/admin/checkins/{checkinId}/checkout?branchId=
 //   PATCH /api/admin/members/{userId}/block
 // =============================================================================
 
@@ -43,15 +42,25 @@ class CheckinsRemoteDataSource {
         response.statusCode == 201 ||
         response.statusCode == 204) return;
     if (response.statusCode == 401) throw UnauthorizedException();
+
+    // Backend error shape: {"status": 404, "message": "...", "timestamp": "..."}.
+    // Extract `message` for every error status, not just 403 — 404 (token/member
+    // not found) and 409 (expired/already-used token, duplicate check-in) carry
+    // the user-facing text here too; without this they'd show as raw JSON.
+    String msg = '';
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      msg = body['message'] as String? ?? '';
+    } catch (_) {}
+
     if (response.statusCode == 403) {
-      String msg = '';
-      try {
-        final body = jsonDecode(response.body) as Map<String, dynamic>;
-        msg = body['message'] as String? ?? '';
-      } catch (_) {}
       throw ForbiddenException(message: msg);
     }
-    throw ServerException(message: 'HTTP ${response.statusCode}: ${response.body}');
+    throw ServerException(
+      message: msg.isNotEmpty
+          ? msg
+          : 'Something went wrong (HTTP ${response.statusCode}).',
+    );
   }
 
   Map<String, dynamic> _parseMap(http.Response response) {
@@ -111,44 +120,20 @@ class CheckinsRemoteDataSource {
     }
   }
 
-  // ── PATCH /api/admin/checkins/{checkinId}/checkout ────────────────────────
-  Future<Map<String, dynamic>> checkOut(int checkinId) async {
+  // ── PATCH /api/admin/checkins/{checkinId}/checkout?branchId= ──────────────
+  Future<Map<String, dynamic>> checkOut({
+    required int checkinId,
+    required int branchId,
+  }) async {
     final headers = await _headers();
     final uri = Uri.parse(
-        '${Env.apiProjectBaseUrl}/api/admin/checkins/$checkinId/checkout');
+        '${Env.apiProjectBaseUrl}/api/admin/checkins/$checkinId/checkout')
+        .replace(queryParameters: {'branchId': branchId.toString()});
 
     try {
       final response = await _client.patch(uri, headers: headers);
       _handleStatus(response);
       return _parseMap(response);
-    } catch (e) {
-      _rethrowOrWrap(e);
-      rethrow;
-    }
-  }
-
-  // ── POST /api/admin/members/{userId}/freeze ───────────────────────────────
-  Future<void> freezeMember({
-    required int    userId,
-    required String fromDate,
-    required String toDate,
-    required String reason,
-  }) async {
-    final headers = await _headers();
-    final uri = Uri.parse(
-        '${Env.apiProjectBaseUrl}/api/admin/members/$userId/freeze');
-
-    try {
-      final response = await _client.post(
-        uri,
-        headers: headers,
-        body: jsonEncode({
-          'fromDate': fromDate,
-          'toDate':   toDate,
-          'reason':   reason,
-        }),
-      );
-      _handleStatus(response);
     } catch (e) {
       _rethrowOrWrap(e);
       rethrow;

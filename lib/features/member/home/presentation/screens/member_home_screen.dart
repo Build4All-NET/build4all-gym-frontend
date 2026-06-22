@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
-import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_screen.dart';
 import '../../../../../app/app_router.dart';
 import '../../domain/entities/member_home.dart';
 import '../../domain/entities/member_stats.dart';
@@ -306,9 +305,9 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                               (route) => false,
                         );
                       },
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(color: Colors.red),
+                      child: Text(
+                        l10n.navLogout,
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ],
@@ -470,11 +469,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         widget.onTabSelected(3);
                       },
                       onBookTrainer: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const MemberPtScreen(),
-                          ),
-                        );
+                        widget.onTabSelected(4);
                       },
                       onQrCode: () {
                         widget.onTabSelected(2);

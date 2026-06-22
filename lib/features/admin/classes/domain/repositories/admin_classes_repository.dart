@@ -37,8 +37,12 @@ abstract class AdminClassesRepository {
   // Returns all non-cancelled bookings for a session
   Future<List<SessionBookingItemEntity>> getSessionBookings(int sessionId);
 
-  // Confirms a cash payment for a pending booking
-  Future<void> confirmBookingPayment(int bookingId);
+  // Confirms a cash payment for a pending booking. amountPaid null = full
+  // payment; a lower amount records a partial cash payment.
+  Future<void> confirmBookingPayment(int bookingId, {double? amountPaid});
+
+  // Collects more cash toward a partially-paid booking's invoice
+  Future<void> recordInvoicePayment(int invoiceId, double amount);
 
   // Reactivates a cancelled session back to SCHEDULED
   Future<void> reactivateClass(int sessionId);

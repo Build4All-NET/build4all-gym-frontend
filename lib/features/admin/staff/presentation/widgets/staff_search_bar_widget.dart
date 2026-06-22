@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_staff_bloc.dart';
 import '../bloc/admin_staff_event.dart';
 
@@ -45,7 +46,7 @@ class _StaffSearchBarWidgetState extends State<StaffSearchBarWidget> {
         onChanged: _onChanged,
         style: TextStyle(fontSize: 14, color: c.label),
         decoration: InputDecoration(
-          hintText: 'Search staff by name',
+          hintText: AppLocalizations.of(context)!.admin_staff_searchHint,
           hintStyle: TextStyle(color: c.muted, fontSize: 14),
           prefixIcon: Icon(Icons.search, color: c.muted, size: 20),
           filled: true,

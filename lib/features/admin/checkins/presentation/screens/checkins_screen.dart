@@ -18,11 +18,20 @@
 //     • CheckinsActionError → red snackbar
 //   BlocBuilder inside child widgets handles loading/loaded/error for the list.
 //
+// LIVE UPDATES:
+//   There's no push from the backend, so "live" is simulated here:
+//     • A periodic silent poll re-fetches every 25s without showing the
+//       loading skeleton (so another device's check-in appears on its own).
+//     • Pull-to-refresh triggers a normal (non-silent) reload on demand.
+//
 // BRANCH:
-//   The selected branchId comes from BranchCubit (the branch pill in the AppBar).
-//   When the admin changes branch, we reload the list for the new branch.
-//   The BLoC itself stores branchId — here we just fire LoadTodayCheckins.
+//   Defaults to the admin's own branch (decoded from the JWT via
+//   AdminProfileCubit) once it resolves; the router's branchId=1 is only a
+//   transient first-paint fallback. Picking a branch from the AppBar pill
+//   dispatches ChangeBranch, which updates CheckinsBloc.branchId and reloads.
 // =============================================================================
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,11 +55,49 @@ class CheckinsScreen extends StatefulWidget {
 }
 
 class _CheckinsScreenState extends State<CheckinsScreen> {
+  int? _selectedBranchId;
+  // Becomes true once the admin's home branch (from the profile/JWT) has
+  // been applied, or once the admin picks a branch manually — either way we
+  // then stop overriding the selection on profile rebuilds.
+  bool _branchResolved = false;
+
+  Timer? _pollTimer;
+
   @override
   void initState() {
     super.initState();
     // Load the list when the screen first mounts.
     context.read<CheckinsBloc>().add(const LoadTodayCheckins());
+
+    // Simulate "live" updates: the backend has no push mechanism, so poll
+    // quietly in the background while this screen is open.
+    _pollTimer = Timer.periodic(const Duration(seconds: 25), (_) {
+      if (mounted) {
+        context.read<CheckinsBloc>().add(const LoadTodayCheckins(silent: true));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _onRefresh() async {
+    final bloc = context.read<CheckinsBloc>();
+    bloc.add(const LoadTodayCheckins());
+    await bloc.stream.firstWhere(
+        (s) => s is CheckinsLoaded || s is CheckinsError);
+  }
+
+  void _onBranchChanged(int? branchId) {
+    final effective = branchId ?? context.read<AdminProfileCubit>().state.branchId ?? 1;
+    setState(() {
+      _selectedBranchId = effective;
+      _branchResolved    = true;
+    });
+    context.read<CheckinsBloc>().add(ChangeBranch(effective));
   }
 
   @override
@@ -60,6 +107,19 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
     final l10n    = AppLocalizations.of(context)!;
     final profile = context.watch<AdminProfileCubit>().state;
 
+    // The profile's branchId resolves asynchronously (JWT decode). As soon
+    // as it's known, correct the bloc/pill from the router's `1` fallback —
+    // but only if the admin hasn't already picked a branch themselves.
+    if (!_branchResolved && profile.branchId != null) {
+      _branchResolved   = true;
+      _selectedBranchId = profile.branchId;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<CheckinsBloc>().add(ChangeBranch(profile.branchId!));
+        }
+      });
+    }
+
     return BlocListener<CheckinsBloc, CheckinsState>(
       // Only react to result states — not to loading/loaded list states.
       listenWhen: (_, curr) =>
@@ -68,9 +128,10 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
           curr is CheckinsActionError,
       listener: (context, state) {
         if (state is CheckinsScanSuccess) {
-          _showSnack(context,
-              '${state.memberName} ${l10n.checkins_scanSuccessMsg}',
-              isError: false);
+          final msg = state.checkedOut
+              ? '${state.memberName} ${l10n.checkins_scanCheckedOutMsg}'
+              : '${state.memberName} ${l10n.checkins_scanSuccessMsg}';
+          _showSnack(context, msg, isError: false);
         } else if (state is CheckinsActionSuccess) {
           _showSnack(context, state.message, isError: false);
         } else if (state is CheckinsActionError) {
@@ -95,7 +156,9 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
             children: [
               // ── AppBar ───────────────────────────────────────────────────
               AdminAppBar(
-                title: l10n.checkins_title,
+                title:            l10n.checkins_title,
+                selectedBranchId: _selectedBranchId,
+                onBranchChanged:  _onBranchChanged,
                 actions: [
                   // QR scan icon — opens the camera bottom sheet.
                   IconButton(
@@ -109,24 +172,28 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
 
               // ── Scrollable body ─────────────────────────────────────────
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 12),
+                child: RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 12),
 
-                      // Stat cards row
-                      const CheckinStatsRow(),
-                      const SizedBox(height: 16),
+                        // Stat cards row
+                        const CheckinStatsRow(),
+                        const SizedBox(height: 16),
 
-                      // Search bar
-                      const CheckinsSearchBar(),
-                      const SizedBox(height: 8),
+                        // Search bar
+                        const CheckinsSearchBar(),
+                        const SizedBox(height: 8),
 
-                      // Today's list
-                      const CheckinsList(),
-                      const SizedBox(height: 24),
-                    ],
+                        // Today's list
+                        const CheckinsList(),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
                 ),
               ),

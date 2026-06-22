@@ -439,7 +439,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
         context: context,
         barrierDismissible: false,
         builder: (_) => MemberProfileEditOtpDialog(
-          title: 'Verify phone number',
+          title: l10n.editProfileVerifyNewPhone,
           sentToLabel: l10n.editProfileCodeSentTo,
           destination: state.newPhoneNumber,
           codeLabel: l10n.editProfileVerificationCode,
@@ -563,7 +563,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
 
     if (state is MemberProfileEditPhoneVerified) {
-      _showSnack(context, 'Phone verified successfully');
+      _showSnack(context, l10n.editProfilePhoneVerified);
       return;
     }
 

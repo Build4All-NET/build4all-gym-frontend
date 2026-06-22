@@ -10,6 +10,7 @@ import '../../../../../core/config/env.dart';
 import '../../../members/data/models/member_card_model.dart';
 import '../../../members/data/services/admin_members_service.dart';
 import '../../../trainers/data/services/admin_trainers_service.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class MemberPickerForReceptionSheet extends StatefulWidget {
   final VoidCallback onAssigned;
@@ -81,8 +82,11 @@ class _MemberPickerForReceptionSheetState
         search:   _searchController.text.trim(),
         size:     30,
         page:     1,
-        // includeStaff defaults to false — exclude owners/admins/trainers/reception
-        // from the picker so only plain members can be promoted.
+        // A user can hold both the Trainer and Reception roles at once, so
+        // include trainers here — otherwise they'd disappear from this picker
+        // and couldn't be promoted to Reception too. Owners/admins/business
+        // staff and existing Reception users stay hidden.
+        includeTrainers: true,
       );
       final items = (raw['items'] as List<dynamic>? ?? [])
           .map((j) => MemberCardModel.fromJson(j as Map<String, dynamic>))
@@ -113,7 +117,7 @@ class _MemberPickerForReceptionSheetState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '${member.fullName} is now Reception Staff. They\'ll see the operations dashboard on next login.',
+            AppLocalizations.of(context)!.admin_staff_assignedReceptionSuccess(member.fullName),
           ),
           backgroundColor: Colors.green.shade700,
           duration: const Duration(seconds: 4),
@@ -123,7 +127,7 @@ class _MemberPickerForReceptionSheetState
       if (mounted) {
         setState(() {
           _assigningUserId = null;
-          _assignError     = 'Failed to assign role. Please try again.';
+          _assignError     = AppLocalizations.of(context)!.adminMemberPicker_assignRoleFailed;
         });
       }
     }
@@ -134,6 +138,7 @@ class _MemberPickerForReceptionSheetState
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final mq     = MediaQuery.of(context);
+    final l10n   = AppLocalizations.of(context)!;
 
     return Container(
       height: mq.size.height * 0.85,
@@ -170,13 +175,13 @@ class _MemberPickerForReceptionSheetState
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Assign Reception Role',
+                    Text(l10n.admin_staff_assignReceptionTitle,
                         style: TextStyle(
                           color: c.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         )),
-                    Text('Pick a member to assign the Reception role',
+                    Text(l10n.admin_staff_assignReceptionSubtitle,
                         style: TextStyle(color: c.muted, fontSize: 12)),
                   ],
                 ),
@@ -191,7 +196,7 @@ class _MemberPickerForReceptionSheetState
               controller: _searchController,
               style: TextStyle(color: c.primary),
               decoration: InputDecoration(
-                hintText: 'Search by name or phone…',
+                hintText: l10n.adminMemberPicker_searchHint,
                 hintStyle: TextStyle(color: c.muted),
                 prefixIcon: Icon(Icons.search_rounded, color: c.muted),
                 suffixIcon: _searchController.text.isNotEmpty
@@ -238,7 +243,7 @@ class _MemberPickerForReceptionSheetState
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'The member will see the Operations dashboard the next time they log in.',
+                      l10n.admin_staff_receptionDashboardNotice,
                       style: TextStyle(color: c.primary, fontSize: 12),
                     ),
                   ),
@@ -255,7 +260,7 @@ class _MemberPickerForReceptionSheetState
                   style: TextStyle(color: c.error ?? Colors.red, fontSize: 12)),
             ),
 
-          Expanded(child: _buildList(c, tokens)),
+          Expanded(child: _buildList(c, tokens, l10n)),
 
           SizedBox(height: mq.padding.bottom + 8),
         ],
@@ -263,7 +268,7 @@ class _MemberPickerForReceptionSheetState
     );
   }
 
-  Widget _buildList(dynamic c, dynamic tokens) {
+  Widget _buildList(dynamic c, dynamic tokens, AppLocalizations l10n) {
     if (_loading) {
       return Center(child: CircularProgressIndicator(color: c.primary));
     }
@@ -274,17 +279,17 @@ class _MemberPickerForReceptionSheetState
           children: [
             Icon(Icons.wifi_off_rounded, color: c.muted, size: 40),
             const SizedBox(height: 8),
-            Text('Could not load members',
+            Text(l10n.adminMemberPicker_couldNotLoad,
                 style: TextStyle(color: c.muted)),
             const SizedBox(height: 8),
-            TextButton(onPressed: _fetchMembers, child: const Text('Retry')),
+            TextButton(onPressed: _fetchMembers, child: Text(l10n.retry)),
           ],
         ),
       );
     }
     if (_members.isEmpty) {
       return Center(
-        child: Text('No members found',
+        child: Text(l10n.adminMemberPicker_noMembersFound,
             style: TextStyle(color: c.muted)),
       );
     }
@@ -292,11 +297,11 @@ class _MemberPickerForReceptionSheetState
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: _members.length,
-      itemBuilder: (_, i) => _buildMemberRow(_members[i], c),
+      itemBuilder: (_, i) => _buildMemberRow(_members[i], c, l10n),
     );
   }
 
-  Widget _buildMemberRow(MemberCardModel member, dynamic c) {
+  Widget _buildMemberRow(MemberCardModel member, dynamic c, AppLocalizations l10n) {
     final isPending   = _pendingUserId == member.userId;
     final isAssigning = _assigningUserId == member.userId;
 
@@ -396,7 +401,7 @@ class _MemberPickerForReceptionSheetState
 
         if (isPending)
           Container(
-            margin: const EdgeInsets.only(bottom: 4, left: 8, right: 8),
+            margin: const EdgeInsetsDirectional.only(bottom: 4, start: 8, end: 8),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: c.primary.withOpacity(0.05),
@@ -412,7 +417,7 @@ class _MemberPickerForReceptionSheetState
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Assign Reception role to ${member.fullName}?',
+                    l10n.admin_staff_confirmAssignReception(member.fullName),
                     style: TextStyle(
                         color: c.primary,
                         fontSize: 13,
@@ -429,7 +434,7 @@ class _MemberPickerForReceptionSheetState
                         horizontal: 12, vertical: 6),
                     minimumSize: Size.zero,
                   ),
-                  child: Text('Cancel',
+                  child: Text(l10n.general_cancel,
                       style: TextStyle(color: c.muted, fontSize: 13)),
                 ),
 
@@ -443,8 +448,8 @@ class _MemberPickerForReceptionSheetState
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('Confirm',
-                      style: TextStyle(
+                  child: Text(l10n.general_confirm,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,
                           fontWeight: FontWeight.w600)),

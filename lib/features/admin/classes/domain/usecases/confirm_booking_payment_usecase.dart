@@ -5,5 +5,6 @@ class ConfirmBookingPaymentUseCase {
 
   ConfirmBookingPaymentUseCase(this._repository);
 
-  Future<void> call(int bookingId) => _repository.confirmBookingPayment(bookingId);
+  Future<void> call(int bookingId, {double? amountPaid}) =>
+      _repository.confirmBookingPayment(bookingId, amountPaid: amountPaid);
 }

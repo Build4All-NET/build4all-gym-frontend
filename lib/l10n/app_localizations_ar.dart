@@ -567,6 +567,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberBottomNavClasses => 'الحصص';
 
   @override
+  String get memberBottomNavBookTrainer => 'مدرب';
+
+  @override
   String get memberBottomNavAccount => 'حسابي';
 
   @override
@@ -728,6 +731,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberSessionsBookNow => 'احجز الآن';
+
+  @override
+  String memberSessionsWithTrainer(String name) {
+    return 'مع $name';
+  }
 
   @override
   String get memberSessionsTitle => 'الحصص الرياضية';
@@ -912,10 +920,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navReceptionStaff => 'موظفو الاستقبال';
 
   @override
+  String get navStaffAccessControl => 'صلاحيات الوصول للموظفين';
+
+  @override
   String get navGymProfile => 'ملف الصالة';
 
   @override
   String get navBranches => 'الفروع';
+
+  @override
+  String get navEmployees => 'الموظفون';
+
+  @override
+  String get navEmployeeCheckins => 'تسجيل حضور الموظفين';
 
   @override
   String get navCheckins => 'تسجيل الحضور';
@@ -1101,6 +1118,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptTrainingVideosOpenError => 'تعذر فتح هذا الفيديو.';
+
+  @override
+  String get ptTrainingVideosPipUnavailable => 'الصورة داخل الصورة غير متاحة على هذا الجهاز.';
 
   @override
   String get ptTrainerDetailsNotFound => 'لم يتم العثور على تفاصيل المدرب.';
@@ -1418,6 +1438,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberQrRetry => 'إعادة المحاولة';
 
   @override
+  String memberQrEntryWindow(String start, String end) {
+    return 'الدخول: $start – $end';
+  }
+
+  @override
   String get myInfoTitle => 'معلوماتي';
 
   @override
@@ -1526,6 +1551,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aiErrorOffline => 'تعذر الحصول على رد. يرجى المحاولة مرة أخرى.';
 
   @override
+  String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
+
+  @override
   String get checkins_title => 'تسجيلات الدخول';
 
   @override
@@ -1535,7 +1563,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkins_scanSuccessMsg => 'تم تسجيل دخوله بنجاح';
 
   @override
-  String get checkins_scannerTitle => 'مسح رمز العضو';
+  String get checkins_scanCheckedOutMsg => 'تم تسجيل خروجه بنجاح';
 
   @override
   String get checkins_activeNow => 'النشطون الآن';
@@ -1544,16 +1572,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkins_totalToday => 'إجمالي اليوم';
 
   @override
+  String get checkins_searchHint => 'ابحث عن عضو...';
+
+  @override
   String get checkins_todayTitle => 'تسجيلات دخول اليوم';
 
   @override
   String get checkins_noCheckins => 'لا توجد تسجيلات دخول اليوم';
-
-  @override
-  String get checkins_searchHint => 'ابحث عن عضو...';
-
-  @override
-  String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
 
   @override
   String get checkins_active => 'نشط';
@@ -1565,28 +1590,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkins_out => 'تسجيل خروج';
 
   @override
-  String get checkins_freeze => 'تجميد';
-
-  @override
   String get checkins_block => 'حظر';
 
   @override
   String get checkins_call => 'اتصال';
 
   @override
-  String get checkins_freezeTitle => 'تجميد الاشتراك';
+  String get checkins_noPhoneNumber => 'لا يوجد رقم هاتف مسجل لهذا العضو.';
 
   @override
-  String get checkins_fromDate => 'من تاريخ';
+  String get checkins_callFailed => 'تعذر بدء المكالمة على هذا الجهاز.';
 
   @override
-  String get checkins_toDate => 'إلى تاريخ';
+  String get checkins_entryPlan => 'اشتراك';
+
+  @override
+  String get checkins_entryClass => 'حصة';
+
+  @override
+  String get checkins_entryPt => 'جلسة تدريب خاص';
 
   @override
   String get checkins_reasonHint => 'أدخل السبب...';
-
-  @override
-  String get checkins_confirm => 'تأكيد';
 
   @override
   String get checkins_blockTitle => 'حظر العضو';
@@ -1596,6 +1621,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get checkins_blockConfirm => 'حظر';
+
+  @override
+  String get checkins_scannerTitle => 'مسح رمز العضو';
 
   @override
   String get sessionDetailBookingClosed => 'انتهى وقت الحجز';
@@ -2282,6 +2310,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_expenses_noExpenses => 'لا توجد مصروفات';
 
   @override
+  String get admin_expenses_confirmPaidTitle => 'تأكيد دفع العمولة';
+
+  @override
+  String get admin_expenses_confirmPaidMessage => 'هل تؤكد أنك دفعت هذه العمولة للمدرب؟ سيتم إضافتها إلى دخل المدرب وحسابها ضمن مصروفات النادي.';
+
+  @override
+  String get admin_expenses_confirmPaid => 'تأكيد';
+
+  @override
   String get balance_sheet_netProfit => 'صافي الربح';
 
   @override
@@ -2393,6 +2430,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_staff_autoGeneratePassword => 'اتركه فارغاً لإنشاء كلمة مرور آمنة تلقائياً';
+
+  @override
+  String get roleAccess_title => 'صلاحيات الوصول للموظفين';
+
+  @override
+  String get roleAccess_subtitle => 'اختر ما يمكن للمدربين وموظفي الاستقبال رؤيته والوصول إليه في قائمة التنقل الخاصة بهم.';
+
+  @override
+  String get roleAccess_trainerColumn => 'مدرب';
+
+  @override
+  String get roleAccess_receptionColumn => 'استقبال';
+
+  @override
+  String get roleAccess_unsaved => 'غير محفوظ';
+
+  @override
+  String get roleAccess_saving => 'جارٍ الحفظ...';
+
+  @override
+  String get roleAccess_saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get roleAccess_saveSuccess => 'تم حفظ الصلاحيات بنجاح';
+
+  @override
+  String get roleAccess_saveFailed => 'فشل حفظ الصلاحيات';
+
+  @override
+  String get roleAccess_notAuthorized => 'يمكن لمالك النادي فقط إدارة صلاحيات وصول الموظفين.';
+
+  @override
+  String get roleAccess_modeAllStaff => 'كل الموظفين';
+
+  @override
+  String get roleAccess_modeSpecificAccount => 'حساب محدد';
+
+  @override
+  String get roleAccess_pickStaffMember => 'اختر أحد الموظفين';
+
+  @override
+  String get roleAccess_noStaffAccounts => 'لا يوجد مدربون أو موظفو استقبال حتى الآن.';
+
+  @override
+  String get roleAccess_selectAccountPrompt => 'اختر مدرباً أو موظف استقبال أعلاه لتعديل صلاحياته الخاصة.';
+
+  @override
+  String get roleAccess_useDefault => 'استخدام الإعداد الافتراضي';
+
+  @override
+  String get roleAccess_alwaysAllow => 'السماح دائماً';
+
+  @override
+  String get roleAccess_alwaysDeny => 'الرفض دائماً';
+
+  @override
+  String get roleAccess_defaultOn => '(الافتراضي: مفعّل)';
+
+  @override
+  String get roleAccess_defaultOff => '(الافتراضي: معطّل)';
 
   @override
   String get admin_settings_unsaved => 'غير محفوظ';
@@ -2679,6 +2776,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_invoices_downloadPdf => 'تنزيل / مشاركة PDF';
 
   @override
+  String get admin_invoices_recordPayment => 'تسجيل دفعة';
+
+  @override
+  String get admin_invoices_paymentRecorded => 'تم تسجيل الدفعة.';
+
+  @override
+  String admin_invoices_balanceDueLabel(String amount) {
+    return 'المبلغ المتبقي: \$ $amount';
+  }
+
+  @override
   String get admin_classes_addTitle => 'إضافة درس جديد';
 
   @override
@@ -2793,6 +2901,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_classes_cancellationDeclined => 'تم رفض الإلغاء';
 
   @override
+  String get admin_classes_collectBalance => 'تحصيل المبلغ المتبقي';
+
+  @override
+  String admin_classes_classPriceLabel(String price) {
+    return 'سعر الحصة: $price';
+  }
+
+  @override
   String get admin_settings_accountTitle => 'الحساب والأمان';
 
   @override
@@ -2811,10 +2927,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_settings_biometricSubtitle => 'استخدام بصمة الإصبع أو التعرف على الوجه';
 
   @override
-  String get admin_settings_twoFactor => 'التحقق الثنائي';
-
-  @override
-  String get admin_settings_twoFactorSubtitle => 'إضافة طبقة أمان إضافية';
+  String get admin_settings_biometricUnavailable => 'المصادقة البيومترية غير متوفرة أو تم إلغاؤها.';
 
   @override
   String get admin_settings_businessTitle => 'قواعد العمل';
@@ -3528,6 +3641,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_dateLabel => 'التاريخ';
 
   @override
+  String get trainer_partialPaymentHint => 'أدخل مبلغًا أقل من الإجمالي لتسجيل دفعة جزئية — لن تُحسب عمولة المدرب حتى يتم سداد المبلغ بالكامل.';
+
+  @override
+  String get trainer_amountToCollectLabel => 'المبلغ المراد تحصيله';
+
+  @override
+  String get trainer_invalidAmount => 'أدخل مبلغًا صحيحًا';
+
+  @override
+  String get trainer_amountExceedsTotal => 'لا يمكن أن يتجاوز المبلغ الإجمالي';
+
+  @override
   String get promotionPrice => 'بعد العرض';
 
   @override
@@ -3957,7 +4082,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_plans_addNewType => 'إضافة نوع جديد…';
 
   @override
-  String get admin_plans_priceLabel => 'السعر *';
+  String get admin_plans_priceLabel => 'السعر';
 
   @override
   String get admin_plans_durationLabel => 'المدة *';
@@ -4111,4 +4236,1218 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_dashboard_viewReports => 'شوف التقارير التفصيلية';
+
+  @override
+  String get paymentSheetNoMethodsAvailable => 'لا توجد طرق دفع متاحة';
+
+  @override
+  String get paymentSheetPaymentFailed => 'فشلت عملية الدفع';
+
+  @override
+  String get paymentSheetCompleteInBrowserTitle => 'أكمل الدفع في المتصفح';
+
+  @override
+  String get paymentSheetCompleteInBrowserMessage => 'تم فتح صفحة الدفع في المتصفح. أكمل عملية الدفع ثم ارجع هنا واضغط \"تم\".';
+
+  @override
+  String get paymentSheetDoneVerifyPayment => 'تم — التحقق من الدفع';
+
+  @override
+  String get paymentSheetReopenPaymentPage => 'إعادة فتح صفحة الدفع';
+
+  @override
+  String get paymentSheetOkButton => 'حسناً';
+
+  @override
+  String get paymentSheetPendingConfirmationTitle => 'في انتظار تأكيد الدفع';
+
+  @override
+  String get bookingSuccessTitle => 'تم الحجز بنجاح';
+
+  @override
+  String get ptPackagePendingMessage => 'تم إرسال طلبك إلى الإدارة. سيتم تفعيل الحصص بعد تأكيد استلام الدفع.';
+
+  @override
+  String get sessionBookingPendingMessage => 'تم إرسال طلبك إلى الإدارة. سيتم تأكيد حجزك بعد تأكيد استلام الدفع.';
+
+  @override
+  String get sessionBookingSuccessMessage => 'تم تأكيد حجزك في الحصة بنجاح.';
+
+  @override
+  String get planSubscriptionSuccessTitle => 'تم الاشتراك بنجاح';
+
+  @override
+  String get planSubscriptionPendingMessage => 'تم إرسال طلبك إلى الإدارة. سيتم تفعيل اشتراكك بعد تأكيد استلام الدفع.';
+
+  @override
+  String planSubscriptionActivatedMessage(String planName) {
+    return 'تم تفعيل اشتراكك في \"$planName\".';
+  }
+
+  @override
+  String get planLabel => 'الخطة';
+
+  @override
+  String get profileCompletionStepBranchTitle => 'فرعك';
+
+  @override
+  String get profileCompletionStepAboutTitle => 'عنك';
+
+  @override
+  String get profileCompletionStepBodyTitle => 'مقاييس الجسم';
+
+  @override
+  String get profileCompletionStepEmergencyTitle => 'جهة اتصال الطوارئ';
+
+  @override
+  String get profileCompletionStepBranchSubtitle => 'اختر الفرع الذي ستتمرن فيه عادةً.';
+
+  @override
+  String get profileCompletionStepAboutSubtitle => 'بعض التفاصيل لتخصيص خطتك.';
+
+  @override
+  String get profileCompletionStepBodySubtitle => 'اختياري — يساعدنا على تخصيص تجربتك.';
+
+  @override
+  String get profileCompletionStepEmergencySubtitle => 'اختياري — من يجب أن نتصل به عند الحاجة؟';
+
+  @override
+  String get profileCompletionGenderMale => 'ذكر';
+
+  @override
+  String get profileCompletionGenderFemale => 'أنثى';
+
+  @override
+  String get profileCompletionGenderOther => 'آخر';
+
+  @override
+  String get profileCompletionGenderPreferNotToSay => 'أفضل عدم القول';
+
+  @override
+  String get profileCompletionSelectBranchError => 'يرجى اختيار الفرع المفضل لديك.';
+
+  @override
+  String get profileCompletionSelectGenderDobError => 'يرجى اختيار الجنس وتاريخ الميلاد.';
+
+  @override
+  String get profileCompletionSaveFailed => 'فشل الحفظ. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get profileCompletionTitle => 'أكمل ملفك الشخصي';
+
+  @override
+  String get profileCompletionPreferredBranch => 'الفرع المفضل *';
+
+  @override
+  String get profileCompletionGenderLabel => 'الجنس *';
+
+  @override
+  String get profileCompletionDobLabel => 'تاريخ الميلاد *';
+
+  @override
+  String get profileCompletionSelectDob => 'اختر تاريخ الميلاد';
+
+  @override
+  String get profileCompletionHeightLabel => 'الطول (سم)';
+
+  @override
+  String get profileCompletionWeightLabel => 'الوزن (كغ)';
+
+  @override
+  String get profileCompletionHeightHint => 'مثال: 175';
+
+  @override
+  String get profileCompletionWeightHint => 'مثال: 70';
+
+  @override
+  String get profileCompletionEmergencyNameLabel => 'اسم جهة اتصال الطوارئ';
+
+  @override
+  String get profileCompletionEmergencyPhoneLabel => 'هاتف جهة اتصال الطوارئ';
+
+  @override
+  String get profileCompletionFullNameHint => 'الاسم الكامل';
+
+  @override
+  String get profileCompletionPhoneNumberHint => 'رقم الهاتف';
+
+  @override
+  String get profileCompletionSaveContinueButton => 'حفظ ومتابعة';
+
+  @override
+  String get profileCompletionSelectBranchHint => 'اختر الفرع';
+
+  @override
+  String get editProfileCodeResentSuccess => 'تم إعادة إرسال الرمز بنجاح';
+
+  @override
+  String get ptVideoPipUnavailable => 'وضع الصورة في الصورة غير متاح على هذا الجهاز.';
+
+  @override
+  String sessionCardWithTrainer(String trainerName) {
+    return 'مع $trainerName';
+  }
+
+  @override
+  String get general_confirm => 'تأكيد';
+
+  @override
+  String get adminMemberPicker_searchHint => 'البحث بالاسم أو رقم الهاتف…';
+
+  @override
+  String get adminMemberPicker_couldNotLoad => 'تعذر تحميل الأعضاء';
+
+  @override
+  String get adminMemberPicker_noMembersFound => 'لا يوجد أعضاء';
+
+  @override
+  String get adminMemberPicker_assignRoleFailed => 'فشل تعيين الدور. حاول مرة أخرى.';
+
+  @override
+  String get admin_staff_assignReceptionTitle => 'تعيين دور الاستقبال';
+
+  @override
+  String get admin_staff_assignReceptionSubtitle => 'اختر عضواً لتعيين دور الاستقبال له';
+
+  @override
+  String get admin_staff_receptionDashboardNotice => 'سيرى العضو لوحة العمليات في المرة القادمة التي يسجّل دخوله.';
+
+  @override
+  String admin_staff_assignedReceptionSuccess(String name) {
+    return '$name الآن من طاقم الاستقبال. سيرى لوحة العمليات عند تسجيل الدخول القادم.';
+  }
+
+  @override
+  String admin_staff_confirmAssignReception(String name) {
+    return 'تعيين دور الاستقبال لـ $name؟';
+  }
+
+  @override
+  String get admin_staff_searchHint => 'البحث عن موظف بالاسم';
+
+  @override
+  String get admin_staff_totalStaffLabel => 'إجمالي الموظفين';
+
+  @override
+  String get admin_staff_activeLabel => 'نشط';
+
+  @override
+  String get admin_trainers_promoteTitle => 'ترقية عضو إلى مدرب';
+
+  @override
+  String get admin_trainers_promoteSubtitle => 'اختر عضواً لتعيين دور المدرب له';
+
+  @override
+  String get admin_trainers_trainerDashboardNotice => 'سيرى العضو لوحة المدرب في المرة القادمة التي يسجّل دخوله.';
+
+  @override
+  String admin_trainers_confirmAssignTrainer(String name) {
+    return 'تعيين دور المدرب لـ $name؟';
+  }
+
+  @override
+  String get admin_trainers_searchHint => 'البحث بالاسم أو التخصص';
+
+  @override
+  String get admin_trainers_allSpecialties => 'الكل';
+
+  @override
+  String get admin_trainers_blockConfirmTitle => 'حظر المدرب';
+
+  @override
+  String get admin_trainers_unblockConfirmTitle => 'إلغاء حظر المدرب';
+
+  @override
+  String admin_trainers_blockConfirmMessage(String name) {
+    return 'حظر $name؟ لن يتمكن من تسجيل الدخول.';
+  }
+
+  @override
+  String admin_trainers_unblockConfirmMessage(String name) {
+    return 'إلغاء حظر $name؟ سيتمكن من تسجيل الدخول مرة أخرى.';
+  }
+
+  @override
+  String get admin_trainers_blockAction => 'حظر';
+
+  @override
+  String get admin_trainers_unblockAction => 'إلغاء الحظر';
+
+  @override
+  String get admin_trainers_scheduleAction => 'الجدول';
+
+  @override
+  String get admin_trainers_editAction => 'تعديل';
+
+  @override
+  String get admin_trainers_blockedBadge => 'محظور';
+
+  @override
+  String get admin_trainers_activeBadge => 'نشط';
+
+  @override
+  String get configureTrainer_title => 'إعداد ملف المدرب';
+
+  @override
+  String get configureTrainer_selectBranchError => 'اختر فرعاً واحداً على الأقل.';
+
+  @override
+  String get configureTrainer_saveFailed => 'فشل الحفظ. حاول مرة أخرى.';
+
+  @override
+  String configureTrainer_setupSuccess(String name) {
+    return 'تم إعداد $name بالكامل كمدرب.';
+  }
+
+  @override
+  String get configureTrainer_branchesLabel => 'الفروع *';
+
+  @override
+  String get configureTrainer_noBranchesFound => 'لا توجد فروع.';
+
+  @override
+  String get configureTrainer_specialtiesLabel => 'التخصصات';
+
+  @override
+  String get configureTrainer_specialtyHint => 'مثال: خسارة الدهون، تقوية…';
+
+  @override
+  String get configureTrainer_yearsLabel => 'سنوات الخبرة';
+
+  @override
+  String get configureTrainer_yearsHint => 'مثال: 5';
+
+  @override
+  String get configureTrainer_notesLabel => 'نبذة / ملاحظات (اختياري)';
+
+  @override
+  String get configureTrainer_notesHint => 'نبذة قصيرة أو ملاحظات إدارية…';
+
+  @override
+  String get configureTrainer_saveButton => 'حفظ وإنهاء';
+
+  @override
+  String get admin_employees_defaultName => 'هذا الموظف';
+
+  @override
+  String get admin_employees_paymentHistoryTitle => 'سجل الدفعات';
+
+  @override
+  String get admin_employees_noPaymentsYet => 'لا توجد دفعات مسجلة بعد';
+
+  @override
+  String get admin_employees_qrScanTitle => 'مسح رمز تسجيل الدخول للنادي';
+
+  @override
+  String get admin_employees_qrScanSubtitle => 'وجّه الكاميرا إلى ملصق رمز الاستجابة السريعة عند المدخل لتسجيل الدخول أو الخروج.';
+
+  @override
+  String admin_employees_payDialogTitle(String name) {
+    return 'دفع راتب $name';
+  }
+
+  @override
+  String get admin_employees_invalidAmount => 'أدخل مبلغاً صحيحاً';
+
+  @override
+  String admin_employees_workedDaysThisMonth(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'عمل $days يوماً هذا الشهر',
+      one: 'عمل $days يوم هذا الشهر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get admin_employees_amountLabel => 'المبلغ *';
+
+  @override
+  String get admin_employees_paymentDateLabel => 'تاريخ الدفع';
+
+  @override
+  String get admin_employees_noteLabel => 'ملاحظة';
+
+  @override
+  String get admin_employees_confirmPayButton => 'تأكيد الدفع';
+
+  @override
+  String get admin_plans_membersLabel => 'الأعضاء';
+
+  @override
+  String get admin_plans_activeLabel => 'نشط';
+
+  @override
+  String get admin_plans_totalPlansLabel => 'إجمالي الخطط';
+
+  @override
+  String get admin_plans_inactiveLabel => 'غير نشط';
+
+  @override
+  String get admin_plans_featuredBadge => 'مميزة';
+
+  @override
+  String get admin_plans_durationCellLabel => 'المدة';
+
+  @override
+  String get admin_plans_visitLimitLabel => 'حد الزيارات';
+
+  @override
+  String get admin_plans_freezeDaysLabel => 'أيام التجميد';
+
+  @override
+  String get admin_plans_maxFreezesLabel => 'الحد الأقصى للتجميد';
+
+  @override
+  String get admin_plans_entryHoursLabel => 'ساعات الدخول';
+
+  @override
+  String get admin_plans_gracePeriodCellLabel => 'فترة السماح';
+
+  @override
+  String get admin_plans_onLabel => 'مفعّل';
+
+  @override
+  String get admin_plans_includedFeatures => 'الميزات المشمولة';
+
+  @override
+  String get admin_plans_availableAt => 'متوفرة في:';
+
+  @override
+  String get admin_plans_editAction => 'تعديل';
+
+  @override
+  String get admin_plans_deletingAction => 'جارٍ الحذف...';
+
+  @override
+  String get admin_plans_cycleMonthly => 'شهر واحد';
+
+  @override
+  String get admin_plans_cycleQuarterly => '3 أشهر';
+
+  @override
+  String get admin_plans_cycleYearly => 'سنة واحدة';
+
+  @override
+  String get admin_plans_cycleOneTime => 'مرة واحدة';
+
+  @override
+  String admin_plans_untilDate(String date) {
+    return 'حتى $date';
+  }
+
+  @override
+  String get admin_plans_openEnded => 'غير محدد المدة';
+
+  @override
+  String get trainer_cashBadge => 'نقدي';
+
+  @override
+  String get trainer_navCheckIn => 'تسجيل الحضور';
+
+  @override
+  String trainer_dayNumberFallback(int day) {
+    return 'اليوم $day';
+  }
+
+  @override
+  String trainer_packageSessionsCount(int count) {
+    return '$count جلسة';
+  }
+
+  @override
+  String trainer_packageDaysPerWeekRange(int min, int max) {
+    return '$min-$max أيام/أسبوع';
+  }
+
+  @override
+  String trainer_packageDaysValid(int days) {
+    return 'صالح لمدة $days يوماً';
+  }
+
+  @override
+  String trainer_packagePriceWasPrice(String salePrice, String price) {
+    return '$salePrice\$ (كان $price\$)';
+  }
+
+  @override
+  String get admin_members_attendanceHistoryTitle => 'سجل الحضور';
+
+  @override
+  String get admin_members_noAttendanceRecords => 'لا يوجد سجل حضور';
+
+  @override
+  String get admin_members_inGym => 'في النادي';
+
+  @override
+  String get admin_members_checkedOut => 'منصرف';
+
+  @override
+  String get admin_members_renewFeatureName => 'تجديد';
+
+  @override
+  String get admin_members_editFeatureName => 'تعديل';
+
+  @override
+  String get admin_members_whatsAppNotInstalled => 'واتساب غير مثبّت';
+
+  @override
+  String admin_members_featureComingSoon(String feature) {
+    return '$feature ستتوفر قريباً';
+  }
+
+  @override
+  String get admin_members_defaultMemberName => 'هذا العضو';
+
+  @override
+  String get admin_members_couldNotOpenDialler => 'تعذر فتح تطبيق الاتصال';
+
+  @override
+  String get admin_members_couldNotOpenSms => 'تعذر فتح الرسائل النصية';
+
+  @override
+  String get admin_expenses_autoRecorded => 'مسجّل تلقائياً';
+
+  @override
+  String get admin_expenses_pendingTrainerPayout => 'في انتظار دفع المدرب';
+
+  @override
+  String get admin_expenses_confirming => 'جارٍ التأكيد...';
+
+  @override
+  String get admin_expenses_confirmPaidToTrainer => 'تأكيد الدفع للمدرب';
+
+  @override
+  String admin_expenses_commissionForTrainer(String name) {
+    return 'عمولة $name';
+  }
+
+  @override
+  String get admin_expenses_commissionAllTrainers => 'العمولة — كل المدربين';
+
+  @override
+  String get admin_expenses_total => 'الإجمالي';
+
+  @override
+  String get admin_expenses_paid => 'مدفوع';
+
+  @override
+  String get admin_expenses_remaining => 'المتبقي';
+
+  @override
+  String get admin_expenses_allTrainers => 'كل المدربين';
+
+  @override
+  String get admin_expenses_thisMonth => 'هذا الشهر';
+
+  @override
+  String get admin_expenses_allTime => 'كل الوقت';
+
+  @override
+  String get admin_expenses_entriesThisMonth => 'العمليات هذا الشهر';
+
+  @override
+  String get admin_expenses_enterTransactionType => 'يرجى إدخال نوع المعاملة';
+
+  @override
+  String get admin_expenses_selectTrainerError => 'يرجى اختيار مدرب';
+
+  @override
+  String get admin_expenses_transactionTypeLabel => 'نوع المعاملة';
+
+  @override
+  String get admin_expenses_customCategoryHint => 'مثال: إصلاح المعدات';
+
+  @override
+  String get admin_expenses_selectTransactionType => 'اختر نوع المعاملة';
+
+  @override
+  String get admin_expenses_addNewTransactionType => 'إضافة نوع معاملة جديد';
+
+  @override
+  String get admin_expenses_payTo => 'الدفع إلى';
+
+  @override
+  String get admin_expenses_payToTrainer => 'مدرب';
+
+  @override
+  String get admin_expenses_payToOther => 'آخر';
+
+  @override
+  String get admin_expenses_trainerLabel => 'المدرب';
+
+  @override
+  String get admin_expenses_selectTrainer => 'اختر مدرباً';
+
+  @override
+  String get admin_employees_thisEmployee => 'هذا الموظف';
+
+  @override
+  String get admin_employees_removeEmployeeTitle => 'إزالة موظف';
+
+  @override
+  String admin_employees_removeEmployeeConfirm(String name) {
+    return 'إزالة $name؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get admin_employees_remove => 'إزالة';
+
+  @override
+  String get admin_employees_allTypes => 'كل الأنواع';
+
+  @override
+  String get admin_employees_searchHint => 'بحث عن موظف...';
+
+  @override
+  String get admin_employees_filterAll => 'الكل';
+
+  @override
+  String get admin_employees_filterActive => 'نشط';
+
+  @override
+  String get admin_employees_filterInactive => 'غير نشط';
+
+  @override
+  String get admin_employees_noEmployeesYet => 'لا يوجد موظفون بعد';
+
+  @override
+  String get admin_employees_checkinsTitle => 'تسجيلات حضور الموظفين';
+
+  @override
+  String get admin_employees_showGymQr => 'إظهار رمز تسجيل الدخول للنادي';
+
+  @override
+  String get admin_employees_scanToCheckInOut => 'مسح للحضور/الانصراف';
+
+  @override
+  String get admin_employees_noActiveEmployeesYet => 'لا يوجد موظفون نشطون بعد';
+
+  @override
+  String get admin_employees_unknown => 'غير معروف';
+
+  @override
+  String get admin_employees_inactive => 'غير نشط';
+
+  @override
+  String get admin_employees_appAccount => 'حساب في التطبيق';
+
+  @override
+  String admin_employees_daysThisMonth(int days) {
+    return '$days يوم هذا الشهر';
+  }
+
+  @override
+  String admin_employees_lastPaid(String date) {
+    return 'آخر دفعة $date';
+  }
+
+  @override
+  String get admin_employees_neverPaid => 'لم يُدفع له من قبل';
+
+  @override
+  String get admin_employees_edit => 'تعديل';
+
+  @override
+  String get admin_employees_removing => 'جارٍ الإزالة...';
+
+  @override
+  String get admin_employees_paying => 'جارٍ الدفع...';
+
+  @override
+  String get admin_employees_pay => 'دفع';
+
+  @override
+  String get admin_employees_overdue => 'متأخر';
+
+  @override
+  String get admin_employees_dueSoon => 'قريب الاستحقاق';
+
+  @override
+  String get admin_employees_upToDate => 'محدّث';
+
+  @override
+  String get admin_employees_freqWeek => 'أسبوع';
+
+  @override
+  String get admin_employees_freqDay => 'يوم';
+
+  @override
+  String get admin_employees_freqMonth => 'شهر';
+
+  @override
+  String get admin_employees_gymCheckinQrTitle => 'رمز تسجيل دخول النادي';
+
+  @override
+  String admin_employees_couldNotLoadQr(String error) {
+    return 'تعذر تحميل الرمز: $error';
+  }
+
+  @override
+  String get admin_employees_qrPosterInstructions => 'اطبع رمز الاستجابة السريعة هذا واعرضه عند المدخل ليتمكن الموظفون من مسحه عند الحضور أو الانصراف.';
+
+  @override
+  String get admin_employees_close => 'إغلاق';
+
+  @override
+  String admin_employees_checkedInAt(String time) {
+    return 'تم الحضور في $time';
+  }
+
+  @override
+  String get admin_employees_checkedIn => 'حاضر';
+
+  @override
+  String admin_employees_checkedOutAt(String time) {
+    return 'تم الانصراف في $time';
+  }
+
+  @override
+  String get admin_employees_checkedOut => 'منصرف';
+
+  @override
+  String get admin_employees_notCheckedIn => 'لم يسجل الحضور';
+
+  @override
+  String get admin_employees_selfCheckin => 'تسجيل ذاتي';
+
+  @override
+  String get admin_employees_checkOut => 'انصراف';
+
+  @override
+  String get admin_employees_checkIn => 'حضور';
+
+  @override
+  String get admin_employees_pleaseSelectBranch => 'يرجى اختيار فرع';
+
+  @override
+  String get admin_employees_pleaseSelectStaffMember => 'يرجى اختيار موظف';
+
+  @override
+  String get admin_employees_pleaseEnterEmployeeType => 'يرجى إدخال نوع الموظف';
+
+  @override
+  String get admin_employees_updatedSuccessfully => 'تم تحديث الموظف بنجاح';
+
+  @override
+  String get admin_employees_addedSuccessfully => 'تم إضافة الموظف بنجاح';
+
+  @override
+  String get admin_employees_editEmployee => 'تعديل موظف';
+
+  @override
+  String get admin_employees_addEmployee => 'إضافة موظف';
+
+  @override
+  String get admin_employees_whoIsThis => 'من هذا؟';
+
+  @override
+  String get admin_employees_newEmployee => 'موظف جديد';
+
+  @override
+  String get admin_employees_existingStaff => 'موظف حالي';
+
+  @override
+  String get admin_employees_trainerReceptionLabel => 'مدرب / موظف استقبال';
+
+  @override
+  String get admin_employees_allStaffHavePayroll => 'جميع الموظفين لديهم سجلات رواتب بالفعل';
+
+  @override
+  String get admin_employees_selectStaffMember => 'اختر موظفاً';
+
+  @override
+  String get admin_employees_required => 'مطلوب';
+
+  @override
+  String get admin_employees_thisPerson => 'هذا الشخص';
+
+  @override
+  String admin_employees_identityManagedNote(String name, String type) {
+    return '$name ($type) — يتم إدارة الهوية عبر حساب التطبيق.';
+  }
+
+  @override
+  String admin_dashboard_growthPercent(String value) {
+    return '$value عن الشهر الماضي';
+  }
+
+  @override
+  String admin_dashboard_vsLastMonthPercent(String value) {
+    return '$value عن الشهر الماضي';
+  }
+
+  @override
+  String get admin_dashboard_notAvailable => 'غير متاح';
+
+  @override
+  String admin_settings_deleteAccountFailed(String error) {
+    return 'فشل حذف الحساب: $error';
+  }
+
+  @override
+  String get admin_payments_sectionTitle => 'وسائل الدفع';
+
+  @override
+  String get admin_payments_sectionSubtitle => 'تفعيل أو تعطيل خيارات الدفع المتاحة للأعضاء.';
+
+  @override
+  String get admin_payments_noMethodsAvailable => 'لا توجد وسائل دفع متاحة على هذه المنصة.';
+
+  @override
+  String get admin_payments_active => 'نشط';
+
+  @override
+  String get admin_payments_disabled => 'معطّل';
+
+  @override
+  String get admin_payments_configured => 'مُهيّأ';
+
+  @override
+  String get admin_payments_notConfigured => 'غير مُهيّأ';
+
+  @override
+  String get admin_payments_configure => 'تهيئة';
+
+  @override
+  String get admin_payments_testConnection => 'اختبار الاتصال';
+
+  @override
+  String admin_payments_couldNotUpdate(String name, String error) {
+    return 'تعذر تحديث $name: $error';
+  }
+
+  @override
+  String get admin_payments_testingConnection => 'جارٍ اختبار الاتصال…';
+
+  @override
+  String get admin_payments_connectionOk => 'الاتصال ناجح';
+
+  @override
+  String get admin_payments_connectionFailed => 'فشل الاتصال';
+
+  @override
+  String admin_payments_credentialsVerified(String name) {
+    return 'تم التحقق من البيانات بنجاح مع $name.';
+  }
+
+  @override
+  String get admin_payments_unknownError => 'خطأ غير معروف';
+
+  @override
+  String get admin_payments_okButton => 'حسناً';
+
+  @override
+  String admin_payments_testFailed(String error) {
+    return 'فشل الاختبار: $error';
+  }
+
+  @override
+  String get admin_payments_credentialsSaved => 'تم حفظ بيانات الاعتماد بنجاح';
+
+  @override
+  String get admin_payments_credentialsSaveFailed => 'فشل حفظ بيانات الاعتماد';
+
+  @override
+  String admin_payments_credentialsTitle(String name) {
+    return 'بيانات اعتماد $name';
+  }
+
+  @override
+  String get admin_payments_credentialsSecureNotice => 'يتم تخزين بيانات الاعتماد هذه بشكل آمن واستخدامها من قبل بوابة الدفع.';
+
+  @override
+  String get admin_payments_connectionSuccessful => 'الاتصال ناجح — بيانات الاعتماد صحيحة.';
+
+  @override
+  String get admin_payments_connectionFailedShort => 'فشل الاتصال.';
+
+  @override
+  String get admin_payments_saveCredentials => 'حفظ بيانات الاعتماد';
+
+  @override
+  String get admin_payments_testingEllipsis => 'جارٍ الاختبار…';
+
+  @override
+  String get admin_invoice_title => 'فاتورة';
+
+  @override
+  String get admin_invoice_invoiceNoLabel => 'رقم الفاتورة';
+
+  @override
+  String get admin_invoice_dateLabel => 'التاريخ';
+
+  @override
+  String get admin_invoice_billTo => 'فاتورة إلى';
+
+  @override
+  String get admin_invoice_items => 'العناصر';
+
+  @override
+  String get admin_invoice_subtotal => 'المجموع الفرعي';
+
+  @override
+  String get admin_invoice_discount => 'الخصم';
+
+  @override
+  String get admin_invoice_tax => 'الضريبة';
+
+  @override
+  String get admin_invoice_total => 'الإجمالي';
+
+  @override
+  String get admin_invoice_balanceDue => 'المبلغ المستحق';
+
+  @override
+  String get admin_invoice_paymentDetails => 'تفاصيل الدفع';
+
+  @override
+  String get admin_invoice_description => 'الوصف';
+
+  @override
+  String get admin_invoice_qty => 'الكمية';
+
+  @override
+  String get admin_invoice_price => 'السعر';
+
+  @override
+  String get admin_invoice_itemTotalColumn => 'الإجمالي';
+
+  @override
+  String admin_invoice_receivedBy(String name) {
+    return 'استلمه: $name';
+  }
+
+  @override
+  String admin_invoice_dueAmount(String amount) {
+    return 'مستحق: $amount';
+  }
+
+  @override
+  String get admin_classes_capacity => 'السعة';
+
+  @override
+  String get admin_classes_statusCancelled => 'ملغاة';
+
+  @override
+  String get admin_classes_statusCompleted => 'مكتملة';
+
+  @override
+  String get admin_classes_nearlyFull => 'ممتلئة تقريباً';
+
+  @override
+  String get adminAppBar_allBranches => 'كل الفروع';
+
+  @override
+  String get admin_branches_editBranchTitle => 'تعديل الفرع';
+
+  @override
+  String get admin_branches_addBranchTitle => 'إضافة فرع';
+
+  @override
+  String get admin_branches_updatedSuccess => 'تم تحديث الفرع بنجاح';
+
+  @override
+  String get admin_branches_createdSuccess => 'تم إنشاء الفرع بنجاح';
+
+  @override
+  String get admin_branches_sectionBasicInfo => 'المعلومات الأساسية';
+
+  @override
+  String get admin_branches_nameHintAlt => 'مثال: فرع وسط البلد';
+
+  @override
+  String get admin_branches_cityLocationLabel => 'المدينة / الموقع';
+
+  @override
+  String get admin_branches_cityHintAlt => 'مثال: بيروت';
+
+  @override
+  String get admin_branches_enterValidEmail => 'أدخل بريداً إلكترونياً صحيحاً';
+
+  @override
+  String get admin_branches_openingTimeLabel => 'وقت الفتح';
+
+  @override
+  String get admin_branches_closingTimeLabel => 'وقت الإغلاق';
+
+  @override
+  String get admin_branches_statusSection => 'الحالة';
+
+  @override
+  String get admin_branches_open24Hours => 'مفتوح 24 ساعة';
+
+  @override
+  String get admin_branches_createBranchButton => 'إنشاء فرع';
+
+  @override
+  String get admin_branches_selectOpeningTime => 'يرجى اختيار وقت الفتح';
+
+  @override
+  String get admin_branches_selectClosingTime => 'يرجى اختيار وقت الإغلاق';
+
+  @override
+  String get admin_branches_detailTitle => 'تفاصيل الفرع';
+
+  @override
+  String get admin_branches_deletedSuccess => 'تم حذف الفرع بنجاح';
+
+  @override
+  String get admin_branches_phoneLabel => 'الهاتف';
+
+  @override
+  String get admin_branches_emailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get admin_branches_addressLabel => 'العنوان';
+
+  @override
+  String get admin_branches_trainers => 'المدربون';
+
+  @override
+  String get admin_branches_deleteTitle => 'حذف الفرع';
+
+  @override
+  String admin_branches_deleteConfirmMessage(String name) {
+    return 'حذف $name؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get admin_branches_deleteAction => 'حذف';
+
+  @override
+  String get admin_reception_removeTitle => 'إزالة موظف';
+
+  @override
+  String admin_reception_removeMessage(String name) {
+    return 'إزالة $name من طاقم الاستقبال؟';
+  }
+
+  @override
+  String get admin_reception_addStaff => 'إضافة موظف';
+
+  @override
+  String get admin_reception_removeError => 'فشلت إزالة الموظف. حاول مرة أخرى.';
+
+  @override
+  String get admin_reception_loadError => 'تعذر تحميل طاقم الاستقبال';
+
+  @override
+  String get admin_reception_noStaffYet => 'لا يوجد طاقم استقبال بعد';
+
+  @override
+  String get admin_reception_noStaffHint => 'اضغط على زر + لتعيين عضو لدور الاستقبال.';
+
+  @override
+  String admin_reception_staffSince(String date) {
+    return 'منذ $date';
+  }
+
+  @override
+  String get admin_reception_badge => 'استقبال';
+
+  @override
+  String admin_plans_percentOffLabel(String value) {
+    return 'خصم $value%';
+  }
+
+  @override
+  String admin_plans_amountOffLabel(String value) {
+    return 'خصم $value ₹';
+  }
+
+  @override
+  String get trainingVideos_newCategoryTitle => 'فئة جديدة';
+
+  @override
+  String get trainingVideos_categoryNameHint => 'مثال: كارديو، تقوية، يوغا...';
+
+  @override
+  String get trainingVideos_categoryNameLabel => 'اسم الفئة';
+
+  @override
+  String get trainingVideos_addCategoryAction => 'إضافة';
+
+  @override
+  String get trainingVideos_selectOrCreateCategoryError => 'يرجى اختيار فئة أو إنشاء واحدة';
+
+  @override
+  String get trainingVideos_selectCategoryError => 'يرجى اختيار فئة';
+
+  @override
+  String get trainingVideos_durationMustBePositive => 'يجب أن تكون المدة أكبر من 0';
+
+  @override
+  String get trainingVideos_addedSuccess => 'تمت إضافة الفيديو بنجاح';
+
+  @override
+  String get trainingVideos_updatedSuccess => 'تم تحديث الفيديو بنجاح';
+
+  @override
+  String trainingVideos_categoryCreatedSuccess(String name) {
+    return 'تم إنشاء الفئة \"$name\" واختيارها';
+  }
+
+  @override
+  String trainingVideos_categoryCreateFailed(String message) {
+    return 'فشل: $message';
+  }
+
+  @override
+  String get trainingVideos_basicInfoSection => 'المعلومات الأساسية';
+
+  @override
+  String get trainingVideos_titleLabel => 'العنوان *';
+
+  @override
+  String get trainingVideos_titleRequired => 'العنوان مطلوب';
+
+  @override
+  String get trainingVideos_descriptionLabel => 'الوصف (اختياري)';
+
+  @override
+  String get trainingVideos_categorySection => 'الفئة';
+
+  @override
+  String get trainingVideos_categoryLabel => 'الفئة *';
+
+  @override
+  String get trainingVideos_selectCategoryHint => 'اختر فئة';
+
+  @override
+  String get trainingVideos_addNewCategoryTooltip => 'إضافة فئة جديدة';
+
+  @override
+  String get trainingVideos_trainerSection => 'المدرب';
+
+  @override
+  String get trainingVideos_assignTrainerLabel => 'تعيين للمدرب *';
+
+  @override
+  String get trainingVideos_selectTrainerHint => 'اختر مدرباً';
+
+  @override
+  String get trainingVideos_assignTrainerRequired => 'يرجى تعيين مدرب';
+
+  @override
+  String trainingVideos_postedByYou(String id) {
+    return 'نشرته أنت (رقم المدرب: $id)';
+  }
+
+  @override
+  String get trainingVideos_videoSection => 'الفيديو';
+
+  @override
+  String get trainingVideos_pickVideoButton => 'اختر فيديو من الهاتف';
+
+  @override
+  String get trainingVideos_videoUrlLabel => 'رابط الفيديو (يوتيوب / فيميو)';
+
+  @override
+  String get trainingVideos_durationSection => 'المدة *';
+
+  @override
+  String get trainingVideos_readingDuration => 'قراءة مدة الفيديو…';
+
+  @override
+  String get trainingVideos_autoFilledNotice => 'تمت التعبئة تلقائياً من الفيديو — يمكنك التعديل أدناه';
+
+  @override
+  String get trainingVideos_minutesLabel => 'دقائق';
+
+  @override
+  String get trainingVideos_secondsLabel => 'ثواني';
+
+  @override
+  String get trainingVideos_requiredField => 'مطلوب';
+
+  @override
+  String get trainingVideos_invalidField => 'غير صالح';
+
+  @override
+  String get trainingVideos_secondsRangeError => '0–59';
+
+  @override
+  String get trainingVideos_thumbnailSection => 'الصورة المصغرة (اختياري)';
+
+  @override
+  String get trainingVideos_fromVideoOption => 'من الفيديو';
+
+  @override
+  String get trainingVideos_customOption => 'مخصصة';
+
+  @override
+  String get trainingVideos_pickVideoFirstNotice => 'اختر فيديو أعلاه لاستخراج صورة مصغرة تلقائياً';
+
+  @override
+  String get trainingVideos_extractingThumbnail => 'جارٍ استخراج الصورة المصغرة…';
+
+  @override
+  String get trainingVideos_reextractButton => 'إعادة الاستخراج';
+
+  @override
+  String get trainingVideos_extractFailedNotice => 'تعذر استخراج الصورة المصغرة';
+
+  @override
+  String get trainingVideos_pickFromGalleryButton => 'اختر من المعرض';
+
+  @override
+  String get trainingVideos_orEnterUrl => 'أو أدخل رابطاً';
+
+  @override
+  String get trainingVideos_thumbnailUrlLabel => 'رابط الصورة المصغرة';
+
+  @override
+  String get trainingVideos_publishedLabel => 'منشور';
+
+  @override
+  String get trainingVideos_publishedSubtitle => 'مرئي للأعضاء فوراً';
+
+  @override
+  String get trainingVideos_addVideoButton => 'إضافة فيديو';
+
+  @override
+  String get trainingVideos_saveChangesButton => 'حفظ التغييرات';
+
+  @override
+  String get trainingVideos_editPageTitle => 'تعديل الفيديو';
+
+  @override
+  String get trainingVideos_addPageTitle => 'إضافة فيديو تدريبي';
+
+  @override
+  String get trainingVideos_reassignTrainerLabel => 'إعادة تعيين المدرب (اختياري)';
+
+  @override
+  String get trainingVideos_keepCurrentTrainerHint => 'الاحتفاظ بالمدرب الحالي';
+
+  @override
+  String get trainingVideos_replaceVideoButton => 'استبدال ملف الفيديو (اختياري)';
+
+  @override
+  String get trainingVideos_noAuthToken => 'لم يتم العثور على رمز الدخول. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get trainingVideos_deleteTitle => 'حذف الفيديو';
+
+  @override
+  String trainingVideos_deleteConfirm(String title) {
+    return 'حذف \"$title\"؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get trainingVideos_categoryFallback => 'فئة';
+
+  @override
+  String get trainingVideos_playAction => 'تشغيل';
+
+  @override
+  String get trainingVideos_editAction => 'تعديل';
+
+  @override
+  String get trainingVideos_draftBadge => 'مسودة';
+
+  @override
+  String get trainingVideos_noVideoUrl => 'لا يوجد رابط فيديو متاح';
 }

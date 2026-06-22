@@ -7,7 +7,8 @@ class AdminInvoiceLoading extends AdminInvoiceState {}
 
 class AdminInvoiceLoaded extends AdminInvoiceState {
   final AdminInvoiceEntity invoice;
-  AdminInvoiceLoaded(this.invoice);
+  final bool wasPaymentRecorded;
+  AdminInvoiceLoaded(this.invoice, {this.wasPaymentRecorded = false});
 }
 
 class AdminInvoiceError extends AdminInvoiceState {

@@ -22,12 +22,12 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
   final GetTodayCheckinsUseCase getTodayCheckins;
   final ScanQrCheckinUseCase    scanQrCheckin;
   final CheckOutMemberUseCase   checkOutMember;
-  final FreezeMemberUseCase     freezeMember;
   final BlockMemberUseCase      blockMember;
 
   /// The branch the admin is currently managing.
-  /// Passed in from the router so the BLoC always knows which branch to query.
-  final int branchId;
+  /// Seeded from the router (defaults to 1) and corrected to the admin's
+  /// home branch — or switched explicitly — via [ChangeBranch].
+  int branchId;
 
   /// Last known search query — remembered so refreshes after actions re-apply it.
   String _lastSearch = '';
@@ -36,7 +36,6 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     required this.getTodayCheckins,
     required this.scanQrCheckin,
     required this.checkOutMember,
-    required this.freezeMember,
     required this.blockMember,
     required this.branchId,
   }) : super(const CheckinsInitial()) {
@@ -44,8 +43,8 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     on<SearchMembers>(_onSearch);
     on<ScanQrCode>(_onScanQr);
     on<CheckOutMember>(_onCheckOut);
-    on<FreezeMember>(_onFreeze);
     on<BlockMember>(_onBlock);
+    on<ChangeBranch>(_onChangeBranch);
   }
 
   // ── LoadTodayCheckins ──────────────────────────────────────────────────────
@@ -55,13 +54,15 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     final search = event.search ?? _lastSearch;
     _lastSearch  = search;
 
-    emit(const CheckinsLoading());
+    if (!event.silent) emit(const CheckinsLoading());
     try {
       final result = await getTodayCheckins(
           branchId: branchId, search: search.isEmpty ? null : search);
       emit(CheckinsLoaded(stats: result.stats, checkins: result.checkins));
     } catch (e) {
-      emit(CheckinsError(e.toString()));
+      // A silent background poll fails quietly — keep showing the last good
+      // list rather than blanking it out over one missed tick.
+      if (!event.silent) emit(CheckinsError(e.toString()));
     }
   }
 
@@ -84,11 +85,11 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
   Future<void> _onScanQr(
       ScanQrCode event, Emitter<CheckinsState> emit) async {
     try {
-      final memberName = await scanQrCheckin(
+      final result = await scanQrCheckin(
           token: event.token, branchId: branchId);
       // Emit success so the sheet can show the snackbar and close.
-      emit(CheckinsScanSuccess(memberName));
-      // Then immediately refresh the list so the new check-in appears.
+      emit(CheckinsScanSuccess(result.memberName, checkedOut: result.checkedOut));
+      // Then immediately refresh the list so the change appears.
       add(const LoadTodayCheckins());
     } catch (e) {
       emit(CheckinsActionError(e.toString()));
@@ -99,26 +100,9 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
   Future<void> _onCheckOut(
       CheckOutMember event, Emitter<CheckinsState> emit) async {
     try {
-      await checkOutMember(event.checkinId);
+      await checkOutMember(checkinId: event.checkinId, branchId: branchId);
       emit(const CheckinsActionSuccess('Member checked out successfully.'));
       add(const LoadTodayCheckins()); // refresh list
-    } catch (e) {
-      emit(CheckinsActionError(e.toString()));
-    }
-  }
-
-  // ── FreezeMember ───────────────────────────────────────────────────────────
-  Future<void> _onFreeze(
-      FreezeMember event, Emitter<CheckinsState> emit) async {
-    try {
-      await freezeMember(
-        userId:   event.userId,
-        fromDate: event.fromDate,
-        toDate:   event.toDate,
-        reason:   event.reason,
-      );
-      emit(const CheckinsActionSuccess('Membership frozen successfully.'));
-      add(const LoadTodayCheckins());
     } catch (e) {
       emit(CheckinsActionError(e.toString()));
     }
@@ -134,5 +118,13 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     } catch (e) {
       emit(CheckinsActionError(e.toString()));
     }
+  }
+
+  // ── ChangeBranch ───────────────────────────────────────────────────────────
+  Future<void> _onChangeBranch(
+      ChangeBranch event, Emitter<CheckinsState> emit) async {
+    if (event.branchId == branchId) return;
+    branchId = event.branchId;
+    add(const LoadTodayCheckins());
   }
 }

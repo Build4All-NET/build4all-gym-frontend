@@ -17,6 +17,7 @@ class SessionBookingItemModel {
   final String? paymentStatus;
   final String? paymentMethod;
   final int?    invoiceId;
+  final double? price;
 
   const SessionBookingItemModel({
     required this.bookingId,
@@ -29,6 +30,7 @@ class SessionBookingItemModel {
     this.paymentStatus,
     this.paymentMethod,
     this.invoiceId,
+    this.price,
   });
 
   factory SessionBookingItemModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class SessionBookingItemModel {
       paymentStatus:    json['paymentStatus']    as String?,
       paymentMethod:    json['paymentMethod']    as String?,
       invoiceId:        (json['invoiceId']       as num?)?.toInt(),
+      price:            (json['price']           as num?)?.toDouble(),
     );
   }
 
@@ -57,5 +60,6 @@ class SessionBookingItemModel {
     'paymentStatus':    paymentStatus,
     'paymentMethod':    paymentMethod,
     'invoiceId':        invoiceId,
+    'price':            price,
   };
 }

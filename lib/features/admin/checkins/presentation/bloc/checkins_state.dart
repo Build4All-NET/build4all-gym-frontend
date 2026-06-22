@@ -39,14 +39,17 @@ class CheckinsError extends CheckinsState {
 // ── QR scan result ─────────────────────────────────────────────────────────────
 
 /// Scan succeeded — [memberName] is shown in the green snackbar.
+/// [checkedOut] is true when this scan toggled an already-active member OUT
+/// instead of creating a new check-in, so the screen can word it correctly.
 class CheckinsScanSuccess extends CheckinsState {
   final String memberName;
-  const CheckinsScanSuccess(this.memberName);
+  final bool   checkedOut;
+  const CheckinsScanSuccess(this.memberName, {this.checkedOut = false});
 }
 
 // ── Card action results ────────────────────────────────────────────────────────
 
-/// Any card action (checkout, freeze, block) succeeded.
+/// Any card action (checkout, block) succeeded.
 /// [message] is shown in a green snackbar.
 class CheckinsActionSuccess extends CheckinsState {
   final String message;

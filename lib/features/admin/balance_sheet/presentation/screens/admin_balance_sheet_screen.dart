@@ -38,12 +38,21 @@ class _AdminBalanceSheetScreenState extends State<AdminBalanceSheetScreen> {
     final now = DateTime.now();
     final current = context.read<BalanceSheetCubit>().state;
     final initial = current is BalanceSheetLoaded ? current.customRange : null;
+
+    // Default the calendar to the current month so it opens with a full
+    // month already selected instead of an empty/arbitrary range.
+    final monthStart = DateTime(now.year, now.month, 1);
+    final monthEnd = DateTime(now.year, now.month + 1, 0);
+    final defaultRange = DateTimeRange(
+      start: monthStart,
+      end: monthEnd.isAfter(now) ? now : monthEnd,
+    );
+
     final picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(now.year - 5),
       lastDate: now,
-      initialDateRange: initial ??
-          DateTimeRange(start: now.subtract(const Duration(days: 7)), end: now),
+      initialDateRange: initial ?? defaultRange,
     );
     if (picked != null && context.mounted) {
       context.read<BalanceSheetCubit>().setRange(BalanceSheetRange.custom, customRange: picked);

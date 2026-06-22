@@ -15,7 +15,6 @@
 //   • pendingLocale     — pending locale (applied only on Save; null = system).
 //   • businessRules     — the 4 backend toggles (null while loading).
 //   • isBiometricEnabled— biometric toggle state.
-//   • isTwoFactorEnabled— 2FA toggle state.
 //   • errorMessage      — set when status == error.
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -50,7 +49,6 @@ class AdminSettingsState {
 
   // ── Account & Security ──────────────────────────────────────────────────────
   final bool isBiometricEnabled;
-  final bool isTwoFactorEnabled;
 
   const AdminSettingsState({
     required this.isDirty,
@@ -60,7 +58,6 @@ class AdminSettingsState {
     this.pendingLocale,
     this.businessRules,
     required this.isBiometricEnabled,
-    required this.isTwoFactorEnabled,
   });
 
   /// Initial state before any user interaction or API call completes.
@@ -71,7 +68,6 @@ class AdminSettingsState {
     pendingLocale: null,
     businessRules: null,
     isBiometricEnabled: false,
-    isTwoFactorEnabled: false,
   );
 
   /// Returns a copy of this state with only the specified fields replaced.
@@ -85,7 +81,6 @@ class AdminSettingsState {
     Object? pendingLocale = _sentinel,
     SettingsBusinessRulesEntity? businessRules,
     bool? isBiometricEnabled,
-    bool? isTwoFactorEnabled,
   }) {
     return AdminSettingsState(
       isDirty: isDirty ?? this.isDirty,
@@ -98,7 +93,6 @@ class AdminSettingsState {
           : pendingLocale as Locale?,
       businessRules: businessRules ?? this.businessRules,
       isBiometricEnabled: isBiometricEnabled ?? this.isBiometricEnabled,
-      isTwoFactorEnabled: isTwoFactorEnabled ?? this.isTwoFactorEnabled,
     );
   }
 }

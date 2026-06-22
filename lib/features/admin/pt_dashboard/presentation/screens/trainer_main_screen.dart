@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../l10n/app_localizations.dart';
 
+import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
@@ -412,7 +413,11 @@ class _MainShell extends StatelessWidget {
       if (isAdmin)
         _NavItem(icon: Icons.people_outline_rounded, label: l10n.trainer_navMore),
       _NavItem(icon: Icons.payments_outlined,      label: l10n.trainer_navIncome),
+      // Pushed as its own screen (not an IndexedStack page) — trainers have
+      // no drawer, so this is their only entry point to self check-in/out.
+      _NavItem(icon: Icons.qr_code_scanner_rounded, label: l10n.trainer_navCheckIn),
     ];
+    final checkInTabIndex = navItems.length - 1;
 
     final bodies = <Widget>[
       TrainerDashboardScreen(
@@ -523,7 +528,16 @@ class _MainShell extends StatelessWidget {
                 final isActive = i == currentIndex;
                 return Expanded(
                   child: GestureDetector(
-                    onTap:    () => onTabSwitch(i),
+                    onTap: () {
+                      if (i == checkInTabIndex) {
+                        Navigator.of(context).pushNamed(
+                          AppRouter.adminEmployeeCheckins,
+                          arguments: {'branchId': branchId},
+                        );
+                      } else {
+                        onTabSwitch(i);
+                      }
+                    },
                     behavior: HitTestBehavior.opaque,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

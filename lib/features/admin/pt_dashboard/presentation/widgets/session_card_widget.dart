@@ -147,7 +147,7 @@ class SessionCardWidget extends StatelessWidget {
                           fontSize: 13, color: Colors.grey[700], fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      '  ·  ${session.durationMinutes} min',
+                      '  ·  ${l10n.memberHomeDurationMinutes(session.durationMinutes)}',
                       style: TextStyle(fontSize: 13, color: Colors.grey[500]),
                     ),
                   ],
@@ -570,17 +570,25 @@ class _PaymentBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPaid = paymentStatus == 'PAID';
+    final isPartial = paymentStatus == 'PARTIAL';
+    final bg = isPaid
+        ? const Color(0xFFD1FAE5)
+        : isPartial
+            ? const Color(0xFFFEE2E2)
+            : const Color(0xFFFEF3C7);
+    final fg = isPaid
+        ? const Color(0xFF059669)
+        : isPartial
+            ? const Color(0xFFDC2626)
+            : const Color(0xFFD97706);
     return Container(
       padding:    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color:        isPaid ? const Color(0xFFD1FAE5) : const Color(0xFFFEF3C7),
+        color:        bg,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(paymentStatus,
-          style: TextStyle(
-              fontSize:   11,
-              fontWeight: FontWeight.w600,
-              color:      isPaid ? const Color(0xFF059669) : const Color(0xFFD97706))),
+          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
     );
   }
 }

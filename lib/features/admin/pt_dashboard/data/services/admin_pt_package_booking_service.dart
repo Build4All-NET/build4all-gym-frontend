@@ -36,12 +36,20 @@ class AdminPtPackageBookingService {
   }
 
   // POST /api/admin/pt-package-bookings/{id}/confirm-cash
-  Future<Map<String, dynamic>> confirmCash(int bookingId) async {
+  // amountPaid: omit (or pass null) for full payment; pass a lower amount to
+  // record a partial cash payment — the package still activates but its
+  // sessions stay out of trainer income until the balance is settled via
+  // the Invoices screen's "Record Payment" action.
+  Future<Map<String, dynamic>> confirmCash(int bookingId, {double? amountPaid}) async {
     final uri = Uri.parse(
       '${Env.apiProjectBaseUrl}/api/admin/pt-package-bookings/$bookingId/confirm-cash',
     );
     try {
-      final response = await _client.post(uri, headers: _headers());
+      final response = await _client.post(
+        uri,
+        headers: _headers(),
+        body: amountPaid != null ? jsonEncode({'amountPaid': amountPaid}) : null,
+      );
       final body = _decode(response);
       debugPrint('ADMIN PT PKG CONFIRM STATUS: ${response.statusCode}');
       if (response.statusCode == 200 || response.statusCode == 201) {

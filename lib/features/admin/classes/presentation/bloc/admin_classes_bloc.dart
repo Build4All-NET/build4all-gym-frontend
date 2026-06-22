@@ -27,6 +27,7 @@ import '../../domain/usecases/get_class_form_options_usecase.dart';
 import '../../domain/usecases/get_classes_by_date_usecase.dart';
 import '../../domain/usecases/get_session_bookings_usecase.dart';
 import '../../domain/usecases/reactivate_class_usecase.dart';
+import '../../domain/usecases/record_invoice_payment_usecase.dart';
 import '../../domain/usecases/update_class_usecase.dart';
 import 'admin_classes_event.dart';
 import 'admin_classes_state.dart';
@@ -43,6 +44,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
   final RejectBookingUseCase         _rejectBooking;
   final ApproveCancellationUseCase   _approveCancellation;
   final DeclineCancellationUseCase   _declineCancellation;
+  final RecordInvoicePaymentUseCase  _recordInvoicePayment;
 
   // The date the admin is currently viewing — persisted across events
   // so after a mutation we can refresh the right date's list
@@ -60,6 +62,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     required RejectBookingUseCase         rejectBooking,
     required ApproveCancellationUseCase   approveCancellation,
     required DeclineCancellationUseCase   declineCancellation,
+    required RecordInvoicePaymentUseCase  recordInvoicePayment,
   })  : _getClassesByDate      = getClassesByDate,
         _getClassFormOptions    = getClassFormOptions,
         _createClass            = createClass,
@@ -71,6 +74,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
         _rejectBooking          = rejectBooking,
         _approveCancellation    = approveCancellation,
         _declineCancellation    = declineCancellation,
+        _recordInvoicePayment   = recordInvoicePayment,
         super(ClassesInitial()) {
 
     on<ClassesStarted>(_onClassesStarted);
@@ -85,6 +89,7 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
     on<RejectBookingRequested>(_onRejectBooking);
     on<ApproveCancellationRequested>(_onApproveCancellation);
     on<DeclineCancellationRequested>(_onDeclineCancellation);
+    on<CollectBookingBalanceRequested>(_onCollectBookingBalance);
   }
 
   // ── ClassesStarted ──────────────────────────────────────────────────────
@@ -212,8 +217,23 @@ class AdminClassesBloc extends Bloc<AdminClassesEvent, AdminClassesState> {
   Future<void> _onConfirmBookingPayment(
       ConfirmBookingPaymentRequested event, Emitter<AdminClassesState> emit) async {
     try {
-      await _confirmBookingPayment(event.bookingId);
+      await _confirmBookingPayment(event.bookingId, amountPaid: event.amountPaid);
       // Reload bookings for this session to reflect updated payment status
+      final bookings = await _getSessionBookings(event.sessionId);
+      emit(SessionBookingsLoaded(event.sessionId, bookings, wasPaymentConfirmed: true));
+    } catch (e) {
+      emit(SessionBookingsError(
+        sessionId: event.sessionId,
+        message: e.toString(),
+      ));
+    }
+  }
+
+  // ── CollectBookingBalanceRequested ──────────────────────────────────────────
+  Future<void> _onCollectBookingBalance(
+      CollectBookingBalanceRequested event, Emitter<AdminClassesState> emit) async {
+    try {
+      await _recordInvoicePayment(event.invoiceId, event.amount);
       final bookings = await _getSessionBookings(event.sessionId);
       emit(SessionBookingsLoaded(event.sessionId, bookings, wasPaymentConfirmed: true));
     } catch (e) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/expense_stats_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class ExpenseStatsCardWidget extends StatelessWidget {
   final ExpenseStatsEntity stats;
@@ -12,6 +13,7 @@ class ExpenseStatsCardWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final card   = tokens.card;
+    final l10n   = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -19,7 +21,7 @@ class ExpenseStatsCardWidget extends StatelessWidget {
         children: [
           _StatCard(
             value:      '₹${stats.totalThisMonth.toStringAsFixed(0)}',
-            label:      'This Month',
+            label:      l10n.admin_expenses_thisMonth,
             valueColor: c.primary,
             surface:    c.surface,
             cardRadius: card.radius,
@@ -27,7 +29,7 @@ class ExpenseStatsCardWidget extends StatelessWidget {
           const SizedBox(width: 10),
           _StatCard(
             value:      '₹${stats.totalAllTime.toStringAsFixed(0)}',
-            label:      'All Time',
+            label:      l10n.admin_expenses_allTime,
             valueColor: c.danger,
             surface:    c.surface,
             cardRadius: card.radius,
@@ -35,7 +37,7 @@ class ExpenseStatsCardWidget extends StatelessWidget {
           const SizedBox(width: 10),
           _StatCard(
             value:      stats.countThisMonth.toString(),
-            label:      'Entries This Month',
+            label:      l10n.admin_expenses_entriesThisMonth,
             valueColor: c.success,
             surface:    c.surface,
             cardRadius: card.radius,

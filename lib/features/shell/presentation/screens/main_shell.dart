@@ -18,6 +18,7 @@ import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
 
 import 'package:build4allgym/features/member/home/presentation/screens/member_home_screen.dart';
 import 'package:build4allgym/features/member/home/presentation/widgets/member_bottom_nav_bar.dart';
+import 'package:build4allgym/features/member/pt/presentation/screens/member_pt_screen.dart';
 
 import 'package:build4allgym/features/member/home/data/services/member_home_remote_datasource.dart';
 import 'package:build4allgym/features/member/home/data/repositories/member_home_repository_impl.dart';
@@ -213,11 +214,20 @@ class _MainShellState extends State<MainShell> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_outline_rounded),
-              title: Text(l10n.memberBottomNavAccount),
+              leading: const Icon(Icons.fitness_center_rounded),
+              title: Text(l10n.memberBottomNavBookTrainer),
               selected: _currentIndex == 4,
               onTap: () {
                 setState(() => _currentIndex = 4);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_outline_rounded),
+              title: Text(l10n.memberBottomNavAccount),
+              selected: _currentIndex == 5,
+              onTap: () {
+                setState(() => _currentIndex = 5);
                 Navigator.pop(context);
               },
             ),
@@ -290,6 +300,8 @@ class _MainShellState extends State<MainShell> {
         ),
       ),
     ),
+
+    const MemberPtScreen(showBackButton: false),
 
     MultiBlocProvider(
       providers: [

@@ -101,9 +101,7 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
     final l10n       = AppLocalizations.of(context)!;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Container(
+    return Container(
         padding: EdgeInsets.only(bottom: bottomInset),
         decoration: BoxDecoration(
           color: c.surface,
@@ -340,7 +338,6 @@ class _AddEditStaffBottomSheetState extends State<AddEditStaffBottomSheet> {
             ),
           ),
         ),
-      ),
     );
   }
 

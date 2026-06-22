@@ -7,6 +7,7 @@ import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/AppBar/data/models/branch_option_model.dart';
 import '../../../../admin/AppBar/data/services/admin_branches_service.dart';
 import '../../data/services/admin_trainers_service.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class ConfigureTrainerSheet extends StatefulWidget {
   final int    userId;
@@ -87,8 +88,9 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedBranches.isEmpty) {
-      setState(() => _error = 'Select at least one branch.');
+      setState(() => _error = l10n.configureTrainer_selectBranchError);
       return;
     }
     setState(() { _submitting = true; _error = null; });
@@ -107,9 +109,9 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
       if (!mounted) return;
       Navigator.pop(context);
       widget.onConfigured();
-      AppToast.success(context, '${widget.trainerName} is fully set up as a trainer.');
+      AppToast.success(context, l10n.configureTrainer_setupSuccess(widget.trainerName));
     } catch (e) {
-      if (mounted) setState(() { _submitting = false; _error = 'Failed to save. Please try again.'; });
+      if (mounted) setState(() { _submitting = false; _error = l10n.configureTrainer_saveFailed; });
     }
   }
 
@@ -118,6 +120,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final mq     = MediaQuery.of(context);
+    final l10n   = AppLocalizations.of(context)!;
 
     return Container(
       height: mq.size.height * 0.9,
@@ -155,7 +158,7 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Set Up Trainer Profile',
+                      Text(l10n.configureTrainer_title,
                           style: TextStyle(
                             color: c.primary,
                             fontWeight: FontWeight.bold,
@@ -186,25 +189,25 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Branch selection ─────────────────────────────────────
-                  _sectionLabel('Branches *', c),
+                  _sectionLabel(l10n.configureTrainer_branchesLabel, c),
                   const SizedBox(height: 8),
                   _loadingBranches
                       ? Center(child: CircularProgressIndicator(color: c.primary))
                       : _branches.isEmpty
-                          ? Text('No branches found.',
+                          ? Text(l10n.configureTrainer_noBranchesFound,
                               style: TextStyle(color: c.body, fontSize: 13))
                           : _branchChips(c),
                   const SizedBox(height: 20),
 
                   // ── Specialties ──────────────────────────────────────────
-                  _sectionLabel('Specialties', c),
+                  _sectionLabel(l10n.configureTrainer_specialtiesLabel, c),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
                         child: _textField(
                           controller: _specialtyController,
-                          hint: 'e.g. Fat Loss, Strength…',
+                          hint: l10n.configureTrainer_specialtyHint,
                           c: c,
                           onSubmitted: (_) => _addSpecialty(),
                         ),
@@ -226,11 +229,11 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                   const SizedBox(height: 20),
 
                   // ── Years of experience ──────────────────────────────────
-                  _sectionLabel('Years of Experience', c),
+                  _sectionLabel(l10n.configureTrainer_yearsLabel, c),
                   const SizedBox(height: 8),
                   _textField(
                     controller: _yearsController,
-                    hint: 'e.g. 5',
+                    hint: l10n.configureTrainer_yearsHint,
                     c: c,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -238,11 +241,11 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                   const SizedBox(height: 20),
 
                   // ── Notes ────────────────────────────────────────────────
-                  _sectionLabel('Bio / Notes (optional)', c),
+                  _sectionLabel(l10n.configureTrainer_notesLabel, c),
                   const SizedBox(height: 8),
                   _textField(
                     controller: _notesController,
-                    hint: 'Brief bio or admin notes…',
+                    hint: l10n.configureTrainer_notesHint,
                     c: c,
                     maxLines: 3,
                   ),
@@ -265,8 +268,8 @@ class _ConfigureTrainerSheetState extends State<ConfigureTrainerSheet> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text('Save & Finish',
-                              style: TextStyle(
+                          : Text(l10n.configureTrainer_saveButton,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,

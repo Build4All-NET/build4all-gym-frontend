@@ -36,16 +36,20 @@ class PlanDetailScreenProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final remoteDatasource = MemberPlansRemoteDatasourceImpl(dio: dio);
-    final repository = MemberPlansRepositoryImpl(remoteDatasource: remoteDatasource);
+    final repository = MemberPlansRepositoryImpl(
+      remoteDatasource: remoteDatasource,
+    );
 
     return BlocProvider(
       create: (_) => PlanDetailBloc(
-        getPlanDetail:         GetPlanDetailUseCase(repository: repository),
-        validateCoupon:        ValidateCouponUseCase(repository: repository),
-        getPaymentMethods:     GetPaymentMethodsUseCase(repository: repository),
-        checkout:              CheckoutUseCase(repository: repository),
-        confirmStripePayment:  ConfirmStripePaymentUseCase(repository: repository),
-        checkPaymentStatus:    CheckPaymentStatusUseCase(repository: repository),
+        getPlanDetail: GetPlanDetailUseCase(repository: repository),
+        validateCoupon: ValidateCouponUseCase(repository: repository),
+        getPaymentMethods: GetPaymentMethodsUseCase(repository: repository),
+        checkout: CheckoutUseCase(repository: repository),
+        confirmStripePayment: ConfirmStripePaymentUseCase(
+          repository: repository,
+        ),
+        checkPaymentStatus: CheckPaymentStatusUseCase(repository: repository),
       )..add(LoadPlanDetailEvent(planId: planId)),
       child: PlanDetailScreen(planId: planId),
     );
@@ -75,198 +79,199 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: BlocConsumer<PlanDetailBloc, PlanDetailState>(
-        listenWhen: (_, curr) =>
-        curr is PlanDetailCheckoutSuccess ||
-            curr is PlanDetailCheckoutError ||
-            curr is PlanDetailOnlinePaymentReady,
-        listener: (context, state) {
-          if (state is PlanDetailCheckoutSuccess) {
-            _showCheckoutResult(context, state.result, tokens, l10n);
-          } else if (state is PlanDetailCheckoutError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: tokens.colors.danger,
-              ),
-            );
-          } else if (state is PlanDetailOnlinePaymentReady) {
-            _handleOnlinePayment(context, state, tokens);
-          }
-        },
-        builder: (context, state) {
-          // Use previousState for transient states so the screen stays visible
-          final PlanDetailState renderState;
-          if (state is PlanDetailCheckoutError) {
-            renderState = state.previousState;
-          } else if (state is PlanDetailOnlinePaymentReady) {
-            renderState = state.previousState;
-          } else {
-            renderState = state;
-          }
+    return BlocConsumer<PlanDetailBloc, PlanDetailState>(
+      listenWhen: (_, curr) =>
+          curr is PlanDetailCheckoutSuccess ||
+          curr is PlanDetailCheckoutError ||
+          curr is PlanDetailOnlinePaymentReady,
+      listener: (context, state) {
+        if (state is PlanDetailCheckoutSuccess) {
+          _showCheckoutResult(context, state.result, tokens, l10n);
+        } else if (state is PlanDetailCheckoutError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: tokens.colors.danger,
+            ),
+          );
+        } else if (state is PlanDetailOnlinePaymentReady) {
+          _handleOnlinePayment(context, state, tokens);
+        }
+      },
+      builder: (context, state) {
+        // Use previousState for transient states so the screen stays visible
+        final PlanDetailState renderState;
+        if (state is PlanDetailCheckoutError) {
+          renderState = state.previousState;
+        } else if (state is PlanDetailOnlinePaymentReady) {
+          renderState = state.previousState;
+        } else {
+          renderState = state;
+        }
 
-          if (renderState is PlanDetailLoading) {
-            return Scaffold(
-              backgroundColor: tokens.colors.background,
-              body: Center(
-                child: CircularProgressIndicator(color: tokens.colors.primary),
-              ),
-            );
-          }
+        if (renderState is PlanDetailLoading) {
+          return Scaffold(
+            backgroundColor: tokens.colors.background,
+            body: Center(
+              child: CircularProgressIndicator(color: tokens.colors.primary),
+            ),
+          );
+        }
 
-          if (renderState is PlanDetailError) {
-            return Scaffold(
-              backgroundColor: tokens.colors.background,
-              body: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        renderState.message,
-                        textAlign: TextAlign.center,
-                        style: tokens.typography.bodyMedium
-                            .copyWith(color: tokens.colors.danger, fontWeight: FontWeight.w700),
+        if (renderState is PlanDetailError) {
+          return Scaffold(
+            backgroundColor: tokens.colors.background,
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      renderState.message,
+                      textAlign: TextAlign.center,
+                      style: tokens.typography.bodyMedium.copyWith(
+                        color: tokens.colors.danger,
+                        fontWeight: FontWeight.w700,
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(l10n.back),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l10n.back),
+                    ),
+                  ],
                 ),
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          if (renderState is PlanDetailLoaded) {
-            final loaded = renderState;
-            final plan = loaded.plan;
+        if (renderState is PlanDetailLoaded) {
+          final loaded = renderState;
+          final plan = loaded.plan;
 
-            return Scaffold(
-              backgroundColor: tokens.colors.background,
-              body: Stack(
-                children: [
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          tokens.colors.primary,
-                          tokens.colors.success.withOpacity(0.88),
-                        ],
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(19),
-                        bottomRight: Radius.circular(19),
-                      ),
+          return Scaffold(
+            backgroundColor: tokens.colors.background,
+            body: Stack(
+              children: [
+                Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        tokens.colors.primary,
+                        tokens.colors.success.withOpacity(0.88),
+                      ],
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(19),
+                      bottomRight: Radius.circular(19),
                     ),
                   ),
-                  SafeArea(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _HeaderTitle(planName: plan.name),
-                          const SizedBox(height: 28),
+                ),
+                SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _HeaderTitle(planName: plan.name),
+                        const SizedBox(height: 28),
 
-                          _CheckoutPlanCard(plan: plan, coupon: loaded.coupon),
+                        _CheckoutPlanCard(plan: plan, coupon: loaded.coupon),
 
-                          SizedBox(height: tokens.spacing.lg),
+                        SizedBox(height: tokens.spacing.lg),
 
-                          _CouponCard(
-                            planId: widget.planId,
-                            couponController: _couponController,
-                            coupon: loaded.coupon,
-                            isCouponValidating: loaded.isCouponValidating,
-                          ),
+                        _CouponCard(
+                          planId: widget.planId,
+                          couponController: _couponController,
+                          coupon: loaded.coupon,
+                          isCouponValidating: loaded.isCouponValidating,
+                        ),
 
-                          SizedBox(height: tokens.spacing.lg),
+                        SizedBox(height: tokens.spacing.lg),
 
-                          _PaymentMethodsCard(
-                            methods: loaded.paymentMethods,
-                            selectedMethod: loaded.selectedPaymentMethod,
-                            isLoading: loaded.isPaymentMethodsLoading,
-                            tokens: tokens,
-                          ),
+                        _PaymentMethodsCard(
+                          methods: loaded.paymentMethods,
+                          selectedMethod: loaded.selectedPaymentMethod,
+                          isLoading: loaded.isPaymentMethodsLoading,
+                          tokens: tokens,
+                        ),
 
-                          SizedBox(height: tokens.spacing.xl),
+                        SizedBox(height: tokens.spacing.xl),
 
-                          SizedBox(
-                            height: 56,
-                            child: ElevatedButton(
-                              onPressed: loaded.isSubmitting ||
-                                  loaded.selectedPaymentMethod == null
-                                  ? null
-                                  : () {
-                                final coupon = loaded.coupon?.valid == true
-                                    ? _couponController.text.trim()
-                                    : null;
-                                context.read<PlanDetailBloc>().add(
-                                  SubmitCheckoutEvent(
-                                    planId: widget.planId,
-                                    paymentMethod:
-                                    loaded.selectedPaymentMethod!,
-                                    couponCode: coupon,
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: tokens.colors.primary,
-                                foregroundColor: tokens.colors.onPrimary,
-                                disabledBackgroundColor:
-                                tokens.colors.primary.withOpacity(0.4),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                              ),
-                              child: loaded.isSubmitting
-                                  ? SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: tokens.colors.onPrimary,
-                                ),
-                              )
-                                  : Text(
-                                l10n.selectThisPlan,
-                                style: tokens.typography.bodyMedium.copyWith(
-                                  color: tokens.colors.onPrimary,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                        SizedBox(
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed:
+                                loaded.isSubmitting ||
+                                    loaded.selectedPaymentMethod == null
+                                ? null
+                                : () {
+                                    final coupon = loaded.coupon?.valid == true
+                                        ? _couponController.text.trim()
+                                        : null;
+                                    context.read<PlanDetailBloc>().add(
+                                      SubmitCheckoutEvent(
+                                        planId: widget.planId,
+                                        paymentMethod:
+                                            loaded.selectedPaymentMethod!,
+                                        couponCode: coupon,
+                                      ),
+                                    );
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: tokens.colors.primary,
+                              foregroundColor: tokens.colors.onPrimary,
+                              disabledBackgroundColor: tokens.colors.primary
+                                  .withOpacity(0.4),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
                               ),
                             ),
+                            child: loaded.isSubmitting
+                                ? SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: tokens.colors.onPrimary,
+                                    ),
+                                  )
+                                : Text(
+                                    l10n.selectThisPlan,
+                                    style: tokens.typography.bodyMedium
+                                        .copyWith(
+                                          color: tokens.colors.onPrimary,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                  ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            );
-          }
+                ),
+              ],
+            ),
+          );
+        }
 
-          return const SizedBox.shrink();
-        },
-      ),
+        return const SizedBox.shrink();
+      },
     );
   }
 
   void _showCheckoutResult(
-      BuildContext context,
-      CheckoutResultEntity result,
-      dynamic tokens,
-      AppLocalizations l10n,
-      ) {
+    BuildContext context,
+    CheckoutResultEntity result,
+    dynamic tokens,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
@@ -279,10 +284,10 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
   }
 
   void _handleOnlinePayment(
-      BuildContext context,
-      PlanDetailOnlinePaymentReady state,
-      dynamic tokens,
-      ) {
+    BuildContext context,
+    PlanDetailOnlinePaymentReady state,
+    dynamic tokens,
+  ) {
     final result = state.result;
 
     if (result.isStripe) {
@@ -293,10 +298,10 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
   }
 
   Future<void> _presentStripeSheet(
-      BuildContext context,
-      PlanDetailOnlinePaymentReady state,
-      dynamic tokens,
-      ) async {
+    BuildContext context,
+    PlanDetailOnlinePaymentReady state,
+    dynamic tokens,
+  ) async {
     try {
       Stripe.publishableKey = state.result.publishableKey!;
       await Stripe.instance.initPaymentSheet(
@@ -309,33 +314,42 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
 
       // Payment sheet closed successfully — confirm on our backend
       if (context.mounted) {
-        context.read<PlanDetailBloc>().add(ConfirmStripePaymentEvent(
-          previousState: state.previousState,
-          pendingResult: state.result,
-        ));
+        context.read<PlanDetailBloc>().add(
+          ConfirmStripePaymentEvent(
+            previousState: state.previousState,
+            pendingResult: state.result,
+          ),
+        );
       }
     } on StripeException catch (e) {
       if (context.mounted && e.error.code != FailureCode.Canceled) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.error.localizedMessage ?? 'Payment failed'),
-          backgroundColor: tokens.colors.danger,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.error.localizedMessage ??
+                  AppLocalizations.of(context)!.paymentSheetPaymentFailed,
+            ),
+            backgroundColor: tokens.colors.danger,
+          ),
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: tokens.colors.danger,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: tokens.colors.danger,
+          ),
+        );
       }
     }
   }
 
   Future<void> _launchRedirectPayment(
-      BuildContext context,
-      PlanDetailOnlinePaymentReady state,
-      dynamic tokens,
-      ) async {
+    BuildContext context,
+    PlanDetailOnlinePaymentReady state,
+    dynamic tokens,
+  ) async {
     final url = Uri.parse(state.result.redirectUrl!);
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -355,10 +369,12 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
         tokens: tokens,
         onDone: () {
           Navigator.of(ctx).pop();
-          context.read<PlanDetailBloc>().add(CheckRedirectPaymentEvent(
-            previousState: state.previousState,
-            pendingResult: state.result,
-          ));
+          context.read<PlanDetailBloc>().add(
+            CheckRedirectPaymentEvent(
+              previousState: state.previousState,
+              pendingResult: state.result,
+            ),
+          );
         },
         onRelaunch: () async {
           try {
@@ -386,63 +402,74 @@ class _WaitingForRedirectSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64, height: 64,
-              decoration: BoxDecoration(
-                color: c.primary.withOpacity(0.10),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.open_in_browser_rounded, color: c.primary, size: 34),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: c.primary.withOpacity(0.10),
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'أكمل الدفع في المتصفح',
-              style: tokens.typography.headlineSmall.copyWith(
-                color: c.label, fontWeight: FontWeight.w900,
-              ),
+            child: Icon(
+              Icons.open_in_browser_rounded,
+              color: c.primary,
+              size: 34,
             ),
-            const SizedBox(height: 8),
-            Text(
-              'تم فتح صفحة الدفع في المتصفح. أكمل عملية الدفع ثم ارجع هنا واضغط "تم".',
-              textAlign: TextAlign.center,
-              style: tokens.typography.bodyMedium.copyWith(color: c.muted, height: 1.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.paymentSheetCompleteInBrowserTitle,
+            style: tokens.typography.headlineSmall.copyWith(
+              color: c.label,
+              fontWeight: FontWeight.w900,
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity, height: 52,
-              child: ElevatedButton(
-                onPressed: onDone,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: c.primary,
-                  foregroundColor: c.onPrimary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.paymentSheetCompleteInBrowserMessage,
+            textAlign: TextAlign.center,
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.muted,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: onDone,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: c.primary,
+                foregroundColor: c.onPrimary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: Text(
-                  'تم — التحقق من الدفع',
-                  style: tokens.typography.bodyMedium.copyWith(
-                      color: c.onPrimary, fontWeight: FontWeight.w900),
-                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: onRelaunch,
               child: Text(
-                'إعادة فتح صفحة الدفع',
-                style: tokens.typography.bodyMedium.copyWith(color: c.primary),
+                l10n.paymentSheetDoneVerifyPayment,
+                style: tokens.typography.bodyMedium.copyWith(
+                  color: c.onPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: onRelaunch,
+            child: Text(
+              l10n.paymentSheetReopenPaymentPage,
+              style: tokens.typography.bodyMedium.copyWith(color: c.primary),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -466,18 +493,18 @@ class _PaymentMethodsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     return _WhiteCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection: TextDirection.rtl,
             children: [
               Icon(Icons.payment_outlined, color: c.primary, size: 22),
               SizedBox(width: tokens.spacing.sm),
               Text(
-                'طريقة الدفع',
+                l10n.memberInvoicesPaymentMethod,
                 style: tokens.typography.titleMedium.copyWith(
                   color: c.label,
                   fontWeight: FontWeight.w900,
@@ -498,19 +525,21 @@ class _PaymentMethodsCard extends StatelessWidget {
             )
           else if (methods.isEmpty)
             Text(
-              'لا توجد طرق دفع متاحة حالياً',
-              textAlign: TextAlign.right,
+              l10n.paymentSheetNoMethodsAvailable,
+              textAlign: TextAlign.start,
               style: tokens.typography.bodyMedium.copyWith(color: c.muted),
             )
           else
-            ...methods.map((method) => _PaymentMethodRow(
-              method: method,
-              isSelected: selectedMethod == method.name,
-              tokens: tokens,
-              onTap: () => context
-                  .read<PlanDetailBloc>()
-                  .add(SelectPaymentMethodEvent(methodName: method.name)),
-            )),
+            ...methods.map(
+              (method) => _PaymentMethodRow(
+                method: method,
+                isSelected: selectedMethod == method.name,
+                tokens: tokens,
+                onTap: () => context.read<PlanDetailBloc>().add(
+                  SelectPaymentMethodEvent(methodName: method.name),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -548,7 +577,6 @@ class _PaymentMethodRow extends StatelessWidget {
           ),
         ),
         child: Row(
-          textDirection: TextDirection.rtl,
           children: [
             Icon(
               _iconFor(method.name),
@@ -559,7 +587,7 @@ class _PaymentMethodRow extends StatelessWidget {
             Expanded(
               child: Text(
                 method.displayName,
-                textAlign: TextAlign.right,
+                textAlign: TextAlign.start,
                 style: tokens.typography.bodyMedium.copyWith(
                   color: isSelected ? c.primary : c.label,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
@@ -605,85 +633,99 @@ class _CheckoutResultSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final isPending = result.isPending;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: isPending
-                    ? const Color(0xFFFFF3CD)
-                    : c.success.withOpacity(0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                isPending ? Icons.hourglass_top_rounded : Icons.check_circle_outline,
-                color: isPending ? const Color(0xFF856404) : c.success,
-                size: 34,
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: isPending
+                  ? const Color(0xFFFFF3CD)
+                  : c.success.withOpacity(0.12),
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 16),
-            Text(
-              isPending ? 'في انتظار تأكيد الدفع' : 'تم الاشتراك بنجاح',
-              style: tokens.typography.headlineSmall.copyWith(
-                color: c.label,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
+            child: Icon(
               isPending
-                  ? 'تم إرسال طلبك إلى الإدارة. سيتم تفعيل اشتراكك بعد تأكيد استلام الدفع.'
-                  : 'تم تفعيل اشتراكك في "${result.planName}".',
-              textAlign: TextAlign.center,
-              style: tokens.typography.bodyMedium.copyWith(
-                color: c.muted,
-                height: 1.5,
+                  ? Icons.hourglass_top_rounded
+                  : Icons.check_circle_outline,
+              color: isPending ? const Color(0xFF856404) : c.success,
+              size: 34,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            isPending
+                ? l10n.paymentSheetPendingConfirmationTitle
+                : l10n.planSubscriptionSuccessTitle,
+            style: tokens.typography.headlineSmall.copyWith(
+              color: c.label,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isPending
+                ? l10n.planSubscriptionPendingMessage
+                : l10n.planSubscriptionActivatedMessage(result.planName),
+            textAlign: TextAlign.center,
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.muted,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _InfoRow(
+            label: l10n.planLabel,
+            value: result.planName,
+            tokens: tokens,
+          ),
+          _InfoRow(
+            label: l10n.totalAmount,
+            value: '\$ ${result.totalAmount.toStringAsFixed(2)}',
+            tokens: tokens,
+          ),
+          _InfoRow(
+            label: l10n.admin_plans_startDate,
+            value: result.startDate,
+            tokens: tokens,
+          ),
+          _InfoRow(
+            label: l10n.admin_plans_endDate,
+            value: result.endDate,
+            tokens: tokens,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: c.primary,
+                foregroundColor: c.onPrimary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: Text(
+                l10n.paymentSheetOkButton,
+                style: tokens.typography.bodyMedium.copyWith(
+                  color: c.onPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-            const SizedBox(height: 20),
-            _InfoRow(label: 'الخطة', value: result.planName, tokens: tokens),
-            _InfoRow(
-              label: 'المبلغ الإجمالي',
-              value: '\$ ${result.totalAmount.toStringAsFixed(2)}',
-              tokens: tokens,
-            ),
-            _InfoRow(label: 'تاريخ البداية', value: result.startDate, tokens: tokens),
-            _InfoRow(label: 'تاريخ الانتهاء', value: result.endDate, tokens: tokens),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: c.primary,
-                  foregroundColor: c.onPrimary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: Text(
-                  'حسناً',
-                  style: tokens.typography.bodyMedium.copyWith(
-                    color: c.onPrimary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -694,7 +736,11 @@ class _InfoRow extends StatelessWidget {
   final String value;
   final dynamic tokens;
 
-  const _InfoRow({required this.label, required this.value, required this.tokens});
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    required this.tokens,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -705,14 +751,18 @@ class _InfoRow extends StatelessWidget {
         children: [
           Text(
             value,
-            style: tokens.typography.bodyMedium
-                .copyWith(color: c.label, fontWeight: FontWeight.w700),
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.label,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const Spacer(),
           Text(
             label,
-            style: tokens.typography.bodyMedium
-                .copyWith(color: c.muted, fontWeight: FontWeight.w500),
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.muted,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -736,7 +786,11 @@ class _HeaderTitle extends StatelessWidget {
           backgroundColor: tokens.colors.onPrimary.withOpacity(0.18),
           child: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_rounded, color: tokens.colors.onPrimary, size: 22),
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: tokens.colors.onPrimary,
+              size: 22,
+            ),
           ),
         ),
         const Spacer(),
@@ -745,7 +799,7 @@ class _HeaderTitle extends StatelessWidget {
             planName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.right,
+            textAlign: TextAlign.start,
             style: tokens.typography.headlineSmall.copyWith(
               color: tokens.colors.onPrimary,
               fontSize: 24,
@@ -779,7 +833,6 @@ class _CheckoutPlanCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection: TextDirection.rtl,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
@@ -788,23 +841,29 @@ class _CheckoutPlanCard extends StatelessWidget {
                   children: [
                     Text(
                       l10n.selectedPlan,
-                      textAlign: TextAlign.right,
-                      style: tokens.typography.bodySmall
-                          .copyWith(color: tokens.colors.muted, fontWeight: FontWeight.w700),
+                      textAlign: TextAlign.start,
+                      style: tokens.typography.bodySmall.copyWith(
+                        color: tokens.colors.muted,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       plan.name,
-                      textAlign: TextAlign.right,
-                      style: tokens.typography.titleMedium
-                          .copyWith(color: tokens.colors.label, fontWeight: FontWeight.w900),
+                      textAlign: TextAlign.start,
+                      style: tokens.typography.titleMedium.copyWith(
+                        color: tokens.colors.label,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       _billingCycleLabel(l10n, plan.billingCycle),
-                      textAlign: TextAlign.right,
-                      style: tokens.typography.bodyMedium
-                          .copyWith(color: tokens.colors.muted, fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.start,
+                      style: tokens.typography.bodyMedium.copyWith(
+                        color: tokens.colors.muted,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -820,13 +879,17 @@ class _CheckoutPlanCard extends StatelessWidget {
               ),
             ],
           ),
-          if (plan.description != null && plan.description!.trim().isNotEmpty) ...[
+          if (plan.description != null &&
+              plan.description!.trim().isNotEmpty) ...[
             SizedBox(height: tokens.spacing.lg),
             Text(
               plan.description!,
-              textAlign: TextAlign.right,
-              style: tokens.typography.bodyMedium
-                  .copyWith(color: tokens.colors.body, fontWeight: FontWeight.w500, height: 1.5),
+              textAlign: TextAlign.start,
+              style: tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.body,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
             ),
           ],
           SizedBox(height: tokens.spacing.lg),
@@ -892,15 +955,20 @@ class _CouponCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection: TextDirection.rtl,
             children: [
-              Icon(Icons.local_offer_outlined, color: tokens.colors.primary, size: 22),
+              Icon(
+                Icons.local_offer_outlined,
+                color: tokens.colors.primary,
+                size: 22,
+              ),
               SizedBox(width: tokens.spacing.sm),
               Text(
                 l10n.couponCode,
-                textAlign: TextAlign.right,
-                style: tokens.typography.titleMedium
-                    .copyWith(color: tokens.colors.label, fontWeight: FontWeight.w900),
+                textAlign: TextAlign.start,
+                style: tokens.typography.titleMedium.copyWith(
+                  color: tokens.colors.label,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ],
           ),
@@ -910,13 +978,15 @@ class _CouponCard extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: couponController,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   decoration: InputDecoration(
                     hintText: l10n.enterCouponCode,
                     filled: true,
                     fillColor: tokens.colors.background,
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -932,12 +1002,12 @@ class _CouponCard extends StatelessWidget {
                   onPressed: isCouponValidating
                       ? null
                       : () {
-                    final code = couponController.text.trim();
-                    if (code.isEmpty) return;
-                    context.read<PlanDetailBloc>().add(
-                      ApplyCouponEvent(couponCode: code, planId: planId),
-                    );
-                  },
+                          final code = couponController.text.trim();
+                          if (code.isEmpty) return;
+                          context.read<PlanDetailBloc>().add(
+                            ApplyCouponEvent(couponCode: code, planId: planId),
+                          );
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: tokens.colors.primary.withOpacity(0.45),
                     foregroundColor: tokens.colors.onPrimary,
@@ -950,16 +1020,20 @@ class _CouponCard extends StatelessWidget {
                   ),
                   child: isCouponValidating
                       ? SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: tokens.colors.onPrimary),
-                  )
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: tokens.colors.onPrimary,
+                          ),
+                        )
                       : Text(
-                    l10n.apply,
-                    style: tokens.typography.bodyMedium.copyWith(
-                        color: tokens.colors.onPrimary, fontWeight: FontWeight.w900),
-                  ),
+                          l10n.apply,
+                          style: tokens.typography.bodyMedium.copyWith(
+                            color: tokens.colors.onPrimary,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -969,11 +1043,14 @@ class _CouponCard extends StatelessWidget {
             Text(
               coupon!.valid
                   ? l10n.couponAppliedFinalPrice(
-                  coupon!.finalPrice?.toStringAsFixed(2) ?? '-')
+                      coupon!.finalPrice?.toStringAsFixed(2) ?? '-',
+                    )
                   : coupon!.message,
-              textAlign: TextAlign.right,
+              textAlign: TextAlign.start,
               style: tokens.typography.bodyMedium.copyWith(
-                color: coupon!.valid ? tokens.colors.success : tokens.colors.danger,
+                color: coupon!.valid
+                    ? tokens.colors.success
+                    : tokens.colors.danger,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -989,7 +1066,11 @@ class _SummaryRow extends StatelessWidget {
   final String value;
   final bool highlighted;
 
-  const _SummaryRow({required this.label, required this.value, this.highlighted = false});
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    this.highlighted = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1006,7 +1087,7 @@ class _SummaryRow extends StatelessWidget {
         const Spacer(),
         Text(
           label,
-          textAlign: TextAlign.right,
+          textAlign: TextAlign.start,
           style: tokens.typography.bodyMedium.copyWith(
             color: highlighted ? tokens.colors.label : tokens.colors.muted,
             fontWeight: highlighted ? FontWeight.w900 : FontWeight.w600,

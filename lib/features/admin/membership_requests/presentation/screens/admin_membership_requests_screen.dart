@@ -188,88 +188,129 @@ class _AdminMembershipRequestsScreenState
   void _showApproveSheet(BuildContext context,
       MembershipRequestEntity req, dynamic tokens) {
     final notesController = TextEditingController();
+    final amountController =
+        TextEditingController(text: req.totalAmount.toStringAsFixed(2));
+    final formKey = GlobalKey<FormState>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
+        padding: EdgeInsetsDirectional.only(
+          start: 24,
+          end: 24,
           top: 24,
           bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
               MediaQuery.of(sheetCtx).padding.bottom +
               24,
         ),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Builder(
-            builder: (ctx) {
+        child: StatefulBuilder(
+            builder: (ctx, setState) {
               final l10n = AppLocalizations.of(ctx)!;
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(l10n.admin_membershipRequests_approveTitle,
-                      style: tokens.typography.headlineSmall.copyWith(
-                          color: tokens.colors.label,
-                          fontWeight: FontWeight.w900)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.admin_membershipRequests_subscriptionInfo(
-                        req.planName, req.totalAmount.toStringAsFixed(2)),
-                    style: tokens.typography.bodyMedium
-                        .copyWith(color: tokens.colors.muted),
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: notesController,
-                    textAlign: TextAlign.right,
-                    decoration: InputDecoration(
-                      hintText: l10n.admin_membershipRequests_notesHint,
-                      filled: true,
-                      fillColor: tokens.colors.background,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
+              final typedAmount =
+                  double.tryParse(amountController.text.trim()) ?? req.totalAmount;
+              return Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(l10n.admin_membershipRequests_approveTitle,
+                        style: tokens.typography.headlineSmall.copyWith(
+                            color: tokens.colors.label,
+                            fontWeight: FontWeight.w900)),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.admin_membershipRequests_subscriptionInfo(
+                          req.planName, req.totalAmount.toStringAsFixed(2)),
+                      style: tokens.typography.bodyMedium
+                          .copyWith(color: tokens.colors.muted),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.trainer_partialPaymentHint,
+                      textAlign: TextAlign.end,
+                      style: tokens.typography.bodySmall
+                          .copyWith(color: tokens.colors.muted),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: amountController,
+                      textAlign: TextAlign.end,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      onChanged: (_) => setState(() {}),
+                      decoration: InputDecoration(
+                        labelText: l10n.trainer_amountToCollectLabel,
+                        filled: true,
+                        fillColor: tokens.colors.background,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (v) {
+                        final amount = double.tryParse(v?.trim() ?? '');
+                        if (amount == null || amount <= 0) {
+                          return l10n.trainer_invalidAmount;
+                        }
+                        if (amount > req.totalAmount) {
+                          return l10n.trainer_amountExceedsTotal;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    TextField(
+                      controller: notesController,
+                      textAlign: TextAlign.end,
+                      decoration: InputDecoration(
+                        hintText: l10n.admin_membershipRequests_notesHint,
+                        filled: true,
+                        fillColor: tokens.colors.background,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(sheetCtx);
-                      context.read<AdminMembershipRequestsBloc>().add(
-                            ApproveMembershipRequestEvent(
-                              requestId: req.requestId,
-                              amountPaid: req.totalAmount,
-                              notes: notesController.text.trim().isEmpty
-                                  ? null
-                                  : notesController.text.trim(),
-                            ),
-                          );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: tokens.colors.success,
-                      foregroundColor: tokens.colors.onPrimary,
-                      elevation: 0,
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (!formKey.currentState!.validate()) return;
+                        final amountPaid = double.parse(amountController.text.trim());
+                        Navigator.pop(sheetCtx);
+                        context.read<AdminMembershipRequestsBloc>().add(
+                              ApproveMembershipRequestEvent(
+                                requestId: req.requestId,
+                                amountPaid: amountPaid,
+                                notes: notesController.text.trim().isEmpty
+                                    ? null
+                                    : notesController.text.trim(),
+                              ),
+                            );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: tokens.colors.success,
+                        foregroundColor: tokens.colors.onPrimary,
+                        elevation: 0,
+                        minimumSize: const Size.fromHeight(52),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: Text(
+                          l10n.admin_membershipRequests_approveButton(
+                              typedAmount.toStringAsFixed(2)),
+                          style: tokens.typography.bodyMedium.copyWith(
+                              color: tokens.colors.onPrimary,
+                              fontWeight: FontWeight.w900)),
                     ),
-                    child: Text(
-                        l10n.admin_membershipRequests_approveButton(
-                            req.totalAmount.toStringAsFixed(2)),
-                        style: tokens.typography.bodyMedium.copyWith(
-                            color: tokens.colors.onPrimary,
-                            fontWeight: FontWeight.w900)),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
-        ),
       ),
     );
   }
@@ -285,17 +326,15 @@ class _AdminMembershipRequestsScreenState
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
+        padding: EdgeInsetsDirectional.only(
+          start: 24,
+          end: 24,
           top: 24,
           bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
               MediaQuery.of(sheetCtx).padding.bottom +
               24,
         ),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Builder(
+        child: Builder(
             builder: (ctx) {
               final l10n = AppLocalizations.of(ctx)!;
               return Column(
@@ -313,7 +352,7 @@ class _AdminMembershipRequestsScreenState
                   const SizedBox(height: 20),
                   TextField(
                     controller: reasonController,
-                    textAlign: TextAlign.right,
+                    textAlign: TextAlign.end,
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: l10n.admin_membershipRequests_rejectHint,
@@ -359,7 +398,6 @@ class _AdminMembershipRequestsScreenState
               );
             },
           ),
-        ),
       ),
     );
   }
@@ -378,17 +416,15 @@ class _AdminMembershipRequestsScreenState
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
+        padding: EdgeInsetsDirectional.only(
+          start: 24,
+          end: 24,
           top: 24,
           bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
               MediaQuery.of(sheetCtx).padding.bottom +
               24,
         ),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
             child: Builder(
               builder: (ctx) {
                 final l10n = AppLocalizations.of(ctx)!;
@@ -427,7 +463,7 @@ class _AdminMembershipRequestsScreenState
                     TextField(
                       controller: amountController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.end,
                       decoration: InputDecoration(
                         hintText: l10n.admin_refundRequests_refundAmountHint,
                         filled: true,
@@ -448,7 +484,7 @@ class _AdminMembershipRequestsScreenState
                     TextField(
                       controller: deductionController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.end,
                       decoration: InputDecoration(
                         hintText: l10n.admin_refundRequests_deductionHint,
                         filled: true,
@@ -463,7 +499,7 @@ class _AdminMembershipRequestsScreenState
                     const SizedBox(height: 14),
                     TextField(
                       controller: noteController,
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.end,
                       decoration: InputDecoration(
                         hintText: l10n.admin_refundRequests_adminNoteHint,
                         filled: true,
@@ -519,7 +555,6 @@ class _AdminMembershipRequestsScreenState
               },
             ),
           ),
-        ),
       ),
     );
   }
@@ -535,17 +570,15 @@ class _AdminMembershipRequestsScreenState
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
+        padding: EdgeInsetsDirectional.only(
+          start: 24,
+          end: 24,
           top: 24,
           bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
               MediaQuery.of(sheetCtx).padding.bottom +
               24,
         ),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Builder(
+        child: Builder(
             builder: (ctx) {
               final l10n = AppLocalizations.of(ctx)!;
               return Column(
@@ -563,7 +596,7 @@ class _AdminMembershipRequestsScreenState
                   const SizedBox(height: 20),
                   TextField(
                     controller: reasonController,
-                    textAlign: TextAlign.right,
+                    textAlign: TextAlign.end,
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: l10n.admin_refundRequests_rejectHint,
@@ -609,7 +642,6 @@ class _AdminMembershipRequestsScreenState
               );
             },
           ),
-        ),
       ),
     );
   }
@@ -883,9 +915,7 @@ class _RequestCard extends StatelessWidget {
                     CircularProgressIndicator(strokeWidth: 2, color: c.primary),
               ),
             )
-          : Directionality(
-              textDirection: TextDirection.rtl,
-              child: Column(
+          : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -983,7 +1013,6 @@ class _RequestCard extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
     );
   }
 }
@@ -1032,9 +1061,7 @@ class _RefundCard extends StatelessWidget {
                     CircularProgressIndicator(strokeWidth: 2, color: c.primary),
               ),
             )
-          : Directionality(
-              textDirection: TextDirection.rtl,
-              child: Column(
+          : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -1132,7 +1159,6 @@ class _RefundCard extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
     );
   }
 }

@@ -37,8 +37,8 @@ class LargeStatCardsGrid extends StatelessWidget {
                   icon:      Icons.group_outlined,
                   value:     '${data.members.activeMembers}',
                   sublabel:  data.members.activeMembersGrowth >= 0
-                      ? '+${data.members.activeMembersGrowth.toStringAsFixed(0)}% growth'
-                      : '${data.members.activeMembersGrowth.toStringAsFixed(0)}% growth',
+                      ? l10n.admin_dashboard_growthPercent('+${data.members.activeMembersGrowth.toStringAsFixed(0)}%')
+                      : l10n.admin_dashboard_growthPercent('${data.members.activeMembersGrowth.toStringAsFixed(0)}%'),
                   sublabelColor: data.members.activeMembersGrowth >= 0
                       ? growthPositive
                       : growthNegative,

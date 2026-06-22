@@ -276,7 +276,8 @@ class MemberQrCard extends StatelessWidget {
                       color: tokens.colors.primary, size: 16),
                   SizedBox(width: tokens.spacing.xs),
                   Text(
-                    'Entry: $planGymAccessStart – $planGymAccessEnd',
+                    l10n.memberQrEntryWindow(
+                        planGymAccessStart!, planGymAccessEnd!),
                     style: tokens.typography.bodySmall.copyWith(
                       color: tokens.colors.primary,
                       fontWeight: FontWeight.w600,

@@ -61,11 +61,15 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
 
   // ── scanQr ─────────────────────────────────────────────────────────────────
   @override
-  Future<String> scanQr({required String token, required int branchId}) async {
+  Future<({String memberName, bool checkedOut})> scanQr({
+    required String token,
+    required int    branchId,
+  }) async {
     try {
       final json = await dataSource.scanQr(token: token, branchId: branchId);
-      // Return the member's name from the response body for the success snackbar.
-      return json['fullName'] as String? ?? 'Member';
+      final fullName = json['fullName'] as String? ?? 'Member';
+      final status   = json['status']   as String? ?? 'ACTIVE';
+      return (memberName: fullName, checkedOut: status == 'CHECKED_OUT');
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
     } on ForbiddenException catch (e) {
@@ -81,35 +85,16 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
 
   // ── checkOut ───────────────────────────────────────────────────────────────
   @override
-  Future<void> checkOut(int checkinId) async {
+  Future<void> checkOut({required int checkinId, required int branchId}) async {
     try {
-      await dataSource.checkOut(checkinId);
+      await dataSource.checkOut(checkinId: checkinId, branchId: branchId);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception("You don't have permission to perform this action.");
-    } on ServerException catch (e) {
-      throw Exception(e.message);
-    } on NetworkException {
-      throw Exception('No internet connection. Please try again.');
-    }
-  }
-
-  // ── freezeMember ───────────────────────────────────────────────────────────
-  @override
-  Future<void> freezeMember({
-    required int    userId,
-    required String fromDate,
-    required String toDate,
-    required String reason,
-  }) async {
-    try {
-      await dataSource.freezeMember(
-          userId: userId, fromDate: fromDate, toDate: toDate, reason: reason);
-    } on UnauthorizedException {
-      throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception("You don't have permission to freeze memberships.");
+    } on ForbiddenException catch (e) {
+      final msg = e.message.isNotEmpty
+          ? e.message
+          : "You don't have permission to perform this action.";
+      throw Exception(msg);
     } on ServerException catch (e) {
       throw Exception(e.message);
     } on NetworkException {

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class StaffStatsRowWidget extends StatelessWidget {
   final int totalStaff;
@@ -19,6 +20,7 @@ class StaffStatsRowWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final card   = tokens.card;
+    final l10n   = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -30,7 +32,7 @@ class StaffStatsRowWidget extends StatelessWidget {
               iconBackgroundColor: c.primary,
               iconForegroundColor: c.onPrimary,
               count:               totalStaff,
-              label:               'Total Staff',
+              label:               l10n.admin_staff_totalStaffLabel,
               surface:             c.surface,
               labelColor:          c.muted,
               valueColor:          c.label,
@@ -44,7 +46,7 @@ class StaffStatsRowWidget extends StatelessWidget {
               iconBackgroundColor: c.success,
               iconForegroundColor: c.onPrimary,
               count:               activeStaff,
-              label:               'Active',
+              label:               l10n.admin_staff_activeLabel,
               surface:             c.surface,
               labelColor:          c.muted,
               valueColor:          c.label,

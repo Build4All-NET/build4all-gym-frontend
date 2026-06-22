@@ -105,10 +105,76 @@ class _AdminPtPackageBookingsScreenState
 
   // ── Cash actions ──────────────────────────────────────────────────────────
 
-  Future<void> _confirmCash(int bookingId) async {
+  void _showConfirmCashDialog(int bookingId, double totalAmount) {
+    final l10n = AppLocalizations.of(context)!;
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final amountCtrl = TextEditingController(text: totalAmount.toStringAsFixed(2));
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: tokens.colors.surface,
+        title: Text(
+          l10n.trainer_confirmCashPayment,
+          style: TextStyle(color: tokens.colors.label, fontWeight: FontWeight.w700),
+        ),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.trainer_partialPaymentHint,
+                style: TextStyle(color: tokens.colors.muted, fontSize: 13),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: amountCtrl,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: l10n.trainer_amountToCollectLabel,
+                  prefixText: '\$ ',
+                ),
+                validator: (v) {
+                  final amount = double.tryParse(v?.trim() ?? '');
+                  if (amount == null || amount <= 0) return l10n.trainer_invalidAmount;
+                  if (amount > totalAmount) return l10n.trainer_amountExceedsTotal;
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.general_cancel),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: tokens.colors.success,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              final amount = double.parse(amountCtrl.text.trim());
+              Navigator.pop(ctx);
+              _confirmCash(bookingId, amount);
+            },
+            child: Text(l10n.trainer_confirmCashPayment),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmCash(int bookingId, double amountPaid) async {
     setState(() => _confirming.add(bookingId));
     try {
-      await _service.confirmCash(bookingId);
+      await _service.confirmCash(bookingId, amountPaid: amountPaid);
       if (mounted) {
         setState(() {
           _bookings.removeWhere((b) => (b['id'] as num?)?.toInt() == bookingId);
@@ -219,9 +285,9 @@ class _AdminPtPackageBookingsScreenState
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheetCtx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
+        padding: EdgeInsetsDirectional.only(
+          start: 24,
+          end: 24,
           top: 24,
           bottom: MediaQuery.of(sheetCtx).viewInsets.bottom +
               MediaQuery.of(sheetCtx).padding.bottom +
@@ -589,12 +655,13 @@ class _AdminPtPackageBookingsScreenState
         itemBuilder: (_, index) {
           final b = _bookings[index];
           final id = (b['id'] as num?)?.toInt() ?? 0;
+          final totalAmount = (b['totalAmount'] as num?)?.toDouble() ?? 0.0;
           return _BookingCard(
             booking: b,
             isConfirming: _confirming.contains(id),
             isRejecting: _rejecting.contains(id),
             tokens: tokens,
-            onConfirm: () => _confirmCash(id),
+            onConfirm: () => _showConfirmCashDialog(id, totalAmount),
             onReject: () => _showRejectCashDialog(id),
           );
         },
@@ -727,9 +794,9 @@ class _AdminPtPackageBookingsScreenState
                   child: Icon(Icons.notifications_none_rounded,
                       color: c.body, size: 18),
                 ),
-                Positioned(
+                PositionedDirectional(
                   top: 2,
-                  right: 2,
+                  end: 2,
                   child: Container(
                     width: 16,
                     height: 16,
@@ -908,7 +975,7 @@ class _BookingCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'CASH',
+                  l10n.trainer_cashBadge,
                   style: tokens.typography.bodySmall.copyWith(
                     color: const Color(0xFF856404),
                     fontWeight: FontWeight.w700,

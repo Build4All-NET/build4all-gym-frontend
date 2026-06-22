@@ -144,7 +144,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           // Notification bell
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsetsDirectional.only(end: 8),
             child: GestureDetector(
               onTap: () => Navigator.of(context).pushNamed(AppRouter.adminNotifications),
               child: Stack(
@@ -159,9 +159,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     child: Icon(Icons.notifications_none_rounded,
                         color: c.body, size: 18),
                   ),
-                  Positioned(
+                  PositionedDirectional(
                     top: 2,
-                    right: 2,
+                    end: 2,
                     child: Container(
                       width: 16,
                       height: 16,

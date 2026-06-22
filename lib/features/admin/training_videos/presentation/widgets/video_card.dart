@@ -8,6 +8,7 @@ import '../bloc/training_videos_bloc.dart';
 import '../bloc/training_videos_event.dart';
 import '../screens/edit_training_video_page.dart';
 import '../screens/video_player_page.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class VideoCard extends StatelessWidget {
   final TrainingVideoEntity video;
@@ -22,20 +23,21 @@ class VideoCard extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Video'),
-        content: Text('Delete "${video.title}"? This cannot be undone.'),
+        title: Text(l10n.trainingVideos_deleteTitle),
+        content: Text(l10n.trainingVideos_deleteConfirm(video.title)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.general_cancel)),
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(ctx).colorScheme.error),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(l10n.admin_plans_delete),
           ),
         ],
       ),
@@ -48,6 +50,7 @@ class VideoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final payload = decodeJwtPayload();
     final role = ((payload?['role'] as String?) ?? '').toUpperCase().trim();
     final isOwner = role == 'OWNER' || role == 'ADMIN';
@@ -121,8 +124,8 @@ class VideoCard extends StatelessWidget {
                         color: Colors.orange.shade800,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Text('Draft',
-                          style: TextStyle(
+                      child: Text(l10n.trainingVideos_draftBadge,
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w600)),
@@ -160,7 +163,7 @@ class VideoCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              categoryName ?? video.categoryName ?? 'Category',
+                              categoryName ?? video.categoryName ?? l10n.trainingVideos_categoryFallback,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: theme.colorScheme.onPrimaryContainer,
                               ),
@@ -227,19 +230,19 @@ class VideoCard extends StatelessWidget {
                     }
                   },
                   itemBuilder: (_) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: _CardAction.play,
                       child: ListTile(
-                        leading: Icon(Icons.play_circle_outline),
-                        title: Text('Play'),
+                        leading: const Icon(Icons.play_circle_outline),
+                        title: Text(l10n.trainingVideos_playAction),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: _CardAction.edit,
                       child: ListTile(
-                        leading: Icon(Icons.edit_outlined),
-                        title: Text('Edit'),
+                        leading: const Icon(Icons.edit_outlined),
+                        title: Text(l10n.trainingVideos_editAction),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
@@ -248,7 +251,7 @@ class VideoCard extends StatelessWidget {
                       child: ListTile(
                         leading: Icon(Icons.delete_outline,
                             color: theme.colorScheme.error),
-                        title: Text('Delete',
+                        title: Text(l10n.admin_plans_delete,
                             style:
                                 TextStyle(color: theme.colorScheme.error)),
                         contentPadding: EdgeInsets.zero,
@@ -266,7 +269,7 @@ class VideoCard extends StatelessWidget {
 
   void _openPlayer(BuildContext context) {
     if (video.videoUrl == null || video.videoUrl!.isEmpty) {
-      AppToast.info(context, 'No video URL available');
+      AppToast.info(context, AppLocalizations.of(context)!.trainingVideos_noVideoUrl);
       return;
     }
     Navigator.push(

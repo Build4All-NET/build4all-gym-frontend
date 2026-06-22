@@ -21,8 +21,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../../../auth/data/services/biometric_auth_service.dart';
 import '../../domain/entities/settings_business_rules_entity.dart';
 import '../../domain/usecases/get_admin_settings_usecase.dart';
 import 'admin_settings_state.dart';
@@ -31,18 +31,15 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
   // ── Dependencies ────────────────────────────────────────────────────────────
   final GetAdminSettingsUseCase _getSettings;
   final SaveAdminSettingsUseCase _saveSettings;
-  final FlutterSecureStorage _secureStorage;
-
-  /// Key used to persist the biometric preference in FlutterSecureStorage.
-  static const _biometricKey = 'biometric_enabled';
+  final BiometricAuthService _biometricService;
 
   AdminSettingsCubit({
     required GetAdminSettingsUseCase getSettings,
     required SaveAdminSettingsUseCase saveSettings,
-    FlutterSecureStorage? secureStorage,
+    BiometricAuthService? biometricService,
   })  : _getSettings = getSettings,
         _saveSettings = saveSettings,
-        _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+        _biometricService = biometricService ?? BiometricAuthService(),
         super(AdminSettingsState.initial()) {
     // Load everything on construction so the screen shows data immediately.
     _loadInitialData();
@@ -56,13 +53,12 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
     try {
       // Run both I/O operations concurrently for faster screen load.
       final results = await Future.wait([
-        _getSettings(),                          // GET /api/admin/settings
-        _secureStorage.read(key: _biometricKey), // local secure storage
+        _getSettings(),               // GET /api/admin/settings
+        _biometricService.isEnabled(), // local secure storage
       ]);
 
       final rules = results[0] as SettingsBusinessRulesEntity;
-      final biometricRaw = results[1] as String?;
-      final isBiometric = biometricRaw == 'true';
+      final isBiometric = results[1] as bool;
 
       emit(state.copyWith(
         status: AdminSettingsStatus.loaded,
@@ -101,15 +97,26 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
   // ── Account & Security setters ──────────────────────────────────────────────
 
   /// Called by AccountSecuritySectionWidget biometric toggle.
-  void setBiometricEnabled(bool value) {
+  ///
+  /// Turning it ON requires a successful device biometric scan first —
+  /// otherwise the toggle would claim to be "enabled" without ever having
+  /// proven the device can actually authenticate the admin.
+  /// Returns false (and leaves the toggle unchanged) if the device has no
+  /// usable biometrics or the scan fails/is cancelled.
+  Future<bool> setBiometricEnabled(bool value) async {
+    if (value) {
+      final supported = await _biometricService.isDeviceSupported();
+      if (!supported) return false;
+
+      final authenticated = await _biometricService.authenticate(
+        'Confirm biometric login for admin access',
+      );
+      if (!authenticated) return false;
+    }
+
     emit(state.copyWith(isBiometricEnabled: value));
     _markDirty();
-  }
-
-  /// Called by AccountSecuritySectionWidget 2FA toggle.
-  void setTwoFactorEnabled(bool value) {
-    emit(state.copyWith(isTwoFactorEnabled: value));
-    _markDirty();
+    return true;
   }
 
   // ── Business Rules setters ──────────────────────────────────────────────────
@@ -161,10 +168,7 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
       }
 
       // 2. Persist biometric flag to secure storage
-      await _secureStorage.write(
-        key: _biometricKey,
-        value: state.isBiometricEnabled.toString(),
-      );
+      await _biometricService.setEnabled(state.isBiometricEnabled);
 
       // 3. Mark as clean — theme/locale are applied by the screen
       emit(state.copyWith(

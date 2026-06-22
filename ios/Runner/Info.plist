@@ -47,6 +47,8 @@
 	<true/>
 	 <key>NSCameraUsageDescription</key>
      <string>Camera is used to scan member QR codes for check-in.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Face ID is used to unlock admin access when Biometric Login is enabled.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

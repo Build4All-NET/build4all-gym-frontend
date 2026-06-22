@@ -48,7 +48,7 @@ class SmallMetricCardsGrid extends StatelessWidget {
                   iconBg:     accentB.withOpacity(0.1),
                   value:      data.revenue != null
                       ? '₹${data.revenue!.paymentsCollected.toStringAsFixed(0)}'
-                      : 'N/A',
+                      : l10n.admin_dashboard_notAvailable,
                   label:      l10n.admin_dashboard_paymentsCollected,
                   badge:      data.revenue != null
                       ? '+${data.revenue!.paymentsGrowth.toStringAsFixed(0)}%'
@@ -187,9 +187,9 @@ class _SmallMetricCard extends StatelessWidget {
           ),
         ),
         if (badge != null)
-          Positioned(
-            top:   10,
-            right: 10,
+          PositionedDirectional(
+            top: 10,
+            end: 10,
             child: Container(
               padding:    const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(

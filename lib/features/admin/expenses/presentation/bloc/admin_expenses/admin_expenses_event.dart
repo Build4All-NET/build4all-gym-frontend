@@ -31,3 +31,9 @@ class DeleteExpenseEvent extends AdminExpensesEvent {
 
 /// Fired after successful create/update from ExpenseFormBottomSheet — reloads list
 class RefreshExpensesEvent extends AdminExpensesEvent {}
+
+/// Owner confirms a commission expense was actually paid out to the trainer
+class ConfirmTrainerPaidEvent extends AdminExpensesEvent {
+  final int expenseId;
+  ConfirmTrainerPaidEvent({required this.expenseId});
+}

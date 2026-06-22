@@ -35,7 +35,7 @@ class QuickActionsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 2, bottom: 14),
+          padding: const EdgeInsetsDirectional.only(start: 2, bottom: 14),
           child: Text(
             l10n.admin_dashboard_quickActions,
             style: TextStyle(
@@ -180,7 +180,10 @@ class _ActionRow extends StatelessWidget {
                       color:      labelColor),
                 ),
               ),
-              Icon(Icons.chevron_right_rounded,
+              Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
                   color: chevronColor.withOpacity(0.5), size: 20),
             ],
           ),

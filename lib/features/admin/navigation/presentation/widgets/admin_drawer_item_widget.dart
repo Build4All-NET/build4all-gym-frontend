@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../config/nav_label_resolver.dart';
 import '../../config/navigation_item.dart';
 
 /// A single navigation row in the drawer.
@@ -57,7 +58,7 @@ class AdminDrawerItemWidget extends StatelessWidget {
         ? c.primary.withOpacity(isDark ? 0.12 : 0.07)
         : null;
 
-    final String label = _resolveLabel(l10n, item.labelKey);
+    final String label = resolveNavLabel(l10n, item.labelKey);
 
     return Material(
       color: Colors.transparent,
@@ -81,17 +82,17 @@ class AdminDrawerItemWidget extends StatelessWidget {
             // signal without overwhelming the layout. Only shown in dark mode
             // because the background tint alone is clear enough in light mode.
             if (isActive && !item.isDestructive && isDark)
-              Positioned(
-                left:   0,
+              PositionedDirectional(
+                start:  0,
                 top:    4,
                 bottom: 4,
                 child: Container(
                   width:                3,
                   decoration: BoxDecoration(
                     color:              c.primary,
-                    borderRadius: const BorderRadius.only(
-                      topRight:    Radius.circular(3),
-                      bottomRight: Radius.circular(3),
+                    borderRadius: BorderRadiusDirectional.only(
+                      topEnd:    const Radius.circular(3),
+                      bottomEnd: const Radius.circular(3),
                     ),
                   ),
                 ),
@@ -99,9 +100,9 @@ class AdminDrawerItemWidget extends StatelessWidget {
 
             // ── Main content row ───────────────────────────────────────────
             Padding(
-              // Extra left padding when accent bar is showing so content
+              // Extra start padding when accent bar is showing so content
               // doesn't collide with the 3px strip.
-              padding: EdgeInsets.fromLTRB(
+              padding: EdgeInsetsDirectional.fromSTEB(
                 (isActive && !item.isDestructive && isDark) ? 23 : 20,
                 11,
                 20,
@@ -138,32 +139,5 @@ class AdminDrawerItemWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // ── Label resolver ──────────────────────────────────────────────────────
-  // Maps translation keys to l10n strings. Kept identical to the original.
-  String _resolveLabel(AppLocalizations l10n, String key) {
-    switch (key) {
-      case 'navDashboard':          return l10n.navDashboard;
-      case 'navMembers':            return l10n.navMembers;
-      case 'navPlans':              return l10n.navPlans;
-      case 'navTrainers':           return l10n.navTrainers;
-      case 'navReceptionStaff':     return l10n.navReceptionStaff;
-      case 'navGymProfile':         return l10n.navAiAssistant;
-      case 'navBranches':           return l10n.navBranches;
-      case 'navCheckins':           return l10n.navCheckins;
-      case 'navPayments':           return l10n.navPayments;
-      case 'navMembershipRequests': return l10n.navMembershipRequests;
-      case 'navInvoices':           return l10n.navInvoices;
-      case 'navExpenses':           return l10n.navExpenses;
-      case 'navClassesPt':          return l10n.navClassesPt;
-      case 'navNotifications':      return l10n.navNotifications;
-      case 'navPtSessions':         return l10n.navPtSessions;
-      case 'navTrainingVideos':       return l10n.navTrainingVideos;
-      case 'navPtPackageBookings':    return l10n.navPtPackageBookings;
-      case 'navSettings':             return l10n.navSettings;
-      case 'navLogout':             return l10n.navLogout;
-      default:                      return key;
-    }
   }
 }

@@ -60,8 +60,8 @@ class TextMetricRows extends StatelessWidget {
             value:         '${data.members.churnRate.toStringAsFixed(1)}%',
             dotColor:      c.success,
             sublabel:      churnVsLast <= 0
-                ? '${churnVsLast.toStringAsFixed(1)}% vs last month'
-                : '+${churnVsLast.toStringAsFixed(1)}% vs last month',
+                ? l10n.admin_dashboard_vsLastMonthPercent('${churnVsLast.toStringAsFixed(1)}%')
+                : l10n.admin_dashboard_vsLastMonthPercent('+${churnVsLast.toStringAsFixed(1)}%'),
             sublabelColor: churnVsLast <= 0 ? c.success : c.danger,
             labelColor:    c.muted,
             valueColor:    c.label,
@@ -71,10 +71,10 @@ class TextMetricRows extends StatelessWidget {
             label:         l10n.admin_dashboard_monthlyRevenue,
             value:         data.revenue != null
                 ? '₹${(data.revenue!.monthlyRevenue / 100000).toStringAsFixed(1)}L'
-                : 'N/A',
+                : l10n.admin_dashboard_notAvailable,
             dotColor:      accentD,
             sublabel:      revenueVsLast != null
-                ? '+${revenueVsLast.toStringAsFixed(0)}% vs last month'
+                ? l10n.admin_dashboard_vsLastMonthPercent('+${revenueVsLast.toStringAsFixed(0)}%')
                 : null,
             sublabelColor: c.success,
             isLast:        true,

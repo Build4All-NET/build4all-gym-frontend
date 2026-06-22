@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:build4allgym/app/app_router.dart';
 import '../data/models/branch_option_model.dart';
 import 'branch_cubit.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class AdminAppBar extends StatelessWidget {
   const AdminAppBar({
@@ -50,6 +51,7 @@ class AdminAppBar extends StatelessWidget {
                     branches:         branchState.branches,
                     selectedBranchId: selectedBranchId,
                     onSelected:       onBranchChanged,
+                    allBranchesLabel: AppLocalizations.of(context)!.adminAppBar_allBranches,
                   );
                 }
                 return _BranchPillPlaceholder(
@@ -94,18 +96,20 @@ class _BranchPill extends StatelessWidget {
     required this.branches,
     required this.selectedBranchId,
     required this.onSelected,
+    required this.allBranchesLabel,
   });
 
   final List<BranchOptionModel>        branches;
   final int?                           selectedBranchId;
   final void Function(int? branchId)?  onSelected;
+  final String                         allBranchesLabel;
 
   String get _selectedName {
-    if (selectedBranchId == null) return 'All Branches';
+    if (selectedBranchId == null) return allBranchesLabel;
     for (final b in branches) {
       if (b.id == selectedBranchId) return b.name;
     }
-    return 'All Branches';
+    return allBranchesLabel;
   }
 
   @override
@@ -156,7 +160,7 @@ class _BranchPill extends StatelessWidget {
           value: null,
           child: _BranchMenuItem(
             icon:       Icons.business_rounded,
-            name:       'All Branches',
+            name:       allBranchesLabel,
             isSelected: selectedBranchId == null,
           ),
         ),
@@ -279,8 +283,8 @@ class _NotificationBell extends StatelessWidget {
                 color: cs.onSurfaceVariant, size: 18),
           ),
           if (count > 0)
-            Positioned(
-              top: 2, right: 2,
+            PositionedDirectional(
+              top: 2, end: 2,
               child: Container(
                 width: 16, height: 16,
                 decoration: BoxDecoration(color: cs.error, shape: BoxShape.circle),

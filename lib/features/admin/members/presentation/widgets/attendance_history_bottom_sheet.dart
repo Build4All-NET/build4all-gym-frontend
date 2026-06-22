@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/member_attendance_item_entity.dart';
 import '../bloc/admin_members_bloc.dart';
 
@@ -33,6 +34,7 @@ class AttendanceHistoryBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs        = Theme.of(context).colorScheme;
     final navHeight = MediaQuery.of(context).viewPadding.bottom;
+    final l10n      = AppLocalizations.of(context)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -60,7 +62,7 @@ class AttendanceHistoryBottomSheet extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Attendance History',
+                  Text(l10n.admin_members_attendanceHistoryTitle,
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -112,7 +114,7 @@ class AttendanceHistoryBottomSheet extends StatelessWidget {
                           onPressed: () => context
                               .read<AdminMembersBloc>()
                               .add(MemberAttendanceRequested(userId)),
-                          child: const Text('Retry'),
+                          child: Text(l10n.retry),
                         ),
                       ],
                     ),
@@ -126,7 +128,7 @@ class AttendanceHistoryBottomSheet extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 40),
                     child: Center(
                       child: Text(
-                        'No attendance records found',
+                        l10n.admin_members_noAttendanceRecords,
                         style: TextStyle(
                             color: cs.onSurface.withOpacity(0.4),
                             fontSize: 14),
@@ -166,10 +168,13 @@ class _AttendanceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final statusColor =
         item.isActive ? const Color(0xFF10B981) : cs.onSurface.withOpacity(0.4);
-    final statusLabel = item.isActive ? 'In Gym' : 'Checked Out';
+    final statusLabel = item.isActive
+        ? l10n.admin_members_inGym
+        : l10n.admin_members_checkedOut;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -237,7 +242,7 @@ class _AttendanceRow extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      '${item.durationMinutes} min',
+                      l10n.memberHomeDurationMinutes(item.durationMinutes!),
                       style: TextStyle(
                           fontSize: 11,
                           color: cs.onSurface.withOpacity(0.5)),

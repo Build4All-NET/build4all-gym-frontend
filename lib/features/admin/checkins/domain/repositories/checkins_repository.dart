@@ -22,25 +22,21 @@ abstract class CheckinsRepository {
   });
 
   /// POST /api/admin/checkins/scan
-  /// Validates QR [token] and creates a check-in.
-  /// Returns the checked-in member's full name (for the success snackbar).
-  Future<String> scanQr({
+  /// Validates QR [token] and creates a check-in — or, if the member already
+  /// has an active check-in today at this branch, checks them out instead
+  /// (the backend toggles direction on rescan). Returns the member's name
+  /// and whether this scan checked them OUT (for the snackbar wording).
+  /// Throws (e.g. 403) when the member has no active plan, class booking,
+  /// or PT session today — entry is denied.
+  Future<({String memberName, bool checkedOut})> scanQr({
     required String token,
     required int    branchId,
   });
 
-  /// PATCH /api/admin/checkins/{checkinId}/checkout
-  /// Marks the check-in as CHECKED_OUT.
-  Future<void> checkOut(int checkinId);
-
-  /// POST /api/admin/members/{userId}/freeze
-  /// Creates a freeze record on the member's active membership.
-  Future<void> freezeMember({
-    required int    userId,
-    required String fromDate,
-    required String toDate,
-    required String reason,
-  });
+  /// PATCH /api/admin/checkins/{checkinId}/checkout?branchId=
+  /// Marks the check-in as CHECKED_OUT. [branchId] must match the check-in's
+  /// branch — the backend rejects cross-branch checkout attempts.
+  Future<void> checkOut({required int checkinId, required int branchId});
 
   /// PATCH /api/admin/members/{userId}/block
   /// Sets the member's status to BLOCKED.

@@ -57,9 +57,10 @@ class _SuggestionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
-        context.read<AiAssistantBloc>().add(AiSuggestionTapped(question, errorFallbackMessage: 'error'));
+        context.read<AiAssistantBloc>().add(AiSuggestionTapped(question, errorFallbackMessage: l10n.aiErrorOffline));
       },
       child: Container(
         width: double.infinity,

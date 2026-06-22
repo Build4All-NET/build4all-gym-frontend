@@ -13,7 +13,7 @@ import 'package:build4allgym/features/member/sessions/presentation/bloc/sessions
 import 'package:build4allgym/features/member/sessions/presentation/bloc/sessions_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../../l10n/app_localizations.dart';
 
@@ -94,7 +94,7 @@ class _SessionsView extends StatelessWidget {
                   ? state.selectedDate
                   : DateTime.now();
               return Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsetsDirectional.only(end: 12),
                 child: ElevatedButton.icon(
                   onPressed: () {
                     final tenantIdStr = tokenStore.getTenantId();
@@ -267,6 +267,7 @@ class _DateNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     return Container(
       color:   Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -277,8 +278,9 @@ class _DateNavigator extends StatelessWidget {
               PtSessionsDateChanged(
                   date: selectedDate.subtract(const Duration(days: 1))),
             ),
-            icon: const Icon(Icons.chevron_left_rounded,
-                size: 28, color: Color(0xFF4B5563)),
+            icon: Icon(
+                isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded,
+                size: 28, color: const Color(0xFF4B5563)),
           ),
           Expanded(
             child: Column(
@@ -297,8 +299,9 @@ class _DateNavigator extends StatelessWidget {
               PtSessionsDateChanged(
                   date: selectedDate.add(const Duration(days: 1))),
             ),
-            icon: const Icon(Icons.chevron_right_rounded,
-                size: 28, color: Color(0xFF4B5563)),
+            icon: Icon(
+                isRtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+                size: 28, color: const Color(0xFF4B5563)),
           ),
         ],
       ),

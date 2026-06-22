@@ -10,4 +10,5 @@ abstract class AdminExpensesRepository {
   Future<void> createExpense(CreateExpenseRequestModel request);
   Future<void> updateExpense(int expenseId, UpdateExpenseRequestModel request);
   Future<void> deleteExpense(int expenseId);
+  Future<ExpenseEntity> confirmTrainerPaid(int expenseId);
 }

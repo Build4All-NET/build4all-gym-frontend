@@ -6,6 +6,7 @@ import '../../../../../core/config/env.dart';
 import '../../../../../core/network/globals.dart' as g;
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/data/services/auth_token_store.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   final String videoUrl;
@@ -60,10 +61,12 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
       final token = await _resolveToken();
       if (token == null || token.isEmpty) {
-        setState(() {
-          _loading = false;
-          _error = 'No auth token found. Please log in again.';
-        });
+        if (mounted) {
+          setState(() {
+            _loading = false;
+            _error = AppLocalizations.of(context)!.trainingVideos_noAuthToken;
+          });
+        }
         return;
       }
 

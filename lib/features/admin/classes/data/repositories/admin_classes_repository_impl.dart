@@ -137,6 +137,7 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
         paymentStatus:    m.paymentStatus,
         paymentMethod:    m.paymentMethod,
         invoiceId:        m.invoiceId,
+        price:            m.price,
       )).toList();
     } catch (e) {
       rethrow;
@@ -145,9 +146,19 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
 
   // ── confirmBookingPayment ──────────────────────────────────────────────────
   @override
-  Future<void> confirmBookingPayment(int bookingId) async {
+  Future<void> confirmBookingPayment(int bookingId, {double? amountPaid}) async {
     try {
-      await _service.confirmBookingPayment(bookingId);
+      await _service.confirmBookingPayment(bookingId, amountPaid: amountPaid);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // ── recordInvoicePayment ────────────────────────────────────────────────────
+  @override
+  Future<void> recordInvoicePayment(int invoiceId, double amount) async {
+    try {
+      await _service.recordInvoicePayment(invoiceId, amount);
     } catch (e) {
       rethrow;
     }

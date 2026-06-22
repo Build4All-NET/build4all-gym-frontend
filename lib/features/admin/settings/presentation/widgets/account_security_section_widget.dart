@@ -5,11 +5,14 @@
 //   Renders the "Account & Security" settings card.
 //
 // CURRENT ADMIN UI:
-//   1. Change Password only.
+//   1. Change Password.
+//   2. Biometric Login — toggling ON runs a real device fingerprint/Face ID
+//      scan (via AdminSettingsCubit.setBiometricEnabled); the switch only
+//      flips if that scan succeeds.
 //
 // REMOVED FROM ADMIN SETTINGS:
-//   - Biometric Login
-//   - Two-Factor Authentication
+//   - Two-Factor Authentication (was a cosmetic toggle never persisted
+//     anywhere — removed rather than left half-implemented).
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
@@ -93,21 +96,17 @@ class AccountSecuritySectionWidget extends StatelessWidget {
             subtitle: l10n.admin_settings_biometricSubtitle,
             trailing: Switch(
               value: state.isBiometricEnabled,
-              onChanged: (v) => cubit.setBiometricEnabled(v),
-              activeColor: c.primary,
-            ),
-            tokens: tokens,
-          ),
-
-          Divider(height: 1, color: c.border.withOpacity(0.2)),
-
-          _SettingsRow(
-            icon: Icons.shield_outlined,
-            label: l10n.admin_settings_twoFactor,
-            subtitle: l10n.admin_settings_twoFactorSubtitle,
-            trailing: Switch(
-              value: state.isTwoFactorEnabled,
-              onChanged: (v) => cubit.setTwoFactorEnabled(v),
+              onChanged: (v) async {
+                final ok = await cubit.setBiometricEnabled(v);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.admin_settings_biometricUnavailable),
+                      backgroundColor: c.error,
+                    ),
+                  );
+                }
+              },
               activeColor: c.primary,
             ),
             tokens: tokens,

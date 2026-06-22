@@ -250,9 +250,9 @@ class _NotificationBell extends StatelessWidget {
             ),
           ),
           if (_count > 0)
-            Positioned(
-              top:   2,
-              right: 2,
+            PositionedDirectional(
+              top: 2,
+              end: 2,
               child: Container(
                 width:  16,
                 height: 16,

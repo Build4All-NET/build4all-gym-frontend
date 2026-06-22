@@ -7,12 +7,17 @@
 //   One member row in Today's check-in list.
 //   Shows: avatar initials | name + time | status badge | action buttons
 //
-// ACTION BUTTONS:
-//   ACTIVE member:     Out | Freeze | Block | Call
-//   CHECKED_OUT member: Freeze | Block | Call  (no Out button)
+// ENTRY TYPE BADGE:
+//   Shows why the member was let in today — Plan / Class / PT Session —
+//   derived from the backend's `entryType` (GYM/CLASS/PT). Older check-ins
+//   created before this field existed simply omit the badge.
 //
-// Bottom sheets and dialogs for Freeze and Block are defined in this file
-// to keep all checkin-card-related UI together.
+// ACTION BUTTONS:
+//   ACTIVE member:      Out | Block | Call
+//   CHECKED_OUT member:  Block | Call  (no Out button)
+//
+// The block confirmation dialog is defined in this file to keep all
+// checkin-card-related UI together.
 // =============================================================================
 
 import 'dart:async';
@@ -37,9 +42,11 @@ class CheckinMemberCard extends StatelessWidget {
     final l10n   = AppLocalizations.of(context)!;
     final isActive = checkin.isActive;
 
+    final entryMeta = _entryTypeMeta(checkin.entryType, l10n);
+
     return Container(
-      margin:  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color:        c.surface,
         borderRadius: BorderRadius.circular(tokens.card.radius),
@@ -56,91 +63,124 @@ class CheckinMemberCard extends StatelessWidget {
             ? Border.all(color: c.border.withOpacity(0.15))
             : null,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Top row: avatar | name + time | status badge ────────────────
-          Row(
-            children: [
-              _Avatar(initials: checkin.avatarInitials, color: c.primary),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      checkin.fullName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize:   15,
-                        color:      c.label,
+          // ── Status accent bar ────────────────────────────────────────────
+          Container(
+            width: 4,
+            color: isActive ? c.success : c.border.withOpacity(0.5),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Top row: avatar | name + time | status badge ────────
+                  Row(
+                    children: [
+                      _Avatar(initials: checkin.avatarInitials, color: c.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              checkin.fullName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize:   15,
+                                color:      c.label,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Icon(Icons.access_time_rounded,
+                                    size: 13, color: c.muted),
+                                const SizedBox(width: 4),
+                                Text(
+                                  checkin.checkinTime,
+                                  style: TextStyle(fontSize: 12, color: c.muted),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      _StatusBadge(isActive: isActive, colors: c, l10n: l10n),
+                    ],
+                  ),
+
+                  // ── Entry-type badge: why this member was let in today ──
+                  if (entryMeta != null) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color:        entryMeta.color.withOpacity(0.10),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(entryMeta.icon, size: 13, color: entryMeta.color),
+                          const SizedBox(width: 4),
+                          Text(
+                            entryMeta.label,
+                            style: TextStyle(
+                              fontSize:   11,
+                              fontWeight: FontWeight.w600,
+                              color:      entryMeta.color,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Row(
+                  ],
+
+                  const SizedBox(height: 12),
+
+                  // ── Action buttons ──────────────────────────────────────
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
                       children: [
-                        Icon(Icons.access_time_rounded,
-                            size: 13, color: c.muted),
-                        const SizedBox(width: 4),
-                        Text(
-                          checkin.checkinTime,
-                          style: TextStyle(fontSize: 12, color: c.muted),
+                        // Out — manual checkout, only while ACTIVE
+                        if (isActive) ...[
+                          _ActionButton(
+                            icon:  Icons.logout_rounded,
+                            label: l10n.checkins_out,
+                            color: c.success,
+                            onTap: () => context
+                                .read<CheckinsBloc>()
+                                .add(CheckOutMember(checkin.checkinId)),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+
+                        // Block
+                        _ActionButton(
+                          icon:  Icons.block_rounded,
+                          label: l10n.checkins_block,
+                          color: c.error,
+                          onTap: () => _showBlockDialog(context, l10n),
+                        ),
+                        const SizedBox(width: 8),
+
+                        // Call
+                        _ActionButton(
+                          icon:  Icons.phone_rounded,
+                          label: l10n.checkins_call,
+                          color: c.muted,
+                          onTap: () => _call(context, checkin.phone, l10n),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              _StatusBadge(isActive: isActive, colors: c, l10n: l10n),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // ── Action buttons ────────────────────────────────────────────────
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                // Out — only for ACTIVE members
-                if (isActive) ...[
-                  _ActionButton(
-                    icon:  Icons.logout_rounded,
-                    label: l10n.checkins_out,
-                    color: c.success,
-                    onTap: () => context
-                        .read<CheckinsBloc>()
-                        .add(CheckOutMember(checkin.checkinId)),
                   ),
-                  const SizedBox(width: 8),
                 ],
-
-                // Freeze
-                _ActionButton(
-                  icon:  Icons.ac_unit_rounded,
-                  label: l10n.checkins_freeze,
-                  color: const Color(0xFF1D4ED8),
-                  onTap: () => _showFreezeSheet(context, l10n),
-                ),
-                const SizedBox(width: 8),
-
-                // Block
-                _ActionButton(
-                  icon:  Icons.block_rounded,
-                  label: l10n.checkins_block,
-                  color: c.error,
-                  onTap: () => _showBlockDialog(context, l10n),
-                ),
-                const SizedBox(width: 8),
-
-                // Call
-                _ActionButton(
-                  icon:  Icons.phone_rounded,
-                  label: l10n.checkins_call,
-                  color: c.muted,
-                  onTap: () => _call(checkin.phone),
-                ),
-              ],
+              ),
             ),
           ),
         ],
@@ -148,19 +188,18 @@ class CheckinMemberCard extends StatelessWidget {
     );
   }
 
-  // ── Freeze bottom sheet ────────────────────────────────────────────────────
-  void _showFreezeSheet(BuildContext context, AppLocalizations l10n) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => BlocProvider.value(
-        value: context.read<CheckinsBloc>(),
-        child: _FreezeSheet(userId: checkin.userId, l10n: l10n),
-      ),
-    );
+  // ── Entry-type badge metadata ─────────────────────────────────────────────
+  _EntryTypeMeta? _entryTypeMeta(String? entryType, AppLocalizations l10n) {
+    switch (entryType) {
+      case 'PT':
+        return _EntryTypeMeta(Icons.fitness_center_rounded, l10n.checkins_entryPt, const Color(0xFF7C3AED));
+      case 'CLASS':
+        return _EntryTypeMeta(Icons.event_available_rounded, l10n.checkins_entryClass, const Color(0xFF1D4ED8));
+      case 'GYM':
+        return _EntryTypeMeta(Icons.card_membership_rounded, l10n.checkins_entryPlan, const Color(0xFF059669));
+      default:
+        return null;
+    }
   }
 
   // ── Block confirmation dialog ──────────────────────────────────────────────
@@ -175,11 +214,28 @@ class CheckinMemberCard extends StatelessWidget {
   }
 
   // ── Phone call ─────────────────────────────────────────────────────────────
-  Future<void> _call(String phone) async {
+  Future<void> _call(BuildContext context, String phone, AppLocalizations l10n) async {
+    if (phone.trim().isEmpty) {
+      _showCallError(context, l10n.checkins_noPhoneNumber);
+      return;
+    }
     final uri = Uri(scheme: 'tel', path: phone);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
+    } else if (context.mounted) {
+      _showCallError(context, l10n.checkins_callFailed);
     }
+  }
+
+  void _showCallError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:         Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red[700],
+        duration:        const Duration(seconds: 3),
+        behavior:        SnackBarBehavior.floating,
+      ),
+    );
   }
 }
 
@@ -269,135 +325,12 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Freeze bottom sheet
-// ─────────────────────────────────────────────────────────────────────────────
-class _FreezeSheet extends StatefulWidget {
-  final int             userId;
-  final AppLocalizations l10n;
-  const _FreezeSheet({required this.userId, required this.l10n});
-
-  @override
-  State<_FreezeSheet> createState() => _FreezeSheetState();
-}
-
-class _FreezeSheetState extends State<_FreezeSheet> {
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  final _reasonController = TextEditingController();
-
-  @override
-  void dispose() {
-    _reasonController.dispose();
-    super.dispose();
-  }
-
-  String _fmt(DateTime d) =>
-      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-
-  Future<void> _pickDate(bool isFrom) async {
-    final now    = DateTime.now();
-    final result = await showDatePicker(
-      context:      context,
-      initialDate:  isFrom ? (_fromDate ?? now) : (_toDate ?? now.add(const Duration(days: 7))),
-      firstDate:    now,
-      lastDate:     now.add(const Duration(days: 365)),
-    );
-    if (result == null) return;
-    setState(() {
-      if (isFrom) _fromDate = result;
-      else        _toDate   = result;
-    });
-  }
-
-  void _submit() {
-    if (_fromDate == null || _toDate == null) return;
-    context.read<CheckinsBloc>().add(FreezeMember(
-      userId:   widget.userId,
-      fromDate: _fmt(_fromDate!),
-      toDate:   _fmt(_toDate!),
-      reason:   _reasonController.text.trim(),
-    ));
-    Navigator.of(context).pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = widget.l10n;
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 20, right: 20, top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(l10n.checkins_freezeTitle,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 20),
-
-          // From date
-          _DateRow(
-            label:   l10n.checkins_fromDate,
-            date:    _fromDate,
-            onTap:   () => _pickDate(true),
-          ),
-          const SizedBox(height: 12),
-
-          // To date
-          _DateRow(
-            label:   l10n.checkins_toDate,
-            date:    _toDate,
-            onTap:   () => _pickDate(false),
-          ),
-          const SizedBox(height: 12),
-
-          // Reason
-          TextField(
-            controller: _reasonController,
-            decoration: InputDecoration(
-              hintText:        l10n.checkins_reasonHint,
-              border:          OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              contentPadding:  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            ),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 20),
-
-          ElevatedButton(
-            onPressed: (_fromDate != null && _toDate != null) ? _submit : null,
-            child: Text(l10n.checkins_confirm),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DateRow extends StatelessWidget {
-  final String    label;
-  final DateTime? date;
-  final VoidCallback onTap;
-  const _DateRow({required this.label, required this.date, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final text = date == null
-        ? label
-        : '${date!.year}-${date!.month.toString().padLeft(2, '0')}-${date!.day.toString().padLeft(2, '0')}';
-
-    return OutlinedButton.icon(
-      onPressed: onTap,
-      icon:  const Icon(Icons.calendar_today_rounded, size: 16),
-      label: Text(text),
-      style: OutlinedButton.styleFrom(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-  }
+// ── Entry-type badge data ─────────────────────────────────────────────────────
+class _EntryTypeMeta {
+  final IconData icon;
+  final String   label;
+  final Color    color;
+  const _EntryTypeMeta(this.icon, this.label, this.color);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

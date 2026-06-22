@@ -10,6 +10,7 @@ class SessionBookingItemEntity {
   final String? paymentStatus;
   final String? paymentMethod;
   final int?    invoiceId;
+  final double? price;
 
   const SessionBookingItemEntity({
     required this.bookingId,
@@ -22,11 +23,14 @@ class SessionBookingItemEntity {
     this.paymentStatus,
     this.paymentMethod,
     this.invoiceId,
+    this.price,
   });
 
   bool get isCashPending =>
       paymentMethod?.toUpperCase() == 'CASH' &&
       (paymentStatus?.toUpperCase() == 'PENDING' || paymentStatus?.toUpperCase() == 'UNPAID');
+
+  bool get isPartiallyPaid => paymentStatus?.toUpperCase() == 'PARTIAL';
 
   bool get isCancelRequested => status.toUpperCase() == 'CANCEL_REQUESTED';
 }

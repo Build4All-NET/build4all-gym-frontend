@@ -32,14 +32,17 @@ class GetTodayCheckinsUseCase {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. ScanQrCheckinUseCase
-//    Called after the camera reads a QR code.
-//    Returns the member's full name to show in the success snackbar.
+//    Called after the camera reads a QR code. The backend toggles direction
+//    on rescan, so this can come back as either a check-in or a check-out.
 // ─────────────────────────────────────────────────────────────────────────────
 class ScanQrCheckinUseCase {
   final CheckinsRepository repository;
   ScanQrCheckinUseCase(this.repository);
 
-  Future<String> call({required String token, required int branchId}) =>
+  Future<({String memberName, bool checkedOut})> call({
+    required String token,
+    required int    branchId,
+  }) =>
       repository.scanQr(token: token, branchId: branchId);
 }
 
@@ -51,33 +54,12 @@ class CheckOutMemberUseCase {
   final CheckinsRepository repository;
   CheckOutMemberUseCase(this.repository);
 
-  Future<void> call(int checkinId) => repository.checkOut(checkinId);
+  Future<void> call({required int checkinId, required int branchId}) =>
+      repository.checkOut(checkinId: checkinId, branchId: branchId);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 4. FreezeMemberUseCase
-//    Admin fills the freeze bottom sheet and taps Confirm.
-// ─────────────────────────────────────────────────────────────────────────────
-class FreezeMemberUseCase {
-  final CheckinsRepository repository;
-  FreezeMemberUseCase(this.repository);
-
-  Future<void> call({
-    required int    userId,
-    required String fromDate,
-    required String toDate,
-    required String reason,
-  }) =>
-      repository.freezeMember(
-        userId:   userId,
-        fromDate: fromDate,
-        toDate:   toDate,
-        reason:   reason,
-      );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 5. BlockMemberUseCase
+// 4. BlockMemberUseCase
 //    Admin confirms the block dialog.
 // ─────────────────────────────────────────────────────────────────────────────
 class BlockMemberUseCase {

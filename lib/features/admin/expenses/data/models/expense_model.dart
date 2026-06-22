@@ -11,6 +11,8 @@ class ExpenseModel {
   final String branchName;
   final int? trainerId;
   final String? trainerName;
+  final String? sourceType;
+  final bool trainerPaid;
   final DateTime createdAt;
 
   const ExpenseModel({
@@ -24,6 +26,8 @@ class ExpenseModel {
     required this.branchName,
     this.trainerId,
     this.trainerName,
+    this.sourceType,
+    this.trainerPaid = true,
     required this.createdAt,
   });
 
@@ -39,6 +43,8 @@ class ExpenseModel {
       branchName: json['branchName'] as String? ?? '',
       trainerId: (json['trainerId'] as num?)?.toInt(),
       trainerName: json['trainerName'] as String?,
+      sourceType: json['sourceType'] as String?,
+      trainerPaid: json['trainerPaid'] as bool? ?? true,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
@@ -54,6 +60,8 @@ class ExpenseModel {
         branchName: branchName,
         trainerId: trainerId,
         trainerName: trainerName,
+        sourceType: sourceType,
+        trainerPaid: trainerPaid,
         createdAt: createdAt,
       );
 }

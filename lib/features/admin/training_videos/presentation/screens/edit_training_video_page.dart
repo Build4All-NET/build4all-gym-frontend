@@ -11,6 +11,7 @@ import '../bloc/training_videos_state.dart';
 import '../../data/models/update_training_video_request.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class EditTrainingVideoPage extends StatefulWidget {
   final TrainingVideoEntity video;
@@ -72,20 +73,21 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
   }
 
   Future<void> _showAddCategoryDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('New Category'),
+        title: Text(l10n.trainingVideos_newCategoryTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(hintText: 'e.g. Cardio, Strength, Yoga...'),
+          decoration: InputDecoration(hintText: l10n.trainingVideos_categoryNameHint),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Add')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.general_cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.trainingVideos_addCategoryAction)),
         ],
       ),
     );
@@ -104,8 +106,9 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedCategoryId == null) {
-      AppToast.info(context, 'Please select a category');
+      AppToast.info(context, l10n.trainingVideos_selectCategoryError);
       return;
     }
 
@@ -113,7 +116,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
     final seconds = int.tryParse(_secondsController.text) ?? 0;
     final totalSeconds = (minutes * 60) + seconds;
     if (totalSeconds <= 0) {
-      AppToast.info(context, 'Duration must be greater than 0');
+      AppToast.info(context, l10n.trainingVideos_durationMustBePositive);
       return;
     }
 
@@ -137,13 +140,14 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return MultiBlocListener(
       listeners: [
         BlocListener<TrainingVideosBloc, TrainingVideosState>(
           listenWhen: (_, curr) => curr is UpdateVideoSuccess || curr is UpdateVideoError,
           listener: (context, state) {
             if (state is UpdateVideoSuccess) {
-              AppToast.success(context, 'Video updated successfully');
+              AppToast.success(context, l10n.trainingVideos_updatedSuccess);
               Navigator.pop(context, true);
             } else if (state is UpdateVideoError) {
               AppToast.error(context, state.message);
@@ -159,7 +163,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                 _selectedCategoryId = state.category.categoryId;
               });
             } else if (state is CategoryCreateError) {
-              AppToast.error(context, 'Failed: ${state.message}');
+              AppToast.error(context, l10n.trainingVideos_categoryCreateFailed(state.message));
             }
           },
         ),
@@ -186,7 +190,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Edit Video'),
+              title: Text(l10n.trainingVideos_editPageTitle),
               centerTitle: false,
             ),
             body: Form(
@@ -196,14 +200,14 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                 children: [
                   TextFormField(
                     controller: _titleController,
-                    decoration: const InputDecoration(labelText: 'Title *'),
+                    decoration: InputDecoration(labelText: l10n.trainingVideos_titleLabel),
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Title is required' : null,
+                        (v == null || v.trim().isEmpty) ? l10n.trainingVideos_titleRequired : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: const InputDecoration(labelText: 'Description (optional)'),
+                    decoration: InputDecoration(labelText: l10n.trainingVideos_descriptionLabel),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 16),
@@ -213,8 +217,8 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                       Expanded(
                         child: DropdownButtonFormField<int?>(
                           value: _selectedCategoryId,
-                          decoration: const InputDecoration(labelText: 'Category *'),
-                          hint: const Text('Select a category'),
+                          decoration: InputDecoration(labelText: l10n.trainingVideos_categoryLabel),
+                          hint: Text(l10n.trainingVideos_selectCategoryHint),
                           items: _categories
                               .map((c) => DropdownMenuItem<int?>(
                                     value: c.categoryId,
@@ -222,7 +226,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                                   ))
                               .toList(),
                           onChanged: (val) => setState(() => _selectedCategoryId = val),
-                          validator: (v) => v == null ? 'Please select a category' : null,
+                          validator: (v) => v == null ? l10n.trainingVideos_selectCategoryError : null,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -243,7 +247,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                             : IconButton.filled(
                                 onPressed: _showAddCategoryDialog,
                                 icon: const Icon(Icons.add),
-                                tooltip: 'Add new category',
+                                tooltip: l10n.trainingVideos_addNewCategoryTooltip,
                               ),
                       ),
                     ],
@@ -252,8 +256,8 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                   if (_isOwner) ...[
                     DropdownButtonFormField<int?>(
                       value: _selectedTrainerId,
-                      decoration: const InputDecoration(labelText: 'Reassign Trainer (optional)'),
-                      hint: const Text('Keep current trainer'),
+                      decoration: InputDecoration(labelText: l10n.trainingVideos_reassignTrainerLabel),
+                      hint: Text(l10n.trainingVideos_keepCurrentTrainerHint),
                       items: _trainers
                           .map((t) => DropdownMenuItem<int?>(
                                 value: t.trainerId,
@@ -267,7 +271,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                   ElevatedButton.icon(
                     onPressed: _pickVideo,
                     icon: const Icon(Icons.video_library),
-                    label: const Text('Replace Video File (optional)'),
+                    label: Text(l10n.trainingVideos_replaceVideoButton),
                   ),
                   if (_selectedVideo != null)
                     Padding(
@@ -277,30 +281,30 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _videoUrlController,
-                    decoration: const InputDecoration(labelText: 'Video URL (YouTube/Vimeo)'),
+                    decoration: InputDecoration(labelText: l10n.trainingVideos_videoUrlLabel),
                     keyboardType: TextInputType.url,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _thumbnailUrlController,
-                    decoration: const InputDecoration(labelText: 'Thumbnail URL (optional)'),
+                    decoration: InputDecoration(labelText: l10n.trainingVideos_thumbnailUrlLabel),
                     keyboardType: TextInputType.url,
                   ),
                   const SizedBox(height: 16),
-                  const Text('Duration *',
-                      style: TextStyle(fontSize: 12, color: Colors.black54)),
+                  Text(l10n.trainingVideos_durationSection,
+                      style: const TextStyle(fontSize: 12, color: Colors.black54)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
                         child: TextFormField(
                           controller: _minutesController,
-                          decoration: const InputDecoration(
-                              labelText: 'Minutes', suffixText: 'min'),
+                          decoration: InputDecoration(
+                              labelText: l10n.trainingVideos_minutesLabel, suffixText: 'min'),
                           keyboardType: TextInputType.number,
                           validator: (v) {
-                            if (v == null || v.isEmpty) return 'Required';
-                            if (int.tryParse(v) == null) return 'Invalid';
+                            if (v == null || v.isEmpty) return l10n.trainingVideos_requiredField;
+                            if (int.tryParse(v) == null) return l10n.trainingVideos_invalidField;
                             return null;
                           },
                         ),
@@ -309,13 +313,13 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _secondsController,
-                          decoration: const InputDecoration(
-                              labelText: 'Seconds', suffixText: 'sec'),
+                          decoration: InputDecoration(
+                              labelText: l10n.trainingVideos_secondsLabel, suffixText: 'sec'),
                           keyboardType: TextInputType.number,
                           validator: (v) {
-                            if (v == null || v.isEmpty) return 'Required';
+                            if (v == null || v.isEmpty) return l10n.trainingVideos_requiredField;
                             final n = int.tryParse(v);
-                            if (n == null || n < 0 || n > 59) return '0–59';
+                            if (n == null || n < 0 || n > 59) return l10n.trainingVideos_secondsRangeError;
                             return null;
                           },
                         ),
@@ -324,8 +328,8 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                   ),
                   const SizedBox(height: 20),
                   SwitchListTile(
-                    title: const Text('Published'),
-                    subtitle: const Text('Visible to members immediately'),
+                    title: Text(l10n.trainingVideos_publishedLabel),
+                    subtitle: Text(l10n.trainingVideos_publishedSubtitle),
                     value: _isPublished,
                     onChanged: (val) => setState(() => _isPublished = val),
                     contentPadding: EdgeInsets.zero,
@@ -343,7 +347,7 @@ class _EditTrainingVideoPageState extends State<EditTrainingVideoPage> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text('Save Changes'),
+                          : Text(l10n.trainingVideos_saveChangesButton),
                     ),
                   ),
                 ],

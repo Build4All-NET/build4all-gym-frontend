@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
@@ -28,6 +29,7 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
   }
 
   Future<void> _confirmRemove(GymReceptionEntity staff) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) {
@@ -35,16 +37,16 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
         return AlertDialog(
           backgroundColor: c.surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('Remove Reception Role',
+          title: Text(l10n.admin_reception_removeTitle,
               style: TextStyle(color: c.primary, fontWeight: FontWeight.bold)),
           content: Text(
-            '${staff.fullName} will lose the Reception role and see the Member dashboard on next login.',
+            l10n.admin_reception_removeMessage(staff.fullName),
             style: TextStyle(color: c.error),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel', style: TextStyle(color: c.error)),
+              child: Text(l10n.general_cancel, style: TextStyle(color: c.error)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
@@ -53,8 +55,8 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text('Remove',
-                  style: TextStyle(color: Colors.white)),
+              child: Text(l10n.admin_trainers_remove,
+                  style: const TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -70,6 +72,7 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
     final tokens  = context.watch<ThemeCubit>().state.tokens;
     final c       = tokens.colors;
     final profile = context.watch<AdminProfileCubit>().state;
+    final l10n    = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: c.background,
@@ -85,7 +88,7 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
         preferredSize: const Size.fromHeight(64),
         child: SafeArea(
           bottom: false,
-          child: AdminAppBar(title: 'Reception Staff'),
+          child: AdminAppBar(title: l10n.navReceptionStaff),
         ),
       ),
 
@@ -96,8 +99,8 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
         ),
         backgroundColor: c.primary,
         icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
-        label: const Text('Add Staff',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+        label: Text(l10n.admin_reception_addStaff,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
       ),
 
       body: BlocConsumer<GymReceptionCubit, GymReceptionState>(
@@ -105,7 +108,7 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
           if (state is GymReceptionRemoveError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(l10n.admin_reception_removeError),
                 backgroundColor: Colors.red.shade700,
               ),
             );
@@ -123,7 +126,7 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
                 children: [
                   Icon(Icons.wifi_off_rounded, color: c.error, size: 48),
                   const SizedBox(height: 12),
-                  Text('Could not load reception staff',
+                  Text(l10n.admin_reception_loadError,
                       style: TextStyle(color: c.primary, fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(state.message,
@@ -133,7 +136,7 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
                   ElevatedButton.icon(
                     onPressed: () => context.read<GymReceptionCubit>().load(),
                     icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('Retry'),
+                    label: Text(l10n.retry),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: c.primary,
                         foregroundColor: Colors.white),
@@ -156,14 +159,14 @@ class _AdminGymReceptionScreenState extends State<AdminGymReceptionScreen> {
                   Icon(Icons.person_outline,
                       color: c.error, size: 56),
                   const SizedBox(height: 16),
-                  Text('No Reception Staff Yet',
+                  Text(l10n.admin_reception_noStaffYet,
                       style: TextStyle(
                           color: c.primary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap "Add Staff" to assign a member\nthe Reception role.',
+                    l10n.admin_reception_noStaffHint,
                     style: TextStyle(color: c.error, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -213,13 +216,14 @@ class _ReceptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
 
     String assignedLabel = '';
     try {
       final dt = DateTime.parse(staff.assignedAt);
-      assignedLabel = 'Staff since ${DateFormat('MMM d, yyyy').format(dt)}';
+      assignedLabel = l10n.admin_reception_staffSince(DateFormat('MMM d, yyyy').format(dt));
     } catch (_) {
-      assignedLabel = 'Reception Staff';
+      assignedLabel = l10n.navReceptionStaff;
     }
 
     return Container(
@@ -293,12 +297,12 @@ class _ReceptionCard extends StatelessWidget {
 
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              margin: const EdgeInsets.only(right: 8),
+              margin: const EdgeInsetsDirectional.only(end: 8),
               decoration: BoxDecoration(
                 color: c.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Text('RECEPTION',
+              child: Text(l10n.admin_reception_badge,
                   style: TextStyle(
                       color: c.primary,
                       fontSize: 10,
@@ -314,7 +318,7 @@ class _ReceptionCard extends StatelessWidget {
                 : IconButton(
               icon: Icon(Icons.person_remove_outlined,
                   color: Colors.red.shade400, size: 22),
-              tooltip: 'Remove Reception Role',
+              tooltip: l10n.admin_reception_removeTitle,
               onPressed: onRemove,
             ),
           ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:build4allgym/l10n/app_localizations.dart';
+
 /// Reusable OTP dialog for Edit Profile.
 ///
 /// This follows the same visual structure as Build4All e-commerce:
@@ -135,7 +137,7 @@ class _MemberProfileEditOtpDialogState
       if (!mounted) return;
 
       setState(() {
-        _errorText = 'Code resent successfully';
+        _errorText = AppLocalizations.of(context)!.editProfileCodeResentSuccess;
       });
     } catch (e) {
       if (!mounted) return;
@@ -196,7 +198,7 @@ class _MemberProfileEditOtpDialogState
                 Expanded(
                   child: TextButton(
                     onPressed: _loading ? null : _cancel,
-                    child: const Text('Cancel'),
+                    child: Text(AppLocalizations.of(context)!.general_cancel),
                   ),
                 ),
                 const SizedBox(width: 8),

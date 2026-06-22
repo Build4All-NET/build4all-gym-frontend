@@ -198,7 +198,19 @@
       "PowerShell(Get-Process *)",
       "Bash(ls mvnw* gradlew*)",
       "Bash(ls pom.xml build.gradle*)",
-      "Bash(sort -t: -k2)"
+      "Bash(sort -t: -k2)",
+      "Bash(xargs -I {} basename {})",
+      "Bash(awk 'NR>=662 && NR<=689 {printf \"%d:\", NR; print}' lib/l10n/app_ar.arb)",
+      "Bash(xargs grep -l \"Dio\\\\|http\")",
+      "Bash(sort -t V -k2 -n)",
+      "Bash(xargs -I{} basename {})",
+      "Read(//c/Users/monir/.claude/projects/C--Users-monir-AndroidStudioProjects-build4all-gym-frontend//**)",
+      "Bash(node -e ' *)",
+      "Bash(find lib/l10n -type f)",
+      "Bash(find . -maxdepth 1 -name \"l10n.yaml\")",
+      "Bash(cat l10n.yaml)",
+      "Bash(grep -c '\":' lib/l10n/app_en.arb)",
+      "Bash(grep -c '\":' lib/l10n/app_ar.arb)"
     ]
   }
 }

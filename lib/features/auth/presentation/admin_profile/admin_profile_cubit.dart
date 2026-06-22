@@ -24,6 +24,11 @@ class AdminProfile {
   /// All gym-specific roles from gym_user_roles: e.g. ['TRAINER', 'RECEPTION'].
   final List<String> gymRoles;
 
+  /// Nav item ids this user's gym role(s) are allowed to see/open, resolved
+  /// server-side by the owner-configurable permission matrix. Only meaningful
+  /// for TRAINER/RECEPTION — admins always see everything (see isAdminRole).
+  final List<String> allowedNavItemIds;
+
   /// Primary gym role (first in list, or 'MEMBER' if empty). Kept for backward compat.
   String get gymRole => gymRoles.isNotEmpty ? gymRoles.first : 'MEMBER';
 
@@ -48,10 +53,15 @@ class AdminProfile {
     this.userId,
     this.role     = '',
     this.gymRoles = const [],
+    this.allowedNavItemIds = const [],
     this.gymRolesLoaded = false,
   });
 
-  AdminProfile copyWith({List<String>? gymRoles, bool? gymRolesLoaded}) => AdminProfile(
+  AdminProfile copyWith({
+    List<String>? gymRoles,
+    List<String>? allowedNavItemIds,
+    bool? gymRolesLoaded,
+  }) => AdminProfile(
     adminName:  adminName,
     adminEmail: adminEmail,
     gymName:    gymName,
@@ -61,6 +71,7 @@ class AdminProfile {
     userId:     userId,
     role:       role,
     gymRoles:   gymRoles ?? this.gymRoles,
+    allowedNavItemIds: allowedNavItemIds ?? this.allowedNavItemIds,
     gymRolesLoaded: gymRolesLoaded ?? this.gymRolesLoaded,
   );
 
@@ -73,6 +84,7 @@ class AdminProfile {
     userId:     null,
     role:       '',
     gymRoles:   [],
+    allowedNavItemIds: [],
     gymRolesLoaded: false,
   );
 }
@@ -182,8 +194,16 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
           }
         }
 
-        debugPrint('✅ gymRoles resolved to: $rolesList');
-        emit(state.copyWith(gymRoles: rolesList, gymRolesLoaded: true));
+        final allowedNavItemIds = (data['allowedNavItemIds'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ?? [];
+
+        debugPrint('✅ gymRoles resolved to: $rolesList, allowedNavItemIds: $allowedNavItemIds');
+        emit(state.copyWith(
+          gymRoles: rolesList,
+          allowedNavItemIds: allowedNavItemIds,
+          gymRolesLoaded: true,
+        ));
       } else {
         debugPrint('⚠️ gym-role unexpected status ${response.statusCode}: ${response.data}');
         emit(state.copyWith(gymRolesLoaded: true));

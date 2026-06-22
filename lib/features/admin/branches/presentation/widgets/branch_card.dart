@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import '../../domain/entity/branch_entity.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class BranchCard extends StatelessWidget {
   final BranchEntity branch;
@@ -13,6 +14,7 @@ class BranchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -46,7 +48,7 @@ class BranchCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                _StatusBadge(isActive: branch.isActive),
+                _StatusBadge(isActive: branch.isActive, l10n: l10n),
               ],
             ),
             if (branch.city != null) ...[
@@ -69,21 +71,21 @@ class BranchCard extends StatelessWidget {
                   icon: Icons.people_outline,
                   color: const Color(0xFF3B82F6),
                   label: '${branch.memberCount}',
-                  sub: 'Members',
+                  sub: l10n.navMembers,
                 ),
                 const SizedBox(width: 12),
                 _MiniStat(
                   icon: Icons.fitness_center,
                   color: const Color(0xFF8B5CF6),
                   label: '${branch.trainerCount}',
-                  sub: 'Trainers',
+                  sub: l10n.admin_branches_trainers,
                 ),
                 const SizedBox(width: 12),
                 _MiniStat(
                   icon: Icons.manage_accounts_outlined,
                   color: const Color(0xFF10B981),
                   label: '${branch.staffCount}',
-                  sub: 'Staff',
+                  sub: l10n.navStaff,
                 ),
               ],
             ),
@@ -131,7 +133,8 @@ class BranchCard extends StatelessWidget {
 
 class _StatusBadge extends StatelessWidget {
   final bool isActive;
-  const _StatusBadge({required this.isActive});
+  final AppLocalizations l10n;
+  const _StatusBadge({required this.isActive, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +147,7 @@ class _StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isActive ? 'Active' : 'Inactive',
+        isActive ? l10n.admin_branches_statusActive : l10n.admin_branches_statusInactive,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
