@@ -6,7 +6,9 @@
 // change freely without altering what staff are allowed to see.
 //
 // Preserved staff access (unchanged from before the regroup):
-//   TRAINER   → PT Sessions, PT Packages, Training Videos
+//   TRAINER   → PT Sessions (Dashboard/Sessions/Schedule/Income tabs only —
+//               Packages, Services and PT Package Payments are Admin/Owner-only),
+//               Training Videos
 //   RECEPTION → Check-ins, Notifications, Membership Requests, Classes & PT,
 //               Payments, Invoices, Expenses, Reports
 
@@ -85,7 +87,6 @@ const _trainingItems = [
     iconData: Icons.assignment_turned_in_outlined,
     labelKey: 'navPtPackageBookings',
     route: '/admin/pt-package-bookings',
-    trainer: true,
   ),
   NavigationItem(
     id: 'training_videos',
@@ -118,6 +119,12 @@ const _financeItems = [
     labelKey: 'navExpenses',
     route: '/admin/expenses',
     reception: true,
+  ),
+  NavigationItem(
+    id: 'balance_sheet',
+    iconData: Icons.account_balance_outlined,
+    labelKey: 'navBalanceSheet',
+    route: '/admin/balance-sheet',
   ),
   NavigationItem(
     id: 'reports',

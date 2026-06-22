@@ -8,7 +8,12 @@ import '../../../../../core/error/exceptions.dart';
 
 abstract class AdminDashboardRemoteDatasource {
   final _client = AuthedHttpClient();
-  Future<AdminDashboardSummaryModel> getDashboardSummary({String period = 'today'});
+  Future<AdminDashboardSummaryModel> getDashboardSummary({
+    String period = 'today',
+    String revenuePeriod = 'this_month',
+    String? revenueStartDate,
+    String? revenueEndDate,
+  });
 }
 
 class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasource {
@@ -19,7 +24,12 @@ class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasour
       : _tokenStore = const AdminTokenStore(); // ← changed
 
   @override
-  Future<AdminDashboardSummaryModel> getDashboardSummary({String period = 'today'}) async {
+  Future<AdminDashboardSummaryModel> getDashboardSummary({
+    String period = 'today',
+    String revenuePeriod = 'this_month',
+    String? revenueStartDate,
+    String? revenueEndDate,
+  }) async {
     final token = await _tokenStore.getToken(); // now reads 'admin_token' key ✅
 
     if (token == null || token.trim().isEmpty) {
@@ -27,7 +37,12 @@ class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasour
     }
 
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/dashboard')
-        .replace(queryParameters: {'period': period});
+        .replace(queryParameters: {
+      'period': period,
+      'revenuePeriod': revenuePeriod,
+      if (revenueStartDate != null) 'startDate': revenueStartDate,
+      if (revenueEndDate != null) 'endDate': revenueEndDate,
+    });
 
     try {
       final response = await _client.get(

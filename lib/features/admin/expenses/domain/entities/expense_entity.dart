@@ -7,6 +7,8 @@ class ExpenseEntity {
   final String category;
   final int branchId;
   final String branchName;
+  final int? trainerId;
+  final String? trainerName;
   final DateTime createdAt;
 
   const ExpenseEntity({
@@ -18,6 +20,8 @@ class ExpenseEntity {
     required this.category,
     required this.branchId,
     required this.branchName,
+    this.trainerId,
+    this.trainerName,
     required this.createdAt,
   });
 }

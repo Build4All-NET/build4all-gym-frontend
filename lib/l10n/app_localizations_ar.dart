@@ -882,6 +882,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navExpenses => 'المصروفات';
 
   @override
+  String get navBalanceSheet => 'الميزانية العمومية';
+
+  @override
   String get navSettings => 'الإعدادات';
 
   @override
@@ -2270,13 +2273,55 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_expenses_delete => 'حذف';
 
   @override
-  String get admin_expenses_allCategories => 'جميع الفئات';
+  String get admin_expenses_allCategories => 'جميع أنواع المعاملات';
 
   @override
   String get admin_expenses_searchHint => 'البحث عن المصروفات...';
 
   @override
   String get admin_expenses_noExpenses => 'لا توجد مصروفات';
+
+  @override
+  String get balance_sheet_netProfit => 'صافي الربح';
+
+  @override
+  String get balance_sheet_collection => 'التحصيل';
+
+  @override
+  String get balance_sheet_expense => 'المصروفات';
+
+  @override
+  String get balance_sheet_collectionTab => 'التحصيل';
+
+  @override
+  String get balance_sheet_expenseTab => 'المصروفات';
+
+  @override
+  String get balance_sheet_filterToday => 'اليوم';
+
+  @override
+  String get balance_sheet_filterThisWeek => 'هذا الأسبوع';
+
+  @override
+  String get balance_sheet_filterThisMonth => 'هذا الشهر';
+
+  @override
+  String get balance_sheet_filterThisYear => 'هذا العام';
+
+  @override
+  String get balance_sheet_filterAllTime => 'كل الوقت';
+
+  @override
+  String get balance_sheet_filterCustom => 'مخصص';
+
+  @override
+  String get balance_sheet_noCollections => 'لا توجد تحصيلات في هذه الفترة';
+
+  @override
+  String get balance_sheet_noExpenses => 'لا توجد مصروفات في هذه الفترة';
+
+  @override
+  String get balance_sheet_selectDateRange => 'اختر النطاق الزمني';
 
   @override
   String get admin_staff_noStaff => 'لا يوجد موظفون.';
@@ -2949,6 +2994,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_newPtService => 'خدمة PT جديدة';
 
   @override
+  String get trainer_newServiceSubtitle => 'إنشاء خدمة تدريب شخصي';
+
+  @override
+  String get trainer_editServiceSubtitle => 'تحديث تفاصيل هذه الخدمة';
+
+  @override
+  String get trainer_sectionBasicInfo => 'المعلومات الأساسية';
+
+  @override
+  String get trainer_sectionPricing => 'التسعير';
+
+  @override
   String get trainer_assignToTrainer => 'تعيين للمدرب';
 
   @override
@@ -3036,6 +3093,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_newPackage => 'باقة جديدة';
 
   @override
+  String get trainer_newPackageSubtitle => 'حدد الجلسات والتسعير ومدة الصلاحية';
+
+  @override
+  String get trainer_editPackageSubtitle => 'تحديث تفاصيل هذه الباقة';
+
+  @override
+  String get trainer_sectionSessionsSchedule => 'الجلسات والجدول';
+
+  @override
   String get trainer_packageNameLabel => 'اسم الباقة';
 
   @override
@@ -3106,6 +3172,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_addAvailabilitySlotTitle => 'إضافة خانة توفر';
+
+  @override
+  String get trainer_addSlotSubtitle => 'تعيين موعد متكرر أو لمرة واحدة';
+
+  @override
+  String get trainer_sectionTiming => 'التوقيت';
+
+  @override
+  String get trainer_sectionAvailabilityType => 'نوع التوفر';
 
   @override
   String get trainer_dayOfWeek => 'يوم الأسبوع';
@@ -3220,6 +3295,58 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_navMore => 'المزيد';
+
+  @override
+  String get trainer_navIncome => 'الدخل';
+
+  @override
+  String get trainer_commissionPercentageLabel => 'نسبة عمولة المدرب';
+
+  @override
+  String trainer_commissionValue(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get trainer_commissionRangeError => 'يجب أن تكون القيمة بين 0 و 100';
+
+  @override
+  String get trainer_linkedPtServiceRequired => 'خدمة التدريب الشخصي المرتبطة';
+
+  @override
+  String get trainer_selectServiceRequired => 'يرجى اختيار خدمة';
+
+  @override
+  String get trainer_incomeAllTitle => 'دخل المدرب';
+
+  @override
+  String get trainer_incomeMyTitle => 'دخلي';
+
+  @override
+  String get trainer_incomeSelectTrainer => 'اختر مدربًا لعرض دخله.';
+
+  @override
+  String get trainer_incomeTotalSessions => 'إجمالي الجلسات';
+
+  @override
+  String get trainer_incomeTotalEarning => 'إجمالي الدخل';
+
+  @override
+  String get trainer_incomeNoData => 'لا توجد جلسات مدفوعة في هذا النطاق الزمني.';
+
+  @override
+  String get trainer_incomeSalaryPayment => 'دفعة راتب';
+
+  @override
+  String get trainer_incomeClassSession => 'حصة جماعية';
+
+  @override
+  String trainer_commissionOfPrice(String percent, String price) {
+    return '$percent% من \$$price';
+  }
+
+  @override
+  String get trainer_markAsPaidButton => 'وضع علامة كمدفوع';
 
   @override
   String get trainer_ptSession => 'جلسة PT';
@@ -3639,6 +3766,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_classes_roomHint => 'مثال: القاعة 1، الطابق 2';
+
+  @override
+  String get admin_classes_commissionLabel => 'نسبة عمولة المدرب (اختياري)';
+
+  @override
+  String get admin_classes_commissionHint => 'مثال: 15';
+
+  @override
+  String get admin_classes_removeCommission => 'إزالة نسبة العمولة الحالية لهذه الحصة';
 
   @override
   String get admin_classes_notesHint => 'مثال: ملاحظات إضافية';

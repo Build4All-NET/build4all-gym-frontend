@@ -44,7 +44,7 @@ class _BusinessRulesSectionWidgetState
     extends State<BusinessRulesSectionWidget> {
   // ── Local UI state ──────────────────────────────────────────────────────────
   bool _isExpanded = true; // Subscription Rules group starts expanded (matches Figma)
-  bool _isOwner = false;   // true = OWNER role, false = ADMIN (toggles disabled)
+  bool? _isOwner;          // null = role not resolved yet, true = OWNER, false = any other role
 
   @override
   void initState() {
@@ -52,8 +52,9 @@ class _BusinessRulesSectionWidgetState
     _resolveRole();
   }
 
-  /// Reads the admin role from secure storage.
-  /// OWNER can edit toggles; ADMIN sees them as disabled.
+  /// Reads the admin role from secure storage. The whole section is
+  /// OWNER-only — until the role resolves to OWNER, nothing renders here
+  /// (no placeholder/spinner), so other roles never see it at all.
   Future<void> _resolveRole() async {
     const storage = FlutterSecureStorage();
     // Role is stored separately under 'admin_role' by AdminTokenStore.
@@ -63,6 +64,8 @@ class _BusinessRulesSectionWidgetState
 
   @override
   Widget build(BuildContext context) {
+    if (_isOwner != true) return const SizedBox.shrink();
+
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c = tokens.colors;
     final state = context.watch<AdminSettingsCubit>().state;
@@ -194,7 +197,7 @@ class _BusinessRulesSectionWidgetState
           label: l10n.admin_settings_allowClassWithoutMembership,
           subtitle: l10n.admin_settings_allowClassWithoutMembershipDesc,
           value: rules.allowClassWithoutMembership,
-          isOwner: _isOwner,
+          isOwner: true,
           onChanged: (v) =>
               cubit.updateBusinessRule(allowClassWithoutMembership: v),
           tokens: tokens,
@@ -205,7 +208,7 @@ class _BusinessRulesSectionWidgetState
           label: l10n.admin_settings_requireMembershipForClass,
           subtitle: l10n.admin_settings_requireMembershipForClassDesc,
           value: rules.requireMembershipForClass,
-          isOwner: _isOwner,
+          isOwner: true,
           onChanged: (v) =>
               cubit.updateBusinessRule(requireMembershipForClass: v),
           tokens: tokens,
@@ -216,7 +219,7 @@ class _BusinessRulesSectionWidgetState
           label: l10n.admin_settings_allowMembershipWithoutClass,
           subtitle: l10n.admin_settings_allowMembershipWithoutClassDesc,
           value: rules.allowMembershipWithoutClass,
-          isOwner: _isOwner,
+          isOwner: true,
           onChanged: (v) =>
               cubit.updateBusinessRule(allowMembershipWithoutClass: v),
           tokens: tokens,
@@ -227,7 +230,7 @@ class _BusinessRulesSectionWidgetState
           label: l10n.admin_settings_allowBothIndependently,
           subtitle: l10n.admin_settings_allowBothIndependentlyDesc,
           value: rules.allowBothIndependently,
-          isOwner: _isOwner,
+          isOwner: true,
           onChanged: (v) =>
               cubit.updateBusinessRule(allowBothIndependently: v),
           tokens: tokens,
@@ -238,7 +241,7 @@ class _BusinessRulesSectionWidgetState
           label: l10n.admin_settings_allowPtBookingWithoutMembership,
           subtitle: l10n.admin_settings_allowPtBookingWithoutMembershipDesc,
           value: rules.allowPtBookingWithoutMembership,
-          isOwner: _isOwner,
+          isOwner: true,
           onChanged: (v) =>
               cubit.updateBusinessRule(allowPtBookingWithoutMembership: v),
           tokens: tokens,

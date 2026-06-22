@@ -1793,6 +1793,12 @@ abstract class AppLocalizations {
   /// **'Expenses'**
   String get navExpenses;
 
+  /// Admin drawer — Balance Sheet item
+  ///
+  /// In en, this message translates to:
+  /// **'Balance Sheet'**
+  String get navBalanceSheet;
+
   /// Admin drawer — Settings item
   ///
   /// In en, this message translates to:
@@ -4508,7 +4514,7 @@ abstract class AppLocalizations {
   /// No description provided for @admin_expenses_allCategories.
   ///
   /// In en, this message translates to:
-  /// **'All Categories'**
+  /// **'All Transaction Types'**
   String get admin_expenses_allCategories;
 
   /// No description provided for @admin_expenses_searchHint.
@@ -4522,6 +4528,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No expenses found'**
   String get admin_expenses_noExpenses;
+
+  /// No description provided for @balance_sheet_netProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Profit'**
+  String get balance_sheet_netProfit;
+
+  /// No description provided for @balance_sheet_collection.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get balance_sheet_collection;
+
+  /// No description provided for @balance_sheet_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get balance_sheet_expense;
+
+  /// No description provided for @balance_sheet_collectionTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get balance_sheet_collectionTab;
+
+  /// No description provided for @balance_sheet_expenseTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get balance_sheet_expenseTab;
+
+  /// No description provided for @balance_sheet_filterToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get balance_sheet_filterToday;
+
+  /// No description provided for @balance_sheet_filterThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get balance_sheet_filterThisWeek;
+
+  /// No description provided for @balance_sheet_filterThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get balance_sheet_filterThisMonth;
+
+  /// No description provided for @balance_sheet_filterThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This Year'**
+  String get balance_sheet_filterThisYear;
+
+  /// No description provided for @balance_sheet_filterAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get balance_sheet_filterAllTime;
+
+  /// No description provided for @balance_sheet_filterCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get balance_sheet_filterCustom;
+
+  /// No description provided for @balance_sheet_noCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'No collections in this period'**
+  String get balance_sheet_noCollections;
+
+  /// No description provided for @balance_sheet_noExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses in this period'**
+  String get balance_sheet_noExpenses;
+
+  /// No description provided for @balance_sheet_selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date range'**
+  String get balance_sheet_selectDateRange;
 
   /// No description provided for @admin_staff_noStaff.
   ///
@@ -5831,6 +5921,30 @@ abstract class AppLocalizations {
   /// **'New PT Service'**
   String get trainer_newPtService;
 
+  /// No description provided for @trainer_newServiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a personal training service'**
+  String get trainer_newServiceSubtitle;
+
+  /// No description provided for @trainer_editServiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update this service\'s details'**
+  String get trainer_editServiceSubtitle;
+
+  /// No description provided for @trainer_sectionBasicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
+  String get trainer_sectionBasicInfo;
+
+  /// No description provided for @trainer_sectionPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get trainer_sectionPricing;
+
   /// No description provided for @trainer_assignToTrainer.
   ///
   /// In en, this message translates to:
@@ -5993,6 +6107,24 @@ abstract class AppLocalizations {
   /// **'New Package'**
   String get trainer_newPackage;
 
+  /// No description provided for @trainer_newPackageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Define sessions, pricing & validity'**
+  String get trainer_newPackageSubtitle;
+
+  /// No description provided for @trainer_editPackageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update this package\'s details'**
+  String get trainer_editPackageSubtitle;
+
+  /// No description provided for @trainer_sectionSessionsSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions & Schedule'**
+  String get trainer_sectionSessionsSchedule;
+
   /// No description provided for @trainer_packageNameLabel.
   ///
   /// In en, this message translates to:
@@ -6124,6 +6256,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Availability Slot'**
   String get trainer_addAvailabilitySlotTitle;
+
+  /// No description provided for @trainer_addSlotSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a recurring or one-time time slot'**
+  String get trainer_addSlotSubtitle;
+
+  /// No description provided for @trainer_sectionTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Timing'**
+  String get trainer_sectionTiming;
+
+  /// No description provided for @trainer_sectionAvailabilityType.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability Type'**
+  String get trainer_sectionAvailabilityType;
 
   /// No description provided for @trainer_dayOfWeek.
   ///
@@ -6352,6 +6502,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More'**
   String get trainer_navMore;
+
+  /// No description provided for @trainer_navIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get trainer_navIncome;
+
+  /// No description provided for @trainer_commissionPercentageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer Commission %'**
+  String get trainer_commissionPercentageLabel;
+
+  /// No description provided for @trainer_commissionValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String trainer_commissionValue(String percent);
+
+  /// No description provided for @trainer_commissionRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be between 0 and 100'**
+  String get trainer_commissionRangeError;
+
+  /// No description provided for @trainer_linkedPtServiceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked PT Service'**
+  String get trainer_linkedPtServiceRequired;
+
+  /// No description provided for @trainer_selectServiceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a service'**
+  String get trainer_selectServiceRequired;
+
+  /// No description provided for @trainer_incomeAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer Income'**
+  String get trainer_incomeAllTitle;
+
+  /// No description provided for @trainer_incomeMyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Income'**
+  String get trainer_incomeMyTitle;
+
+  /// No description provided for @trainer_incomeSelectTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a trainer to view their income.'**
+  String get trainer_incomeSelectTrainer;
+
+  /// No description provided for @trainer_incomeTotalSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Sessions'**
+  String get trainer_incomeTotalSessions;
+
+  /// No description provided for @trainer_incomeTotalEarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earning'**
+  String get trainer_incomeTotalEarning;
+
+  /// No description provided for @trainer_incomeNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No paid sessions in this date range.'**
+  String get trainer_incomeNoData;
+
+  /// No description provided for @trainer_incomeSalaryPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary payment'**
+  String get trainer_incomeSalaryPayment;
+
+  /// No description provided for @trainer_incomeClassSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Class session'**
+  String get trainer_incomeClassSession;
+
+  /// No description provided for @trainer_commissionOfPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of \${price}'**
+  String trainer_commissionOfPrice(String percent, String price);
+
+  /// No description provided for @trainer_markAsPaidButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Paid'**
+  String get trainer_markAsPaidButton;
 
   /// No description provided for @trainer_ptSession.
   ///
@@ -7008,426 +7254,873 @@ abstract class AppLocalizations {
   String get branchDialog_back;
 
   /// No description provided for @navReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
   String get navReports;
 
   /// No description provided for @reports_tabFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial'**
   String get reports_tabFinancial;
 
   /// No description provided for @reports_tabAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
   String get reports_tabAttendance;
 
   /// No description provided for @reports_collected.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
   String get reports_collected;
 
   /// No description provided for @reports_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
   String get reports_expense;
 
   /// No description provided for @reports_net.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
   String get reports_net;
 
   /// No description provided for @reports_totalCheckins.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Check-ins'**
   String get reports_totalCheckins;
 
   /// No description provided for @reports_uniqueMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Unique Members'**
   String get reports_uniqueMembers;
 
   /// No description provided for @reports_avgPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg / Day'**
   String get reports_avgPerDay;
 
   /// No description provided for @reports_collectedOverTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected Over Time'**
   String get reports_collectedOverTime;
 
   /// No description provided for @reports_expenseByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense by Category'**
   String get reports_expenseByCategory;
 
   /// No description provided for @reports_checkinsOverTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins Over Time'**
   String get reports_checkinsOverTime;
 
   /// No description provided for @reports_noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data for this period'**
   String get reports_noData;
 
   /// No description provided for @sectionOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
   String get sectionOverview;
 
   /// No description provided for @sectionMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
   String get sectionMembers;
 
   /// No description provided for @sectionFrontDesk.
+  ///
+  /// In en, this message translates to:
+  /// **'Front Desk'**
   String get sectionFrontDesk;
 
   /// No description provided for @sectionTrainingClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Training & Classes'**
   String get sectionTrainingClasses;
 
   /// No description provided for @sectionFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
   String get sectionFinance;
 
   /// No description provided for @sectionSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup'**
   String get sectionSetup;
 
   /// No description provided for @sectionTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
   String get sectionTools;
 
   /// No description provided for @admin_classes_sectionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Class Details'**
   String get admin_classes_sectionDetails;
 
   /// No description provided for @admin_classes_sectionSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
   String get admin_classes_sectionSchedule;
 
   /// No description provided for @admin_classes_sectionCapacityRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity & Room'**
   String get admin_classes_sectionCapacityRoom;
 
   /// No description provided for @admin_classes_sectionNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
   String get admin_classes_sectionNotes;
 
   /// No description provided for @admin_classes_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
   String get admin_classes_required;
 
   /// No description provided for @admin_classes_mustBeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be a number'**
   String get admin_classes_mustBeNumber;
 
   /// No description provided for @admin_classes_nameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Morning Yoga Flow'**
   String get admin_classes_nameHint;
 
   /// No description provided for @admin_classes_durationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 60'**
   String get admin_classes_durationHint;
 
   /// No description provided for @admin_classes_capacityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum participants'**
   String get admin_classes_capacityHint;
 
   /// No description provided for @admin_classes_roomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Hall 1, 2nd Floor'**
   String get admin_classes_roomHint;
 
+  /// No description provided for @admin_classes_commissionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer Commission % (optional)'**
+  String get admin_classes_commissionLabel;
+
+  /// No description provided for @admin_classes_commissionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 15'**
+  String get admin_classes_commissionHint;
+
+  /// No description provided for @admin_classes_removeCommission.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the existing commission % for this class'**
+  String get admin_classes_removeCommission;
+
   /// No description provided for @admin_classes_notesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Additional class notes'**
   String get admin_classes_notesHint;
 
   /// No description provided for @admin_classes_createTypeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
   String get admin_classes_createTypeButton;
 
   /// No description provided for @admin_classes_typeExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This type already exists — select it from the list'**
   String get admin_classes_typeExists;
 
   /// No description provided for @admin_classes_typeNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name *'**
   String get admin_classes_typeNameLabel;
 
   /// No description provided for @admin_classes_typeNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Yoga, CrossFit'**
   String get admin_classes_typeNameHint;
 
   /// No description provided for @admin_classes_typeDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (minutes) *'**
   String get admin_classes_typeDurationLabel;
 
   /// No description provided for @admin_classes_typeDifficultyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty Level'**
   String get admin_classes_typeDifficultyLabel;
 
   /// No description provided for @admin_classes_typePriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
   String get admin_classes_typePriceLabel;
 
   /// No description provided for @admin_classes_diffBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
   String get admin_classes_diffBeginner;
 
   /// No description provided for @admin_classes_diffIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
   String get admin_classes_diffIntermediate;
 
   /// No description provided for @admin_classes_diffAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
   String get admin_classes_diffAdvanced;
 
   /// No description provided for @admin_expenses_addTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Expense'**
   String get admin_expenses_addTitle;
 
   /// No description provided for @admin_expenses_editTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Expense'**
   String get admin_expenses_editTitle;
 
   /// No description provided for @admin_expenses_sectionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Details'**
   String get admin_expenses_sectionDetails;
 
   /// No description provided for @admin_expenses_titleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title *'**
   String get admin_expenses_titleLabel;
 
   /// No description provided for @admin_expenses_titleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Electricity bill'**
   String get admin_expenses_titleHint;
 
   /// No description provided for @admin_expenses_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
   String get admin_expenses_required;
 
   /// No description provided for @admin_expenses_descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
   String get admin_expenses_descriptionLabel;
 
   /// No description provided for @admin_expenses_descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional notes'**
   String get admin_expenses_descriptionHint;
 
   /// No description provided for @admin_expenses_amountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount *'**
   String get admin_expenses_amountLabel;
 
   /// No description provided for @admin_expenses_invalidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid amount'**
   String get admin_expenses_invalidAmount;
 
   /// No description provided for @admin_expenses_dateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date *'**
   String get admin_expenses_dateLabel;
 
   /// No description provided for @admin_expenses_categoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category *'**
   String get admin_expenses_categoryLabel;
 
   /// No description provided for @admin_expenses_selectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
   String get admin_expenses_selectCategory;
 
   /// No description provided for @admin_expenses_branchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch *'**
   String get admin_expenses_branchLabel;
 
   /// No description provided for @admin_expenses_selectBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Select branch'**
   String get admin_expenses_selectBranch;
 
   /// No description provided for @admin_expenses_selectBranchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a branch'**
   String get admin_expenses_selectBranchError;
 
   /// No description provided for @admin_expenses_addedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense added successfully'**
   String get admin_expenses_addedSuccess;
 
   /// No description provided for @admin_expenses_updatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense updated successfully'**
   String get admin_expenses_updatedSuccess;
 
   /// No description provided for @admin_expenses_saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
   String get admin_expenses_saveChanges;
 
   /// No description provided for @admin_staff_addSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the details to add a new staff member to your gym'**
   String get admin_staff_addSubtitle;
 
   /// No description provided for @admin_staff_sectionPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
   String get admin_staff_sectionPersonal;
 
   /// No description provided for @admin_staff_fullNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
   String get admin_staff_fullNameLabel;
 
   /// No description provided for @admin_staff_fullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name is required'**
   String get admin_staff_fullNameRequired;
 
   /// No description provided for @admin_staff_emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
   String get admin_staff_emailLabel;
 
   /// No description provided for @admin_staff_emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
   String get admin_staff_emailRequired;
 
   /// No description provided for @admin_staff_emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
   String get admin_staff_emailInvalid;
 
   /// No description provided for @admin_staff_phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
   String get admin_staff_phoneLabel;
 
   /// No description provided for @admin_staff_phoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
   String get admin_staff_phoneRequired;
 
   /// No description provided for @admin_staff_roleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
   String get admin_staff_roleLabel;
 
   /// No description provided for @admin_staff_roleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Role is required'**
   String get admin_staff_roleRequired;
 
   /// No description provided for @admin_staff_branchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Assignment'**
   String get admin_staff_branchLabel;
 
   /// No description provided for @admin_staff_branchRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch is required'**
   String get admin_staff_branchRequired;
 
   /// No description provided for @admin_staff_passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
   String get admin_staff_passwordLabel;
 
   /// No description provided for @admin_staff_passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-generate or enter'**
   String get admin_staff_passwordHint;
 
   /// No description provided for @admin_staff_passwordHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to auto-generate a secure password'**
   String get admin_staff_passwordHelp;
 
   /// No description provided for @admin_staff_addButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Staff Member'**
   String get admin_staff_addButton;
 
   /// No description provided for @admin_staff_saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
   String get admin_staff_saveChanges;
 
   /// No description provided for @admin_plans_sectionBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
   String get admin_plans_sectionBasic;
 
   /// No description provided for @admin_plans_sectionMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership Settings'**
   String get admin_plans_sectionMembership;
 
   /// No description provided for @admin_plans_sectionAccessHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Hours'**
   String get admin_plans_sectionAccessHours;
 
   /// No description provided for @admin_plans_sectionFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Features'**
   String get admin_plans_sectionFeatures;
 
   /// No description provided for @admin_plans_sectionPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion'**
   String get admin_plans_sectionPromotion;
 
   /// No description provided for @admin_plans_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
   String get admin_plans_required;
 
   /// No description provided for @admin_plans_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid'**
   String get admin_plans_invalid;
 
   /// No description provided for @admin_plans_nameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Name *'**
   String get admin_plans_nameLabel;
 
   /// No description provided for @admin_plans_typeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type / Activity *'**
   String get admin_plans_typeLabel;
 
   /// No description provided for @admin_plans_typeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter type (e.g. Yoga)'**
   String get admin_plans_typeHint;
 
   /// No description provided for @admin_plans_selectType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select type'**
   String get admin_plans_selectType;
 
   /// No description provided for @admin_plans_addNewType.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new type…'**
   String get admin_plans_addNewType;
 
   /// No description provided for @admin_plans_priceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price *'**
   String get admin_plans_priceLabel;
 
   /// No description provided for @admin_plans_durationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration *'**
   String get admin_plans_durationLabel;
 
   /// No description provided for @admin_plans_customDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Duration (days) *'**
   String get admin_plans_customDurationLabel;
 
   /// No description provided for @admin_plans_enterDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter number of days'**
   String get admin_plans_enterDays;
 
   /// No description provided for @admin_plans_mustBeWhole.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be a whole number'**
   String get admin_plans_mustBeWhole;
 
   /// No description provided for @admin_plans_statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status *'**
   String get admin_plans_statusLabel;
 
   /// No description provided for @admin_plans_descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
   String get admin_plans_descriptionLabel;
 
   /// No description provided for @admin_plans_descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional plan description'**
   String get admin_plans_descriptionHint;
 
   /// No description provided for @admin_plans_allowedVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed Visits'**
   String get admin_plans_allowedVisits;
 
   /// No description provided for @admin_plans_unlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
   String get admin_plans_unlimited;
 
   /// No description provided for @admin_plans_limited.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited'**
   String get admin_plans_limited;
 
   /// No description provided for @admin_plans_numberOfVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of visits'**
   String get admin_plans_numberOfVisits;
 
   /// No description provided for @admin_plans_enterVisitCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter visit count'**
   String get admin_plans_enterVisitCount;
 
   /// No description provided for @admin_plans_gracePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Grace Period (Days)'**
   String get admin_plans_gracePeriod;
 
   /// No description provided for @admin_plans_gracePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Days after expiry before suspension'**
   String get admin_plans_gracePeriodHint;
 
   /// No description provided for @admin_plans_autoRenew.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Renew'**
   String get admin_plans_autoRenew;
 
   /// No description provided for @admin_plans_autoRenewSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew automatically on expiry'**
   String get admin_plans_autoRenewSub;
 
   /// No description provided for @admin_plans_featured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Plan'**
   String get admin_plans_featured;
 
   /// No description provided for @admin_plans_featuredSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight on member browse screen'**
   String get admin_plans_featuredSub;
 
   /// No description provided for @admin_plans_restrictHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Restrict Entry Hours'**
   String get admin_plans_restrictHours;
 
   /// No description provided for @admin_plans_restrictOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Members can only enter between the times below'**
   String get admin_plans_restrictOn;
 
   /// No description provided for @admin_plans_restrictOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Members can enter at any time'**
   String get admin_plans_restrictOff;
 
   /// No description provided for @admin_plans_entryWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed Entry Window'**
   String get admin_plans_entryWindow;
 
   /// No description provided for @admin_plans_from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
   String get admin_plans_from;
 
   /// No description provided for @admin_plans_until.
+  ///
+  /// In en, this message translates to:
+  /// **'Until'**
   String get admin_plans_until;
 
   /// No description provided for @admin_plans_accessNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Members with booked sessions or PT can always enter during their session window.'**
   String get admin_plans_accessNote;
 
   /// No description provided for @admin_plans_featuresHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add features members will see on this plan (e.g. Pool Access, WiFi)'**
   String get admin_plans_featuresHint;
 
   /// No description provided for @admin_plans_featureHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature (e.g. WiFi)'**
   String get admin_plans_featureHint;
 
   /// No description provided for @admin_plans_valueOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Value (optional)'**
   String get admin_plans_valueOptional;
 
   /// No description provided for @admin_plans_addFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Feature'**
   String get admin_plans_addFeature;
 
   /// No description provided for @admin_plans_hasPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Has Active Promotion'**
   String get admin_plans_hasPromotion;
 
   /// No description provided for @admin_plans_promoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion Title *'**
   String get admin_plans_promoTitle;
 
   /// No description provided for @admin_plans_titleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title required'**
   String get admin_plans_titleRequired;
 
   /// No description provided for @admin_plans_promoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion Description'**
   String get admin_plans_promoDescription;
 
   /// No description provided for @admin_plans_optionalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional details'**
   String get admin_plans_optionalDetails;
 
   /// No description provided for @admin_plans_promoTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Summer Special'**
   String get admin_plans_promoTitleHint;
 
   /// No description provided for @admin_plans_discountType.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Type'**
   String get admin_plans_discountType;
 
   /// No description provided for @admin_plans_fixedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed Amount'**
   String get admin_plans_fixedAmount;
 
   /// No description provided for @admin_plans_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage %'**
   String get admin_plans_percentage;
 
   /// No description provided for @admin_plans_discountPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount %'**
   String get admin_plans_discountPercent;
 
   /// No description provided for @admin_plans_discountAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Amount'**
   String get admin_plans_discountAmount;
 
   /// No description provided for @admin_plans_startDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
   String get admin_plans_startDate;
 
   /// No description provided for @admin_plans_noStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No start date'**
   String get admin_plans_noStartDate;
 
   /// No description provided for @admin_plans_endDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
   String get admin_plans_endDate;
 
   /// No description provided for @admin_plans_noEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No end date'**
   String get admin_plans_noEndDate;
 
   /// No description provided for @admin_plans_noEndDateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No end date = promotion stays active until manually deactivated'**
   String get admin_plans_noEndDateNote;
 
   /// No description provided for @admin_plans_saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
   String get admin_plans_saveChanges;
 
   /// No description provided for @admin_plans_durOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One Time'**
   String get admin_plans_durOneTime;
 
   /// No description provided for @admin_plans_durCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
   String get admin_plans_durCustom;
 
+  /// No description provided for @admin_plans_nameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Gold Monthly'**
   String get admin_plans_nameHint;
 
+  /// No description provided for @admin_plans_customDurationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 45'**
   String get admin_plans_customDurationHint;
 
+  /// No description provided for @admin_dashboard_viewReports.
+  ///
+  /// In en, this message translates to:
+  /// **'View detailed reports'**
   String get admin_dashboard_viewReports;
 }
 

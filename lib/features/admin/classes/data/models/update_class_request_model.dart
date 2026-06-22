@@ -15,6 +15,8 @@ class UpdateClassRequestModel {
   final int?    capacity;
   final String? roomName;
   final String? notes;
+  final double? commissionPercentage; // optional (0-100) — null means "don't change this"
+  final bool clearCommissionPercentage; // true -> explicitly remove a previously-set commission
 
   const UpdateClassRequestModel({
     this.className,
@@ -27,6 +29,8 @@ class UpdateClassRequestModel {
     this.capacity,
     this.roomName,
     this.notes,
+    this.commissionPercentage,
+    this.clearCommissionPercentage = false,
   });
 
   // Only include non-null fields — null means "don't change this"
@@ -42,6 +46,11 @@ class UpdateClassRequestModel {
     if (capacity        != null) map['capacity']        = capacity;
     if (roomName        != null) map['roomName']        = roomName;
     if (notes           != null) map['notes']           = notes;
+    if (clearCommissionPercentage) {
+      map['clearCommissionPercentage'] = true;
+    } else if (commissionPercentage != null) {
+      map['commissionPercentage'] = commissionPercentage;
+    }
     return map;
   }
 }

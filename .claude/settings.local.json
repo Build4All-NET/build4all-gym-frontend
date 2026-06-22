@@ -195,7 +195,10 @@
       "Bash(where chrome.exe)",
       "Bash(tasklist)",
       "Bash(tasklist *)",
-      "PowerShell(Get-Process *)"
+      "PowerShell(Get-Process *)",
+      "Bash(ls mvnw* gradlew*)",
+      "Bash(ls pom.xml build.gradle*)",
+      "Bash(sort -t: -k2)"
     ]
   }
 }

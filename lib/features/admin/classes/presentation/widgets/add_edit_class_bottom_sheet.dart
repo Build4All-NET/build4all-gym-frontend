@@ -51,6 +51,8 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   late final TextEditingController _capacityCtrl;
   late final TextEditingController _roomNameCtrl;
   late final TextEditingController _notesCtrl;
+  late final TextEditingController _commissionPercentageCtrl;
+  bool _clearCommissionPercentage = false;
 
   ClassFormOptionItemEntity? _selectedType;
   ClassFormOptionItemEntity? _selectedTrainer;
@@ -75,6 +77,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         text: e != null ? e.capacity.toString() : '');
     _roomNameCtrl = TextEditingController(text: e?.roomName ?? '');
     _notesCtrl = TextEditingController();
+    _commissionPercentageCtrl = TextEditingController();
 
     if (_isEditMode) {
       _selectedDate = widget.existingDate;
@@ -149,6 +152,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     _capacityCtrl.dispose();
     _roomNameCtrl.dispose();
     _notesCtrl.dispose();
+    _commissionPercentageCtrl.dispose();
     super.dispose();
   }
 
@@ -418,6 +422,8 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
     final bloc = context.read<AdminClassesBloc>();
+    final commissionPercentage =
+        double.tryParse(_commissionPercentageCtrl.text.trim());
 
     if (_isEditMode) {
       bloc.add(ClassUpdateRequested(
@@ -437,6 +443,8 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           notes: _notesCtrl.text.trim().isEmpty
               ? null
               : _notesCtrl.text.trim(),
+          commissionPercentage: _clearCommissionPercentage ? null : commissionPercentage,
+          clearCommissionPercentage: _clearCommissionPercentage,
         ),
       ));
     } else {
@@ -456,6 +464,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
           notes: _notesCtrl.text.trim().isEmpty
               ? null
               : _notesCtrl.text.trim(),
+          commissionPercentage: commissionPercentage,
         ),
       ));
     }
@@ -728,6 +737,56 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 ),
                 const SizedBox(height: 16),
 
+                // ── Trainer Commission % (optional) ──────────────────────
+                _FieldLabel(l10n.admin_classes_commissionLabel, cs),
+                _buildTextField(
+                  cs: cs,
+                  controller: _commissionPercentageCtrl,
+                  hint: l10n.admin_classes_commissionHint,
+                  enabled: !_clearCommissionPercentage,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: (v) {
+                    if (_clearCommissionPercentage) return null;
+                    if (v == null || v.trim().isEmpty) return null;
+                    final n = double.tryParse(v.trim());
+                    if (n == null) return l10n.admin_classes_mustBeNumber;
+                    if (n < 0 || n > 100) return l10n.trainer_commissionRangeError;
+                    return null;
+                  },
+                ),
+                // This form never pre-fills the current commission % (the
+                // backend list endpoint doesn't return it), so there's no
+                // way to show "currently 15%" here — this checkbox is the
+                // only way to explicitly remove a previously-set value.
+                if (_isEditMode) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: Checkbox(
+                          value: _clearCommissionPercentage,
+                          onChanged: (v) => setState(() {
+                            _clearCommissionPercentage = v ?? false;
+                            if (_clearCommissionPercentage) {
+                              _commissionPercentageCtrl.clear();
+                            }
+                          }),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.admin_classes_removeCommission,
+                          style: TextStyle(fontSize: 12.5, color: cs.onSurface.withOpacity(0.6)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 16),
+
                 // ── Section: Notes ─────────────────────────────────────────
                 _SectionHeader(l10n.admin_classes_sectionNotes, cs),
 
@@ -832,12 +891,14 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     required String hint,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    bool enabled = true,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      enabled: enabled,
       validator: validator,
       style: TextStyle(color: cs.onSurface, fontSize: 14),
       decoration: InputDecoration(

@@ -31,6 +31,7 @@ class TrainerPtSessionsBloc
   final GetSessionRequestsUseCase _getRequests;
   final CreateSessionUseCase _createSession;
   final UpdateSessionStatusUseCase _updateStatus;
+  final MarkSessionPaidUseCase _markPaid;
   final AcceptSessionRequestUseCase _acceptRequest;
   final DeclineSessionRequestUseCase _declineRequest;
   final DeclineCancelRequestUseCase _declineCancelRequest;
@@ -59,6 +60,7 @@ class TrainerPtSessionsBloc
     required GetSessionRequestsUseCase getRequests,
     required CreateSessionUseCase createSession,
     required UpdateSessionStatusUseCase updateStatus,
+    required MarkSessionPaidUseCase markPaid,
     required AcceptSessionRequestUseCase acceptRequest,
     required DeclineSessionRequestUseCase declineRequest,
     required DeclineCancelRequestUseCase declineCancelRequest,
@@ -68,6 +70,7 @@ class TrainerPtSessionsBloc
         _getRequests = getRequests,
         _createSession = createSession,
         _updateStatus = updateStatus,
+        _markPaid = markPaid,
         _acceptRequest = acceptRequest,
         _declineRequest = declineRequest,
         _declineCancelRequest = declineCancelRequest,
@@ -77,6 +80,7 @@ class TrainerPtSessionsBloc
     on<PtSessionsDateChanged>(_onDateChanged);
     on<PtSessionsTabChanged>(_onTabChanged);
     on<PtSessionStatusUpdateRequested>(_onStatusUpdate);
+    on<PtSessionMarkPaidRequested>(_onMarkPaid);
     on<PtSessionAcceptRequested>(_onAcceptRequest);
     on<PtSessionDeclineRequested>(_onDeclineRequest);
     on<PtSessionCancelApproved>(_onCancelApproved);
@@ -204,6 +208,39 @@ class TrainerPtSessionsBloc
       ),
     );
 
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Mark a standalone session as paid (Admin/Owner/Manager)
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onMarkPaid(
+      PtSessionMarkPaidRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _markPaid(sessionId: event.sessionId);
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to mark session as paid.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    final updatedSessions = current.sessions.map((s) =>
+        s.ptSessionId == event.sessionId ? result.data! : s).toList();
+    final updatedState = current.copyWith(sessions: updatedSessions);
+
+    emit(PtSessionActionSuccess(actionType: 'marked_paid', updatedState: updatedState));
     emit(updatedState);
   }
 

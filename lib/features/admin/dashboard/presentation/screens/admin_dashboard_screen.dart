@@ -24,7 +24,6 @@ import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
 import '../bloc/admin_dashboard_state.dart';
 import '../widgets/dashboard_metric_card.dart';
-import '../../domain/entities/admin_dashboard_summary.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -39,8 +38,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ── First-run branch dialog guard ──────────────────────────────────────────
   bool _firstBranchDialogShown = false;
 
-  // ── Payments period segment (local — backend wiring comes later) ───────────
-  int _paymentsPeriodIndex = 0; // 0=This Month 1=Last Month 2=Last 3 Months 3=Custom
+  // Maps a Payments-tab segment index to the ?revenuePeriod value sent to the backend.
+  static const _revenuePeriodKeys = [
+    'this_month', 'last_month', 'last_3_months', 'custom',
+  ];
 
   static const _months = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -253,7 +254,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<AdminDashboardBloc>().add(
-                          AdminDashboardLoadRequested(period: state.period),
+                          AdminDashboardLoadRequested(
+                            period: state.period,
+                            revenuePeriod: state.revenuePeriod,
+                            revenueStartDate: state.revenueStartDate,
+                            revenueEndDate: state.revenueEndDate,
+                          ),
                         ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: c.primary,
@@ -274,9 +280,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         if (state is AdminDashboardLoaded) {
           return TabBarView(
             children: [
-              _membershipTab(context, c, l10n, state.data),
-              _paymentsTab(context, c, l10n, state.data),
-              _attendanceTab(context, c, l10n, state.data),
+              _membershipTab(context, c, l10n, state),
+              _paymentsTab(context, c, l10n, state),
+              _attendanceTab(context, c, l10n, state),
             ],
           );
         }
@@ -320,12 +326,18 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // TAB 1 — MEMBERSHIP
   // ════════════════════════════════════════════════════════════════════════
   Widget _membershipTab(BuildContext context, dynamic c,
-      AppLocalizations l10n, AdminDashboardSummary d) {
+      AppLocalizations l10n, AdminDashboardLoaded state) {
+    final d = state.data;
     return RefreshIndicator(
       color: c.primary,
-      onRefresh: () async => context
-          .read<AdminDashboardBloc>()
-          .add(AdminDashboardRefreshRequested(period: d.period)),
+      onRefresh: () async => context.read<AdminDashboardBloc>().add(
+            AdminDashboardRefreshRequested(
+              period: state.period,
+              revenuePeriod: state.revenuePeriod,
+              revenueStartDate: state.revenueStartDate,
+              revenueEndDate: state.revenueEndDate,
+            ),
+          ),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
@@ -436,13 +448,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // TAB 2 — PAYMENTS
   // ════════════════════════════════════════════════════════════════════════
   Widget _paymentsTab(BuildContext context, dynamic c, AppLocalizations l10n,
-      AdminDashboardSummary d) {
+      AdminDashboardLoaded state) {
+    final d = state.data;
     final rev = d.revenue;
     return RefreshIndicator(
       color: c.primary,
-      onRefresh: () async => context
-          .read<AdminDashboardBloc>()
-          .add(AdminDashboardRefreshRequested(period: d.period)),
+      onRefresh: () async => context.read<AdminDashboardBloc>().add(
+            AdminDashboardRefreshRequested(
+              period: state.period,
+              revenuePeriod: state.revenuePeriod,
+              revenueStartDate: state.revenueStartDate,
+              revenueEndDate: state.revenueEndDate,
+            ),
+          ),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
@@ -458,8 +476,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               highlighted: true,
               onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
             ),
-            _sectionHeader(c, _monthLabel()),
-            _paymentsPeriodSegment(c, l10n),
+            _sectionHeader(c, _revenuePeriodLabel(state)),
+            _paymentsPeriodSegment(context, c, l10n, state),
             const SizedBox(height: 12),
             _grid([
               DashboardMetricCard(
@@ -519,13 +537,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  Widget _paymentsPeriodSegment(dynamic c, AppLocalizations l10n) {
+  Widget _paymentsPeriodSegment(BuildContext context, dynamic c,
+      AppLocalizations l10n, AdminDashboardLoaded state) {
     final labels = [
       l10n.admin_dashboard_thisMonth,
       l10n.admin_dashboard_lastMonth,
       l10n.admin_dashboard_last3Months,
       l10n.admin_dashboard_custom,
     ];
+    final selectedIndex = _revenuePeriodKeys.indexOf(state.revenuePeriod);
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -535,13 +555,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ),
       child: Row(
         children: List.generate(labels.length, (i) {
-          final selected = i == _paymentsPeriodIndex;
+          final selected = i == selectedIndex;
           return Expanded(
             child: GestureDetector(
-              onTap: () {
-                setState(() => _paymentsPeriodIndex = i);
-                if (i != 0) _comingSoon(labels[i]);
-              },
+              onTap: () => _onRevenuePeriodTap(context, state, i),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 9),
                 decoration: BoxDecoration(
@@ -567,17 +584,91 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
+  // Tapping "Custom" opens a date range picker; the other 3 segments refetch
+  // the dashboard immediately with the matching ?revenuePeriod value.
+  Future<void> _onRevenuePeriodTap(
+      BuildContext context, AdminDashboardLoaded state, int index) async {
+    final key = _revenuePeriodKeys[index];
+
+    if (key == 'custom') {
+      final now = DateTime.now();
+      final initialRange = (state.revenueStartDate != null &&
+              state.revenueEndDate != null)
+          ? DateTimeRange(
+              start: DateTime.parse(state.revenueStartDate!),
+              end: DateTime.parse(state.revenueEndDate!),
+            )
+          : DateTimeRange(start: DateTime(now.year, now.month, 1), end: now);
+
+      final picked = await showDateRangePicker(
+        context: context,
+        firstDate: DateTime(now.year - 5),
+        lastDate: now,
+        initialDateRange: initialRange,
+      );
+      if (picked == null || !context.mounted) return;
+
+      context.read<AdminDashboardBloc>().add(AdminDashboardRevenuePeriodChanged(
+            period: state.period,
+            revenuePeriod: 'custom',
+            revenueStartDate: _isoDate(picked.start),
+            revenueEndDate: _isoDate(picked.end),
+          ));
+      return;
+    }
+
+    context.read<AdminDashboardBloc>().add(AdminDashboardRevenuePeriodChanged(
+          period: state.period,
+          revenuePeriod: key,
+        ));
+  }
+
+  String _isoDate(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}-'
+      '${d.day.toString().padLeft(2, '0')}';
+
+  // Section-header label above the segment control, e.g. "Jun 2026",
+  // "May 2026", "Last 3 Months", or "3 Apr – 19 Jun 2026" for a custom range.
+  String _revenuePeriodLabel(AdminDashboardLoaded state) {
+    switch (state.revenuePeriod) {
+      case 'last_month':
+        final now = DateTime.now();
+        final lastMonth = DateTime(now.year, now.month - 1);
+        return '${_months[lastMonth.month - 1]} ${lastMonth.year}';
+      case 'last_3_months':
+        return AppLocalizations.of(context)!.admin_dashboard_last3Months;
+      case 'custom':
+        final start = state.revenueStartDate;
+        final end = state.revenueEndDate;
+        if (start != null && end != null) {
+          final s = DateTime.parse(start);
+          final e = DateTime.parse(end);
+          return '${s.day} ${_months[s.month - 1]} – ${e.day} ${_months[e.month - 1]} ${e.year}';
+        }
+        return AppLocalizations.of(context)!.admin_dashboard_custom;
+      default:
+        return _monthLabel();
+    }
+  }
+
   // ════════════════════════════════════════════════════════════════════════
   // TAB 3 — ATTENDANCE
   // ════════════════════════════════════════════════════════════════════════
   Widget _attendanceTab(BuildContext context, dynamic c, AppLocalizations l10n,
-      AdminDashboardSummary d) {
+      AdminDashboardLoaded state) {
+    final d = state.data;
     final growth = d.checkins.attendanceGrowth;
     return RefreshIndicator(
       color: c.primary,
-      onRefresh: () async => context
-          .read<AdminDashboardBloc>()
-          .add(AdminDashboardRefreshRequested(period: d.period)),
+      onRefresh: () async => context.read<AdminDashboardBloc>().add(
+            AdminDashboardRefreshRequested(
+              period: state.period,
+              revenuePeriod: state.revenuePeriod,
+              revenueStartDate: state.revenueStartDate,
+              revenueEndDate: state.revenueEndDate,
+            ),
+          ),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),

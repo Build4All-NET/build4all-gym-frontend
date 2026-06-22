@@ -8,12 +8,17 @@ import '../../../../../common/widgets/app_toast.dart';
 import '../../../../../common/widgets/form_section_kit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
+import '../../../trainers/data/models/admin_trainer_card_model.dart';
+import '../../../trainers/data/services/admin_trainers_service.dart';
 import '../../domain/entities/expense_entity.dart';
 import '../../domain/usecases/admin_expenses_usecases.dart';
 import '../../data/repositories/admin_expenses_repository_impl.dart';
 import '../../data/services/admin_expenses_remote_service.dart';
 import '../../data/models/create_expense_request_model.dart';
 import '../../data/models/update_expense_request_model.dart';
+
+/// The expense category that unlocks the "Pay to: Trainer / Other" choice.
+const String kSalaryCategory = 'salaries';
 
 const List<String> kExpenseCategories = [
   'rent',
@@ -85,7 +90,16 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
 
   late DateTime _expenseDate;
   String? _selectedCategory;
+  bool _isCustomCategory = false;
+  late final TextEditingController _customCategoryController;
   int? _selectedBranchId;
+
+  // ── Salary -> trainer linkage ──────────────────────────────────────────
+  bool _payToTrainer = false;
+  int? _selectedTrainerId;
+  List<AdminTrainerCardModel> _trainers = [];
+  bool _trainersLoading = false;
+  int? _trainersLoadedForBranchId;
 
   bool _isSubmitting = false;
   String? _errorMessage;
@@ -119,9 +133,45 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
     );
 
     _expenseDate = expense?.expenseDate ?? DateTime.now();
-
-    _selectedCategory = expense?.category ?? widget.availableCategories.first;
     _selectedBranchId = expense?.branchId;
+
+    // If editing an expense whose category isn't in the known list (shouldn't
+    // normally happen since the backend list includes every in-use category,
+    // but guards against a stale list), fall back to custom-entry mode.
+    final knownCategory = expense != null && widget.availableCategories.contains(expense.category);
+    if (expense != null && !knownCategory) {
+      _isCustomCategory = true;
+      _customCategoryController = TextEditingController(text: formatExpenseCategory(expense.category));
+    } else {
+      _customCategoryController = TextEditingController();
+      _selectedCategory = expense?.category ??
+          (widget.availableCategories.isNotEmpty ? widget.availableCategories.first : null);
+    }
+
+    _selectedTrainerId = expense?.trainerId;
+    _payToTrainer = expense?.trainerId != null;
+    if (_isSalaryCategory && _selectedBranchId != null) {
+      _loadTrainers(_selectedBranchId!);
+    }
+  }
+
+  bool get _isSalaryCategory =>
+      !_isCustomCategory && _selectedCategory?.toLowerCase() == kSalaryCategory;
+
+  Future<void> _loadTrainers(int branchId) async {
+    if (_trainersLoadedForBranchId == branchId) return;
+    setState(() => _trainersLoading = true);
+    try {
+      final response = await AdminTrainersService().getTrainers(branchId: branchId);
+      if (!mounted) return;
+      setState(() {
+        _trainers = response.trainers;
+        _trainersLoadedForBranchId = branchId;
+        _trainersLoading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _trainersLoading = false);
+    }
   }
 
   @override
@@ -129,7 +179,39 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
     _titleController.dispose();
     _descriptionController.dispose();
     _amountController.dispose();
+    _customCategoryController.dispose();
     super.dispose();
+  }
+
+  Widget _payToChoiceChip({
+    required dynamic c,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? c.primary.withOpacity(0.1) : c.background,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? c.primary : c.border.withOpacity(0.3),
+            width: selected ? 1.4 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? c.primary : c.label,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _pickDate() async {
@@ -154,10 +236,24 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
       });
       return;
     }
+    final effectiveCategory = _isCustomCategory
+        ? _customCategoryController.text.trim().toLowerCase()
+        : _selectedCategory;
+    if (effectiveCategory == null || effectiveCategory.isEmpty) {
+      setState(() => _errorMessage = 'Please enter a transaction type');
+      return;
+    }
+
+    if (_isSalaryCategory && _payToTrainer && _selectedTrainerId == null) {
+      setState(() => _errorMessage = 'Please select a trainer');
+      return;
+    }
 
     final amount = double.tryParse(_amountController.text.trim()) ?? 0;
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
+    final effectiveTrainerId =
+        _isSalaryCategory && _payToTrainer ? _selectedTrainerId : null;
 
     setState(() {
       _isSubmitting = true;
@@ -173,8 +269,9 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
             description: description.isEmpty ? null : description,
             amount: amount,
             expenseDate: _expenseDate,
-            category: _selectedCategory!,
+            category: effectiveCategory,
             branchId: _selectedBranchId!,
+            trainerId: effectiveTrainerId,
           ),
         );
       } else {
@@ -184,8 +281,9 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
             description: description.isEmpty ? null : description,
             amount: amount,
             expenseDate: _expenseDate,
-            category: _selectedCategory!,
+            category: effectiveCategory,
             branchId: _selectedBranchId!,
+            trainerId: effectiveTrainerId,
           ),
         );
       }
@@ -325,31 +423,78 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                 ],
               ),
               const SizedBox(height: 12),
-              FormFieldLabel('Category *', c),
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                decoration: formInputDecoration(
-                  hint: 'Select category',
-                  c: c,
-                ),
-                items: widget.availableCategories
-                    .map(
-                      (cat) => DropdownMenuItem<String>(
-                        value: cat,
-                        child: Text(formatExpenseCategory(cat)),
+              FormFieldLabel('Transaction Type *', c),
+              if (_isCustomCategory) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _customCategoryController,
+                        textCapitalization: TextCapitalization.words,
+                        style: TextStyle(color: c.label),
+                        decoration: formInputDecoration(hint: 'Enter transaction type (e.g. Marketing)', c: c),
+                        validator: (v) => _isCustomCategory && (v == null || v.trim().isEmpty)
+                            ? 'Required'
+                            : null,
                       ),
-                    )
-                    .toList(),
-                onChanged: (v) {
-                  setState(() => _selectedCategory = v);
-                },
-                validator: (v) {
-                  if (v == null) {
-                    return 'Required';
-                  }
-                  return null;
-                },
-              ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        _isCustomCategory = false;
+                        _customCategoryController.clear();
+                        _selectedCategory = widget.availableCategories.isNotEmpty
+                            ? widget.availableCategories.first
+                            : null;
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                          color: c.background,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: c.border.withOpacity(0.3)),
+                        ),
+                        child: Icon(Icons.close_rounded, size: 18, color: c.muted),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else ...[
+                DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  decoration: formInputDecoration(hint: 'Select transaction type', c: c),
+                  items: [
+                    ...widget.availableCategories.map((cat) =>
+                        DropdownMenuItem(value: cat, child: Text(formatExpenseCategory(cat)))),
+                    DropdownMenuItem(
+                      value: '__new__',
+                      child: Row(
+                        children: [
+                          Icon(Icons.add_rounded, size: 16, color: c.primary),
+                          const SizedBox(width: 6),
+                          Text('Add new transaction type…',
+                              style: TextStyle(
+                                  color: c.primary, fontWeight: FontWeight.w600, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    if (v == '__new__') {
+                      setState(() {
+                        _isCustomCategory = true;
+                        _selectedCategory = null;
+                      });
+                    } else {
+                      setState(() => _selectedCategory = v);
+                      if (_isSalaryCategory && _selectedBranchId != null) {
+                        _loadTrainers(_selectedBranchId!);
+                      }
+                    }
+                  },
+                  validator: (v) => !_isCustomCategory && v == null ? 'Required' : null,
+                ),
+              ],
               const SizedBox(height: 12),
               FormFieldLabel('Branch *', c),
               BlocBuilder<BranchCubit, BranchState>(
@@ -376,6 +521,7 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                           .toList(),
                       onChanged: (v) {
                         setState(() => _selectedBranchId = v);
+                        if (_isSalaryCategory && v != null) _loadTrainers(v);
                       },
                       validator: (v) {
                         if (v == null) {
@@ -409,6 +555,67 @@ class _ExpenseFormContentState extends State<_ExpenseFormContent> {
                   );
                 },
               ),
+              if (_isSalaryCategory) ...[
+                const SizedBox(height: 12),
+                FormFieldLabel('Pay to', c),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _payToChoiceChip(
+                        c: c,
+                        label: 'Trainer',
+                        selected: _payToTrainer,
+                        onTap: () => setState(() {
+                          _payToTrainer = true;
+                          if (_selectedBranchId != null) {
+                            _loadTrainers(_selectedBranchId!);
+                          }
+                        }),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _payToChoiceChip(
+                        c: c,
+                        label: 'Other',
+                        selected: !_payToTrainer,
+                        onTap: () => setState(() {
+                          _payToTrainer = false;
+                          _selectedTrainerId = null;
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+                if (_payToTrainer) ...[
+                  const SizedBox(height: 12),
+                  FormFieldLabel('Trainer *', c),
+                  _trainersLoading
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : DropdownButtonFormField<int>(
+                          value: _trainers.any((t) => t.trainerId == _selectedTrainerId)
+                              ? _selectedTrainerId
+                              : null,
+                          decoration: formInputDecoration(hint: 'Select trainer', c: c),
+                          items: _trainers
+                              .map((t) => DropdownMenuItem(
+                                    value: t.trainerId,
+                                    child: Text(t.fullName),
+                                  ))
+                              .toList(),
+                          onChanged: (v) => setState(() => _selectedTrainerId = v),
+                          validator: (v) =>
+                              _payToTrainer && v == null ? 'Required' : null,
+                        ),
+                ],
+              ],
               if (_errorMessage != null) ...[
                 const SizedBox(height: 12),
                 Container(

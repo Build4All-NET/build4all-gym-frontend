@@ -130,6 +130,26 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
     }
   }
 
+  // ── Mark payment as paid (standalone sessions, Admin/Owner/Manager) ───────
+
+  @override
+  Future<({PtSessionEntity? data, Failure? failure})> markPaymentPaid({
+    required int sessionId,
+  }) async {
+    try {
+      final model = await _service.markPaymentPaid(sessionId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
   // ── Get all upcoming sessions ──────────────────────────────────────────────
 
   @override

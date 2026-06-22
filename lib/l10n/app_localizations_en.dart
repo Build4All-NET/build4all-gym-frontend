@@ -882,6 +882,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navExpenses => 'Expenses';
 
   @override
+  String get navBalanceSheet => 'Balance Sheet';
+
+  @override
   String get navSettings => 'Settings';
 
   @override
@@ -2270,13 +2273,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_expenses_delete => 'Delete';
 
   @override
-  String get admin_expenses_allCategories => 'All Categories';
+  String get admin_expenses_allCategories => 'All Transaction Types';
 
   @override
   String get admin_expenses_searchHint => 'Search expenses...';
 
   @override
   String get admin_expenses_noExpenses => 'No expenses found';
+
+  @override
+  String get balance_sheet_netProfit => 'Net Profit';
+
+  @override
+  String get balance_sheet_collection => 'Collection';
+
+  @override
+  String get balance_sheet_expense => 'Expense';
+
+  @override
+  String get balance_sheet_collectionTab => 'Collection';
+
+  @override
+  String get balance_sheet_expenseTab => 'Expense';
+
+  @override
+  String get balance_sheet_filterToday => 'Today';
+
+  @override
+  String get balance_sheet_filterThisWeek => 'This Week';
+
+  @override
+  String get balance_sheet_filterThisMonth => 'This Month';
+
+  @override
+  String get balance_sheet_filterThisYear => 'This Year';
+
+  @override
+  String get balance_sheet_filterAllTime => 'All Time';
+
+  @override
+  String get balance_sheet_filterCustom => 'Custom';
+
+  @override
+  String get balance_sheet_noCollections => 'No collections in this period';
+
+  @override
+  String get balance_sheet_noExpenses => 'No expenses in this period';
+
+  @override
+  String get balance_sheet_selectDateRange => 'Select date range';
 
   @override
   String get admin_staff_noStaff => 'No staff members found.';
@@ -2949,6 +2994,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_newPtService => 'New PT Service';
 
   @override
+  String get trainer_newServiceSubtitle => 'Create a personal training service';
+
+  @override
+  String get trainer_editServiceSubtitle => 'Update this service\'s details';
+
+  @override
+  String get trainer_sectionBasicInfo => 'Basic Info';
+
+  @override
+  String get trainer_sectionPricing => 'Pricing';
+
+  @override
   String get trainer_assignToTrainer => 'Assign to Trainer';
 
   @override
@@ -3036,6 +3093,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_newPackage => 'New Package';
 
   @override
+  String get trainer_newPackageSubtitle => 'Define sessions, pricing & validity';
+
+  @override
+  String get trainer_editPackageSubtitle => 'Update this package\'s details';
+
+  @override
+  String get trainer_sectionSessionsSchedule => 'Sessions & Schedule';
+
+  @override
   String get trainer_packageNameLabel => 'Package Name';
 
   @override
@@ -3106,6 +3172,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainer_addAvailabilitySlotTitle => 'Add Availability Slot';
+
+  @override
+  String get trainer_addSlotSubtitle => 'Set a recurring or one-time time slot';
+
+  @override
+  String get trainer_sectionTiming => 'Timing';
+
+  @override
+  String get trainer_sectionAvailabilityType => 'Availability Type';
 
   @override
   String get trainer_dayOfWeek => 'Day of Week';
@@ -3220,6 +3295,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainer_navMore => 'More';
+
+  @override
+  String get trainer_navIncome => 'Income';
+
+  @override
+  String get trainer_commissionPercentageLabel => 'Trainer Commission %';
+
+  @override
+  String trainer_commissionValue(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get trainer_commissionRangeError => 'Must be between 0 and 100';
+
+  @override
+  String get trainer_linkedPtServiceRequired => 'Linked PT Service';
+
+  @override
+  String get trainer_selectServiceRequired => 'Please select a service';
+
+  @override
+  String get trainer_incomeAllTitle => 'Trainer Income';
+
+  @override
+  String get trainer_incomeMyTitle => 'My Income';
+
+  @override
+  String get trainer_incomeSelectTrainer => 'Select a trainer to view their income.';
+
+  @override
+  String get trainer_incomeTotalSessions => 'Total Sessions';
+
+  @override
+  String get trainer_incomeTotalEarning => 'Total Earning';
+
+  @override
+  String get trainer_incomeNoData => 'No paid sessions in this date range.';
+
+  @override
+  String get trainer_incomeSalaryPayment => 'Salary payment';
+
+  @override
+  String get trainer_incomeClassSession => 'Class session';
+
+  @override
+  String trainer_commissionOfPrice(String percent, String price) {
+    return '$percent% of \$$price';
+  }
+
+  @override
+  String get trainer_markAsPaidButton => 'Mark as Paid';
 
   @override
   String get trainer_ptSession => 'PT Session';
@@ -3639,6 +3766,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_classes_roomHint => 'e.g. Hall 1, 2nd Floor';
+
+  @override
+  String get admin_classes_commissionLabel => 'Trainer Commission % (optional)';
+
+  @override
+  String get admin_classes_commissionHint => 'e.g. 15';
+
+  @override
+  String get admin_classes_removeCommission => 'Remove the existing commission % for this class';
 
   @override
   String get admin_classes_notesHint => 'e.g. Additional class notes';

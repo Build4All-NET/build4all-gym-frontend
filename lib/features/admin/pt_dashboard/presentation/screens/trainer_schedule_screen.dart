@@ -14,11 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../common/widgets/app_toast.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../domain/entities/availability_entity.dart';
 import '../bloc/availability/availability_bloc.dart';
+import '../widgets/pt_form_dialog_kit.dart';
 
 List<String> _localizedWeekdays(AppLocalizations l10n) => [
   l10n.trainer_dayFullMonday, l10n.trainer_dayFullTuesday, l10n.trainer_dayFullWednesday,
@@ -366,34 +369,52 @@ class _AddSlotDialogState extends State<_AddSlotDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.trainer_addAvailabilitySlotTitle),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ── Trainer picker (admin only) ─────────────────────────────────
-            if (widget.isAdmin && widget.trainers.isNotEmpty)
-              DropdownButtonFormField<int>(
-                value: _selectedTrainerId,
-                hint: Text(AppLocalizations.of(context)!.trainer_assignToTrainer),
-                items: widget.trainers.map((t) {
-                  return DropdownMenuItem(
-                    value: t.trainerId,
-                    child: Text(t.fullName),
-                  );
-                }).toList(),
-                onChanged: (v) =>
-                    setState(() => _selectedTrainerId = v),
-              ),
-            const SizedBox(height: 12),
+    final l10n = AppLocalizations.of(context)!;
+    final c    = context.read<ThemeCubit>().state.tokens.colors;
 
-            // ── Weekday ─────────────────────────────────────────────────────
+    return PtFormDialogScaffold(
+      header: PtDialogHeader(
+        icon:     Icons.event_available_rounded,
+        title:    l10n.trainer_addAvailabilitySlotTitle,
+        subtitle: l10n.trainer_addSlotSubtitle,
+        onClose:  () => Navigator.pop(context),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // ── Trainer picker (admin only) ─────────────────────────────────
+          if (widget.isAdmin && widget.trainers.isNotEmpty) ...[
             DropdownButtonFormField<int>(
+              value: _selectedTrainerId,
+              decoration: ptFieldDecoration(c,
+                  label: l10n.trainer_assignToTrainer,
+                  icon: Icons.person_outline_rounded),
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
+              items: widget.trainers.map((t) {
+                return DropdownMenuItem(
+                  value: t.trainerId,
+                  child: Text(t.fullName),
+                );
+              }).toList(),
+              onChanged: (v) =>
+                  setState(() => _selectedTrainerId = v),
+            ),
+            const SizedBox(height: 14),
+          ],
+
+          // ── Timing ────────────────────────────────────────────────────────
+          PtSectionLabel(icon: Icons.schedule_rounded, text: l10n.trainer_sectionTiming),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: DropdownButtonFormField<int>(
               value: _selectedWeekday,
-              decoration: InputDecoration(labelText: AppLocalizations.of(context)!.trainer_dayOfWeek),
+              decoration: ptFieldDecoration(c,
+                  label: l10n.trainer_dayOfWeek,
+                  icon: Icons.calendar_today_outlined),
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
               items: List.generate(7, (i) {
-                final weekdays = _localizedWeekdays(AppLocalizations.of(context)!);
+                final weekdays = _localizedWeekdays(l10n);
                 return DropdownMenuItem(
                   value: i + 1,
                   child: Text(weekdays[i]),
@@ -402,111 +423,115 @@ class _AddSlotDialogState extends State<_AddSlotDialog> {
               onChanged: (v) =>
                   setState(() => _selectedWeekday = v ?? 1),
             ),
-            const SizedBox(height: 12),
-
-            // ── Start / End time ────────────────────────────────────────────
-            _TimePicker(
-              label:   AppLocalizations.of(context)!.trainer_startTime,
-              initial: _startTime,
-              onChange: (v) => setState(() => _startTime = v),
-            ),
-            const SizedBox(height: 8),
-            _TimePicker(
-              label:   AppLocalizations.of(context)!.trainer_endTime,
-              initial: _endTime,
-              onChange: (v) => setState(() => _endTime = v),
-            ),
-            const SizedBox(height: 8),
-
-            // ── Recurring toggle ────────────────────────────────────────────
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.trainer_recurringWeeklyToggle),
-              value: _recurring,
-              onChanged: (v) => setState(() {
-                _recurring = v;
-                if (v) _specificDate = null; // clear when toggling back
-              }),
-            ),
-
-            // ── Specific date picker (one-time only) ────────────────────────
-            // Shown when recurring = false.
-            // Maps to trainer_availability.specific_date in the DB.
-            if (!_recurring) ...[
-              const SizedBox(height: 4),
-              InkWell(
-                onTap: _pickSpecificDate,
-                borderRadius: BorderRadius.circular(8),
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.trainer_specificDate,
-                    suffixIcon: const Icon(Icons.calendar_today, size: 18),
-                    errorText: _specificDate == null
-                        ? AppLocalizations.of(context)!.trainer_requiredForOneTime
-                        : null,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _PtTimeField(
+                    c:        c,
+                    label:    l10n.trainer_startTime,
+                    initial:  _startTime,
+                    onChange: (v) => setState(() => _startTime = v),
                   ),
-                  child: Text(
-                    _specificDate == null
-                        ? AppLocalizations.of(context)!.trainer_pickDate
-                        : DateFormat('EEE, MMM d, yyyy').format(_specificDate!),
-                    style: TextStyle(
-                      color: _specificDate == null
-                          ? Colors.grey[500]
-                          : Colors.black87,
-                    ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _PtTimeField(
+                    c:        c,
+                    label:    l10n.trainer_endTime,
+                    initial:  _endTime,
+                    onChange: (v) => setState(() => _endTime = v),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Availability type ────────────────────────────────────────────
+          PtSectionLabel(icon: Icons.repeat_rounded, text: l10n.trainer_sectionAvailabilityType),
+          PtSwitchCard(
+            icon:  Icons.event_repeat_rounded,
+            title: l10n.trainer_recurringWeeklyToggle,
+            value: _recurring,
+            onChanged: (v) => setState(() {
+              _recurring = v;
+              if (v) _specificDate = null; // clear when toggling back
+            }),
+          ),
+
+          // ── Specific date picker (one-time only) ────────────────────────
+          // Shown when recurring = false.
+          // Maps to trainer_availability.specific_date in the DB.
+          if (!_recurring) ...[
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: _pickSpecificDate,
+              borderRadius: BorderRadius.circular(12),
+              child: InputDecorator(
+                decoration: ptFieldDecoration(c,
+                    label: l10n.trainer_specificDate,
+                    icon: Icons.calendar_month_rounded,
+                    errorText: _specificDate == null
+                        ? l10n.trainer_requiredForOneTime
+                        : null),
+                child: Text(
+                  _specificDate == null
+                      ? l10n.trainer_pickDate
+                      : DateFormat('EEE, MMM d, yyyy').format(_specificDate!),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: _specificDate == null ? c.muted : c.label,
                   ),
                 ),
               ),
-            ],
+            ),
           ],
-        ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.general_cancel),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final l10n = AppLocalizations.of(context)!;
-            final trainerId =
-                _selectedTrainerId ?? widget.defaultTrainerId;
-            if (trainerId == 0) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.trainer_selectTrainerSnackbar)),
-              );
-              return;
-            }
-            // Validate: specificDate required for one-time slots
-            if (!_recurring && _specificDate == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.trainer_pickSpecificDate)),
-              );
-              return;
-            }
-            widget.onSubmit(
-              trainerId:    trainerId,
-              weekday:      _selectedWeekday,
-              startTime:    _startTime,
-              endTime:      _endTime,
-              recurring:    _recurring,
-              specificDate: _recurring ? null : _specificDate,
-            );
-          },
-          child: Text(AppLocalizations.of(context)!.trainer_addButton),
-        ),
-      ],
+      footer: PtDialogFooter(
+        cancelLabel: l10n.general_cancel,
+        submitLabel: l10n.trainer_addAvailabilityButton,
+        submitIcon:  Icons.add_rounded,
+        onCancel:    () => Navigator.pop(context),
+        onSubmit:    () {
+          final trainerId =
+              _selectedTrainerId ?? widget.defaultTrainerId;
+          if (trainerId == 0) {
+            AppToast.error(context, l10n.trainer_selectTrainerSnackbar);
+            return;
+          }
+          // Validate: specificDate required for one-time slots
+          if (!_recurring && _specificDate == null) {
+            AppToast.error(context, l10n.trainer_pickSpecificDate);
+            return;
+          }
+          widget.onSubmit(
+            trainerId:    trainerId,
+            weekday:      _selectedWeekday,
+            startTime:    _startTime,
+            endTime:      _endTime,
+            recurring:    _recurring,
+            specificDate: _recurring ? null : _specificDate,
+          );
+        },
+      ),
     );
   }
 }
 
-// ── Time picker helper widget ─────────────────────────────────────────────────
+// ── Time picker field ─────────────────────────────────────────────────────────
 
-class _TimePicker extends StatelessWidget {
+class _PtTimeField extends StatelessWidget {
+  final ColorTokens c;
   final String label;
   final String initial;
   final void Function(String) onChange;
 
-  const _TimePicker({
+  const _PtTimeField({
+    required this.c,
     required this.label,
     required this.initial,
     required this.onChange,
@@ -531,12 +556,10 @@ class _TimePicker extends StatelessWidget {
           );
         }
       },
+      borderRadius: BorderRadius.circular(12),
       child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          suffixIcon: const Icon(Icons.access_time),
-        ),
-        child: Text(initial),
+        decoration: ptFieldDecoration(c, label: label, icon: Icons.access_time_rounded),
+        child: Text(initial, style: TextStyle(fontSize: 14, color: c.label)),
       ),
     );
   }
