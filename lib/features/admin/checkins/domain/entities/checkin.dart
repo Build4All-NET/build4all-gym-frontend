@@ -17,6 +17,7 @@ class Checkin {
   final String checkinTime;    // "07:50" — display-ready string from backend
   final String status;         // "ACTIVE" | "CHECKED_OUT"
   final String phone;
+  final String? entryType;     // "GYM" (plan) | "CLASS" | "PT" | null
 
   const Checkin({
     required this.checkinId,
@@ -26,6 +27,7 @@ class Checkin {
     required this.checkinTime,
     required this.status,
     required this.phone,
+    this.entryType,
   });
 
   /// Convenience: true when member is still inside.

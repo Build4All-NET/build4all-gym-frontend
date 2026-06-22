@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
 
@@ -69,14 +70,23 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
           date.month == widget.selectedDate.month &&
           date.day == widget.selectedDate.day;
 
-  String _weekdayLabel(DateTime date) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  String _weekdayLabel(AppLocalizations l10n, DateTime date) {
+    final days = [
+      l10n.dayMonday,
+      l10n.dayTuesday,
+      l10n.dayWednesday,
+      l10n.dayThursday,
+      l10n.dayFriday,
+      l10n.daySaturday,
+      l10n.daySunday,
+    ];
     return days[date.weekday - 1];
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return SizedBox(
       height: 72,
@@ -120,7 +130,7 @@ class _ClassDateFilterWidgetState extends State<ClassDateFilterWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    today ? 'Today' : _weekdayLabel(date),
+                    today ? l10n.admin_dashboard_today : _weekdayLabel(l10n, date),
                     style: TextStyle(
                       fontSize: today ? 9 : 10,
                       fontWeight: FontWeight.w600,
@@ -182,6 +192,7 @@ class ClassCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final isLoading = loadingSessionId == session.sessionId;
     final fillRatio = session.capacity > 0
         ? (session.bookedCount / session.capacity).clamp(0.0, 1.0)
@@ -228,7 +239,7 @@ class ClassCardWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Cancelled',
+                      l10n.admin_classes_statusCancelled,
                       style: TextStyle(
                         color: cs.error,
                         fontSize: 11,
@@ -245,7 +256,7 @@ class ClassCardWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Completed',
+                      l10n.admin_classes_statusCompleted,
                       style: TextStyle(
                         color: cs.onSurface.withOpacity(0.5),
                         fontSize: 11,
@@ -262,9 +273,9 @@ class ClassCardWidget extends StatelessWidget {
                       color: const Color(0xFFFF9800).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      'Nearly Full',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.admin_classes_nearlyFull,
+                      style: const TextStyle(
                         color: Color(0xFFE65100),
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -323,7 +334,7 @@ class ClassCardWidget extends StatelessWidget {
                 Expanded(
                   child: _InfoItem(
                       icon: Icons.calendar_today_outlined,
-                      label: '${session.durationMinutes} min'),
+                      label: l10n.memberHomeDurationMinutes(session.durationMinutes)),
                 ),
               ],
             ),
@@ -335,7 +346,7 @@ class ClassCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Capacity',
+                  l10n.admin_classes_capacity,
                   style: TextStyle(
                     fontSize: 13,
                     color: cs.onSurface.withOpacity(0.5),

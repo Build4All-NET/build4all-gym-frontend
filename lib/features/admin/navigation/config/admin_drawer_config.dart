@@ -2,10 +2,16 @@
 //
 // Admin drawer navigation, organised into small, focused groups so the admin
 // finds things fast. Admin/Owner sees every item; staff visibility is driven
-// per-item (trainer / reception flags) — NOT by section — so the grouping can
-// change freely without altering what staff are allowed to see.
+// per-item — NOT by section — so the grouping can change freely without
+// altering what staff are allowed to see.
 //
-// Preserved staff access (unchanged from before the regroup):
+// Staff (TRAINER/RECEPTION) visibility is owner-configurable per gym via the
+// Staff Access Control screen (admin/role_permissions), backed by the
+// gym_nav_permissions table. The `trainer`/`reception` flags below are only
+// the seed defaults / brief-loading fallback — see canSee() in
+// admin_navigation_drawer.dart and AdminProfile.allowedNavItemIds.
+//
+// Default staff access (mirrors the matrix's seeded defaults):
 //   TRAINER   → PT Sessions (Dashboard/Sessions/Schedule/Income tabs only —
 //               Packages, Services and PT Package Payments are Admin/Owner-only),
 //               Training Videos
@@ -49,6 +55,17 @@ const _frontDeskItems = [
     iconData: Icons.how_to_reg_outlined,
     labelKey: 'navCheckins',
     route: '/admin/checkins',
+    reception: true,
+  ),
+  NavigationItem(
+    id: 'employee_checkins',
+    iconData: Icons.fingerprint_outlined,
+    labelKey: 'navEmployeeCheckins',
+    route: '/admin/employee-checkins',
+    // Unlike "employees" (payroll/salary, owner-only), trainer/reception need
+    // this to self check-in/out — matches GymNavPermissionService.DEFAULTS
+    // {true, true} for "employee_checkins".
+    trainer: true,
     reception: true,
   ),
   NavigationItem(
@@ -154,6 +171,26 @@ const _setupItems = [
     iconData: Icons.person_outline,
     labelKey: 'navReceptionStaff',
     route: '/admin/staff',
+    // Assigns gym roles to users — never delegable to staff (would let a
+    // trainer/reception grant themselves elevated access). Excluded from the
+    // Staff Access Control editor entirely.
+    configurable: false,
+  ),
+  NavigationItem(
+    id: 'employees',
+    iconData: Icons.badge_outlined,
+    labelKey: 'navEmployees',
+    route: '/admin/employees',
+    // Owner-only by default (payroll/salary data) but delegable, matching the
+    // backend's GymNavPermissionService.DEFAULTS {false, false} for "employees".
+  ),
+  NavigationItem(
+    id: 'staff_access_control',
+    iconData: Icons.admin_panel_settings_outlined,
+    labelKey: 'navStaffAccessControl',
+    route: '/admin/staff-access',
+    // The permissions editor itself — owner-only, and not a row in its own table.
+    configurable: false,
   ),
 ];
 

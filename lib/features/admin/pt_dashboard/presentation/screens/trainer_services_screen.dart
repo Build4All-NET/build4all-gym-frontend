@@ -316,7 +316,9 @@ class _ServiceCard extends StatelessWidget {
               children: [
                 Icon(Icons.timer, size: 14, color: tokens.colors.muted),
                 const SizedBox(width: 4),
-                Text('${service.durationMinutes} min',
+                Text(
+                    AppLocalizations.of(context)!
+                        .memberHomeDurationMinutes(service.durationMinutes),
                     style: TextStyle(
                         color: tokens.colors.body, fontSize: 13)),
                 const SizedBox(width: 16),

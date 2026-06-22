@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -248,7 +248,7 @@ class _BookSessionSheetState extends State<BookSessionSheet> {
             ),
             // ── Header ──────────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 8, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 8, 0),
               child: Row(
                 children: [
                   Text(l10n.trainer_bookSession,
@@ -638,7 +638,15 @@ class _InlineCalendar extends StatefulWidget {
 class _InlineCalendarState extends State<_InlineCalendar> {
   late DateTime _focusedMonth;
 
-  static const _dayHeaders = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  List<String> _dayHeaders(AppLocalizations l10n) => [
+        l10n.dayMonday,
+        l10n.dayTuesday,
+        l10n.dayWednesday,
+        l10n.dayThursday,
+        l10n.dayFriday,
+        l10n.daySaturday,
+        l10n.daySunday,
+      ];
 
   @override
   void initState() {
@@ -664,6 +672,7 @@ class _InlineCalendarState extends State<_InlineCalendar> {
     final offset = (firstDay.weekday - 1) % 7;
     final totalCells = offset + daysInMonth;
     final rows = (totalCells / 7).ceil();
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Container(
       decoration: BoxDecoration(
@@ -678,10 +687,12 @@ class _InlineCalendarState extends State<_InlineCalendar> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Row(
               children: [
-                _navBtn(Icons.chevron_left_rounded, _prevMonth, cs),
+                _navBtn(
+                    isRtl ? Icons.chevron_right_rounded : Icons.chevron_left_rounded,
+                    _prevMonth, cs),
                 Expanded(
                   child: Text(
-                    DateFormat('MMMM yyyy').format(_focusedMonth),
+                    DateFormat.yMMMM(Localizations.localeOf(context).toString()).format(_focusedMonth),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 15,
@@ -689,7 +700,9 @@ class _InlineCalendarState extends State<_InlineCalendar> {
                         color: cs.label),
                   ),
                 ),
-                _navBtn(Icons.chevron_right_rounded, _nextMonth, cs),
+                _navBtn(
+                    isRtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+                    _nextMonth, cs),
               ],
             ),
           ),
@@ -697,7 +710,7 @@ class _InlineCalendarState extends State<_InlineCalendar> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
-              children: _dayHeaders
+              children: _dayHeaders(AppLocalizations.of(context)!)
                   .map((d) => Expanded(
                         child: Center(
                           child: Text(d,

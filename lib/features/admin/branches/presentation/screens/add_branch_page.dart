@@ -6,6 +6,7 @@ import '../../domain/usecase/create_branch_usecase.dart';
 import '../../domain/usecase/update_branch_usecase.dart';
 import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AddBranchPage extends StatefulWidget {
   final BranchDetailEntity? existing;
@@ -58,6 +59,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -65,7 +67,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
         elevation: 0,
         leading: const BackButton(color: Color(0xFF1A1A2E)),
         title: Text(
-          _isEdit ? 'Edit Branch' : 'Add Branch',
+          _isEdit ? l10n.admin_branches_editBranchTitle : l10n.admin_branches_addBranchTitle,
           style: const TextStyle(
               color: Color(0xFF1A1A2E),
               fontWeight: FontWeight.w700,
@@ -83,8 +85,8 @@ class _AddBranchPageState extends State<AddBranchPage> {
             ScaffoldMessenger.of(ctx).showSnackBar(
               SnackBar(
                 content: Text(_isEdit
-                    ? 'Branch updated successfully'
-                    : 'Branch created successfully'),
+                    ? l10n.admin_branches_updatedSuccess
+                    : l10n.admin_branches_createdSuccess),
                 backgroundColor: const Color(0xFF10B981),
               ),
             );
@@ -112,62 +114,62 @@ class _AddBranchPageState extends State<AddBranchPage> {
             child: Column(
               children: [
                 _FormCard(children: [
-                  const _SectionTitle('Basic Information'),
+                  _SectionTitle(l10n.admin_branches_sectionBasicInfo),
                   const SizedBox(height: 12),
                   _buildField(
                     controller: _nameCtrl,
-                    label: 'Branch Name',
-                    hint: 'e.g. Mumbai Central',
+                    label: l10n.branchDialog_name,
+                    hint: l10n.admin_branches_nameHintAlt,
                     validator: (v) =>
-                        v == null || v.isEmpty ? 'Branch name is required' : null,
+                        v == null || v.isEmpty ? l10n.branchDialog_nameRequired : null,
                   ),
                   const SizedBox(height: 12),
                   _buildField(
                     controller: _cityCtrl,
-                    label: 'City / Location',
-                    hint: 'e.g. Mumbai',
+                    label: l10n.admin_branches_cityLocationLabel,
+                    hint: l10n.admin_branches_cityHintAlt,
                     validator: (v) =>
-                        v == null || v.isEmpty ? 'City is required' : null,
+                        v == null || v.isEmpty ? l10n.branchDialog_cityRequired : null,
                   ),
                 ]),
                 const SizedBox(height: 12),
                 _FormCard(children: [
-                  const _SectionTitle('Contact Information'),
+                  _SectionTitle(l10n.branchDialog_sectionContact),
                   const SizedBox(height: 12),
                   _buildField(
                     controller: _phoneCtrl,
-                    label: 'Phone',
+                    label: l10n.branchDialog_phone,
                     hint: '+91 98765 43210',
                     keyboardType: TextInputType.phone,
                     validator: (v) =>
-                        v == null || v.isEmpty ? 'Phone is required' : null,
+                        v == null || v.isEmpty ? l10n.branchDialog_phoneRequired : null,
                   ),
                   const SizedBox(height: 12),
                   _buildField(
                     controller: _emailCtrl,
-                    label: 'Email',
+                    label: l10n.branchDialog_email,
                     hint: 'branch@gymapp.com',
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Email is required';
+                      if (v == null || v.isEmpty) return l10n.branchDialog_emailRequired;
                       final emailReg = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                      if (!emailReg.hasMatch(v)) return 'Enter a valid email';
+                      if (!emailReg.hasMatch(v)) return l10n.admin_branches_enterValidEmail;
                       return null;
                     },
                   ),
                   const SizedBox(height: 12),
                   _buildField(
                     controller: _addressCtrl,
-                    label: 'Address',
+                    label: l10n.branchDialog_address,
                     hint: '123 MG Road, Mumbai',
                     maxLines: 3,
                     validator: (v) =>
-                        v == null || v.isEmpty ? 'Address is required' : null,
+                        v == null || v.isEmpty ? l10n.branchDialog_addressRequired : null,
                   ),
                 ]),
                 const SizedBox(height: 12),
                 _FormCard(children: [
-                  const _SectionTitle('Operating Hours'),
+                  _SectionTitle(l10n.branchDialog_sectionHours),
                   const SizedBox(height: 12),
                   _Open24Toggle(
                     value: _isOpen24Hours,
@@ -185,7 +187,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
                       children: [
                         Expanded(
                           child: _TimePicker(
-                            label: 'Opening Time',
+                            label: l10n.admin_branches_openingTimeLabel,
                             value: _openingTime,
                             onPicked: (t) => setState(() => _openingTime = t),
                           ),
@@ -193,7 +195,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: _TimePicker(
-                            label: 'Closing Time',
+                            label: l10n.admin_branches_closingTimeLabel,
                             value: _closingTime,
                             onPicked: (t) => setState(() => _closingTime = t),
                           ),
@@ -203,25 +205,25 @@ class _AddBranchPageState extends State<AddBranchPage> {
                     if (_openingTime != null &&
                         _closingTime != null &&
                         !_closingAfterOpening())
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
                         child: Text(
-                          'Closing time must be after opening time',
-                          style: TextStyle(color: Colors.red, fontSize: 12),
+                          l10n.branchDialog_closingAfterOpening,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),
                   ],
                 ]),
                 const SizedBox(height: 12),
                 _FormCard(children: [
-                  const _SectionTitle('Status'),
+                  _SectionTitle(l10n.admin_branches_statusSection),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     value: _status,
                     decoration: _dropdownDecoration(),
-                    items: const [
-                      DropdownMenuItem(value: 'ACTIVE', child: Text('Active')),
-                      DropdownMenuItem(value: 'INACTIVE', child: Text('Inactive')),
+                    items: [
+                      DropdownMenuItem(value: 'ACTIVE', child: Text(l10n.admin_branches_statusActive)),
+                      DropdownMenuItem(value: 'INACTIVE', child: Text(l10n.admin_branches_statusInactive)),
                     ],
                     onChanged: (v) => setState(() => _status = v ?? 'ACTIVE'),
                   ),
@@ -250,7 +252,7 @@ class _AddBranchPageState extends State<AddBranchPage> {
                                     color: Colors.white, strokeWidth: 2),
                               )
                             : Text(
-                                _isEdit ? 'Save Changes' : 'Create Branch',
+                                _isEdit ? l10n.admin_plans_saveChanges : l10n.admin_branches_createBranchButton,
                                 style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
@@ -270,24 +272,24 @@ class _AddBranchPageState extends State<AddBranchPage> {
   void _submit() {
     final valid = _formKey.currentState?.validate() ?? false;
     if (!valid) return;
+    final l10n = AppLocalizations.of(context)!;
 
     if (!_isOpen24Hours) {
       if (_openingTime == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select an opening time')),
+          SnackBar(content: Text(l10n.admin_branches_selectOpeningTime)),
         );
         return;
       }
       if (_closingTime == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select a closing time')),
+          SnackBar(content: Text(l10n.admin_branches_selectClosingTime)),
         );
         return;
       }
       if (!_closingAfterOpening()) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Closing time must be after opening time')),
+          SnackBar(content: Text(l10n.branchDialog_closingAfterOpening)),
         );
         return;
       }
@@ -434,6 +436,7 @@ class _Open24Toggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => onChanged(!value),
       child: Container(
@@ -455,7 +458,7 @@ class _Open24Toggle extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                'Open 24 Hours',
+                l10n.admin_branches_open24Hours,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

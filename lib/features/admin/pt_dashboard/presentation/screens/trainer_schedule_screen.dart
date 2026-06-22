@@ -164,7 +164,7 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
           final weekdays = _localizedWeekdays(l10n);
           final dayName  = day >= 1 && day <= 7
               ? weekdays[day - 1]
-              : 'Day $day';
+              : l10n.trainer_dayNumberFallback(day);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

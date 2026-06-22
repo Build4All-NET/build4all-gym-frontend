@@ -24,7 +24,7 @@ class RecentActivityFeed extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 2),
+              padding: const EdgeInsetsDirectional.only(start: 2),
               child: Text(
                 l10n.admin_dashboard_recentActivity,
                 style: TextStyle(
@@ -156,9 +156,9 @@ class _ActivityItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
+                PositionedDirectional(
                   bottom: 0,
-                  right:  0,
+                  end:    0,
                   child: Container(
                     width:  16,
                     height: 16,

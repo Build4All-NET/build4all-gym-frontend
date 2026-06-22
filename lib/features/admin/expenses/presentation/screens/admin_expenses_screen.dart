@@ -12,9 +12,13 @@ import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/admin_expenses/admin_expenses_bloc.dart';
 import '../widgets/expense_stats_card_widget.dart';
 import '../widgets/admin_expense_card_widget.dart';
+import '../widgets/commission_summary_card_widget.dart';
 import '../widgets/expense_form_bottom_sheet.dart';
+import '../../domain/entities/expense_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
+
+const String _kCommissionCategory = 'commission';
 
 class AdminExpensesScreen extends StatefulWidget {
   const AdminExpensesScreen({super.key});
@@ -26,6 +30,11 @@ class AdminExpensesScreen extends StatefulWidget {
 class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
   final _searchController = TextEditingController();
   Timer? _debounce;
+
+  // Client-side trainer filter, only relevant while the Commission category
+  // filter is active — the trainer list is derived from the already-loaded
+  // commission rows, so this doesn't need its own network round-trip.
+  int? _selectedTrainerId;
 
   @override
   void initState() {
@@ -82,6 +91,33 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
               l10n.admin_expenses_delete,
               style: TextStyle(color: c.danger),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfirmTrainerPaidDialog(int expenseId) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(l10n.admin_expenses_confirmPaidTitle),
+        content: Text(l10n.admin_expenses_confirmPaidMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.general_cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context
+                  .read<AdminExpensesBloc>()
+                  .add(ConfirmTrainerPaidEvent(expenseId: expenseId));
+            },
+            child: Text(l10n.admin_expenses_confirmPaid),
           ),
         ],
       ),
@@ -173,6 +209,28 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                   }
 
                   if (state is AdminExpensesLoaded) {
+                    final isCommissionFilter =
+                        state.activeCategoryFilter == _kCommissionCategory;
+
+                    // trainerId -> trainerName, derived from the currently
+                    // loaded commission rows (already category-filtered by
+                    // the backend), so no extra request is needed.
+                    final trainerOptions = <int, String>{};
+                    if (isCommissionFilter) {
+                      for (final e in state.expenses) {
+                        if (e.trainerId != null && e.trainerName != null) {
+                          trainerOptions[e.trainerId!] = e.trainerName!;
+                        }
+                      }
+                    }
+
+                    final List<ExpenseEntity> displayedExpenses =
+                        isCommissionFilter && _selectedTrainerId != null
+                            ? state.expenses
+                                .where((e) => e.trainerId == _selectedTrainerId)
+                                .toList()
+                            : state.expenses;
+
                     return Column(
                       children: [
                         Container(
@@ -229,6 +287,9 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                       ),
                                     ],
                                     onChanged: (v) {
+                                      if (v != _kCommissionCategory) {
+                                        setState(() => _selectedTrainerId = null);
+                                      }
                                       context
                                           .read<AdminExpensesBloc>()
                                           .add(FilterByCategoryEvent(category: v));
@@ -271,6 +332,46 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                             ],
                           ),
                         ),
+                        if (isCommissionFilter)
+                          Container(
+                            color: c.surface,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: c.background,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: DropdownButton<int?>(
+                                value: _selectedTrainerId,
+                                isExpanded: true,
+                                underline: const SizedBox.shrink(),
+                                dropdownColor: c.surface,
+                                style: TextStyle(fontSize: 13, color: c.label),
+                                items: [
+                                  DropdownMenuItem<int?>(
+                                    value: null,
+                                    child: Text(
+                                      l10n.admin_expenses_allTrainers,
+                                      style: TextStyle(fontSize: 13, color: c.label),
+                                    ),
+                                  ),
+                                  ...trainerOptions.entries.map(
+                                    (entry) => DropdownMenuItem<int?>(
+                                      value: entry.key,
+                                      child: Text(
+                                        entry.value,
+                                        style: TextStyle(fontSize: 13, color: c.label),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (v) {
+                                  setState(() => _selectedTrainerId = v);
+                                },
+                              ),
+                            ),
+                          ),
                         Expanded(
                           child: RefreshIndicator(
                             color: c.primary,
@@ -282,7 +383,14 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                             child: ListView(
                               children: [
                                 ExpenseStatsCardWidget(stats: state.stats),
-                                if (state.expenses.isEmpty)
+                                if (isCommissionFilter)
+                                  CommissionSummaryCardWidget(
+                                    expenses: displayedExpenses,
+                                    trainerName: _selectedTrainerId == null
+                                        ? null
+                                        : trainerOptions[_selectedTrainerId],
+                                  ),
+                                if (displayedExpenses.isEmpty)
                                   Padding(
                                     padding: const EdgeInsets.all(40),
                                     child: Center(
@@ -293,12 +401,16 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                     ),
                                   )
                                 else
-                                  ...state.expenses.map(
+                                  ...displayedExpenses.map(
                                     (expense) => AdminExpenseCardWidget(
                                       expense: expense,
                                       isDeleting: state.isDeletingExpense &&
                                           state.deletingExpenseId ==
                                               expense.expenseId,
+                                      isConfirmingTrainerPaid:
+                                          state.isConfirmingTrainerPaid &&
+                                              state.confirmingExpenseId ==
+                                                  expense.expenseId,
                                       onEdit: () {
                                         ExpenseFormBottomSheet.show(
                                           context,
@@ -313,6 +425,9 @@ class _AdminExpensesScreenState extends State<AdminExpensesScreen> {
                                       },
                                       onDelete: () {
                                         _showDeleteDialog(expense.expenseId);
+                                      },
+                                      onConfirmTrainerPaid: () {
+                                        _showConfirmTrainerPaidDialog(expense.expenseId);
                                       },
                                     ),
                                   ),

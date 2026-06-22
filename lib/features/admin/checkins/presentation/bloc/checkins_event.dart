@@ -16,9 +16,12 @@ abstract class CheckinsEvent {
 
 /// Fired on screen open and after any action that should refresh the list.
 /// [search] lets us re-apply the current search term after an action.
+/// [silent] is set by the background poll timer — it skips the loading
+/// skeleton and swallows errors so a transient blip doesn't blank the list.
 class LoadTodayCheckins extends CheckinsEvent {
   final String? search;
-  const LoadTodayCheckins({this.search});
+  final bool    silent;
+  const LoadTodayCheckins({this.search, this.silent = false});
 }
 
 // ── Search ────────────────────────────────────────────────────────────────────
@@ -46,23 +49,18 @@ class CheckOutMember extends CheckinsEvent {
   const CheckOutMember(this.checkinId);
 }
 
-/// Admin confirms the freeze bottom sheet.
-class FreezeMember extends CheckinsEvent {
-  final int    userId;
-  final String fromDate;
-  final String toDate;
-  final String reason;
-  const FreezeMember({
-    required this.userId,
-    required this.fromDate,
-    required this.toDate,
-    required this.reason,
-  });
-}
-
 /// Admin confirms the block dialog.
 class BlockMember extends CheckinsEvent {
   final int    userId;
   final String reason;
   const BlockMember({required this.userId, required this.reason});
+}
+
+// ── Branch switch ──────────────────────────────────────────────────────────
+
+/// Fired when the admin picks a different branch from the AppBar branch pill
+/// (or once, when the admin's home branch resolves after the profile loads).
+class ChangeBranch extends CheckinsEvent {
+  final int branchId;
+  const ChangeBranch(this.branchId);
 }

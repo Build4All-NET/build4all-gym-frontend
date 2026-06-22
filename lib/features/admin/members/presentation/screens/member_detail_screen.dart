@@ -71,7 +71,9 @@ class _TopBar extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: Icon(Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_rounded
+                : Icons.arrow_back_rounded),
             color: cs.onSurface,
             onPressed: () => Navigator.pop(context),
           ),

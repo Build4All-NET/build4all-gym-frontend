@@ -23,4 +23,11 @@ class AdminInvoiceRepositoryImpl implements AdminInvoiceRepository {
     final models = await _service.listInvoices(page: page, size: size, status: status, type: type);
     return models.map<AdminInvoiceSummaryEntity>((AdminInvoiceSummaryModel m) => m.toEntity()).toList();
   }
+
+  @override
+  Future<AdminInvoiceEntity> recordPayment(
+      int invoiceId, double amount, {String? notes}) async {
+    final model = await _service.recordPayment(invoiceId, amount, notes: notes);
+    return model.toEntity();
+  }
 }

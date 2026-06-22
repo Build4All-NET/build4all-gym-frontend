@@ -6,6 +6,7 @@ import 'package:build4allgym/core/realtime/realtime_cubit.dart';
 import 'package:build4allgym/core/utils/jwt_utils.dart';
 import 'package:build4allgym/features/auth/data/services/admin_token_store.dart';
 import 'package:build4allgym/features/auth/data/services/auth_token_store.dart';
+import 'package:build4allgym/features/auth/data/services/biometric_auth_service.dart';
 import 'package:build4allgym/features/auth/data/services/session_role_store.dart';
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_bloc.dart';
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_event.dart';
@@ -34,6 +35,7 @@ class _AuthGateState extends State<AuthGate> {
   final _adminStore         = const AdminTokenStore();
   final _userStore          = const AuthTokenStore();
   final _refreshCoordinator = AuthRefreshCoordinator.instance;
+  final _biometricService   = BiometricAuthService();
 
   // ─── state ──────────────────────────────────────────────────────────────────
   bool _loading   = true;
@@ -188,6 +190,25 @@ class _AuthGateState extends State<AuthGate> {
     );
   }
 
+  // ─── biometric gate ───────────────────────────────────────────────────────────
+  /// Admin auto-login (re-entering the app on a stored token, no password
+  /// re-entry) is silently gated behind a device biometric scan when the
+  /// admin enabled "Biometric Login" in Settings.
+  ///
+  /// Fails open (returns true) if biometrics are off or the device has none
+  /// configured, so this never locks an admin out of their own app.
+  Future<bool> _passesAdminBiometricGate() async {
+    final enabled = await _biometricService.isEnabled();
+    if (!enabled) return true;
+
+    final supported = await _biometricService.isDeviceSupported();
+    if (!supported) return true;
+
+    return _biometricService.authenticate(
+      'Authenticate to access the admin dashboard',
+    );
+  }
+
   // ─── boot ─────────────────────────────────────────────────────────────────────
   /// Runs once on init. Decides where to navigate.
   Future<void> _boot() async {
@@ -239,7 +260,13 @@ class _AuthGateState extends State<AuthGate> {
       //    Priority: respect lastRole first, then fallback priority
 
       if (lastRole == 'admin' && adminValid) {
-        _goAdminWithToken(adminToken!);
+        if (await _passesAdminBiometricGate()) {
+          if (!mounted) return;
+          _goAdminWithToken(adminToken!);
+        } else {
+          if (!mounted) return;
+          _goLogin();
+        }
         return;
       }
 
@@ -257,7 +284,13 @@ class _AuthGateState extends State<AuthGate> {
 
       // Fallback priority (lastRole existed but that role's token expired)
       if (adminValid) {
-        _goAdminWithToken(adminToken!);
+        if (await _passesAdminBiometricGate()) {
+          if (!mounted) return;
+          _goAdminWithToken(adminToken!);
+        } else {
+          if (!mounted) return;
+          _goLogin();
+        }
         return;
       }
 
@@ -334,7 +367,13 @@ class _AuthGateState extends State<AuthGate> {
 
     if (choice == 'admin') {
       await _roleStore.saveRole('admin');
-      _goAdminWithToken(adminToken);
+      if (await _passesAdminBiometricGate()) {
+        if (!mounted) return;
+        _goAdminWithToken(adminToken);
+      } else {
+        if (!mounted) return;
+        _goLogin();
+      }
       return;
     }
     if (choice == 'user') {

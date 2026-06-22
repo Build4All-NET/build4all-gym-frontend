@@ -86,9 +86,7 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
     
     final profile = context.watch<AdminProfileCubit>().state;
 
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Scaffold(
+    return Scaffold(
     drawer:  AdminNavigationDrawer(
     gymName:    profile.gymName,
     branchName: profile.branchName,
@@ -208,7 +206,6 @@ class _AdminStaffViewState extends State<_AdminStaffView> {
           shape:           const CircleBorder(),
           child:           const Icon(Icons.add, size: 28),
         ),
-      ),
     );
   }
 

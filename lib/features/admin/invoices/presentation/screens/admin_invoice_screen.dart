@@ -52,7 +52,15 @@ class _AdminInvoiceScreenState extends State<AdminInvoiceScreen> {
           children: [
             AdminAppBar(title: AppLocalizations.of(context)!.admin_invoices_invoiceLabel),
             Expanded(
-              child: BlocBuilder<AdminInvoiceBloc, AdminInvoiceState>(
+              child: BlocConsumer<AdminInvoiceBloc, AdminInvoiceState>(
+                listener: (ctx, state) {
+                  if (state is AdminInvoiceLoaded && state.wasPaymentRecorded) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(content: Text(
+                          AppLocalizations.of(ctx)!.admin_invoices_paymentRecorded)),
+                    );
+                  }
+                },
                 builder: (ctx, state) {
                   if (state is AdminInvoiceLoading) {
                     return Center(
@@ -134,27 +142,119 @@ class _InvoiceView extends StatelessWidget {
           bottom: 24,
           left: 16,
           right: 16,
-          child: SizedBox(
-            height: 54,
-            child: ElevatedButton.icon(
-              onPressed: () => _downloadPdf(context, invoice, gymName, c, t),
-              icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
-              label: Text(
-                AppLocalizations.of(context)!.admin_invoices_downloadPdf,
-                style: t.bodyMedium.copyWith(
-                    color: c.onPrimary, fontWeight: FontWeight.w800),
+          child: Row(
+            children: [
+              if (invoice.dueAmount > 0) ...[
+                Expanded(
+                  child: SizedBox(
+                    height: 54,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showRecordPaymentDialog(context, invoice, c, t),
+                      icon: const Icon(Icons.payments_outlined, size: 20),
+                      label: Text(
+                        AppLocalizations.of(context)!.admin_invoices_recordPayment,
+                        style: t.bodyMedium.copyWith(
+                            color: Colors.white, fontWeight: FontWeight.w800),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: c.success,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+              Expanded(
+                child: SizedBox(
+                  height: 54,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _downloadPdf(context, invoice, gymName, c, t),
+                    icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
+                    label: Text(
+                      AppLocalizations.of(context)!.admin_invoices_downloadPdf,
+                      style: t.bodyMedium.copyWith(
+                          color: c.onPrimary, fontWeight: FontWeight.w800),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: c.primary,
+                      foregroundColor: c.onPrimary,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                    ),
+                  ),
+                ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: c.primary,
-                foregroundColor: c.onPrimary,
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-              ),
-            ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  void _showRecordPaymentDialog(
+      BuildContext context, AdminInvoiceEntity invoice, dynamic c, dynamic t) {
+    final l10n = AppLocalizations.of(context)!;
+    final amountCtrl =
+        TextEditingController(text: invoice.dueAmount.toStringAsFixed(2));
+    final formKey = GlobalKey<FormState>();
+    final bloc = context.read<AdminInvoiceBloc>();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.admin_invoices_recordPayment),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.admin_invoices_balanceDueLabel(
+                    invoice.dueAmount.toStringAsFixed(2)),
+                style: t.bodySmall.copyWith(color: c.muted),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: amountCtrl,
+                autofocus: true,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.trainer_amountToCollectLabel,
+                  prefixText: '\$ ',
+                ),
+                validator: (v) {
+                  final amount = double.tryParse(v?.trim() ?? '');
+                  if (amount == null || amount <= 0) {
+                    return AppLocalizations.of(context)!.trainer_invalidAmount;
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.general_cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              final amount = double.parse(amountCtrl.text.trim());
+              Navigator.pop(ctx);
+              bloc.add(RecordInvoicePaymentEvent(invoice.invoiceId, amount));
+            },
+            child: Text(l10n.admin_invoices_recordPayment),
+          ),
+        ],
+      ),
     );
   }
 
@@ -190,6 +290,7 @@ class _InvoiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c   = tokens.colors;
     final t   = tokens.typography;
+    final l10n = AppLocalizations.of(context)!;
     final fmt = NumberFormat('#,##0.00');
     final statusColor = _statusColor(invoice.status, c);
 
@@ -250,7 +351,7 @@ class _InvoiceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'INVOICE',
+                      l10n.admin_invoice_title,
                       style: t.headlineSmall.copyWith(
                         color: c.label,
                         fontWeight: FontWeight.w900,
@@ -290,12 +391,12 @@ class _InvoiceCard extends StatelessWidget {
                   children: [
                     Expanded(
                         child: _MetaBlock(
-                            label: 'Invoice No.',
+                            label: l10n.admin_invoice_invoiceNoLabel,
                             value: invoice.invoiceNumber,
                             tokens: tokens)),
                     Expanded(
                         child: _MetaBlock(
-                            label: 'Date',
+                            label: l10n.admin_invoice_dateLabel,
                             value: _formatDate(invoice.invoiceDate),
                             tokens: tokens,
                             align: TextAlign.end)),
@@ -308,7 +409,7 @@ class _InvoiceCard extends StatelessWidget {
 
                 // ── Bill To ──────────────────────────────────────────────────
                 if (invoice.member != null) ...[
-                  Text('BILL TO',
+                  Text(l10n.admin_invoice_billTo,
                       style: t.bodySmall.copyWith(
                           color: c.muted,
                           fontWeight: FontWeight.w700,
@@ -329,13 +430,13 @@ class _InvoiceCard extends StatelessWidget {
                 ],
 
                 // ── Items table ──────────────────────────────────────────────
-                Text('ITEMS',
+                Text(l10n.admin_invoice_items,
                     style: t.bodySmall.copyWith(
                         color: c.muted,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.8)),
                 const SizedBox(height: 10),
-                _itemsTable(invoice.items, c, t, fmt),
+                _itemsTable(invoice.items, c, t, fmt, l10n),
 
                 const SizedBox(height: 20),
                 Divider(color: c.border.withValues(alpha: 0.15), height: 1),
@@ -343,36 +444,36 @@ class _InvoiceCard extends StatelessWidget {
 
                 // ── Totals ───────────────────────────────────────────────────
                 _TotalRow(
-                    label: 'Subtotal',
+                    label: l10n.admin_invoice_subtotal,
                     value: '\$ ${fmt.format(invoice.subtotal)}',
                     tokens: tokens),
                 if (invoice.discountAmount > 0)
                   _TotalRow(
-                      label: 'Discount',
+                      label: l10n.admin_invoice_discount,
                       value: '- \$ ${fmt.format(invoice.discountAmount)}',
                       tokens: tokens,
                       valueColor: c.success),
                 if (invoice.taxAmount > 0)
                   _TotalRow(
-                      label: 'Tax',
+                      label: l10n.admin_invoice_tax,
                       value: '\$ ${fmt.format(invoice.taxAmount)}',
                       tokens: tokens),
                 const SizedBox(height: 6),
                 Divider(color: c.border.withValues(alpha: 0.15), height: 1),
                 const SizedBox(height: 6),
                 _TotalRow(
-                    label: 'TOTAL',
+                    label: l10n.admin_invoice_total,
                     value: '\$ ${fmt.format(invoice.totalAmount)}',
                     tokens: tokens,
                     bold: true),
                 _TotalRow(
-                    label: 'Paid',
+                    label: l10n.admin_expenses_paid,
                     value: '\$ ${fmt.format(invoice.paidAmount)}',
                     tokens: tokens,
                     valueColor: c.success),
                 if (invoice.dueAmount > 0)
                   _TotalRow(
-                      label: 'Balance Due',
+                      label: l10n.admin_invoice_balanceDue,
                       value: '\$ ${fmt.format(invoice.dueAmount)}',
                       tokens: tokens,
                       bold: true,
@@ -384,7 +485,7 @@ class _InvoiceCard extends StatelessWidget {
                   Divider(
                       color: c.border.withValues(alpha: 0.15), height: 1),
                   const SizedBox(height: 12),
-                  Text('PAYMENT DETAILS',
+                  Text(l10n.admin_invoice_paymentDetails,
                       style: t.bodySmall.copyWith(
                           color: c.muted,
                           fontWeight: FontWeight.w700,
@@ -406,6 +507,7 @@ class _InvoiceCard extends StatelessWidget {
     dynamic c,
     dynamic t,
     NumberFormat fmt,
+    AppLocalizations l10n,
   ) {
     return Column(
       children: [
@@ -415,24 +517,24 @@ class _InvoiceCard extends StatelessWidget {
             children: [
               Expanded(
                   flex: 4,
-                  child: Text('Description',
+                  child: Text(l10n.admin_invoice_description,
                       style: t.bodySmall.copyWith(
                           color: c.muted, fontWeight: FontWeight.w700))),
               SizedBox(
                   width: 36,
-                  child: Text('Qty',
+                  child: Text(l10n.admin_invoice_qty,
                       textAlign: TextAlign.center,
                       style: t.bodySmall.copyWith(
                           color: c.muted, fontWeight: FontWeight.w700))),
               SizedBox(
                   width: 70,
-                  child: Text('Price',
+                  child: Text(l10n.admin_invoice_price,
                       textAlign: TextAlign.end,
                       style: t.bodySmall.copyWith(
                           color: c.muted, fontWeight: FontWeight.w700))),
               SizedBox(
                   width: 70,
-                  child: Text('Total',
+                  child: Text(l10n.admin_invoice_itemTotalColumn,
                       textAlign: TextAlign.end,
                       style: t.bodySmall.copyWith(
                           color: c.muted, fontWeight: FontWeight.w700))),
@@ -592,6 +694,7 @@ class _PaymentRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final t = tokens.typography;
+    final l10n = AppLocalizations.of(context)!;
 
     String paidAt = '';
     if (payment.paidAt != null) {
@@ -633,7 +736,7 @@ class _PaymentRow extends StatelessWidget {
                 if (paidAt.isNotEmpty)
                   Text(paidAt, style: t.bodySmall.copyWith(color: c.muted)),
                 if (payment.receivedBy != null)
-                  Text('Received by: ${payment.receivedBy}',
+                  Text(l10n.admin_invoice_receivedBy(payment.receivedBy!),
                       style: t.bodySmall.copyWith(color: c.muted)),
               ],
             ),

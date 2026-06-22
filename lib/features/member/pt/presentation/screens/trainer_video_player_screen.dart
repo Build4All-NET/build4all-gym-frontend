@@ -265,8 +265,9 @@ class _TrainerVideoPlayerScreenState extends State<TrainerVideoPlayerScreen>
 
     if (!isAvailable) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Picture-in-Picture is not available on this device.'),
+        SnackBar(
+          content: Text(
+              AppLocalizations.of(context)!.ptTrainingVideosPipUnavailable),
           behavior: SnackBarBehavior.floating,
         ),
       );

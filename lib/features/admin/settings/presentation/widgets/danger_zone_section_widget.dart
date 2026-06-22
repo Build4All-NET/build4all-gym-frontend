@@ -191,7 +191,7 @@ class DangerZoneSectionWidget extends StatelessWidget {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete account: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.admin_settings_deleteAccountFailed(e.toString()))),
       );
     }
   }

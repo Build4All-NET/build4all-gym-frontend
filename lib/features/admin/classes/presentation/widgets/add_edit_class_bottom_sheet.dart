@@ -6,12 +6,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../../../../core/config/env.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
+import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../data/models/create_class_request_model.dart';
 import '../../data/models/update_class_request_model.dart';
 import '../../domain/entities/admin_class_card_entity.dart';
 import '../../domain/entities/class_form_option_item_entity.dart';
 import '../../../../../common/widgets/app_toast.dart';
+import '../../../../../common/widgets/form_section_kit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_classes_bloc.dart';
 import '../bloc/admin_classes_event.dart';
@@ -26,10 +29,14 @@ class AddEditClassBottomSheet extends StatefulWidget {
 
   static void show(BuildContext context,
       {int? sessionId, AdminClassCardEntity? existing, DateTime? existingDate}) {
+    final c = context.read<ThemeCubit>().state.tokens.colors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: c.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (_) => BlocProvider.value(
         value: context.read<AdminClassesBloc>(),
         child: AddEditClassBottomSheet(
@@ -157,7 +164,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   }
 
   Future<void> _showCreateTypeDialog() async {
-    final cs   = Theme.of(context).colorScheme;
+    final c    = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
     final durationCtrl = TextEditingController();
@@ -169,11 +176,27 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: cs.surface,
-          title: Text(
-            l10n.admin_classes_newTypeTitle,
-            style: TextStyle(
-                fontWeight: FontWeight.w700, color: cs.onSurface),
+          backgroundColor: c.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: c.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.category_outlined, size: 18, color: c.primary),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.admin_classes_newTypeTitle,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 16, color: c.label),
+                ),
+              ),
+            ],
           ),
           content: SingleChildScrollView(
             child: Form(
@@ -182,24 +205,22 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _dialogLabel(l10n.admin_classes_typeNameLabel, cs),
-                  const SizedBox(height: 4),
+                  FormFieldLabel(l10n.admin_classes_typeNameLabel, c),
                   TextFormField(
                     controller: nameCtrl,
-                    style: TextStyle(color: cs.onSurface),
-                    decoration: _dialogDeco(l10n.admin_classes_typeNameHint, cs),
+                    style: TextStyle(color: c.label),
+                    decoration: formInputDecoration(hint: l10n.admin_classes_typeNameHint, c: c),
                     validator: (v) => (v == null || v.trim().isEmpty)
                         ? l10n.admin_classes_required
                         : null,
                   ),
-                  const SizedBox(height: 12),
-                  _dialogLabel(l10n.admin_classes_typeDurationLabel, cs),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 14),
+                  FormFieldLabel(l10n.admin_classes_typeDurationLabel, c),
                   TextFormField(
                     controller: durationCtrl,
                     keyboardType: TextInputType.number,
-                    style: TextStyle(color: cs.onSurface),
-                    decoration: _dialogDeco(l10n.admin_classes_durationHint, cs),
+                    style: TextStyle(color: c.label),
+                    decoration: formInputDecoration(hint: l10n.admin_classes_durationHint, c: c),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) {
                         return l10n.admin_classes_required;
@@ -210,13 +231,12 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 12),
-                  _dialogLabel(l10n.admin_classes_typeDifficultyLabel, cs),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 14),
+                  FormFieldLabel(l10n.admin_classes_typeDifficultyLabel, c),
                   DropdownButtonFormField<String>(
                     value: difficulty,
-                    style: TextStyle(color: cs.onSurface),
-                    decoration: _dialogDeco('', cs),
+                    style: TextStyle(color: c.label),
+                    decoration: formInputDecoration(hint: '', c: c),
                     items: [
                       DropdownMenuItem(
                           value: 'BEGINNER',
@@ -231,15 +251,15 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                     onChanged: (v) =>
                         setDialogState(() => difficulty = v ?? 'BEGINNER'),
                   ),
-                  const SizedBox(height: 12),
-                  _dialogLabel(l10n.admin_classes_typePriceLabel, cs),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 14),
+                  FormFieldLabel(l10n.admin_classes_typePriceLabel, c),
                   TextFormField(
                     controller: priceCtrl,
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true),
-                    style: TextStyle(color: cs.onSurface),
-                    decoration: _dialogDeco('0.00', cs),
+                    style: TextStyle(color: c.label),
+                    decoration: formInputDecoration(
+                        hint: '0.00', c: c, prefixIcon: Icons.attach_money_rounded),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return null;
                       if (double.tryParse(v.trim()) == null) {
@@ -256,12 +276,13 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
               child: Text(l10n.general_cancel,
-                  style: TextStyle(color: cs.onSurface.withOpacity(0.6))),
+                  style: TextStyle(color: c.muted)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                foregroundColor: cs.onPrimary,
+                backgroundColor: c.primary,
+                foregroundColor: c.onPrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () async {
                 if (!formKey.currentState!.validate()) return;
@@ -474,75 +495,54 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final cs   = Theme.of(context).colorScheme;
+    final c    = context.watch<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
-    final mq = MediaQuery.of(context);
-    final bottomInset = mq.viewInsets.bottom;
-    final navBarHeight = mq.viewPadding.bottom;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final navBarHeight = MediaQuery.of(context).viewPadding.bottom;
 
     return BlocListener<AdminClassesBloc, AdminClassesState>(
       listener: (context, state) {},
-      child: Container(
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius:
-          const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
+      child: Padding(
         padding: EdgeInsets.only(
             left: 20, right: 20, top: 20, bottom: bottomInset + navBarHeight + 20),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-
-                // ── Handle + title ─────────────────────────────────────────
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: cs.outline.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+                FormSheetHandle(c),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Text(
-                      _isEditMode ? l10n.admin_classes_editTitle : l10n.admin_classes_addTitle,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: cs.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Icon(Icons.close, color: cs.onSurface),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
+                FormSheetHeader(
+                  title: _isEditMode ? l10n.admin_classes_editTitle : l10n.admin_classes_addTitle,
+                  icon: Icons.event_available_rounded,
+                  c: c,
+                  onClose: () => Navigator.of(context).pop(),
                 ),
-                const SizedBox(height: 20),
 
                 // ── Section: Class Details ─────────────────────────────────
-                _SectionHeader(l10n.admin_classes_sectionDetails, cs),
+                FormSectionHeader(
+                  title: l10n.admin_classes_sectionDetails,
+                  icon: Icons.info_outline_rounded,
+                  c: c,
+                ),
 
                 // ── Class Name ─────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_nameLabel, cs),
-                _buildTextField(
-                  cs: cs,
+                FormFieldLabel(l10n.admin_classes_nameLabel, c),
+                TextFormField(
                   controller: _classNameCtrl,
-                  hint: l10n.admin_classes_nameHint,
+                  style: TextStyle(color: c.label),
+                  decoration: formInputDecoration(
+                    hint: l10n.admin_classes_nameHint,
+                    c: c,
+                    prefixIcon: Icons.label_outline_rounded,
+                  ),
                   validator: (v) => v == null || v.trim().isEmpty
                       ? l10n.admin_classes_required
                       : null,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
 
                 // ── Dropdowns ──────────────────────────────────────────────
                 BlocBuilder<AdminClassesBloc, AdminClassesState>(
@@ -550,7 +550,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                     if (state is ClassFormOptionsLoading) {
                       return Center(
                           child: CircularProgressIndicator(
-                              color: cs.primary));
+                              color: c.primary));
                     }
                     if (state is ClassFormOptionsLoaded) {
                       WidgetsBinding.instance.addPostFrameCallback(
@@ -568,43 +568,40 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                           Row(
                             children: [
                               Expanded(
-                                  child:
-                                  _FieldLabel(l10n.admin_classes_typeLabel, cs)),
-                              TextButton.icon(
-                                icon: Icon(Icons.add,
-                                    size: 14, color: cs.primary),
-                                label: Text(l10n.admin_classes_newTypeButton,
-                                    style: TextStyle(
-                                        fontSize: 12, color: cs.primary)),
-                                onPressed: _showCreateTypeDialog,
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero),
-                              ),
+                                  child: FormFieldLabel(
+                                      l10n.admin_classes_typeLabel, c)),
+                              _NewTypeChip(
+                                  label: l10n.admin_classes_newTypeButton,
+                                  c: c,
+                                  onTap: _showCreateTypeDialog),
                             ],
                           ),
-                          _buildDropdown(
-                              cs: cs,
+                          _optionDropdown(
+                              c: c,
                               items: allTypes,
                               value: _selectedType,
                               hint: l10n.admin_classes_selectType,
+                              icon: Icons.category_outlined,
                               onChanged: (v) =>
                                   setState(() => _selectedType = v)),
-                          const SizedBox(height: 16),
-                          _FieldLabel(l10n.admin_classes_trainerLabel, cs),
-                          _buildDropdown(
-                              cs: cs,
+                          const SizedBox(height: 14),
+                          FormFieldLabel(l10n.admin_classes_trainerLabel, c),
+                          _optionDropdown(
+                              c: c,
                               items: options.trainers,
                               value: _selectedTrainer,
                               hint: l10n.admin_classes_selectTrainer,
+                              icon: Icons.person_outline_rounded,
                               onChanged: (v) =>
                                   setState(() => _selectedTrainer = v)),
-                          const SizedBox(height: 16),
-                          _FieldLabel(l10n.admin_classes_branchLabel, cs),
-                          _buildDropdown(
-                              cs: cs,
+                          const SizedBox(height: 14),
+                          FormFieldLabel(l10n.admin_classes_branchLabel, c),
+                          _optionDropdown(
+                              c: c,
                               items: options.branches,
                               value: _selectedBranch,
                               hint: l10n.admin_classes_selectBranch,
+                              icon: Icons.store_outlined,
                               onChanged: (v) =>
                                   setState(() => _selectedBranch = v)),
                         ],
@@ -617,82 +614,103 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                         Row(
                           children: [
                             Expanded(
-                                child:
-                                _FieldLabel(l10n.admin_classes_typeLabel, cs)),
-                            TextButton.icon(
-                              icon: Icon(Icons.add,
-                                  size: 14, color: cs.primary),
-                              label: Text(l10n.admin_classes_newTypeButton,
-                                  style: TextStyle(
-                                      fontSize: 12, color: cs.primary)),
-                              onPressed: _showCreateTypeDialog,
-                              style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero),
-                            ),
+                                child: FormFieldLabel(
+                                    l10n.admin_classes_typeLabel, c)),
+                            _NewTypeChip(
+                                label: l10n.admin_classes_newTypeButton,
+                                c: c,
+                                onTap: _showCreateTypeDialog),
                           ],
                         ),
-                        _buildDropdown(
-                            cs: cs,
-                            items: [],
+                        _optionDropdown(
+                            c: c,
+                            items: const [],
                             value: null,
                             hint: l10n.admin_classes_selectType,
+                            icon: Icons.category_outlined,
                             onChanged: (_) {}),
-                        const SizedBox(height: 16),
-                        _FieldLabel(l10n.admin_classes_trainerLabel, cs),
-                        _buildDropdown(
-                            cs: cs,
-                            items: [],
+                        const SizedBox(height: 14),
+                        FormFieldLabel(l10n.admin_classes_trainerLabel, c),
+                        _optionDropdown(
+                            c: c,
+                            items: const [],
                             value: null,
                             hint: l10n.admin_classes_selectTrainer,
+                            icon: Icons.person_outline_rounded,
                             onChanged: (_) {}),
-                        const SizedBox(height: 16),
-                        _FieldLabel(l10n.admin_classes_branchLabel, cs),
-                        _buildDropdown(
-                            cs: cs,
-                            items: [],
+                        const SizedBox(height: 14),
+                        FormFieldLabel(l10n.admin_classes_branchLabel, c),
+                        _optionDropdown(
+                            c: c,
+                            items: const [],
                             value: null,
                             hint: l10n.admin_classes_selectBranch,
+                            icon: Icons.store_outlined,
                             onChanged: (_) {}),
                       ],
                     );
                   },
                 ),
-                const SizedBox(height: 16),
 
                 // ── Section: Schedule ──────────────────────────────────────
-                _SectionHeader(l10n.admin_classes_sectionSchedule, cs),
-
-                // ── Date ───────────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_dateLabel, cs),
-                _buildTapField(
-                  cs: cs,
-                  hint: 'mm/dd/yyyy',
-                  icon: Icons.calendar_today_outlined,
-                  value: _selectedDate != null
-                      ? DateFormat('MM/dd/yyyy').format(_selectedDate!)
-                      : null,
-                  onTap: _pickDate,
+                FormSectionHeader(
+                  title: l10n.admin_classes_sectionSchedule,
+                  icon: Icons.event_outlined,
+                  c: c,
                 ),
-                const SizedBox(height: 16),
 
-                // ── Time ───────────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_timeLabel, cs),
-                _buildTapField(
-                  cs: cs,
-                  hint: '--:--',
-                  icon: Icons.access_time_outlined,
-                  value: _selectedTime?.format(context),
-                  onTap: _pickTime,
+                // ── Date + Time ────────────────────────────────────────────
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FormFieldLabel(l10n.admin_classes_dateLabel, c),
+                          FormPickerField(
+                            icon: Icons.calendar_today_outlined,
+                            label: _selectedDate != null
+                                ? DateFormat('MM/dd/yyyy').format(_selectedDate!)
+                                : 'mm/dd/yyyy',
+                            hasValue: _selectedDate != null,
+                            onTap: _pickDate,
+                            c: c,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FormFieldLabel(l10n.admin_classes_timeLabel, c),
+                          FormPickerField(
+                            icon: Icons.access_time_outlined,
+                            label: _selectedTime?.format(context) ?? '--:--',
+                            hasValue: _selectedTime != null,
+                            onTap: _pickTime,
+                            c: c,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
 
                 // ── Duration ───────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_durationLabel, cs),
-                _buildTextField(
-                  cs: cs,
+                FormFieldLabel(l10n.admin_classes_durationLabel, c),
+                TextFormField(
                   controller: _durationCtrl,
-                  hint: l10n.admin_classes_durationHint,
                   keyboardType: TextInputType.number,
+                  style: TextStyle(color: c.label),
+                  decoration: formInputDecoration(
+                    hint: l10n.admin_classes_durationHint,
+                    c: c,
+                    prefixIcon: Icons.timer_outlined,
+                  ),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) {
                       return l10n.admin_classes_required;
@@ -703,48 +721,79 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
 
                 // ── Section: Capacity & Room ───────────────────────────────
-                _SectionHeader(l10n.admin_classes_sectionCapacityRoom, cs),
-
-                // ── Capacity ───────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_capacityLabel, cs),
-                _buildTextField(
-                  cs: cs,
-                  controller: _capacityCtrl,
-                  hint: l10n.admin_classes_capacityHint,
-                  keyboardType: TextInputType.number,
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return l10n.admin_classes_required;
-                    }
-                    if (int.tryParse(v.trim()) == null) {
-                      return l10n.admin_classes_mustBeNumber;
-                    }
-                    return null;
-                  },
+                FormSectionHeader(
+                  title: l10n.admin_classes_sectionCapacityRoom,
+                  icon: Icons.groups_outlined,
+                  c: c,
                 ),
-                const SizedBox(height: 16),
 
-                // ── Room Name ──────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_roomLabel, cs),
-                _buildTextField(
-                  cs: cs,
-                  controller: _roomNameCtrl,
-                  hint: l10n.admin_classes_roomHint,
-                  validator: null,
+                // ── Capacity + Room Name ───────────────────────────────────
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FormFieldLabel(l10n.admin_classes_capacityLabel, c),
+                          TextFormField(
+                            controller: _capacityCtrl,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(color: c.label),
+                            decoration: formInputDecoration(
+                              hint: l10n.admin_classes_capacityHint,
+                              c: c,
+                              prefixIcon: Icons.groups_outlined,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) {
+                                return l10n.admin_classes_required;
+                              }
+                              if (int.tryParse(v.trim()) == null) {
+                                return l10n.admin_classes_mustBeNumber;
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FormFieldLabel(l10n.admin_classes_roomLabel, c),
+                          TextFormField(
+                            controller: _roomNameCtrl,
+                            style: TextStyle(color: c.label),
+                            decoration: formInputDecoration(
+                              hint: l10n.admin_classes_roomHint,
+                              c: c,
+                              prefixIcon: Icons.meeting_room_outlined,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
 
                 // ── Trainer Commission % (optional) ──────────────────────
-                _FieldLabel(l10n.admin_classes_commissionLabel, cs),
-                _buildTextField(
-                  cs: cs,
+                FormFieldLabel(l10n.admin_classes_commissionLabel, c),
+                TextFormField(
                   controller: _commissionPercentageCtrl,
-                  hint: l10n.admin_classes_commissionHint,
                   enabled: !_clearCommissionPercentage,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  style: TextStyle(color: c.label),
+                  decoration: formInputDecoration(
+                    hint: l10n.admin_classes_commissionHint,
+                    c: c,
+                    prefixIcon: Icons.percent_rounded,
+                  ),
                   validator: (v) {
                     if (_clearCommissionPercentage) return null;
                     if (v == null || v.trim().isEmpty) return null;
@@ -759,7 +808,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                 // way to show "currently 15%" here — this checkbox is the
                 // only way to explicitly remove a previously-set value.
                 if (_isEditMode) ...[
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       SizedBox(
@@ -767,6 +816,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                         height: 22,
                         child: Checkbox(
                           value: _clearCommissionPercentage,
+                          activeColor: c.primary,
                           onChanged: (v) => setState(() {
                             _clearCommissionPercentage = v ?? false;
                             if (_clearCommissionPercentage) {
@@ -779,67 +829,65 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                       Expanded(
                         child: Text(
                           l10n.admin_classes_removeCommission,
-                          style: TextStyle(fontSize: 12.5, color: cs.onSurface.withOpacity(0.6)),
+                          style: TextStyle(fontSize: 12.5, color: c.muted),
                         ),
                       ),
                     ],
                   ),
                 ],
-                const SizedBox(height: 16),
 
                 // ── Section: Notes ─────────────────────────────────────────
-                _SectionHeader(l10n.admin_classes_sectionNotes, cs),
+                FormSectionHeader(
+                  title: l10n.admin_classes_sectionNotes,
+                  icon: Icons.sticky_note_2_outlined,
+                  c: c,
+                ),
 
                 // ── Notes ──────────────────────────────────────────────────
-                _FieldLabel(l10n.admin_classes_notesLabel, cs),
-                _buildTextField(
-                  cs: cs,
+                FormFieldLabel(l10n.admin_classes_notesLabel, c),
+                TextFormField(
                   controller: _notesCtrl,
-                  hint: l10n.admin_classes_notesHint,
                   maxLines: 3,
-                  validator: null,
+                  style: TextStyle(color: c.label),
+                  decoration: formInputDecoration(
+                    hint: l10n.admin_classes_notesHint,
+                    c: c,
+                  ),
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 26),
 
                 // ── Buttons ────────────────────────────────────────────────
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: OutlinedButton.styleFrom(
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 14),
-                          side: BorderSide(
-                              color: cs.outline.withOpacity(0.5)),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text(
-                          l10n.general_cancel,
-                          style: TextStyle(
-                            color: cs.onSurface.withOpacity(0.6),
-                            fontWeight: FontWeight.w600,
+                      child: SizedBox(
+                        height: 52,
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: c.border.withOpacity(0.4)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
+                          ),
+                          child: Text(
+                            l10n.general_cancel,
+                            style: TextStyle(
+                              color: c.muted,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: ElevatedButton(
+                      child: FormPrimaryButton(
+                        label: l10n.admin_classes_saveButton,
+                        icon: Icons.check_rounded,
+                        background: c.primary,
+                        foreground: c.onPrimary,
                         onPressed: _onSave,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: cs.primary,
-                          foregroundColor: cs.onPrimary,
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text(
-                          l10n.admin_classes_saveButton,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
                       ),
                     ),
                   ],
@@ -854,86 +902,12 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  Widget _dialogLabel(String text, ColorScheme cs) => Text(
-    text,
-    style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: cs.onSurface.withOpacity(0.7)),
-  );
-
-  InputDecoration _dialogDeco(String hint, ColorScheme cs) =>
-      InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: cs.onSurface.withOpacity(0.3)),
-        isDense: true,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        filled: true,
-        fillColor: cs.surfaceVariant,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: cs.outline.withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: cs.outline.withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: cs.primary, width: 1.4),
-        ),
-      );
-
-  Widget _buildTextField({
-    required ColorScheme cs,
-    required TextEditingController controller,
-    required String hint,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-    bool enabled = true,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      enabled: enabled,
-      validator: validator,
-      style: TextStyle(color: cs.onSurface, fontSize: 14),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle:
-        TextStyle(color: cs.onSurface.withOpacity(0.3), fontSize: 14),
-        filled: true,
-        fillColor: cs.surfaceVariant,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: cs.outline.withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: cs.outline.withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: cs.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: cs.error),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDropdown({
-    required ColorScheme cs,
+  Widget _optionDropdown({
+    required ColorTokens c,
     required List<ClassFormOptionItemEntity> items,
     required ClassFormOptionItemEntity? value,
     required String hint,
+    required IconData icon,
     required void Function(ClassFormOptionItemEntity?) onChanged,
   }) {
     ClassFormOptionItemEntity? safeValue;
@@ -945,112 +919,59 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       }
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-      decoration: BoxDecoration(
-        color: cs.surfaceVariant,
-        borderRadius: BorderRadius.circular(12),
-        border:
-        Border.all(color: cs.outline.withOpacity(0.3)),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<ClassFormOptionItemEntity>(
-          value: safeValue,
-          isExpanded: true,
-          dropdownColor: cs.surface,
-          hint: Text(hint,
-              style: TextStyle(
-                  color: cs.onSurface.withOpacity(0.3), fontSize: 14)),
-          items: items
-              .map((item) => DropdownMenuItem(
-            value: item,
-            child: Text(item.name,
-                style: TextStyle(color: cs.onSurface)),
-          ))
-              .toList(),
-          onChanged: onChanged,
-        ),
-      ),
+    return DropdownButtonFormField<ClassFormOptionItemEntity>(
+      value: safeValue,
+      isExpanded: true,
+      dropdownColor: c.surface,
+      decoration: formInputDecoration(hint: hint, c: c, prefixIcon: icon),
+      items: items
+          .map((item) => DropdownMenuItem(
+                value: item,
+                child: Text(item.name, style: TextStyle(color: c.label)),
+              ))
+          .toList(),
+      onChanged: onChanged,
     );
   }
+}
 
-  Widget _buildTapField({
-    required ColorScheme cs,
-    required String hint,
-    required IconData icon,
-    required String? value,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding:
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: BoxDecoration(
-          color: cs.surfaceVariant,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: cs.outline.withOpacity(0.3)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                value ?? hint,
+/// Small outlined chip that opens the "create new class type" dialog.
+class _NewTypeChip extends StatelessWidget {
+  final String label;
+  final ColorTokens c;
+  final VoidCallback onTap;
+
+  const _NewTypeChip({required this.label, required this.c, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: c.primary.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: c.primary.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add_rounded, size: 14, color: c.primary),
+              const SizedBox(width: 4),
+              Text(
+                label,
                 style: TextStyle(
-                  color: value != null
-                      ? cs.onSurface
-                      : cs.onSurface.withOpacity(0.3),
-                  fontSize: 14,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: c.primary,
                 ),
               ),
-            ),
-            Icon(icon, size: 18, color: cs.onSurface.withOpacity(0.4)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Groups related fields under a small section heading so the long form
-/// reads as a few clear steps instead of one wall of inputs.
-class _SectionHeader extends StatelessWidget {
-  final String text;
-  final ColorScheme cs;
-  const _SectionHeader(this.text, this.cs);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        text.toUpperCase(),
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.6,
-          color: cs.primary,
-        ),
-      ),
-    );
-  }
-}
-
-class _FieldLabel extends StatelessWidget {
-  final String text;
-  final ColorScheme cs;
-  const _FieldLabel(this.text, this.cs);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: cs.onSurface.withOpacity(0.7),
+            ],
+          ),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/admin_trainer_card_entity.dart';
 import '../bloc/admin_trainers_bloc.dart';
 import '../bloc/admin_trainers_event.dart';
@@ -23,21 +24,23 @@ class TrainerCardWidget extends StatelessWidget {
   void _showBlockConfirmation(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
-    final action = trainer.isBlocked ? 'Unblock' : 'Block';
+    final l10n   = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title:   Text('$action Trainer',
+        title:   Text(
+            trainer.isBlocked ? l10n.admin_trainers_unblockConfirmTitle : l10n.admin_trainers_blockConfirmTitle,
             style: const TextStyle(fontWeight: FontWeight.w700)),
         content: Text(
-          '$action ${trainer.fullName}? '
-              '${trainer.isBlocked ? 'They will be able to log in again.' : 'They will not be able to log in.'}',
+          trainer.isBlocked
+              ? l10n.admin_trainers_unblockConfirmMessage(trainer.fullName)
+              : l10n.admin_trainers_blockConfirmMessage(trainer.fullName),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child:     const Text('Cancel'),
+            child:     Text(l10n.general_cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -50,7 +53,7 @@ class TrainerCardWidget extends StatelessWidget {
               backgroundColor: trainer.isBlocked ? c.success : c.danger,
               foregroundColor: c.onPrimary,
             ),
-            child: Text(action),
+            child: Text(trainer.isBlocked ? l10n.admin_trainers_unblockAction : l10n.admin_trainers_blockAction),
           ),
         ],
       ),
@@ -62,6 +65,7 @@ class TrainerCardWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final card   = tokens.card;
+    final l10n   = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -145,7 +149,7 @@ class TrainerCardWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    trainer.isBlocked ? 'Blocked' : 'Active',
+                    trainer.isBlocked ? l10n.admin_trainers_blockedBadge : l10n.admin_trainers_activeBadge,
                     style: TextStyle(
                       fontSize:   11,
                       fontWeight: FontWeight.w600,
@@ -224,7 +228,7 @@ class TrainerCardWidget extends StatelessWidget {
                   Expanded(
                     child: _ActionBtn(
                       icon:    Icons.calendar_month_outlined,
-                      label:   'Schedule',
+                      label:   l10n.admin_trainers_scheduleAction,
                       color:   c.primary,
                       onTap:   () {},
                     ),
@@ -233,7 +237,7 @@ class TrainerCardWidget extends StatelessWidget {
                   Expanded(
                     child: _ActionBtn(
                       icon:  Icons.edit_outlined,
-                      label: 'Edit',
+                      label: l10n.admin_trainers_editAction,
                       color: c.success,
                       onTap: onEditTap,
                     ),
@@ -244,7 +248,7 @@ class TrainerCardWidget extends StatelessWidget {
                       icon:  trainer.isBlocked
                           ? Icons.lock_open_outlined
                           : Icons.block_outlined,
-                      label: trainer.isBlocked ? 'Unblock' : 'Block',
+                      label: trainer.isBlocked ? l10n.admin_trainers_unblockAction : l10n.admin_trainers_blockAction,
                       color: trainer.isBlocked ? c.success : c.danger,
                       onTap: () => _showBlockConfirmation(context),
                     ),

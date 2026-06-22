@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_plan_stats_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class PlanStatsCardWidget extends StatelessWidget {
   final AdminPlanStatsEntity stats;
@@ -14,6 +15,7 @@ class PlanStatsCardWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final card   = tokens.card;
+    final l10n   = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -21,7 +23,7 @@ class PlanStatsCardWidget extends StatelessWidget {
         children: [
           _StatCard(
             value:      stats.totalPlans.toString(),
-            label:      'Total Plans',
+            label:      l10n.admin_plans_totalPlansLabel,
             valueColor: c.primary,
             surface:    c.surface,
             cardRadius: card.radius,
@@ -29,7 +31,7 @@ class PlanStatsCardWidget extends StatelessWidget {
           const SizedBox(width: 10),
           _StatCard(
             value:      stats.totalMembers.toString(),
-            label:      'Members',
+            label:      l10n.admin_plans_membersLabel,
             valueColor: c.success,
             surface:    c.surface,
             cardRadius: card.radius,
@@ -37,7 +39,7 @@ class PlanStatsCardWidget extends StatelessWidget {
           const SizedBox(width: 10),
           _StatCard(
             value:      stats.activePlans.toString(),
-            label:      'Active',
+            label:      l10n.admin_plans_activeLabel,
             valueColor: c.primary,
             surface:    c.surface,
             cardRadius: card.radius,

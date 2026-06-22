@@ -73,7 +73,7 @@ class DashboardMetricCard extends StatelessWidget {
                 Expanded(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: Text(
                       value,
                       style: TextStyle(
@@ -104,8 +104,12 @@ class DashboardMetricCard extends StatelessWidget {
                   ),
                 ),
                 if (onTap != null)
-                  Icon(Icons.chevron_right_rounded,
-                      size: 18, color: c.muted),
+                  Icon(
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.chevron_left_rounded
+                          : Icons.chevron_right_rounded,
+                      size: 18,
+                      color: c.muted),
               ],
             ),
           ],

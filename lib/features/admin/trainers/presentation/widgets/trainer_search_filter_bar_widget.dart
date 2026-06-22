@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_trainers_bloc.dart';
 import '../bloc/admin_trainers_event.dart';
 import '../bloc/admin_trainers_state.dart';
@@ -30,6 +31,7 @@ class _TrainerSearchFilterBarWidgetState
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
+    final l10n   = AppLocalizations.of(context)!;
 
     return BlocBuilder<AdminTrainersBloc, AdminTrainersState>(
       builder: (context, state) {
@@ -58,7 +60,7 @@ class _TrainerSearchFilterBarWidgetState
                   controller: _controller,
                   style: TextStyle(fontSize: 14, color: c.label),
                   decoration: InputDecoration(
-                    hintText:  'Search by name or specialty',
+                    hintText:  l10n.admin_trainers_searchHint,
                     hintStyle: TextStyle(color: c.muted, fontSize: 14),
                     prefixIcon: Icon(Icons.search, color: c.muted, size: 20),
                     suffixIcon: _controller.text.isNotEmpty
@@ -114,14 +116,14 @@ class _TrainerSearchFilterBarWidgetState
                       value:      activeSpecialty,
                       isExpanded: true,
                       hint: Text(
-                        'All',
+                        l10n.admin_trainers_allSpecialties,
                         style: TextStyle(fontSize: 13, color: c.muted),
                       ),
                       style: TextStyle(fontSize: 13, color: c.label),
                       items: [
                         DropdownMenuItem<String?>(
                           value: null,
-                          child: Text('All',
+                          child: Text(l10n.admin_trainers_allSpecialties,
                               style: TextStyle(
                                   fontSize: 13, color: c.label)),
                         ),

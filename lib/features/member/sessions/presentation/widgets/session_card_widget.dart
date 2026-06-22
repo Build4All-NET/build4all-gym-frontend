@@ -106,9 +106,7 @@ class SessionCardWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        isArabic
-                            ? 'مع ${session.trainerName}'
-                            : 'with ${session.trainerName}',
+                        l10n.memberSessionsWithTrainer(session.trainerName),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign:

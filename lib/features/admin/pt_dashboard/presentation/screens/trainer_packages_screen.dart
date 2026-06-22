@@ -466,14 +466,14 @@ class _PackageCard extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 8),
-            _infoRow(tokens, '${package.numberOfSessions} sessions',
+            _infoRow(tokens, AppLocalizations.of(context)!.trainer_packageSessionsCount(package.numberOfSessions),
                 Icons.fitness_center),
             _infoRow(tokens,
-                '${package.minDaysPerWeek}–${package.maxDaysPerWeek} days/week',
+                AppLocalizations.of(context)!.trainer_packageDaysPerWeekRange(package.minDaysPerWeek, package.maxDaysPerWeek),
                 Icons.calendar_today),
-            _infoRow(tokens, '${package.sessionDurationMinutes} min/session',
+            _infoRow(tokens, AppLocalizations.of(context)!.memberHomeDurationMinutes(package.sessionDurationMinutes),
                 Icons.timer),
-            _infoRow(tokens, '${package.daysAvailable} days valid',
+            _infoRow(tokens, AppLocalizations.of(context)!.trainer_packageDaysValid(package.daysAvailable),
                 Icons.date_range),
             if (package.maxConcurrentSessions > 1)
               _infoRow(tokens,
@@ -481,7 +481,8 @@ class _PackageCard extends StatelessWidget {
                   Icons.people),
             _infoRow(tokens,
                 package.salePrice != null
-                    ? '\$${package.salePrice!.toStringAsFixed(2)} (was \$${package.price.toStringAsFixed(2)})'
+                    ? AppLocalizations.of(context)!.trainer_packagePriceWasPrice(
+                        package.salePrice!.toStringAsFixed(2), package.price.toStringAsFixed(2))
                     : '\$${package.price.toStringAsFixed(2)}',
                 Icons.attach_money),
             const SizedBox(height: 8),

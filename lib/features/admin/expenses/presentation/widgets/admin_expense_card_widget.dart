@@ -3,19 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../domain/entities/expense_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AdminExpenseCardWidget extends StatelessWidget {
   final ExpenseEntity expense;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onConfirmTrainerPaid;
   final bool isDeleting;
+  final bool isConfirmingTrainerPaid;
 
   const AdminExpenseCardWidget({
     super.key,
     required this.expense,
     required this.onEdit,
     required this.onDelete,
+    required this.onConfirmTrainerPaid,
     this.isDeleting = false,
+    this.isConfirmingTrainerPaid = false,
   });
 
   @override
@@ -23,6 +28,7 @@ class AdminExpenseCardWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
     final card = tokens.card;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -92,6 +98,27 @@ class AdminExpenseCardWidget extends StatelessWidget {
                   color: c.border.withOpacity(0.12),
                   textColor: c.body,
                 ),
+                if (expense.trainerName != null)
+                  _PillBadge(
+                    label: expense.trainerName!,
+                    icon: Icons.fitness_center_rounded,
+                    color: c.success.withOpacity(0.10),
+                    textColor: c.success,
+                  ),
+                if (expense.isAutoRecorded)
+                  _PillBadge(
+                    label: l10n.admin_expenses_autoRecorded,
+                    icon: Icons.bolt_rounded,
+                    color: c.primary.withOpacity(0.10),
+                    textColor: c.primary,
+                  ),
+                if (expense.isPendingTrainerPayout)
+                  _PillBadge(
+                    label: l10n.admin_expenses_pendingTrainerPayout,
+                    icon: Icons.hourglass_top_rounded,
+                    color: Colors.orange.withOpacity(0.12),
+                    textColor: Colors.orange.shade800,
+                  ),
               ],
             ),
 
@@ -106,7 +133,7 @@ class AdminExpenseCardWidget extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: onEdit,
                     icon: const Icon(Icons.edit_outlined, size: 15),
-                    label: const Text('Edit', style: TextStyle(fontSize: 13)),
+                    label: Text(l10n.admin_plans_editAction, style: const TextStyle(fontSize: 13)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: c.body,
                       side: BorderSide(color: c.border.withOpacity(0.4)),
@@ -126,7 +153,7 @@ class AdminExpenseCardWidget extends StatelessWidget {
                             child: CircularProgressIndicator(strokeWidth: 2, color: c.danger),
                           )
                         : const Icon(Icons.delete_outline_rounded, size: 15),
-                    label: Text(isDeleting ? 'Deleting...' : 'Delete',
+                    label: Text(isDeleting ? l10n.admin_plans_deletingAction : l10n.admin_expenses_delete,
                         style: const TextStyle(fontSize: 13)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: c.danger,
@@ -138,6 +165,35 @@ class AdminExpenseCardWidget extends StatelessWidget {
                 ),
               ],
             ),
+
+            if (expense.isPendingTrainerPayout) ...[
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: isConfirmingTrainerPaid ? null : onConfirmTrainerPaid,
+                  icon: isConfirmingTrainerPaid
+                      ? SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: c.onPrimary),
+                        )
+                      : const Icon(Icons.check_circle_outline_rounded, size: 16),
+                  label: Text(
+                    isConfirmingTrainerPaid
+                        ? l10n.admin_expenses_confirming
+                        : l10n.admin_expenses_confirmPaidToTrainer,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange.shade700,
+                    foregroundColor: c.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:build4allgym/l10n/app_localizations.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../data/services/member_profile_service.dart';
 
@@ -24,10 +26,8 @@ class ProfileCompletionDialog extends StatefulWidget {
     return showDialog(
       context: context,
       barrierDismissible: false, // must fill before dismissing
-      builder: (_) => ProfileCompletionDialog(
-        existing: existing,
-        onCompleted: onCompleted,
-      ),
+      builder: (_) =>
+          ProfileCompletionDialog(existing: existing, onCompleted: onCompleted),
     );
   }
 
@@ -42,17 +42,18 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
   // ── Wizard state ───────────────────────────────────────────────────────────
   int _currentStep = 0;
   static const _stepCount = 4;
-  static const _stepTitles = [
-    'Your Branch',
-    'About You',
-    'Body Metrics',
-    'Emergency Contact',
+  late AppLocalizations l10n;
+  List<String> get _stepTitles => [
+    l10n.profileCompletionStepBranchTitle,
+    l10n.profileCompletionStepAboutTitle,
+    l10n.profileCompletionStepBodyTitle,
+    l10n.profileCompletionStepEmergencyTitle,
   ];
-  static const _stepSubtitles = [
-    "Pick the branch you'll usually train at.",
-    'A few details to personalise your plan.',
-    'Optional — helps us tailor your experience.',
-    'Optional — who should we contact if needed?',
+  List<String> get _stepSubtitles => [
+    l10n.profileCompletionStepBranchSubtitle,
+    l10n.profileCompletionStepAboutSubtitle,
+    l10n.profileCompletionStepBodySubtitle,
+    l10n.profileCompletionStepEmergencySubtitle,
   ];
   static const _stepIcons = [
     Icons.storefront_rounded,
@@ -64,31 +65,31 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
   // ── Form state ─────────────────────────────────────────────────────────────
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
-  final _emergencyNameController  = TextEditingController();
+  final _emergencyNameController = TextEditingController();
   final _emergencyPhoneController = TextEditingController();
 
-  List<Map<String, dynamic>> _branches        = [];
-  int?                        _selectedBranchId;
-  String?                     _selectedGender;
-  DateTime?                   _selectedDob;
+  List<Map<String, dynamic>> _branches = [];
+  int? _selectedBranchId;
+  String? _selectedGender;
+  DateTime? _selectedDob;
 
-  bool    _loadingBranches = true;
-  bool    _submitting      = false;
+  bool _loadingBranches = true;
+  bool _submitting = false;
   String? _error;
 
   static const _genders = ['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY'];
-  static const _genderLabels = {
-    'MALE':             'Male',
-    'FEMALE':           'Female',
-    'OTHER':            'Other',
-    'PREFER_NOT_TO_SAY':'Prefer not to say',
+  Map<String, String> get _genderLabels => {
+    'MALE': l10n.profileCompletionGenderMale,
+    'FEMALE': l10n.profileCompletionGenderFemale,
+    'OTHER': l10n.profileCompletionGenderOther,
+    'PREFER_NOT_TO_SAY': l10n.profileCompletionGenderPreferNotToSay,
   };
 
   @override
   void initState() {
     super.initState();
     // Pre-fill from existing data
-    _selectedGender   = widget.existing['gender'] as String?;
+    _selectedGender = widget.existing['gender'] as String?;
     _selectedBranchId = widget.existing['preferredBranchId'] as int?;
     if (widget.existing['dob'] != null) {
       _selectedDob = DateTime.tryParse(widget.existing['dob'] as String);
@@ -99,8 +100,8 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
     if (widget.existing['weightKg'] != null) {
       _weightController.text = widget.existing['weightKg'].toString();
     }
-    _emergencyNameController.text  =
-        (widget.existing['emergencyContactName']  as String?) ?? '';
+    _emergencyNameController.text =
+        (widget.existing['emergencyContactName'] as String?) ?? '';
     _emergencyPhoneController.text =
         (widget.existing['emergencyContactPhone'] as String?) ?? '';
 
@@ -119,7 +120,11 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
   Future<void> _loadBranches() async {
     try {
       final list = await _service.getBranches();
-      if (mounted) setState(() { _branches = list; _loadingBranches = false; });
+      if (mounted)
+        setState(() {
+          _branches = list;
+          _loadingBranches = false;
+        });
     } catch (_) {
       if (mounted) setState(() => _loadingBranches = false);
     }
@@ -133,9 +138,9 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       firstDate: DateTime(1940),
       lastDate: DateTime(now.year - 5),
       builder: (ctx, child) => Theme(
-        data: Theme.of(ctx).copyWith(
-          colorScheme: ColorScheme.dark(primary: c.primary),
-        ),
+        data: Theme.of(
+          ctx,
+        ).copyWith(colorScheme: ColorScheme.dark(primary: c.primary)),
         child: child!,
       ),
     );
@@ -157,14 +162,16 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
 
   bool get _canSubmit =>
       _selectedBranchId != null &&
-      _selectedGender   != null &&
-      _selectedDob      != null;
+      _selectedGender != null &&
+      _selectedDob != null;
 
   void _goNext() {
     if (!_canProceedFromCurrentStep) {
-      setState(() => _error = _currentStep == 0
-          ? 'Please select your preferred branch.'
-          : 'Please select your gender and date of birth.');
+      setState(
+        () => _error = _currentStep == 0
+            ? l10n.profileCompletionSelectBranchError
+            : l10n.profileCompletionSelectGenderDobError,
+      );
       return;
     }
     setState(() => _error = null);
@@ -185,37 +192,47 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
 
   Future<void> _submit() async {
     if (!_canSubmit) return;
-    setState(() { _submitting = true; _error = null; });
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
 
     try {
       await _service.saveProfile({
-        'dob':                  '${_selectedDob!.year}-'
-                                '${_selectedDob!.month.toString().padLeft(2,'0')}-'
-                                '${_selectedDob!.day.toString().padLeft(2,'0')}',
-        'gender':               _selectedGender,
-        'preferredBranchId':    _selectedBranchId,
-        'heightCm':             double.tryParse(_heightController.text.trim()),
-        'weightKg':             double.tryParse(_weightController.text.trim()),
-        'emergencyContactName':
-            _emergencyNameController.text.trim().isEmpty
-                ? null : _emergencyNameController.text.trim(),
-        'emergencyContactPhone':
-            _emergencyPhoneController.text.trim().isEmpty
-                ? null : _emergencyPhoneController.text.trim(),
+        'dob':
+            '${_selectedDob!.year}-'
+            '${_selectedDob!.month.toString().padLeft(2, '0')}-'
+            '${_selectedDob!.day.toString().padLeft(2, '0')}',
+        'gender': _selectedGender,
+        'preferredBranchId': _selectedBranchId,
+        'heightCm': double.tryParse(_heightController.text.trim()),
+        'weightKg': double.tryParse(_weightController.text.trim()),
+        'emergencyContactName': _emergencyNameController.text.trim().isEmpty
+            ? null
+            : _emergencyNameController.text.trim(),
+        'emergencyContactPhone': _emergencyPhoneController.text.trim().isEmpty
+            ? null
+            : _emergencyPhoneController.text.trim(),
       });
       if (!mounted) return;
       Navigator.of(context).pop();
       widget.onCompleted();
     } catch (e) {
-      if (mounted) setState(() { _submitting = false; _error = 'Failed to save. Please try again.'; });
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+          _error = l10n.profileCompletionSaveFailed;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
-    final c      = tokens.colors;
-    final mq     = MediaQuery.of(context);
+    final c = tokens.colors;
+    final mq = MediaQuery.of(context);
+    l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       backgroundColor: c.surface,
@@ -270,7 +287,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
               Icon(Icons.person_outline_rounded, color: c.primary, size: 18),
               const SizedBox(width: 8),
               Text(
-                'Complete Your Profile',
+                l10n.profileCompletionTitle,
                 style: TextStyle(
                   color: c.primary,
                   fontWeight: FontWeight.bold,
@@ -296,7 +313,11 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
-                  child: Icon(_stepIcons[_currentStep], color: c.primary, size: 19),
+                  child: Icon(
+                    _stepIcons[_currentStep],
+                    color: c.primary,
+                    size: 19,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -318,13 +339,15 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                           if (_currentStep >= 2)
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: c.muted.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                'Optional',
+                                l10n.general_optional,
                                 style: TextStyle(
                                   color: c.muted,
                                   fontSize: 10,
@@ -338,7 +361,9 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                       Text(
                         _stepSubtitles[_currentStep],
                         style: TextStyle(
-                            color: c.label.withOpacity(0.6), fontSize: 12),
+                          color: c.label.withOpacity(0.6),
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -377,7 +402,9 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
             shape: BoxShape.circle,
             color: completed || active ? c.primary : c.background,
             border: Border.all(
-              color: completed || active ? c.primary : c.border.withOpacity(0.4),
+              color: completed || active
+                  ? c.primary
+                  : c.border.withOpacity(0.4),
               width: 1.5,
             ),
           ),
@@ -408,11 +435,17 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded, color: c.error ?? Colors.red, size: 16),
+          Icon(
+            Icons.error_outline_rounded,
+            color: c.error ?? Colors.red,
+            size: 16,
+          ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(_error!,
-                style: TextStyle(color: c.error ?? Colors.red, fontSize: 12)),
+            child: Text(
+              _error!,
+              style: TextStyle(color: c.error ?? Colors.red, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -439,15 +472,18 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label('Preferred Branch *', c),
+          _label(l10n.profileCompletionPreferredBranch, c),
           const SizedBox(height: 8),
           _loadingBranches
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: CircularProgressIndicator(
-                        color: c.primary, strokeWidth: 2),
-                  ))
+                      color: c.primary,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                )
               : _branchDropdown(c),
         ],
       ),
@@ -460,7 +496,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label('Gender *', c),
+          _label(l10n.profileCompletionGenderLabel, c),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -479,14 +515,16 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                 ),
                 backgroundColor: c.background,
                 side: BorderSide(
-                    color: selected ? c.primary : c.border.withOpacity(0.3)),
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  color: selected ? c.primary : c.border.withOpacity(0.3),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               );
             }).toList(),
           ),
           const SizedBox(height: 20),
-          _label('Date of Birth *', c),
+          _label(l10n.profileCompletionDobLabel, c),
           const SizedBox(height: 8),
           GestureDetector(
             onTap: () => _pickDob(c),
@@ -497,24 +535,27 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                 color: c.background,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: _selectedDob != null
-                        ? c.primary
-                        : c.border.withOpacity(0.3)),
+                  color: _selectedDob != null
+                      ? c.primary
+                      : c.border.withOpacity(0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today_rounded,
-                      color: _selectedDob != null
-                          ? c.primary
-                          : c.label.withOpacity(0.5),
-                      size: 18),
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    color: _selectedDob != null
+                        ? c.primary
+                        : c.label.withOpacity(0.5),
+                    size: 18,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     _selectedDob != null
                         ? '${_selectedDob!.year}-'
-                          '${_selectedDob!.month.toString().padLeft(2, '0')}-'
-                          '${_selectedDob!.day.toString().padLeft(2, '0')}'
-                        : 'Select date of birth',
+                              '${_selectedDob!.month.toString().padLeft(2, '0')}-'
+                              '${_selectedDob!.day.toString().padLeft(2, '0')}'
+                        : l10n.profileCompletionSelectDob,
                     style: TextStyle(
                       color: _selectedDob != null
                           ? c.primary
@@ -543,9 +584,13 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _label('Height (cm)', c),
+                    _label(l10n.profileCompletionHeightLabel, c),
                     const SizedBox(height: 8),
-                    _numField(_heightController, 'e.g. 175', c),
+                    _numField(
+                      _heightController,
+                      l10n.profileCompletionHeightHint,
+                      c,
+                    ),
                   ],
                 ),
               ),
@@ -554,9 +599,13 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _label('Weight (kg)', c),
+                    _label(l10n.profileCompletionWeightLabel, c),
                     const SizedBox(height: 8),
-                    _numField(_weightController, 'e.g. 70', c),
+                    _numField(
+                      _weightController,
+                      l10n.profileCompletionWeightHint,
+                      c,
+                    ),
                   ],
                 ),
               ),
@@ -573,14 +622,22 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label('Emergency Contact Name', c),
+          _label(l10n.profileCompletionEmergencyNameLabel, c),
           const SizedBox(height: 8),
-          _textField(_emergencyNameController, 'Full name', c),
+          _textField(
+            _emergencyNameController,
+            l10n.profileCompletionFullNameHint,
+            c,
+          ),
           const SizedBox(height: 16),
-          _label('Emergency Contact Phone', c),
+          _label(l10n.profileCompletionEmergencyPhoneLabel, c),
           const SizedBox(height: 8),
-          _textField(_emergencyPhoneController, 'Phone number', c,
-              keyboardType: TextInputType.phone),
+          _textField(
+            _emergencyPhoneController,
+            l10n.profileCompletionPhoneNumberHint,
+            c,
+            keyboardType: TextInputType.phone,
+          ),
         ],
       ),
     );
@@ -599,12 +656,14 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   side: BorderSide(color: c.border.withOpacity(0.4)),
-                  shape:
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: Text('Back',
-                    style:
-                        TextStyle(color: c.label, fontWeight: FontWeight.w600)),
+                child: Text(
+                  l10n.back,
+                  style: TextStyle(color: c.label, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
           if (_currentStep > 0) const SizedBox(width: 12),
@@ -617,17 +676,23 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                 disabledBackgroundColor: c.primary.withOpacity(0.4),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 0,
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: _submitting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
                   : Text(
-                      _isLastStep ? 'Save & Continue' : 'Next',
+                      _isLastStep
+                          ? l10n.profileCompletionSaveContinueButton
+                          : l10n.branchDialog_next,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -649,8 +714,10 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       decoration: InputDecoration(
         filled: true,
         fillColor: c.background,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: c.border.withOpacity(0.3)),
@@ -664,39 +731,49 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
           borderSide: BorderSide(color: c.primary),
         ),
       ),
-      hint: Text('Select branch',
-          style: TextStyle(color: c.label.withOpacity(0.5), fontSize: 14)),
+      hint: Text(
+        l10n.profileCompletionSelectBranchHint,
+        style: TextStyle(color: c.label.withOpacity(0.5), fontSize: 14),
+      ),
       items: _branches
-          .map((b) => DropdownMenuItem<int>(
-                value: b['id'] as int,
-                child: Text(b['name'] as String,
-                    style: TextStyle(color: c.primary)),
-              ))
+          .map(
+            (b) => DropdownMenuItem<int>(
+              value: b['id'] as int,
+              child: Text(
+                b['name'] as String,
+                style: TextStyle(color: c.primary),
+              ),
+            ),
+          )
           .toList(),
       onChanged: (int? v) => setState(() => _selectedBranchId = v),
     );
   }
 
-  Widget _label(String text, dynamic c) => Text(text,
-      style: TextStyle(
-          color: c.primary, fontWeight: FontWeight.w600, fontSize: 13));
+  Widget _label(String text, dynamic c) => Text(
+    text,
+    style: TextStyle(
+      color: c.primary,
+      fontWeight: FontWeight.w600,
+      fontSize: 13,
+    ),
+  );
 
-  Widget _numField(
-      TextEditingController ctrl, String hint, dynamic c) {
+  Widget _numField(TextEditingController ctrl, String hint, dynamic c) {
     return TextField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))
-      ],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
       style: TextStyle(color: c.primary, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: c.label.withOpacity(0.5), fontSize: 13),
         filled: true,
         fillColor: c.background,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: c.border.withOpacity(0.2)),
@@ -728,8 +805,10 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
         hintStyle: TextStyle(color: c.label.withOpacity(0.5), fontSize: 13),
         filled: true,
         fillColor: c.background,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: c.border.withOpacity(0.2)),

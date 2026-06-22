@@ -34,6 +34,7 @@ import '../../../members/data/models/member_card_model.dart';
 import '../../../members/data/services/admin_members_service.dart';
 import '../../data/services/admin_trainers_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class MemberPickerForTrainerSheet extends StatefulWidget {
   /// Called after role assignment succeeds, with the assigned member's info.
@@ -152,7 +153,7 @@ class _MemberPickerForTrainerSheetState
       if (mounted) {
         setState(() {
           _assigningUserId = null;
-          _assignError     = 'Failed to assign role. Please try again.';
+          _assignError     = AppLocalizations.of(context)!.adminMemberPicker_assignRoleFailed;
         });
       }
     }
@@ -165,6 +166,7 @@ class _MemberPickerForTrainerSheetState
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c      = tokens.colors;
     final mq     = MediaQuery.of(context);
+    final l10n   = AppLocalizations.of(context)!;
 
     return Container(
       height: mq.size.height * 0.85,
@@ -203,13 +205,13 @@ class _MemberPickerForTrainerSheetState
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Promote Member to Trainer',
+                    Text(l10n.admin_trainers_promoteTitle,
                         style: TextStyle(
                           color: c.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         )),
-                    Text('Pick a member to assign the Trainer role',
+                    Text(l10n.admin_trainers_promoteSubtitle,
                         style: TextStyle(color: c.muted, fontSize: 12)),
                   ],
                 ),
@@ -225,7 +227,7 @@ class _MemberPickerForTrainerSheetState
               controller: _searchController,
               style: TextStyle(color: c.primary),
               decoration: InputDecoration(
-                hintText: 'Search by name or phone…',
+                hintText: l10n.adminMemberPicker_searchHint,
                 hintStyle: TextStyle(color: c.muted),
                 prefixIcon: Icon(Icons.search_rounded, color: c.muted),
                 suffixIcon: _searchController.text.isNotEmpty
@@ -273,7 +275,7 @@ class _MemberPickerForTrainerSheetState
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'The member will see the Trainer dashboard the next time they log in.',
+                      l10n.admin_trainers_trainerDashboardNotice,
                       style: TextStyle(color: c.primary, fontSize: 12),
                     ),
                   ),
@@ -292,7 +294,7 @@ class _MemberPickerForTrainerSheetState
             ),
 
           // ── List ─────────────────────────────────────────────────────────────
-          Expanded(child: _buildList(c, tokens)),
+          Expanded(child: _buildList(c, tokens, l10n)),
 
           SizedBox(height: mq.padding.bottom + 8),
         ],
@@ -300,7 +302,7 @@ class _MemberPickerForTrainerSheetState
     );
   }
 
-  Widget _buildList(dynamic c, dynamic tokens) {
+  Widget _buildList(dynamic c, dynamic tokens, AppLocalizations l10n) {
     if (_loading) {
       return Center(child: CircularProgressIndicator(color: c.primary));
     }
@@ -311,17 +313,17 @@ class _MemberPickerForTrainerSheetState
           children: [
             Icon(Icons.wifi_off_rounded, color: c.muted, size: 40),
             const SizedBox(height: 8),
-            Text('Could not load members',
+            Text(l10n.adminMemberPicker_couldNotLoad,
                 style: TextStyle(color: c.muted)),
             const SizedBox(height: 8),
-            TextButton(onPressed: _fetchMembers, child: const Text('Retry')),
+            TextButton(onPressed: _fetchMembers, child: Text(l10n.retry)),
           ],
         ),
       );
     }
     if (_members.isEmpty) {
       return Center(
-        child: Text('No members found',
+        child: Text(l10n.adminMemberPicker_noMembersFound,
             style: TextStyle(color: c.muted)),
       );
     }
@@ -329,11 +331,11 @@ class _MemberPickerForTrainerSheetState
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: _members.length,
-      itemBuilder: (_, i) => _buildMemberRow(_members[i], c),
+      itemBuilder: (_, i) => _buildMemberRow(_members[i], c, l10n),
     );
   }
 
-  Widget _buildMemberRow(MemberCardModel member, dynamic c) {
+  Widget _buildMemberRow(MemberCardModel member, dynamic c, AppLocalizations l10n) {
     final isPending   = _pendingUserId == member.userId;
     final isAssigning = _assigningUserId == member.userId;
 
@@ -455,7 +457,7 @@ class _MemberPickerForTrainerSheetState
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Assign Trainer role to ${member.fullName}?',
+                    l10n.admin_trainers_confirmAssignTrainer(member.fullName),
                     style: TextStyle(
                         color: c.primary,
                         fontSize: 13,
@@ -473,7 +475,7 @@ class _MemberPickerForTrainerSheetState
                         horizontal: 12, vertical: 6),
                     minimumSize: Size.zero,
                   ),
-                  child: Text('Cancel',
+                  child: Text(l10n.general_cancel,
                       style: TextStyle(color: c.muted, fontSize: 13)),
                 ),
 
@@ -488,8 +490,8 @@ class _MemberPickerForTrainerSheetState
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text('Confirm',
-                      style: TextStyle(
+                  child: Text(l10n.general_confirm,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,
                           fontWeight: FontWeight.w600)),

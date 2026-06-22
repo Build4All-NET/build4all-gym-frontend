@@ -12,12 +12,14 @@ class AdminExpensesBloc extends Bloc<AdminExpensesEvent, AdminExpensesState> {
   final GetExpensesUseCase getExpenses;
   final GetExpenseCategoriesUseCase getCategories;
   final DeleteExpenseUseCase deleteExpense;
+  final ConfirmTrainerPaidUseCase confirmTrainerPaid;
 
   AdminExpensesBloc({
     required this.getStats,
     required this.getExpenses,
     required this.getCategories,
     required this.deleteExpense,
+    required this.confirmTrainerPaid,
   }) : super(AdminExpensesInitial()) {
     on<LoadAdminExpensesEvent>(_onLoad);
     on<FilterByCategoryEvent>(_onFilterByCategory);
@@ -25,6 +27,7 @@ class AdminExpensesBloc extends Bloc<AdminExpensesEvent, AdminExpensesState> {
     on<SearchExpensesEvent>(_onSearch);
     on<DeleteExpenseEvent>(_onDeleteExpense);
     on<RefreshExpensesEvent>(_onRefresh);
+    on<ConfirmTrainerPaidEvent>(_onConfirmTrainerPaid);
   }
 
   // ── Load (initial) ─────────────────────────────────────────────────────────
@@ -154,6 +157,29 @@ class AdminExpensesBloc extends Bloc<AdminExpensesEvent, AdminExpensesState> {
       emit(current.copyWith(isDeletingExpense: false, deletingExpenseId: null));
       emit(AdminExpensesError(message: _extractMessage(e)));
       emit(current.copyWith(isDeletingExpense: false, deletingExpenseId: null));
+    }
+  }
+
+  // ── Confirm trainer paid ───────────────────────────────────────────────────
+  Future<void> _onConfirmTrainerPaid(
+    ConfirmTrainerPaidEvent event,
+    Emitter<AdminExpensesState> emit,
+  ) async {
+    final current = state;
+    if (current is! AdminExpensesLoaded) return;
+
+    emit(current.copyWith(
+      isConfirmingTrainerPaid: true,
+      confirmingExpenseId: event.expenseId,
+    ));
+
+    try {
+      await confirmTrainerPaid(event.expenseId);
+      add(RefreshExpensesEvent());
+    } catch (e) {
+      emit(current.copyWith(isConfirmingTrainerPaid: false, confirmingExpenseId: null));
+      emit(AdminExpensesError(message: _extractMessage(e)));
+      emit(current.copyWith(isConfirmingTrainerPaid: false, confirmingExpenseId: null));
     }
   }
 

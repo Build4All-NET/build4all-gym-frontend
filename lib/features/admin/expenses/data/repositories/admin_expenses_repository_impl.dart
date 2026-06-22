@@ -38,4 +38,10 @@ class AdminExpensesRepositoryImpl implements AdminExpensesRepository {
   @override
   Future<void> deleteExpense(int expenseId) =>
       remoteDatasource.deleteExpense(expenseId);
+
+  @override
+  Future<ExpenseEntity> confirmTrainerPaid(int expenseId) async {
+    final model = await remoteDatasource.confirmTrainerPaid(expenseId);
+    return model.toEntity();
+  }
 }

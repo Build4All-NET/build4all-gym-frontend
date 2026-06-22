@@ -347,6 +347,7 @@ class _InvoiceSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c   = tokens.colors;
     final t   = tokens.typography;
+    final l10n = AppLocalizations.of(context)!;
     final fmt = NumberFormat('#,##0.00');
 
     Color statusColor;
@@ -494,7 +495,7 @@ class _InvoiceSummaryCard extends StatelessWidget {
                     style: t.bodyMedium.copyWith(
                         color: c.label, fontWeight: FontWeight.w900)),
                 if (invoice.dueAmount > 0)
-                  Text('Due: \$ ${fmt.format(invoice.dueAmount)}',
+                  Text(l10n.admin_invoice_dueAmount('\$ ${fmt.format(invoice.dueAmount)}'),
                       style: t.bodySmall.copyWith(
                           color: c.danger, fontWeight: FontWeight.w600)),
               ],

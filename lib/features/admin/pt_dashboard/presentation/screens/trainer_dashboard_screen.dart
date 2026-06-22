@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -73,7 +73,7 @@ class TrainerDashboardScreen extends StatelessWidget {
                 final name     = context.watch<AdminProfileCubit>().state.adminName;
                 final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
                 return Container(
-                  margin: const EdgeInsets.only(left: 6),
+                  margin: const EdgeInsetsDirectional.only(start: 6),
                   width:  36,
                   height: 36,
                   decoration: BoxDecoration(
@@ -271,8 +271,8 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: gradient,
-          begin:  Alignment.topLeft,
-          end:    Alignment.bottomRight,
+          begin:  AlignmentDirectional.topStart,
+          end:    AlignmentDirectional.bottomEnd,
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -287,7 +287,7 @@ class _StatCard extends StatelessWidget {
             children: [
               FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(value,
                     style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold, fontSize: 26)),
@@ -459,7 +459,7 @@ class _ScheduleRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Align(
-                    alignment: Alignment.centerRight,
+                    alignment: AlignmentDirectional.centerEnd,
                     child: Text(
                       '${session.sessionIndex}/${session.totalPackageSessions}',
                       style: TextStyle(fontSize: 11, color: c.muted),
@@ -954,7 +954,12 @@ class _UpcomingClientsSection extends StatelessWidget {
             TextButton.icon(
               onPressed: () {},
               icon:  Text(AppLocalizations.of(context)!.admin_dashboard_viewAll, style: TextStyle(fontSize: 13, color: c.primary)),
-              label: Icon(Icons.chevron_right_rounded, size: 18, color: c.primary),
+              label: Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
+                  size: 18,
+                  color: c.primary),
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
             ),
           ],
@@ -984,7 +989,7 @@ class _UpcomingClientsSection extends StatelessWidget {
                 final avatarColor = _colorFor(session.initials);
                 return Container(
                   width:   170,
-                  margin:  const EdgeInsets.only(right: 12),
+                  margin:  const EdgeInsetsDirectional.only(end: 12),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color:        c.surface,

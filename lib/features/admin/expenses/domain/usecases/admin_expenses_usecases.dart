@@ -42,3 +42,9 @@ class DeleteExpenseUseCase {
   DeleteExpenseUseCase({required this.repository});
   Future<void> call(int expenseId) => repository.deleteExpense(expenseId);
 }
+
+class ConfirmTrainerPaidUseCase {
+  final AdminExpensesRepository repository;
+  ConfirmTrainerPaidUseCase({required this.repository});
+  Future<ExpenseEntity> call(int expenseId) => repository.confirmTrainerPaid(expenseId);
+}

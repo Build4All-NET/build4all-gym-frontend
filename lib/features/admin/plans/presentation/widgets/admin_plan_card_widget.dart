@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_plan_list_item_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AdminPlanCardWidget extends StatelessWidget {
   final AdminPlanListItemEntity plan;
@@ -22,6 +23,7 @@ class AdminPlanCardWidget extends StatelessWidget {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
     final card = tokens.card;
+    final l10n = AppLocalizations.of(context)!;
 
     return Opacity(
       opacity: plan.isActive ? 1.0 : 0.65,
@@ -65,10 +67,10 @@ class AdminPlanCardWidget extends StatelessWidget {
                           textColor: c.muted,
                         ),
                         if (plan.isFeatured)
-                          const _PillBadge(
-                            label: 'Featured',
-                            color: Color(0xFFFFF3CD),
-                            textColor: Color(0xFF856404),
+                          _PillBadge(
+                            label: l10n.admin_plans_featuredBadge,
+                            color: const Color(0xFFFFF3CD),
+                            textColor: const Color(0xFF856404),
                             icon: Icons.star_rounded,
                           ),
                       ],
@@ -76,7 +78,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   _PillBadge(
-                    label: plan.isActive ? 'Active' : 'Inactive',
+                    label: plan.isActive ? l10n.admin_plans_activeLabel : l10n.admin_plans_inactiveLabel,
                     color: plan.isActive
                         ? c.success.withOpacity(0.12)
                         : c.border.withOpacity(0.15),
@@ -105,7 +107,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                   Expanded(
                     child: _DetailCell(
                       icon: Icons.attach_money_rounded,
-                      label: 'Price',
+                      label: l10n.admin_plans_priceLabel,
                       value: '₹${plan.price.toStringAsFixed(0)}',
                       c: c,
                     ),
@@ -113,8 +115,8 @@ class AdminPlanCardWidget extends StatelessWidget {
                   Expanded(
                     child: _DetailCell(
                       icon: Icons.calendar_today_outlined,
-                      label: 'Duration',
-                      value: _formatCycle(plan.billingCycle),
+                      label: l10n.admin_plans_durationCellLabel,
+                      value: _formatCycle(plan.billingCycle, l10n),
                       c: c,
                     ),
                   ),
@@ -128,7 +130,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                   Expanded(
                     child: _DetailCell(
                       icon: Icons.people_outline_rounded,
-                      label: 'Members',
+                      label: l10n.admin_plans_membersLabel,
                       value: plan.memberCount.toString(),
                       c: c,
                     ),
@@ -136,10 +138,10 @@ class AdminPlanCardWidget extends StatelessWidget {
                   Expanded(
                     child: _DetailCell(
                       icon: Icons.confirmation_number_outlined,
-                      label: 'Visit Limit',
+                      label: l10n.admin_plans_visitLimitLabel,
                       value: plan.allowedVisits != null
                           ? plan.allowedVisits.toString()
-                          : 'Unlimited',
+                          : l10n.admin_plans_unlimited,
                       c: c,
                     ),
                   ),
@@ -156,7 +158,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                       Expanded(
                         child: _DetailCell(
                           icon: Icons.ac_unit_rounded,
-                          label: 'Freeze Days',
+                          label: l10n.admin_plans_freezeDaysLabel,
                           value: '${plan.freezeDaysAllowance}d',
                           c: c,
                           iconColor: Colors.lightBlue,
@@ -166,7 +168,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                       Expanded(
                         child: _DetailCell(
                           icon: Icons.repeat_rounded,
-                          label: 'Max Freezes',
+                          label: l10n.admin_plans_maxFreezesLabel,
                           value: plan.maxFreezesCount.toString(),
                           c: c,
                           iconColor: Colors.lightBlue,
@@ -184,7 +186,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                     Expanded(
                       child: _DetailCell(
                         icon: Icons.access_time_rounded,
-                        label: 'Entry Hours',
+                        label: l10n.admin_plans_entryHoursLabel,
                         value: '${plan.gymAccessStart} – ${plan.gymAccessEnd}',
                         c: c,
                         iconColor: c.primary,
@@ -204,7 +206,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                       Expanded(
                         child: _DetailCell(
                           icon: Icons.hourglass_bottom_rounded,
-                          label: 'Grace Period',
+                          label: l10n.admin_plans_gracePeriodCellLabel,
                           value: '${plan.gracePeriodDays}d',
                           c: c,
                         ),
@@ -213,8 +215,8 @@ class AdminPlanCardWidget extends StatelessWidget {
                       Expanded(
                         child: _DetailCell(
                           icon: Icons.autorenew_rounded,
-                          label: 'Auto Renew',
-                          value: 'On',
+                          label: l10n.admin_plans_autoRenew,
+                          value: l10n.admin_plans_onLabel,
                           c: c,
                           iconColor: c.success,
                           valueColor: c.success,
@@ -234,7 +236,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                     Icon(Icons.check_circle_outline_rounded,
                         size: 13, color: c.muted),
                     const SizedBox(width: 5),
-                    Text('Included Features',
+                    Text(l10n.admin_plans_includedFeatures,
                         style: TextStyle(
                             fontSize: 11,
                             color: c.muted,
@@ -309,7 +311,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                 const SizedBox(height: 14),
                 Divider(height: 1, color: c.border.withOpacity(0.15)),
                 const SizedBox(height: 10),
-                Text('Available at:',
+                Text(l10n.admin_plans_availableAt,
                     style: TextStyle(
                         fontSize: 11,
                         color: c.muted,
@@ -340,8 +342,8 @@ class AdminPlanCardWidget extends StatelessWidget {
                     child: OutlinedButton.icon(
                       onPressed: onEdit,
                       icon: const Icon(Icons.edit_outlined, size: 15),
-                      label: const Text('Edit',
-                          style: TextStyle(fontSize: 13)),
+                      label: Text(l10n.admin_plans_editAction,
+                          style: const TextStyle(fontSize: 13)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: c.body,
                         side: BorderSide(
@@ -369,7 +371,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                               Icons.delete_outline_rounded,
                               size: 15),
                       label: Text(
-                          isDeleting ? 'Deleting...' : 'Delete',
+                          isDeleting ? l10n.admin_plans_deletingAction : l10n.admin_plans_delete,
                           style: const TextStyle(fontSize: 13)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: c.danger,
@@ -390,11 +392,11 @@ class AdminPlanCardWidget extends StatelessWidget {
     );
   }
 
-  String _formatCycle(String cycle) => switch (cycle.toLowerCase()) {
-        'monthly' => '1 month',
-        'quarterly' => '3 months',
-        'yearly' => '1 year',
-        'one_time' || 'one-time' => 'One time',
+  String _formatCycle(String cycle, AppLocalizations l10n) => switch (cycle.toLowerCase()) {
+        'monthly' => l10n.admin_plans_cycleMonthly,
+        'quarterly' => l10n.admin_plans_cycleQuarterly,
+        'yearly' => l10n.admin_plans_cycleYearly,
+        'one_time' || 'one-time' => l10n.admin_plans_cycleOneTime,
         _ => cycle,
       };
 }
@@ -409,13 +411,14 @@ class _PromotionBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final promoColor = Color.lerp(c.danger, c.primary, 0.3)!;
 
     String discountLabel = '';
     if (promotion.discountValue > 0) {
       discountLabel = promotion.discountType == 'percentage'
-          ? '${promotion.discountValue.toStringAsFixed(0)}% off'
-          : '₹${promotion.discountValue.toStringAsFixed(0)} off';
+          ? l10n.admin_plans_percentOffLabel(promotion.discountValue.toStringAsFixed(0))
+          : l10n.admin_plans_amountOffLabel(promotion.discountValue.toStringAsFixed(0));
     }
 
     String dateLabel = '';
@@ -426,9 +429,9 @@ class _PromotionBanner extends StatelessWidget {
           '${fmt(promotion.startDate!)} – ${fmt(promotion.endDate!)}';
     } else if (promotion.endDate != null) {
       final d = promotion.endDate!;
-      dateLabel = 'Until ${d.day}/${d.month}/${d.year}';
+      dateLabel = l10n.admin_plans_untilDate('${d.day}/${d.month}/${d.year}');
     } else {
-      dateLabel = 'Open-ended';
+      dateLabel = l10n.admin_plans_openEnded;
     }
 
     return Container(

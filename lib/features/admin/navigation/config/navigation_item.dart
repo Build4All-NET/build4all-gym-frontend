@@ -11,11 +11,19 @@ class NavigationItem {
   final bool isDestructive; // true → red color (used for Logout)
 
   // ── Role visibility ─────────────────────────────────────────────────────────
-  // Admin/Owner always sees every item. These flags additionally expose an item
-  // to staff gym-roles, so display grouping can change freely without affecting
-  // what TRAINER / RECEPTION users are allowed to see.
-  final bool trainer;   // visible to TRAINER staff
-  final bool reception; // visible to RECEPTION staff
+  // Admin/Owner always sees every item. Once the owner's nav-permission matrix
+  // has loaded (AdminProfile.gymRolesLoaded), staff visibility is driven by
+  // AdminProfile.allowedNavItemIds (see admin_navigation_drawer.dart's canSee).
+  // These two flags now only serve as the fallback shown briefly while that
+  // matrix is still being fetched, so nav doesn't flash empty on login.
+  final bool trainer;   // visible to TRAINER staff while loading
+  final bool reception; // visible to RECEPTION staff while loading
+
+  /// False for items the owner can never delegate to staff (e.g. staff role
+  /// assignment) — excludes them from the Staff Access Control editor screen.
+  /// Does not affect canSee(); those items simply never appear in the
+  /// backend-resolved allowedNavItemIds either.
+  final bool configurable;
 
   const NavigationItem({
     required this.id,
@@ -25,6 +33,7 @@ class NavigationItem {
     this.isDestructive = false,
     this.trainer = false,
     this.reception = false,
+    this.configurable = true,
   });
 }
 

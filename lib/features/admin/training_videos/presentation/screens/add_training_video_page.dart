@@ -13,6 +13,7 @@ import '../bloc/training_videos_event.dart';
 import '../bloc/training_videos_state.dart';
 import '../../data/models/create_training_video_request.dart';
 import '../../domain/entities/trainer_option.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class AddTrainingVideoPage extends StatefulWidget {
   const AddTrainingVideoPage({super.key});
@@ -75,28 +76,29 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
   }
 
   Future<void> _showAddCategoryDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('New Category'),
+        title: Text(l10n.trainingVideos_newCategoryTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            hintText: 'e.g. Cardio, Strength, Yoga...',
-            labelText: 'Category name',
+          decoration: InputDecoration(
+            hintText: l10n.trainingVideos_categoryNameHint,
+            labelText: l10n.trainingVideos_categoryNameLabel,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.general_cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Add'),
+            child: Text(l10n.trainingVideos_addCategoryAction),
           ),
         ],
       ),
@@ -173,10 +175,11 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context)!;
 
     if (_selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select or create a category')),
+        SnackBar(content: Text(l10n.trainingVideos_selectOrCreateCategoryError)),
       );
       return;
     }
@@ -186,7 +189,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
     final total = (mins * 60) + secs;
     if (total <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Duration must be greater than 0')),
+        SnackBar(content: Text(l10n.trainingVideos_durationMustBePositive)),
       );
       return;
     }
@@ -258,6 +261,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return MultiBlocListener(
       listeners: [
@@ -266,7 +270,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
           listener: (context, state) {
             if (state is CreateVideoSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Video added successfully')),
+                SnackBar(content: Text(l10n.trainingVideos_addedSuccess)),
               );
               Navigator.pop(context);
             } else if (state is CreateVideoError) {
@@ -286,12 +290,12 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Category "${state.category.name}" created and selected'),
+                  content: Text(l10n.trainingVideos_categoryCreatedSuccess(state.category.name)),
                 ),
               );
             } else if (state is CategoryCreateError) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed: ${state.message}')),
+                SnackBar(content: Text(l10n.trainingVideos_categoryCreateFailed(state.message))),
               );
             }
           },
@@ -314,7 +318,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Add Training Video'),
+              title: Text(l10n.trainingVideos_addPageTitle),
               centerTitle: false,
             ),
             body: Form(
@@ -324,22 +328,22 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                 children: [
 
                   // ── Basic Info ─────────────────────────────────────────
-                  _sectionLabel('Basic Info'),
+                  _sectionLabel(l10n.trainingVideos_basicInfoSection),
                   TextFormField(
                     controller: _titleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Title *',
-                      prefixIcon: Icon(Icons.title),
+                    decoration: InputDecoration(
+                      labelText: l10n.trainingVideos_titleLabel,
+                      prefixIcon: const Icon(Icons.title),
                     ),
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Title is required' : null,
+                        (v == null || v.trim().isEmpty) ? l10n.trainingVideos_titleRequired : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Description (optional)',
-                      prefixIcon: Icon(Icons.notes),
+                    decoration: InputDecoration(
+                      labelText: l10n.trainingVideos_descriptionLabel,
+                      prefixIcon: const Icon(Icons.notes),
                       alignLabelWithHint: true,
                     ),
                     maxLines: 3,
@@ -347,15 +351,15 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                   const SizedBox(height: 24),
 
                   // ── Category ───────────────────────────────────────────
-                  _sectionLabel('Category'),
+                  _sectionLabel(l10n.trainingVideos_categorySection),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<int?>(
                           value: _selectedCategoryId,
-                          decoration: const InputDecoration(labelText: 'Category *'),
-                          hint: const Text('Select a category'),
+                          decoration: InputDecoration(labelText: l10n.trainingVideos_categoryLabel),
+                          hint: Text(l10n.trainingVideos_selectCategoryHint),
                           items: _categories
                               .map((c) => DropdownMenuItem<int?>(
                                     value: c.categoryId,
@@ -363,7 +367,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                                   ))
                               .toList(),
                           onChanged: (val) => setState(() => _selectedCategoryId = val),
-                          validator: (v) => v == null ? 'Please select a category' : null,
+                          validator: (v) => v == null ? l10n.trainingVideos_selectCategoryError : null,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -384,7 +388,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                             : IconButton.filled(
                                 onPressed: _showAddCategoryDialog,
                                 icon: const Icon(Icons.add),
-                                tooltip: 'Add new category',
+                                tooltip: l10n.trainingVideos_addNewCategoryTooltip,
                               ),
                       ),
                     ],
@@ -392,15 +396,15 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                   const SizedBox(height: 24),
 
                   // ── Trainer ────────────────────────────────────────────
-                  _sectionLabel('Trainer'),
+                  _sectionLabel(l10n.trainingVideos_trainerSection),
                   if (_isOwner) ...[
                     DropdownButtonFormField<int?>(
                       value: _selectedTrainerId,
-                      decoration: const InputDecoration(
-                        labelText: 'Assign to Trainer *',
-                        prefixIcon: Icon(Icons.person_outline),
+                      decoration: InputDecoration(
+                        labelText: l10n.trainingVideos_assignTrainerLabel,
+                        prefixIcon: const Icon(Icons.person_outline),
                       ),
-                      hint: const Text('Select a trainer'),
+                      hint: Text(l10n.trainingVideos_selectTrainerHint),
                       items: _trainers
                           .map((t) => DropdownMenuItem<int?>(
                                 value: t.trainerId,
@@ -408,7 +412,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                               ))
                           .toList(),
                       onChanged: (val) => setState(() => _selectedTrainerId = val),
-                      validator: (v) => v == null ? 'Please assign a trainer' : null,
+                      validator: (v) => v == null ? l10n.trainingVideos_assignTrainerRequired : null,
                     ),
                   ] else ...[
                     Container(
@@ -423,7 +427,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                           const Icon(Icons.person_outline, size: 18),
                           const SizedBox(width: 8),
                           Text(
-                            'Posted by you (Trainer ID: ${_jwtTrainerId ?? '—'})',
+                            l10n.trainingVideos_postedByYou('${_jwtTrainerId ?? '—'}'),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -433,11 +437,11 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                   const SizedBox(height: 24),
 
                   // ── Video ──────────────────────────────────────────────
-                  _sectionLabel('Video'),
+                  _sectionLabel(l10n.trainingVideos_videoSection),
                   OutlinedButton.icon(
                     onPressed: _pickVideo,
                     icon: const Icon(Icons.video_library_outlined),
-                    label: const Text('Pick Video From Phone'),
+                    label: Text(l10n.trainingVideos_pickVideoButton),
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
                     ),
@@ -469,16 +473,16 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _videoUrlController,
-                    decoration: const InputDecoration(
-                      labelText: 'Video URL (YouTube / Vimeo)',
-                      prefixIcon: Icon(Icons.link),
+                    decoration: InputDecoration(
+                      labelText: l10n.trainingVideos_videoUrlLabel,
+                      prefixIcon: const Icon(Icons.link),
                     ),
                     keyboardType: TextInputType.url,
                   ),
                   const SizedBox(height: 24),
 
                   // ── Duration ───────────────────────────────────────────
-                  _sectionLabel('Duration *'),
+                  _sectionLabel(l10n.trainingVideos_durationSection),
                   if (_extractingDuration) ...[
                     Row(
                       children: [
@@ -489,7 +493,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          'Reading duration from video…',
+                          l10n.trainingVideos_readingDuration,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -501,7 +505,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                         Icon(Icons.auto_fix_high, size: 15, color: Colors.green.shade600),
                         const SizedBox(width: 6),
                         Text(
-                          'Auto-filled from video — you can edit below',
+                          l10n.trainingVideos_autoFilledNotice,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: Colors.green.shade700,
                               ),
@@ -515,14 +519,14 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _minutesController,
-                          decoration: const InputDecoration(
-                            labelText: 'Minutes',
+                          decoration: InputDecoration(
+                            labelText: l10n.trainingVideos_minutesLabel,
                             suffixText: 'min',
                           ),
                           keyboardType: TextInputType.number,
                           validator: (v) {
-                            if (v == null || v.isEmpty) return 'Required';
-                            if (int.tryParse(v) == null) return 'Invalid';
+                            if (v == null || v.isEmpty) return l10n.trainingVideos_requiredField;
+                            if (int.tryParse(v) == null) return l10n.trainingVideos_invalidField;
                             return null;
                           },
                         ),
@@ -531,15 +535,15 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _secondsController,
-                          decoration: const InputDecoration(
-                            labelText: 'Seconds',
+                          decoration: InputDecoration(
+                            labelText: l10n.trainingVideos_secondsLabel,
                             suffixText: 'sec',
                           ),
                           keyboardType: TextInputType.number,
                           validator: (v) {
-                            if (v == null || v.isEmpty) return 'Required';
+                            if (v == null || v.isEmpty) return l10n.trainingVideos_requiredField;
                             final n = int.tryParse(v);
-                            if (n == null || n < 0 || n > 59) return '0–59';
+                            if (n == null || n < 0 || n > 59) return l10n.trainingVideos_secondsRangeError;
                             return null;
                           },
                         ),
@@ -549,18 +553,18 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                   const SizedBox(height: 24),
 
                   // ── Thumbnail ──────────────────────────────────────────
-                  _sectionLabel('Thumbnail (optional)'),
+                  _sectionLabel(l10n.trainingVideos_thumbnailSection),
                   SegmentedButton<bool>(
-                    segments: const [
+                    segments: [
                       ButtonSegment<bool>(
                         value: true,
-                        label: Text('From Video'),
-                        icon: Icon(Icons.video_call_outlined),
+                        label: Text(l10n.trainingVideos_fromVideoOption),
+                        icon: const Icon(Icons.video_call_outlined),
                       ),
                       ButtonSegment<bool>(
                         value: false,
-                        label: Text('Custom'),
-                        icon: Icon(Icons.image_outlined),
+                        label: Text(l10n.trainingVideos_customOption),
+                        icon: const Icon(Icons.image_outlined),
                       ),
                     ],
                     selected: {_thumbnailFromVideo},
@@ -592,7 +596,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Pick a video above to auto-extract a thumbnail',
+                                l10n.trainingVideos_pickVideoFirstNotice,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ),
@@ -609,7 +613,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            'Extracting thumbnail…',
+                            l10n.trainingVideos_extractingThumbnail,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -620,7 +624,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                       OutlinedButton.icon(
                         onPressed: () => _doExtractThumbnail(_selectedVideo!.path),
                         icon: const Icon(Icons.refresh, size: 18),
-                        label: const Text('Re-extract'),
+                        label: Text(l10n.trainingVideos_reextractButton),
                       ),
                     ] else ...[
                       Row(
@@ -628,11 +632,11 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                           const Icon(Icons.warning_amber_outlined,
                               size: 18, color: Colors.orange),
                           const SizedBox(width: 8),
-                          const Text('Could not extract thumbnail'),
+                          Text(l10n.trainingVideos_extractFailedNotice),
                           const Spacer(),
                           TextButton(
                             onPressed: () => _doExtractThumbnail(_selectedVideo!.path),
-                            child: const Text('Retry'),
+                            child: Text(l10n.retry),
                           ),
                         ],
                       ),
@@ -644,7 +648,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                     OutlinedButton.icon(
                       onPressed: _pickThumbnailFromGallery,
                       icon: const Icon(Icons.photo_library_outlined),
-                      label: const Text('Pick from Gallery'),
+                      label: Text(l10n.trainingVideos_pickFromGalleryButton),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
                       ),
@@ -660,7 +664,7 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
-                              'or enter URL',
+                              l10n.trainingVideos_orEnterUrl,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
@@ -670,9 +674,9 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _thumbnailUrlController,
-                        decoration: const InputDecoration(
-                          labelText: 'Thumbnail URL',
-                          prefixIcon: Icon(Icons.link),
+                        decoration: InputDecoration(
+                          labelText: l10n.trainingVideos_thumbnailUrlLabel,
+                          prefixIcon: const Icon(Icons.link),
                         ),
                         keyboardType: TextInputType.url,
                       ),
@@ -682,8 +686,8 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
 
                   // ── Published toggle ───────────────────────────────────
                   SwitchListTile(
-                    title: const Text('Published'),
-                    subtitle: const Text('Visible to members immediately'),
+                    title: Text(l10n.trainingVideos_publishedLabel),
+                    subtitle: Text(l10n.trainingVideos_publishedSubtitle),
                     value: _isPublished,
                     onChanged: (val) => setState(() => _isPublished = val),
                     contentPadding: EdgeInsets.zero,
@@ -703,9 +707,9 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text(
-                              'Add Video',
-                              style: TextStyle(fontSize: 16),
+                          : Text(
+                              l10n.trainingVideos_addVideoButton,
+                              style: const TextStyle(fontSize: 16),
                             ),
                     ),
                   ),

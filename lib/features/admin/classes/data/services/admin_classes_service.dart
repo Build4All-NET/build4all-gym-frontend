@@ -185,14 +185,43 @@ class AdminClassesService {
   }
 
   // ── PATCH /api/admin/classes/bookings/{bookingId}/confirm-payment ──────────
-  // Confirms a cash payment for a pending booking.
-  Future<void> confirmBookingPayment(int bookingId) async {
+  // Confirms a cash payment for a pending booking. amountPaid omitted/null
+  // means the full amount was collected; a lower amount records a partial
+  // cash payment — the booking still moves to BOOKED but stays out of
+  // trainer income until the balance is settled via recordInvoicePayment().
+  Future<void> confirmBookingPayment(int bookingId, {double? amountPaid}) async {
     final headers = await _headers();
     final uri = Uri.parse(
         '${Env.apiProjectBaseUrl}/api/admin/classes/bookings/$bookingId/confirm-payment');
 
     try {
-      final response = await _client.patch(uri, headers: headers, body: '{}');
+      final response = await _client.patch(
+        uri,
+        headers: headers,
+        body: jsonEncode(amountPaid != null ? {'amountPaid': amountPaid} : {}),
+      );
+      _handleStatus(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
+  // ── POST /api/admin/invoices/{invoiceId}/record-payment ────────────────────
+  // Collects more cash toward a partially-paid booking's invoice. Once the
+  // invoice reaches a zero balance the backend flips the booking back to
+  // fully paid, making it eligible for trainer income again.
+  Future<void> recordInvoicePayment(int invoiceId, double amount) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/admin/invoices/$invoiceId/record-payment');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: headers,
+        body: jsonEncode({'amount': amount}),
+      );
       _handleStatus(response);
     } catch (e) {
       if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;

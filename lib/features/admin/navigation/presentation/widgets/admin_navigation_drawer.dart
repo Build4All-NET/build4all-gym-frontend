@@ -92,16 +92,22 @@ class _DrawerBody extends StatelessWidget {
     // ── Filter sections by role ──────────────────────────────────────────────
 
     // isAdminRole (OWNER/ADMIN/MANAGER JWT role) → all sections.
-    // Staff gym roles (TRAINER / RECEPTION) → only their section(s)
+    // Staff gym roles (TRAINER / RECEPTION) → only items the owner has granted
+    // them via the Staff Access Control screen (AdminProfile.allowedNavItemIds).
 
-    // Item-level visibility: Admin/Owner sees everything; staff see only items
-    // flagged for their gym-role. Sections with no visible items are dropped so
-    // their header doesn't show empty.
+    // Item-level visibility: Admin/Owner sees everything. For staff, once the
+    // permission matrix has loaded we trust it exclusively (an item not in
+    // allowedNavItemIds is fully dropped, never shown disabled). While that
+    // fetch is still in flight, fall back to the compiled-in trainer/reception
+    // flags so the drawer doesn't flash empty right after login. Sections with
+    // no visible items are dropped so their header doesn't show empty.
     bool canSee(NavigationItem item) {
       if (profile.isAdminRole) return true;
-      if (profile.isTrainerRole && item.trainer) return true;
-      if (profile.isReceptionRole && item.reception) return true;
-      return false;
+      if (!profile.gymRolesLoaded) {
+        return (profile.isTrainerRole && item.trainer) ||
+            (profile.isReceptionRole && item.reception);
+      }
+      return profile.allowedNavItemIds.contains(item.id);
     }
 
     final visibleSections = adminDrawerSections
@@ -259,7 +265,7 @@ class _SectionLabel extends StatelessWidget {
     };
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 4),
       child: Text(
         label.toUpperCase(),
         style: TextStyle(

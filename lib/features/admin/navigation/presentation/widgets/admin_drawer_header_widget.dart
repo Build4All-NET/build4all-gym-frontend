@@ -76,7 +76,7 @@ class AdminDrawerHeaderWidget extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 12, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

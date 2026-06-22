@@ -5,6 +5,8 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:build4allgym/l10n/app_localizations.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../member/plans/data/repositories/member_plans_repository_impl.dart';
 import '../../../../member/plans/data/services/member_plans_remote_datasource.dart';
@@ -58,10 +60,12 @@ class SessionBookingPaymentSheet extends StatefulWidget {
   }
 
   @override
-  State<SessionBookingPaymentSheet> createState() => _SessionBookingPaymentSheetState();
+  State<SessionBookingPaymentSheet> createState() =>
+      _SessionBookingPaymentSheetState();
 }
 
-class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet> {
+class _SessionBookingPaymentSheetState
+    extends State<SessionBookingPaymentSheet> {
   List<PaymentMethodEntity> _methods = [];
   String? _selectedMethod;
   bool _loadingMethods = true;
@@ -103,6 +107,7 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     return BlocListener<SessionsBloc, SessionsState>(
       listener: (ctx, state) async {
@@ -118,7 +123,8 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
         } else if (state is SessionBookingPaymentReady) {
           setState(() => _submitting = false);
           Navigator.of(ctx).pop();
-          if (ctx.mounted) await _handleOnlinePayment(ctx, state.result, tokens);
+          if (ctx.mounted)
+            await _handleOnlinePayment(ctx, state.result, tokens);
         }
       },
       child: DraggableScrollableSheet(
@@ -135,7 +141,8 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
             children: [
               const SizedBox(height: 12),
               Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
                   color: c.border.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(2),
@@ -150,10 +157,11 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
                     children: [
                       // Header
                       Text(
-                        'تأكيد الحجز',
+                        l10n.ptPackageConfirmBooking,
                         textAlign: TextAlign.center,
                         style: tokens.typography.headlineSmall.copyWith(
-                          color: c.label, fontWeight: FontWeight.w900,
+                          color: c.label,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -170,34 +178,45 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
 
                       // Payment methods
                       Text(
-                        'طريقة الدفع',
+                        l10n.memberInvoicesPaymentMethod,
                         style: tokens.typography.titleMedium.copyWith(
-                          color: c.label, fontWeight: FontWeight.w800,
+                          color: c.label,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(height: 12),
 
                       if (_loadingMethods)
-                        Center(child: CircularProgressIndicator(color: c.primary))
+                        Center(
+                          child: CircularProgressIndicator(color: c.primary),
+                        )
                       else if (_methods.isEmpty)
                         Text(
-                          'لا توجد طرق دفع متاحة',
-                          style: tokens.typography.bodyMedium.copyWith(color: c.muted),
+                          l10n.paymentSheetNoMethodsAvailable,
+                          style: tokens.typography.bodyMedium.copyWith(
+                            color: c.muted,
+                          ),
                         )
                       else
-                        ..._methods.map((m) => _PaymentMethodTile(
-                          method: m,
-                          isSelected: _selectedMethod == m.name,
-                          tokens: tokens,
-                          onTap: () => setState(() => _selectedMethod = m.name),
-                        )),
+                        ..._methods.map(
+                          (m) => _PaymentMethodTile(
+                            method: m,
+                            isSelected: _selectedMethod == m.name,
+                            tokens: tokens,
+                            onTap: () =>
+                                setState(() => _selectedMethod = m.name),
+                          ),
+                        ),
 
                       const SizedBox(height: 24),
 
                       SizedBox(
                         height: 54,
                         child: ElevatedButton(
-                          onPressed: (_submitting || _loadingMethods || _selectedMethod == null)
+                          onPressed:
+                              (_submitting ||
+                                  _loadingMethods ||
+                                  _selectedMethod == null)
                               ? null
                               : () => _confirmBooking(context),
                           style: ElevatedButton.styleFrom(
@@ -211,15 +230,18 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
                           ),
                           child: _submitting
                               ? SizedBox(
-                                  width: 22, height: 22,
+                                  width: 22,
+                                  height: 22,
                                   child: CircularProgressIndicator(
-                                    strokeWidth: 2.5, color: c.onPrimary,
+                                    strokeWidth: 2.5,
+                                    color: c.onPrimary,
                                   ),
                                 )
                               : Text(
-                                  'تأكيد الحجز',
+                                  l10n.ptPackageConfirmBooking,
                                   style: tokens.typography.bodyMedium.copyWith(
-                                    color: c.onPrimary, fontWeight: FontWeight.w900,
+                                    color: c.onPrimary,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                 ),
                         ),
@@ -278,17 +300,21 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
       }
     } on StripeException catch (e) {
       if (context.mounted && e.error.code != FailureCode.Canceled) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.error.localizedMessage ?? 'Payment failed'),
-          backgroundColor: c.danger,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.error.localizedMessage ??
+                  AppLocalizations.of(context)!.paymentSheetPaymentFailed,
+            ),
+            backgroundColor: c.danger,
+          ),
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: c.danger,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: c.danger),
+        );
       }
     }
   }
@@ -299,7 +325,9 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
     dynamic tokens,
   ) async {
     final url = Uri.parse(result.redirectUrl!);
-    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (_) {}
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (_) {}
     if (!context.mounted) return;
     showModalBottomSheet(
       context: context,
@@ -315,7 +343,9 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
           context.read<SessionsBloc>().add(const SessionsStarted());
         },
         onRelaunch: () async {
-          try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (_) {}
+          try {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } catch (_) {}
         },
       ),
     );
@@ -334,7 +364,11 @@ class _SessionBookingPaymentSheetState extends State<SessionBookingPaymentSheet>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => _BookingResultSheet(result: result, tokens: tokens, confirmed: confirmed),
+      builder: (_) => _BookingResultSheet(
+        result: result,
+        tokens: tokens,
+        confirmed: confirmed,
+      ),
     );
   }
 }
@@ -357,7 +391,10 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
-    final timeStr = DateFormat('EEEE, MMM d — HH:mm').format(startTime);
+    final timeStr = DateFormat(
+      'EEEE, MMM d — HH:mm',
+      Localizations.localeOf(context).languageCode,
+    ).format(startTime);
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -375,14 +412,17 @@ class _SummaryCard extends StatelessWidget {
                 child: Text(
                   className,
                   style: tokens.typography.titleMedium.copyWith(
-                    color: c.label, fontWeight: FontWeight.w900,
+                    color: c.label,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
               Text(
                 '\$ ${price.toStringAsFixed(2)}',
                 style: tokens.typography.headlineSmall.copyWith(
-                  color: c.primary, fontWeight: FontWeight.w900, fontSize: 22.0,
+                  color: c.primary,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 22.0,
                 ),
               ),
             ],
@@ -468,10 +508,14 @@ class _PaymentMethodTile extends StatelessWidget {
 
   IconData _iconFor(String name) {
     switch (name.toUpperCase()) {
-      case 'CASH':   return Icons.payments_outlined;
-      case 'STRIPE': return Icons.credit_card_outlined;
-      case 'PAYPAL': return Icons.account_balance_wallet_outlined;
-      default:       return Icons.payment_outlined;
+      case 'CASH':
+        return Icons.payments_outlined;
+      case 'STRIPE':
+        return Icons.credit_card_outlined;
+      case 'PAYPAL':
+        return Icons.account_balance_wallet_outlined;
+      default:
+        return Icons.payment_outlined;
     }
   }
 }
@@ -493,6 +537,7 @@ class _BookingResultSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final isPending = result.isPending && !confirmed;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
@@ -500,7 +545,8 @@ class _BookingResultSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 64, height: 64,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
               color: isPending
                   ? const Color(0xFFFFF3CD)
@@ -508,41 +554,53 @@ class _BookingResultSheet extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              isPending ? Icons.hourglass_top_rounded : Icons.check_circle_outline,
+              isPending
+                  ? Icons.hourglass_top_rounded
+                  : Icons.check_circle_outline,
               color: isPending ? const Color(0xFF856404) : c.success,
               size: 34,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            isPending ? 'في انتظار تأكيد الدفع' : 'تم الحجز بنجاح',
+            isPending
+                ? l10n.paymentSheetPendingConfirmationTitle
+                : l10n.bookingSuccessTitle,
             style: tokens.typography.headlineSmall.copyWith(
-              color: c.label, fontWeight: FontWeight.w900,
+              color: c.label,
+              fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             isPending
-                ? 'تم إرسال طلبك إلى الإدارة. سيتم تأكيد حجزك بعد تأكيد استلام الدفع.'
-                : 'تم تأكيد حجزك في الحصة بنجاح.',
+                ? l10n.sessionBookingPendingMessage
+                : l10n.sessionBookingSuccessMessage,
             textAlign: TextAlign.center,
-            style: tokens.typography.bodyMedium.copyWith(color: c.muted, height: 1.5),
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.muted,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 24),
           SizedBox(
-            width: double.infinity, height: 52,
+            width: double.infinity,
+            height: 52,
             child: ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: c.primary,
                 foregroundColor: c.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
-                'حسناً',
+                l10n.paymentSheetOkButton,
                 style: tokens.typography.bodyMedium.copyWith(
-                  color: c.onPrimary, fontWeight: FontWeight.w900,
+                  color: c.onPrimary,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -569,6 +627,7 @@ class _WaitingRedirectSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
@@ -576,41 +635,54 @@ class _WaitingRedirectSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 64, height: 64,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
               color: c.primary.withOpacity(0.10),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.open_in_browser_rounded, color: c.primary, size: 34),
+            child: Icon(
+              Icons.open_in_browser_rounded,
+              color: c.primary,
+              size: 34,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
-            'أكمل الدفع في المتصفح',
+            l10n.paymentSheetCompleteInBrowserTitle,
             style: tokens.typography.headlineSmall.copyWith(
-              color: c.label, fontWeight: FontWeight.w900,
+              color: c.label,
+              fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'تم فتح صفحة الدفع في المتصفح. أكمل عملية الدفع ثم ارجع هنا واضغط "تم".',
+            l10n.paymentSheetCompleteInBrowserMessage,
             textAlign: TextAlign.center,
-            style: tokens.typography.bodyMedium.copyWith(color: c.muted, height: 1.5),
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.muted,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 24),
           SizedBox(
-            width: double.infinity, height: 52,
+            width: double.infinity,
+            height: 52,
             child: ElevatedButton(
               onPressed: onDone,
               style: ElevatedButton.styleFrom(
                 backgroundColor: c.primary,
                 foregroundColor: c.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
-                'تم — التحقق من الدفع',
+                l10n.paymentSheetDoneVerifyPayment,
                 style: tokens.typography.bodyMedium.copyWith(
-                  color: c.onPrimary, fontWeight: FontWeight.w900,
+                  color: c.onPrimary,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -619,7 +691,7 @@ class _WaitingRedirectSheet extends StatelessWidget {
           TextButton(
             onPressed: onRelaunch,
             child: Text(
-              'إعادة فتح صفحة الدفع',
+              l10n.paymentSheetReopenPaymentPage,
               style: tokens.typography.bodyMedium.copyWith(color: c.primary),
             ),
           ),

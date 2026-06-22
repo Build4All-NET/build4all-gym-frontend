@@ -76,7 +76,7 @@ class _AdminPaymentConfigScreenState extends State<AdminPaymentConfigScreen> {
                             ElevatedButton(
                               onPressed: () =>
                                   context.read<AdminPaymentConfigCubit>().load(),
-                              child: const Text('Retry'),
+                              child: Text(l10n.retry),
                             ),
                           ],
                         ),
@@ -88,6 +88,7 @@ class _AdminPaymentConfigScreenState extends State<AdminPaymentConfigScreen> {
                       methods: state.methods,
                       savingMethod: state.savingMethod,
                       tokens: tokens,
+                      l10n: l10n,
                     );
                   }
                   return const SizedBox.shrink();
@@ -107,11 +108,13 @@ class _MethodList extends StatelessWidget {
   final List<PaymentMethodConfigModel> methods;
   final String? savingMethod;
   final dynamic tokens;
+  final AppLocalizations l10n;
 
   const _MethodList({
     required this.methods,
     required this.savingMethod,
     required this.tokens,
+    required this.l10n,
   });
 
   @override
@@ -122,8 +125,8 @@ class _MethodList extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
         _SectionHeader(
-          label: 'Payment Methods',
-          subtitle: 'Enable or disable payment options visible to your members.',
+          label: l10n.admin_payments_sectionTitle,
+          subtitle: l10n.admin_payments_sectionSubtitle,
           tokens: tokens,
         ),
         const SizedBox(height: 16),
@@ -139,7 +142,7 @@ class _MethodList extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
               child: Text(
-                'No payment methods available on this platform.',
+                l10n.admin_payments_noMethodsAvailable,
                 style: tokens.typography.bodyMedium.copyWith(color: c.muted),
               ),
             ),
@@ -208,6 +211,7 @@ class _MethodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -266,7 +270,7 @@ class _MethodCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            method.tenantEnabled ? 'Active' : 'Disabled',
+                            method.tenantEnabled ? l10n.admin_payments_active : l10n.admin_payments_disabled,
                             style: tokens.typography.bodySmall.copyWith(
                               color: method.tenantEnabled ? c.success : c.muted,
                               fontWeight: FontWeight.w600,
@@ -284,7 +288,7 @@ class _MethodCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                _isConfigured ? 'Configured' : 'Not configured',
+                                _isConfigured ? l10n.admin_payments_configured : l10n.admin_payments_notConfigured,
                                 style: tokens.typography.bodySmall.copyWith(
                                   fontSize: 10.0,
                                   color: _isConfigured ? c.success : c.danger,
@@ -335,7 +339,7 @@ class _MethodCard extends StatelessWidget {
                               size: 16, color: c.primary),
                           const SizedBox(width: 8),
                           Text(
-                            'Configure',
+                            l10n.admin_payments_configure,
                             style: tokens.typography.bodySmall.copyWith(
                               color: c.primary,
                               fontWeight: FontWeight.w700,
@@ -364,7 +368,7 @@ class _MethodCard extends StatelessWidget {
                                 size: 16, color: c.muted),
                             const SizedBox(width: 8),
                             Text(
-                              'Test Connection',
+                              l10n.admin_payments_testConnection,
                               style: tokens.typography.bodySmall.copyWith(
                                 color: c.muted,
                                 fontWeight: FontWeight.w700,
@@ -397,7 +401,7 @@ class _MethodCard extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not update ${method.displayName}: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.admin_payments_couldNotUpdate(method.displayName, e.toString()))),
         );
       }
     }
@@ -421,6 +425,7 @@ class _MethodCard extends StatelessWidget {
   Future<void> _testConnection(BuildContext context) async {
     final cubit = context.read<AdminPaymentConfigCubit>();
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -430,7 +435,7 @@ class _MethodCard extends StatelessWidget {
           children: [
             CircularProgressIndicator(color: c.primary),
             const SizedBox(width: 16),
-            const Text('Testing connection…'),
+            Text(l10n.admin_payments_testingConnection),
           ],
         ),
       ),
@@ -450,18 +455,18 @@ class _MethodCard extends StatelessWidget {
                   color: result.ok ? c.success : c.danger,
                 ),
                 const SizedBox(width: 10),
-                Text(result.ok ? 'Connection OK' : 'Connection Failed'),
+                Text(result.ok ? l10n.admin_payments_connectionOk : l10n.admin_payments_connectionFailed),
               ],
             ),
             content: Text(
               result.ok
-                  ? 'Credentials verified successfully with ${method.displayName}.'
-                  : result.error ?? 'Unknown error',
+                  ? l10n.admin_payments_credentialsVerified(method.displayName)
+                  : result.error ?? l10n.admin_payments_unknownError,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child: Text(l10n.admin_payments_okButton),
               ),
             ],
           ),
@@ -471,7 +476,7 @@ class _MethodCard extends StatelessWidget {
       if (context.mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Test failed: $e')),
+          SnackBar(content: Text(l10n.admin_payments_testFailed(e.toString()))),
         );
       }
     }
@@ -603,14 +608,15 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
         );
     if (mounted) {
       setState(() => _saving = false);
+      final l10n = AppLocalizations.of(context)!;
       if (ok) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Credentials saved successfully')),
+          SnackBar(content: Text(l10n.admin_payments_credentialsSaved)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to save credentials')),
+          SnackBar(content: Text(l10n.admin_payments_credentialsSaveFailed)),
         );
       }
     }
@@ -639,6 +645,7 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
   Widget build(BuildContext context) {
     final c = widget.tokens.colors;
     final t = widget.tokens.typography;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -656,7 +663,7 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
                 Icon(_iconFor(widget.method.name), color: c.primary, size: 22),
                 const SizedBox(width: 10),
                 Text(
-                  '${widget.method.displayName} Credentials',
+                  l10n.admin_payments_credentialsTitle(widget.method.displayName),
                   style: t.headlineSmall
                       .copyWith(color: c.label, fontWeight: FontWeight.w900),
                 ),
@@ -669,7 +676,7 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              'These credentials are stored securely and used by the payment gateway.',
+              l10n.admin_payments_credentialsSecureNotice,
               style: t.bodySmall.copyWith(color: c.muted),
             ),
             const SizedBox(height: 20),
@@ -713,8 +720,8 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
                     Expanded(
                       child: Text(
                         _testResult!.ok
-                            ? 'Connection successful — credentials are valid.'
-                            : _testResult!.error ?? 'Connection failed.',
+                            ? l10n.admin_payments_connectionSuccessful
+                            : _testResult!.error ?? l10n.admin_payments_connectionFailedShort,
                         style: t.bodySmall.copyWith(
                           color: _testResult!.ok ? c.success : c.danger,
                           fontWeight: FontWeight.w600,
@@ -749,7 +756,7 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
                             strokeWidth: 2, color: c.onPrimary),
                       )
                     : Text(
-                        'Save Credentials',
+                        l10n.admin_payments_saveCredentials,
                         style: t.bodyMedium.copyWith(
                             color: c.onPrimary, fontWeight: FontWeight.w800),
                       ),
@@ -773,7 +780,7 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
                     : Icon(Icons.wifi_tethering_rounded,
                         size: 18, color: c.primary),
                 label: Text(
-                  _testing ? 'Testing…' : 'Test Connection',
+                  _testing ? l10n.admin_payments_testingEllipsis : l10n.admin_payments_testConnection,
                   style: t.bodyMedium
                       .copyWith(color: c.primary, fontWeight: FontWeight.w700),
                 ),

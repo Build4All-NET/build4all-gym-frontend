@@ -29,6 +29,7 @@ class CheckinModel {
   final String checkinTime;
   final String status;
   final String phone;
+  final String? entryType;
 
   const CheckinModel({
     required this.checkinId,
@@ -38,6 +39,7 @@ class CheckinModel {
     required this.checkinTime,
     required this.status,
     required this.phone,
+    this.entryType,
   });
 
   factory CheckinModel.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class CheckinModel {
       checkinTime:    json['checkinTime']    as String? ?? '',
       status:         json['status']         as String? ?? 'ACTIVE',
       phone:          json['phone']          as String? ?? '',
+      entryType:      json['entryType']      as String?,
     );
   }
 
@@ -62,6 +65,7 @@ class CheckinModel {
       checkinTime:    checkinTime,
       status:         status,
       phone:          phone,
+      entryType:      entryType,
     );
   }
 }

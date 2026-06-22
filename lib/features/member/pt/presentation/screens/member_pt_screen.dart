@@ -14,7 +14,9 @@ import '../widgets/trainer_card_widget.dart';
 import '../widgets/trainer_filter_chips_widget.dart';
 
 class MemberPtScreen extends StatelessWidget {
-  const MemberPtScreen({super.key});
+  final bool showBackButton;
+
+  const MemberPtScreen({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +30,15 @@ class MemberPtScreen extends StatelessWidget {
         toggleFavoriteTrainerUseCase: ToggleFavoriteTrainerUseCase(repository),
         getTrainerDetailUseCase: GetTrainerDetailUseCase(repository),
       )..add(const TrainersStarted()),
-      child: const _MemberPtView(),
+      child: _MemberPtView(showBackButton: showBackButton),
     );
   }
 }
 
 class _MemberPtView extends StatelessWidget {
-  const _MemberPtView();
+  final bool showBackButton;
+
+  const _MemberPtView({required this.showBackButton});
 
   @override
   Widget build(BuildContext context) {
@@ -92,43 +96,44 @@ class _MemberPtView extends StatelessWidget {
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            Align(
-                              alignment: isRtl
-                                  ? Alignment.centerLeft
-                                  : Alignment.centerRight,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: tokens.colors.onPrimary
-                                        .withOpacity(0.18),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Directionality(
-                                    textDirection: TextDirection.ltr,
-                                    child: Icon(
-                                      isRtl
-                                          ? Icons.arrow_back_ios_new_rounded
-                                          : Icons.arrow_forward_ios_rounded,
-                                      color: tokens.colors.onPrimary,
-                                      size: 20,
+                            if (showBackButton)
+                              Align(
+                                alignment: isRtl
+                                    ? Alignment.centerLeft
+                                    : Alignment.centerRight,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: tokens.colors.onPrimary
+                                          .withOpacity(0.18),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Directionality(
+                                      textDirection: TextDirection.ltr,
+                                      child: Icon(
+                                        isRtl
+                                            ? Icons.arrow_back_ios_new_rounded
+                                            : Icons.arrow_forward_ios_rounded,
+                                        color: tokens.colors.onPrimary,
+                                        size: 20,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
                             Align(
                               alignment: isRtl
                                   ? Alignment.centerRight
                                   : Alignment.centerLeft,
                               child: Padding(
-                                padding: const EdgeInsetsDirectional.only(
-                                  end: 52,
+                                padding: EdgeInsetsDirectional.only(
+                                  end: showBackButton ? 52 : 0,
                                 ),
                                 child: Text(
                                   l10n.ptScreenTitle,
@@ -149,8 +154,8 @@ class _MemberPtView extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Padding(
-                          padding: const EdgeInsetsDirectional.only(
-                            end: 52,
+                          padding: EdgeInsetsDirectional.only(
+                            end: showBackButton ? 52 : 0,
                           ),
                           child: Text(
                             l10n.ptScreenSubtitle,

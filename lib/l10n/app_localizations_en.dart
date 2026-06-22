@@ -567,6 +567,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memberBottomNavClasses => 'Classes';
 
   @override
+  String get memberBottomNavBookTrainer => 'Trainer';
+
+  @override
   String get memberBottomNavAccount => 'My Account';
 
   @override
@@ -728,6 +731,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberSessionsBookNow => 'Book Now';
+
+  @override
+  String memberSessionsWithTrainer(String name) {
+    return 'with $name';
+  }
 
   @override
   String get memberSessionsTitle => 'Sports Classes';
@@ -912,10 +920,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navReceptionStaff => 'Reception Staff';
 
   @override
+  String get navStaffAccessControl => 'Staff Access Control';
+
+  @override
   String get navGymProfile => 'Gym Profile';
 
   @override
   String get navBranches => 'Branches';
+
+  @override
+  String get navEmployees => 'Employees';
+
+  @override
+  String get navEmployeeCheckins => 'Employee Check-Ins';
 
   @override
   String get navCheckins => 'Check-ins';
@@ -1101,6 +1118,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ptTrainingVideosOpenError => 'Could not open this video.';
+
+  @override
+  String get ptTrainingVideosPipUnavailable => 'Picture-in-Picture is not available on this device.';
 
   @override
   String get ptTrainerDetailsNotFound => 'Trainer details not found.';
@@ -1418,6 +1438,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memberQrRetry => 'Retry';
 
   @override
+  String memberQrEntryWindow(String start, String end) {
+    return 'Entry: $start – $end';
+  }
+
+  @override
   String get myInfoTitle => 'My Info';
 
   @override
@@ -1526,6 +1551,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiErrorOffline => 'Sorry, I couldn\'t process your request. Please try again.';
 
   @override
+  String get aiErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
   String get checkins_title => 'Check-ins';
 
   @override
@@ -1535,7 +1563,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkins_scanSuccessMsg => 'checked in successfully';
 
   @override
-  String get checkins_scannerTitle => 'Scan Member QR';
+  String get checkins_scanCheckedOutMsg => 'checked out successfully';
 
   @override
   String get checkins_activeNow => 'Active Now';
@@ -1544,16 +1572,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkins_totalToday => 'Total Today';
 
   @override
+  String get checkins_searchHint => 'Search members...';
+
+  @override
   String get checkins_todayTitle => 'Today\'s Check-ins';
 
   @override
   String get checkins_noCheckins => 'No check-ins today';
-
-  @override
-  String get checkins_searchHint => 'Search members...';
-
-  @override
-  String get aiErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
   String get checkins_active => 'Active';
@@ -1565,28 +1590,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkins_out => 'Out';
 
   @override
-  String get checkins_freeze => 'Freeze';
-
-  @override
   String get checkins_block => 'Block';
 
   @override
   String get checkins_call => 'Call';
 
   @override
-  String get checkins_freezeTitle => 'Freeze Membership';
+  String get checkins_noPhoneNumber => 'No phone number on file for this member.';
 
   @override
-  String get checkins_fromDate => 'From date';
+  String get checkins_callFailed => 'Unable to start the call on this device.';
 
   @override
-  String get checkins_toDate => 'To date';
+  String get checkins_entryPlan => 'Plan';
+
+  @override
+  String get checkins_entryClass => 'Class';
+
+  @override
+  String get checkins_entryPt => 'PT Session';
 
   @override
   String get checkins_reasonHint => 'Reason (optional)';
-
-  @override
-  String get checkins_confirm => 'Confirm';
 
   @override
   String get checkins_blockTitle => 'Block Member';
@@ -1596,6 +1621,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_blockConfirm => 'Block';
+
+  @override
+  String get checkins_scannerTitle => 'Scan Member QR';
 
   @override
   String get sessionDetailBookingClosed => 'Booking closed';
@@ -2282,6 +2310,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_expenses_noExpenses => 'No expenses found';
 
   @override
+  String get admin_expenses_confirmPaidTitle => 'Confirm Commission Payout';
+
+  @override
+  String get admin_expenses_confirmPaidMessage => 'Confirm that you have paid this commission to the trainer? It will then be added to the trainer\'s income and counted in gym expenses.';
+
+  @override
+  String get admin_expenses_confirmPaid => 'Confirm';
+
+  @override
   String get balance_sheet_netProfit => 'Net Profit';
 
   @override
@@ -2393,6 +2430,66 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_staff_autoGeneratePassword => 'Leave empty to auto-generate a secure password';
+
+  @override
+  String get roleAccess_title => 'Staff Access Control';
+
+  @override
+  String get roleAccess_subtitle => 'Choose what Trainers and Reception staff can see and access in their navigation menu.';
+
+  @override
+  String get roleAccess_trainerColumn => 'Trainer';
+
+  @override
+  String get roleAccess_receptionColumn => 'Reception';
+
+  @override
+  String get roleAccess_unsaved => 'Unsaved';
+
+  @override
+  String get roleAccess_saving => 'Saving...';
+
+  @override
+  String get roleAccess_saveChanges => 'Save Changes';
+
+  @override
+  String get roleAccess_saveSuccess => 'Permissions saved successfully';
+
+  @override
+  String get roleAccess_saveFailed => 'Failed to save permissions';
+
+  @override
+  String get roleAccess_notAuthorized => 'Only the gym owner can manage staff access permissions.';
+
+  @override
+  String get roleAccess_modeAllStaff => 'All Staff';
+
+  @override
+  String get roleAccess_modeSpecificAccount => 'Specific Account';
+
+  @override
+  String get roleAccess_pickStaffMember => 'Select a staff member';
+
+  @override
+  String get roleAccess_noStaffAccounts => 'No trainer or reception accounts yet.';
+
+  @override
+  String get roleAccess_selectAccountPrompt => 'Pick a trainer or reception account above to edit their specific permissions.';
+
+  @override
+  String get roleAccess_useDefault => 'Use Default';
+
+  @override
+  String get roleAccess_alwaysAllow => 'Always Allow';
+
+  @override
+  String get roleAccess_alwaysDeny => 'Always Deny';
+
+  @override
+  String get roleAccess_defaultOn => '(default: on)';
+
+  @override
+  String get roleAccess_defaultOff => '(default: off)';
 
   @override
   String get admin_settings_unsaved => 'Unsaved';
@@ -2679,6 +2776,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_invoices_downloadPdf => 'Download / Share PDF';
 
   @override
+  String get admin_invoices_recordPayment => 'Record Payment';
+
+  @override
+  String get admin_invoices_paymentRecorded => 'Payment recorded.';
+
+  @override
+  String admin_invoices_balanceDueLabel(String amount) {
+    return 'Balance due: \$ $amount';
+  }
+
+  @override
   String get admin_classes_addTitle => 'Add New Class';
 
   @override
@@ -2793,6 +2901,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_classes_cancellationDeclined => 'Cancellation declined';
 
   @override
+  String get admin_classes_collectBalance => 'Collect Balance';
+
+  @override
+  String admin_classes_classPriceLabel(String price) {
+    return 'Class price: $price';
+  }
+
+  @override
   String get admin_settings_accountTitle => 'Account & Security';
 
   @override
@@ -2811,10 +2927,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_settings_biometricSubtitle => 'Use fingerprint or face ID';
 
   @override
-  String get admin_settings_twoFactor => 'Two-Factor Authentication';
-
-  @override
-  String get admin_settings_twoFactorSubtitle => 'Add an extra layer of security';
+  String get admin_settings_biometricUnavailable => 'Biometric authentication is not available or was cancelled.';
 
   @override
   String get admin_settings_businessTitle => 'Business Rules';
@@ -3528,6 +3641,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_dateLabel => 'Date';
 
   @override
+  String get trainer_partialPaymentHint => 'Enter less than the full amount to record a partial payment — the trainer\'s commission won\'t count until the balance is paid in full.';
+
+  @override
+  String get trainer_amountToCollectLabel => 'Amount to collect';
+
+  @override
+  String get trainer_invalidAmount => 'Enter a valid amount';
+
+  @override
+  String get trainer_amountExceedsTotal => 'Amount cannot exceed the total';
+
+  @override
   String get promotionPrice => 'Promotion price';
 
   @override
@@ -3957,7 +4082,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_plans_addNewType => 'Add new type…';
 
   @override
-  String get admin_plans_priceLabel => 'Price *';
+  String get admin_plans_priceLabel => 'Price';
 
   @override
   String get admin_plans_durationLabel => 'Duration *';
@@ -4111,4 +4236,1218 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_dashboard_viewReports => 'View detailed reports';
+
+  @override
+  String get paymentSheetNoMethodsAvailable => 'No payment methods available';
+
+  @override
+  String get paymentSheetPaymentFailed => 'Payment failed';
+
+  @override
+  String get paymentSheetCompleteInBrowserTitle => 'Complete payment in browser';
+
+  @override
+  String get paymentSheetCompleteInBrowserMessage => 'The payment page opened in your browser. Complete the payment, then come back here and tap \"Done\".';
+
+  @override
+  String get paymentSheetDoneVerifyPayment => 'Done — Verify Payment';
+
+  @override
+  String get paymentSheetReopenPaymentPage => 'Reopen payment page';
+
+  @override
+  String get paymentSheetOkButton => 'OK';
+
+  @override
+  String get paymentSheetPendingConfirmationTitle => 'Pending payment confirmation';
+
+  @override
+  String get bookingSuccessTitle => 'Booking Successful';
+
+  @override
+  String get ptPackagePendingMessage => 'Your request has been sent to the administration. Sessions will be activated once payment is confirmed.';
+
+  @override
+  String get sessionBookingPendingMessage => 'Your request has been sent to the administration. Your booking will be confirmed once payment is confirmed.';
+
+  @override
+  String get sessionBookingSuccessMessage => 'Your booking for this class has been confirmed.';
+
+  @override
+  String get planSubscriptionSuccessTitle => 'Subscribed Successfully';
+
+  @override
+  String get planSubscriptionPendingMessage => 'Your request has been sent to the administration. Your subscription will be activated once payment is confirmed.';
+
+  @override
+  String planSubscriptionActivatedMessage(String planName) {
+    return 'Your subscription to \"$planName\" has been activated.';
+  }
+
+  @override
+  String get planLabel => 'Plan';
+
+  @override
+  String get profileCompletionStepBranchTitle => 'Your Branch';
+
+  @override
+  String get profileCompletionStepAboutTitle => 'About You';
+
+  @override
+  String get profileCompletionStepBodyTitle => 'Body Metrics';
+
+  @override
+  String get profileCompletionStepEmergencyTitle => 'Emergency Contact';
+
+  @override
+  String get profileCompletionStepBranchSubtitle => 'Pick the branch you\'ll usually train at.';
+
+  @override
+  String get profileCompletionStepAboutSubtitle => 'A few details to personalise your plan.';
+
+  @override
+  String get profileCompletionStepBodySubtitle => 'Optional — helps us tailor your experience.';
+
+  @override
+  String get profileCompletionStepEmergencySubtitle => 'Optional — who should we contact if needed?';
+
+  @override
+  String get profileCompletionGenderMale => 'Male';
+
+  @override
+  String get profileCompletionGenderFemale => 'Female';
+
+  @override
+  String get profileCompletionGenderOther => 'Other';
+
+  @override
+  String get profileCompletionGenderPreferNotToSay => 'Prefer not to say';
+
+  @override
+  String get profileCompletionSelectBranchError => 'Please select your preferred branch.';
+
+  @override
+  String get profileCompletionSelectGenderDobError => 'Please select your gender and date of birth.';
+
+  @override
+  String get profileCompletionSaveFailed => 'Failed to save. Please try again.';
+
+  @override
+  String get profileCompletionTitle => 'Complete Your Profile';
+
+  @override
+  String get profileCompletionPreferredBranch => 'Preferred Branch *';
+
+  @override
+  String get profileCompletionGenderLabel => 'Gender *';
+
+  @override
+  String get profileCompletionDobLabel => 'Date of Birth *';
+
+  @override
+  String get profileCompletionSelectDob => 'Select date of birth';
+
+  @override
+  String get profileCompletionHeightLabel => 'Height (cm)';
+
+  @override
+  String get profileCompletionWeightLabel => 'Weight (kg)';
+
+  @override
+  String get profileCompletionHeightHint => 'e.g. 175';
+
+  @override
+  String get profileCompletionWeightHint => 'e.g. 70';
+
+  @override
+  String get profileCompletionEmergencyNameLabel => 'Emergency Contact Name';
+
+  @override
+  String get profileCompletionEmergencyPhoneLabel => 'Emergency Contact Phone';
+
+  @override
+  String get profileCompletionFullNameHint => 'Full name';
+
+  @override
+  String get profileCompletionPhoneNumberHint => 'Phone number';
+
+  @override
+  String get profileCompletionSaveContinueButton => 'Save & Continue';
+
+  @override
+  String get profileCompletionSelectBranchHint => 'Select branch';
+
+  @override
+  String get editProfileCodeResentSuccess => 'Code resent successfully';
+
+  @override
+  String get ptVideoPipUnavailable => 'Picture-in-Picture is not available on this device.';
+
+  @override
+  String sessionCardWithTrainer(String trainerName) {
+    return 'with $trainerName';
+  }
+
+  @override
+  String get general_confirm => 'Confirm';
+
+  @override
+  String get adminMemberPicker_searchHint => 'Search by name or phone…';
+
+  @override
+  String get adminMemberPicker_couldNotLoad => 'Could not load members';
+
+  @override
+  String get adminMemberPicker_noMembersFound => 'No members found';
+
+  @override
+  String get adminMemberPicker_assignRoleFailed => 'Failed to assign role. Please try again.';
+
+  @override
+  String get admin_staff_assignReceptionTitle => 'Assign Reception Role';
+
+  @override
+  String get admin_staff_assignReceptionSubtitle => 'Pick a member to assign the Reception role';
+
+  @override
+  String get admin_staff_receptionDashboardNotice => 'The member will see the Operations dashboard the next time they log in.';
+
+  @override
+  String admin_staff_assignedReceptionSuccess(String name) {
+    return '$name is now Reception Staff. They\'ll see the operations dashboard on next login.';
+  }
+
+  @override
+  String admin_staff_confirmAssignReception(String name) {
+    return 'Assign Reception role to $name?';
+  }
+
+  @override
+  String get admin_staff_searchHint => 'Search staff by name';
+
+  @override
+  String get admin_staff_totalStaffLabel => 'Total Staff';
+
+  @override
+  String get admin_staff_activeLabel => 'Active';
+
+  @override
+  String get admin_trainers_promoteTitle => 'Promote Member to Trainer';
+
+  @override
+  String get admin_trainers_promoteSubtitle => 'Pick a member to assign the Trainer role';
+
+  @override
+  String get admin_trainers_trainerDashboardNotice => 'The member will see the Trainer dashboard the next time they log in.';
+
+  @override
+  String admin_trainers_confirmAssignTrainer(String name) {
+    return 'Assign Trainer role to $name?';
+  }
+
+  @override
+  String get admin_trainers_searchHint => 'Search by name or specialty';
+
+  @override
+  String get admin_trainers_allSpecialties => 'All';
+
+  @override
+  String get admin_trainers_blockConfirmTitle => 'Block Trainer';
+
+  @override
+  String get admin_trainers_unblockConfirmTitle => 'Unblock Trainer';
+
+  @override
+  String admin_trainers_blockConfirmMessage(String name) {
+    return 'Block $name? They will not be able to log in.';
+  }
+
+  @override
+  String admin_trainers_unblockConfirmMessage(String name) {
+    return 'Unblock $name? They will be able to log in again.';
+  }
+
+  @override
+  String get admin_trainers_blockAction => 'Block';
+
+  @override
+  String get admin_trainers_unblockAction => 'Unblock';
+
+  @override
+  String get admin_trainers_scheduleAction => 'Schedule';
+
+  @override
+  String get admin_trainers_editAction => 'Edit';
+
+  @override
+  String get admin_trainers_blockedBadge => 'Blocked';
+
+  @override
+  String get admin_trainers_activeBadge => 'Active';
+
+  @override
+  String get configureTrainer_title => 'Set Up Trainer Profile';
+
+  @override
+  String get configureTrainer_selectBranchError => 'Select at least one branch.';
+
+  @override
+  String get configureTrainer_saveFailed => 'Failed to save. Please try again.';
+
+  @override
+  String configureTrainer_setupSuccess(String name) {
+    return '$name is fully set up as a trainer.';
+  }
+
+  @override
+  String get configureTrainer_branchesLabel => 'Branches *';
+
+  @override
+  String get configureTrainer_noBranchesFound => 'No branches found.';
+
+  @override
+  String get configureTrainer_specialtiesLabel => 'Specialties';
+
+  @override
+  String get configureTrainer_specialtyHint => 'e.g. Fat Loss, Strength…';
+
+  @override
+  String get configureTrainer_yearsLabel => 'Years of Experience';
+
+  @override
+  String get configureTrainer_yearsHint => 'e.g. 5';
+
+  @override
+  String get configureTrainer_notesLabel => 'Bio / Notes (optional)';
+
+  @override
+  String get configureTrainer_notesHint => 'Brief bio or admin notes…';
+
+  @override
+  String get configureTrainer_saveButton => 'Save & Finish';
+
+  @override
+  String get admin_employees_defaultName => 'this employee';
+
+  @override
+  String get admin_employees_paymentHistoryTitle => 'Payment History';
+
+  @override
+  String get admin_employees_noPaymentsYet => 'No payments recorded yet';
+
+  @override
+  String get admin_employees_qrScanTitle => 'Scan the Gym Check-In QR';
+
+  @override
+  String get admin_employees_qrScanSubtitle => 'Point your camera at the QR poster at the entrance to check in or out.';
+
+  @override
+  String admin_employees_payDialogTitle(String name) {
+    return 'Pay $name';
+  }
+
+  @override
+  String get admin_employees_invalidAmount => 'Enter a valid amount';
+
+  @override
+  String admin_employees_workedDaysThisMonth(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Worked $days days this month',
+      one: 'Worked $days day this month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get admin_employees_amountLabel => 'Amount *';
+
+  @override
+  String get admin_employees_paymentDateLabel => 'Payment Date';
+
+  @override
+  String get admin_employees_noteLabel => 'Note';
+
+  @override
+  String get admin_employees_confirmPayButton => 'Confirm Pay';
+
+  @override
+  String get admin_plans_membersLabel => 'Members';
+
+  @override
+  String get admin_plans_activeLabel => 'Active';
+
+  @override
+  String get admin_plans_totalPlansLabel => 'Total Plans';
+
+  @override
+  String get admin_plans_inactiveLabel => 'Inactive';
+
+  @override
+  String get admin_plans_featuredBadge => 'Featured';
+
+  @override
+  String get admin_plans_durationCellLabel => 'Duration';
+
+  @override
+  String get admin_plans_visitLimitLabel => 'Visit Limit';
+
+  @override
+  String get admin_plans_freezeDaysLabel => 'Freeze Days';
+
+  @override
+  String get admin_plans_maxFreezesLabel => 'Max Freezes';
+
+  @override
+  String get admin_plans_entryHoursLabel => 'Entry Hours';
+
+  @override
+  String get admin_plans_gracePeriodCellLabel => 'Grace Period';
+
+  @override
+  String get admin_plans_onLabel => 'On';
+
+  @override
+  String get admin_plans_includedFeatures => 'Included Features';
+
+  @override
+  String get admin_plans_availableAt => 'Available at:';
+
+  @override
+  String get admin_plans_editAction => 'Edit';
+
+  @override
+  String get admin_plans_deletingAction => 'Deleting...';
+
+  @override
+  String get admin_plans_cycleMonthly => '1 month';
+
+  @override
+  String get admin_plans_cycleQuarterly => '3 months';
+
+  @override
+  String get admin_plans_cycleYearly => '1 year';
+
+  @override
+  String get admin_plans_cycleOneTime => 'One time';
+
+  @override
+  String admin_plans_untilDate(String date) {
+    return 'Until $date';
+  }
+
+  @override
+  String get admin_plans_openEnded => 'Open-ended';
+
+  @override
+  String get trainer_cashBadge => 'Cash';
+
+  @override
+  String get trainer_navCheckIn => 'Check In';
+
+  @override
+  String trainer_dayNumberFallback(int day) {
+    return 'Day $day';
+  }
+
+  @override
+  String trainer_packageSessionsCount(int count) {
+    return '$count sessions';
+  }
+
+  @override
+  String trainer_packageDaysPerWeekRange(int min, int max) {
+    return '$min-$max days/week';
+  }
+
+  @override
+  String trainer_packageDaysValid(int days) {
+    return 'Valid for $days days';
+  }
+
+  @override
+  String trainer_packagePriceWasPrice(String salePrice, String price) {
+    return '\$$salePrice (was \$$price)';
+  }
+
+  @override
+  String get admin_members_attendanceHistoryTitle => 'Attendance History';
+
+  @override
+  String get admin_members_noAttendanceRecords => 'No attendance records';
+
+  @override
+  String get admin_members_inGym => 'In Gym';
+
+  @override
+  String get admin_members_checkedOut => 'Checked Out';
+
+  @override
+  String get admin_members_renewFeatureName => 'Renew';
+
+  @override
+  String get admin_members_editFeatureName => 'Edit';
+
+  @override
+  String get admin_members_whatsAppNotInstalled => 'WhatsApp is not installed';
+
+  @override
+  String admin_members_featureComingSoon(String feature) {
+    return '$feature is coming soon';
+  }
+
+  @override
+  String get admin_members_defaultMemberName => 'this member';
+
+  @override
+  String get admin_members_couldNotOpenDialler => 'Could not open dialler';
+
+  @override
+  String get admin_members_couldNotOpenSms => 'Could not open SMS';
+
+  @override
+  String get admin_expenses_autoRecorded => 'Auto-recorded';
+
+  @override
+  String get admin_expenses_pendingTrainerPayout => 'Pending trainer payout';
+
+  @override
+  String get admin_expenses_confirming => 'Confirming...';
+
+  @override
+  String get admin_expenses_confirmPaidToTrainer => 'Confirm Paid to Trainer';
+
+  @override
+  String admin_expenses_commissionForTrainer(String name) {
+    return 'Commission for $name';
+  }
+
+  @override
+  String get admin_expenses_commissionAllTrainers => 'Commission — All Trainers';
+
+  @override
+  String get admin_expenses_total => 'Total';
+
+  @override
+  String get admin_expenses_paid => 'Paid';
+
+  @override
+  String get admin_expenses_remaining => 'Remaining';
+
+  @override
+  String get admin_expenses_allTrainers => 'All Trainers';
+
+  @override
+  String get admin_expenses_thisMonth => 'This Month';
+
+  @override
+  String get admin_expenses_allTime => 'All Time';
+
+  @override
+  String get admin_expenses_entriesThisMonth => 'Entries This Month';
+
+  @override
+  String get admin_expenses_enterTransactionType => 'Please enter a transaction type';
+
+  @override
+  String get admin_expenses_selectTrainerError => 'Please select a trainer';
+
+  @override
+  String get admin_expenses_transactionTypeLabel => 'Transaction Type';
+
+  @override
+  String get admin_expenses_customCategoryHint => 'e.g. Equipment Repair';
+
+  @override
+  String get admin_expenses_selectTransactionType => 'Select transaction type';
+
+  @override
+  String get admin_expenses_addNewTransactionType => 'Add new transaction type';
+
+  @override
+  String get admin_expenses_payTo => 'Pay To';
+
+  @override
+  String get admin_expenses_payToTrainer => 'Trainer';
+
+  @override
+  String get admin_expenses_payToOther => 'Other';
+
+  @override
+  String get admin_expenses_trainerLabel => 'Trainer';
+
+  @override
+  String get admin_expenses_selectTrainer => 'Select a trainer';
+
+  @override
+  String get admin_employees_thisEmployee => 'this employee';
+
+  @override
+  String get admin_employees_removeEmployeeTitle => 'Remove Employee';
+
+  @override
+  String admin_employees_removeEmployeeConfirm(String name) {
+    return 'Remove $name? This cannot be undone.';
+  }
+
+  @override
+  String get admin_employees_remove => 'Remove';
+
+  @override
+  String get admin_employees_allTypes => 'All Types';
+
+  @override
+  String get admin_employees_searchHint => 'Search employees...';
+
+  @override
+  String get admin_employees_filterAll => 'All';
+
+  @override
+  String get admin_employees_filterActive => 'Active';
+
+  @override
+  String get admin_employees_filterInactive => 'Inactive';
+
+  @override
+  String get admin_employees_noEmployeesYet => 'No employees yet';
+
+  @override
+  String get admin_employees_checkinsTitle => 'Employee Check-ins';
+
+  @override
+  String get admin_employees_showGymQr => 'Show gym check-in QR';
+
+  @override
+  String get admin_employees_scanToCheckInOut => 'Scan to check in/out';
+
+  @override
+  String get admin_employees_noActiveEmployeesYet => 'No active employees yet';
+
+  @override
+  String get admin_employees_unknown => 'Unknown';
+
+  @override
+  String get admin_employees_inactive => 'Inactive';
+
+  @override
+  String get admin_employees_appAccount => 'App Account';
+
+  @override
+  String admin_employees_daysThisMonth(int days) {
+    return '$days days this month';
+  }
+
+  @override
+  String admin_employees_lastPaid(String date) {
+    return 'Last paid $date';
+  }
+
+  @override
+  String get admin_employees_neverPaid => 'Never paid';
+
+  @override
+  String get admin_employees_edit => 'Edit';
+
+  @override
+  String get admin_employees_removing => 'Removing...';
+
+  @override
+  String get admin_employees_paying => 'Paying...';
+
+  @override
+  String get admin_employees_pay => 'Pay';
+
+  @override
+  String get admin_employees_overdue => 'Overdue';
+
+  @override
+  String get admin_employees_dueSoon => 'Due soon';
+
+  @override
+  String get admin_employees_upToDate => 'Up to date';
+
+  @override
+  String get admin_employees_freqWeek => 'week';
+
+  @override
+  String get admin_employees_freqDay => 'day';
+
+  @override
+  String get admin_employees_freqMonth => 'month';
+
+  @override
+  String get admin_employees_gymCheckinQrTitle => 'Gym Check-In QR';
+
+  @override
+  String admin_employees_couldNotLoadQr(String error) {
+    return 'Could not load QR: $error';
+  }
+
+  @override
+  String get admin_employees_qrPosterInstructions => 'Print and display this QR code at the entrance for employees to scan when checking in or out.';
+
+  @override
+  String get admin_employees_close => 'Close';
+
+  @override
+  String admin_employees_checkedInAt(String time) {
+    return 'Checked in at $time';
+  }
+
+  @override
+  String get admin_employees_checkedIn => 'Checked in';
+
+  @override
+  String admin_employees_checkedOutAt(String time) {
+    return 'Checked out at $time';
+  }
+
+  @override
+  String get admin_employees_checkedOut => 'Checked out';
+
+  @override
+  String get admin_employees_notCheckedIn => 'Not checked in';
+
+  @override
+  String get admin_employees_selfCheckin => 'Self check-in';
+
+  @override
+  String get admin_employees_checkOut => 'Check Out';
+
+  @override
+  String get admin_employees_checkIn => 'Check In';
+
+  @override
+  String get admin_employees_pleaseSelectBranch => 'Please select a branch';
+
+  @override
+  String get admin_employees_pleaseSelectStaffMember => 'Please select a staff member';
+
+  @override
+  String get admin_employees_pleaseEnterEmployeeType => 'Please enter an employee type';
+
+  @override
+  String get admin_employees_updatedSuccessfully => 'Employee updated successfully';
+
+  @override
+  String get admin_employees_addedSuccessfully => 'Employee added successfully';
+
+  @override
+  String get admin_employees_editEmployee => 'Edit Employee';
+
+  @override
+  String get admin_employees_addEmployee => 'Add Employee';
+
+  @override
+  String get admin_employees_whoIsThis => 'Who is this?';
+
+  @override
+  String get admin_employees_newEmployee => 'New Employee';
+
+  @override
+  String get admin_employees_existingStaff => 'Existing Staff';
+
+  @override
+  String get admin_employees_trainerReceptionLabel => 'Trainer / Reception Staff';
+
+  @override
+  String get admin_employees_allStaffHavePayroll => 'All staff already have payroll records';
+
+  @override
+  String get admin_employees_selectStaffMember => 'Select a staff member';
+
+  @override
+  String get admin_employees_required => 'Required';
+
+  @override
+  String get admin_employees_thisPerson => 'This person';
+
+  @override
+  String admin_employees_identityManagedNote(String name, String type) {
+    return '$name ($type) — identity is managed via the app account.';
+  }
+
+  @override
+  String admin_dashboard_growthPercent(String value) {
+    return '$value vs last month';
+  }
+
+  @override
+  String admin_dashboard_vsLastMonthPercent(String value) {
+    return '$value vs last month';
+  }
+
+  @override
+  String get admin_dashboard_notAvailable => 'N/A';
+
+  @override
+  String admin_settings_deleteAccountFailed(String error) {
+    return 'Failed to delete account: $error';
+  }
+
+  @override
+  String get admin_payments_sectionTitle => 'Payment Methods';
+
+  @override
+  String get admin_payments_sectionSubtitle => 'Enable or disable payment options visible to your members.';
+
+  @override
+  String get admin_payments_noMethodsAvailable => 'No payment methods available on this platform.';
+
+  @override
+  String get admin_payments_active => 'Active';
+
+  @override
+  String get admin_payments_disabled => 'Disabled';
+
+  @override
+  String get admin_payments_configured => 'Configured';
+
+  @override
+  String get admin_payments_notConfigured => 'Not configured';
+
+  @override
+  String get admin_payments_configure => 'Configure';
+
+  @override
+  String get admin_payments_testConnection => 'Test Connection';
+
+  @override
+  String admin_payments_couldNotUpdate(String name, String error) {
+    return 'Could not update $name: $error';
+  }
+
+  @override
+  String get admin_payments_testingConnection => 'Testing connection…';
+
+  @override
+  String get admin_payments_connectionOk => 'Connection OK';
+
+  @override
+  String get admin_payments_connectionFailed => 'Connection Failed';
+
+  @override
+  String admin_payments_credentialsVerified(String name) {
+    return 'Credentials verified successfully with $name.';
+  }
+
+  @override
+  String get admin_payments_unknownError => 'Unknown error';
+
+  @override
+  String get admin_payments_okButton => 'OK';
+
+  @override
+  String admin_payments_testFailed(String error) {
+    return 'Test failed: $error';
+  }
+
+  @override
+  String get admin_payments_credentialsSaved => 'Credentials saved successfully';
+
+  @override
+  String get admin_payments_credentialsSaveFailed => 'Failed to save credentials';
+
+  @override
+  String admin_payments_credentialsTitle(String name) {
+    return '$name Credentials';
+  }
+
+  @override
+  String get admin_payments_credentialsSecureNotice => 'These credentials are stored securely and used by the payment gateway.';
+
+  @override
+  String get admin_payments_connectionSuccessful => 'Connection successful — credentials are valid.';
+
+  @override
+  String get admin_payments_connectionFailedShort => 'Connection failed.';
+
+  @override
+  String get admin_payments_saveCredentials => 'Save Credentials';
+
+  @override
+  String get admin_payments_testingEllipsis => 'Testing…';
+
+  @override
+  String get admin_invoice_title => 'INVOICE';
+
+  @override
+  String get admin_invoice_invoiceNoLabel => 'Invoice No.';
+
+  @override
+  String get admin_invoice_dateLabel => 'Date';
+
+  @override
+  String get admin_invoice_billTo => 'BILL TO';
+
+  @override
+  String get admin_invoice_items => 'ITEMS';
+
+  @override
+  String get admin_invoice_subtotal => 'Subtotal';
+
+  @override
+  String get admin_invoice_discount => 'Discount';
+
+  @override
+  String get admin_invoice_tax => 'Tax';
+
+  @override
+  String get admin_invoice_total => 'TOTAL';
+
+  @override
+  String get admin_invoice_balanceDue => 'Balance Due';
+
+  @override
+  String get admin_invoice_paymentDetails => 'PAYMENT DETAILS';
+
+  @override
+  String get admin_invoice_description => 'Description';
+
+  @override
+  String get admin_invoice_qty => 'Qty';
+
+  @override
+  String get admin_invoice_price => 'Price';
+
+  @override
+  String get admin_invoice_itemTotalColumn => 'Total';
+
+  @override
+  String admin_invoice_receivedBy(String name) {
+    return 'Received by: $name';
+  }
+
+  @override
+  String admin_invoice_dueAmount(String amount) {
+    return 'Due: $amount';
+  }
+
+  @override
+  String get admin_classes_capacity => 'Capacity';
+
+  @override
+  String get admin_classes_statusCancelled => 'Cancelled';
+
+  @override
+  String get admin_classes_statusCompleted => 'Completed';
+
+  @override
+  String get admin_classes_nearlyFull => 'Nearly Full';
+
+  @override
+  String get adminAppBar_allBranches => 'All Branches';
+
+  @override
+  String get admin_branches_editBranchTitle => 'Edit Branch';
+
+  @override
+  String get admin_branches_addBranchTitle => 'Add Branch';
+
+  @override
+  String get admin_branches_updatedSuccess => 'Branch updated successfully';
+
+  @override
+  String get admin_branches_createdSuccess => 'Branch created successfully';
+
+  @override
+  String get admin_branches_sectionBasicInfo => 'Basic Info';
+
+  @override
+  String get admin_branches_nameHintAlt => 'e.g. Downtown Branch';
+
+  @override
+  String get admin_branches_cityLocationLabel => 'City / Location';
+
+  @override
+  String get admin_branches_cityHintAlt => 'e.g. Mumbai';
+
+  @override
+  String get admin_branches_enterValidEmail => 'Enter a valid email';
+
+  @override
+  String get admin_branches_openingTimeLabel => 'Opening Time';
+
+  @override
+  String get admin_branches_closingTimeLabel => 'Closing Time';
+
+  @override
+  String get admin_branches_statusSection => 'Status';
+
+  @override
+  String get admin_branches_open24Hours => 'Open 24 Hours';
+
+  @override
+  String get admin_branches_createBranchButton => 'Create Branch';
+
+  @override
+  String get admin_branches_selectOpeningTime => 'Please select an opening time';
+
+  @override
+  String get admin_branches_selectClosingTime => 'Please select a closing time';
+
+  @override
+  String get admin_branches_detailTitle => 'Branch Details';
+
+  @override
+  String get admin_branches_deletedSuccess => 'Branch deleted successfully';
+
+  @override
+  String get admin_branches_phoneLabel => 'Phone';
+
+  @override
+  String get admin_branches_emailLabel => 'Email';
+
+  @override
+  String get admin_branches_addressLabel => 'Address';
+
+  @override
+  String get admin_branches_trainers => 'Trainers';
+
+  @override
+  String get admin_branches_deleteTitle => 'Delete Branch';
+
+  @override
+  String admin_branches_deleteConfirmMessage(String name) {
+    return 'Delete $name? This cannot be undone.';
+  }
+
+  @override
+  String get admin_branches_deleteAction => 'Delete';
+
+  @override
+  String get admin_reception_removeTitle => 'Remove Staff';
+
+  @override
+  String admin_reception_removeMessage(String name) {
+    return 'Remove $name from reception staff?';
+  }
+
+  @override
+  String get admin_reception_addStaff => 'Add Staff';
+
+  @override
+  String get admin_reception_removeError => 'Failed to remove staff. Please try again.';
+
+  @override
+  String get admin_reception_loadError => 'Couldn\'t load reception staff';
+
+  @override
+  String get admin_reception_noStaffYet => 'No Reception Staff Yet';
+
+  @override
+  String get admin_reception_noStaffHint => 'Tap the + button to assign a member to the reception role.';
+
+  @override
+  String admin_reception_staffSince(String date) {
+    return 'Since $date';
+  }
+
+  @override
+  String get admin_reception_badge => 'RECEPTION';
+
+  @override
+  String admin_plans_percentOffLabel(String value) {
+    return '$value% off';
+  }
+
+  @override
+  String admin_plans_amountOffLabel(String value) {
+    return '₹$value off';
+  }
+
+  @override
+  String get trainingVideos_newCategoryTitle => 'New Category';
+
+  @override
+  String get trainingVideos_categoryNameHint => 'e.g. Cardio, Strength, Yoga...';
+
+  @override
+  String get trainingVideos_categoryNameLabel => 'Category name';
+
+  @override
+  String get trainingVideos_addCategoryAction => 'Add';
+
+  @override
+  String get trainingVideos_selectOrCreateCategoryError => 'Please select or create a category';
+
+  @override
+  String get trainingVideos_selectCategoryError => 'Please select a category';
+
+  @override
+  String get trainingVideos_durationMustBePositive => 'Duration must be greater than 0';
+
+  @override
+  String get trainingVideos_addedSuccess => 'Video added successfully';
+
+  @override
+  String get trainingVideos_updatedSuccess => 'Video updated successfully';
+
+  @override
+  String trainingVideos_categoryCreatedSuccess(String name) {
+    return 'Category \"$name\" created and selected';
+  }
+
+  @override
+  String trainingVideos_categoryCreateFailed(String message) {
+    return 'Failed: $message';
+  }
+
+  @override
+  String get trainingVideos_basicInfoSection => 'Basic Info';
+
+  @override
+  String get trainingVideos_titleLabel => 'Title *';
+
+  @override
+  String get trainingVideos_titleRequired => 'Title is required';
+
+  @override
+  String get trainingVideos_descriptionLabel => 'Description (optional)';
+
+  @override
+  String get trainingVideos_categorySection => 'Category';
+
+  @override
+  String get trainingVideos_categoryLabel => 'Category *';
+
+  @override
+  String get trainingVideos_selectCategoryHint => 'Select a category';
+
+  @override
+  String get trainingVideos_addNewCategoryTooltip => 'Add new category';
+
+  @override
+  String get trainingVideos_trainerSection => 'Trainer';
+
+  @override
+  String get trainingVideos_assignTrainerLabel => 'Assign to Trainer *';
+
+  @override
+  String get trainingVideos_selectTrainerHint => 'Select a trainer';
+
+  @override
+  String get trainingVideos_assignTrainerRequired => 'Please assign a trainer';
+
+  @override
+  String trainingVideos_postedByYou(String id) {
+    return 'Posted by you (Trainer ID: $id)';
+  }
+
+  @override
+  String get trainingVideos_videoSection => 'Video';
+
+  @override
+  String get trainingVideos_pickVideoButton => 'Pick Video From Phone';
+
+  @override
+  String get trainingVideos_videoUrlLabel => 'Video URL (YouTube / Vimeo)';
+
+  @override
+  String get trainingVideos_durationSection => 'Duration *';
+
+  @override
+  String get trainingVideos_readingDuration => 'Reading duration from video…';
+
+  @override
+  String get trainingVideos_autoFilledNotice => 'Auto-filled from video — you can edit below';
+
+  @override
+  String get trainingVideos_minutesLabel => 'Minutes';
+
+  @override
+  String get trainingVideos_secondsLabel => 'Seconds';
+
+  @override
+  String get trainingVideos_requiredField => 'Required';
+
+  @override
+  String get trainingVideos_invalidField => 'Invalid';
+
+  @override
+  String get trainingVideos_secondsRangeError => '0–59';
+
+  @override
+  String get trainingVideos_thumbnailSection => 'Thumbnail (optional)';
+
+  @override
+  String get trainingVideos_fromVideoOption => 'From Video';
+
+  @override
+  String get trainingVideos_customOption => 'Custom';
+
+  @override
+  String get trainingVideos_pickVideoFirstNotice => 'Pick a video above to auto-extract a thumbnail';
+
+  @override
+  String get trainingVideos_extractingThumbnail => 'Extracting thumbnail…';
+
+  @override
+  String get trainingVideos_reextractButton => 'Re-extract';
+
+  @override
+  String get trainingVideos_extractFailedNotice => 'Could not extract thumbnail';
+
+  @override
+  String get trainingVideos_pickFromGalleryButton => 'Pick from Gallery';
+
+  @override
+  String get trainingVideos_orEnterUrl => 'or enter URL';
+
+  @override
+  String get trainingVideos_thumbnailUrlLabel => 'Thumbnail URL';
+
+  @override
+  String get trainingVideos_publishedLabel => 'Published';
+
+  @override
+  String get trainingVideos_publishedSubtitle => 'Visible to members immediately';
+
+  @override
+  String get trainingVideos_addVideoButton => 'Add Video';
+
+  @override
+  String get trainingVideos_saveChangesButton => 'Save Changes';
+
+  @override
+  String get trainingVideos_editPageTitle => 'Edit Video';
+
+  @override
+  String get trainingVideos_addPageTitle => 'Add Training Video';
+
+  @override
+  String get trainingVideos_reassignTrainerLabel => 'Reassign Trainer (optional)';
+
+  @override
+  String get trainingVideos_keepCurrentTrainerHint => 'Keep current trainer';
+
+  @override
+  String get trainingVideos_replaceVideoButton => 'Replace Video File (optional)';
+
+  @override
+  String get trainingVideos_noAuthToken => 'No auth token found. Please log in again.';
+
+  @override
+  String get trainingVideos_deleteTitle => 'Delete Video';
+
+  @override
+  String trainingVideos_deleteConfirm(String title) {
+    return 'Delete \"$title\"? This cannot be undone.';
+  }
+
+  @override
+  String get trainingVideos_categoryFallback => 'Category';
+
+  @override
+  String get trainingVideos_playAction => 'Play';
+
+  @override
+  String get trainingVideos_editAction => 'Edit';
+
+  @override
+  String get trainingVideos_draftBadge => 'Draft';
+
+  @override
+  String get trainingVideos_noVideoUrl => 'No video URL available';
 }

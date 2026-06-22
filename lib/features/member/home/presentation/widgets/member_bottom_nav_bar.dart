@@ -56,6 +56,11 @@ class MemberBottomNavBar extends StatelessWidget {
           label: l10n.memberBottomNavClasses,
         ),
         BottomNavigationBarItem(
+          icon: const Icon(Icons.fitness_center_rounded),
+          activeIcon: const Icon(Icons.fitness_center_rounded),
+          label: l10n.memberBottomNavBookTrainer,
+        ),
+        BottomNavigationBarItem(
           icon: const Icon(Icons.person_outline_rounded),
           activeIcon: const Icon(Icons.person_rounded),
           label: l10n.memberBottomNavAccount,

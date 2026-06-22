@@ -17,6 +17,7 @@ abstract class AdminExpensesRemoteDatasource {
   Future<void> createExpense(CreateExpenseRequestModel request);
   Future<void> updateExpense(int expenseId, UpdateExpenseRequestModel request);
   Future<void> deleteExpense(int expenseId);
+  Future<ExpenseModel> confirmTrainerPaid(int expenseId);
 }
 
 // ── Implementation ────────────────────────────────────────────────────────────
@@ -123,6 +124,18 @@ class AdminExpensesRemoteDatasourceImpl implements AdminExpensesRemoteDatasource
       throw Exception(_extractMessage(response) ?? 'Cannot delete expense');
     }
     _checkStatus(response);
+  }
+
+  // ── POST /api/admin/expenses/{expenseId}/confirm-trainer-paid ──────────────
+  @override
+  Future<ExpenseModel> confirmTrainerPaid(int expenseId) async {
+    final headers = await _authHeaders();
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/admin/expenses/$expenseId/confirm-trainer-paid'),
+      headers: headers,
+    );
+    _checkStatus(response);
+    return ExpenseModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   // ── Private helpers ──────────────────────────────────────────────────────────

@@ -203,7 +203,8 @@ class MemberCardWidget extends StatelessWidget {
           icon: Icons.refresh,
           color: cs.tertiary,
           tooltip: AppLocalizations.of(context)!.admin_members_actionRenew,
-          onTap: () => _showComingSoon(context, 'Plan Renewal'),
+          onTap: () => _showComingSoon(
+              context, AppLocalizations.of(context)!.admin_members_renewFeatureName),
         ),
         // Block / Unblock — semantic colors
         _ActionIcon(
@@ -226,7 +227,8 @@ class MemberCardWidget extends StatelessWidget {
           icon:    Icons.edit_outlined,
           color:   cs.onSurface.withOpacity(0.4),
           tooltip: AppLocalizations.of(context)!.admin_members_actionEdit,
-          onTap:   () => _showComingSoon(context, 'Edit Member'),
+          onTap:   () => _showComingSoon(
+              context, AppLocalizations.of(context)!.admin_members_editFeatureName),
         ),
       ],
     );
@@ -239,7 +241,7 @@ class MemberCardWidget extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (context.mounted) {
-      AppToast.error(context, 'WhatsApp is not installed');
+      AppToast.error(context, AppLocalizations.of(context)!.admin_members_whatsAppNotInstalled);
     }
   }
 
@@ -310,7 +312,7 @@ class MemberCardWidget extends StatelessWidget {
   }
 
   void _showComingSoon(BuildContext context, String feature) {
-    AppToast.info(context, '$feature — coming soon');
+    AppToast.info(context, AppLocalizations.of(context)!.admin_members_featureComingSoon(feature));
   }
 }
 

@@ -32,4 +32,19 @@ class AdminInvoiceService {
         .map((e) => AdminInvoiceSummaryModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  // Collects more cash toward a partially-paid invoice's due balance. Once the
+  // invoice is fully paid the backend flips the owning membership/PT
+  // package/class booking back to fully paid automatically.
+  Future<AdminInvoiceModel> recordPayment(
+      int invoiceId, double amount, {String? notes}) async {
+    final response = await _dio.post(
+      _url('/api/admin/invoices/$invoiceId/record-payment'),
+      data: {
+        'amount': amount,
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+      },
+    );
+    return AdminInvoiceModel.fromJson(response.data as Map<String, dynamic>);
+  }
 }

@@ -76,7 +76,7 @@ class PtDialogHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 12, 18),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 12, 18),
       decoration: BoxDecoration(
         color: c.primary.withOpacity(0.06),
         border: Border(

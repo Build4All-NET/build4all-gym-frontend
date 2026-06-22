@@ -109,13 +109,36 @@ class SessionBookingsRequested extends AdminClassesEvent {
 
 // ── ConfirmBookingPaymentRequested ─────────────────────────────────────────
 // Dispatched when admin taps "Confirm Payment" on a cash-pending booking.
+// amountPaid null = full payment; a lower amount records a partial payment.
 class ConfirmBookingPaymentRequested extends AdminClassesEvent {
   final int bookingId;
   final int sessionId;
-  const ConfirmBookingPaymentRequested({required this.bookingId, required this.sessionId});
+  final double? amountPaid;
+  const ConfirmBookingPaymentRequested({
+    required this.bookingId,
+    required this.sessionId,
+    this.amountPaid,
+  });
 
   @override
-  List<Object?> get props => [bookingId, sessionId];
+  List<Object?> get props => [bookingId, sessionId, amountPaid];
+}
+
+// ── CollectBookingBalanceRequested ─────────────────────────────────────────
+// Dispatched when admin taps "Collect Balance" on a PARTIAL booking — settles
+// more of the invoice's due amount via the generic invoices endpoint.
+class CollectBookingBalanceRequested extends AdminClassesEvent {
+  final int invoiceId;
+  final int sessionId;
+  final double amount;
+  const CollectBookingBalanceRequested({
+    required this.invoiceId,
+    required this.sessionId,
+    required this.amount,
+  });
+
+  @override
+  List<Object?> get props => [invoiceId, sessionId, amount];
 }
 
 // ── RejectBookingRequested ─────────────────────────────────────────────────

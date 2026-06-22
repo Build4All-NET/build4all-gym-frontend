@@ -29,6 +29,7 @@ import '../features/admin/classes/domain/usecases/confirm_booking_payment_usecas
 import '../features/admin/classes/domain/usecases/reject_booking_usecase.dart';
 import '../features/admin/classes/domain/usecases/get_session_bookings_usecase.dart';
 import '../features/admin/classes/domain/usecases/reactivate_class_usecase.dart';
+import '../features/admin/classes/domain/usecases/record_invoice_payment_usecase.dart';
 import '../features/admin/classes/domain/usecases/update_class_usecase.dart';
 import '../features/admin/classes/domain/usecases/approve_cancellation_usecase.dart';
 import '../features/admin/classes/domain/usecases/decline_cancellation_usecase.dart';
@@ -54,6 +55,16 @@ import '../features/admin/expenses/data/services/admin_expenses_remote_service.d
 import '../features/admin/expenses/domain/usecases/admin_expenses_usecases.dart';
 import '../features/admin/expenses/presentation/bloc/admin_expenses/admin_expenses_bloc.dart';
 import '../features/admin/expenses/presentation/screens/admin_expenses_screen.dart';
+import '../features/admin/employees/data/repositories/admin_employees_repository_impl.dart';
+import '../features/admin/employees/data/services/admin_employees_remote_service.dart';
+import '../features/admin/employees/domain/usecases/admin_employees_usecases.dart';
+import '../features/admin/employees/presentation/bloc/admin_employees/admin_employees_bloc.dart';
+import '../features/admin/employees/presentation/screens/admin_employees_screen.dart';
+import '../features/admin/employees/data/repositories/employee_checkins_repository_impl.dart';
+import '../features/admin/employees/data/services/employee_checkins_remote_service.dart';
+import '../features/admin/employees/domain/usecases/employee_checkins_usecases.dart';
+import '../features/admin/employees/presentation/bloc/employee_checkins/employee_checkins_bloc.dart';
+import '../features/admin/employees/presentation/screens/employee_checkins_screen.dart';
 import '../features/admin/balance_sheet/presentation/cubit/balance_sheet_cubit.dart';
 import '../features/admin/balance_sheet/presentation/screens/admin_balance_sheet_screen.dart';
 import '../features/admin/reports/data/repositories/admin_reports_repository_impl.dart';
@@ -153,6 +164,12 @@ import '../features/admin/settings/data/services/admin_settings_remote_service.d
 import '../features/admin/settings/domain/usecases/get_admin_settings_usecase.dart';
 import '../features/admin/settings/presentation/cubit/admin_settings_cubit.dart';
 import '../features/admin/settings/presentation/screens/admin_settings_screen.dart';
+import '../features/admin/role_permissions/data/repositories/role_permissions_repository_impl.dart';
+import '../features/admin/role_permissions/data/services/role_permissions_remote_service.dart';
+import '../features/admin/role_permissions/domain/usecases/get_role_permissions_usecase.dart';
+import '../features/admin/role_permissions/domain/usecases/get_staff_accounts_usecase.dart';
+import '../features/admin/role_permissions/presentation/cubit/role_permissions_cubit.dart';
+import '../features/admin/role_permissions/presentation/screens/role_permissions_screen.dart';
 
 // ── Member Settings imports ──────────────────────────────────────────────────
 import '../features/member/settings/data/repositories/member_settings_repository_impl.dart';
@@ -175,7 +192,8 @@ import '../features/admin/membership_requests/presentation/bloc/admin_membership
 import '../features/admin/membership_requests/presentation/screens/admin_membership_requests_screen.dart';
 import '../features/admin/invoices/data/repositories/admin_invoice_repository_impl.dart';
 import '../features/admin/invoices/data/services/admin_invoice_service.dart';
-import '../features/admin/invoices/domain/usecases/admin_invoice_usecases.dart';
+import '../features/admin/invoices/domain/usecases/admin_invoice_usecases.dart' hide RecordInvoicePaymentUseCase;
+import '../features/admin/invoices/domain/usecases/admin_invoice_usecases.dart' as invoice_uc show RecordInvoicePaymentUseCase;
 import '../features/admin/invoices/presentation/bloc/admin_invoice_bloc.dart';
 import '../features/admin/invoices/presentation/bloc/admin_invoices_list_bloc.dart';
 import '../features/admin/invoices/presentation/screens/admin_invoice_screen.dart';
@@ -206,6 +224,9 @@ class AppRouter {
   static const String adminPlans      = '/admin/plans';
   static const String adminTrainers   = '/admin/trainers';
   static const String adminStaff      = '/admin/staff';
+  static const String adminEmployees  = '/admin/employees';
+  static const String adminEmployeeCheckins = '/admin/employee-checkins';
+  static const String adminStaffAccess = '/admin/staff-access';
   static const String adminAiAssistant = '/admin/ai_assistant';
   static const String adminBranches   = '/admin/branches';
 
@@ -448,10 +469,84 @@ class AppRouter {
                         remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
                       ),
                     ),
+                    confirmTrainerPaid: ConfirmTrainerPaidUseCase(
+                      repository: AdminExpensesRepositoryImpl(
+                        remoteDatasource: AdminExpensesRemoteDatasourceImpl(),
+                      ),
+                    ),
                   )..add(LoadAdminExpensesEvent()),
                 ),
               ],
               child: const AdminExpensesScreen(),
+            ),
+          ),
+        );
+
+    // ── Admin: Employees ───────────────────────────────────────────────────
+
+      case adminEmployees:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => AdminEmployeesBloc(
+                    getEmployees: GetEmployeesUseCase(
+                      repository: AdminEmployeesRepositoryImpl(
+                        remoteDatasource: AdminEmployeesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    getTypes: GetEmployeeTypesUseCase(
+                      repository: AdminEmployeesRepositoryImpl(
+                        remoteDatasource: AdminEmployeesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    deleteEmployee: DeleteEmployeeUseCase(
+                      repository: AdminEmployeesRepositoryImpl(
+                        remoteDatasource: AdminEmployeesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                    payEmployee: PayEmployeeUseCase(
+                      repository: AdminEmployeesRepositoryImpl(
+                        remoteDatasource: AdminEmployeesRemoteDatasourceImpl(),
+                      ),
+                    ),
+                  )..add(LoadAdminEmployeesEvent()),
+                ),
+              ],
+              child: const AdminEmployeesScreen(),
+            ),
+          ),
+        );
+
+    // ── Admin: Employee Check-Ins ───────────────────────────────────────────
+
+      case adminEmployeeCheckins:
+        final ecArgs = settings.arguments as Map<String, dynamic>?;
+        final ecBranchId = ecArgs?['branchId'] as int? ?? 1;
+
+        final ecRepo = EmployeeCheckinsRepositoryImpl(
+          remoteDatasource: EmployeeCheckinsRemoteDatasourceImpl(),
+        );
+
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => BranchCubit()..loadBranches()),
+                BlocProvider(
+                  create: (_) => EmployeeCheckinsBloc(
+                    branchId: ecBranchId,
+                    getTodayCheckins: GetTodayEmployeeCheckinsUseCase(repository: ecRepo),
+                    getBranchQr: GetBranchCheckinQrUseCase(repository: ecRepo),
+                    scanCheckin: ScanEmployeeCheckinUseCase(repository: ecRepo),
+                    manualCheckin: ManualCheckinUseCase(repository: ecRepo),
+                    manualCheckout: ManualCheckoutUseCase(repository: ecRepo),
+                  ),
+                ),
+              ],
+              child: const EmployeeCheckinsScreen(),
             ),
           ),
         );
@@ -669,7 +764,6 @@ class AppRouter {
                     getTodayCheckins: GetTodayCheckinsUseCase(ciRepo),
                     scanQrCheckin:    ScanQrCheckinUseCase(ciRepo),
                     checkOutMember:   CheckOutMemberUseCase(ciRepo),
-                    freezeMember:     FreezeMemberUseCase(ciRepo),
                     blockMember:      BlockMemberUseCase(ciRepo),
                   ),
                 ),
@@ -749,6 +843,7 @@ class AppRouter {
                     rejectBooking:          RejectBookingUseCase(classesRepo),
                     approveCancellation:    ApproveCancellationUseCase(classesRepo),
                     declineCancellation:    DeclineCancellationUseCase(classesRepo),
+                    recordInvoicePayment:   RecordInvoicePaymentUseCase(classesRepo),
                   )..add(ClassesStarted(DateTime.now())),
                 ),
               ],
@@ -837,6 +932,23 @@ class AppRouter {
            ),
        );
 
+      case adminStaffAccess:
+         final rolePermissionsRepo = RolePermissionsRepositoryImpl(RolePermissionsRemoteService());
+         return MaterialPageRoute(
+           builder: (_) => _withProfile(
+             BlocProvider(
+               create: (_) => RolePermissionsCubit(
+                 getPermissions: GetRolePermissionsUseCase(rolePermissionsRepo),
+                 savePermissions: SaveRolePermissionsUseCase(rolePermissionsRepo),
+                 getStaffAccounts: GetStaffAccountsUseCase(rolePermissionsRepo),
+                 getUserOverrides: GetUserOverridesUseCase(rolePermissionsRepo),
+                 saveUserOverrides: SaveUserOverridesUseCase(rolePermissionsRepo),
+               ),
+               child: const RolePermissionsScreen(),
+             ),
+           ),
+       );
+
     // ── Admin: Invoices list ───────────────────────────────────────────────
 
       case '/admin/invoices':
@@ -879,6 +991,7 @@ class AppRouter {
                 BlocProvider(
                   create: (_) => AdminInvoiceBloc(
                     getInvoice: GetInvoiceUseCase(invoiceRepo),
+                    recordInvoicePayment: invoice_uc.RecordInvoicePaymentUseCase(invoiceRepo),
                   ),
                 ),
               ],

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:build4allgym/l10n/app_localizations.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../data/services/member_pt_service.dart';
 import '../../domain/entities/pt_package_booking_response_entity.dart';
@@ -65,10 +67,13 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
       if (mounted) {
         setState(() {
           _methods = raw
-              .map((m) => _PaymentMethod(
-                    name: m['name'] as String? ?? '',
-                    displayName: m['displayName'] as String? ?? m['name'] as String? ?? '',
-                  ))
+              .map(
+                (m) => _PaymentMethod(
+                  name: m['name'] as String? ?? '',
+                  displayName:
+                      m['displayName'] as String? ?? m['name'] as String? ?? '',
+                ),
+              )
               .where((m) => m.name.isNotEmpty)
               .toList();
           if (_methods.isNotEmpty) _selectedMethod = _methods.first.name;
@@ -83,9 +88,9 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
   void _confirm(BuildContext context) {
     if (_selectedMethod == null) return;
     setState(() => _submitting = true);
-    context
-        .read<PtPackageBookingBloc>()
-        .add(PtPackagePaymentConfirmRequested(_selectedMethod!));
+    context.read<PtPackageBookingBloc>().add(
+      PtPackagePaymentConfirmRequested(_selectedMethod!),
+    );
   }
 
   @override
@@ -93,6 +98,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final l10n = AppLocalizations.of(context)!;
 
     return BlocListener<PtPackageBookingBloc, PtPackageBookingState>(
       listener: (ctx, state) async {
@@ -110,10 +116,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
           setState(() => _submitting = false);
           if (ctx.mounted) {
             ScaffoldMessenger.of(ctx).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: c.danger,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: c.danger),
             );
           }
         }
@@ -174,7 +177,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
                       child: Padding(
                         padding: const EdgeInsetsDirectional.only(end: 52.0),
                         child: Text(
-                          'تأكيد الحجز',
+                          l10n.ptPackageConfirmBooking,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: tokens.typography.headlineSmall.copyWith(
@@ -229,7 +232,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
                       const SizedBox(height: 20),
 
                       Text(
-                        'طريقة الدفع',
+                        l10n.memberInvoicesPaymentMethod,
                         style: tokens.typography.titleMedium.copyWith(
                           color: c.label,
                           fontWeight: FontWeight.w800,
@@ -238,26 +241,34 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
                       const SizedBox(height: 12),
 
                       if (_loadingMethods)
-                        Center(child: CircularProgressIndicator(color: c.primary))
+                        Center(
+                          child: CircularProgressIndicator(color: c.primary),
+                        )
                       else if (_methods.isEmpty)
                         Text(
-                          'لا توجد طرق دفع متاحة',
-                          style: tokens.typography.bodyMedium.copyWith(color: c.muted),
+                          l10n.paymentSheetNoMethodsAvailable,
+                          style: tokens.typography.bodyMedium.copyWith(
+                            color: c.muted,
+                          ),
                         )
                       else
-                        ..._methods.map((m) => _MethodTile(
-                              method: m,
-                              isSelected: _selectedMethod == m.name,
-                              tokens: tokens,
-                              onTap: () => setState(() => _selectedMethod = m.name),
-                            )),
+                        ..._methods.map(
+                          (m) => _MethodTile(
+                            method: m,
+                            isSelected: _selectedMethod == m.name,
+                            tokens: tokens,
+                            onTap: () =>
+                                setState(() => _selectedMethod = m.name),
+                          ),
+                        ),
 
                       const SizedBox(height: 24),
 
                       SizedBox(
                         height: 54,
                         child: ElevatedButton(
-                          onPressed: (_submitting ||
+                          onPressed:
+                              (_submitting ||
                                   _loadingMethods ||
                                   _selectedMethod == null)
                               ? null
@@ -281,7 +292,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
                                   ),
                                 )
                               : Text(
-                                  'تأكيد الحجز',
+                                  l10n.ptPackageConfirmBooking,
                                   style: tokens.typography.bodyMedium.copyWith(
                                     color: c.onPrimary,
                                     fontWeight: FontWeight.w900,
@@ -329,23 +340,30 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
 
       // Activate booking + generate sessions on backend.
       if (context.mounted) {
-        context
-            .read<PtPackageBookingBloc>()
-            .add(const PtPackagePaymentActivated());
+        context.read<PtPackageBookingBloc>().add(
+          const PtPackagePaymentActivated(),
+        );
       }
     } on StripeException catch (e) {
       if (context.mounted && e.error.code != FailureCode.Canceled) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.error.localizedMessage ?? 'Payment failed'),
-          backgroundColor: tokens.colors.danger,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.error.localizedMessage ??
+                  AppLocalizations.of(context)!.paymentSheetPaymentFailed,
+            ),
+            backgroundColor: tokens.colors.danger,
+          ),
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: tokens.colors.danger,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: tokens.colors.danger,
+          ),
+        );
       }
     }
   }
@@ -373,9 +391,9 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
         tokens: tokens,
         onDone: () {
           Navigator.of(ctx).pop();
-          context
-              .read<PtPackageBookingBloc>()
-              .add(const PtPackagePaymentActivated());
+          context.read<PtPackageBookingBloc>().add(
+            const PtPackagePaymentActivated(),
+          );
         },
         onRelaunch: () async {
           try {
@@ -500,6 +518,7 @@ class _ResultSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final isPending = booking.isPending;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
@@ -525,7 +544,9 @@ class _ResultSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            isPending ? 'في انتظار تأكيد الدفع' : 'تم الحجز بنجاح',
+            isPending
+                ? l10n.paymentSheetPendingConfirmationTitle
+                : l10n.bookingSuccessTitle,
             style: tokens.typography.headlineSmall.copyWith(
               color: c.label,
               fontWeight: FontWeight.w900,
@@ -534,8 +555,8 @@ class _ResultSheet extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             isPending
-                ? 'تم إرسال طلبك إلى الإدارة. سيتم تفعيل الحصص بعد تأكيد استلام الدفع.'
-                : 'تم تأكيد حجزك وسيتم توليد جميع الحصص تلقائياً.',
+                ? l10n.ptPackagePendingMessage
+                : l10n.ptPackageBookingSuccess,
             textAlign: TextAlign.center,
             style: tokens.typography.bodyMedium.copyWith(
               color: c.muted,
@@ -557,7 +578,7 @@ class _ResultSheet extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'حسناً',
+                l10n.paymentSheetOkButton,
                 style: tokens.typography.bodyMedium.copyWith(
                   color: c.onPrimary,
                   fontWeight: FontWeight.w900,
@@ -587,6 +608,7 @@ class _WaitingSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
@@ -600,11 +622,15 @@ class _WaitingSheet extends StatelessWidget {
               color: c.primary.withOpacity(0.10),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.open_in_browser_rounded, color: c.primary, size: 34),
+            child: Icon(
+              Icons.open_in_browser_rounded,
+              color: c.primary,
+              size: 34,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
-            'أكمل الدفع في المتصفح',
+            l10n.paymentSheetCompleteInBrowserTitle,
             style: tokens.typography.headlineSmall.copyWith(
               color: c.label,
               fontWeight: FontWeight.w900,
@@ -612,9 +638,12 @@ class _WaitingSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'تم فتح صفحة الدفع في المتصفح. أكمل عملية الدفع ثم ارجع هنا واضغط "تم".',
+            l10n.paymentSheetCompleteInBrowserMessage,
             textAlign: TextAlign.center,
-            style: tokens.typography.bodyMedium.copyWith(color: c.muted, height: 1.5),
+            style: tokens.typography.bodyMedium.copyWith(
+              color: c.muted,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -626,10 +655,12 @@ class _WaitingSheet extends StatelessWidget {
                 backgroundColor: c.primary,
                 foregroundColor: c.onPrimary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
-                'تم — التحقق من الدفع',
+                l10n.paymentSheetDoneVerifyPayment,
                 style: tokens.typography.bodyMedium.copyWith(
                   color: c.onPrimary,
                   fontWeight: FontWeight.w900,
@@ -641,7 +672,7 @@ class _WaitingSheet extends StatelessWidget {
           TextButton(
             onPressed: onRelaunch,
             child: Text(
-              'إعادة فتح صفحة الدفع',
+              l10n.paymentSheetReopenPaymentPage,
               style: tokens.typography.bodyMedium.copyWith(color: c.primary),
             ),
           ),

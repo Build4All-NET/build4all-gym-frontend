@@ -75,14 +75,14 @@ class QuickActionsWidget extends StatelessWidget {
                 onTap: () => AttendanceHistoryBottomSheet.show(
                   context,
                   userId:     member.userId,
-                  memberName: member.fullName ?? 'Member',
+                  memberName: member.fullName ?? l10n.admin_members_defaultMemberName,
                 ),
               ),
               _ActionButton(
                 icon:  Icons.refresh_rounded,
                 label: l10n.admin_members_actionRenew,
                 color: const Color(0xFFF97316),
-                onTap: () => _showComingSoon(context, 'Renew Plan'),
+                onTap: () => _showComingSoon(context, l10n.admin_members_renewFeatureName),
               ),
               _ActionButton(
                 icon:  member.isBlocked
@@ -108,7 +108,7 @@ class QuickActionsWidget extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else if (context.mounted) {
-      _showError(context, 'Could not open dialler');
+      _showError(context, AppLocalizations.of(context)!.admin_members_couldNotOpenDialler);
     }
   }
 
@@ -118,7 +118,7 @@ class QuickActionsWidget extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (context.mounted) {
-      _showError(context, 'WhatsApp is not installed');
+      _showError(context, AppLocalizations.of(context)!.admin_members_whatsAppNotInstalled);
     }
   }
 
@@ -127,7 +127,7 @@ class QuickActionsWidget extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else if (context.mounted) {
-      _showError(context, 'Could not open SMS app');
+      _showError(context, AppLocalizations.of(context)!.admin_members_couldNotOpenSms);
     }
   }
 
@@ -172,7 +172,7 @@ class QuickActionsWidget extends StatelessWidget {
   }
 
   void _showComingSoon(BuildContext context, String feature) {
-    AppToast.info(context, '$feature — coming soon');
+    AppToast.info(context, AppLocalizations.of(context)!.admin_members_featureComingSoon(feature));
   }
 
   void _showError(BuildContext context, String msg) {

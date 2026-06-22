@@ -434,12 +434,7 @@ class _MemberRow extends StatelessWidget {
                       width: 96,
                       child: ElevatedButton(
                         onPressed: () =>
-                            context.read<AdminClassesBloc>().add(
-                              ConfirmBookingPaymentRequested(
-                                bookingId: booking.bookingId,
-                                sessionId: sessionId,
-                              ),
-                            ),
+                            _showConfirmPaymentDialog(context, booking, sessionId),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: c.success,
                           foregroundColor: Colors.white,
@@ -460,7 +455,170 @@ class _MemberRow extends StatelessWidget {
                   ],
                 ),
               ],
+
+              // Collect Balance button (partially-paid bookings only)
+              if (booking.isPartiallyPaid && booking.invoiceId != null) ...[
+                const SizedBox(height: 6),
+                SizedBox(
+                  height: 30,
+                  child: OutlinedButton(
+                    onPressed: () =>
+                        _showCollectBalanceDialog(context, booking, sessionId),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: c.primary,
+                      side: BorderSide(color: c.primary),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.admin_classes_collectBalance,
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ],
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Confirm payment dialog ───────────────────────────────────────────────
+  // Pre-fills the amount with the class price (from the booking's invoice)
+  // so the admin can see how much is due. They can still type a lower
+  // amount to record a partial payment — the backend clamps anything above
+  // the invoice total.
+  void _showConfirmPaymentDialog(
+      BuildContext context, SessionBookingItemEntity booking, int sessionId) {
+    final l10n = AppLocalizations.of(context)!;
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final price = booking.price;
+    final amountCtrl = TextEditingController(
+      text: price != null ? price.toStringAsFixed(2) : '',
+    );
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.admin_classes_confirmPayment),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (price != null) ...[
+                Text(
+                  l10n.admin_classes_classPriceLabel('\$${price.toStringAsFixed(2)}'),
+                  style: TextStyle(
+                    color: tokens.colors.label,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+              Text(
+                l10n.trainer_partialPaymentHint,
+                style: TextStyle(color: tokens.colors.muted, fontSize: 13),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: amountCtrl,
+                autofocus: true,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: l10n.trainer_amountToCollectLabel,
+                  prefixText: '\$ ',
+                ),
+                validator: (v) {
+                  final amount = double.tryParse(v?.trim() ?? '');
+                  if (amount == null || amount <= 0) return l10n.trainer_invalidAmount;
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.general_cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              final amount = double.parse(amountCtrl.text.trim());
+              Navigator.pop(ctx);
+              context.read<AdminClassesBloc>().add(
+                    ConfirmBookingPaymentRequested(
+                      bookingId: booking.bookingId,
+                      sessionId: sessionId,
+                      amountPaid: amount,
+                    ),
+                  );
+            },
+            child: Text(l10n.admin_classes_confirmPayment),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Collect remaining balance dialog (PARTIAL bookings) ──────────────────
+  void _showCollectBalanceDialog(
+      BuildContext context, SessionBookingItemEntity booking, int sessionId) {
+    final l10n = AppLocalizations.of(context)!;
+    final amountCtrl = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.admin_classes_collectBalance),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: amountCtrl,
+            autofocus: true,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: l10n.trainer_amountToCollectLabel,
+              prefixText: '\$ ',
+            ),
+            validator: (v) {
+              final amount = double.tryParse(v?.trim() ?? '');
+              if (amount == null || amount <= 0) return l10n.trainer_invalidAmount;
+              return null;
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.general_cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              final amount = double.parse(amountCtrl.text.trim());
+              Navigator.pop(ctx);
+              context.read<AdminClassesBloc>().add(
+                    CollectBookingBalanceRequested(
+                      invoiceId: booking.invoiceId!,
+                      sessionId: sessionId,
+                      amount: amount,
+                    ),
+                  );
+            },
+            child: Text(l10n.admin_classes_collectBalance),
           ),
         ],
       ),
@@ -470,6 +628,8 @@ class _MemberRow extends StatelessWidget {
   Color _paymentChipBg(String method, String? status, dynamic c) {
     if (status?.toUpperCase() == 'PAID')
       return c.success.withValues(alpha: 0.12);
+    if (status?.toUpperCase() == 'PARTIAL')
+      return c.danger.withValues(alpha: 0.12);
     if (method.toUpperCase() == 'CASH')
       return Colors.orange.withValues(alpha: 0.12);
     if (method.toUpperCase() == 'STRIPE')
@@ -479,6 +639,7 @@ class _MemberRow extends StatelessWidget {
 
   Color _paymentChipText(String method, String? status, dynamic c) {
     if (status?.toUpperCase() == 'PAID') return c.success;
+    if (status?.toUpperCase() == 'PARTIAL') return c.danger;
     if (method.toUpperCase() == 'CASH') return Colors.orange.shade800;
     if (method.toUpperCase() == 'STRIPE') return Colors.indigo;
     return c.muted;
@@ -488,6 +649,7 @@ class _MemberRow extends StatelessWidget {
     final m = method.toUpperCase();
     final s = status?.toUpperCase() ?? '';
     if (s == 'PAID') return '$m · Paid';
+    if (s == 'PARTIAL') return '$m · Partial';
     if (s == 'PENDING' || s == 'UNPAID') return '$m · Pending';
     return m;
   }

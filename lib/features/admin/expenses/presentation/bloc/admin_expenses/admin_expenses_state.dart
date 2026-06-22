@@ -15,6 +15,8 @@ class AdminExpensesLoaded extends AdminExpensesState {
   final String? activeSearch;
   final bool isDeletingExpense;
   final int? deletingExpenseId; // shows spinner on specific card
+  final bool isConfirmingTrainerPaid;
+  final int? confirmingExpenseId; // shows spinner on specific card
 
   AdminExpensesLoaded({
     required this.stats,
@@ -25,6 +27,8 @@ class AdminExpensesLoaded extends AdminExpensesState {
     this.activeSearch,
     this.isDeletingExpense = false,
     this.deletingExpenseId,
+    this.isConfirmingTrainerPaid = false,
+    this.confirmingExpenseId,
   });
 
   AdminExpensesLoaded copyWith({
@@ -36,6 +40,8 @@ class AdminExpensesLoaded extends AdminExpensesState {
     String? activeSearch,
     bool? isDeletingExpense,
     int? deletingExpenseId,
+    bool? isConfirmingTrainerPaid,
+    int? confirmingExpenseId,
   }) {
     return AdminExpensesLoaded(
       stats: stats ?? this.stats,
@@ -46,6 +52,8 @@ class AdminExpensesLoaded extends AdminExpensesState {
       activeSearch: activeSearch ?? this.activeSearch,
       isDeletingExpense: isDeletingExpense ?? this.isDeletingExpense,
       deletingExpenseId: deletingExpenseId ?? this.deletingExpenseId,
+      isConfirmingTrainerPaid: isConfirmingTrainerPaid ?? this.isConfirmingTrainerPaid,
+      confirmingExpenseId: confirmingExpenseId ?? this.confirmingExpenseId,
     );
   }
 }
