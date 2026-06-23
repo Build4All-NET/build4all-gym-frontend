@@ -835,12 +835,41 @@ jobs:
 
           # Ensure assets/branding/logo.png exists (needed for flutter_launcher_icons + flutter_native_splash)
           pathlib.Path("assets").mkdir(parents=True, exist_ok=True)
-          if not pathlib.Path("assets/branding/logo.png").exists():
-              import base64 as _b64
-              stub_png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwADhQGAWjR9awAAAABJRU5ErkJggg=="
+
+          def _make_solid_png(path, size=512, rgba=(33, 150, 243, 255)):
+              # Generate a valid solid-color PNG at runtime (stdlib only) so CRC
+              # checksums are always correct. A hardcoded base64 stub previously
+              # used here had a corrupt IDAT CRC, which made flutter_launcher_icons
+              # fail with "ImageException: Invalid IDAT checksum".
+              import zlib, struct
+              def _chunk(ctype, data):
+                  body = ctype + data
+                  return struct.pack(">I", len(data)) + body + struct.pack(">I", zlib.crc32(body) & 0xFFFFFFFF)
+              ihdr = struct.pack(">IIBBBBB", size, size, 8, 6, 0, 0, 0)  # 8-bit RGBA
+              row = b"\x00" + bytes(rgba) * size  # filter byte 0 + pixels
+              idat = zlib.compress(row * size, 9)
+              png = (b"\x89PNG\r\n\x1a\n"
+                     + _chunk(b"IHDR", ihdr)
+                     + _chunk(b"IDAT", idat)
+                     + _chunk(b"IEND", b""))
+              pathlib.Path(path).write_bytes(png)
+
+          # Validate any downloaded logo actually decodes; otherwise fall back.
+          logo_ok = False
+          if pathlib.Path("assets/branding/logo.png").exists():
+              try:
+                  head = pathlib.Path("assets/branding/logo.png").read_bytes()[:4]
+                  # PNG (\x89PNG), JPEG (\xff\xd8), GIF (GIF8), WEBP (RIFF) signatures
+                  logo_ok = head[:4] == b"\x89PNG" or head[:2] == b"\xff\xd8" or head[:3] == b"GIF" or head[:4] == b"RIFF"
+              except Exception as e:
+                  print("⚠️ Could not read downloaded logo:", e)
+              if not logo_ok:
+                  print("⚠️ Downloaded logo is not a valid image; using fallback")
+
+          if not logo_ok:
               pathlib.Path("assets/branding").mkdir(parents=True, exist_ok=True)
-              pathlib.Path("assets/branding/logo.png").write_bytes(_b64.b64decode(stub_png))
-              print("⚠️ Created stub assets/branding/logo.png (no logo available)")
+              _make_solid_png("assets/branding/logo.png")
+              print("⚠️ Created fallback assets/branding/logo.png (no valid logo available)")
           if pathlib.Path("assets/branding/logo.png").exists():
               shutil.copyfile("assets/branding/logo.png", "assets/app_icon.png")
               print("✅ Copied logo to assets/app_icon.png")
