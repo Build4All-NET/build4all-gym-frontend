@@ -573,7 +573,7 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
 
     if (state is MemberProfileEditCodeResent) {
-      _showSnack(context, state.message);
+      _showSnack(context, l10n.otp_codeSentAgain);
       return;
     }
   }
