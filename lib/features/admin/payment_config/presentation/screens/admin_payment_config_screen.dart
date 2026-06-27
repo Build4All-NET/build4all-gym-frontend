@@ -312,7 +312,7 @@ class _MethodCard extends StatelessWidget {
                 else
                   Switch(
                   value: method.tenantEnabled,
-                  activeThumbColor: c.primary,
+                  activeColor: c.primary,
                   activeTrackColor: c.primary.withValues(alpha: 0.45),
                   onChanged: (value) => _toggle(context, method, value),
                 ),
