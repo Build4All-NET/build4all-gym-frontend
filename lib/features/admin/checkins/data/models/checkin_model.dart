@@ -30,6 +30,8 @@ class CheckinModel {
   final String status;
   final String phone;
   final String? entryType;
+  final int?    durationMinutes;
+  final int     visitCount;
 
   const CheckinModel({
     required this.checkinId,
@@ -40,32 +42,38 @@ class CheckinModel {
     required this.status,
     required this.phone,
     this.entryType,
+    this.durationMinutes,
+    this.visitCount = 0,
   });
 
   factory CheckinModel.fromJson(Map<String, dynamic> json) {
     return CheckinModel(
-      checkinId:      (json['checkinId'] as num).toInt(),
-      userId:         (json['userId']    as num).toInt(),
-      fullName:       json['fullName']       as String? ?? '',
-      avatarInitials: json['avatarInitials'] as String? ?? '?',
-      checkinTime:    json['checkinTime']    as String? ?? '',
-      status:         json['status']         as String? ?? 'ACTIVE',
-      phone:          json['phone']          as String? ?? '',
-      entryType:      json['entryType']      as String?,
+      checkinId:       (json['checkinId'] as num).toInt(),
+      userId:          (json['userId']    as num).toInt(),
+      fullName:        json['fullName']       as String? ?? '',
+      avatarInitials:  json['avatarInitials'] as String? ?? '?',
+      checkinTime:     json['checkinTime']    as String? ?? '',
+      status:          json['status']         as String? ?? 'ACTIVE',
+      phone:           json['phone']          as String? ?? '',
+      entryType:       json['entryType']      as String?,
+      durationMinutes: (json['durationMinutes'] as num?)?.toInt(),
+      visitCount:      (json['visitCount']      as num?)?.toInt() ?? 0,
     );
   }
 
   /// Converts this model to the pure domain entity the BLoC works with.
   Checkin toEntity() {
     return Checkin(
-      checkinId:      checkinId,
-      userId:         userId,
-      fullName:       fullName,
-      avatarInitials: avatarInitials,
-      checkinTime:    checkinTime,
-      status:         status,
-      phone:          phone,
-      entryType:      entryType,
+      checkinId:       checkinId,
+      userId:          userId,
+      fullName:        fullName,
+      avatarInitials:  avatarInitials,
+      checkinTime:     checkinTime,
+      status:          status,
+      phone:           phone,
+      entryType:       entryType,
+      durationMinutes: durationMinutes,
+      visitCount:      visitCount,
     );
   }
 }

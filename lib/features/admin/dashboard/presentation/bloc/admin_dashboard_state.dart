@@ -128,17 +128,21 @@ class AdminDashboardLoaded extends AdminDashboardState {
   final String? revenueStartDate;
   final String? revenueEndDate;
 
+  /// null = all branches
+  final int? branchId;
+
   const AdminDashboardLoaded({
     required this.data,
     required this.period,
     this.revenuePeriod = 'this_month',
     this.revenueStartDate,
     this.revenueEndDate,
+    this.branchId,
   });
 
   @override
   List<Object?> get props =>
-      [data, period, revenuePeriod, revenueStartDate, revenueEndDate];
+      [data, period, revenuePeriod, revenueStartDate, revenueEndDate, branchId];
 }
 
 /*
@@ -177,6 +181,7 @@ class AdminDashboardError extends AdminDashboardState {
   final String revenuePeriod;
   final String? revenueStartDate;
   final String? revenueEndDate;
+  final int? branchId;
 
   const AdminDashboardError({
     required this.message,
@@ -184,9 +189,10 @@ class AdminDashboardError extends AdminDashboardState {
     this.revenuePeriod = 'this_month',
     this.revenueStartDate,
     this.revenueEndDate,
+    this.branchId,
   });
 
   @override
   List<Object?> get props =>
-      [message, period, revenuePeriod, revenueStartDate, revenueEndDate];
+      [message, period, revenuePeriod, revenueStartDate, revenueEndDate, branchId];
 }

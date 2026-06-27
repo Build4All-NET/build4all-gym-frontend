@@ -13,6 +13,7 @@ abstract class AdminDashboardRemoteDatasource {
     String revenuePeriod = 'this_month',
     String? revenueStartDate,
     String? revenueEndDate,
+    int? branchId,
   });
 }
 
@@ -29,6 +30,7 @@ class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasour
     String revenuePeriod = 'this_month',
     String? revenueStartDate,
     String? revenueEndDate,
+    int? branchId,
   }) async {
     final token = await _tokenStore.getToken(); // now reads 'admin_token' key ✅
 
@@ -42,6 +44,7 @@ class AdminDashboardRemoteDatasourceImpl implements AdminDashboardRemoteDatasour
       'revenuePeriod': revenuePeriod,
       if (revenueStartDate != null) 'startDate': revenueStartDate,
       if (revenueEndDate != null) 'endDate': revenueEndDate,
+      if (branchId != null) 'branchId': branchId.toString(),
     });
 
     try {

@@ -19,6 +19,7 @@ class TrainerDetailModel {
 
   final List<PtPackageModel> packages;
   final List<String> availableDays;
+  final bool hasActivePtPackage;
 
   const TrainerDetailModel({
     required this.id,
@@ -36,6 +37,7 @@ class TrainerDetailModel {
     this.branchName,
     required this.packages,
     this.availableDays = const [],
+    this.hasActivePtPackage = false,
   });
 
   factory TrainerDetailModel.fromJson(Map<String, dynamic> json) {
@@ -78,6 +80,7 @@ class TrainerDetailModel {
           .toList()
           : const [],
       availableDays: List<String>.from(json['availableDays'] ?? []),
+      hasActivePtPackage: json['hasActivePtPackage'] as bool? ?? false,
     );
   }
 
@@ -98,6 +101,7 @@ class TrainerDetailModel {
       'branchName': branchName,
       'packages': packages.map((ptPackage) => ptPackage.toJson()).toList(),
       'availableDays': availableDays,
+      'hasActivePtPackage': hasActivePtPackage,
     };
   }
 
@@ -118,6 +122,7 @@ class TrainerDetailModel {
       branchName: branchName,
       packages: packages.map((ptPackage) => ptPackage.toEntity()).toList(),
       availableDays: availableDays,
+      hasActivePtPackage: hasActivePtPackage,
     );
   }
 }

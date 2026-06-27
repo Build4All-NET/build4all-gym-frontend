@@ -9,6 +9,7 @@
 //   - _submit() includes `isActive` in the body for both create and edit.
 // =============================================================================
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -248,6 +249,7 @@ class _ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Card(
       color: tokens.colors.surface,
@@ -324,7 +326,7 @@ class _ServiceCard extends StatelessWidget {
                 const SizedBox(width: 16),
                 Icon(Icons.attach_money,
                     size: 14, color: tokens.colors.muted),
-                Text('\$${service.price.toStringAsFixed(2)}',
+                Text('$symbol${service.price.toStringAsFixed(2)}',
                     style: TextStyle(
                         color: tokens.colors.body, fontSize: 13)),
                 const SizedBox(width: 16),

@@ -7,6 +7,7 @@
 //   Admin mode  (isAdmin=true):  a trainer must be picked from the dropdown.
 // =============================================================================
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -191,6 +192,7 @@ class _TrainerIncomeScreenState extends State<TrainerIncomeScreen> {
   }
 
   Widget _summaryCard(dynamic c, AppLocalizations l10n, TrainerIncomeSummaryEntity summary) {
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -222,7 +224,7 @@ class _TrainerIncomeScreenState extends State<TrainerIncomeScreen> {
                 Text(l10n.trainer_incomeTotalEarning,
                     style: TextStyle(color: c.onPrimary.withOpacity(0.85), fontSize: 12.5)),
                 const SizedBox(height: 4),
-                Text('\$${summary.totalEarning.toStringAsFixed(2)}',
+                Text('$symbol${summary.totalEarning.toStringAsFixed(2)}',
                     style: TextStyle(
                         color: c.onPrimary, fontSize: 22, fontWeight: FontWeight.w700)),
               ],
@@ -254,6 +256,7 @@ class _IncomeRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Card(
       color: c.surface,
@@ -271,7 +274,7 @@ class _IncomeRow extends StatelessWidget {
                       style: TextStyle(
                           color: c.label, fontWeight: FontWeight.w600, fontSize: 14.5)),
                 ),
-                Text('+\$${session.trainerEarning.toStringAsFixed(2)}',
+                Text('+$symbol${session.trainerEarning.toStringAsFixed(2)}',
                     style: TextStyle(
                         color: c.success, fontWeight: FontWeight.w700, fontSize: 14.5)),
               ],

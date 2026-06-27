@@ -2,18 +2,12 @@
 // lib/features/admin/settings/presentation/screens/admin_settings_screen.dart
 // ─────────────────────────────────────────────────────────────────────────────
 
-import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/localization/locale_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
-import '../../../../../../common/settings/cubits/appearance_settings_cubit.dart';
-import '../../../../../../common/settings/widgets/appearance_section_widget.dart';
-
-import '../../../../../l10n/app_localizations.dart';
-
 import '../../../../../../common/settings/widgets/language_section_widget.dart';
 import '../../../../../../common/settings/widgets/settings_version_footer.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';

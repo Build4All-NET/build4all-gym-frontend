@@ -383,15 +383,15 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
               ],
 
               if (!_useExistingStaff && !_isLinkedEmployee) ...[
-                FormSectionHeader(title: 'Employee Details', icon: Icons.info_outline_rounded, c: c),
-                FormFieldLabel('Full Name *', c),
+                FormSectionHeader(title: l10n.admin_employees_sectionEmployeeDetails, icon: Icons.info_outline_rounded, c: c),
+                FormFieldLabel(l10n.admin_employees_fullNameLabel, c),
                 TextFormField(
                   controller: _fullNameController,
                   style: TextStyle(color: c.label),
-                  decoration: formInputDecoration(hint: 'e.g. John Doe', c: c),
+                  decoration: formInputDecoration(hint: l10n.admin_employees_fullNameHint, c: c),
                   validator: (v) {
                     if (!_useExistingStaff && (v == null || v.trim().isEmpty)) {
-                      return 'Required';
+                      return l10n.admin_employees_required;
                     }
                     return null;
                   },
@@ -403,12 +403,12 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FormFieldLabel('Phone', c),
+                          FormFieldLabel(l10n.admin_employees_phoneLabel, c),
                           TextFormField(
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             style: TextStyle(color: c.label),
-                            decoration: formInputDecoration(hint: 'Optional', c: c),
+                            decoration: formInputDecoration(hint: l10n.admin_employees_optional, c: c),
                           ),
                         ],
                       ),
@@ -418,12 +418,12 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FormFieldLabel('Email', c),
+                          FormFieldLabel(l10n.admin_employees_emailLabel, c),
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             style: TextStyle(color: c.label),
-                            decoration: formInputDecoration(hint: 'Optional', c: c),
+                            decoration: formInputDecoration(hint: l10n.admin_employees_optional, c: c),
                           ),
                         ],
                       ),
@@ -431,7 +431,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                FormFieldLabel('Employee Type *', c),
+                FormFieldLabel(l10n.admin_employees_employeeTypeLabel, c),
                 if (_isCustomType) ...[
                   Row(
                     children: [
@@ -440,9 +440,9 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                           controller: _customTypeController,
                           textCapitalization: TextCapitalization.words,
                           style: TextStyle(color: c.label),
-                          decoration: formInputDecoration(hint: 'e.g. Cleaner', c: c),
+                          decoration: formInputDecoration(hint: l10n.admin_employees_employeeTypeHint, c: c),
                           validator: (v) => _isCustomType && (v == null || v.trim().isEmpty)
-                              ? 'Required'
+                              ? l10n.admin_employees_required
                               : null,
                         ),
                       ),
@@ -470,7 +470,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                 ] else ...[
                   DropdownButtonFormField<String>(
                     value: _selectedType,
-                    decoration: formInputDecoration(hint: 'Select employee type', c: c),
+                    decoration: formInputDecoration(hint: l10n.admin_employees_selectEmployeeType, c: c),
                     items: [
                       ...widget.availableTypes.map((t) =>
                           DropdownMenuItem(value: t, child: Text(formatEmployeeType(t)))),
@@ -498,27 +498,27 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                       }
                     },
                     validator: (v) =>
-                        !_isCustomType && !_useExistingStaff && v == null ? 'Required' : null,
+                        !_isCustomType && !_useExistingStaff && v == null ? l10n.admin_employees_required : null,
                   ),
                 ],
               ],
 
-              FormSectionHeader(title: 'Pay', icon: Icons.payments_outlined, c: c),
-              FormFieldLabel('Salary Amount *', c),
+              FormSectionHeader(title: l10n.admin_employees_sectionPay, icon: Icons.payments_outlined, c: c),
+              FormFieldLabel(l10n.admin_employees_salaryLabel, c),
               TextFormField(
                 controller: _salaryController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 style: TextStyle(color: c.label),
                 decoration: formInputDecoration(hint: '0.00', c: c, prefixIcon: Icons.attach_money_rounded),
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Required';
+                  if (v == null || v.trim().isEmpty) return l10n.admin_employees_required;
                   final parsed = double.tryParse(v.trim());
-                  if (parsed == null || parsed <= 0) return 'Invalid amount';
+                  if (parsed == null || parsed <= 0) return l10n.admin_employees_invalidAmount;
                   return null;
                 },
               ),
               const SizedBox(height: 12),
-              FormFieldLabel('Pay Frequency *', c),
+              FormFieldLabel(l10n.admin_employees_payFrequencyLabel, c),
               Row(
                 children: kEmployeePayFrequencies.map((freq) {
                   return Expanded(
@@ -535,7 +535,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                 }).toList(),
               ),
               const SizedBox(height: 12),
-              FormFieldLabel('Branch *', c),
+              FormFieldLabel(l10n.admin_employees_branchLabel, c),
               BlocBuilder<BranchCubit, BranchState>(
                 builder: (context, state) {
                   if (state is BranchLoaded) {
@@ -545,12 +545,12 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
 
                     return DropdownButtonFormField<int>(
                       value: hasSelected ? _selectedBranchId : null,
-                      decoration: formInputDecoration(hint: 'Select branch', c: c),
+                      decoration: formInputDecoration(hint: l10n.admin_employees_selectBranch, c: c),
                       items: branches
                           .map((b) => DropdownMenuItem<int>(value: b.id, child: Text(b.name)))
                           .toList(),
                       onChanged: (v) => setState(() => _selectedBranchId = v),
-                      validator: (v) => v == null ? 'Required' : null,
+                      validator: (v) => v == null ? l10n.admin_employees_required : null,
                     );
                   }
                   if (state is BranchError) {
@@ -567,10 +567,10 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                 },
               ),
               const SizedBox(height: 12),
-              FormFieldLabel('Hire Date', c),
+              FormFieldLabel(l10n.admin_employees_hireDateLabel, c),
               FormPickerField(
                 icon: Icons.calendar_today_outlined,
-                label: _hireDate == null ? 'Optional' : DateFormat('dd MMM yyyy').format(_hireDate!),
+                label: _hireDate == null ? l10n.admin_employees_optional : DateFormat('dd MMM yyyy').format(_hireDate!),
                 hasValue: _hireDate != null,
                 onTap: _pickHireDate,
                 onClear: _hireDate == null ? null : () => setState(() => _hireDate = null),
@@ -579,12 +579,12 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
 
               if (_isEditMode) ...[
                 const SizedBox(height: 12),
-                FormFieldLabel('Status', c),
+                FormFieldLabel(l10n.admin_employees_statusLabel, c),
                 Row(
                   children: [
                     Expanded(
                       child: FormToggleChip(
-                        label: 'Active',
+                        label: l10n.admin_employees_statusActive,
                         selected: _status == 'active',
                         c: c,
                         onTap: () => setState(() => _status = 'active'),
@@ -593,7 +593,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: FormToggleChip(
-                        label: 'Inactive',
+                        label: l10n.admin_employees_inactive,
                         selected: _status == 'inactive',
                         c: c,
                         onTap: () => setState(() => _status = 'inactive'),
@@ -604,12 +604,12 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
               ],
 
               const SizedBox(height: 12),
-              FormFieldLabel('Notes', c),
+              FormFieldLabel(l10n.admin_employees_notesLabel, c),
               TextFormField(
                 controller: _notesController,
                 maxLines: 2,
                 style: TextStyle(color: c.label),
-                decoration: formInputDecoration(hint: 'Optional notes', c: c),
+                decoration: formInputDecoration(hint: l10n.admin_employees_optionalNotes, c: c),
               ),
 
               if (_errorMessage != null) ...[
@@ -626,7 +626,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
 
               const SizedBox(height: 24),
               FormPrimaryButton(
-                label: _isEditMode ? 'Save Changes' : 'Add Employee',
+                label: _isEditMode ? l10n.admin_employees_saveChanges : l10n.admin_employees_addEmployee,
                 background: c.primary,
                 foreground: c.onPrimary,
                 loading: _isSubmitting,

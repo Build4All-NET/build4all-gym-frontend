@@ -1,14 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../config/env.dart';
 import '../runtime/runtime_config_service.dart';
 import 'remote_theme_dto.dart';
 import 'app_theme_tokens.dart';
 import 'app_theme_builder.dart';
-// shared_preferences removed — theme is always light;
 
 class ThemeState {
   final ThemeData themeData;
@@ -57,6 +56,8 @@ class ThemeState {
 class ThemeCubit extends Cubit<ThemeState> {
   final RuntimeConfigService _runtimeService;
 
+  static const _themeModeKey = 'theme_mode';
+
   ThemeCubit({RuntimeConfigService? runtimeService})
       : _runtimeService = runtimeService ?? RuntimeConfigService(Dio()),
         super(ThemeState.initial()) {
@@ -64,19 +65,28 @@ class ThemeCubit extends Cubit<ThemeState> {
   }
 
   Future<void> loadTheme() async {
+    // Load persisted theme mode from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final savedModeStr = prefs.getString(_themeModeKey);
+    final savedMode = savedModeStr == 'dark'
+        ? ThemeMode.dark
+        : savedModeStr == 'system'
+            ? ThemeMode.system
+            : ThemeMode.light;
+
     // ── Apply the visual theme from env or runtime ────────────────────────────
     final envB64 = Env.themeJsonB64.trim();
     if (envB64.isNotEmpty) {
       _applyThemeFromB64(envB64, source: 'ENV');
-      emit(state.copyWith(isLoaded: true));
-      return;  // safe to return now — ThemeMode is already loaded above
+      emit(state.copyWith(isLoaded: true, selectedThemeMode: savedMode));
+      return;
     }
 
     try {
       final apiBaseUrl = Env.apiBaseUrl.trim();
       final linkId = Env.ownerProjectLinkId.trim();
       if (apiBaseUrl.isEmpty || linkId.isEmpty) {
-        emit(state.copyWith(isLoaded: true));
+        emit(state.copyWith(isLoaded: true, selectedThemeMode: savedMode));
         return;
       }
       final cfg = await _runtimeService.fetchByLinkId(
@@ -87,10 +97,10 @@ class ThemeCubit extends Cubit<ThemeState> {
       if (runtimeB64.isNotEmpty) {
         _applyThemeFromB64(runtimeB64, source: 'RUNTIME');
       }
-      emit(state.copyWith(isLoaded: true));
+      emit(state.copyWith(isLoaded: true, selectedThemeMode: savedMode));
     } catch (e) {
       print('Theme runtime load failed: $e');
-      emit(state.copyWith(isLoaded: true));
+      emit(state.copyWith(isLoaded: true, selectedThemeMode: savedMode));
     }
   }
 
@@ -114,7 +124,21 @@ class ThemeCubit extends Cubit<ThemeState> {
       print('Theme apply failed ($source): $e');
     }
   }
-  void setThemeMode(ThemeMode mode) =>
-      emit(state.copyWith(selectedThemeMode: ThemeMode.light));
+  void setThemeMode(ThemeMode mode) {
+    emit(state.copyWith(selectedThemeMode: mode));
+    SharedPreferences.getInstance().then(
+      (prefs) => prefs.setString(_themeModeKey, _modeToString(mode)),
+    );
+  }
 
+  String _modeToString(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.dark:
+        return 'dark';
+      case ThemeMode.system:
+        return 'system';
+      default:
+        return 'light';
+    }
+  }
 }

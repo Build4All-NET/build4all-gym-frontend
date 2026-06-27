@@ -1123,6 +1123,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ptTrainingVideosPipUnavailable => 'الصورة داخل الصورة غير متاحة على هذا الجهاز.';
 
   @override
+  String get ptVideosLockedTitle => 'للمشتركين فقط';
+
+  @override
+  String get ptVideosLockedSubtitle => 'اشترك في باقة تدريب مع هذا المدرب لفتح الفيديوهات التدريبية.';
+
+  @override
   String get ptTrainerDetailsNotFound => 'لم يتم العثور على تفاصيل المدرب.';
 
   @override
@@ -1626,6 +1632,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkins_scannerTitle => 'مسح رمز العضو';
 
   @override
+  String get checkins_visits => 'الزيارات';
+
+  @override
+  String checkins_durationMinutes(Object minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String get checkins_filterByDate => 'تصفية بالتاريخ';
+
+  @override
+  String get checkins_clearDateFilter => 'الرجوع لليوم';
+
+  @override
+  String get checkins_allBranchesScanBlocked => 'اختر فرعًا محددًا لمسح رموز QR.';
+
+  @override
   String get sessionDetailBookingClosed => 'انتهى وقت الحجز';
 
   @override
@@ -1832,6 +1855,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberInvoicesRefundStatus => 'طلب الاسترجاع';
+
+  @override
+  String get memberInvoicesRefundDeadline => 'الاسترجاع حتى';
+
+  @override
+  String get memberInvoicesRefundedAmount => 'المسترجع';
+
+  @override
+  String get memberInvoicesDeductedAmount => 'المخصوم';
 
   @override
   String get memberInvoicesDate => 'التاريخ';
@@ -2973,6 +3005,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_settings_allowPtBookingWithoutMembershipDesc => 'يمكن للأعضاء حجز جلسات التدريب الشخصي بدون خطة عضوية نشطة';
+
+  @override
+  String get admin_settings_refundPolicy => 'سياسة الاسترجاع';
+
+  @override
+  String get admin_settings_refundPolicyDesc => 'تحديد نافذة زمنية لأهلية الاسترجاع لكل نوع شراء';
+
+  @override
+  String get admin_settings_planRefundWindow => 'نافذة استرجاع الخطة (ساعات)';
+
+  @override
+  String get admin_settings_planRefundWindowDesc => 'اتركه فارغاً لعدم التحديد · أدخل 0 لتعطيل استرجاع الخطط';
+
+  @override
+  String get admin_settings_classRefundWindow => 'نافذة استرجاع حجز الدرس (ساعات)';
+
+  @override
+  String get admin_settings_classRefundWindowDesc => 'اتركه فارغاً لعدم التحديد · أدخل 0 لتعطيل استرجاع الدروس';
+
+  @override
+  String get admin_settings_ptPackageRefundWindow => 'نافذة استرجاع باقة التدريب الشخصي (ساعات)';
+
+  @override
+  String get admin_settings_ptPackageRefundWindowDesc => 'اتركه فارغاً لعدم التحديد · أدخل 0 لتعطيل استرجاع الباقات';
 
   @override
   String get admin_settings_dangerTitle => 'المنطقة الخطرة';
@@ -4919,6 +4975,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_employees_checkIn => 'حضور';
 
   @override
+  String get admin_employees_checkedInNow => 'الحاضرون الآن';
+
+  @override
+  String get admin_employees_totalStaff => 'إجمالي الموظفين';
+
+  @override
+  String get admin_employees_manual => 'يدوي';
+
+  @override
   String get admin_employees_pleaseSelectBranch => 'يرجى اختيار فرع';
 
   @override
@@ -4967,6 +5032,66 @@ class AppLocalizationsAr extends AppLocalizations {
   String admin_employees_identityManagedNote(String name, String type) {
     return '$name ($type) — يتم إدارة الهوية عبر حساب التطبيق.';
   }
+
+  @override
+  String get admin_employees_sectionEmployeeDetails => 'تفاصيل الموظف';
+
+  @override
+  String get admin_employees_fullNameLabel => 'الاسم الكامل *';
+
+  @override
+  String get admin_employees_fullNameHint => 'مثال: محمد أحمد';
+
+  @override
+  String get admin_employees_phoneLabel => 'الهاتف';
+
+  @override
+  String get admin_employees_emailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get admin_employees_optional => 'اختياري';
+
+  @override
+  String get admin_employees_employeeTypeLabel => 'نوع الموظف *';
+
+  @override
+  String get admin_employees_employeeTypeHint => 'مثال: عامل نظافة';
+
+  @override
+  String get admin_employees_selectEmployeeType => 'اختر نوع الموظف';
+
+  @override
+  String get admin_employees_sectionPay => 'الراتب';
+
+  @override
+  String get admin_employees_salaryLabel => 'قيمة الراتب *';
+
+  @override
+  String get admin_employees_payFrequencyLabel => 'دورية الدفع *';
+
+  @override
+  String get admin_employees_branchLabel => 'الفرع *';
+
+  @override
+  String get admin_employees_selectBranch => 'اختر الفرع';
+
+  @override
+  String get admin_employees_hireDateLabel => 'تاريخ التوظيف';
+
+  @override
+  String get admin_employees_statusLabel => 'الحالة';
+
+  @override
+  String get admin_employees_statusActive => 'نشط';
+
+  @override
+  String get admin_employees_notesLabel => 'ملاحظات';
+
+  @override
+  String get admin_employees_optionalNotes => 'ملاحظات اختيارية';
+
+  @override
+  String get admin_employees_saveChanges => 'حفظ التغييرات';
 
   @override
   String admin_dashboard_growthPercent(String value) {
@@ -5068,6 +5193,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_payments_testingEllipsis => 'جارٍ الاختبار…';
+
+  @override
+  String admin_payments_configureFirst(String name) => 'قم بتهيئة $name قبل تفعيله.';
 
   @override
   String get admin_invoice_title => 'فاتورة';

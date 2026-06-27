@@ -143,34 +143,42 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
     _markDirty();
   }
 
+  void updatePlanRefundWindow(int? hours) {
+    final current = state.businessRules ?? SettingsBusinessRulesEntity.defaults();
+    emit(state.copyWith(
+      businessRules: current.copyWith(planRefundWindowHours: hours),
+    ));
+    _markDirty();
+  }
+
+  void updateClassRefundWindow(int? hours) {
+    final current = state.businessRules ?? SettingsBusinessRulesEntity.defaults();
+    emit(state.copyWith(
+      businessRules: current.copyWith(classRefundWindowHours: hours),
+    ));
+    _markDirty();
+  }
+
+  void updatePtPackageRefundWindow(int? hours) {
+    final current = state.businessRules ?? SettingsBusinessRulesEntity.defaults();
+    emit(state.copyWith(
+      businessRules: current.copyWith(ptPackageRefundWindowHours: hours),
+    ));
+    _markDirty();
+  }
+
   // ── Save all settings ───────────────────────────────────────────────────────
 
   /// Persists ALL dirty settings.
-  /// Called when the user taps the sticky "Save Changes" button.
-  ///
-  /// Operations:
-  ///   1. PUT /api/admin/settings  (business rules)
-  ///   2. Write biometric flag to FlutterSecureStorage
-  ///   3. ThemeCubit.setThemeMode() and LocaleCubit.setLocale() are called
-  ///      by the SCREEN (not here) after this future resolves, because
-  ///      ThemeCubit and LocaleCubit live at the app root and the cubit
-  ///      should not depend on them directly.
-  ///
-  /// Returns true on success, false on failure (screen shows snackbar).
   Future<bool> saveSettings() async {
-    if (!state.isDirty) return true; // Nothing to save
+    if (!state.isDirty) return true;
 
     emit(state.copyWith(status: AdminSettingsStatus.saving));
     try {
-      // 1. Persist business rules to backend
       if (state.businessRules != null) {
         await _saveSettings(state.businessRules!);
       }
-
-      // 2. Persist biometric flag to secure storage
       await _biometricService.setEnabled(state.isBiometricEnabled);
-
-      // 3. Mark as clean — theme/locale are applied by the screen
       emit(state.copyWith(
         status: AdminSettingsStatus.saved,
         isDirty: false,
@@ -187,7 +195,6 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
 
   // ── Private helpers ─────────────────────────────────────────────────────────
 
-  /// Sets isDirty = true. Shows the "Unsaved" badge and enables the Save button.
   void _markDirty() {
     if (!state.isDirty) {
       emit(state.copyWith(isDirty: true));

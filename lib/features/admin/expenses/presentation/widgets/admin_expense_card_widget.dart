@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../domain/entities/expense_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -29,6 +30,7 @@ class AdminExpenseCardWidget extends StatelessWidget {
     final c = tokens.colors;
     final card = tokens.card;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -60,7 +62,7 @@ class AdminExpenseCardWidget extends StatelessWidget {
                           color: c.label)),
                 ),
                 const SizedBox(width: 8),
-                Text('₹${expense.amount.toStringAsFixed(2)}',
+                Text('$symbol${expense.amount.toStringAsFixed(2)}',
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../domain/entities/admin_plan_list_item_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -24,6 +25,7 @@ class AdminPlanCardWidget extends StatelessWidget {
     final c = tokens.colors;
     final card = tokens.card;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Opacity(
       opacity: plan.isActive ? 1.0 : 0.65,
@@ -108,7 +110,7 @@ class AdminPlanCardWidget extends StatelessWidget {
                     child: _DetailCell(
                       icon: Icons.attach_money_rounded,
                       label: l10n.admin_plans_priceLabel,
-                      value: '₹${plan.price.toStringAsFixed(0)}',
+                      value: '$symbol${plan.price.toStringAsFixed(0)}',
                       c: c,
                     ),
                   ),

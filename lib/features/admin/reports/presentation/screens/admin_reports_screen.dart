@@ -17,6 +17,7 @@ import '../widgets/report_bar_chart_widget.dart';
 import '../widgets/report_stat_tile_widget.dart';
 import '../../domain/entities/financial_report_entity.dart';
 import '../../domain/entities/attendance_report_entity.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -33,7 +34,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
-  String _money(num v) => '₹${v.toStringAsFixed(0)}';
+  String _money(num v, String symbol) => '$symbol${v.toStringAsFixed(0)}';
 
   String _rangeText(DateTime from, DateTime to) =>
       '${from.day} ${_months[from.month - 1]} – ${to.day} ${_months[to.month - 1]} ${to.year}';
@@ -205,6 +206,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   // ── Financial tab ──────────────────────────────────────────────────────────
   Widget _financialTab(BuildContext context, dynamic c, AppLocalizations l10n,
       FinancialReportEntity f) {
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     return RefreshIndicator(
       color: c.primary,
       onRefresh: () async =>
@@ -216,27 +218,27 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
           _statsWrap(context, [
             ReportStatTile(
                 label: l10n.reports_collected,
-                value: _money(f.collected),
+                value: _money(f.collected, symbol),
                 icon: Icons.payments_rounded,
                 valueColor: c.success),
             ReportStatTile(
                 label: l10n.reports_expense,
-                value: _money(f.expense),
+                value: _money(f.expense, symbol),
                 icon: Icons.money_off_rounded,
                 valueColor: c.danger),
             ReportStatTile(
                 label: l10n.reports_net,
-                value: _money(f.net),
+                value: _money(f.net, symbol),
                 icon: Icons.account_balance_wallet_rounded,
                 valueColor: f.net >= 0 ? c.success : c.danger),
             ReportStatTile(
                 label: l10n.admin_dashboard_membershipDue,
-                value: _money(f.membershipDue),
+                value: _money(f.membershipDue, symbol),
                 icon: Icons.wallet_rounded,
                 valueColor: c.danger),
             ReportStatTile(
                 label: l10n.admin_dashboard_ptDue,
-                value: _money(f.ptDue),
+                value: _money(f.ptDue, symbol),
                 icon: Icons.wallet_rounded,
                 valueColor: c.danger),
           ]),
@@ -246,7 +248,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 points: f.collectedSeries,
                 emptyLabel: l10n.reports_noData,
                 barColor: c.primary,
-                valueFormatter: (v) => _money(v),
+                valueFormatter: (v) => _money(v, symbol),
               )),
           const SizedBox(height: 20),
           _chartSection(c, l10n.reports_expenseByCategory,
@@ -254,7 +256,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 points: f.expenseByCategory,
                 emptyLabel: l10n.reports_noData,
                 barColor: c.danger,
-                valueFormatter: (v) => _money(v),
+                valueFormatter: (v) => _money(v, symbol),
               )),
         ],
       ),

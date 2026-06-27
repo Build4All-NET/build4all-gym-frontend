@@ -3,6 +3,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
+import '../../../AppBar/presentation/branch_cubit.dart';
 import '../bloc/branches_bloc.dart';
 import '../bloc/branches_event.dart';
 import '../bloc/branches_state.dart';
@@ -29,6 +31,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -64,6 +67,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                       );
                       if (updated == true && context.mounted) {
                         context.read<BranchesBloc>().add(LoadBranchDetail(widget.branchId));
+                        context.read<BranchCubit>().reload();
                       }
                     },
                   ),
@@ -277,7 +281,7 @@ class _BranchDetailPageState extends State<BranchDetailPage> {
                                       fontSize: 11),
                                 ),
                                 Text(
-                                  '₹${_formatRevenue(d.monthlyRevenue)}',
+                                  '$symbol${_formatRevenue(d.monthlyRevenue)}',
                                   style: const TextStyle(
                                     color: Color(0xFF10B981),
                                     fontSize: 16,

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
@@ -635,97 +636,100 @@ class _CheckoutResultSheet extends StatelessWidget {
     final isPending = result.isPending;
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: isPending
-                  ? const Color(0xFFFFF3CD)
-                  : c.success.withOpacity(0.12),
-              shape: BoxShape.circle,
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: isPending
+                    ? const Color(0xFFFFF3CD)
+                    : c.success.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isPending
+                    ? Icons.hourglass_top_rounded
+                    : Icons.check_circle_outline,
+                color: isPending ? const Color(0xFF856404) : c.success,
+                size: 34,
+              ),
             ),
-            child: Icon(
+            const SizedBox(height: 16),
+            Text(
               isPending
-                  ? Icons.hourglass_top_rounded
-                  : Icons.check_circle_outline,
-              color: isPending ? const Color(0xFF856404) : c.success,
-              size: 34,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            isPending
-                ? l10n.paymentSheetPendingConfirmationTitle
-                : l10n.planSubscriptionSuccessTitle,
-            style: tokens.typography.headlineSmall.copyWith(
-              color: c.label,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isPending
-                ? l10n.planSubscriptionPendingMessage
-                : l10n.planSubscriptionActivatedMessage(result.planName),
-            textAlign: TextAlign.center,
-            style: tokens.typography.bodyMedium.copyWith(
-              color: c.muted,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 20),
-          _InfoRow(
-            label: l10n.planLabel,
-            value: result.planName,
-            tokens: tokens,
-          ),
-          _InfoRow(
-            label: l10n.totalAmount,
-            value: '\$ ${result.totalAmount.toStringAsFixed(2)}',
-            tokens: tokens,
-          ),
-          _InfoRow(
-            label: l10n.admin_plans_startDate,
-            value: result.startDate,
-            tokens: tokens,
-          ),
-          _InfoRow(
-            label: l10n.admin_plans_endDate,
-            value: result.endDate,
-            tokens: tokens,
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: c.primary,
-                foregroundColor: c.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                  ? l10n.paymentSheetPendingConfirmationTitle
+                  : l10n.planSubscriptionSuccessTitle,
+              style: tokens.typography.headlineSmall.copyWith(
+                color: c.label,
+                fontWeight: FontWeight.w900,
               ),
-              child: Text(
-                l10n.paymentSheetOkButton,
-                style: tokens.typography.bodyMedium.copyWith(
-                  color: c.onPrimary,
-                  fontWeight: FontWeight.w900,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              isPending
+                  ? l10n.planSubscriptionPendingMessage
+                  : l10n.planSubscriptionActivatedMessage(result.planName),
+              textAlign: TextAlign.center,
+              style: tokens.typography.bodyMedium.copyWith(
+                color: c.muted,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 20),
+            _InfoRow(
+              label: l10n.planLabel,
+              value: result.planName,
+              tokens: tokens,
+            ),
+            _InfoRow(
+              label: l10n.totalAmount,
+              value: '\$ ${result.totalAmount.toStringAsFixed(2)}',
+              tokens: tokens,
+            ),
+            _InfoRow(
+              label: l10n.admin_plans_startDate,
+              value: result.startDate,
+              tokens: tokens,
+            ),
+            _InfoRow(
+              label: l10n.admin_plans_endDate,
+              value: result.endDate,
+              tokens: tokens,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: c.primary,
+                  foregroundColor: c.onPrimary,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Text(
+                  l10n.paymentSheetOkButton,
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: c.onPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -822,6 +826,7 @@ class _CheckoutPlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     final baseDisplayPrice = plan.displayPrice;
 
     final finalPrice = coupon?.valid == true && coupon?.finalPrice != null
@@ -870,7 +875,7 @@ class _CheckoutPlanCard extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               Text(
-                '\$ ${finalPrice.toStringAsFixed(0)}',
+                '$symbol ${finalPrice == finalPrice.truncateToDouble() ? finalPrice.toInt() : finalPrice.toStringAsFixed(2)}',
                 style: tokens.typography.headlineSmall.copyWith(
                   color: tokens.colors.primary,
                   fontSize: 28,
@@ -897,20 +902,20 @@ class _CheckoutPlanCard extends StatelessWidget {
           SizedBox(height: tokens.spacing.md),
           _SummaryRow(
             label: l10n.baseAmount,
-            value: '\$ ${plan.price.toStringAsFixed(2)}',
+            value: '$symbol ${plan.price.toStringAsFixed(2)}',
           ),
           if (plan.hasActivePromotion) ...[
             SizedBox(height: tokens.spacing.sm),
             _SummaryRow(
               label: l10n.promotionPrice,
-              value: '\$ ${plan.displayPrice.toStringAsFixed(2)}',
+              value: '$symbol ${plan.displayPrice.toStringAsFixed(2)}',
               highlighted: true,
             ),
           ],
           SizedBox(height: tokens.spacing.sm),
           _SummaryRow(
             label: l10n.totalAmount,
-            value: '\$ ${finalPrice.toStringAsFixed(2)}',
+            value: '$symbol ${finalPrice.toStringAsFixed(2)}',
             highlighted: true,
           ),
         ],

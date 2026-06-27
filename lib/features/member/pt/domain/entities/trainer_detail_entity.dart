@@ -22,6 +22,7 @@ class TrainerDetailEntity {
   // e.g. ['MONDAY', 'WEDNESDAY', 'FRIDAY']
   // Empty when trainer has no availability configured.
   final List<String> availableDays;
+  final bool hasActivePtPackage;
 
   const TrainerDetailEntity({
     required this.id,
@@ -39,6 +40,7 @@ class TrainerDetailEntity {
     this.branchName,
     required this.packages,
     this.availableDays = const [],
+    this.hasActivePtPackage = false,
   });
 
   TrainerDetailEntity copyWith({
@@ -57,6 +59,7 @@ class TrainerDetailEntity {
     String? branchName,
     List<PtPackageEntity>? packages,
     List<String>? availableDays,
+    bool? hasActivePtPackage,
   }) {
     return TrainerDetailEntity(
       id: id ?? this.id,
@@ -74,6 +77,7 @@ class TrainerDetailEntity {
       branchName: branchName ?? this.branchName,
       packages: packages ?? this.packages,
       availableDays: availableDays ?? this.availableDays,
+      hasActivePtPackage: hasActivePtPackage ?? this.hasActivePtPackage,
     );
   }
 }

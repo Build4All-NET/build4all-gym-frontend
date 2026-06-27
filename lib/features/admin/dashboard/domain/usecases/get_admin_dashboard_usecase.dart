@@ -12,12 +12,14 @@ class GetAdminDashboardUseCase {
     String revenuePeriod = 'this_month',
     String? revenueStartDate,
     String? revenueEndDate,
+    int? branchId,
   }) {
     return repository.getDashboardSummary(
       period: period,
       revenuePeriod: revenuePeriod,
       revenueStartDate: revenueStartDate,
       revenueEndDate: revenueEndDate,
+      branchId: branchId,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,11 +10,13 @@ import '../../domain/entities/trainer_video_entity.dart';
 class TrainerVideoCardWidget extends StatelessWidget {
   final TrainerVideoEntity video;
   final VoidCallback? onTap;
+  final bool isLocked;
 
   const TrainerVideoCardWidget({
     super.key,
     required this.video,
     this.onTap,
+    this.isLocked = false,
   });
 
   @override
@@ -21,7 +25,7 @@ class TrainerVideoCardWidget extends StatelessWidget {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return InkWell(
-      onTap: onTap,
+      onTap: isLocked ? null : onTap,
       borderRadius: BorderRadius.circular(tokens.card.radius),
       child: Container(
         width: 155.0,
@@ -69,19 +73,39 @@ class TrainerVideoCardWidget extends StatelessWidget {
                         : _thumbnailPlaceholder(context),
                   ),
 
-                  Container(
-                    width: 38.0,
-                    height: 38.0,
-                    decoration: BoxDecoration(
-                      color: tokens.colors.label.withOpacity(0.48),
-                      shape: BoxShape.circle,
+                  if (isLocked)
+                    Positioned.fill(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 6.0, sigmaY: 6.0),
+                        child: Container(
+                          color: Colors.black.withOpacity(0.45),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.lock_rounded,
+                                color: Colors.white,
+                                size: 26.0,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      width: 38.0,
+                      height: 38.0,
+                      decoration: BoxDecoration(
+                        color: tokens.colors.label.withOpacity(0.48),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.play_arrow_rounded,
+                        color: tokens.colors.surface,
+                        size: 30.0,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: tokens.colors.surface,
-                      size: 30.0,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -98,7 +122,9 @@ class TrainerVideoCardWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: isRtl ? TextAlign.right : TextAlign.left,
                     style: tokens.typography.bodySmall.copyWith(
-                      color: tokens.colors.label,
+                      color: isLocked
+                          ? tokens.colors.muted
+                          : tokens.colors.label,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -112,13 +138,15 @@ class TrainerVideoCardWidget extends StatelessWidget {
                       isRtl ? TextDirection.rtl : TextDirection.ltr,
                       children: [
                         Icon(
-                          Icons.schedule_rounded,
+                          isLocked
+                              ? Icons.lock_outline_rounded
+                              : Icons.schedule_rounded,
                           size: 13.0,
                           color: tokens.colors.muted,
                         ),
                         SizedBox(width: tokens.spacing.xs),
                         Text(
-                          video.duration!,
+                          isLocked ? '- : --' : video.duration!,
                           style: tokens.typography.bodySmall.copyWith(
                             color: tokens.colors.muted,
                             fontSize: 11.0,
