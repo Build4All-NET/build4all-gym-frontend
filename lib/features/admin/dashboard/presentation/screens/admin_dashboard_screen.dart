@@ -9,7 +9,8 @@
 //   • Every card is backed by a real /api/admin/dashboard field, except
 //     Admission Fees, Service Paid and Service Due — there is no
 //     admission-fee / generic "service" concept anywhere in the schema
-//     yet, so those 3 still show "₹0" + a "… — coming soon" toast.
+//     yet, so those 3 still show "0" (with the gym's currency symbol) +
+//     a "… — coming soon" toast.
 
 import 'package:build4allgym/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../app/app_router.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
+import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
 import '../../../branches/presentation/widgets/create_first_branch_dialog.dart';
 import '../bloc/admin_dashboard_bloc.dart';
 import '../bloc/admin_dashboard_event.dart';
 import '../bloc/admin_dashboard_state.dart';
 import '../widgets/dashboard_metric_card.dart';
+import '../../../../../core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -37,6 +40,9 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ── First-run branch dialog guard ──────────────────────────────────────────
   bool _firstBranchDialogShown = false;
+
+  /// null = all branches
+  int? _selectedBranchId;
 
   // Maps a Payments-tab segment index to the ?revenuePeriod value sent to the backend.
   static const _revenuePeriodKeys = [
@@ -58,7 +64,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     return '${_months[n.month - 1]} ${n.year}';
   }
 
-  String _money(num v) => '₹${v.toStringAsFixed(0)}';
+  String _money(num v, String symbol) => '$symbol${v.toStringAsFixed(0)}';
 
   void _comingSoon(String feature) {
     final l10n = AppLocalizations.of(context)!;
@@ -106,7 +112,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                _buildAppBar(context, c, l10n),
+                AdminAppBar(
+                  title: l10n.navDashboard,
+                  selectedBranchId: _selectedBranchId,
+                  onBranchChanged: (branchId) {
+                    setState(() => _selectedBranchId = branchId);
+                    context.read<AdminDashboardBloc>().add(
+                      AdminDashboardLoadRequested(branchId: branchId),
+                    );
+                  },
+                ),
                 _buildTabBar(c, l10n),
                 _buildHint(c, l10n),
                 Expanded(child: _buildBody(context, c, l10n)),
@@ -114,75 +129,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  // ── AppBar ─────────────────────────────────────────────────────────────────
-  Widget _buildAppBar(BuildContext context, dynamic c, AppLocalizations l10n) {
-    return Container(
-      color: c.surface,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      child: Row(
-        children: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.menu_rounded, color: c.label),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              l10n.navDashboard,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: c.label,
-              ),
-            ),
-          ),
-          // Notification bell
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pushNamed(AppRouter.adminNotifications),
-              child: Stack(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: c.border.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(Icons.notifications_none_rounded,
-                        color: c.body, size: 18),
-                  ),
-                  PositionedDirectional(
-                    top: 2,
-                    end: 2,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: c.danger,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Text('3',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -259,6 +205,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             revenuePeriod: state.revenuePeriod,
                             revenueStartDate: state.revenueStartDate,
                             revenueEndDate: state.revenueEndDate,
+                            branchId: state.branchId,
                           ),
                         ),
                     style: ElevatedButton.styleFrom(
@@ -316,7 +263,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        mainAxisExtent: 104,
+        // Taller than the text actually needs so a 2-line label or a larger
+        // system font scale never overflows the card's bottom edge.
+        mainAxisExtent: 124,
       ),
       itemBuilder: (_, i) => cards[i],
     );
@@ -336,6 +285,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               revenuePeriod: state.revenuePeriod,
               revenueStartDate: state.revenueStartDate,
               revenueEndDate: state.revenueEndDate,
+              branchId: state.branchId,
             ),
           ),
       child: SingleChildScrollView(
@@ -451,6 +401,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       AdminDashboardLoaded state) {
     final d = state.data;
     final rev = d.revenue;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     return RefreshIndicator(
       color: c.primary,
       onRefresh: () async => context.read<AdminDashboardBloc>().add(
@@ -459,6 +410,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               revenuePeriod: state.revenuePeriod,
               revenueStartDate: state.revenueStartDate,
               revenueEndDate: state.revenueEndDate,
+              branchId: state.branchId,
             ),
           ),
       child: SingleChildScrollView(
@@ -470,7 +422,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             _sectionHeader(c,
                 '${l10n.admin_dashboard_sectionTodaysCollection} – ${_todayLabel()}'),
             DashboardMetricCard(
-              value: _money(rev?.paymentsCollected ?? 0),
+              value: _money(rev?.paymentsCollected ?? 0, symbol),
               label: l10n.admin_dashboard_membershipCollectedToday,
               icon: Icons.payments_rounded,
               highlighted: true,
@@ -481,19 +433,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             const SizedBox(height: 12),
             _grid([
               DashboardMetricCard(
-                value: _money(rev?.admissionFees ?? 0),
+                value: _money(rev?.admissionFees ?? 0, symbol),
                 label: l10n.admin_dashboard_admissionFees,
                 icon: Icons.how_to_reg_rounded,
                 onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(rev?.monthlyRevenue ?? 0),
+                value: _money(rev?.monthlyRevenue ?? 0, symbol),
                 label: l10n.admin_dashboard_membershipCollected,
                 icon: Icons.account_balance_wallet_rounded,
                 onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(rev?.membershipDue ?? 0),
+                value: _money(rev?.membershipDue ?? 0, symbol),
                 label: l10n.admin_dashboard_membershipDue,
                 icon: Icons.wallet_rounded,
                 valueColor: c.danger,
@@ -501,20 +453,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(rev?.ptDue ?? 0),
+                value: _money(rev?.ptDue ?? 0, symbol),
                 label: l10n.admin_dashboard_ptDue,
                 icon: Icons.wallet_rounded,
                 valueColor: c.danger,
                 onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(rev?.servicePaid ?? 0),
+                value: _money(rev?.servicePaid ?? 0, symbol),
                 label: l10n.admin_dashboard_servicePaid,
                 icon: Icons.receipt_long_rounded,
                 onTap: () => Navigator.pushNamed(context, '/admin/invoices'),
               ),
               DashboardMetricCard(
-                value: _money(rev?.serviceDue ?? 0),
+                value: _money(rev?.serviceDue ?? 0, symbol),
                 label: l10n.admin_dashboard_serviceDue,
                 icon: Icons.receipt_long_rounded,
                 valueColor: c.danger,
@@ -523,7 +475,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ]),
             const SizedBox(height: 12),
             DashboardMetricCard(
-              value: _money(rev?.monthlyExpense ?? 0),
+              value: _money(rev?.monthlyExpense ?? 0, symbol),
               label: l10n.admin_dashboard_expense,
               icon: Icons.money_off_rounded,
               valueColor: c.danger,
@@ -613,6 +565,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             revenuePeriod: 'custom',
             revenueStartDate: _isoDate(picked.start),
             revenueEndDate: _isoDate(picked.end),
+            branchId: state.branchId,
           ));
       return;
     }
@@ -620,6 +573,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     context.read<AdminDashboardBloc>().add(AdminDashboardRevenuePeriodChanged(
           period: state.period,
           revenuePeriod: key,
+          branchId: state.branchId,
         ));
   }
 
@@ -667,6 +621,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               revenuePeriod: state.revenuePeriod,
               revenueStartDate: state.revenueStartDate,
               revenueEndDate: state.revenueEndDate,
+              branchId: state.branchId,
             ),
           ),
       child: SingleChildScrollView(

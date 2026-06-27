@@ -2,9 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
+import '../../../../../core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
+
+// "Lakh" (1L = 100,000) is an Indian numbering convention — only abbreviate
+// this way for INR. Every other currency just gets thousands separators.
+String _formatMonthlyRevenue(double amount, CurrencyInfo currency) {
+  if (currency.code.toUpperCase() == 'INR') {
+    return '${currency.symbol}${(amount / 100000).toStringAsFixed(1)}L';
+  }
+  return '${currency.symbol}${NumberFormat('#,##0').format(amount)}';
+}
 
 class TextMetricRows extends StatelessWidget {
   final AdminDashboardSummary data;
@@ -16,6 +27,7 @@ class TextMetricRows extends StatelessWidget {
     final c             = tokens.colors;
     final card          = tokens.card;
     final l10n          = AppLocalizations.of(context)!;
+    final currency      = context.watch<CurrencyCubit>().state.info;
     final churnVsLast   = data.members.churnRateVsLastMonth;
     final revenueVsLast = data.revenue?.monthlyRevenueVsLastMonth;
     final accentD       = Color.lerp(c.primary, c.label, 0.3) ?? c.primary;
@@ -70,7 +82,7 @@ class TextMetricRows extends StatelessWidget {
           _TextMetricRow(
             label:         l10n.admin_dashboard_monthlyRevenue,
             value:         data.revenue != null
-                ? '₹${(data.revenue!.monthlyRevenue / 100000).toStringAsFixed(1)}L'
+                ? _formatMonthlyRevenue(data.revenue!.monthlyRevenue, currency)
                 : l10n.admin_dashboard_notAvailable,
             dotColor:      accentD,
             sublabel:      revenueVsLast != null

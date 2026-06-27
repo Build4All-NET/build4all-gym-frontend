@@ -27,7 +27,11 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
   /// The branch the admin is currently managing.
   /// Seeded from the router (defaults to 1) and corrected to the admin's
   /// home branch — or switched explicitly — via [ChangeBranch].
-  int branchId;
+  /// Null means "All Branches" — stats/list aggregate across the tenant.
+  int? branchId;
+
+  /// The date currently shown (null means "today"). Set via [FilterByDate].
+  DateTime? selectedDate;
 
   /// Last known search query — remembered so refreshes after actions re-apply it.
   String _lastSearch = '';
@@ -45,6 +49,7 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     on<CheckOutMember>(_onCheckOut);
     on<BlockMember>(_onBlock);
     on<ChangeBranch>(_onChangeBranch);
+    on<FilterByDate>(_onFilterByDate);
   }
 
   // ── LoadTodayCheckins ──────────────────────────────────────────────────────
@@ -57,7 +62,9 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     if (!event.silent) emit(const CheckinsLoading());
     try {
       final result = await getTodayCheckins(
-          branchId: branchId, search: search.isEmpty ? null : search);
+          branchId: branchId,
+          search:   search.isEmpty ? null : search,
+          date:     selectedDate);
       emit(CheckinsLoaded(stats: result.stats, checkins: result.checkins));
     } catch (e) {
       // A silent background poll fails quietly — keep showing the last good
@@ -74,7 +81,8 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     try {
       final result = await getTodayCheckins(
           branchId: branchId,
-          search:   event.query.isEmpty ? null : event.query);
+          search:   event.query.isEmpty ? null : event.query,
+          date:     selectedDate);
       emit(CheckinsLoaded(stats: result.stats, checkins: result.checkins));
     } catch (e) {
       emit(CheckinsError(e.toString()));
@@ -84,9 +92,15 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
   // ── ScanQrCode ─────────────────────────────────────────────────────────────
   Future<void> _onScanQr(
       ScanQrCode event, Emitter<CheckinsState> emit) async {
+    final currentBranchId = branchId;
+    if (currentBranchId == null) {
+      emit(const CheckinsActionError(
+          'Select a specific branch to scan QR codes.'));
+      return;
+    }
     try {
       final result = await scanQrCheckin(
-          token: event.token, branchId: branchId);
+          token: event.token, branchId: currentBranchId);
       // Emit success so the sheet can show the snackbar and close.
       emit(CheckinsScanSuccess(result.memberName, checkedOut: result.checkedOut));
       // Then immediately refresh the list so the change appears.
@@ -99,8 +113,14 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
   // ── CheckOutMember ─────────────────────────────────────────────────────────
   Future<void> _onCheckOut(
       CheckOutMember event, Emitter<CheckinsState> emit) async {
+    final currentBranchId = branchId;
+    if (currentBranchId == null) {
+      emit(const CheckinsActionError(
+          'Select a specific branch to check out members.'));
+      return;
+    }
     try {
-      await checkOutMember(checkinId: event.checkinId, branchId: branchId);
+      await checkOutMember(checkinId: event.checkinId, branchId: currentBranchId);
       emit(const CheckinsActionSuccess('Member checked out successfully.'));
       add(const LoadTodayCheckins()); // refresh list
     } catch (e) {
@@ -125,6 +145,13 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
       ChangeBranch event, Emitter<CheckinsState> emit) async {
     if (event.branchId == branchId) return;
     branchId = event.branchId;
+    add(const LoadTodayCheckins());
+  }
+
+  // ── FilterByDate ───────────────────────────────────────────────────────────
+  Future<void> _onFilterByDate(
+      FilterByDate event, Emitter<CheckinsState> emit) async {
+    selectedDate = event.date;
     add(const LoadTodayCheckins());
   }
 }

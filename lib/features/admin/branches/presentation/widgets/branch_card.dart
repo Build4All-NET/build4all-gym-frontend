@@ -3,6 +3,8 @@
 // One branch row in the scrollable list
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../domain/entity/branch_entity.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -15,6 +17,7 @@ class BranchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -110,7 +113,7 @@ class BranchCard extends StatelessWidget {
                     ],
                   ),
                 Text(
-                  '₹${_formatRevenue(branch.monthlyRevenue)}',
+                  '$symbol${_formatRevenue(branch.monthlyRevenue)}',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

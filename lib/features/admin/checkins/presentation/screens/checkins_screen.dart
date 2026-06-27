@@ -42,6 +42,7 @@ import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/checkins_bloc.dart';
+import '../widgets/checkin_date_filter_widget.dart';
 import '../widgets/checkin_stats_row.dart';
 import '../widgets/checkins_list.dart';
 import '../widgets/checkins_search_bar.dart';
@@ -61,6 +62,10 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
   // then stop overriding the selection on profile rebuilds.
   bool _branchResolved = false;
 
+  // Null means "today". Polling is skipped while a past date is selected —
+  // there's nothing "live" to poll for on a historical day.
+  DateTime? _selectedDate;
+
   Timer? _pollTimer;
 
   @override
@@ -72,7 +77,7 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
     // Simulate "live" updates: the backend has no push mechanism, so poll
     // quietly in the background while this screen is open.
     _pollTimer = Timer.periodic(const Duration(seconds: 25), (_) {
-      if (mounted) {
+      if (mounted && _selectedDate == null) {
         context.read<CheckinsBloc>().add(const LoadTodayCheckins(silent: true));
       }
     });
@@ -92,12 +97,27 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
   }
 
   void _onBranchChanged(int? branchId) {
-    final effective = branchId ?? context.read<AdminProfileCubit>().state.branchId ?? 1;
+    // branchId is null when the admin explicitly picks "All Branches" from
+    // the pill — that must stay null so stats/list aggregate tenant-wide
+    // instead of silently falling back to the admin's home branch.
     setState(() {
-      _selectedBranchId = effective;
+      _selectedBranchId = branchId;
       _branchResolved    = true;
     });
-    context.read<CheckinsBloc>().add(ChangeBranch(effective));
+    context.read<CheckinsBloc>().add(ChangeBranch(branchId));
+  }
+
+  void _onDateChanged(DateTime? date) {
+    setState(() => _selectedDate = date);
+    context.read<CheckinsBloc>().add(FilterByDate(date));
+  }
+
+  void _onScanTap(BuildContext context, AppLocalizations l10n) {
+    if (_selectedBranchId == null) {
+      _showSnack(context, l10n.checkins_allBranchesScanBlocked, isError: true);
+      return;
+    }
+    showQrScannerSheet(context);
   }
 
   @override
@@ -165,7 +185,7 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
                     icon:  Icon(Icons.qr_code_scanner_rounded,
                         color: c.label, size: 22),
                     tooltip:   l10n.checkins_scanQr,
-                    onPressed: () => showQrScannerSheet(context),
+                    onPressed: () => _onScanTap(context, l10n),
                   ),
                 ],
               ),
@@ -188,6 +208,13 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
                         // Search bar
                         const CheckinsSearchBar(),
                         const SizedBox(height: 8),
+
+                        // Date filter
+                        CheckinDateFilterWidget(
+                          selectedDate: _selectedDate,
+                          onChanged:    _onDateChanged,
+                        ),
+                        const SizedBox(height: 4),
 
                         // Today's list
                         const CheckinsList(),

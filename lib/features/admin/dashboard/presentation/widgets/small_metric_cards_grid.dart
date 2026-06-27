@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/admin_dashboard_summary.dart';
+import '../../../../../core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -15,6 +16,7 @@ class SmallMetricCardsGrid extends StatelessWidget {
     final tokens     = context.read<ThemeCubit>().state.tokens;
     final c          = tokens.colors;
     final l10n       = AppLocalizations.of(context)!;
+    final symbol     = context.watch<CurrencyCubit>().state.info.symbol;
     final accentA    = c.primary;
     final accentB    = c.success;
     final accentC    = Color.lerp(c.danger, c.primary, 0.5) ?? c.primary;
@@ -47,7 +49,7 @@ class SmallMetricCardsGrid extends StatelessWidget {
                   iconColor:  accentB,
                   iconBg:     accentB.withOpacity(0.1),
                   value:      data.revenue != null
-                      ? '₹${data.revenue!.paymentsCollected.toStringAsFixed(0)}'
+                      ? '$symbol${data.revenue!.paymentsCollected.toStringAsFixed(0)}'
                       : l10n.admin_dashboard_notAvailable,
                   label:      l10n.admin_dashboard_paymentsCollected,
                   badge:      data.revenue != null

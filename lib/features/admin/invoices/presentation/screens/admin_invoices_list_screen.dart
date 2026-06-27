@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -349,6 +350,7 @@ class _InvoiceSummaryCard extends StatelessWidget {
     final t   = tokens.typography;
     final l10n = AppLocalizations.of(context)!;
     final fmt = NumberFormat('#,##0.00');
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     Color statusColor;
     switch (invoice.status.toLowerCase()) {
@@ -491,11 +493,11 @@ class _InvoiceSummaryCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('\$ ${fmt.format(invoice.totalAmount)}',
+                Text('$symbol ${fmt.format(invoice.totalAmount)}',
                     style: t.bodyMedium.copyWith(
                         color: c.label, fontWeight: FontWeight.w900)),
                 if (invoice.dueAmount > 0)
-                  Text(l10n.admin_invoice_dueAmount('\$ ${fmt.format(invoice.dueAmount)}'),
+                  Text(l10n.admin_invoice_dueAmount('$symbol ${fmt.format(invoice.dueAmount)}'),
                       style: t.bodySmall.copyWith(
                           color: c.danger, fontWeight: FontWeight.w600)),
               ],

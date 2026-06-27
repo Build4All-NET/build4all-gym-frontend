@@ -170,6 +170,9 @@ class MemberInvoiceSummaryModel extends MemberInvoiceSummaryEntity {
     super.paymentMethod,
     super.refundStatus,
     required super.canRequestRefund,
+    super.refundWindowEndsAt,
+    super.refundedAmount,
+    super.deductionAmount,
   });
 
   factory MemberInvoiceSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -184,14 +187,15 @@ class MemberInvoiceSummaryModel extends MemberInvoiceSummaryEntity {
       dueAmount: _toDouble(json['dueAmount']),
       type: json['type']?.toString(),
       paymentMethod: json['paymentMethod']?.toString(),
-
-      // Comes from backend after our member-side backend change.
-      // null means no refund request exists yet.
       refundStatus: json['refundStatus']?.toString(),
-
-      // Backend decides if the refund button should be shown.
-      // Flutter should follow this boolean directly.
       canRequestRefund: json['canRequestRefund'] == true,
+      refundWindowEndsAt: json['refundWindowEndsAt']?.toString(),
+      refundedAmount: json['refundedAmount'] != null
+          ? _toDouble(json['refundedAmount'])
+          : null,
+      deductionAmount: json['deductionAmount'] != null
+          ? _toDouble(json['deductionAmount'])
+          : null,
     );
   }
 }

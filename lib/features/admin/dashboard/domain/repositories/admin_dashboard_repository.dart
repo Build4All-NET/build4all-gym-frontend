@@ -7,5 +7,6 @@ abstract class AdminDashboardRepository {
     String revenuePeriod = 'this_month',
     String? revenueStartDate,
     String? revenueEndDate,
+    int? branchId,
   });
 }

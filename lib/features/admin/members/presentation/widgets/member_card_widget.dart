@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
+
 import '../../domain/entities/member_card_entity.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../bloc/admin_members_bloc.dart';
@@ -135,6 +137,7 @@ class MemberCardWidget extends StatelessWidget {
   }
 
   Widget _buildInfoGrid(BuildContext context, ColorScheme cs) {
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     return Row(
       children: [
         Expanded(
@@ -146,7 +149,7 @@ class MemberCardWidget extends StatelessWidget {
               const SizedBox(height: 8),
               _InfoLabel(label: AppLocalizations.of(context)!.admin_members_colDueAmount, cs: cs),
               _InfoValue(
-                value: '₹${(member.dueAmount ?? 0).toStringAsFixed(0)}',
+                value: '$symbol${(member.dueAmount ?? 0).toStringAsFixed(0)}',
                 cs: cs,
                 // Semantic red for dues — intentional, not theme-driven.
                 overrideColor: member.hasDues ? const Color(0xFFEF4444) : null,

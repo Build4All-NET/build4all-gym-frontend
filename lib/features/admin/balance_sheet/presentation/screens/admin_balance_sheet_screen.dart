@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
+
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -252,11 +254,12 @@ class _SummaryHeader extends StatelessWidget {
 
   const _SummaryHeader({required this.state, required this.l10n, required this.tokens});
 
-  String _money(num v) => '₹${v.toStringAsFixed(0)}';
+  String _money(num v, String symbol) => '$symbol${v.toStringAsFixed(0)}';
 
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     final isProfit = state.netProfit >= 0;
     final profitColor = isProfit ? c.success : c.danger;
 
@@ -300,7 +303,7 @@ class _SummaryHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _money(state.netProfit),
+                        _money(state.netProfit, symbol),
                         style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: profitColor),
                       ),
                     ],
@@ -316,7 +319,7 @@ class _SummaryHeader extends StatelessWidget {
               Expanded(
                 child: _MiniStat(
                   label: l10n.balance_sheet_collection,
-                  value: _money(state.totalCollection),
+                  value: _money(state.totalCollection, symbol),
                   icon: Icons.payments_rounded,
                   color: c.success,
                   surface: c.background,
@@ -326,7 +329,7 @@ class _SummaryHeader extends StatelessWidget {
               Expanded(
                 child: _MiniStat(
                   label: l10n.balance_sheet_expense,
-                  value: _money(state.totalExpense),
+                  value: _money(state.totalExpense, symbol),
                   icon: Icons.money_off_rounded,
                   color: c.danger,
                   surface: c.background,
@@ -447,6 +450,7 @@ class _CollectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     final fmt = NumberFormat('#,##0.00');
 
     String dateStr;
@@ -497,7 +501,7 @@ class _CollectionCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text('₹${fmt.format(invoice.paidAmount)}',
+            Text('$symbol${fmt.format(invoice.paidAmount)}',
                 style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: c.success)),
           ],
         ),
@@ -564,6 +568,7 @@ class _ExpenseRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -605,7 +610,7 @@ class _ExpenseRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text('₹${expense.amount.toStringAsFixed(2)}',
+          Text('$symbol${expense.amount.toStringAsFixed(2)}',
               style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: c.danger)),
         ],
       ),

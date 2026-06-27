@@ -22,16 +22,23 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
 
   CheckinsRepositoryImpl(this.dataSource);
 
+  String _isoDate(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}-'
+      '${d.day.toString().padLeft(2, '0')}';
+
   // ── getTodayCheckins ───────────────────────────────────────────────────────
   @override
   Future<({CheckinStats stats, List<Checkin> checkins})> getTodayCheckins({
-    required int branchId,
-    String? search,
+    int?      branchId,
+    String?   search,
+    DateTime? date,
   }) async {
     try {
       final json = await dataSource.getTodayCheckins(
         branchId: branchId,
         search: search,
+        date: date == null ? null : _isoDate(date),
       );
 
       final stats = CheckinStatsModel.fromJson(json).toEntity();

@@ -68,36 +68,33 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
       AdminDashboardLoadRequested event,
       Emitter<AdminDashboardState> emit,
       ) async {
-    // Show loading indicator to user
     emit(AdminDashboardLoading());
 
-    // Execute use case to fetch data
-    // Use case returns a Result object containing either data or failure
     final result = await getAdminDashboardUseCase(
       period: event.period,
       revenuePeriod: event.revenuePeriod,
       revenueStartDate: event.revenueStartDate,
       revenueEndDate: event.revenueEndDate,
+      branchId: event.branchId,
     );
 
-    // Check if data fetch was successful
     if (result.data != null) {
-      // Success: emit loaded state with dashboard data
       emit(AdminDashboardLoaded(
         data: result.data!,
         period: event.period,
         revenuePeriod: event.revenuePeriod,
         revenueStartDate: event.revenueStartDate,
         revenueEndDate: event.revenueEndDate,
+        branchId: event.branchId,
       ));
     } else {
-      // Failure: emit error state with error message
       emit(AdminDashboardError(
         message: result.failure?.message ?? 'Unknown error occurred',
         period: event.period,
         revenuePeriod: event.revenuePeriod,
         revenueStartDate: event.revenueStartDate,
         revenueEndDate: event.revenueEndDate,
+        branchId: event.branchId,
       ));
     }
   }
@@ -123,26 +120,24 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
       AdminDashboardRefreshRequested event,
       Emitter<AdminDashboardState> emit,
       ) async {
-    // Silent refresh - no loading state to prevent UI flicker
     final result = await getAdminDashboardUseCase(
       period: event.period,
       revenuePeriod: event.revenuePeriod,
       revenueStartDate: event.revenueStartDate,
       revenueEndDate: event.revenueEndDate,
+      branchId: event.branchId,
     );
 
     if (result.data != null) {
-      // Success: update UI with fresh data
       emit(AdminDashboardLoaded(
         data: result.data!,
         period: event.period,
         revenuePeriod: event.revenuePeriod,
         revenueStartDate: event.revenueStartDate,
         revenueEndDate: event.revenueEndDate,
+        branchId: event.branchId,
       ));
     }
-    // On failure: stay on current state silently
-    // This prevents error messages during background refresh
   }
 
   /*
@@ -166,20 +161,28 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
       AdminDashboardPeriodChanged event,
       Emitter<AdminDashboardState> emit,
       ) async {
-    // Show loading state - user expects feedback when changing period
     emit(AdminDashboardLoading());
 
-    // Fetch data for new time period
-    final result = await getAdminDashboardUseCase(period: event.period);
+    final branchId = state is AdminDashboardLoaded
+        ? (state as AdminDashboardLoaded).branchId
+        : null;
+
+    final result = await getAdminDashboardUseCase(
+      period: event.period,
+      branchId: branchId,
+    );
 
     if (result.data != null) {
-      // Success: show dashboard with new period's data
-      emit(AdminDashboardLoaded(data: result.data!, period: event.period));
+      emit(AdminDashboardLoaded(
+        data: result.data!,
+        period: event.period,
+        branchId: branchId,
+      ));
     } else {
-      // Failure: show error with retry option
       emit(AdminDashboardError(
         message: result.failure?.message ?? 'Failed to load data for selected period',
         period: event.period,
+        branchId: branchId,
       ));
     }
   }
@@ -205,6 +208,7 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
       revenuePeriod: event.revenuePeriod,
       revenueStartDate: event.revenueStartDate,
       revenueEndDate: event.revenueEndDate,
+      branchId: event.branchId,
     );
 
     if (result.data != null) {
@@ -214,6 +218,7 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
         revenuePeriod: event.revenuePeriod,
         revenueStartDate: event.revenueStartDate,
         revenueEndDate: event.revenueEndDate,
+        branchId: event.branchId,
       ));
     } else {
       emit(AdminDashboardError(
@@ -222,6 +227,7 @@ class AdminDashboardBloc extends Bloc<AdminDashboardEvent, AdminDashboardState> 
         revenuePeriod: event.revenuePeriod,
         revenueStartDate: event.revenueStartDate,
         revenueEndDate: event.revenueEndDate,
+        branchId: event.branchId,
       ));
     }
   }

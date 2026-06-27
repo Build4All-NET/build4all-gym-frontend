@@ -7,17 +7,18 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 class SessionBookingItemModel {
-  final int     bookingId;
-  final int     userId;
-  final String  fullName;
-  final String?  phone;
-  final int?    profileFileId;
-  final String  status;
-  final int?    waitlistPosition;
-  final String? paymentStatus;
-  final String? paymentMethod;
-  final int?    invoiceId;
-  final double? price;
+  final int       bookingId;
+  final int       userId;
+  final String    fullName;
+  final String?   phone;
+  final int?      profileFileId;
+  final String    status;
+  final int?      waitlistPosition;
+  final String?   paymentStatus;
+  final String?   paymentMethod;
+  final int?      invoiceId;
+  final double?   price;
+  final DateTime? bookedAt;
 
   const SessionBookingItemModel({
     required this.bookingId,
@@ -31,6 +32,7 @@ class SessionBookingItemModel {
     this.paymentMethod,
     this.invoiceId,
     this.price,
+    this.bookedAt,
   });
 
   factory SessionBookingItemModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +48,9 @@ class SessionBookingItemModel {
       paymentMethod:    json['paymentMethod']    as String?,
       invoiceId:        (json['invoiceId']       as num?)?.toInt(),
       price:            (json['price']           as num?)?.toDouble(),
+      bookedAt:         json['bookedAt'] != null
+          ? DateTime.tryParse(json['bookedAt'] as String)
+          : null,
     );
   }
 
@@ -61,5 +66,6 @@ class SessionBookingItemModel {
     'paymentMethod':    paymentMethod,
     'invoiceId':        invoiceId,
     'price':            price,
+    'bookedAt':         bookedAt?.toIso8601String(),
   };
 }

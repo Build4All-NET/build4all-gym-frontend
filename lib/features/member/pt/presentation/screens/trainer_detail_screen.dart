@@ -309,6 +309,7 @@ class _TrainerDetailBody extends StatelessWidget {
 
                       TrainingVideosSectionWidget(
                         videos: trainer.assignedVideos,
+                        isSubscribed: trainer.hasActivePtPackage,
                       ),
 
                       SizedBox(height: tokens.spacing.xl),

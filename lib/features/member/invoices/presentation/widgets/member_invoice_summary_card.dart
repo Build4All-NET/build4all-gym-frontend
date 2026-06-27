@@ -148,6 +148,78 @@ class MemberInvoiceSummaryCard extends StatelessWidget {
             ),
           ],
 
+          // Refund breakdown: shown when the invoice is fully refunded
+          if (invoice.status.toLowerCase() == 'refunded' &&
+              invoice.refundedAmount != null) ...[
+            const SizedBox(height: 10.0),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 12.0, vertical: 10.0),
+              decoration: BoxDecoration(
+                color: c.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(
+                    color: c.primary.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.memberInvoicesRefundedAmount,
+                        style: t.bodySmall.copyWith(
+                            color: c.success,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        money.format(invoice.refundedAmount!),
+                        style: t.bodySmall.copyWith(
+                            color: c.success,
+                            fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                  if (invoice.deductionAmount != null &&
+                      invoice.deductionAmount! > 0) ...[
+                    const SizedBox(height: 4.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          l10n.memberInvoicesDeductedAmount,
+                          style: t.bodySmall.copyWith(
+                              color: c.danger,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          money.format(invoice.deductionAmount!),
+                          style: t.bodySmall.copyWith(
+                              color: c.danger,
+                              fontWeight: FontWeight.w800),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+
+          if (invoice.canRequestRefund &&
+              invoice.refundWindowEndsAt != null) ...[
+            const SizedBox(height: 6.0),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: MemberInvoiceBadge(
+                text: '${l10n.memberInvoicesRefundDeadline} '
+                    '${_formatDeadline(invoice.refundWindowEndsAt!, localeName)}',
+                color: c.danger,
+                tokens: tokens,
+              ),
+            ),
+          ],
+
           const SizedBox(height: 14.0),
           Divider(
             height: 1.0,
@@ -345,6 +417,15 @@ String _paymentMethodLabel(String method, AppLocalizations l10n) {
 String _formatDate(String rawDate, String localeName) {
   try {
     return DateFormat.yMMMd(localeName).format(DateTime.parse(rawDate));
+  } catch (_) {
+    return rawDate;
+  }
+}
+
+String _formatDeadline(String rawDate, String localeName) {
+  try {
+    final dt = DateTime.parse(rawDate);
+    return DateFormat('MMM d, yyyy · HH:mm', localeName).format(dt);
   } catch (_) {
     return rawDate;
   }

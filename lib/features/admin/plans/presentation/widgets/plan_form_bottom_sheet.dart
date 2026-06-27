@@ -743,23 +743,6 @@ class _PlanFormContentState extends State<_PlanFormContent> {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: Text(l10n.admin_plans_autoRenew,
-                              style: TextStyle(
-                                  color: c.label,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500)),
-                          subtitle: Text(l10n.admin_plans_autoRenewSub,
-                              style: TextStyle(
-                                  color: c.muted, fontSize: 12)),
-                          value: _autoRenew,
-                          activeColor: c.primary,
-                          onChanged: (v) =>
-                              setState(() => _autoRenew = v),
-                        ),
-                        Divider(
-                            height: 1,
-                            color: c.border.withOpacity(0.2)),
-                        SwitchListTile(
                           title: Text(l10n.admin_plans_featured,
                               style: TextStyle(
                                   color: c.label,

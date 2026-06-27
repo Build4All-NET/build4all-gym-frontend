@@ -28,12 +28,27 @@ class SettingsBusinessRulesEntity {
   /// Members can book a PT package without an active membership plan.
   final bool allowPtBookingWithoutMembership;
 
+  /// Hours after plan purchase during which a member may request a refund.
+  /// null = no time restriction, 0 = refunds not allowed for plans.
+  final int? planRefundWindowHours;
+
+  /// Hours after class booking during which a member may request a refund.
+  /// null = no time restriction, 0 = refunds not allowed for classes.
+  final int? classRefundWindowHours;
+
+  /// Hours after PT package purchase during which a member may request a refund.
+  /// null = no time restriction, 0 = refunds not allowed for PT packages.
+  final int? ptPackageRefundWindowHours;
+
   const SettingsBusinessRulesEntity({
     required this.allowClassWithoutMembership,
     required this.requireMembershipForClass,
     required this.allowMembershipWithoutClass,
     required this.allowBothIndependently,
     required this.allowPtBookingWithoutMembership,
+    this.planRefundWindowHours,
+    this.classRefundWindowHours,
+    this.ptPackageRefundWindowHours,
   });
 
   /// Default factory — mirrors the defaults defined in the backend GymSettings entity.
@@ -46,12 +61,18 @@ class SettingsBusinessRulesEntity {
   );
 
   /// Returns a new entity with only the provided fields changed.
+  // Sentinel used to clear a nullable int field via copyWith.
+  static const int _clearWindow = -999;
+
   SettingsBusinessRulesEntity copyWith({
     bool? allowClassWithoutMembership,
     bool? requireMembershipForClass,
     bool? allowMembershipWithoutClass,
     bool? allowBothIndependently,
     bool? allowPtBookingWithoutMembership,
+    int? planRefundWindowHours = _clearWindow,
+    int? classRefundWindowHours = _clearWindow,
+    int? ptPackageRefundWindowHours = _clearWindow,
   }) {
     return SettingsBusinessRulesEntity(
       allowClassWithoutMembership:
@@ -64,6 +85,15 @@ class SettingsBusinessRulesEntity {
       allowBothIndependently ?? this.allowBothIndependently,
       allowPtBookingWithoutMembership:
       allowPtBookingWithoutMembership ?? this.allowPtBookingWithoutMembership,
+      planRefundWindowHours: planRefundWindowHours == _clearWindow
+          ? this.planRefundWindowHours
+          : planRefundWindowHours,
+      classRefundWindowHours: classRefundWindowHours == _clearWindow
+          ? this.classRefundWindowHours
+          : classRefundWindowHours,
+      ptPackageRefundWindowHours: ptPackageRefundWindowHours == _clearWindow
+          ? this.ptPackageRefundWindowHours
+          : ptPackageRefundWindowHours,
     );
   }
 }

@@ -16,12 +16,7 @@ import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
 /// Shows a non-dismissible dialog so the admin must create the first branch
-/// before using the app. On success, reloads [BranchCubit] so the AppBar
-/// dropdown reflects the new branch immediately.
-///
-/// [initialName] / [initialEmail] / [initialCity] pre-fill the form with data
-/// we already know about the gym/admin (e.g. the gym name and admin email) so
-/// the owner doesn't retype information the app already has.
+/// before using the app. Pressing the back button / swipe redirects to /login.
 Future<void> showCreateFirstBranchDialog(
   BuildContext context, {
   String? initialName,
@@ -92,7 +87,6 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   @override
   void initState() {
     super.initState();
-    // Pre-fill with data we already have so the owner doesn't retype it.
     _nameCtrl = TextEditingController(text: widget.initialName ?? '');
     _cityCtrl = TextEditingController(text: widget.initialCity ?? '');
     _emailCtrl = TextEditingController(text: widget.initialEmail ?? '');
@@ -131,103 +125,127 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
   Widget build(BuildContext context) {
     final c = context.read<ThemeCubit>().state.tokens.colors;
     final l10n = AppLocalizations.of(context)!;
-    // Keyboard-aware sizing: cap the dialog to the height left above the
-    // keyboard (and status bar / margins) so the form scrolls above it and
-    // the focused field stays visible — no overflow, no collapse.
     final media = MediaQuery.of(context);
-    final availableHeight = media.size.height -
-        media.padding.top -
-        media.viewInsets.bottom -
-        48;
 
-    return BlocListener<BranchesBloc, BranchesState>(
-      listenWhen: (_, s) => s is BranchCreated || s is BranchCreateError,
-      listener: (ctx, state) {
-        if (state is BranchCreated) {
-          Navigator.of(ctx).pop();
-          widget.onBranchCreated();
-          AppToast.success(context, l10n.branchDialog_createdSuccess);
-        } else if (state is BranchCreateError) {
-          AppToast.error(ctx, state.message);
+    final keyboardHeight = media.viewInsets.bottom;
+    final keyboardOpen   = keyboardHeight > 0;
+
+    // Maximum dialog height: full screen minus status bar, safe-area bottom,
+    // and the dialog's own top+bottom margins (24 each).
+    final maxDialogHeight = media.size.height
+        - media.viewPadding.top      // status bar / iPhone notch
+        - media.viewPadding.bottom   // iPhone home indicator
+        - keyboardHeight             // keyboard
+        - 48;                        // dialog vertical inset margins (24 × 2)
+
+    return PopScope(
+      // Prevent back button / swipe from simply going back without a branch.
+      // When the user tries to go back, redirect to login instead.
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/login', (_) => false);
         }
       },
-      child: Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        backgroundColor: c.surface,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Header(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: _StepIndicator(
-                currentStep: _step,
-                totalSteps: _totalSteps,
-                stepLabel: _stepLabel(l10n),
-                icon: _stepIcon(),
-              ),
+      child: BlocListener<BranchesBloc, BranchesState>(
+        listenWhen: (_, s) => s is BranchCreated || s is BranchCreateError,
+        listener: (ctx, state) {
+          if (state is BranchCreated) {
+            Navigator.of(ctx).pop();
+            widget.onBranchCreated();
+            AppToast.success(context, l10n.branchDialog_createdSuccess);
+          } else if (state is BranchCreateError) {
+            AppToast.error(ctx, state.message);
+          }
+        },
+        child: Dialog(
+          // insetPadding already accounts for viewInsets (keyboard) internally
+          // in Flutter's Dialog widget — we only specify the explicit margins.
+          insetPadding: EdgeInsets.fromLTRB(
+            16,
+            media.viewPadding.top + 16,  // below notch/status bar on iPhone
+            16,
+            24,
+          ),
+          backgroundColor: c.surface,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: maxDialogHeight.clamp(200.0, double.infinity),
             ),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  transitionBuilder: (child, anim) =>
-                      FadeTransition(opacity: anim, child: child),
-                  child: _buildStepContent(c, l10n),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Collapse the decorative header when keyboard is open so
+                // the form fields always have enough room to be visible.
+                if (!keyboardOpen) _Header(),
+
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  child: _StepIndicator(
+                    currentStep: _step,
+                    totalSteps: _totalSteps,
+                    stepLabel: _stepLabel(l10n),
+                    icon: _stepIcon(),
+                  ),
                 ),
-              ),
+
+                // Expanded + SingleChildScrollView: the form content fills
+                // all remaining height and scrolls if there isn't enough room.
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      transitionBuilder: (child, anim) =>
+                          FadeTransition(opacity: anim, child: child),
+                      child: _buildStepContent(c, l10n),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+                _Footer(
+                  step: _step,
+                  totalSteps: _totalSteps,
+                  onBack: _goBack,
+                  onNext: _goNext,
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            _Footer(
-              step: _step,
-              totalSteps: _totalSteps,
-              onBack: _goBack,
-              onNext: _goNext,
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
+  // ── Step helpers ─────────────────────────────────────────────────────────
+
+  String _stepLabel(AppLocalizations l10n) => switch (_step) {
+        1 => l10n.branchDialog_sectionBasic,
+        2 => l10n.branchDialog_sectionContact,
+        _ => l10n.branchDialog_sectionHours,
+      };
+
+  IconData _stepIcon() => switch (_step) {
+        1 => Icons.store_mall_directory_outlined,
+        2 => Icons.contact_phone_outlined,
+        _ => Icons.access_time_rounded,
+      };
+
+  Widget _buildStepContent(dynamic c, AppLocalizations l10n) =>
+      switch (_step) {
+        1 => _basicStep(c, l10n),
+        2 => _contactStep(c, l10n),
+        _ => _hoursStep(c, l10n),
+      };
+
   // ── Step content ─────────────────────────────────────────────────────────
-
-  String _stepLabel(AppLocalizations l10n) {
-    switch (_step) {
-      case 1:
-        return l10n.branchDialog_sectionBasic;
-      case 2:
-        return l10n.branchDialog_sectionContact;
-      default:
-        return l10n.branchDialog_sectionHours;
-    }
-  }
-
-  IconData _stepIcon() {
-    switch (_step) {
-      case 1:
-        return Icons.store_mall_directory_outlined;
-      case 2:
-        return Icons.contact_phone_outlined;
-      default:
-        return Icons.access_time_rounded;
-    }
-  }
-
-  Widget _buildStepContent(dynamic c, AppLocalizations l10n) {
-    switch (_step) {
-      case 1:
-        return _basicStep(c, l10n);
-      case 2:
-        return _contactStep(c, l10n);
-      default:
-        return _hoursStep(c, l10n);
-    }
-  }
 
   Widget _basicStep(dynamic c, AppLocalizations l10n) {
     return Form(
@@ -369,7 +387,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
     );
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────────
+  // ── Field widget ─────────────────────────────────────────────────────────
 
   Widget _field({
     required dynamic c,
@@ -386,6 +404,8 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
       validator: validator,
       keyboardType: keyboard,
       maxLines: maxLines,
+      textInputAction:
+          maxLines > 1 ? TextInputAction.newline : TextInputAction.next,
       style: TextStyle(color: c.label, fontSize: 14),
       decoration: InputDecoration(
         labelText: label,
@@ -456,9 +476,7 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
         );
   }
 
-  void _snack(String msg) {
-    AppToast.error(context, msg);
-  }
+  void _snack(String msg) => AppToast.error(context, msg);
 
   bool _isClosingAfterOpening() {
     if (_openingTime == null || _closingTime == null) return true;
@@ -466,7 +484,6 @@ class _CreateFirstBranchDialogState extends State<_CreateFirstBranchDialog> {
       final p = t.split(':');
       return int.parse(p[0]) * 60 + int.parse(p[1]);
     }
-
     return toMins(_closingTime!) > toMins(_openingTime!);
   }
 }
@@ -585,7 +602,8 @@ class _StepIndicator extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(stepText, style: TextStyle(fontSize: 12, color: c.muted)),
+              Text(stepText,
+                  style: TextStyle(fontSize: 12, color: c.muted)),
             ],
           ),
           const SizedBox(height: 8),
@@ -725,7 +743,9 @@ class _Open24HoursTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: value ? c.primary.withOpacity(0.08) : c.background,
           border: Border.all(
-            color: value ? c.primary.withOpacity(0.5) : c.border.withOpacity(0.4),
+            color: value
+                ? c.primary.withOpacity(0.5)
+                : c.border.withOpacity(0.4),
           ),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -804,7 +824,9 @@ class _TimeTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: active ? c.primary.withOpacity(0.08) : c.background,
           border: Border.all(
-            color: active ? c.primary.withOpacity(0.5) : c.border.withOpacity(0.4),
+            color: active
+                ? c.primary.withOpacity(0.5)
+                : c.border.withOpacity(0.4),
           ),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -834,7 +856,8 @@ class _TimeTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: active ? c.label : c.muted.withOpacity(0.7),
+                      color:
+                          active ? c.label : c.muted.withOpacity(0.7),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

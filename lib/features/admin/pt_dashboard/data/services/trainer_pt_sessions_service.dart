@@ -47,7 +47,16 @@ class TrainerPtSessionsService {
     final body = _decodeBody(response);
     if (response.statusCode == 401) throw UnauthorizedException();
     if (response.statusCode == 403) throw ForbiddenException();
-    throw ServerException(message: body);
+    // Extract the human-readable "message" field from the JSON error body,
+    // falling back to the raw body if it isn't valid JSON.
+    String message;
+    try {
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      message = json['message'] as String? ?? body;
+    } catch (_) {
+      message = body;
+    }
+    throw ServerException(message: message);
   }
 
   // ── GET services by date ──────────────────────────────────────────────────

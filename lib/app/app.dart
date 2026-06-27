@@ -6,6 +6,7 @@ import 'package:build4allgym/core/config/app_config.dart';
 import 'package:build4allgym/core/localization/locale_cubit.dart';
 import 'package:build4allgym/core/localization/locale_storage.dart';
 import 'package:build4allgym/core/network/connecting(wifiORserver)/connection_cubit.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/core/realtime/realtime_cubit.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => CurrencyCubit()),
 
         BlocProvider(
           create: (_) => LocaleCubit(LocaleStorage())..loadSavedLocale(),

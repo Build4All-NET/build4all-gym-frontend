@@ -1,4 +1,5 @@
 import 'package:build4allgym/common/widgets/app_toast.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -428,6 +429,7 @@ class _AdminMembershipRequestsScreenState
             child: Builder(
               builder: (ctx) {
                 final l10n = AppLocalizations.of(ctx)!;
+                final symbol = ctx.watch<CurrencyCubit>().state.info.symbol;
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -442,7 +444,7 @@ class _AdminMembershipRequestsScreenState
                             .copyWith(color: tokens.colors.muted)),
                     const SizedBox(height: 4),
                     Text(
-                      '${l10n.admin_refundRequests_requestedAmount}: \$ ${req.requestedAmount.toStringAsFixed(2)}',
+                      '${l10n.admin_refundRequests_requestedAmount}: $symbol ${req.requestedAmount.toStringAsFixed(2)}',
                       style: tokens.typography.bodySmall
                           .copyWith(color: tokens.colors.primary, fontWeight: FontWeight.w700),
                     ),
@@ -472,7 +474,7 @@ class _AdminMembershipRequestsScreenState
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide.none,
                         ),
-                        prefixText: '\$ ',
+                        prefixText: '$symbol ',
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -493,7 +495,7 @@ class _AdminMembershipRequestsScreenState
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide.none,
                         ),
-                        prefixText: '\$ ',
+                        prefixText: '$symbol ',
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -892,6 +894,7 @@ class _RequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -971,7 +974,7 @@ class _RequestCard extends StatelessWidget {
                       tokens: tokens),
                   _InfoRow(
                       label: l10n.admin_membershipRequests_amount,
-                      value: '\$ ${request.totalAmount.toStringAsFixed(2)}',
+                      value: '$symbol ${request.totalAmount.toStringAsFixed(2)}',
                       tokens: tokens,
                       valueColor: c.primary),
                   const SizedBox(height: 14),
@@ -1038,6 +1041,7 @@ class _RefundCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -1112,7 +1116,7 @@ class _RefundCard extends StatelessWidget {
                       tokens: tokens),
                   _InfoRow(
                       label: l10n.admin_refundRequests_requestedAmount,
-                      value: '\$ ${request.requestedAmount.toStringAsFixed(2)}',
+                      value: '$symbol ${request.requestedAmount.toStringAsFixed(2)}',
                       tokens: tokens,
                       valueColor: c.danger),
                   if (request.reason != null && request.reason!.isNotEmpty)

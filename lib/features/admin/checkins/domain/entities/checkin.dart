@@ -18,6 +18,8 @@ class Checkin {
   final String status;         // "ACTIVE" | "CHECKED_OUT"
   final String phone;
   final String? entryType;     // "GYM" (plan) | "CLASS" | "PT" | null
+  final int?    durationMinutes; // minutes between check-in/out; null while ACTIVE
+  final int     visitCount;      // lifetime check-ins for this member
 
   const Checkin({
     required this.checkinId,
@@ -28,6 +30,8 @@ class Checkin {
     required this.status,
     required this.phone,
     this.entryType,
+    this.durationMinutes,
+    this.visitCount = 0,
   });
 
   /// Convenience: true when member is still inside.

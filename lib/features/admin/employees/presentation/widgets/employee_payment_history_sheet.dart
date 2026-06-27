@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../../../../common/widgets/form_section_kit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -74,6 +75,7 @@ class _PaymentHistoryContentState extends State<_PaymentHistoryContent> {
     final tokens = context.watch<ThemeCubit>().state.tokens;
     final c = tokens.colors;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     final displayName = (widget.employee.fullName == null || widget.employee.fullName!.isEmpty)
         ? l10n.admin_employees_defaultName
         : widget.employee.fullName!;
@@ -142,7 +144,7 @@ class _PaymentHistoryContentState extends State<_PaymentHistoryContent> {
                                         ),
                                       ),
                                       Text(
-                                        '\$${p.amount.toStringAsFixed(2)}',
+                                        '$symbol${p.amount.toStringAsFixed(2)}',
                                         style: TextStyle(
                                             color: c.success,
                                             fontWeight: FontWeight.w700,

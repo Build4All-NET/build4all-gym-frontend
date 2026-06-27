@@ -3,8 +3,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
+import '../../../AppBar/presentation/branch_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../bloc/branches_bloc.dart';
@@ -41,6 +43,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
   @override
   Widget build(BuildContext context) {
     final profile = context.watch<AdminProfileCubit>().state;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Scaffold(
       drawer:  AdminNavigationDrawer(
@@ -72,6 +75,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
 
               if (created == true && mounted) {
                 context.read<BranchesBloc>().add(const LoadBranches());
+                context.read<BranchCubit>().reload();
               }
             },
 
@@ -146,7 +150,7 @@ class _BranchesListPageState extends State<BranchesListPage> {
                           const SizedBox(height: 8),
                           BranchStatCard(
                             label: AppLocalizations.of(context)!.admin_branches_monthlyRevenue,
-                            value: '₹${_formatRevenue(state.stats.monthlyRevenue)}',
+                            value: '$symbol${_formatRevenue(state.stats.monthlyRevenue)}',
                             icon: Icons.trending_up,
                             iconBgColor: const Color(0xFF8B5CF6).withOpacity(0.12),
                             iconColor: const Color(0xFF8B5CF6),
