@@ -80,10 +80,12 @@ class _MemberEditProfileView extends StatefulWidget {
   });
 
   @override
-  State<_MemberEditProfileView> createState() => _MemberEditProfileViewState();
+  State<_MemberEditProfileView> createState() =>
+      _MemberEditProfileViewState();
 }
 
-class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
+class _MemberEditProfileViewState
+    extends State<_MemberEditProfileView> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _firstNameController;
@@ -126,7 +128,8 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       text: widget.profile.email ?? '',
     );
 
-    _phoneCompleteNumber = widget.profile.phoneNumber?.trim() ?? '';
+    _phoneCompleteNumber =
+        widget.profile.phoneNumber?.trim() ?? '';
 
     _currentPasswordController = TextEditingController();
     _newPasswordController = TextEditingController();
@@ -162,7 +165,8 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                 _EditHeader(
                   title: l10n.editProfileTitle,
                   subtitle: l10n.editProfileSubtitle,
-                  onBack: loading ? null : () => Navigator.pop(context),
+                  onBack:
+                  loading ? null : () => Navigator.pop(context),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -171,13 +175,19 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                       padding: EdgeInsets.all(tokens.spacing.lg),
                       decoration: BoxDecoration(
                         color: tokens.colors.surface,
-                        borderRadius: BorderRadius.circular(tokens.card.radius),
+                        borderRadius: BorderRadius.circular(
+                          tokens.card.radius,
+                        ),
                         border: Border.all(
-                          color: tokens.colors.border.withOpacity(0.15),
+                          color: tokens.colors.border.withOpacity(
+                            0.15,
+                          ),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: tokens.colors.label.withOpacity(0.05),
+                            color: tokens.colors.label.withOpacity(
+                              0.05,
+                            ),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -194,82 +204,118 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                               children: [
                                 Expanded(
                                   child: _EditField(
-                                    label: l10n.editProfileFirstName,
-                                    controller: _firstNameController,
-                                    icon: Icons.person_outline_rounded,
+                                    label:
+                                    l10n.editProfileFirstName,
+                                    controller:
+                                    _firstNameController,
+                                    icon: Icons
+                                        .person_outline_rounded,
                                     inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
+                                      FilteringTextInputFormatter
+                                          .allow(
                                         _nameAllowedChars,
                                       ),
                                     ],
-                                    validator: (value) => _validateName(
-                                      value,
-                                      l10n,
-                                    ),
+                                    validator: (value) =>
+                                        _validateName(
+                                          value,
+                                          l10n,
+                                        ),
                                   ),
                                 ),
-                                SizedBox(width: tokens.spacing.md),
+                                SizedBox(
+                                  width: tokens.spacing.md,
+                                ),
                                 Expanded(
                                   child: _EditField(
-                                    label: l10n.editProfileLastName,
-                                    controller: _lastNameController,
-                                    icon: Icons.person_outline_rounded,
+                                    label:
+                                    l10n.editProfileLastName,
+                                    controller:
+                                    _lastNameController,
+                                    icon: Icons
+                                        .person_outline_rounded,
                                     inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
+                                      FilteringTextInputFormatter
+                                          .allow(
                                         _nameAllowedChars,
                                       ),
                                     ],
-                                    validator: (value) => _validateName(
-                                      value,
-                                      l10n,
-                                    ),
+                                    validator: (value) =>
+                                        _validateName(
+                                          value,
+                                          l10n,
+                                        ),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: tokens.spacing.md),
+                            SizedBox(
+                              height: tokens.spacing.md,
+                            ),
                             _EditField(
                               label: l10n.editProfileUsername,
                               controller: _usernameController,
-                              icon: Icons.alternate_email_rounded,
+                              icon:
+                              Icons.alternate_email_rounded,
                               validator: (value) {
-                                final v = value?.trim() ?? '';
+                                final v =
+                                    value?.trim() ?? '';
+
                                 if (v.isEmpty) {
-                                  return l10n.editProfileUsernameRequired;
+                                  return l10n
+                                      .editProfileUsernameRequired;
                                 }
+
                                 return null;
                               },
                             ),
-                            SizedBox(height: tokens.spacing.md),
+                            SizedBox(
+                              height: tokens.spacing.md,
+                            ),
                             _EditField(
                               label: l10n.editProfileEmail,
                               controller: _emailController,
                               icon: Icons.email_outlined,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) => _validateEmail(
-                                value,
-                                l10n,
-                              ),
+                              keyboardType:
+                              TextInputType.emailAddress,
+                              validator: (value) =>
+                                  _validateEmail(
+                                    value,
+                                    l10n,
+                                  ),
                             ),
-                            SizedBox(height: tokens.spacing.md),
+                            SizedBox(
+                              height: tokens.spacing.md,
+                            ),
                             _PhoneField(
                               label: l10n.editProfilePhone,
-                              requiredMessage: l10n.editProfilePhoneRequired,
-                              initialPhoneNumber: widget.profile.phoneNumber,
+                              requiredMessage:
+                              l10n.editProfilePhoneRequired,
+                              initialPhoneNumber:
+                              widget.profile.phoneNumber,
                               onChanged: (completeNumber) {
-                                _phoneCompleteNumber = completeNumber.trim();
+                                _phoneCompleteNumber =
+                                    completeNumber.trim();
                               },
                             ),
-                            SizedBox(height: tokens.spacing.xl),
-                            _SectionTitle(
-                              text: l10n.editProfileChangePassword,
+                            SizedBox(
+                              height: tokens.spacing.xl,
                             ),
-                            SizedBox(height: tokens.spacing.md),
+                            _SectionTitle(
+                              text:
+                              l10n.editProfileChangePassword,
+                            ),
+                            SizedBox(
+                              height: tokens.spacing.md,
+                            ),
                             _EditField(
-                              label: l10n.editProfileCurrentPassword,
-                              controller: _currentPasswordController,
+                              label: l10n
+                                  .editProfileCurrentPassword,
+                              controller:
+                              _currentPasswordController,
                               icon: Icons.lock_outline_rounded,
-                              obscureText: _hideCurrentPassword,
+                              obscureText:
+                              _hideCurrentPassword,
                               suffixIcon: IconButton(
                                 onPressed: loading
                                     ? null
@@ -281,15 +327,21 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                                 },
                                 icon: Icon(
                                   _hideCurrentPassword
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
+                                      ? Icons
+                                      .visibility_off_outlined
+                                      : Icons
+                                      .visibility_outlined,
                                 ),
                               ),
                             ),
-                            SizedBox(height: tokens.spacing.md),
+                            SizedBox(
+                              height: tokens.spacing.md,
+                            ),
                             _EditField(
-                              label: l10n.editProfileNewPassword,
-                              controller: _newPasswordController,
+                              label:
+                              l10n.editProfileNewPassword,
+                              controller:
+                              _newPasswordController,
                               icon: Icons.lock_reset_rounded,
                               obscureText: _hideNewPassword,
                               suffixIcon: IconButton(
@@ -297,61 +349,82 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                                     ? null
                                     : () {
                                   setState(() {
-                                    _hideNewPassword = !_hideNewPassword;
+                                    _hideNewPassword =
+                                    !_hideNewPassword;
                                   });
                                 },
                                 icon: Icon(
                                   _hideNewPassword
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
+                                      ? Icons
+                                      .visibility_off_outlined
+                                      : Icons
+                                      .visibility_outlined,
                                 ),
                               ),
                               validator: (value) {
-                                final newPassword = value?.trim() ?? '';
+                                final newPassword =
+                                    value?.trim() ?? '';
 
                                 // If the user did not type a new password,
                                 // do not validate password change.
                                 //
-                                // Important:
-                                // Current password can be used for phone verification,
-                                // so it must NOT force new password to be required.
+                                // Current password can also be used for
+                                // phone verification.
                                 if (newPassword.isEmpty) {
                                   return null;
                                 }
 
-                                final currentPassword = _currentPasswordController.text.trim();
+                                final currentPassword =
+                                _currentPasswordController
+                                    .text
+                                    .trim();
 
                                 if (currentPassword.isEmpty) {
-                                  return l10n.editProfileCurrentPasswordRequired;
+                                  return l10n
+                                      .editProfileCurrentPasswordRequired;
                                 }
 
                                 if (newPassword.length < 6) {
-                                  return l10n.editProfilePasswordTooShort;
+                                  return l10n
+                                      .editProfilePasswordTooShort;
                                 }
 
-                                if (newPassword == currentPassword) {
-                                  return l10n.editProfilePasswordSameAsCurrent;
+                                if (newPassword ==
+                                    currentPassword) {
+                                  return l10n
+                                      .editProfilePasswordSameAsCurrent;
                                 }
 
                                 return null;
                               },
                             ),
-                            SizedBox(height: tokens.spacing.xl),
+                            SizedBox(
+                              height: tokens.spacing.xl,
+                            ),
                             Row(
                               children: [
                                 Expanded(
                                   child: SizedBox(
-                                    height: tokens.button.height,
+                                    height:
+                                    tokens.button.height,
                                     child: ElevatedButton(
-                                      onPressed: loading ? null : _submit,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: tokens.colors.primary,
+                                      onPressed: loading
+                                          ? null
+                                          : _submit,
+                                      style: ElevatedButton
+                                          .styleFrom(
+                                        backgroundColor:
+                                        tokens.colors.primary,
                                         foregroundColor:
-                                        tokens.colors.onPrimary,
+                                        tokens
+                                            .colors.onPrimary,
                                         elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            tokens.button.radius,
+                                        shape:
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                            tokens
+                                                .button.radius,
                                           ),
                                         ),
                                       ),
@@ -359,44 +432,68 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
                                           ? SizedBox(
                                         width: 18,
                                         height: 18,
-                                        child: CircularProgressIndicator(
+                                        child:
+                                        CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          color: tokens.colors.onPrimary,
+                                          color: tokens
+                                              .colors
+                                              .onPrimary,
                                         ),
                                       )
                                           : Text(
-                                        l10n.editProfileSave,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w800,
+                                        l10n
+                                            .editProfileSave,
+                                        style:
+                                        const TextStyle(
+                                          fontWeight:
+                                          FontWeight
+                                              .w800,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: tokens.spacing.md),
+                                SizedBox(
+                                  width: tokens.spacing.md,
+                                ),
                                 Expanded(
                                   child: SizedBox(
-                                    height: tokens.button.height,
+                                    height:
+                                    tokens.button.height,
                                     child: OutlinedButton(
                                       onPressed: loading
                                           ? null
-                                          : () => Navigator.pop(context),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: tokens.colors.label,
+                                          : () =>
+                                          Navigator.pop(
+                                            context,
+                                          ),
+                                      style: OutlinedButton
+                                          .styleFrom(
+                                        foregroundColor:
+                                        tokens.colors.label,
                                         side: BorderSide(
-                                          color: tokens.colors.border
-                                              .withOpacity(0.4),
+                                          color: tokens
+                                              .colors.border
+                                              .withOpacity(
+                                            0.4,
+                                          ),
                                         ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            tokens.button.radius,
+                                        shape:
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                            tokens
+                                                .button.radius,
                                           ),
                                         ),
                                       ),
                                       child: Text(
-                                        l10n.editProfileCancel,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w800,
+                                        l10n
+                                            .editProfileCancel,
+                                        style:
+                                        const TextStyle(
+                                          fontWeight:
+                                          FontWeight.w800,
                                         ),
                                       ),
                                     ),
@@ -425,7 +522,11 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     final l10n = AppLocalizations.of(context)!;
 
     if (state is MemberProfileEditError) {
-      _showSnack(context, state.message, isError: true);
+      _showSnack(
+        context,
+        state.message,
+        isError: true,
+      );
       return;
     }
 
@@ -433,6 +534,10 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       _refreshAccountAndClose(context);
       return;
     }
+
+    // -------------------------------------------------------------------------
+    // PHONE CHANGE VERIFICATION
+    // -------------------------------------------------------------------------
 
     if (state is MemberProfileEditPhoneVerificationRequired) {
       final ok = await showDialog<bool>(
@@ -445,37 +550,52 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
           codeLabel: l10n.editProfileVerificationCode,
           resendLabel: l10n.editProfileResend,
           verifyLabel: l10n.editProfileVerify,
-          codeRequiredMessage: l10n.editProfileCodeRequired,
+          codeRequiredMessage:
+          l10n.editProfileCodeRequired,
           onVerify: (code) async {
-            final repository = MemberProfileEditRepositoryImpl(
+            final repository =
+            MemberProfileEditRepositoryImpl(
               MemberProfileEditService(),
             );
 
+            // This endpoint verifies the OTP and updates
+            // the real phone number in the backend.
             await repository.verifyPhoneChangeCode(
               phoneNumber: state.newPhoneNumber,
               code: code,
             );
           },
           onResend: () async {
-            final repository = MemberProfileEditRepositoryImpl(
+            final repository =
+            MemberProfileEditRepositoryImpl(
               MemberProfileEditService(),
             );
 
-            await repository.sendPhoneChangeVerificationCode(
+            await repository
+                .sendPhoneChangeVerificationCode(
               phoneNumber: state.newPhoneNumber,
-              password: _currentPasswordController.text,
-              ownerProjectLinkId: state.ownerProjectLinkId,
+              password:
+              _currentPasswordController.text,
+              ownerProjectLinkId:
+              state.ownerProjectLinkId,
             );
           },
         ),
       );
 
+      // IMPORTANT:
+      // Do not submit the profile again.
+      // The verify phone endpoint already updates the real phone number.
       if (ok == true && mounted) {
-        _submit(phoneAlreadyVerified: true);
+        _refreshAccountAndClose(context);
       }
 
       return;
     }
+
+    // -------------------------------------------------------------------------
+    // EMAIL CHANGE VERIFICATION
+    // -------------------------------------------------------------------------
 
     if (state is MemberProfileEditEmailVerificationRequired) {
       final ok = await showDialog<bool>(
@@ -488,16 +608,21 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
           codeLabel: l10n.editProfileVerificationCode,
           resendLabel: l10n.editProfileResend,
           verifyLabel: l10n.editProfileVerify,
-          codeRequiredMessage: l10n.editProfileCodeRequired,
+          codeRequiredMessage:
+          l10n.editProfileCodeRequired,
           onVerify: (code) async {
-            final repository = MemberProfileEditRepositoryImpl(
+            final repository =
+            MemberProfileEditRepositoryImpl(
               MemberProfileEditService(),
             );
 
-            await repository.verifyEmailChange(code: code);
+            await repository.verifyEmailChange(
+              code: code,
+            );
           },
           onResend: () async {
-            final repository = MemberProfileEditRepositoryImpl(
+            final repository =
+            MemberProfileEditRepositoryImpl(
               MemberProfileEditService(),
             );
 
@@ -513,20 +638,28 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       return;
     }
 
+    // -------------------------------------------------------------------------
+    // PASSWORD CHANGE VERIFICATION
+    // -------------------------------------------------------------------------
+
     if (state is MemberProfileEditPasswordVerificationRequired) {
       final ok = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (_) => MemberProfileEditOtpDialog(
-          title: l10n.editProfileVerifyPasswordChange,
+          title: l10n
+              .editProfileVerifyPasswordChange,
           sentToLabel: l10n.editProfileCodeSentTo,
           destination: state.email,
-          codeLabel: l10n.editProfileVerificationCode,
+          codeLabel:
+          l10n.editProfileVerificationCode,
           resendLabel: l10n.editProfileResend,
           verifyLabel: l10n.editProfileVerify,
-          codeRequiredMessage: l10n.editProfileCodeRequired,
+          codeRequiredMessage:
+          l10n.editProfileCodeRequired,
           onVerify: (code) async {
-            final repository = MemberProfileEditRepositoryImpl(
+            final repository =
+            MemberProfileEditRepositoryImpl(
               MemberProfileEditService(),
             );
 
@@ -534,17 +667,20 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
               email: state.email,
               code: code,
               newPassword: state.newPassword,
-              ownerProjectLinkId: state.ownerProjectLinkId,
+              ownerProjectLinkId:
+              state.ownerProjectLinkId,
             );
           },
           onResend: () async {
-            final repository = MemberProfileEditRepositoryImpl(
+            final repository =
+            MemberProfileEditRepositoryImpl(
               MemberProfileEditService(),
             );
 
             await repository.sendPasswordResetCode(
               email: state.email,
-              ownerProjectLinkId: state.ownerProjectLinkId,
+              ownerProjectLinkId:
+              state.ownerProjectLinkId,
             );
           },
         ),
@@ -558,39 +694,58 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
     }
 
     if (state is MemberProfileEditEmailVerified) {
-      _showSnack(context, l10n.editProfileEmailVerified);
+      _showSnack(
+        context,
+        l10n.editProfileEmailVerified,
+      );
       return;
     }
 
     if (state is MemberProfileEditPhoneVerified) {
-      _showSnack(context, l10n.editProfilePhoneVerified);
+      _showSnack(
+        context,
+        l10n.editProfilePhoneVerified,
+      );
       return;
     }
 
     if (state is MemberProfileEditPasswordUpdated) {
-      _showSnack(context, l10n.editProfilePasswordUpdated);
+      _showSnack(
+        context,
+        l10n.editProfilePasswordUpdated,
+      );
       return;
     }
 
     if (state is MemberProfileEditCodeResent) {
-      _showSnack(context, state.message);
+      _showSnack(
+        context,
+        state.message,
+      );
       return;
     }
   }
 
   void _refreshAccountAndClose(BuildContext context) {
-    context.read<MemberAccountBloc>().add(const MemberAccountStarted());
+    context.read<MemberAccountBloc>().add(
+      const MemberAccountStarted(),
+    );
 
     context
         .read<MemberBuild4AllProfileBloc>()
-        .add(const MemberBuild4AllProfileRefreshRequested());
+        .add(
+      const MemberBuild4AllProfileRefreshRequested(),
+    );
 
     Navigator.pop(context);
   }
+
   String _normalizePhone(String? raw) {
     var value = (raw ?? '').trim();
 
-    if (value.isEmpty) return '';
+    if (value.isEmpty) {
+      return '';
+    }
 
     value = value
         .replaceAll(' ', '')
@@ -607,28 +762,34 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       value = '+961${value.substring(5)}';
     }
 
-    if (RegExp(r'^0(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+    if (RegExp(
+      r'^0(3|70|71|76|78|79|81)\d{6}$',
+    ).hasMatch(value)) {
       value = '+961${value.substring(1)}';
     }
 
     if (!value.startsWith('+')) {
-      if (RegExp(r'^(3|70|71|76|78|79|81)\d{6}$').hasMatch(value)) {
+      if (RegExp(
+        r'^(3|70|71|76|78|79|81)\d{6}$',
+      ).hasMatch(value)) {
         value = '+961$value';
       }
     }
 
     return value;
   }
-  void _submit({
-    bool phoneAlreadyVerified = false,
-  }) {
+
+  void _submit() {
     final l10n = AppLocalizations.of(context)!;
 
     FocusScope.of(context).unfocus();
 
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-    final ownerProjectLinkId = int.tryParse(Env.ownerProjectLinkId) ?? 0;
+    final ownerProjectLinkId =
+        int.tryParse(Env.ownerProjectLinkId) ?? 0;
 
     if (ownerProjectLinkId <= 0) {
       _showSnack(
@@ -647,18 +808,28 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       );
       return;
     }
-    final oldPhone = _normalizePhone(widget.profile.phoneNumber);
-    final newPhone = _normalizePhone(_phoneCompleteNumber);
+
+    final oldPhone = _normalizePhone(
+      widget.profile.phoneNumber,
+    );
+
+    final newPhone = _normalizePhone(
+      _phoneCompleteNumber,
+    );
 
     final phoneChanged = oldPhone != newPhone;
+
     final currentPasswordFilled =
         _currentPasswordController.text.trim().isNotEmpty;
+
     final newPasswordFilled =
         _newPasswordController.text.trim().isNotEmpty;
 
-// Current password alone is not a valid action.
-// It is only used when changing phone or changing password.
-    if (currentPasswordFilled && !newPasswordFilled && !phoneChanged) {
+    // Current password alone is not a valid action.
+    // It is only used for phone change or password change.
+    if (currentPasswordFilled &&
+        !newPasswordFilled &&
+        !phoneChanged) {
       _showSnack(
         context,
         l10n.editProfileNewPasswordRequired,
@@ -669,19 +840,31 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
 
     context.read<MemberProfileEditBloc>().add(
       MemberProfileEditSubmitted(
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        username: _usernameController.text.trim(),
+        firstName:
+        _firstNameController.text.trim(),
+        lastName:
+        _lastNameController.text.trim(),
+        username:
+        _usernameController.text.trim(),
         email: _emailController.text.trim(),
-        phoneNumber: _phoneCompleteNumber.trim(),
+        phoneNumber:
+        _phoneCompleteNumber.trim(),
         dateOfBirth: null,
         address: null,
-        currentEmail: widget.profile.email ?? '',
-        currentPhoneNumber: widget.profile.phoneNumber ?? '',
-        currentPassword: _currentPasswordController.text,
-        newPassword: _newPasswordController.text.trim(),
-        ownerProjectLinkId: ownerProjectLinkId,
-        phoneAlreadyVerified: phoneAlreadyVerified,
+        currentEmail:
+        widget.profile.email ?? '',
+        currentPhoneNumber:
+        widget.profile.phoneNumber ?? '',
+        currentPassword:
+        _currentPasswordController.text,
+        newPassword:
+        _newPasswordController.text.trim(),
+        ownerProjectLinkId:
+        ownerProjectLinkId,
+
+        // The phone is not already verified when
+        // the Save button is first pressed.
+        phoneAlreadyVerified: false,
       ),
     );
   }
@@ -692,7 +875,9 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       ) {
     final v = value?.trim() ?? '';
 
-    if (v.isEmpty) return l10n.editProfileRequired;
+    if (v.isEmpty) {
+      return l10n.editProfileRequired;
+    }
 
     if (!_nameFullRegex.hasMatch(v)) {
       return l10n.editProfileOnlyLetters;
@@ -707,11 +892,17 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       ) {
     final v = value?.trim() ?? '';
 
-    if (v.isEmpty) return l10n.editProfileEmailRequired;
+    if (v.isEmpty) {
+      return l10n.editProfileEmailRequired;
+    }
 
-    final ok = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v);
+    final valid = RegExp(
+      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    ).hasMatch(v);
 
-    if (!ok) return l10n.editProfileInvalidEmail;
+    if (!valid) {
+      return l10n.editProfileInvalidEmail;
+    }
 
     return null;
   }
@@ -721,13 +912,15 @@ class _MemberEditProfileViewState extends State<_MemberEditProfileView> {
       String message, {
         bool isError = false,
       }) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens =
+        context.read<ThemeCubit>().state.tokens;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor:
-        isError ? tokens.colors.danger : tokens.colors.success,
+        backgroundColor: isError
+            ? tokens.colors.danger
+            : tokens.colors.success,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -747,7 +940,9 @@ class _EditHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens =
+        context.read<ThemeCubit>().state.tokens;
+
     final isArabic = _isArabic(context);
 
     return Container(
@@ -760,52 +955,76 @@ class _EditHeader extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: isArabic ? Alignment.topRight : Alignment.topLeft,
-          end: isArabic ? Alignment.bottomLeft : Alignment.bottomRight,
+          begin: isArabic
+              ? Alignment.topRight
+              : Alignment.topLeft,
+          end: isArabic
+              ? Alignment.bottomLeft
+              : Alignment.bottomRight,
           colors: [
             tokens.colors.primary,
             tokens.colors.success,
           ],
         ),
-        borderRadius: const BorderRadiusDirectional.only(
+        borderRadius:
+        const BorderRadiusDirectional.only(
           bottomStart: Radius.circular(28),
           bottomEnd: Radius.circular(28),
         ),
       ),
       child: Column(
-        crossAxisAlignment:
-        isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isArabic
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           GestureDetector(
             onTap: onBack,
             child: Icon(
-              isArabic ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+              isArabic
+                  ? Icons.arrow_forward_rounded
+                  : Icons.arrow_back_rounded,
               color: tokens.colors.onPrimary,
               size: 24,
             ),
           ),
-          SizedBox(height: tokens.spacing.lg),
+          SizedBox(
+            height: tokens.spacing.lg,
+          ),
           SizedBox(
             width: double.infinity,
             child: Text(
               title,
-              textAlign: isArabic ? TextAlign.right : TextAlign.left,
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-              style: tokens.typography.headlineSmall.copyWith(
+              textAlign: isArabic
+                  ? TextAlign.right
+                  : TextAlign.left,
+              textDirection: isArabic
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              style:
+              tokens.typography.headlineSmall.copyWith(
                 color: tokens.colors.onPrimary,
                 fontWeight: FontWeight.w900,
               ),
             ),
           ),
-          SizedBox(height: tokens.spacing.xs),
+          SizedBox(
+            height: tokens.spacing.xs,
+          ),
           SizedBox(
             width: double.infinity,
             child: Text(
               subtitle,
-              textAlign: isArabic ? TextAlign.right : TextAlign.left,
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-              style: tokens.typography.bodyMedium.copyWith(
-                color: tokens.colors.onPrimary.withOpacity(0.85),
+              textAlign: isArabic
+                  ? TextAlign.right
+                  : TextAlign.left,
+              textDirection: isArabic
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              style:
+              tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.onPrimary.withOpacity(
+                  0.85,
+                ),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -825,17 +1044,25 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens =
+        context.read<ThemeCubit>().state.tokens;
+
     final isArabic = _isArabic(context);
 
     return SizedBox(
       width: double.infinity,
       child: Align(
-        alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: isArabic
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
         child: Text(
           text,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          textAlign: isArabic
+              ? TextAlign.right
+              : TextAlign.left,
+          textDirection: isArabic
+              ? TextDirection.rtl
+              : TextDirection.ltr,
           style: tokens.typography.bodyMedium.copyWith(
             color: tokens.colors.label,
             fontWeight: FontWeight.w900,
@@ -855,17 +1082,25 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens =
+        context.read<ThemeCubit>().state.tokens;
+
     final isArabic = _isArabic(context);
 
     return SizedBox(
       width: double.infinity,
       child: Align(
-        alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: isArabic
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
         child: Text(
           text,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          textAlign: isArabic
+              ? TextAlign.right
+              : TextAlign.left,
+          textDirection: isArabic
+              ? TextDirection.rtl
+              : TextDirection.ltr,
           style: tokens.typography.bodySmall.copyWith(
             color: tokens.colors.muted,
             fontWeight: FontWeight.w700,
@@ -891,41 +1126,63 @@ class _PhoneField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens =
+        context.read<ThemeCubit>().state.tokens;
+
     final isArabic = _isArabic(context);
 
     return Column(
-      crossAxisAlignment:
-      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isArabic
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
-        _FieldLabel(text: label),
-        SizedBox(height: tokens.spacing.xs),
+        _FieldLabel(
+          text: label,
+        ),
+        SizedBox(
+          height: tokens.spacing.xs,
+        ),
         IntlPhoneField(
-          initialCountryCode: _guessInitialCountryCode(initialPhoneNumber),
-          initialValue: _stripKnownDialCode(initialPhoneNumber),
+          initialCountryCode:
+          _guessInitialCountryCode(
+            initialPhoneNumber,
+          ),
+          initialValue: _stripKnownDialCode(
+            initialPhoneNumber,
+          ),
           keyboardType: TextInputType.phone,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
+          textAlign: isArabic
+              ? TextAlign.right
+              : TextAlign.left,
           decoration: InputDecoration(
             filled: true,
             fillColor: tokens.colors.background,
             hintText: label,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide(
                 color: tokens.colors.primary,
                 width: tokens.search.borderWidth,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide(
                 color: tokens.colors.danger,
                 width: tokens.search.borderWidth,
@@ -937,41 +1194,83 @@ class _PhoneField extends StatelessWidget {
             ),
           ),
           validator: (phone) {
-            final complete = phone?.completeNumber.trim() ?? '';
-            if (complete.isEmpty) return requiredMessage;
+            final complete =
+                phone?.completeNumber.trim() ?? '';
+
+            if (complete.isEmpty) {
+              return requiredMessage;
+            }
+
             return null;
           },
           onChanged: (phone) {
-            onChanged(phone.completeNumber);
+            onChanged(
+              phone.completeNumber,
+            );
           },
         ),
       ],
     );
   }
 
-  static String _guessInitialCountryCode(String? phone) {
-    final v = phone?.trim() ?? '';
+  static String _guessInitialCountryCode(
+      String? phone,
+      ) {
+    final value = phone?.trim() ?? '';
 
-    if (v.startsWith('+961')) return 'LB';
-    if (v.startsWith('+33')) return 'FR';
-    if (v.startsWith('+1')) return 'US';
-    if (v.startsWith('+44')) return 'GB';
-    if (v.startsWith('+971')) return 'AE';
+    if (value.startsWith('+961')) {
+      return 'LB';
+    }
+
+    if (value.startsWith('+33')) {
+      return 'FR';
+    }
+
+    if (value.startsWith('+1')) {
+      return 'US';
+    }
+
+    if (value.startsWith('+44')) {
+      return 'GB';
+    }
+
+    if (value.startsWith('+971')) {
+      return 'AE';
+    }
 
     return 'LB';
   }
 
-  static String? _stripKnownDialCode(String? phone) {
-    final v = phone?.trim();
-    if (v == null || v.isEmpty) return null;
+  static String? _stripKnownDialCode(
+      String? phone,
+      ) {
+    final value = phone?.trim();
 
-    if (v.startsWith('+961')) return v.substring(4);
-    if (v.startsWith('+33')) return v.substring(3);
-    if (v.startsWith('+1')) return v.substring(2);
-    if (v.startsWith('+44')) return v.substring(3);
-    if (v.startsWith('+971')) return v.substring(4);
+    if (value == null || value.isEmpty) {
+      return null;
+    }
 
-    return v;
+    if (value.startsWith('+961')) {
+      return value.substring(4);
+    }
+
+    if (value.startsWith('+33')) {
+      return value.substring(3);
+    }
+
+    if (value.startsWith('+1')) {
+      return value.substring(2);
+    }
+
+    if (value.startsWith('+44')) {
+      return value.substring(3);
+    }
+
+    if (value.startsWith('+971')) {
+      return value.substring(4);
+    }
+
+    return value;
   }
 }
 
@@ -1002,15 +1301,22 @@ class _EditField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.read<ThemeCubit>().state.tokens;
+    final tokens =
+        context.read<ThemeCubit>().state.tokens;
+
     final isArabic = _isArabic(context);
 
     return Column(
-      crossAxisAlignment:
-      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isArabic
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
-        _FieldLabel(text: label),
-        SizedBox(height: tokens.spacing.xs),
+        _FieldLabel(
+          text: label,
+        ),
+        SizedBox(
+          height: tokens.spacing.xs,
+        ),
         TextFormField(
           controller: controller,
           readOnly: readOnly,
@@ -1019,8 +1325,12 @@ class _EditField extends StatelessWidget {
           inputFormatters: inputFormatters,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          textAlign: isArabic
+              ? TextAlign.right
+              : TextAlign.left,
+          textDirection: isArabic
+              ? TextDirection.rtl
+              : TextDirection.ltr,
           decoration: InputDecoration(
             filled: true,
             fillColor: tokens.colors.background,
@@ -1031,22 +1341,30 @@ class _EditField extends StatelessWidget {
             ),
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide(
                 color: tokens.colors.primary,
                 width: tokens.search.borderWidth,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(tokens.search.radius),
+              borderRadius: BorderRadius.circular(
+                tokens.search.radius,
+              ),
               borderSide: BorderSide(
                 color: tokens.colors.danger,
                 width: tokens.search.borderWidth,

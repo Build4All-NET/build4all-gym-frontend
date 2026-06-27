@@ -5450,4 +5450,123 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainingVideos_noVideoUrl => 'لا يوجد رابط فيديو متاح';
+
+  @override
+  String get memberMembershipEmptyTitle => 'لا توجد اشتراكات';
+
+  @override
+  String get memberMembershipEmptySubtitle => 'ستظهر اشتراكاتك هنا بعد الاشتراك في إحدى الخطط.';
+
+  @override
+  String get memberMembershipLoadFailed => 'تعذر تحميل الاشتراكات';
+
+  @override
+  String get memberMembershipLoadFailedSubtitle => 'تحقق من اتصالك بالإنترنت وحاول مرة أخرى.';
+
+  @override
+  String get memberMembershipPlanType => 'نوع الخطة';
+
+  @override
+  String get memberMembershipPaymentStatus => 'حالة الدفع';
+
+  @override
+  String get memberMembershipStartDate => 'تاريخ البدء';
+
+  @override
+  String get memberMembershipEndDate => 'تاريخ الانتهاء';
+
+  @override
+  String get memberMembershipRemainingDays => 'الأيام المتبقية';
+
+  @override
+  String get memberMembershipRemainingVisits => 'الزيارات المتبقية';
+
+  @override
+  String get memberMembershipDuration => 'مدة الخطة';
+
+  @override
+  String get memberMembershipBillingCycle => 'دورة الفوترة';
+
+  @override
+  String get memberMembershipPrice => 'السعر';
+
+  @override
+  String get memberMembershipBranch => 'الفرع';
+
+  @override
+  String get memberMembershipAutoRenew => 'التجديد التلقائي';
+
+  @override
+  String get memberMembershipNotAvailable => 'غير متوفر';
+
+  @override
+  String get memberMembershipEnabled => 'مفعّل';
+
+  @override
+  String get memberMembershipDisabled => 'غير مفعّل';
+
+  @override
+  String memberMembershipDurationDays(int days) {
+    return '$days يوم';
+  }
+
+  @override
+  String get memberMembershipStatusActive => 'نشط';
+
+  @override
+  String get memberMembershipStatusFrozen => 'مجمّد';
+
+  @override
+  String get memberMembershipStatusExpired => 'منتهي';
+
+  @override
+  String get memberMembershipStatusCancelled => 'ملغى';
+
+  @override
+  String get memberMembershipStatusPending => 'قيد الانتظار';
+
+  @override
+  String get memberMembershipPaymentPaid => 'مدفوع';
+
+  @override
+  String get memberMembershipPaymentPending => 'قيد الانتظار';
+
+  @override
+  String get memberMembershipPaymentFailed => 'فشل الدفع';
+
+  @override
+  String get memberMembershipPaymentRefunded => 'تم الاسترداد';
+
+  @override
+  String get memberMembershipPaymentUnpaid => 'غير مدفوع';
+
+  @override
+  String get memberMembershipPlanTypeGym => 'نادي رياضي';
+
+  @override
+  String get memberMembershipPlanTypeClasses => 'حصص';
+
+  @override
+  String get memberMembershipPlanTypeMixed => 'مختلط';
+
+  @override
+  String get memberMembershipPlanTypeMonthly => 'شهري';
+
+  @override
+  String get memberMembershipPlanTypeYearly => 'سنوي';
+
+  @override
+  String get memberMembershipBillingDaily => 'يومي';
+
+  @override
+  String get memberMembershipBillingWeekly => 'أسبوعي';
+
+  @override
+  String get memberMembershipBillingMonthly => 'شهري';
+
+  @override
+  String get memberMembershipBillingYearly => 'سنوي';
+
+  @override
+  String get memberMembershipBillingOneTime => 'دفعة واحدة';
 }
