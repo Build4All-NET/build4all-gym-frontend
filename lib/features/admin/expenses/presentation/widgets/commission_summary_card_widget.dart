@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/expense_entity.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -26,6 +27,7 @@ class CommissionSummaryCardWidget extends StatelessWidget {
     final c = tokens.colors;
     final card = tokens.card;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     final total = expenses.fold<double>(0, (sum, e) => sum + e.amount);
     final paid = expenses
@@ -68,18 +70,21 @@ class CommissionSummaryCardWidget extends StatelessWidget {
                 value: total,
                 valueColor: c.primary,
                 mutedColor: c.muted,
+                symbol: symbol,
               ),
               _CommissionStat(
                 label: l10n.admin_expenses_paid,
                 value: paid,
                 valueColor: c.success,
                 mutedColor: c.muted,
+                symbol: symbol,
               ),
               _CommissionStat(
                 label: l10n.admin_expenses_remaining,
                 value: remaining,
                 valueColor: Colors.orange.shade800,
                 mutedColor: c.muted,
+                symbol: symbol,
               ),
             ],
           ),
@@ -94,12 +99,14 @@ class _CommissionStat extends StatelessWidget {
   final double value;
   final Color valueColor;
   final Color mutedColor;
+  final String symbol;
 
   const _CommissionStat({
     required this.label,
     required this.value,
     required this.valueColor,
     required this.mutedColor,
+    required this.symbol,
   });
 
   @override
@@ -108,7 +115,7 @@ class _CommissionStat extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            '₹${value.toStringAsFixed(0)}',
+            '$symbol${value.toStringAsFixed(0)}',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,

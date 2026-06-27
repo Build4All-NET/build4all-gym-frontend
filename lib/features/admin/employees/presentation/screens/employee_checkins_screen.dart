@@ -11,10 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/admin_app_bar.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
+import '../../../checkins/presentation/widgets/checkin_stat_card.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
+import '../../domain/entities/employee_checkin_row_entity.dart';
 import '../bloc/employee_checkins/employee_checkins_bloc.dart';
 import '../widgets/employee_checkin_row_widget.dart';
 import '../widgets/employee_qr_scanner_sheet.dart';
@@ -135,89 +138,168 @@ class _EmployeeCheckinsScreenState extends State<EmployeeCheckinsScreen> {
               ),
               Expanded(
                 child: BlocBuilder<EmployeeCheckinsBloc, EmployeeCheckinsState>(
+                  // Action success/error states are transient (snackbar-only, handled by
+                  // the BlocListener above) — ignoring them here keeps the list on screen
+                  // instead of it flashing blank every time someone taps Check In/Out.
+                  buildWhen: (_, curr) =>
+                      curr is EmployeeCheckinsLoading ||
+                      curr is EmployeeCheckinsInitial ||
+                      curr is EmployeeCheckinsError ||
+                      curr is EmployeeCheckinsLoaded,
                   builder: (context, state) {
-                    if (state is EmployeeCheckinsLoading || state is EmployeeCheckinsInitial) {
-                      return Center(child: CircularProgressIndicator(color: c.primary));
-                    }
+                    final isLoading = state is EmployeeCheckinsLoading || state is EmployeeCheckinsInitial;
+                    final List<EmployeeCheckinRowEntity> rows =
+                        state is EmployeeCheckinsLoaded ? state.rows : const [];
+                    final activeNow = rows.where((r) => r.isCheckedIn).length;
 
-                    if (state is EmployeeCheckinsError) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.error_outline_rounded, color: c.danger, size: 48),
-                            const SizedBox(height: 12),
-                            Text(state.message, textAlign: TextAlign.center, style: TextStyle(color: c.muted)),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () => context
-                                  .read<EmployeeCheckinsBloc>()
-                                  .add(const LoadTodayEmployeeCheckins()),
-                              style: ElevatedButton.styleFrom(backgroundColor: c.primary, foregroundColor: c.onPrimary),
-                              child: Text(l10n.retry),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    if (state is EmployeeCheckinsLoaded) {
-                      if (state.rows.isEmpty) {
-                        return RefreshIndicator(
-                          color: c.primary,
-                          onRefresh: () async => context
-                              .read<EmployeeCheckinsBloc>()
-                              .add(const LoadTodayEmployeeCheckins()),
-                          child: ListView(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(48),
-                                child: Center(
-                                  child: Text(l10n.admin_employees_noActiveEmployeesYet, style: TextStyle(color: c.muted)),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (profile.isAdminRole) ...[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                            child: Row(
+                              children: [
+                                CheckinStatCard(
+                                  icon: Icons.how_to_reg_rounded,
+                                  value: activeNow,
+                                  label: l10n.admin_employees_checkedInNow,
+                                  tintColor: c.success,
+                                  iconColor: c.success,
+                                  isLoading: isLoading,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 12),
+                                CheckinStatCard(
+                                  icon: Icons.groups_rounded,
+                                  value: rows.length,
+                                  label: l10n.admin_employees_totalStaff,
+                                  tintColor: const Color(0xFF1D4ED8),
+                                  iconColor: const Color(0xFF1D4ED8),
+                                  isLoading: isLoading,
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                      }
-
-                      return RefreshIndicator(
-                        color: c.primary,
-                        onRefresh: () async => context
-                            .read<EmployeeCheckinsBloc>()
-                            .add(const LoadTodayEmployeeCheckins()),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                          itemCount: state.rows.length,
-                          itemBuilder: (context, i) {
-                            final row = state.rows[i];
-                            return EmployeeCheckinRowWidget(
-                              row: row,
-                              isBusy: _busyEmployeeId == row.employeeId,
-                              onCheckIn: () {
-                                setState(() => _busyEmployeeId = row.employeeId);
-                                context.read<EmployeeCheckinsBloc>().add(ManualCheckinEvent(row.employeeId));
-                              },
-                              onCheckOut: () {
-                                if (row.employeeCheckinId == null) return;
-                                setState(() => _busyEmployeeId = row.employeeId);
-                                context
-                                    .read<EmployeeCheckinsBloc>()
-                                    .add(ManualCheckoutEvent(row.employeeCheckinId!));
-                              },
-                            );
-                          },
-                        ),
-                      );
-                    }
-
-                    return const SizedBox.shrink();
+                          const SizedBox(height: 4),
+                        ],
+                        Expanded(child: _buildBody(context, state, c, l10n)),
+                      ],
+                    );
                   },
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    EmployeeCheckinsState state,
+    ColorTokens c,
+    AppLocalizations l10n,
+  ) {
+    if (state is EmployeeCheckinsLoading || state is EmployeeCheckinsInitial) {
+      return ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        itemCount: 5,
+        itemBuilder: (_, __) => const _RowSkeleton(),
+      );
+    }
+
+    if (state is EmployeeCheckinsError) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline_rounded, color: c.danger, size: 48),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(state.message, textAlign: TextAlign.center, style: TextStyle(color: c.muted)),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.read<EmployeeCheckinsBloc>().add(const LoadTodayEmployeeCheckins()),
+              style: ElevatedButton.styleFrom(backgroundColor: c.primary, foregroundColor: c.onPrimary),
+              child: Text(l10n.retry),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (state is EmployeeCheckinsLoaded) {
+      if (state.rows.isEmpty) {
+        return RefreshIndicator(
+          color: c.primary,
+          onRefresh: () async =>
+              context.read<EmployeeCheckinsBloc>().add(const LoadTodayEmployeeCheckins()),
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(48),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.badge_outlined, size: 48, color: c.muted.withOpacity(0.5)),
+                      const SizedBox(height: 12),
+                      Text(l10n.admin_employees_noActiveEmployeesYet,
+                          style: TextStyle(color: c.muted, fontSize: 14)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      return RefreshIndicator(
+        color: c.primary,
+        onRefresh: () async =>
+            context.read<EmployeeCheckinsBloc>().add(const LoadTodayEmployeeCheckins()),
+        child: ListView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          itemCount: state.rows.length,
+          itemBuilder: (context, i) {
+            final row = state.rows[i];
+            return EmployeeCheckinRowWidget(
+              row: row,
+              isBusy: _busyEmployeeId == row.employeeId,
+              onCheckIn: () {
+                setState(() => _busyEmployeeId = row.employeeId);
+                context.read<EmployeeCheckinsBloc>().add(ManualCheckinEvent(row.employeeId));
+              },
+              onCheckOut: () {
+                if (row.employeeCheckinId == null) return;
+                setState(() => _busyEmployeeId = row.employeeId);
+                context.read<EmployeeCheckinsBloc>().add(ManualCheckoutEvent(row.employeeCheckinId!));
+              },
+            );
+          },
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+}
+
+// ── Loading skeleton row — shown while the first load is in flight ───────────
+class _RowSkeleton extends StatelessWidget {
+  const _RowSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      height: 72,
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(14),
       ),
     );
   }

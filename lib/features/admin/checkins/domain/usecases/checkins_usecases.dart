@@ -24,10 +24,11 @@ class GetTodayCheckinsUseCase {
   GetTodayCheckinsUseCase(this.repository);
 
   Future<({CheckinStats stats, List<Checkin> checkins})> call({
-    required int branchId,
-    String? search,
+    int?      branchId,
+    String?   search,
+    DateTime? date,
   }) =>
-      repository.getTodayCheckins(branchId: branchId, search: search);
+      repository.getTodayCheckins(branchId: branchId, search: search, date: date);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

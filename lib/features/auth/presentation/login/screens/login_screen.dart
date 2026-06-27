@@ -88,10 +88,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     final inputBorderColor = c.border.withOpacity(0.3);
     final hintColor = c.muted;
     final labelColor = c.label.withOpacity(0.7);
-    final dividerColor = c.border.withOpacity(0.2);
     final shadowColor = Colors.black;
-    final inverseSurface = c.label; // Use label as dark color
-    final onInverseSurface = c.onPrimary;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (ctx, state) async {
@@ -471,101 +468,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           style: TextStyle(
                                             fontSize: btn.textSize,
                                             fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: sp.lg),
-
-                                    // ── Divider "or" ──
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Divider(
-                                            color: dividerColor,
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsetsDirectional.symmetric(horizontal: sp.md),
-                                          child: Text(
-                                            l.general_or,
-                                            style: TextStyle(
-                                              color: c.muted,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Divider(
-                                            color: dividerColor,
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: sp.lg),
-
-                                    // ── Google login button ──
-                                    SizedBox(
-                                      height: btn.height,
-                                      child: OutlinedButton.icon(
-                                        onPressed: () {
-                                          // TODO: Google login
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: c.label,
-                                          side: BorderSide(
-                                            color: inputBorderColor,
-                                            width: 1,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(btn.radius),
-                                          ),
-                                        ),
-                                        icon: Image.network(
-                                          'https://www.google.com/favicon.ico',
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                        label: Text(
-                                          l.auth_continueWithGoogle,
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: sp.sm),
-
-                                    // ── Apple login button ──
-                                    SizedBox(
-                                      height: btn.height,
-                                      child: OutlinedButton.icon(
-                                        onPressed: () {
-                                          // TODO: Apple login
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          backgroundColor: inverseSurface,
-                                          foregroundColor: onInverseSurface,
-                                          side: BorderSide(
-                                            color: inverseSurface,
-                                            width: 1,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(btn.radius),
-                                          ),
-                                        ),
-                                        icon: const Icon(
-                                          Icons.apple,
-                                          size: 22,
-                                        ),
-                                        label: Text(
-                                          l.auth_continueWithApple,
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),

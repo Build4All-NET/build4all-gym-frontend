@@ -41,113 +41,60 @@ class AccountActionCardsWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Row(
-      children: [
-        Expanded(
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(tokens.card.radius),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(tokens.card.radius),
-              onTap: () => _openBookings(context),
-              child: Ink(
-                height: 110,
-                padding: EdgeInsets.all(tokens.spacing.md),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      tokens.colors.danger,
-                      tokens.colors.success,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(tokens.card.radius),
-                ),
-                child: Column(
-                  crossAxisAlignment:
-                  isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Align(
-                      alignment:
-                      isRtl ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Icon(
-                        Icons.bookmark_rounded,
-                        color: tokens.colors.onPrimary,
-                        size: 28,
-                      ),
-                    ),
-                    Text(
-                      '${account.activeBookingsCount}',
-                      textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                      style: tokens.typography.headlineSmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    Text(
-                      l10n.accountMyBookings,
-                      textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                      style: tokens.typography.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: tokens.spacing.md),
-        Expanded(
-          child: Container(
-            height: 110,
-            padding: EdgeInsets.all(tokens.spacing.md),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  tokens.colors.primary,
-                  tokens.colors.primary.withOpacity(0.72),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(tokens.card.radius),
-            ),
-            child: Column(
-              crossAxisAlignment:
-              isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Align(
-                  alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Icon(
-                    Icons.card_giftcard_rounded,
-                    color: tokens.colors.onPrimary,
-                    size: 28,
-                  ),
-                ),
-                Text(
-                  '450',
-                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                  style: tokens.typography.headlineSmall.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                Text(
-                  l10n.accountLoyaltyPoints,
-                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                  style: tokens.typography.bodySmall.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(tokens.card.radius),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(tokens.card.radius),
+        onTap: () => _openBookings(context),
+        child: Ink(
+          width: double.infinity,
+          height: 110,
+          padding: EdgeInsets.all(tokens.spacing.md),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                tokens.colors.danger,
+                tokens.colors.success,
               ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
+            borderRadius: BorderRadius.circular(tokens.card.radius),
+          ),
+          child: Column(
+            crossAxisAlignment:
+            isRtl ? CrossAxisAlignment.stretch : CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment:
+                isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                child: Icon(
+                  Icons.bookmark_rounded,
+                  color: tokens.colors.onPrimary,
+                  size: 28,
+                ),
+              ),
+              Text(
+                '${account.activeBookingsCount}',
+                textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                style: tokens.typography.headlineSmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                l10n.accountMyBookings,
+                textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                style: tokens.typography.bodySmall.copyWith(
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

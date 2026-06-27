@@ -65,15 +65,19 @@ class AdminDashboardLoadRequested extends AdminDashboardEvent {
   final String? revenueStartDate;
   final String? revenueEndDate;
 
+  /// null = all branches
+  final int? branchId;
+
   const AdminDashboardLoadRequested({
     this.period = 'today',
     this.revenuePeriod = 'this_month',
     this.revenueStartDate,
     this.revenueEndDate,
+    this.branchId,
   });
 
   @override
-  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate];
+  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate, branchId];
 }
 
 /*
@@ -106,16 +110,18 @@ class AdminDashboardRefreshRequested extends AdminDashboardEvent {
   final String revenuePeriod;
   final String? revenueStartDate;
   final String? revenueEndDate;
+  final int? branchId;
 
   const AdminDashboardRefreshRequested({
     this.period = 'today',
     this.revenuePeriod = 'this_month',
     this.revenueStartDate,
     this.revenueEndDate,
+    this.branchId,
   });
 
   @override
-  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate];
+  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate, branchId];
 }
 
 /*
@@ -170,14 +176,16 @@ class AdminDashboardRevenuePeriodChanged extends AdminDashboardEvent {
   final String revenuePeriod;
   final String? revenueStartDate;
   final String? revenueEndDate;
+  final int? branchId;
 
   const AdminDashboardRevenuePeriodChanged({
     this.period = 'today',
     required this.revenuePeriod,
     this.revenueStartDate,
     this.revenueEndDate,
+    this.branchId,
   });
 
   @override
-  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate];
+  List<Object?> get props => [period, revenuePeriod, revenueStartDate, revenueEndDate, branchId];
 }

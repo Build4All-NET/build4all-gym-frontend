@@ -154,6 +154,19 @@ class MemberInvoiceSummaryEntity {
   /// It should simply show the button when this is true.
   final bool canRequestRefund;
 
+  /// ISO timestamp of when the refund window closes (set by backend when a
+  /// time-limited refund policy is configured for this invoice type).
+  /// null = no window configured or already expired.
+  final String? refundWindowEndsAt;
+
+  /// Amount actually refunded to the member after admin approval.
+  /// null when no refund has been processed yet.
+  final double? refundedAmount;
+
+  /// Amount deducted by the gym during the refund (fee/penalty).
+  /// null or 0 means no deduction.
+  final double? deductionAmount;
+
   const MemberInvoiceSummaryEntity({
     required this.invoiceId,
     required this.invoiceNumber,
@@ -167,5 +180,8 @@ class MemberInvoiceSummaryEntity {
     this.paymentMethod,
     this.refundStatus,
     required this.canRequestRefund,
+    this.refundWindowEndsAt,
+    this.refundedAmount,
+    this.deductionAmount,
   });
 }

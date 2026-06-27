@@ -21,6 +21,7 @@
 //     as null/empty and the backend would either reject or default incorrectly.
 // =============================================================================
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -392,6 +393,7 @@ class _PackageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Card(
       color: tokens.colors.surface,
@@ -483,7 +485,7 @@ class _PackageCard extends StatelessWidget {
                 package.salePrice != null
                     ? AppLocalizations.of(context)!.trainer_packagePriceWasPrice(
                         package.salePrice!.toStringAsFixed(2), package.price.toStringAsFixed(2))
-                    : '\$${package.price.toStringAsFixed(2)}',
+                    : '$symbol${package.price.toStringAsFixed(2)}',
                 Icons.attach_money),
             const SizedBox(height: 8),
             Row(
@@ -592,9 +594,14 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
   bool    _isActive    = true;
 
   // ── PT Services (for ptServiceId dropdown) ─────────────────────────────────
-  List<PtServiceModel> _services        = [];
+  List<PtServiceModel> _allServices     = [];
   bool                 _servicesLoading = false;
   int?                 _selectedServiceId;
+
+  List<PtServiceModel> get _filteredServices {
+    if (_selectedTrainerId == null) return _allServices.where((s) => s.isActive).toList();
+    return _allServices.where((s) => s.isActive && s.trainerId == _selectedTrainerId).toList();
+  }
 
   @override
   void initState() {
@@ -656,17 +663,44 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
   Future<void> _loadServices() async {
     setState(() => _servicesLoading = true);
     try {
-      final list = await PtServiceService()
-          .getServices(tenantId: widget.tenantId);
+      final list = await PtServiceService().getServices(tenantId: widget.tenantId);
       if (mounted) {
         setState(() {
-          _services        = list.where((s) => s.isActive).toList();
+          _allServices     = list;
           _servicesLoading = false;
+          // Validate pre-selected service still belongs to selected trainer.
+          if (_selectedServiceId != null) {
+            final stillValid = _filteredServices.any((s) => s.serviceId == _selectedServiceId);
+            if (!stillValid) _selectedServiceId = null;
+          }
         });
       }
     } catch (_) {
       if (mounted) setState(() => _servicesLoading = false);
     }
+  }
+
+  void _onTrainerChanged(int? trainerId) {
+    setState(() {
+      _selectedTrainerId = trainerId;
+      // Reset service selection when trainer changes — the filtered list changes.
+      _selectedServiceId = null;
+    });
+  }
+
+  void _onServiceChanged(int? serviceId) {
+    setState(() {
+      _selectedServiceId = serviceId;
+      if (serviceId == null) return;
+      final service = _allServices.where((s) => s.serviceId == serviceId).firstOrNull;
+      if (service == null) return;
+      // Auto-fill price and duration from the selected service.
+      _price.text    = service.price.toStringAsFixed(2);
+      _duration.text = '${service.durationMinutes}';
+      // Default sessions to 1 if the field is empty or zero.
+      final currentSessions = int.tryParse(_sessions.text.trim()) ?? 0;
+      if (currentSessions <= 0) _sessions.text = '1';
+    });
   }
 
   @override
@@ -702,8 +736,7 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                     child: Text(t.fullName),
                   );
                 }).toList(),
-                onChanged: (v) =>
-                    setState(() => _selectedTrainerId = v),
+                onChanged: _onTrainerChanged,
                 validator: (v) =>
                 v == null ? l10n.trainer_selectTrainerRequired : null,
               ),
@@ -741,8 +774,11 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
               _field(c, _sessions, l10n.trainer_numberOfSessions,
                   icon: Icons.fitness_center_rounded,
                   keyboardType: TextInputType.number,
-                  validator: (v) =>
-                  int.tryParse(v ?? '') == null ? l10n.trainer_enterNumber : null),
+                  validator: (v) {
+                    final n = int.tryParse(v ?? '');
+                    if (n == null && (v ?? '').isNotEmpty) return l10n.trainer_enterNumber;
+                    return null; // empty = defaults to 1 in submit
+                  }),
               _field(c, _duration, l10n.trainer_sessionDurationMin,
                   icon: Icons.timer_outlined,
                   keyboardType: TextInputType.number,
@@ -801,18 +837,19 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2)))
                   : DropdownButtonFormField<int?>(
-                      value: _selectedServiceId,
+                      value: _filteredServices.any((s) => s.serviceId == _selectedServiceId)
+                          ? _selectedServiceId
+                          : null,
                       decoration: ptFieldDecoration(c,
                           label: l10n.trainer_linkedPtServiceRequired,
                           icon: Icons.link_rounded),
                       icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.muted),
-                      items: _services
+                      items: _filteredServices
                           .map((s) => DropdownMenuItem<int?>(
                               value: s.serviceId,
                               child: Text(s.name)))
                           .toList(),
-                      onChanged: (v) =>
-                          setState(() => _selectedServiceId = v),
+                      onChanged: _onServiceChanged,
                       validator: (v) =>
                           v == null ? l10n.trainer_selectServiceRequired : null,
                     ),
@@ -885,8 +922,8 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
 
     final body = <String, dynamic>{
       'name':                   _name.text.trim(),
-      'packageType':            _packageType,           // ← was missing
-      'numberOfSessions':       int.parse(_sessions.text.trim()),
+      'packageType':            _packageType,
+      'numberOfSessions':       int.tryParse(_sessions.text.trim()) ?? 1,
       'sessionDurationMinutes': int.parse(_duration.text.trim()),
       'daysAvailable':          int.parse(_daysAvailable.text.trim()), // ← was missing
       'minDaysPerWeek':         int.parse(_minDays.text.trim()),

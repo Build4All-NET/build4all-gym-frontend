@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../domain/entities/expense_stats_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -14,13 +15,14 @@ class ExpenseStatsCardWidget extends StatelessWidget {
     final c      = tokens.colors;
     final card   = tokens.card;
     final l10n   = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         children: [
           _StatCard(
-            value:      '₹${stats.totalThisMonth.toStringAsFixed(0)}',
+            value:      '$symbol${stats.totalThisMonth.toStringAsFixed(0)}',
             label:      l10n.admin_expenses_thisMonth,
             valueColor: c.primary,
             surface:    c.surface,
@@ -28,7 +30,7 @@ class ExpenseStatsCardWidget extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           _StatCard(
-            value:      '₹${stats.totalAllTime.toStringAsFixed(0)}',
+            value:      '$symbol${stats.totalAllTime.toStringAsFixed(0)}',
             label:      l10n.admin_expenses_allTime,
             valueColor: c.danger,
             surface:    c.surface,

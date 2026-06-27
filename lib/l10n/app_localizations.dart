@@ -2255,6 +2255,18 @@ abstract class AppLocalizations {
   /// **'Picture-in-Picture is not available on this device.'**
   String get ptTrainingVideosPipUnavailable;
 
+  /// No description provided for @ptVideosLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Members Only'**
+  String get ptVideosLockedTitle;
+
+  /// No description provided for @ptVideosLockedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to a PT package with this trainer to unlock training videos.'**
+  String get ptVideosLockedSubtitle;
+
   /// No description provided for @ptTrainerDetailsNotFound.
   ///
   /// In en, this message translates to:
@@ -3233,6 +3245,36 @@ abstract class AppLocalizations {
   /// **'Scan Member QR'**
   String get checkins_scannerTitle;
 
+  /// No description provided for @checkins_visits.
+  ///
+  /// In en, this message translates to:
+  /// **'Visits'**
+  String get checkins_visits;
+
+  /// No description provided for @checkins_durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String checkins_durationMinutes(Object minutes);
+
+  /// No description provided for @checkins_filterByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by date'**
+  String get checkins_filterByDate;
+
+  /// No description provided for @checkins_clearDateFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to today'**
+  String get checkins_clearDateFilter;
+
+  /// No description provided for @checkins_allBranchesScanBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a specific branch to scan QR codes.'**
+  String get checkins_allBranchesScanBlocked;
+
   /// No description provided for @sessionDetailBookingClosed.
   ///
   /// In en, this message translates to:
@@ -3640,6 +3682,15 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refund Request'**
   String get memberInvoicesRefundStatus;
+
+  /// No description provided for @memberInvoicesRefundDeadline.
+  String get memberInvoicesRefundDeadline;
+
+  /// No description provided for @memberInvoicesRefundedAmount.
+  String get memberInvoicesRefundedAmount;
+
+  /// No description provided for @memberInvoicesDeductedAmount.
+  String get memberInvoicesDeductedAmount;
 
   /// No description provided for @memberInvoicesDate.
   ///
@@ -5878,6 +5929,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Members can book personal training sessions without an active membership plan'**
   String get admin_settings_allowPtBookingWithoutMembershipDesc;
+
+  /// No description provided for @admin_settings_refundPolicy.
+  String get admin_settings_refundPolicy;
+
+  /// No description provided for @admin_settings_refundPolicyDesc.
+  String get admin_settings_refundPolicyDesc;
+
+  /// No description provided for @admin_settings_planRefundWindow.
+  String get admin_settings_planRefundWindow;
+
+  /// No description provided for @admin_settings_planRefundWindowDesc.
+  String get admin_settings_planRefundWindowDesc;
+
+  /// No description provided for @admin_settings_classRefundWindow.
+  String get admin_settings_classRefundWindow;
+
+  /// No description provided for @admin_settings_classRefundWindowDesc.
+  String get admin_settings_classRefundWindowDesc;
+
+  /// No description provided for @admin_settings_ptPackageRefundWindow.
+  String get admin_settings_ptPackageRefundWindow;
+
+  /// No description provided for @admin_settings_ptPackageRefundWindowDesc.
+  String get admin_settings_ptPackageRefundWindowDesc;
 
   /// No description provided for @admin_settings_dangerTitle.
   ///
@@ -9611,6 +9686,24 @@ abstract class AppLocalizations {
   /// **'Check In'**
   String get admin_employees_checkIn;
 
+  /// No description provided for @admin_employees_checkedInNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked In Now'**
+  String get admin_employees_checkedInNow;
+
+  /// No description provided for @admin_employees_totalStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Staff'**
+  String get admin_employees_totalStaff;
+
+  /// No description provided for @admin_employees_manual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get admin_employees_manual;
+
   /// No description provided for @admin_employees_pleaseSelectBranch.
   ///
   /// In en, this message translates to:
@@ -9706,6 +9799,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} ({type}) — identity is managed via the app account.'**
   String admin_employees_identityManagedNote(String name, String type);
+
+  /// No description provided for @admin_employees_sectionEmployeeDetails.
+  String get admin_employees_sectionEmployeeDetails;
+
+  /// No description provided for @admin_employees_fullNameLabel.
+  String get admin_employees_fullNameLabel;
+
+  /// No description provided for @admin_employees_fullNameHint.
+  String get admin_employees_fullNameHint;
+
+  /// No description provided for @admin_employees_phoneLabel.
+  String get admin_employees_phoneLabel;
+
+  /// No description provided for @admin_employees_emailLabel.
+  String get admin_employees_emailLabel;
+
+  /// No description provided for @admin_employees_optional.
+  String get admin_employees_optional;
+
+  /// No description provided for @admin_employees_employeeTypeLabel.
+  String get admin_employees_employeeTypeLabel;
+
+  /// No description provided for @admin_employees_employeeTypeHint.
+  String get admin_employees_employeeTypeHint;
+
+  /// No description provided for @admin_employees_selectEmployeeType.
+  String get admin_employees_selectEmployeeType;
+
+  /// No description provided for @admin_employees_sectionPay.
+  String get admin_employees_sectionPay;
+
+  /// No description provided for @admin_employees_salaryLabel.
+  String get admin_employees_salaryLabel;
+
+  /// No description provided for @admin_employees_payFrequencyLabel.
+  String get admin_employees_payFrequencyLabel;
+
+  /// No description provided for @admin_employees_branchLabel.
+  String get admin_employees_branchLabel;
+
+  /// No description provided for @admin_employees_selectBranch.
+  String get admin_employees_selectBranch;
+
+  /// No description provided for @admin_employees_hireDateLabel.
+  String get admin_employees_hireDateLabel;
+
+  /// No description provided for @admin_employees_statusLabel.
+  String get admin_employees_statusLabel;
+
+  /// No description provided for @admin_employees_statusActive.
+  String get admin_employees_statusActive;
+
+  /// No description provided for @admin_employees_notesLabel.
+  String get admin_employees_notesLabel;
+
+  /// No description provided for @admin_employees_optionalNotes.
+  String get admin_employees_optionalNotes;
+
+  /// No description provided for @admin_employees_saveChanges.
+  String get admin_employees_saveChanges;
 
   /// No description provided for @admin_dashboard_growthPercent.
   ///
@@ -9880,6 +10033,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Testing…'**
   String get admin_payments_testingEllipsis;
+
+  /// No description provided for @admin_payments_configureFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure {name} before enabling it.'**
+  String admin_payments_configureFirst(String name);
 
   /// No description provided for @admin_invoice_title.
   ///

@@ -15,7 +15,6 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
-import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../../admin/AppBar/presentation/admin_app_bar.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
@@ -25,7 +24,6 @@ import '../../domain/entities/pt_session_entity.dart';
 import '../../domain/entities/pt_session_stats_entity.dart';
 import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
-import '../widgets/book_session_sheet_widget.dart';
 
 class TrainerDashboardScreen extends StatelessWidget {
   final ValueChanged<int>     onTabSwitch;
@@ -556,14 +554,6 @@ class _QuickActionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
-    final tokenStore = AdminTokenStore();
-
-    // For admin: default trainer for BookSessionSheet = first trainer in list
-    // For trainer: use their own trainerId
-    final defaultTrainerIdForSheet = (isAdmin && trainers.isNotEmpty)
-        ? trainers.first.trainerId
-        : trainerId;
-
     final l10n = AppLocalizations.of(context)!;
 
     // Tab order differs by role (see TrainerMainScreen._MainShell):
@@ -601,25 +591,6 @@ class _QuickActionsSection extends StatelessWidget {
           iconColor: Color.lerp(c.danger, c.primary, 0.5)!,
           onTap:     () => onTabSwitch(3),
         ),
-      _QAItem(
-        icon: Icons.event_available_outlined,
-        label: l10n.trainer_createSession,
-        bg:        Color.lerp(c.primary, c.label, 0.3)!.withOpacity(0.1),
-        iconColor: Color.lerp(c.primary, c.label, 0.3)!,
-        onTap: () {
-          final tenantIdStr = tokenStore.getTenantId();
-          final tenantId = int.tryParse(tenantIdStr.toString()) ?? 1;
-          BookSessionSheet.show(
-            context,
-            branchId:     branchId,
-            tenantId:     tenantId,
-            trainerId:    defaultTrainerIdForSheet,
-            isAdmin:      isAdmin,
-            trainers:     trainers,
-            selectedDate: DateTime.now(),
-          );
-        },
-      ),
     ];
 
     return Column(

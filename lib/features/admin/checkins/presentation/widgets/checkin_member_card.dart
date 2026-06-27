@@ -95,14 +95,46 @@ class CheckinMemberCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 2),
-                            Row(
+                            Wrap(
+                              spacing:   8,
+                              runSpacing: 2,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                Icon(Icons.access_time_rounded,
-                                    size: 13, color: c.muted),
-                                const SizedBox(width: 4),
-                                Text(
-                                  checkin.checkinTime,
-                                  style: TextStyle(fontSize: 12, color: c.muted),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.access_time_rounded,
+                                        size: 13, color: c.muted),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      checkin.checkinTime,
+                                      style: TextStyle(fontSize: 12, color: c.muted),
+                                    ),
+                                  ],
+                                ),
+                                if (!isActive && checkin.durationMinutes != null)
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.timelapse_rounded,
+                                          size: 13, color: c.muted),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        l10n.checkins_durationMinutes(checkin.durationMinutes!),
+                                        style: TextStyle(fontSize: 12, color: c.muted),
+                                      ),
+                                    ],
+                                  ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.repeat_rounded, size: 13, color: c.muted),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${l10n.checkins_visits}: ${checkin.visitCount}',
+                                      style: TextStyle(fontSize: 12, color: c.muted),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

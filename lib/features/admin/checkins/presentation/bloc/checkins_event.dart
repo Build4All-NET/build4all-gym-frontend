@@ -60,7 +60,18 @@ class BlockMember extends CheckinsEvent {
 
 /// Fired when the admin picks a different branch from the AppBar branch pill
 /// (or once, when the admin's home branch resolves after the profile loads).
+/// [branchId] null means "All Branches" — stats/list aggregate across the
+/// whole tenant instead of one branch.
 class ChangeBranch extends CheckinsEvent {
-  final int branchId;
+  final int? branchId;
   const ChangeBranch(this.branchId);
+}
+
+// ── Date filter ───────────────────────────────────────────────────────────
+
+/// Fired when the admin picks a date from the date filter (or clears it).
+/// [date] null means "today".
+class FilterByDate extends CheckinsEvent {
+  final DateTime? date;
+  const FilterByDate(this.date);
 }

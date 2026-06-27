@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import '../../domain/entities/employee_entity.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
@@ -32,6 +33,7 @@ class AdminEmployeeCardWidget extends StatelessWidget {
     final c = tokens.colors;
     final card = tokens.card;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     final displayName = (employee.fullName == null || employee.fullName!.isEmpty)
         ? l10n.admin_employees_unknown
@@ -68,7 +70,7 @@ class AdminEmployeeCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '\$${employee.salaryAmount.toStringAsFixed(2)} / ${_formatFrequency(employee.payFrequency, l10n)}',
+                  '$symbol${employee.salaryAmount.toStringAsFixed(2)} / ${_formatFrequency(employee.payFrequency, l10n)}',
                   style: TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w700, color: c.danger),
                 ),

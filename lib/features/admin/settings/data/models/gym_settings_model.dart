@@ -23,6 +23,9 @@ class GymSettingsModel {
   final bool allowMembershipWithoutClass;
   final bool allowBothIndependently;
   final bool allowPtBookingWithoutMembership;
+  final int? planRefundWindowHours;
+  final int? classRefundWindowHours;
+  final int? ptPackageRefundWindowHours;
 
   const GymSettingsModel({
     required this.allowClassWithoutMembership,
@@ -30,6 +33,9 @@ class GymSettingsModel {
     required this.allowMembershipWithoutClass,
     required this.allowBothIndependently,
     required this.allowPtBookingWithoutMembership,
+    this.planRefundWindowHours,
+    this.classRefundWindowHours,
+    this.ptPackageRefundWindowHours,
   });
 
   // ── JSON deserialization ────────────────────────────────────────────────────
@@ -48,6 +54,9 @@ class GymSettingsModel {
         json['allowBothIndependently'] as bool? ?? true,
         allowPtBookingWithoutMembership:
         json['allowPtBookingWithoutMembership'] as bool? ?? false,
+        planRefundWindowHours: json['planRefundWindowHours'] as int?,
+        classRefundWindowHours: json['classRefundWindowHours'] as int?,
+        ptPackageRefundWindowHours: json['ptPackageRefundWindowHours'] as int?,
       );
 
   // ── JSON serialization ──────────────────────────────────────────────────────
@@ -59,6 +68,9 @@ class GymSettingsModel {
     'allowMembershipWithoutClass': allowMembershipWithoutClass,
     'allowBothIndependently': allowBothIndependently,
     'allowPtBookingWithoutMembership': allowPtBookingWithoutMembership,
+    'planRefundWindowHours': planRefundWindowHours,
+    'classRefundWindowHours': classRefundWindowHours,
+    'ptPackageRefundWindowHours': ptPackageRefundWindowHours,
   };
 
   // ── Mapping helpers ─────────────────────────────────────────────────────────
@@ -70,6 +82,9 @@ class GymSettingsModel {
     allowMembershipWithoutClass: allowMembershipWithoutClass,
     allowBothIndependently: allowBothIndependently,
     allowPtBookingWithoutMembership: allowPtBookingWithoutMembership,
+    planRefundWindowHours: planRefundWindowHours,
+    classRefundWindowHours: classRefundWindowHours,
+    ptPackageRefundWindowHours: ptPackageRefundWindowHours,
   );
 
   /// Converts a domain entity → data model (for the repository to serialize before PUT).
@@ -80,5 +95,8 @@ class GymSettingsModel {
         allowMembershipWithoutClass: entity.allowMembershipWithoutClass,
         allowBothIndependently: entity.allowBothIndependently,
         allowPtBookingWithoutMembership: entity.allowPtBookingWithoutMembership,
+        planRefundWindowHours: entity.planRefundWindowHours,
+        classRefundWindowHours: entity.classRefundWindowHours,
+        ptPackageRefundWindowHours: entity.ptPackageRefundWindowHours,
       );
 }

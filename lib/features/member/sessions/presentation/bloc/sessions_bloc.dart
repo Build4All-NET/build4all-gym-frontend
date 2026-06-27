@@ -96,9 +96,19 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
         }
 
         emit(SessionBookingDone(result));
-      }
 
-      await _loadSessions(emit);
+        // Reload the session detail so the detail screen reflects the updated
+        // available seats and "already booked" status immediately after booking.
+        if (getSessionDetailUseCase != null) {
+          try {
+            final updated = await getSessionDetailUseCase!(event.sessionId);
+            emit(SessionDetailLoaded(updated));
+          } catch (_) {
+            // If the detail reload fails, fall back to refreshing the list.
+            await _loadSessions(emit);
+          }
+        }
+      }
     } catch (e) {
       emit(SessionBookingError(e.toString()));
     }

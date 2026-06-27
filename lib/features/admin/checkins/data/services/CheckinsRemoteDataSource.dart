@@ -75,14 +75,20 @@ class CheckinsRemoteDataSource {
     return decoded;
   }
 
-  // ── GET /api/admin/checkins/today?branchId=&search= ───────────────────────
+  // ── GET /api/admin/checkins/today?branchId=&search=&date= ─────────────────
+  // [branchId] null means "all branches" — the param is simply omitted so the
+  // backend aggregates across the whole tenant. [date] is an ISO date string
+  // (yyyy-MM-dd); omitted means "today".
   Future<Map<String, dynamic>> getTodayCheckins({
-    required int branchId,
+    int?    branchId,
     String? search,
+    String? date,
   }) async {
     final headers = await _headers();
-    final params  = <String, String>{'branchId': branchId.toString()};
+    final params  = <String, String>{};
+    if (branchId != null) params['branchId'] = branchId.toString();
     if (search != null && search.isNotEmpty) params['search'] = search;
+    if (date != null && date.isNotEmpty) params['date'] = date;
 
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/checkins/today')
         .replace(queryParameters: params);

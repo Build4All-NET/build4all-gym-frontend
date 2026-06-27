@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import '../../../../../core/currency/currency_cubit.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -199,6 +200,7 @@ class _InvoiceView extends StatelessWidget {
   void _showRecordPaymentDialog(
       BuildContext context, AdminInvoiceEntity invoice, dynamic c, dynamic t) {
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.read<CurrencyCubit>().state.info.symbol;
     final amountCtrl =
         TextEditingController(text: invoice.dueAmount.toStringAsFixed(2));
     final formKey = GlobalKey<FormState>();
@@ -226,7 +228,7 @@ class _InvoiceView extends StatelessWidget {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.trainer_amountToCollectLabel,
-                  prefixText: '\$ ',
+                  prefixText: '$symbol ',
                 ),
                 validator: (v) {
                   final amount = double.tryParse(v?.trim() ?? '');
@@ -265,7 +267,8 @@ class _InvoiceView extends StatelessWidget {
     dynamic c,
     dynamic t,
   ) async {
-    final pdf = _buildPdf(invoice, gymName);
+    final symbol = context.read<CurrencyCubit>().state.info.symbol;
+    final pdf = _buildPdf(invoice, gymName, symbol);
     await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
       name: 'Invoice-${invoice.invoiceNumber}',
@@ -292,6 +295,7 @@ class _InvoiceCard extends StatelessWidget {
     final t   = tokens.typography;
     final l10n = AppLocalizations.of(context)!;
     final fmt = NumberFormat('#,##0.00');
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
     final statusColor = _statusColor(invoice.status, c);
 
     return Container(
@@ -436,7 +440,7 @@ class _InvoiceCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.8)),
                 const SizedBox(height: 10),
-                _itemsTable(invoice.items, c, t, fmt, l10n),
+                _itemsTable(invoice.items, c, t, fmt, l10n, symbol),
 
                 const SizedBox(height: 20),
                 Divider(color: c.border.withValues(alpha: 0.15), height: 1),
@@ -445,36 +449,36 @@ class _InvoiceCard extends StatelessWidget {
                 // ── Totals ───────────────────────────────────────────────────
                 _TotalRow(
                     label: l10n.admin_invoice_subtotal,
-                    value: '\$ ${fmt.format(invoice.subtotal)}',
+                    value: '$symbol ${fmt.format(invoice.subtotal)}',
                     tokens: tokens),
                 if (invoice.discountAmount > 0)
                   _TotalRow(
                       label: l10n.admin_invoice_discount,
-                      value: '- \$ ${fmt.format(invoice.discountAmount)}',
+                      value: '- $symbol ${fmt.format(invoice.discountAmount)}',
                       tokens: tokens,
                       valueColor: c.success),
                 if (invoice.taxAmount > 0)
                   _TotalRow(
                       label: l10n.admin_invoice_tax,
-                      value: '\$ ${fmt.format(invoice.taxAmount)}',
+                      value: '$symbol ${fmt.format(invoice.taxAmount)}',
                       tokens: tokens),
                 const SizedBox(height: 6),
                 Divider(color: c.border.withValues(alpha: 0.15), height: 1),
                 const SizedBox(height: 6),
                 _TotalRow(
                     label: l10n.admin_invoice_total,
-                    value: '\$ ${fmt.format(invoice.totalAmount)}',
+                    value: '$symbol ${fmt.format(invoice.totalAmount)}',
                     tokens: tokens,
                     bold: true),
                 _TotalRow(
                     label: l10n.admin_expenses_paid,
-                    value: '\$ ${fmt.format(invoice.paidAmount)}',
+                    value: '$symbol ${fmt.format(invoice.paidAmount)}',
                     tokens: tokens,
                     valueColor: c.success),
                 if (invoice.dueAmount > 0)
                   _TotalRow(
                       label: l10n.admin_invoice_balanceDue,
-                      value: '\$ ${fmt.format(invoice.dueAmount)}',
+                      value: '$symbol ${fmt.format(invoice.dueAmount)}',
                       tokens: tokens,
                       bold: true,
                       valueColor: c.danger),
@@ -492,7 +496,7 @@ class _InvoiceCard extends StatelessWidget {
                           letterSpacing: 0.8)),
                   const SizedBox(height: 10),
                   for (final p in invoice.payments)
-                    _PaymentRow(payment: p, tokens: tokens, fmt: fmt),
+                    _PaymentRow(payment: p, tokens: tokens, fmt: fmt, symbol: symbol),
                 ],
               ],
             ),
@@ -508,6 +512,7 @@ class _InvoiceCard extends StatelessWidget {
     dynamic t,
     NumberFormat fmt,
     AppLocalizations l10n,
+    String symbol,
   ) {
     return Column(
       children: [
@@ -569,12 +574,12 @@ class _InvoiceCard extends StatelessWidget {
                         style: t.bodyMedium.copyWith(color: c.label))),
                 SizedBox(
                     width: 70,
-                    child: Text('\$ ${fmt.format(item.unitPrice)}',
+                    child: Text('$symbol ${fmt.format(item.unitPrice)}',
                         textAlign: TextAlign.end,
                         style: t.bodyMedium.copyWith(color: c.label))),
                 SizedBox(
                     width: 70,
-                    child: Text('\$ ${fmt.format(item.lineTotal)}',
+                    child: Text('$symbol ${fmt.format(item.lineTotal)}',
                         textAlign: TextAlign.end,
                         style: t.bodyMedium.copyWith(
                             color: c.label, fontWeight: FontWeight.w700))),
@@ -590,7 +595,7 @@ class _InvoiceCard extends StatelessWidget {
   Color _statusColor(String status, dynamic c) {
     switch (status.toLowerCase()) {
       case 'paid':      return c.success;
-      case 'partial':   return c.warning ?? Colors.orange;
+      case 'partial':   return Colors.orange;
       case 'overdue':
       case 'cancelled': return c.danger;
       default:          return c.muted;
@@ -686,9 +691,10 @@ class _PaymentRow extends StatelessWidget {
   final AdminInvoicePaymentEntity payment;
   final dynamic                   tokens;
   final NumberFormat              fmt;
+  final String                    symbol;
 
   const _PaymentRow(
-      {required this.payment, required this.tokens, required this.fmt});
+      {required this.payment, required this.tokens, required this.fmt, required this.symbol});
 
   @override
   Widget build(BuildContext context) {
@@ -741,7 +747,7 @@ class _PaymentRow extends StatelessWidget {
               ],
             ),
           ),
-          Text('\$ ${fmt.format(payment.amount)}',
+          Text('$symbol ${fmt.format(payment.amount)}',
               style: t.bodyMedium.copyWith(
                   color: c.success, fontWeight: FontWeight.w900)),
         ],
@@ -752,7 +758,7 @@ class _PaymentRow extends StatelessWidget {
 
 // ── PDF builder ────────────────────────────────────────────────────────────────
 
-pw.Document _buildPdf(AdminInvoiceEntity invoice, String gymName) {
+pw.Document _buildPdf(AdminInvoiceEntity invoice, String gymName, String symbol) {
   final pdf = pw.Document();
   final fmt = NumberFormat('#,##0.00');
 
@@ -986,13 +992,13 @@ pw.Document _buildPdf(AdminInvoiceEntity invoice, String gymName) {
                 ),
                 pw.SizedBox(
                   width: 60,
-                  child: pw.Text('\$ ${fmt.format(item.unitPrice)}',
+                  child: pw.Text('$symbol ${fmt.format(item.unitPrice)}',
                       textAlign: pw.TextAlign.right,
                       style: const pw.TextStyle(fontSize: 10)),
                 ),
                 pw.SizedBox(
                   width: 60,
-                  child: pw.Text('\$ ${fmt.format(item.lineTotal)}',
+                  child: pw.Text('$symbol ${fmt.format(item.lineTotal)}',
                       textAlign: pw.TextAlign.right,
                       style: pw.TextStyle(
                           fontSize: 10, fontWeight: pw.FontWeight.bold)),
@@ -1011,22 +1017,22 @@ pw.Document _buildPdf(AdminInvoiceEntity invoice, String gymName) {
             width: 220,
             child: pw.Column(children: [
               _pdfTotalRow('Subtotal',
-                  '\$ ${fmt.format(invoice.subtotal)}', mutedColor),
+                  '$symbol ${fmt.format(invoice.subtotal)}', mutedColor),
               if (invoice.discountAmount > 0)
                 _pdfTotalRow('Discount',
-                    '- \$ ${fmt.format(invoice.discountAmount)}', mutedColor),
+                    '- $symbol ${fmt.format(invoice.discountAmount)}', mutedColor),
               if (invoice.taxAmount > 0)
                 _pdfTotalRow(
-                    'Tax', '\$ ${fmt.format(invoice.taxAmount)}', mutedColor),
+                    'Tax', '$symbol ${fmt.format(invoice.taxAmount)}', mutedColor),
               pw.Divider(color: dividerColor, thickness: 0.5),
               _pdfTotalRow('TOTAL',
-                  '\$ ${fmt.format(invoice.totalAmount)}', PdfColors.black,
+                  '$symbol ${fmt.format(invoice.totalAmount)}', PdfColors.black,
                   bold: true),
               _pdfTotalRow('Paid',
-                  '\$ ${fmt.format(invoice.paidAmount)}', PdfColors.green700),
+                  '$symbol ${fmt.format(invoice.paidAmount)}', PdfColors.green700),
               if (invoice.dueAmount > 0)
                 _pdfTotalRow('Balance Due',
-                    '\$ ${fmt.format(invoice.dueAmount)}', PdfColors.red700,
+                    '$symbol ${fmt.format(invoice.dueAmount)}', PdfColors.red700,
                     bold: true),
             ]),
           ),
@@ -1084,7 +1090,7 @@ pw.Document _buildPdf(AdminInvoiceEntity invoice, String gymName) {
                       ],
                     ),
                   ]),
-                  pw.Text('\$ ${fmt.format(p.amount)}',
+                  pw.Text('$symbol ${fmt.format(p.amount)}',
                       style: pw.TextStyle(
                           color: PdfColors.green700,
                           fontSize: 11,

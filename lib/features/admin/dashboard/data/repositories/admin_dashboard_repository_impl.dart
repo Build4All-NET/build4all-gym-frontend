@@ -15,6 +15,7 @@ class AdminDashboardRepositoryImpl implements AdminDashboardRepository {
     String revenuePeriod = 'this_month',
     String? revenueStartDate,
     String? revenueEndDate,
+    int? branchId,
   }) async {
     try {
       final model = await remoteDatasource.getDashboardSummary(
@@ -22,6 +23,7 @@ class AdminDashboardRepositoryImpl implements AdminDashboardRepository {
         revenuePeriod: revenuePeriod,
         revenueStartDate: revenueStartDate,
         revenueEndDate: revenueEndDate,
+        branchId: branchId,
       );
       return (data: model.toEntity(), failure: null);
     } on UnauthorizedException {

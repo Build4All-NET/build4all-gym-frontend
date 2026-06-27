@@ -1,16 +1,17 @@
 
 class SessionBookingItemEntity {
-  final int     bookingId;
-  final int     userId;
-  final String  fullName;
-  final String  phone;
-  final int?    profileFileId;
-  final String  status;
-  final int?    waitlistPosition;
-  final String? paymentStatus;
-  final String? paymentMethod;
-  final int?    invoiceId;
-  final double? price;
+  final int       bookingId;
+  final int       userId;
+  final String    fullName;
+  final String    phone;
+  final int?      profileFileId;
+  final String    status;
+  final int?      waitlistPosition;
+  final String?   paymentStatus;
+  final String?   paymentMethod;
+  final int?      invoiceId;
+  final double?   price;
+  final DateTime? bookedAt;
 
   const SessionBookingItemEntity({
     required this.bookingId,
@@ -24,6 +25,7 @@ class SessionBookingItemEntity {
     this.paymentMethod,
     this.invoiceId,
     this.price,
+    this.bookedAt,
   });
 
   bool get isCashPending =>

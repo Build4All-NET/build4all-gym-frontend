@@ -14,11 +14,13 @@ import '../entities/checkin_stats.dart';
 
 abstract class CheckinsRepository {
 
-  /// GET /api/admin/checkins/today?branchId=&search=
-  /// Returns stats + today's check-in list, optionally filtered by [search].
+  /// GET /api/admin/checkins/today?branchId=&search=&date=
+  /// Returns stats + the check-in list for [date] (defaults to today),
+  /// optionally filtered by [search]. [branchId] null means "all branches".
   Future<({CheckinStats stats, List<Checkin> checkins})> getTodayCheckins({
-    required int branchId,
-    String? search,
+    int?      branchId,
+    String?   search,
+    DateTime? date,
   });
 
   /// POST /api/admin/checkins/scan

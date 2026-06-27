@@ -138,6 +138,7 @@ class AdminClassesRepositoryImpl implements AdminClassesRepository {
         paymentMethod:    m.paymentMethod,
         invoiceId:        m.invoiceId,
         price:            m.price,
+        bookedAt:         m.bookedAt,
       )).toList();
     } catch (e) {
       rethrow;

@@ -312,7 +312,8 @@ class _MethodCard extends StatelessWidget {
                 else
                   Switch(
                   value: method.tenantEnabled,
-                  activeColor: c.primary, //  works
+                  activeColor: c.primary,
+                  activeTrackColor: c.primary.withValues(alpha: 0.45),
                   onChanged: (value) => _toggle(context, method, value),
                 ),
               ],
@@ -396,6 +397,17 @@ class _MethodCard extends StatelessWidget {
 
   Future<void> _toggle(
       BuildContext context, PaymentMethodConfigModel method, bool value) async {
+    if (value && _needsConfig && !_isConfigured) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.admin_payments_configureFirst(method.displayName),
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
     try {
       await context.read<AdminPaymentConfigCubit>().toggleMethod(method, value);
     } catch (e) {
@@ -662,12 +674,14 @@ class _CredentialsSheetState extends State<_CredentialsSheet> {
               children: [
                 Icon(_iconFor(widget.method.name), color: c.primary, size: 22),
                 const SizedBox(width: 10),
-                Text(
-                  l10n.admin_payments_credentialsTitle(widget.method.displayName),
-                  style: t.headlineSmall
-                      .copyWith(color: c.label, fontWeight: FontWeight.w900),
+                Expanded(
+                  child: Text(
+                    l10n.admin_payments_credentialsTitle(widget.method.displayName),
+                    style: t.headlineSmall
+                        .copyWith(color: c.label, fontWeight: FontWeight.w900),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                const Spacer(),
                 IconButton(
                   icon: Icon(Icons.close, color: c.muted),
                   onPressed: () => Navigator.of(context).pop(),

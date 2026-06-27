@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
@@ -247,9 +248,15 @@ class _PriceBlock extends StatelessWidget {
     required this.isRtl,
   });
 
+  String _fmt(double price, String symbol) {
+    final isWhole = price == price.truncateToDouble();
+    return '$symbol${isWhole ? price.toInt() : price.toStringAsFixed(2)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Align(
       alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
@@ -262,7 +269,7 @@ class _PriceBlock extends StatelessWidget {
           children: [
             // Sale price first.
             Text(
-              '\$${finalPrice.toStringAsFixed(0)}',
+              _fmt(finalPrice, symbol),
               textDirection: TextDirection.ltr,
               style: tokens.typography.headlineSmall.copyWith(
                 color: hasPromotion
@@ -277,7 +284,7 @@ class _PriceBlock extends StatelessWidget {
             // Real price second, crossed.
             if (hasPromotion)
               Text(
-                '\$${originalPrice.toStringAsFixed(0)}',
+                _fmt(originalPrice, symbol),
                 textDirection: TextDirection.ltr,
                 style: tokens.typography.headlineSmall.copyWith(
                   color: tokens.colors.muted,

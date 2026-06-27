@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import 'package:build4allgym/core/currency/currency_cubit.dart';
+
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -108,6 +110,7 @@ class _AdminPtPackageBookingsScreenState
   void _showConfirmCashDialog(int bookingId, double totalAmount) {
     final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final symbol = context.read<CurrencyCubit>().state.info.symbol;
     final amountCtrl = TextEditingController(text: totalAmount.toStringAsFixed(2));
     final formKey = GlobalKey<FormState>();
 
@@ -135,7 +138,7 @@ class _AdminPtPackageBookingsScreenState
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: l10n.trainer_amountToCollectLabel,
-                  prefixText: '\$ ',
+                  prefixText: '$symbol ',
                 ),
                 validator: (v) {
                   final amount = double.tryParse(v?.trim() ?? '');
@@ -274,6 +277,7 @@ class _AdminPtPackageBookingsScreenState
   void _showApproveRefundSheet(AdminRefundRequestEntity req) {
     final tokens = context.read<ThemeCubit>().state.tokens;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.read<CurrencyCubit>().state.info.symbol;
     final amountCtrl =
         TextEditingController(text: req.requestedAmount.toStringAsFixed(2));
     final deductionCtrl = TextEditingController(text: '0.00');
@@ -311,7 +315,7 @@ class _AdminPtPackageBookingsScreenState
               ),
               const SizedBox(height: 4),
               Text(
-                '${l10n.admin_refundRequests_requestedAmount}: \$ ${req.requestedAmount.toStringAsFixed(2)}',
+                '${l10n.admin_refundRequests_requestedAmount}: $symbol ${req.requestedAmount.toStringAsFixed(2)}',
                 style: tokens.typography.bodySmall.copyWith(
                     color: tokens.colors.primary, fontWeight: FontWeight.w700),
               ),
@@ -340,7 +344,7 @@ class _AdminPtPackageBookingsScreenState
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,
                   ),
-                  prefixText: '\$ ',
+                  prefixText: '$symbol ',
                 ),
               ),
               const SizedBox(height: 14),
@@ -360,7 +364,7 @@ class _AdminPtPackageBookingsScreenState
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,
                   ),
-                  prefixText: '\$ ',
+                  prefixText: '$symbol ',
                 ),
               ),
               const SizedBox(height: 14),
@@ -938,6 +942,7 @@ class _BookingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     final id = (booking['id'] as num?)?.toInt() ?? 0;
     final totalAmount = (booking['totalAmount'] as num?)?.toDouble() ?? 0.0;
@@ -1000,7 +1005,7 @@ class _BookingCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '\$ ${totalAmount.toStringAsFixed(2)}',
+                '$symbol ${totalAmount.toStringAsFixed(2)}',
                 style: tokens.typography.headlineSmall.copyWith(
                   color: c.primary,
                   fontWeight: FontWeight.w900,
@@ -1108,6 +1113,7 @@ class _RefundCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = tokens.colors;
+    final symbol = context.watch<CurrencyCubit>().state.info.symbol;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1182,7 +1188,7 @@ class _RefundCard extends StatelessWidget {
                     tokens: tokens),
                 _Row(
                     label: l10n.admin_refundRequests_requestedAmount,
-                    value: '\$ ${refund.requestedAmount.toStringAsFixed(2)}',
+                    value: '$symbol ${refund.requestedAmount.toStringAsFixed(2)}',
                     tokens: tokens,
                     valueColor: c.danger),
                 if (refund.reason != null && refund.reason!.isNotEmpty)

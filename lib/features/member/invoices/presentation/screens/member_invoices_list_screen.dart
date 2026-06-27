@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -47,75 +48,149 @@ class _MemberInvoicesListScreenState extends State<MemberInvoicesListScreen> {
     );
   }
 
-  /// Send refund request directly without popup.
-  ///
-  /// Backend will only create a pending refund request.
-  /// Admin approval is handled elsewhere.
-  void _confirmRefund(MemberInvoiceSummaryEntity invoice) {
-    context.read<MemberInvoicesListBloc>().add(
-      RequestMemberRefundEvent(
-        invoiceId: invoice.invoiceId,
-        reason: null,
-        status: _selectedStatus,
-        type: _selectedType,
-      ),
-    );
-  }
-
-  /*
-  /// Old refund confirmation popup.
-  ///
-  /// Kept as comment in case we need to restore the popup later.
   Future<void> _confirmRefund(MemberInvoiceSummaryEntity invoice) async {
     final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
     final c = tokens.colors;
+    final t = tokens.typography;
+    final money = NumberFormat('#,##0.00',
+        Localizations.localeOf(context).toLanguageTag());
 
     final reasonController = TextEditingController();
 
     final confirmed = await showDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (dialogContext) {
-        return AlertDialog(
+        return Dialog(
           backgroundColor: c.surface,
-          title: Text(
-            l10n.memberInvoicesRefundTitle,
-            style: tokens.typography.titleMedium.copyWith(
-              color: c.label,
-              fontWeight: FontWeight.w800,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: c.danger.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.assignment_return_rounded,
+                    color: c.danger,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.memberInvoicesRefundTitle,
+                  style: t.titleMedium.copyWith(
+                    color: c.label,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: c.background,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(invoice.invoiceNumber,
+                          style: t.bodySmall.copyWith(
+                              color: c.muted,
+                              fontWeight: FontWeight.w600)),
+                      Text(
+                        money.format(invoice.totalAmount),
+                        style: t.bodyMedium.copyWith(
+                          color: c.success,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  l10n.memberInvoicesRefundMessage,
+                  style: t.bodySmall.copyWith(color: c.muted),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: reasonController,
+                  maxLines: 3,
+                  style: t.bodyMedium.copyWith(color: c.label),
+                  decoration: InputDecoration(
+                    hintText: l10n.memberInvoicesRefundReason,
+                    hintStyle:
+                        t.bodySmall.copyWith(color: c.muted),
+                    filled: true,
+                    fillColor: c.background,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () =>
+                            Navigator.pop(dialogContext, false),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: c.label,
+                          side: BorderSide(
+                              color: c.border.withValues(alpha: 0.5)),
+                          minimumSize: const Size.fromHeight(48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(l10n.general_cancel,
+                            style: t.bodyMedium.copyWith(
+                                color: c.label,
+                                fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            Navigator.pop(dialogContext, true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: c.danger,
+                          foregroundColor: c.onPrimary,
+                          elevation: 0,
+                          minimumSize: const Size.fromHeight(48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(l10n.memberInvoicesRefundSend,
+                            style: t.bodyMedium.copyWith(
+                                color: c.onPrimary,
+                                fontWeight: FontWeight.w800)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.memberInvoicesRefundMessage,
-                style: tokens.typography.bodyMedium.copyWith(
-                  color: c.body,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Optional reason sent to backend.
-              TextField(
-                controller: reasonController,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: l10n.memberInvoicesRefundReason,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: Text(l10n.general_cancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              child: Text(l10n.memberInvoicesRefundSend),
-            ),
-          ],
         );
       },
     );
@@ -133,7 +208,6 @@ class _MemberInvoicesListScreenState extends State<MemberInvoicesListScreen> {
           ),
         );
   }
-  */
 
   /// Navigate to full invoice details.
   void _openDetails(MemberInvoiceSummaryEntity invoice) {

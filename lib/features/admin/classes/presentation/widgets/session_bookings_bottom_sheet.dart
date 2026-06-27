@@ -1,4 +1,5 @@
 import 'package:build4allgym/common/widgets/app_toast.dart';
+import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/session_booking_item_entity.dart';
@@ -160,6 +161,7 @@ class SessionBookingsBottomSheet extends StatelessWidget {
                           itemBuilder: (context, index) => _MemberRow(
                             booking:   bookings[index],
                             sessionId: sessionId,
+                            position:  index + 1,
                           ),
                         ),
                       ),
@@ -190,8 +192,19 @@ class SessionBookingsBottomSheet extends StatelessWidget {
 class _MemberRow extends StatelessWidget {
   final SessionBookingItemEntity booking;
   final int sessionId;
+  final int position;
 
-  const _MemberRow({required this.booking, required this.sessionId});
+  const _MemberRow({required this.booking, required this.sessionId, required this.position});
+
+  String _formatBookedAt(DateTime? dt) {
+    if (dt == null) return '';
+    final local = dt.toLocal();
+    final h = local.hour.toString().padLeft(2, '0');
+    final m = local.minute.toString().padLeft(2, '0');
+    final day   = local.day.toString().padLeft(2, '0');
+    final month = local.month.toString().padLeft(2, '0');
+    return '$day/$month  $h:$m';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,23 +248,47 @@ class _MemberRow extends StatelessWidget {
       child: Row(
         children: [
 
-          // ── Avatar ──────────────────────────────────────────────────────
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: c.primary.withValues(alpha: 0.1),
-            child: Text(
-              initials,
-              style: TextStyle(
-                color: c.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+          // ── Avatar with booking position ─────────────────────────────
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: c.primary.withValues(alpha: 0.1),
+                child: Text(
+                  initials,
+                  style: TextStyle(
+                    color: c.primary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                right: -4,
+                bottom: -2,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: c.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '#$position',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(width: 12),
 
-          // ── Name + phone ─────────────────────────────────────────────────
+          // ── Name + phone + booked time ───────────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,6 +306,19 @@ class _MemberRow extends StatelessWidget {
                   phone.isNotEmpty ? phone : AppLocalizations.of(context)!.admin_classes_noPhone,
                   style: TextStyle(fontSize: 12, color: c.muted),
                 ),
+                if (booking.bookedAt != null) ...[
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time_rounded, size: 11, color: c.muted.withValues(alpha: 0.7)),
+                      const SizedBox(width: 3),
+                      Text(
+                        _formatBookedAt(booking.bookedAt),
+                        style: TextStyle(fontSize: 11, color: c.muted.withValues(alpha: 0.7)),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -498,6 +548,7 @@ class _MemberRow extends StatelessWidget {
       BuildContext context, SessionBookingItemEntity booking, int sessionId) {
     final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final symbol = context.read<CurrencyCubit>().state.info.symbol;
     final price = booking.price;
     final amountCtrl = TextEditingController(
       text: price != null ? price.toStringAsFixed(2) : '',
@@ -516,7 +567,7 @@ class _MemberRow extends StatelessWidget {
             children: [
               if (price != null) ...[
                 Text(
-                  l10n.admin_classes_classPriceLabel('\$${price.toStringAsFixed(2)}'),
+                  l10n.admin_classes_classPriceLabel('$symbol${price.toStringAsFixed(2)}'),
                   style: TextStyle(
                     color: tokens.colors.label,
                     fontSize: 14,
@@ -536,7 +587,7 @@ class _MemberRow extends StatelessWidget {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: l10n.trainer_amountToCollectLabel,
-                  prefixText: '\$ ',
+                  prefixText: '$symbol ',
                 ),
                 validator: (v) {
                   final amount = double.tryParse(v?.trim() ?? '');
@@ -576,6 +627,7 @@ class _MemberRow extends StatelessWidget {
   void _showCollectBalanceDialog(
       BuildContext context, SessionBookingItemEntity booking, int sessionId) {
     final l10n = AppLocalizations.of(context)!;
+    final symbol = context.read<CurrencyCubit>().state.info.symbol;
     final amountCtrl = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
@@ -591,7 +643,7 @@ class _MemberRow extends StatelessWidget {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
               labelText: l10n.trainer_amountToCollectLabel,
-              prefixText: '\$ ',
+              prefixText: '$symbol ',
             ),
             validator: (v) {
               final amount = double.tryParse(v?.trim() ?? '');

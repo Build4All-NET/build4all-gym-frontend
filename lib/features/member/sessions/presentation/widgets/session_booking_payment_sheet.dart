@@ -295,7 +295,7 @@ class _SessionBookingPaymentSheetState
       }
 
       if (context.mounted) {
-        context.read<SessionsBloc>().add(const SessionsStarted());
+        context.read<SessionsBloc>().add(SessionDetailRequested(widget.sessionId));
         _showResultSheet(context, result, tokens, confirmed: true);
       }
     } on StripeException catch (e) {

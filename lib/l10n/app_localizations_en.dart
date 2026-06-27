@@ -1123,6 +1123,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptTrainingVideosPipUnavailable => 'Picture-in-Picture is not available on this device.';
 
   @override
+  String get ptVideosLockedTitle => 'Members Only';
+
+  @override
+  String get ptVideosLockedSubtitle => 'Subscribe to a PT package with this trainer to unlock training videos.';
+
+  @override
   String get ptTrainerDetailsNotFound => 'Trainer details not found.';
 
   @override
@@ -1626,6 +1632,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkins_scannerTitle => 'Scan Member QR';
 
   @override
+  String get checkins_visits => 'Visits';
+
+  @override
+  String checkins_durationMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get checkins_filterByDate => 'Filter by date';
+
+  @override
+  String get checkins_clearDateFilter => 'Back to today';
+
+  @override
+  String get checkins_allBranchesScanBlocked => 'Select a specific branch to scan QR codes.';
+
+  @override
   String get sessionDetailBookingClosed => 'Booking closed';
 
   @override
@@ -1832,6 +1855,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberInvoicesRefundStatus => 'Refund Request';
+
+  @override
+  String get memberInvoicesRefundDeadline => 'Refund by';
+
+  @override
+  String get memberInvoicesRefundedAmount => 'Refunded';
+
+  @override
+  String get memberInvoicesDeductedAmount => 'Deducted';
 
   @override
   String get memberInvoicesDate => 'Date';
@@ -2973,6 +3005,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_settings_allowPtBookingWithoutMembershipDesc => 'Members can book personal training sessions without an active membership plan';
+
+  @override
+  String get admin_settings_refundPolicy => 'Refund Policy';
+
+  @override
+  String get admin_settings_refundPolicyDesc => 'Configure time window for refund eligibility per purchase type';
+
+  @override
+  String get admin_settings_planRefundWindow => 'Plan Refund Window (hours)';
+
+  @override
+  String get admin_settings_planRefundWindowDesc => 'Leave empty for no limit · Enter 0 to disable plan refunds';
+
+  @override
+  String get admin_settings_classRefundWindow => 'Class Booking Refund Window (hours)';
+
+  @override
+  String get admin_settings_classRefundWindowDesc => 'Leave empty for no limit · Enter 0 to disable class refunds';
+
+  @override
+  String get admin_settings_ptPackageRefundWindow => 'PT Package Refund Window (hours)';
+
+  @override
+  String get admin_settings_ptPackageRefundWindowDesc => 'Leave empty for no limit · Enter 0 to disable PT package refunds';
 
   @override
   String get admin_settings_dangerTitle => 'Danger Zone';
@@ -4919,6 +4975,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_employees_checkIn => 'Check In';
 
   @override
+  String get admin_employees_checkedInNow => 'Checked In Now';
+
+  @override
+  String get admin_employees_totalStaff => 'Total Staff';
+
+  @override
+  String get admin_employees_manual => 'Manual';
+
+  @override
   String get admin_employees_pleaseSelectBranch => 'Please select a branch';
 
   @override
@@ -4967,6 +5032,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String admin_employees_identityManagedNote(String name, String type) {
     return '$name ($type) — identity is managed via the app account.';
   }
+
+  @override
+  String get admin_employees_sectionEmployeeDetails => 'Employee Details';
+
+  @override
+  String get admin_employees_fullNameLabel => 'Full Name *';
+
+  @override
+  String get admin_employees_fullNameHint => 'e.g. John Doe';
+
+  @override
+  String get admin_employees_phoneLabel => 'Phone';
+
+  @override
+  String get admin_employees_emailLabel => 'Email';
+
+  @override
+  String get admin_employees_optional => 'Optional';
+
+  @override
+  String get admin_employees_employeeTypeLabel => 'Employee Type *';
+
+  @override
+  String get admin_employees_employeeTypeHint => 'e.g. Cleaner';
+
+  @override
+  String get admin_employees_selectEmployeeType => 'Select employee type';
+
+  @override
+  String get admin_employees_sectionPay => 'Pay';
+
+  @override
+  String get admin_employees_salaryLabel => 'Salary Amount *';
+
+  @override
+  String get admin_employees_payFrequencyLabel => 'Pay Frequency *';
+
+  @override
+  String get admin_employees_branchLabel => 'Branch *';
+
+  @override
+  String get admin_employees_selectBranch => 'Select branch';
+
+  @override
+  String get admin_employees_hireDateLabel => 'Hire Date';
+
+  @override
+  String get admin_employees_statusLabel => 'Status';
+
+  @override
+  String get admin_employees_statusActive => 'Active';
+
+  @override
+  String get admin_employees_notesLabel => 'Notes';
+
+  @override
+  String get admin_employees_optionalNotes => 'Optional notes';
+
+  @override
+  String get admin_employees_saveChanges => 'Save Changes';
 
   @override
   String admin_dashboard_growthPercent(String value) {
@@ -5068,6 +5193,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_payments_testingEllipsis => 'Testing…';
+
+  @override
+  String admin_payments_configureFirst(String name) => 'Configure $name before enabling it.';
 
   @override
   String get admin_invoice_title => 'INVOICE';
