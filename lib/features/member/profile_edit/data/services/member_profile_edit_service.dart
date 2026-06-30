@@ -37,6 +37,10 @@ class MemberProfileEditService {
         _tokenStore = tokenStore,
         _storage = storage;
 
+  // ---------------------------------------------------------------------------
+  // AUTH HELPERS
+  // ---------------------------------------------------------------------------
+
   Future<int> _userId() async {
     final userId = await _tokenStore.getUserId();
 
@@ -58,6 +62,10 @@ class MemberProfileEditService {
         ? token
         : 'Bearer $token';
   }
+
+  // ---------------------------------------------------------------------------
+  // UPDATE BUILD4ALL PROFILE
+  // ---------------------------------------------------------------------------
 
   Future<void> updateBuild4AllProfile({
     required String firstName,
@@ -85,29 +93,42 @@ class MemberProfileEditService {
       'imageRemoved': false,
     });
 
-    await _dio.put(
-      '/api/users/$userId/profile',
-      data: formData,
-      options: Options(
-        headers: {
-          'Authorization': auth,
-        },
-        contentType: Headers.multipartFormDataContentType,
-        receiveDataWhenStatusError: true,
-      ),
-    );
+    try {
+      await _dio.put(
+        '/api/users/$userId/profile',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': auth,
+          },
+          contentType: Headers.multipartFormDataContentType,
+          receiveDataWhenStatusError: true,
+        ),
+      );
 
-    // IMPORTANT:
-    // MemberHomeScreen reads the displayed name from secure storage.
-    // So after profile update succeeds, update the cached user data too.
-    await _saveUpdatedUserToStorage(
-      firstName: cleanFirstName,
-      lastName: cleanLastName,
-      username: cleanUsername,
-      email: cleanEmail,
-      phoneNumber: cleanPhoneNumber,
-    );
+      // MemberHomeScreen reads the displayed user information
+      // from secure storage. Update the locally cached information
+      // after the backend update succeeds.
+      await _saveUpdatedUserToStorage(
+        firstName: cleanFirstName,
+        lastName: cleanLastName,
+        username: cleanUsername,
+        email: cleanEmail,
+        phoneNumber: cleanPhoneNumber,
+      );
+    } catch (e) {
+      throw Exception(
+        readError(
+          e,
+          'Failed to update profile.',
+        ),
+      );
+    }
   }
+
+  // ---------------------------------------------------------------------------
+  // UPDATE CACHED USER DATA
+  // ---------------------------------------------------------------------------
 
   Future<void> _saveUpdatedUserToStorage({
     required String firstName,
@@ -126,7 +147,9 @@ class MemberProfileEditService {
       value: lastName,
     );
 
-    final rawUserJson = await _storage.read(key: 'auth_user_json');
+    final rawUserJson = await _storage.read(
+      key: 'auth_user_json',
+    );
 
     final Map<String, dynamic> userJson = {};
 
@@ -136,9 +159,19 @@ class MemberProfileEditService {
 
         if (decoded is Map<String, dynamic>) {
           userJson.addAll(decoded);
+        } else if (decoded is Map) {
+          userJson.addAll(
+            decoded.map(
+                  (key, value) => MapEntry(
+                key.toString(),
+                value,
+              ),
+            ),
+          );
         }
       } catch (_) {
-        // If old cached JSON is invalid, recreate a clean one below.
+        // If the old cached JSON is invalid,
+        // recreate a clean object below.
       }
     }
 
@@ -154,62 +187,97 @@ class MemberProfileEditService {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // EMAIL CHANGE FLOW
+  // ---------------------------------------------------------------------------
+
   Future<void> verifyEmailChange({
     required String code,
   }) async {
     final userId = await _userId();
     final auth = await _authHeader();
 
-    await _dio.post(
-      '/api/users/$userId/email-change/verify',
-      data: {
-        'code': code.trim(),
-      },
-      options: Options(
-        headers: {
-          'Authorization': auth,
-          'Content-Type': 'application/json',
+    try {
+      await _dio.post(
+        '/api/users/$userId/email-change/verify',
+        data: {
+          'code': code.trim(),
         },
-        receiveDataWhenStatusError: true,
-      ),
-    );
+        options: Options(
+          headers: {
+            'Authorization': auth,
+            'Content-Type': 'application/json',
+          },
+          receiveDataWhenStatusError: true,
+        ),
+      );
+    } catch (e) {
+      throw Exception(
+        readError(
+          e,
+          'Invalid or expired email verification code.',
+        ),
+      );
+    }
   }
 
   Future<void> resendEmailChangeCode() async {
     final userId = await _userId();
     final auth = await _authHeader();
 
-    await _dio.post(
-      '/api/users/$userId/email-change/resend',
-      options: Options(
-        headers: {
-          'Authorization': auth,
-          'Content-Type': 'application/json',
-        },
-        receiveDataWhenStatusError: true,
-      ),
-    );
+    try {
+      await _dio.post(
+        '/api/users/$userId/email-change/resend',
+        options: Options(
+          headers: {
+            'Authorization': auth,
+            'Content-Type': 'application/json',
+          },
+          receiveDataWhenStatusError: true,
+        ),
+      );
+    } catch (e) {
+      throw Exception(
+        readError(
+          e,
+          'Failed to resend email verification code.',
+        ),
+      );
+    }
   }
+
+  // ---------------------------------------------------------------------------
+  // PASSWORD CHANGE FLOW
+  // ---------------------------------------------------------------------------
 
   Future<void> sendPasswordResetCode({
     required String email,
     required int ownerProjectLinkId,
   }) async {
-    await _dio.post(
-      '/api/users/reset-password',
-      queryParameters: {
-        'ownerProjectLinkId': ownerProjectLinkId.toString(),
-      },
-      data: {
-        'email': email.trim(),
-      },
-      options: Options(
-        headers: const {
-          'Content-Type': 'application/json',
+    try {
+      await _dio.post(
+        '/api/users/reset-password',
+        queryParameters: {
+          'ownerProjectLinkId': ownerProjectLinkId.toString(),
         },
-        receiveDataWhenStatusError: true,
-      ),
-    );
+        data: {
+          'email': email.trim(),
+        },
+        options: Options(
+          headers: const {
+            'Content-Type': 'application/json',
+          },
+          receiveDataWhenStatusError: true,
+        ),
+      );
+    } catch (e) {
+      throw Exception(
+        readError(
+          e,
+          'Failed to send password verification code.',
+        ),
+      );
+    }
   }
 
   Future<void> updatePassword({
@@ -218,23 +286,32 @@ class MemberProfileEditService {
     required String newPassword,
     required int ownerProjectLinkId,
   }) async {
-    await _dio.post(
-      '/api/users/update-password',
-      queryParameters: {
-        'ownerProjectLinkId': ownerProjectLinkId.toString(),
-      },
-      data: {
-        'email': email.trim(),
-        'code': code.trim(),
-        'newPassword': newPassword,
-      },
-      options: Options(
-        headers: const {
-          'Content-Type': 'application/json',
+    try {
+      await _dio.post(
+        '/api/users/update-password',
+        queryParameters: {
+          'ownerProjectLinkId': ownerProjectLinkId.toString(),
         },
-        receiveDataWhenStatusError: true,
-      ),
-    );
+        data: {
+          'email': email.trim(),
+          'code': code.trim(),
+          'newPassword': newPassword,
+        },
+        options: Options(
+          headers: const {
+            'Content-Type': 'application/json',
+          },
+          receiveDataWhenStatusError: true,
+        ),
+      );
+    } catch (e) {
+      throw Exception(
+        readError(
+          e,
+          'Failed to update password.',
+        ),
+      );
+    }
   }
 
   Future<void> verifyCurrentPassword({
@@ -264,6 +341,16 @@ class MemberProfileEditService {
 
   // ---------------------------------------------------------------------------
   // PHONE CHANGE OTP FLOW
+  //
+  // Correct backend endpoints:
+  //
+  // POST /api/users/{id}/phone-change/request
+  // POST /api/users/{id}/phone-change/verify
+  // POST /api/users/{id}/phone-change/resend
+  //
+  // The old /api/auth/send-verification and
+  // /api/auth/user/verify-phone-code endpoints were registration endpoints.
+  // They verified a number but did not update the logged-in user's phone.
   // ---------------------------------------------------------------------------
 
   Future<void> sendPhoneChangeVerificationCode({
@@ -271,16 +358,18 @@ class MemberProfileEditService {
     required String password,
     required int ownerProjectLinkId,
   }) async {
+    final userId = await _userId();
+    final auth = await _authHeader();
+
     try {
       await _dio.post(
-        '/api/auth/send-verification',
+        '/api/users/$userId/phone-change/request',
         data: {
-          'phoneNumber': phoneNumber.trim(),
-          'password': password,
-          'ownerProjectLinkId': ownerProjectLinkId,
+          'newPhone': phoneNumber.trim(),
         },
         options: Options(
-          headers: const {
+          headers: {
+            'Authorization': auth,
             'Content-Type': 'application/json',
           },
           receiveDataWhenStatusError: true,
@@ -288,7 +377,10 @@ class MemberProfileEditService {
       );
     } catch (e) {
       throw Exception(
-        readError(e, 'Failed to send phone verification code.'),
+        readError(
+          e,
+          'Failed to send phone verification code.',
+        ),
       );
     }
   }
@@ -297,15 +389,49 @@ class MemberProfileEditService {
     required String phoneNumber,
     required String code,
   }) async {
+    final userId = await _userId();
+    final auth = await _authHeader();
+
     try {
       await _dio.post(
-        '/api/auth/user/verify-phone-code',
+        '/api/users/$userId/phone-change/verify',
         data: {
-          'phoneNumber': phoneNumber.trim(),
           'code': code.trim(),
         },
         options: Options(
-          headers: const {
+          headers: {
+            'Authorization': auth,
+            'Content-Type': 'application/json',
+          },
+          receiveDataWhenStatusError: true,
+        ),
+      );
+
+      // The backend updates the real phone number after successful OTP
+      // verification. Update the cached phone number as well.
+      await _updateCachedPhoneNumber(
+        phoneNumber.trim(),
+      );
+    } catch (e) {
+      throw Exception(
+        readError(
+          e,
+          'Invalid or expired phone verification code.',
+        ),
+      );
+    }
+  }
+
+  Future<void> resendPhoneChangeCode() async {
+    final userId = await _userId();
+    final auth = await _authHeader();
+
+    try {
+      await _dio.post(
+        '/api/users/$userId/phone-change/resend',
+        options: Options(
+          headers: {
+            'Authorization': auth,
             'Content-Type': 'application/json',
           },
           receiveDataWhenStatusError: true,
@@ -313,20 +439,70 @@ class MemberProfileEditService {
       );
     } catch (e) {
       throw Exception(
-        readError(e, 'Invalid or expired phone verification code.'),
+        readError(
+          e,
+          'Failed to resend phone verification code.',
+        ),
       );
     }
   }
 
-  String readError(Object error, String fallback) {
+  Future<void> _updateCachedPhoneNumber(
+      String phoneNumber,
+      ) async {
+    final rawUserJson = await _storage.read(
+      key: 'auth_user_json',
+    );
+
+    final Map<String, dynamic> userJson = {};
+
+    if (rawUserJson != null && rawUserJson.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(rawUserJson);
+
+        if (decoded is Map<String, dynamic>) {
+          userJson.addAll(decoded);
+        } else if (decoded is Map) {
+          userJson.addAll(
+            decoded.map(
+                  (key, value) => MapEntry(
+                key.toString(),
+                value,
+              ),
+            ),
+          );
+        }
+      } catch (_) {
+        // Recreate the cached JSON if the existing value is invalid.
+      }
+    }
+
+    userJson['phoneNumber'] = phoneNumber;
+
+    await _storage.write(
+      key: 'auth_user_json',
+      value: jsonEncode(userJson),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // ERROR READER
+  // ---------------------------------------------------------------------------
+
+  String readError(
+      Object error,
+      String fallback,
+      ) {
     if (error is DioException) {
       final data = error.response?.data;
 
       if (data is Map) {
-        final message = (data['message'] ??
-            data['error'] ??
-            data['details'] ??
-            data['detail'])
+        final message = (
+            data['message'] ??
+                data['error'] ??
+                data['details'] ??
+                data['detail']
+        )
             ?.toString()
             .trim();
 
@@ -339,13 +515,18 @@ class MemberProfileEditService {
         return data.trim();
       }
 
-      final msg = error.message?.trim();
-      if (msg != null && msg.isNotEmpty) {
-        return msg;
+      final message = error.message?.trim();
+
+      if (message != null && message.isNotEmpty) {
+        return message;
       }
     }
 
-    final raw = error.toString().replaceFirst('Exception: ', '').trim();
+    final raw = error
+        .toString()
+        .replaceFirst('Exception: ', '')
+        .trim();
+
     return raw.isEmpty ? fallback : raw;
   }
 }

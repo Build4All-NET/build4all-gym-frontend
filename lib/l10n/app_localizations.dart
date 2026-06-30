@@ -10759,6 +10759,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No video URL available'**
   String get trainingVideos_noVideoUrl;
+
+  /// No description provided for @memberMembershipEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No memberships found'**
+  String get memberMembershipEmptyTitle;
+
+  /// No description provided for @memberMembershipEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your memberships will appear here after you subscribe to a plan.'**
+  String get memberMembershipEmptySubtitle;
+
+  /// No description provided for @memberMembershipLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load memberships'**
+  String get memberMembershipLoadFailed;
+
+  /// No description provided for @memberMembershipLoadFailedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get memberMembershipLoadFailedSubtitle;
+
+  /// No description provided for @memberMembershipPlanType.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Type'**
+  String get memberMembershipPlanType;
+
+  /// No description provided for @memberMembershipPaymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Status'**
+  String get memberMembershipPaymentStatus;
+
+  /// No description provided for @memberMembershipStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get memberMembershipStartDate;
+
+  /// No description provided for @memberMembershipEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get memberMembershipEndDate;
+
+  /// No description provided for @memberMembershipRemainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Days'**
+  String get memberMembershipRemainingDays;
+
+  /// No description provided for @memberMembershipRemainingVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Visits'**
+  String get memberMembershipRemainingVisits;
+
+  /// No description provided for @memberMembershipDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Duration'**
+  String get memberMembershipDuration;
+
+  /// No description provided for @memberMembershipBillingCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Cycle'**
+  String get memberMembershipBillingCycle;
+
+  /// No description provided for @memberMembershipPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get memberMembershipPrice;
+
+  /// No description provided for @memberMembershipBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get memberMembershipBranch;
+
+  /// No description provided for @memberMembershipAutoRenew.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Renew'**
+  String get memberMembershipAutoRenew;
+
+  /// No description provided for @memberMembershipNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get memberMembershipNotAvailable;
+
+  /// No description provided for @memberMembershipEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get memberMembershipEnabled;
+
+  /// No description provided for @memberMembershipDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get memberMembershipDisabled;
+
+  /// Displays the membership plan duration in days
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String memberMembershipDurationDays(int days);
+
+  /// No description provided for @memberMembershipStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get memberMembershipStatusActive;
+
+  /// No description provided for @memberMembershipStatusFrozen.
+  ///
+  /// In en, this message translates to:
+  /// **'Frozen'**
+  String get memberMembershipStatusFrozen;
+
+  /// No description provided for @memberMembershipStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get memberMembershipStatusExpired;
+
+  /// No description provided for @memberMembershipStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get memberMembershipStatusCancelled;
+
+  /// No description provided for @memberMembershipStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get memberMembershipStatusPending;
+
+  /// No description provided for @memberMembershipPaymentPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get memberMembershipPaymentPaid;
+
+  /// No description provided for @memberMembershipPaymentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get memberMembershipPaymentPending;
+
+  /// No description provided for @memberMembershipPaymentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get memberMembershipPaymentFailed;
+
+  /// No description provided for @memberMembershipPaymentRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get memberMembershipPaymentRefunded;
+
+  /// No description provided for @memberMembershipPaymentUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid'**
+  String get memberMembershipPaymentUnpaid;
+
+  /// No description provided for @memberMembershipPlanTypeGym.
+  ///
+  /// In en, this message translates to:
+  /// **'Gym'**
+  String get memberMembershipPlanTypeGym;
+
+  /// No description provided for @memberMembershipPlanTypeClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get memberMembershipPlanTypeClasses;
+
+  /// No description provided for @memberMembershipPlanTypeMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed'**
+  String get memberMembershipPlanTypeMixed;
+
+  /// No description provided for @memberMembershipPlanTypeMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get memberMembershipPlanTypeMonthly;
+
+  /// No description provided for @memberMembershipPlanTypeYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get memberMembershipPlanTypeYearly;
+
+  /// No description provided for @memberMembershipBillingDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get memberMembershipBillingDaily;
+
+  /// No description provided for @memberMembershipBillingWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get memberMembershipBillingWeekly;
+
+  /// No description provided for @memberMembershipBillingMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get memberMembershipBillingMonthly;
+
+  /// No description provided for @memberMembershipBillingYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get memberMembershipBillingYearly;
+
+  /// No description provided for @memberMembershipBillingOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One Time'**
+  String get memberMembershipBillingOneTime;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -2117,5 +2117,60 @@
   "trainingVideos_playAction": "Play",
   "trainingVideos_editAction": "Edit",
   "trainingVideos_draftBadge": "Draft",
-  "trainingVideos_noVideoUrl": "No video URL available"
+  "trainingVideos_noVideoUrl": "No video URL available",
+    "memberMembershipEmptyTitle": "No memberships found",
+    "memberMembershipEmptySubtitle": "Your memberships will appear here after you subscribe to a plan.",
+
+    "memberMembershipLoadFailed": "Failed to load memberships",
+    "memberMembershipLoadFailedSubtitle": "Check your connection and try again.",
+
+    "memberMembershipPlanType": "Plan Type",
+    "memberMembershipPaymentStatus": "Payment Status",
+    "memberMembershipStartDate": "Start Date",
+    "memberMembershipEndDate": "End Date",
+    "memberMembershipRemainingDays": "Remaining Days",
+    "memberMembershipRemainingVisits": "Remaining Visits",
+    "memberMembershipDuration": "Plan Duration",
+    "memberMembershipBillingCycle": "Billing Cycle",
+    "memberMembershipPrice": "Price",
+    "memberMembershipBranch": "Branch",
+    "memberMembershipAutoRenew": "Auto Renew",
+
+    "memberMembershipNotAvailable": "Not available",
+    "memberMembershipEnabled": "Enabled",
+    "memberMembershipDisabled": "Disabled",
+
+    "memberMembershipDurationDays": "{days} days",
+    "@memberMembershipDurationDays": {
+      "description": "Displays the membership plan duration in days",
+      "placeholders": {
+        "days": {
+          "type": "int"
+        }
+      }
+    },
+
+    "memberMembershipStatusActive": "Active",
+    "memberMembershipStatusFrozen": "Frozen",
+    "memberMembershipStatusExpired": "Expired",
+    "memberMembershipStatusCancelled": "Cancelled",
+    "memberMembershipStatusPending": "Pending",
+
+    "memberMembershipPaymentPaid": "Paid",
+    "memberMembershipPaymentPending": "Pending",
+    "memberMembershipPaymentFailed": "Failed",
+    "memberMembershipPaymentRefunded": "Refunded",
+    "memberMembershipPaymentUnpaid": "Unpaid",
+
+    "memberMembershipPlanTypeGym": "Gym",
+    "memberMembershipPlanTypeClasses": "Classes",
+    "memberMembershipPlanTypeMixed": "Mixed",
+    "memberMembershipPlanTypeMonthly": "Monthly",
+    "memberMembershipPlanTypeYearly": "Yearly",
+
+    "memberMembershipBillingDaily": "Daily",
+    "memberMembershipBillingWeekly": "Weekly",
+    "memberMembershipBillingMonthly": "Monthly",
+    "memberMembershipBillingYearly": "Yearly",
+    "memberMembershipBillingOneTime": "One Time"
 }
