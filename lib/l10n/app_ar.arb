@@ -2136,5 +2136,6 @@
     "memberMembershipBillingWeekly": "أسبوعي",
     "memberMembershipBillingMonthly": "شهري",
     "memberMembershipBillingYearly": "سنوي",
-    "memberMembershipBillingOneTime": "دفعة واحدة"
+    "memberMembershipBillingOneTime": "دفعة واحدة",
+    "planPendingApproval": "بانتظار الموافقة"
 }

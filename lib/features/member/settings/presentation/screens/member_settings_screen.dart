@@ -1,6 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// lib/features/member/settings/presentation/screens/member_settings_screen.dart
-//
+
 // PURPOSE:
 //   Member Settings screen.
 //
@@ -31,7 +30,9 @@ import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
 import 'package:build4allgym/common/settings/cubits/appearance_settings_cubit.dart';
-import 'package:build4allgym/common/settings/widgets/appearance_section_widget.dart';
+// Appearance section commented out below — import left here too, commented,
+// so both can be restored together later.
+// import 'package:build4allgym/common/settings/widgets/appearance_section_widget.dart';
 import 'package:build4allgym/common/settings/widgets/language_section_widget.dart';
 import 'package:build4allgym/common/settings/widgets/settings_version_footer.dart';
 
@@ -168,7 +169,10 @@ class _MemberSettingsBody extends StatelessWidget {
                 children: [
                   const SizedBox(height: 8.0),
 
-                  const AppearanceSectionWidget(),
+                  // Appearance / theme section — temporarily removed from
+                  // the member settings screen per request. Left commented
+                  // out (not deleted) so it can be restored easily later.
+                  // const AppearanceSectionWidget(),
 
                   LanguageSectionWidget(
                     selectedLocale: state.pendingLocale,

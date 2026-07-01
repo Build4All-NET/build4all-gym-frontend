@@ -11104,6 +11104,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'One Time'**
   String get memberMembershipBillingOneTime;
+
+  /// No description provided for @planPendingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Approval'**
+  String get planPendingApproval;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
