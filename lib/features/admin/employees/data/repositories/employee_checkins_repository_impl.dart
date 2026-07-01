@@ -28,8 +28,8 @@ class EmployeeCheckinsRepositoryImpl implements EmployeeCheckinsRepository {
   }
 
   @override
-  Future<EmployeeCheckinActionEntity> manualCheckin({required int employeeId}) async {
-    final model = await remoteDatasource.manualCheckin(employeeId: employeeId);
+  Future<EmployeeCheckinActionEntity> manualCheckin({required int employeeId, int? branchId}) async {
+    final model = await remoteDatasource.manualCheckin(employeeId: employeeId, branchId: branchId);
     return model.toEntity();
   }
 

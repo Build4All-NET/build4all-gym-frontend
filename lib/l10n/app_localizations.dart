@@ -3684,12 +3684,21 @@ abstract class AppLocalizations {
   String get memberInvoicesRefundStatus;
 
   /// No description provided for @memberInvoicesRefundDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund by'**
   String get memberInvoicesRefundDeadline;
 
   /// No description provided for @memberInvoicesRefundedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded Amount'**
   String get memberInvoicesRefundedAmount;
 
   /// No description provided for @memberInvoicesDeductedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deducted Amount'**
   String get memberInvoicesDeductedAmount;
 
   /// No description provided for @memberInvoicesDate.
@@ -4043,19 +4052,19 @@ abstract class AppLocalizations {
   /// No description provided for @admin_dashboard_membershipCollectedToday.
   ///
   /// In en, this message translates to:
-  /// **'Membership Collected Today'**
+  /// **'Total Collected Today'**
   String get admin_dashboard_membershipCollectedToday;
 
   /// No description provided for @admin_dashboard_admissionFees.
   ///
   /// In en, this message translates to:
-  /// **'Admission Fees'**
+  /// **'Membership Collected'**
   String get admin_dashboard_admissionFees;
 
   /// No description provided for @admin_dashboard_membershipCollected.
   ///
   /// In en, this message translates to:
-  /// **'Membership Collected'**
+  /// **'Total Revenue Collected'**
   String get admin_dashboard_membershipCollected;
 
   /// No description provided for @admin_dashboard_membershipDue.
@@ -5654,6 +5663,18 @@ abstract class AppLocalizations {
   /// **'Select trainer'**
   String get admin_classes_selectTrainer;
 
+  /// No description provided for @admin_classes_selectTrainerFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a trainer first'**
+  String get admin_classes_selectTrainerFirst;
+
+  /// No description provided for @admin_classes_noServicesForTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'No services for this trainer'**
+  String get admin_classes_noServicesForTrainer;
+
   /// No description provided for @admin_classes_selectBranch.
   ///
   /// In en, this message translates to:
@@ -5931,27 +5952,51 @@ abstract class AppLocalizations {
   String get admin_settings_allowPtBookingWithoutMembershipDesc;
 
   /// No description provided for @admin_settings_refundPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Policy'**
   String get admin_settings_refundPolicy;
 
   /// No description provided for @admin_settings_refundPolicyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure time window for refund eligibility per purchase type'**
   String get admin_settings_refundPolicyDesc;
 
   /// No description provided for @admin_settings_planRefundWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Refund Window (hours)'**
   String get admin_settings_planRefundWindow;
 
   /// No description provided for @admin_settings_planRefundWindowDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for no limit · Enter 0 to disable plan refunds'**
   String get admin_settings_planRefundWindowDesc;
 
   /// No description provided for @admin_settings_classRefundWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Class Booking Refund Window (hours)'**
   String get admin_settings_classRefundWindow;
 
   /// No description provided for @admin_settings_classRefundWindowDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for no limit · Enter 0 to disable class refunds'**
   String get admin_settings_classRefundWindowDesc;
 
   /// No description provided for @admin_settings_ptPackageRefundWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'PT Package Refund Window (hours)'**
   String get admin_settings_ptPackageRefundWindow;
 
   /// No description provided for @admin_settings_ptPackageRefundWindowDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for no limit · Enter 0 to disable PT package refunds'**
   String get admin_settings_ptPackageRefundWindowDesc;
 
   /// No description provided for @admin_settings_dangerTitle.
@@ -6889,6 +6934,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PT Session'**
   String get trainer_ptSession;
+
+  /// No description provided for @trainer_gymClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Class'**
+  String get trainer_gymClass;
 
   /// No description provided for @trainer_completeButton.
   ///
@@ -9801,63 +9852,123 @@ abstract class AppLocalizations {
   String admin_employees_identityManagedNote(String name, String type);
 
   /// No description provided for @admin_employees_sectionEmployeeDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee Details'**
   String get admin_employees_sectionEmployeeDetails;
 
+  /// No description provided for @admin_employees_sectionPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary & Pay'**
+  String get admin_employees_sectionPay;
+
   /// No description provided for @admin_employees_fullNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
   String get admin_employees_fullNameLabel;
 
   /// No description provided for @admin_employees_fullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
   String get admin_employees_fullNameHint;
 
   /// No description provided for @admin_employees_phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
   String get admin_employees_phoneLabel;
 
   /// No description provided for @admin_employees_emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
   String get admin_employees_emailLabel;
 
   /// No description provided for @admin_employees_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
   String get admin_employees_optional;
 
   /// No description provided for @admin_employees_employeeTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee Type'**
   String get admin_employees_employeeTypeLabel;
 
   /// No description provided for @admin_employees_employeeTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Trainer, Receptionist…'**
   String get admin_employees_employeeTypeHint;
 
   /// No description provided for @admin_employees_selectEmployeeType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select type…'**
   String get admin_employees_selectEmployeeType;
 
-  /// No description provided for @admin_employees_sectionPay.
-  String get admin_employees_sectionPay;
-
   /// No description provided for @admin_employees_salaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
   String get admin_employees_salaryLabel;
 
   /// No description provided for @admin_employees_payFrequencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay Frequency'**
   String get admin_employees_payFrequencyLabel;
 
   /// No description provided for @admin_employees_branchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
   String get admin_employees_branchLabel;
 
   /// No description provided for @admin_employees_selectBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Branch'**
   String get admin_employees_selectBranch;
 
   /// No description provided for @admin_employees_hireDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hire Date'**
   String get admin_employees_hireDateLabel;
 
   /// No description provided for @admin_employees_statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
   String get admin_employees_statusLabel;
 
   /// No description provided for @admin_employees_statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
   String get admin_employees_statusActive;
 
   /// No description provided for @admin_employees_notesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
   String get admin_employees_notesLabel;
 
   /// No description provided for @admin_employees_optionalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional notes…'**
   String get admin_employees_optionalNotes;
 
   /// No description provided for @admin_employees_saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
   String get admin_employees_saveChanges;
 
   /// No description provided for @admin_dashboard_growthPercent.

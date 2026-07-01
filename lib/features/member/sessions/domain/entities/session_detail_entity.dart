@@ -1,6 +1,6 @@
 class SessionDetailEntity {
   final int sessionId;
-  final int classTypeId;
+  final int? classTypeId;
   final int trainerId;
   final String className;
   final String trainerName;
@@ -23,7 +23,7 @@ class SessionDetailEntity {
 
   const SessionDetailEntity({
     required this.sessionId,
-    required this.classTypeId,
+    this.classTypeId,
     required this.trainerId,
     required this.className,
     required this.trainerName,

@@ -1860,10 +1860,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memberInvoicesRefundDeadline => 'Refund by';
 
   @override
-  String get memberInvoicesRefundedAmount => 'Refunded';
+  String get memberInvoicesRefundedAmount => 'Refunded Amount';
 
   @override
-  String get memberInvoicesDeductedAmount => 'Deducted';
+  String get memberInvoicesDeductedAmount => 'Deducted Amount';
 
   @override
   String get memberInvoicesDate => 'Date';
@@ -2040,13 +2040,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_dashboard_recordAttendance => 'Record Attendance';
 
   @override
-  String get admin_dashboard_membershipCollectedToday => 'Membership Collected Today';
+  String get admin_dashboard_membershipCollectedToday => 'Total Collected Today';
 
   @override
-  String get admin_dashboard_admissionFees => 'Admission Fees';
+  String get admin_dashboard_admissionFees => 'Membership Collected';
 
   @override
-  String get admin_dashboard_membershipCollected => 'Membership Collected';
+  String get admin_dashboard_membershipCollected => 'Total Revenue Collected';
 
   @override
   String get admin_dashboard_membershipDue => 'Membership Due';
@@ -2867,6 +2867,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_classes_selectTrainer => 'Select trainer';
 
   @override
+  String get admin_classes_selectTrainerFirst => 'Select a trainer first';
+
+  @override
+  String get admin_classes_noServicesForTrainer => 'No services for this trainer';
+
+  @override
   String get admin_classes_selectBranch => 'Select branch';
 
   @override
@@ -3519,6 +3525,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainer_ptSession => 'PT Session';
+
+  @override
+  String get trainer_gymClass => 'Gym Class';
 
   @override
   String get trainer_completeButton => 'Complete';
@@ -5037,10 +5046,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_employees_sectionEmployeeDetails => 'Employee Details';
 
   @override
-  String get admin_employees_fullNameLabel => 'Full Name *';
+  String get admin_employees_sectionPay => 'Salary & Pay';
 
   @override
-  String get admin_employees_fullNameHint => 'e.g. John Doe';
+  String get admin_employees_fullNameLabel => 'Full Name';
+
+  @override
+  String get admin_employees_fullNameHint => 'Full name';
 
   @override
   String get admin_employees_phoneLabel => 'Phone';
@@ -5052,28 +5064,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_employees_optional => 'Optional';
 
   @override
-  String get admin_employees_employeeTypeLabel => 'Employee Type *';
+  String get admin_employees_employeeTypeLabel => 'Employee Type';
 
   @override
-  String get admin_employees_employeeTypeHint => 'e.g. Cleaner';
+  String get admin_employees_employeeTypeHint => 'e.g. Trainer, Receptionist…';
 
   @override
-  String get admin_employees_selectEmployeeType => 'Select employee type';
+  String get admin_employees_selectEmployeeType => 'Select type…';
 
   @override
-  String get admin_employees_sectionPay => 'Pay';
+  String get admin_employees_salaryLabel => 'Salary';
 
   @override
-  String get admin_employees_salaryLabel => 'Salary Amount *';
+  String get admin_employees_payFrequencyLabel => 'Pay Frequency';
 
   @override
-  String get admin_employees_payFrequencyLabel => 'Pay Frequency *';
+  String get admin_employees_branchLabel => 'Branch';
 
   @override
-  String get admin_employees_branchLabel => 'Branch *';
-
-  @override
-  String get admin_employees_selectBranch => 'Select branch';
+  String get admin_employees_selectBranch => 'Select Branch';
 
   @override
   String get admin_employees_hireDateLabel => 'Hire Date';
@@ -5088,7 +5097,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_employees_notesLabel => 'Notes';
 
   @override
-  String get admin_employees_optionalNotes => 'Optional notes';
+  String get admin_employees_optionalNotes => 'Optional notes…';
 
   @override
   String get admin_employees_saveChanges => 'Save Changes';
@@ -5195,7 +5204,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_payments_testingEllipsis => 'Testing…';
 
   @override
-  String admin_payments_configureFirst(String name) => 'Configure $name before enabling it.';
+  String admin_payments_configureFirst(String name) {
+    return 'Configure $name before enabling it.';
+  }
 
   @override
   String get admin_invoice_title => 'INVOICE';

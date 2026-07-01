@@ -63,7 +63,8 @@ class CheckinMemberCard extends StatelessWidget {
             ? Border.all(color: c.border.withOpacity(0.15))
             : null,
       ),
-      child: Row(
+      child: IntrinsicHeight(
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ── Status accent bar ────────────────────────────────────────────
@@ -216,6 +217,7 @@ class CheckinMemberCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

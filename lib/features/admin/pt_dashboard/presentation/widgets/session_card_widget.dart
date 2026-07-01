@@ -94,12 +94,42 @@ class SessionCardWidget extends StatelessWidget {
                                   color:      Color(0xFF1A1A2E))),
                           const SizedBox(height: 2),
                           Text(
-                            session.serviceName ??
-                                (session.notes ?? l10n.trainer_ptSession),
+                            session.isClass
+                                ? (session.notes ?? l10n.trainer_gymClass)
+                                : (session.serviceName ??
+                                    (session.notes ?? l10n.trainer_ptSession)),
                             style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                           ),
-                          // Trainer attribution badge (admin only)
-                          if (isAdmin &&
+                          // Gym class badge
+                          if (session.isClass) ...[
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEEF2FF),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.fitness_center_rounded,
+                                      size: 11, color: Color(0xFF4F46E5)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    l10n.trainer_gymClass,
+                                    style: const TextStyle(
+                                        fontSize:   11,
+                                        fontWeight: FontWeight.w600,
+                                        color:      Color(0xFF4F46E5)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          // Trainer attribution badge (admin only, PT sessions)
+                          if (!session.isClass &&
+                              isAdmin &&
                               session.trainerName != null &&
                               session.trainerName!.isNotEmpty) ...[
                             const SizedBox(height: 4),

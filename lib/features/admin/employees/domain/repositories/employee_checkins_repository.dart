@@ -6,6 +6,6 @@ abstract class EmployeeCheckinsRepository {
   Future<List<EmployeeCheckinRowEntity>> getTodayCheckins({required int branchId});
   Future<BranchCheckinQrEntity> getBranchQr({required int branchId});
   Future<EmployeeCheckinActionEntity> scan({required String token});
-  Future<EmployeeCheckinActionEntity> manualCheckin({required int employeeId});
+  Future<EmployeeCheckinActionEntity> manualCheckin({required int employeeId, int? branchId});
   Future<EmployeeCheckinActionEntity> manualCheckout({required int employeeCheckinId});
 }

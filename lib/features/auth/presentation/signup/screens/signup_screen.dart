@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/core/theme/app_theme_tokens.dart';
@@ -64,6 +65,7 @@ class _SignupContentState extends State<_SignupContent> {
   bool _usePhone       = false;
   bool _obscurePass    = true;
   bool _obscureConfirm = true;
+  String _fullPhoneNumber = '';
 
   @override
   void dispose() {
@@ -84,7 +86,7 @@ class _SignupContentState extends State<_SignupContent> {
       RegisterSendCodeSubmitted(
         method:      _usePhone ? RegisterMethod.phone : RegisterMethod.email,
         email:       _usePhone ? null : _emailCtrl.text.trim(),
-        phoneNumber: _usePhone ? _phoneCtrl.text.trim() : null,
+        phoneNumber: _usePhone ? _fullPhoneNumber : null,
         password:    _passwordCtrl.text,
       ),
     );
@@ -162,7 +164,7 @@ class _SignupContentState extends State<_SignupContent> {
                   child: OtpScreen(
                     contact:  state.contact!,
                     email:    _usePhone ? '' : _emailCtrl.text.trim(),
-                    phone:    _usePhone ? _phoneCtrl.text.trim() : null,
+                    phone:    _usePhone ? _fullPhoneNumber : null,
                     password: _passwordCtrl.text,
                   ),
                 ),
@@ -322,6 +324,7 @@ class _SignupContentState extends State<_SignupContent> {
                                         _usePhone = val;
                                         _emailCtrl.clear();
                                         _phoneCtrl.clear();
+                                        _fullPhoneNumber = '';
                                       }),
                                     ),
                                     SizedBox(height: sp.md),
@@ -340,34 +343,38 @@ class _SignupContentState extends State<_SignupContent> {
                                     SizedBox(height: sp.xs),
 
                                     // ── Identifier field ────────────────
-                                    TextFormField(
-                                      controller: _usePhone
-                                          ? _phoneCtrl
-                                          : _emailCtrl,
-                                      keyboardType: _usePhone
-                                          ? TextInputType.phone
-                                          : TextInputType.emailAddress,
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        color:    c.label,
-                                        fontSize: 15,
-                                      ),
-                                      decoration: _inputDecoration(
-                                        hint: _usePhone
-                                            ? l.auth_phoneHint
-                                            : l.auth_emailHint,
-                                        suffixIcon: Icon(
-                                          _usePhone
-                                              ? Icons.phone_outlined
-                                              : Icons.email_outlined,
-                                          color: c.muted,
-                                          size:  20,
+                                    if (_usePhone)
+                                      IntlPhoneField(
+                                        controller: _phoneCtrl,
+                                        initialCountryCode: 'LB',
+                                        keyboardType: TextInputType.phone,
+                                        style: TextStyle(color: c.label, fontSize: 15),
+                                        decoration: _inputDecoration(
+                                          hint: l.auth_phoneHint,
+                                          tokens: tokens,
                                         ),
-                                        tokens: tokens,
+                                        onChanged: (phone) =>
+                                            setState(() => _fullPhoneNumber = phone.completeNumber),
+                                        validator: (phone) {
+                                          if (phone == null || phone.number.trim().isEmpty) {
+                                            return l.validation_phoneRequired;
+                                          }
+                                          return null;
+                                        },
+                                      )
+                                    else
+                                      TextFormField(
+                                        controller: _emailCtrl,
+                                        keyboardType: TextInputType.emailAddress,
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(color: c.label, fontSize: 15),
+                                        decoration: _inputDecoration(
+                                          hint: l.auth_emailHint,
+                                          suffixIcon: Icon(Icons.email_outlined, color: c.muted, size: 20),
+                                          tokens: tokens,
+                                        ),
+                                        validator: (v) => _validateIdentifier(v, l),
                                       ),
-                                      validator: (v) =>
-                                          _validateIdentifier(v, l),
-                                    ),
                                     SizedBox(height: sp.md),
 
                                     // ── Password label ──────────────────

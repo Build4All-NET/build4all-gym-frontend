@@ -71,7 +71,7 @@ class EmployeeCheckinsBloc extends Bloc<EmployeeCheckinsEvent, EmployeeCheckinsS
   Future<void> _onManualCheckin(
       ManualCheckinEvent event, Emitter<EmployeeCheckinsState> emit) async {
     try {
-      final result = await manualCheckin(employeeId: event.employeeId);
+      final result = await manualCheckin(employeeId: event.employeeId, branchId: branchId);
       emit(EmployeeCheckinsActionSuccess('${result.employeeName} checked in.'));
       add(const LoadTodayEmployeeCheckins());
     } catch (e) {

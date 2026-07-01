@@ -147,20 +147,17 @@ class MemberQrBloc extends Bloc<MemberQrEvent, MemberQrState> {
     _scheduleAutoRefresh(data.expiresAt);
   }
 
-  /// Starts a timer that fires exactly when the QR token expires.
+  /// Starts a timer that refreshes the QR token before it expires on the server.
   ///
-  /// If expiresAt is already passed, refresh immediately.
+  /// The server's expiresAt is a LocalDateTime with no timezone info.
+  /// Parsing it on a device in a different timezone makes the token look
+  /// already-expired, which used to trigger an immediate re-refresh → the QR
+  /// changed every second.  Instead we ignore expiresAt entirely and always
+  /// wait 4 minutes: tokens are valid for 5 minutes server-side, so this
+  /// guarantees a fresh token well before the server rejects the old one.
   void _scheduleAutoRefresh(DateTime expiresAt) {
     _refreshTimer?.cancel();
-
-    final delay = expiresAt.difference(DateTime.now());
-
-    if (delay.isNegative || delay == Duration.zero) {
-      add(const RefreshMemberQr());
-      return;
-    }
-
-    _refreshTimer = Timer(delay, () {
+    _refreshTimer = Timer(const Duration(minutes: 4), () {
       add(const RefreshMemberQr());
     });
   }

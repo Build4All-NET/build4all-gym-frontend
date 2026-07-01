@@ -59,7 +59,8 @@ class EmployeeCheckinRowWidget extends StatelessWidget {
             : null,
         border: tokens.card.showBorder ? Border.all(color: c.border.withOpacity(0.15)) : null,
       ),
-      child: Row(
+      child: IntrinsicHeight(
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Status accent bar — mirrors the member check-ins card language.
@@ -109,13 +110,7 @@ class EmployeeCheckinRowWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  if (row.isLinked)
-                    // Self check-in via QR scan — no manual buttons for the owner here.
-                    _PillBadge(
-                        label: l10n.admin_employees_selfCheckin,
-                        color: c.primary.withOpacity(0.10),
-                        textColor: c.primary)
-                  else if (isBusy)
+                  if (isBusy)
                     const SizedBox(
                         width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.2))
                   else if (row.isCheckedIn)
@@ -138,6 +133,7 @@ class EmployeeCheckinRowWidget extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -162,23 +158,6 @@ class _TypeChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(label, style: TextStyle(fontSize: 11, color: colors.muted, fontWeight: FontWeight.w600)),
-    );
-  }
-}
-
-class _PillBadge extends StatelessWidget {
-  final String label;
-  final Color color;
-  final Color textColor;
-
-  const _PillBadge({required this.label, required this.color, required this.textColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
-      child: Text(label, style: TextStyle(fontSize: 11, color: textColor, fontWeight: FontWeight.w600)),
     );
   }
 }

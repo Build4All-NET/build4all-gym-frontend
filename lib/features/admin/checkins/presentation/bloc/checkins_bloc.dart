@@ -101,10 +101,11 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     try {
       final result = await scanQrCheckin(
           token: event.token, branchId: currentBranchId);
-      // Emit success so the sheet can show the snackbar and close.
       emit(CheckinsScanSuccess(result.memberName, checkedOut: result.checkedOut));
-      // Then immediately refresh the list so the change appears.
-      add(const LoadTodayCheckins());
+      // Call _onLoad directly (not via add) so we own the emit and cannot
+      // be beaten by a concurrent background-poll _onLoad overwriting our
+      // result with stale data (flutter_bloc 8+ default is concurrent).
+      await _onLoad(const LoadTodayCheckins(), emit);
     } catch (e) {
       emit(CheckinsActionError(e.toString()));
     }
@@ -122,7 +123,7 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     try {
       await checkOutMember(checkinId: event.checkinId, branchId: currentBranchId);
       emit(const CheckinsActionSuccess('Member checked out successfully.'));
-      add(const LoadTodayCheckins()); // refresh list
+      await _onLoad(const LoadTodayCheckins(), emit);
     } catch (e) {
       emit(CheckinsActionError(e.toString()));
     }
@@ -134,7 +135,7 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     try {
       await blockMember(userId: event.userId, reason: event.reason);
       emit(const CheckinsActionSuccess('Member blocked successfully.'));
-      add(const LoadTodayCheckins());
+      await _onLoad(const LoadTodayCheckins(), emit);
     } catch (e) {
       emit(CheckinsActionError(e.toString()));
     }

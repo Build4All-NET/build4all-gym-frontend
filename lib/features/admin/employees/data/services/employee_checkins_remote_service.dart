@@ -13,7 +13,7 @@ abstract class EmployeeCheckinsRemoteDatasource {
   Future<List<EmployeeCheckinRowModel>> getTodayCheckins({required int branchId});
   Future<BranchCheckinQrModel> getBranchQr({required int branchId});
   Future<EmployeeCheckinActionModel> scan({required String token});
-  Future<EmployeeCheckinActionModel> manualCheckin({required int employeeId});
+  Future<EmployeeCheckinActionModel> manualCheckin({required int employeeId, int? branchId});
   Future<EmployeeCheckinActionModel> manualCheckout({required int employeeCheckinId});
 }
 
@@ -77,12 +77,13 @@ class EmployeeCheckinsRemoteDatasourceImpl implements EmployeeCheckinsRemoteData
 
   // ── POST /api/admin/employees/checkins/{employeeId}/manual-checkin ─────────
   @override
-  Future<EmployeeCheckinActionModel> manualCheckin({required int employeeId}) async {
+  Future<EmployeeCheckinActionModel> manualCheckin({required int employeeId, int? branchId}) async {
     final headers = await _authHeaders();
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/api/admin/employees/checkins/$employeeId/manual-checkin'),
-      headers: headers,
-    );
+    final url = '$_baseUrl/api/admin/employees/checkins/$employeeId/manual-checkin';
+    final uri = branchId != null
+        ? Uri.parse(url).replace(queryParameters: {'branchId': branchId.toString()})
+        : Uri.parse(url);
+    final response = await _client.post(uri, headers: headers);
     _checkStatus(response);
     return EmployeeCheckinActionModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
