@@ -27,8 +27,8 @@ class ScanEmployeeCheckinUseCase {
 class ManualCheckinUseCase {
   final EmployeeCheckinsRepository repository;
   ManualCheckinUseCase({required this.repository});
-  Future<EmployeeCheckinActionEntity> call({required int employeeId}) =>
-      repository.manualCheckin(employeeId: employeeId);
+  Future<EmployeeCheckinActionEntity> call({required int employeeId, int? branchId}) =>
+      repository.manualCheckin(employeeId: employeeId, branchId: branchId);
 }
 
 class ManualCheckoutUseCase {

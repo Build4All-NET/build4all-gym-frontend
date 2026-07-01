@@ -327,12 +327,24 @@ class TrainerPtSessionsService {
   }
 
   // ── PATCH update status ───────────────────────────────────────────────────
+  //
+  // Negative sessionId means this is a gym class session:
+  //   route to /api/trainer/pt-sessions/class/{abs(id)}/status
+  // Positive sessionId is a regular PT session:
+  //   route to /api/trainer/pt-sessions/{id}/status
 
   Future<PtSessionModel> updateStatus(int sessionId, String status) async {
     final headers = _authHeaders();
-    final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/status',
-    );
+    final Uri uri;
+    if (sessionId < 0) {
+      uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/class/${-sessionId}/status',
+      );
+    } else {
+      uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/status',
+      );
+    }
 
     try {
       final response = await _client.patch(
@@ -340,7 +352,7 @@ class TrainerPtSessionsService {
         headers: headers,
         body: jsonEncode({'status': status}),
       );
-      debugPrint('UPDATE STATUS: ${response.statusCode}');
+      debugPrint('UPDATE STATUS (${sessionId < 0 ? "CLASS" : "PT"}): ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final decoded =

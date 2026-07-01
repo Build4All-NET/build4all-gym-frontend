@@ -1,14 +1,13 @@
 // PATH: lib/features/admin/classes/presentation/widgets/add_edit_class_bottom_sheet.dart
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import '../../../../../core/config/env.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
+import '../../../../admin/pt_dashboard/data/services/pt_service_service.dart';
+import '../../../../admin/pt_dashboard/data/models/pt_service_model.dart';
 import '../../data/models/create_class_request_model.dart';
 import '../../data/models/update_class_request_model.dart';
 import '../../domain/entities/admin_class_card_entity.dart';
@@ -58,6 +57,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   late final TextEditingController _capacityCtrl;
   late final TextEditingController _roomNameCtrl;
   late final TextEditingController _notesCtrl;
+  late final TextEditingController _priceCtrl;
   late final TextEditingController _commissionPercentageCtrl;
   bool _clearCommissionPercentage = false;
 
@@ -65,10 +65,14 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   ClassFormOptionItemEntity? _selectedTrainer;
   ClassFormOptionItemEntity? _selectedBranch;
 
+  List<ClassFormOptionItemEntity> _trainerServices = [];
+  Map<int, PtServiceModel> _trainerServiceModels = {};
+  bool _loadingServices = false;
+  String _selectedDifficulty = 'BEGINNER';
+
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-  final List<ClassFormOptionItemEntity> _newTypes = [];
   bool _optionsInitialized = false;
 
   bool get _isEditMode => widget.sessionId != null;
@@ -84,6 +88,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
         text: e != null ? e.capacity.toString() : '');
     _roomNameCtrl = TextEditingController(text: e?.roomName ?? '');
     _notesCtrl = TextEditingController();
+    _priceCtrl = TextEditingController();
     _commissionPercentageCtrl = TextEditingController();
 
     if (_isEditMode) {
@@ -102,7 +107,6 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
   TimeOfDay? _parseTimeOfDay(String? timeStr) {
     if (timeStr == null || timeStr.isEmpty) return null;
     try {
-      // Handles "7:00 AM", "2:30 PM", "14:30", etc.
       final upper = timeStr.trim().toUpperCase();
       final hasPeriod = upper.endsWith('AM') || upper.endsWith('PM');
       if (hasPeriod) {
@@ -129,11 +133,6 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     final e = widget.existing;
     if (e == null) return;
 
-    final allTypes = [
-      ...options.classTypes,
-      ..._newTypes.where((n) => !options.classTypes.any((t) => t.id == n.id)),
-    ];
-
     ClassFormOptionItemEntity? findByName(
         List<ClassFormOptionItemEntity> items, String? name) {
       if (name == null) return null;
@@ -144,216 +143,74 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       }
     }
 
+    final trainer = findByName(options.trainers, e.trainerName);
+    final branch  = findByName(options.branches, e.branchName);
+
     setState(() {
       _optionsInitialized = true;
-      _selectedType    = findByName(allTypes, e.typeName);
-      _selectedTrainer = findByName(options.trainers, e.trainerName);
-      _selectedBranch  = findByName(options.branches, e.branchName);
+      _selectedTrainer = trainer;
+      _selectedBranch  = branch;
     });
-  }
 
-  @override
-  void dispose() {
-    _classNameCtrl.dispose();
-    _durationCtrl.dispose();
-    _capacityCtrl.dispose();
-    _roomNameCtrl.dispose();
-    _notesCtrl.dispose();
-    _commissionPercentageCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _showCreateTypeDialog() async {
-    final c    = context.read<ThemeCubit>().state.tokens.colors;
-    final l10n = AppLocalizations.of(context)!;
-    final nameCtrl = TextEditingController();
-    final durationCtrl = TextEditingController();
-    final priceCtrl = TextEditingController(text: '0');
-    String difficulty = 'BEGINNER';
-    final formKey = GlobalKey<FormState>();
-
-    final result = await showDialog<ClassFormOptionItemEntity>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: c.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: c.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(Icons.category_outlined, size: 18, color: c.primary),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  l10n.admin_classes_newTypeTitle,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 16, color: c.label),
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormFieldLabel(l10n.admin_classes_typeNameLabel, c),
-                  TextFormField(
-                    controller: nameCtrl,
-                    style: TextStyle(color: c.label),
-                    decoration: formInputDecoration(hint: l10n.admin_classes_typeNameHint, c: c),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.admin_classes_required
-                        : null,
-                  ),
-                  const SizedBox(height: 14),
-                  FormFieldLabel(l10n.admin_classes_typeDurationLabel, c),
-                  TextFormField(
-                    controller: durationCtrl,
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: c.label),
-                    decoration: formInputDecoration(hint: l10n.admin_classes_durationHint, c: c),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
-                        return l10n.admin_classes_required;
-                      }
-                      if (int.tryParse(v.trim()) == null) {
-                        return l10n.admin_classes_mustBeNumber;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  FormFieldLabel(l10n.admin_classes_typeDifficultyLabel, c),
-                  DropdownButtonFormField<String>(
-                    value: difficulty,
-                    style: TextStyle(color: c.label),
-                    decoration: formInputDecoration(hint: '', c: c),
-                    items: [
-                      DropdownMenuItem(
-                          value: 'BEGINNER',
-                          child: Text(l10n.admin_classes_diffBeginner)),
-                      DropdownMenuItem(
-                          value: 'INTERMEDIATE',
-                          child: Text(l10n.admin_classes_diffIntermediate)),
-                      DropdownMenuItem(
-                          value: 'ADVANCED',
-                          child: Text(l10n.admin_classes_diffAdvanced)),
-                    ],
-                    onChanged: (v) =>
-                        setDialogState(() => difficulty = v ?? 'BEGINNER'),
-                  ),
-                  const SizedBox(height: 14),
-                  FormFieldLabel(l10n.admin_classes_typePriceLabel, c),
-                  TextFormField(
-                    controller: priceCtrl,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true),
-                    style: TextStyle(color: c.label),
-                    decoration: formInputDecoration(
-                        hint: '0.00', c: c, prefixIcon: Icons.attach_money_rounded),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) return null;
-                      if (double.tryParse(v.trim()) == null) {
-                        return l10n.admin_classes_mustBeNumber;
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(l10n.general_cancel,
-                  style: TextStyle(color: c.muted)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: c.primary,
-                foregroundColor: c.onPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onPressed: () async {
-                if (!formKey.currentState!.validate()) return;
-                final newType = await _createClassTypeOnBackend(
-                  name: nameCtrl.text.trim(),
-                  durationMinutes: int.parse(durationCtrl.text.trim()),
-                  difficultyLevel: difficulty,
-                  price: double.tryParse(priceCtrl.text.trim()) ?? 0,
-                );
-                if (newType != null && ctx.mounted) {
-                  Navigator.of(ctx).pop(newType);
-                } else if (ctx.mounted) {
-                  AppToast.error(ctx, AppLocalizations.of(ctx)!.admin_classes_failedCreateType);
-                }
-              },
-              child: Text(AppLocalizations.of(ctx)!.admin_classes_createTypeButton),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (result != null && mounted) {
-      setState(() {
-        _newTypes.add(result);
-        _selectedType = result;
-      });
+    if (trainer != null) {
+      _loadTrainerServices(trainer, restoreTypeName: e.typeName);
     }
   }
 
-  Future<ClassFormOptionItemEntity?> _createClassTypeOnBackend({
-    required String name,
-    required int durationMinutes,
-    required String difficultyLevel,
-    required double price,
+  Future<void> _loadTrainerServices(
+    ClassFormOptionItemEntity trainer, {
+    String? restoreTypeName,
   }) async {
+    setState(() {
+      _trainerServices = [];
+      _selectedType = null;
+      _loadingServices = true;
+    });
+
     try {
       final tokenStore = const AdminTokenStore();
-      final token = await tokenStore.getToken();
-      if (token == null) return null;
+      final tenantIdStr = await tokenStore.getTenantId();
+      final tenantId = int.tryParse(tenantIdStr ?? '') ?? 1;
 
-      final r = await http.post(
-        Uri.parse('${Env.apiProjectBaseUrl}/api/admin/classes/types'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-          'X-Owner-Project-Link-Id': Env.ownerProjectLinkId,
-        },
-        body: jsonEncode({
-          'name': name,
-          'durationMinutes': durationMinutes,
-          'difficultyLevel': difficultyLevel,
-          'price': price,
-        }),
+      final services = await PtServiceService().getServices(
+        trainerId: trainer.id,
+        tenantId: tenantId,
       );
 
-      if (r.statusCode == 201) {
-        final json = jsonDecode(r.body) as Map<String, dynamic>;
-        return ClassFormOptionItemEntity(
-          id: json['id'] as int,
-          name: json['name'] as String,
-        );
+      if (!mounted) return;
+
+      final activeServices = services.where((s) => s.isActive).toList();
+      final items = activeServices
+          .map((s) => ClassFormOptionItemEntity(id: s.serviceId, name: s.name))
+          .toList();
+      final modelsMap = {for (final s in activeServices) s.serviceId: s};
+
+      ClassFormOptionItemEntity? restored;
+      if (restoreTypeName != null) {
+        try {
+          restored = items.firstWhere((i) => i.name == restoreTypeName);
+        } catch (_) {}
       }
 
-      if (r.statusCode == 409 && mounted) {
-        AppToast.info(context, AppLocalizations.of(context)!.admin_classes_typeExists);
-      }
-      return null;
+      setState(() {
+        _trainerServices = items;
+        _trainerServiceModels = modelsMap;
+        _loadingServices = false;
+        if (restored != null) _selectedType = restored;
+      });
     } catch (_) {
-      return null;
+      if (mounted) setState(() => _loadingServices = false);
     }
+  }
+
+  void _onServiceSelected(ClassFormOptionItemEntity? service) {
+    setState(() => _selectedType = service);
+    if (service == null) return;
+    final model = _trainerServiceModels[service.id];
+    if (model == null) return;
+    // Pre-fill duration and price from the service defaults
+    _durationCtrl.text = model.durationMinutes.toString();
+    _priceCtrl.text = model.price > 0 ? model.price.toStringAsFixed(2) : '';
   }
 
   Future<void> _pickDate() async {
@@ -370,8 +227,6 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     );
     if (picked != null) {
       setState(() => _selectedDate = picked);
-      // If the previously chosen time is now in the past (date changed to today),
-      // clear it so the user has to re-pick a valid time.
       if (_selectedTime != null) {
         final now2 = DateTime.now();
         final combined = DateTime(
@@ -394,7 +249,6 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     );
     if (picked == null) return;
 
-    // If the chosen date is today, reject times already in the past.
     final now = DateTime.now();
     final isToday = _selectedDate != null &&
         _selectedDate!.year == now.year &&
@@ -445,25 +299,24 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     final bloc = context.read<AdminClassesBloc>();
     final commissionPercentage =
         double.tryParse(_commissionPercentageCtrl.text.trim());
+    final price = double.tryParse(_priceCtrl.text.trim());
 
     if (_isEditMode) {
       bloc.add(ClassUpdateRequested(
         widget.sessionId!,
         UpdateClassRequestModel(
           className: _classNameCtrl.text.trim(),
-          classTypeId: _selectedType!.id,
+          ptServiceId: _selectedType!.id,
           trainerId: _selectedTrainer!.id,
           branchId: _selectedBranch!.id,
           date: dateStr,
           time: timeStr,
           durationMinutes: int.parse(_durationCtrl.text.trim()),
           capacity: int.parse(_capacityCtrl.text.trim()),
-          roomName: _roomNameCtrl.text.trim().isEmpty
-              ? null
-              : _roomNameCtrl.text.trim(),
-          notes: _notesCtrl.text.trim().isEmpty
-              ? null
-              : _notesCtrl.text.trim(),
+          roomName: _roomNameCtrl.text.trim().isEmpty ? null : _roomNameCtrl.text.trim(),
+          notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+          difficultyLevel: _selectedDifficulty,
+          price: price,
           commissionPercentage: _clearCommissionPercentage ? null : commissionPercentage,
           clearCommissionPercentage: _clearCommissionPercentage,
         ),
@@ -472,19 +325,17 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
       bloc.add(ClassCreateRequested(
         CreateClassRequestModel(
           className: _classNameCtrl.text.trim(),
-          classTypeId: _selectedType!.id,
+          ptServiceId: _selectedType!.id,
           trainerId: _selectedTrainer!.id,
           branchId: _selectedBranch!.id,
           date: dateStr,
           time: timeStr,
           durationMinutes: int.parse(_durationCtrl.text.trim()),
           capacity: int.parse(_capacityCtrl.text.trim()),
-          roomName: _roomNameCtrl.text.trim().isEmpty
-              ? null
-              : _roomNameCtrl.text.trim(),
-          notes: _notesCtrl.text.trim().isEmpty
-              ? null
-              : _notesCtrl.text.trim(),
+          roomName: _roomNameCtrl.text.trim().isEmpty ? null : _roomNameCtrl.text.trim(),
+          notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+          difficultyLevel: _selectedDifficulty,
+          price: price,
           commissionPercentage: commissionPercentage,
         ),
       ));
@@ -549,42 +400,17 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                   builder: (context, state) {
                     if (state is ClassFormOptionsLoading) {
                       return Center(
-                          child: CircularProgressIndicator(
-                              color: c.primary));
+                          child: CircularProgressIndicator(color: c.primary));
                     }
                     if (state is ClassFormOptionsLoaded) {
                       WidgetsBinding.instance.addPostFrameCallback(
                           (_) => _initDropdownsFromOptions(state.options));
                       final options = state.options;
-                      final allTypes = [
-                        ...options.classTypes,
-                        ..._newTypes.where((n) => !options.classTypes
-                            .any((t) => t.id == n.id)),
-                      ];
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: FormFieldLabel(
-                                      l10n.admin_classes_typeLabel, c)),
-                              _NewTypeChip(
-                                  label: l10n.admin_classes_newTypeButton,
-                                  c: c,
-                                  onTap: _showCreateTypeDialog),
-                            ],
-                          ),
-                          _optionDropdown(
-                              c: c,
-                              items: allTypes,
-                              value: _selectedType,
-                              hint: l10n.admin_classes_selectType,
-                              icon: Icons.category_outlined,
-                              onChanged: (v) =>
-                                  setState(() => _selectedType = v)),
-                          const SizedBox(height: 14),
+                          // ── Trainer (first) ────────────────────────────
                           FormFieldLabel(l10n.admin_classes_trainerLabel, c),
                           _optionDropdown(
                               c: c,
@@ -592,9 +418,43 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                               value: _selectedTrainer,
                               hint: l10n.admin_classes_selectTrainer,
                               icon: Icons.person_outline_rounded,
-                              onChanged: (v) =>
-                                  setState(() => _selectedTrainer = v)),
+                              onChanged: (v) {
+                                setState(() {
+                                  _selectedTrainer = v;
+                                  _selectedType = null;
+                                  _trainerServices = [];
+                                  _trainerServiceModels = {};
+                                });
+                                if (v != null) _loadTrainerServices(v);
+                              }),
                           const SizedBox(height: 14),
+
+                          // ── Type / Activity (from trainer's services) ──
+                          FormFieldLabel(l10n.admin_classes_typeLabel, c),
+                          if (_loadingServices)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                      color: c.primary, strokeWidth: 2)),
+                            )
+                          else
+                            _optionDropdown(
+                                c: c,
+                                items: _trainerServices,
+                                value: _selectedType,
+                                hint: _selectedTrainer == null
+                                    ? l10n.admin_classes_selectTrainerFirst
+                                    : (_trainerServices.isEmpty
+                                        ? l10n.admin_classes_noServicesForTrainer
+                                        : l10n.admin_classes_selectType),
+                                icon: Icons.category_outlined,
+                                onChanged: _selectedTrainer == null || _trainerServices.isEmpty
+                                    ? null
+                                    : _onServiceSelected),
+                          const SizedBox(height: 14),
+
+                          // ── Branch ─────────────────────────────────────
                           FormFieldLabel(l10n.admin_classes_branchLabel, c),
                           _optionDropdown(
                               c: c,
@@ -604,32 +464,63 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                               icon: Icons.store_outlined,
                               onChanged: (v) =>
                                   setState(() => _selectedBranch = v)),
+                          const SizedBox(height: 14),
+
+                          // ── Difficulty Level ───────────────────────────
+                          FormFieldLabel(l10n.admin_classes_typeDifficultyLabel, c),
+                          DropdownButtonFormField<String>(
+                            value: _selectedDifficulty,
+                            isExpanded: true,
+                            dropdownColor: c.surface,
+                            style: TextStyle(color: c.label),
+                            decoration: formInputDecoration(
+                              hint: '', c: c,
+                              prefixIcon: Icons.signal_cellular_alt_rounded,
+                            ),
+                            items: [
+                              DropdownMenuItem(
+                                value: 'BEGINNER',
+                                child: Text(l10n.admin_classes_diffBeginner,
+                                    style: TextStyle(color: c.label))),
+                              DropdownMenuItem(
+                                value: 'INTERMEDIATE',
+                                child: Text(l10n.admin_classes_diffIntermediate,
+                                    style: TextStyle(color: c.label))),
+                              DropdownMenuItem(
+                                value: 'ADVANCED',
+                                child: Text(l10n.admin_classes_diffAdvanced,
+                                    style: TextStyle(color: c.label))),
+                            ],
+                            onChanged: (v) =>
+                                setState(() => _selectedDifficulty = v ?? 'BEGINNER'),
+                          ),
+                          const SizedBox(height: 14),
+
+                          // ── Class Price ────────────────────────────────
+                          FormFieldLabel(l10n.admin_classes_typePriceLabel, c),
+                          TextFormField(
+                            controller: _priceCtrl,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            style: TextStyle(color: c.label),
+                            decoration: formInputDecoration(
+                              hint: '0.00', c: c,
+                              prefixIcon: Icons.attach_money_rounded,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) return null;
+                              if (double.tryParse(v.trim()) == null) {
+                                return l10n.admin_classes_mustBeNumber;
+                              }
+                              return null;
+                            },
+                          ),
                         ],
                       );
                     }
-                    // Not yet loaded — show empty dropdowns
+                    // Not yet loaded — show placeholder dropdowns
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                                child: FormFieldLabel(
-                                    l10n.admin_classes_typeLabel, c)),
-                            _NewTypeChip(
-                                label: l10n.admin_classes_newTypeButton,
-                                c: c,
-                                onTap: _showCreateTypeDialog),
-                          ],
-                        ),
-                        _optionDropdown(
-                            c: c,
-                            items: const [],
-                            value: null,
-                            hint: l10n.admin_classes_selectType,
-                            icon: Icons.category_outlined,
-                            onChanged: (_) {}),
-                        const SizedBox(height: 14),
                         FormFieldLabel(l10n.admin_classes_trainerLabel, c),
                         _optionDropdown(
                             c: c,
@@ -637,7 +528,16 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                             value: null,
                             hint: l10n.admin_classes_selectTrainer,
                             icon: Icons.person_outline_rounded,
-                            onChanged: (_) {}),
+                            onChanged: null),
+                        const SizedBox(height: 14),
+                        FormFieldLabel(l10n.admin_classes_typeLabel, c),
+                        _optionDropdown(
+                            c: c,
+                            items: const [],
+                            value: null,
+                            hint: l10n.admin_classes_selectType,
+                            icon: Icons.category_outlined,
+                            onChanged: null),
                         const SizedBox(height: 14),
                         FormFieldLabel(l10n.admin_classes_branchLabel, c),
                         _optionDropdown(
@@ -646,7 +546,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                             value: null,
                             hint: l10n.admin_classes_selectBranch,
                             icon: Icons.store_outlined,
-                            onChanged: (_) {}),
+                            onChanged: null),
                       ],
                     );
                   },
@@ -803,10 +703,6 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
                     return null;
                   },
                 ),
-                // This form never pre-fills the current commission % (the
-                // backend list endpoint doesn't return it), so there's no
-                // way to show "currently 15%" here — this checkbox is the
-                // only way to explicitly remove a previously-set value.
                 if (_isEditMode) ...[
                   const SizedBox(height: 8),
                   Row(
@@ -908,7 +804,7 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     required ClassFormOptionItemEntity? value,
     required String hint,
     required IconData icon,
-    required void Function(ClassFormOptionItemEntity?) onChanged,
+    required void Function(ClassFormOptionItemEntity?)? onChanged,
   }) {
     ClassFormOptionItemEntity? safeValue;
     if (value != null) {
@@ -931,49 +827,6 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
               ))
           .toList(),
       onChanged: onChanged,
-    );
-  }
-}
-
-/// Small outlined chip that opens the "create new class type" dialog.
-class _NewTypeChip extends StatelessWidget {
-  final String label;
-  final ColorTokens c;
-  final VoidCallback onTap;
-
-  const _NewTypeChip({required this.label, required this.c, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: c.primary.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: c.primary.withOpacity(0.3)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add_rounded, size: 14, color: c.primary),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: c.primary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

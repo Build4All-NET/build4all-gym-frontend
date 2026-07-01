@@ -9,20 +9,22 @@
 
 class CreateClassRequestModel {
   final String  className;
-  final int     classTypeId;
+  final int     ptServiceId;
   final int     trainerId;
   final int     branchId;
   final String  date;            // "yyyy-MM-dd" format e.g. "2026-03-16"
   final String  time;            // "HH:mm" format e.g. "07:00"
   final int     durationMinutes;
   final int     capacity;
-  final String? roomName;        // optional
-  final String? notes;           // optional — BRD 8.2.10
-  final double? commissionPercentage; // optional (0-100) — trainer's cut of this class
+  final String? roomName;
+  final String? notes;
+  final String? difficultyLevel; // BEGINNER | INTERMEDIATE | ADVANCED
+  final double? price;
+  final double? commissionPercentage;
 
   const CreateClassRequestModel({
     required this.className,
-    required this.classTypeId,
+    required this.ptServiceId,
     required this.trainerId,
     required this.branchId,
     required this.date,
@@ -31,13 +33,15 @@ class CreateClassRequestModel {
     required this.capacity,
     this.roomName,
     this.notes,
+    this.difficultyLevel,
+    this.price,
     this.commissionPercentage,
   });
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{
       'className':       className,
-      'classTypeId':     classTypeId,
+      'ptServiceId':     ptServiceId,
       'trainerId':       trainerId,
       'branchId':        branchId,
       'date':            date,
@@ -46,8 +50,10 @@ class CreateClassRequestModel {
       'capacity':        capacity,
     };
     // Only include optional fields when they have a value
-    if (roomName != null) map['roomName'] = roomName;
-    if (notes    != null) map['notes']    = notes;
+    if (roomName        != null) map['roomName']        = roomName;
+    if (notes           != null) map['notes']           = notes;
+    if (difficultyLevel != null) map['difficultyLevel'] = difficultyLevel;
+    if (price           != null) map['price']           = price;
     if (commissionPercentage != null) map['commissionPercentage'] = commissionPercentage;
     return map;
   }

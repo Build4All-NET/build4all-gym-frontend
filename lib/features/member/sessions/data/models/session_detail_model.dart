@@ -1,6 +1,6 @@
 class SessionDetailModel {
   final int sessionId;
-  final int classTypeId;
+  final int? classTypeId;
   final int trainerId;
   final String className;
   final String trainerName;
@@ -23,7 +23,7 @@ class SessionDetailModel {
 
   SessionDetailModel({
     required this.sessionId,
-    required this.classTypeId,
+    this.classTypeId,
     required this.trainerId,
     required this.className,
     required this.trainerName,
@@ -48,7 +48,7 @@ class SessionDetailModel {
   factory SessionDetailModel.fromJson(Map<String, dynamic> json) {
     return SessionDetailModel(
       sessionId: (json['sessionId'] as num).toInt(),
-      classTypeId: (json['classTypeId'] as num).toInt(),
+      classTypeId: json['classTypeId'] == null ? null : (json['classTypeId'] as num).toInt(),
       trainerId: (json['trainerId'] as num).toInt(),
       className: json['className'] as String,
       trainerName: json['trainerName'] as String,

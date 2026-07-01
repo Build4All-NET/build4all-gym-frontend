@@ -1860,10 +1860,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get memberInvoicesRefundDeadline => 'الاسترجاع حتى';
 
   @override
-  String get memberInvoicesRefundedAmount => 'المسترجع';
+  String get memberInvoicesRefundedAmount => 'المبلغ المسترجع';
 
   @override
-  String get memberInvoicesDeductedAmount => 'المخصوم';
+  String get memberInvoicesDeductedAmount => 'المبلغ المخصوم';
 
   @override
   String get memberInvoicesDate => 'التاريخ';
@@ -2867,6 +2867,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_classes_selectTrainer => 'اختر المدرب';
 
   @override
+  String get admin_classes_selectTrainerFirst => 'اختر مدرباً أولاً';
+
+  @override
+  String get admin_classes_noServicesForTrainer => 'لا توجد خدمات لهذا المدرب';
+
+  @override
   String get admin_classes_selectBranch => 'اختر الفرع';
 
   @override
@@ -3519,6 +3525,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_ptSession => 'جلسة PT';
+
+  @override
+  String get trainer_gymClass => 'حصة جماعية';
 
   @override
   String get trainer_completeButton => 'إكمال';
@@ -5034,13 +5043,16 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get admin_employees_sectionEmployeeDetails => 'تفاصيل الموظف';
+  String get admin_employees_sectionEmployeeDetails => 'بيانات الموظف';
 
   @override
-  String get admin_employees_fullNameLabel => 'الاسم الكامل *';
+  String get admin_employees_sectionPay => 'الراتب والدفع';
 
   @override
-  String get admin_employees_fullNameHint => 'مثال: محمد أحمد';
+  String get admin_employees_fullNameLabel => 'الاسم الكامل';
+
+  @override
+  String get admin_employees_fullNameHint => 'الاسم الكامل';
 
   @override
   String get admin_employees_phoneLabel => 'الهاتف';
@@ -5052,31 +5064,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_employees_optional => 'اختياري';
 
   @override
-  String get admin_employees_employeeTypeLabel => 'نوع الموظف *';
+  String get admin_employees_employeeTypeLabel => 'نوع الموظف';
 
   @override
-  String get admin_employees_employeeTypeHint => 'مثال: عامل نظافة';
+  String get admin_employees_employeeTypeHint => 'مثال: مدرب، موظف استقبال...';
 
   @override
-  String get admin_employees_selectEmployeeType => 'اختر نوع الموظف';
+  String get admin_employees_selectEmployeeType => 'اختر النوع...';
 
   @override
-  String get admin_employees_sectionPay => 'الراتب';
+  String get admin_employees_salaryLabel => 'الراتب';
 
   @override
-  String get admin_employees_salaryLabel => 'قيمة الراتب *';
+  String get admin_employees_payFrequencyLabel => 'دورية الراتب';
 
   @override
-  String get admin_employees_payFrequencyLabel => 'دورية الدفع *';
-
-  @override
-  String get admin_employees_branchLabel => 'الفرع *';
+  String get admin_employees_branchLabel => 'الفرع';
 
   @override
   String get admin_employees_selectBranch => 'اختر الفرع';
 
   @override
-  String get admin_employees_hireDateLabel => 'تاريخ التوظيف';
+  String get admin_employees_hireDateLabel => 'تاريخ التعيين';
 
   @override
   String get admin_employees_statusLabel => 'الحالة';
@@ -5088,7 +5097,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_employees_notesLabel => 'ملاحظات';
 
   @override
-  String get admin_employees_optionalNotes => 'ملاحظات اختيارية';
+  String get admin_employees_optionalNotes => 'ملاحظات اختيارية...';
 
   @override
   String get admin_employees_saveChanges => 'حفظ التغييرات';
@@ -5195,7 +5204,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_payments_testingEllipsis => 'جارٍ الاختبار…';
 
   @override
-  String admin_payments_configureFirst(String name) => 'قم بتهيئة $name قبل تفعيله.';
+  String admin_payments_configureFirst(String name) {
+    return 'قم بتهيئة $name قبل تفعيله.';
+  }
 
   @override
   String get admin_invoice_title => 'فاتورة';

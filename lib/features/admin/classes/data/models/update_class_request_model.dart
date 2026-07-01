@@ -6,7 +6,7 @@
 
 class UpdateClassRequestModel {
   final String? className;
-  final int?    classTypeId;
+  final int?    ptServiceId;
   final int?    trainerId;
   final int?    branchId;
   final String? date;
@@ -15,12 +15,14 @@ class UpdateClassRequestModel {
   final int?    capacity;
   final String? roomName;
   final String? notes;
-  final double? commissionPercentage; // optional (0-100) — null means "don't change this"
-  final bool clearCommissionPercentage; // true -> explicitly remove a previously-set commission
+  final String? difficultyLevel;
+  final double? price;
+  final double? commissionPercentage;
+  final bool clearCommissionPercentage;
 
   const UpdateClassRequestModel({
     this.className,
-    this.classTypeId,
+    this.ptServiceId,
     this.trainerId,
     this.branchId,
     this.date,
@@ -29,6 +31,8 @@ class UpdateClassRequestModel {
     this.capacity,
     this.roomName,
     this.notes,
+    this.difficultyLevel,
+    this.price,
     this.commissionPercentage,
     this.clearCommissionPercentage = false,
   });
@@ -37,7 +41,7 @@ class UpdateClassRequestModel {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (className       != null) map['className']       = className;
-    if (classTypeId     != null) map['classTypeId']     = classTypeId;
+    if (ptServiceId     != null) map['ptServiceId']     = ptServiceId;
     if (trainerId       != null) map['trainerId']       = trainerId;
     if (branchId        != null) map['branchId']        = branchId;
     if (date            != null) map['date']            = date;
@@ -46,6 +50,8 @@ class UpdateClassRequestModel {
     if (capacity        != null) map['capacity']        = capacity;
     if (roomName        != null) map['roomName']        = roomName;
     if (notes           != null) map['notes']           = notes;
+    if (difficultyLevel != null) map['difficultyLevel'] = difficultyLevel;
+    if (price           != null) map['price']           = price;
     if (clearCommissionPercentage) {
       map['clearCommissionPercentage'] = true;
     } else if (commissionPercentage != null) {

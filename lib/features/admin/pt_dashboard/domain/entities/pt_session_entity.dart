@@ -84,6 +84,10 @@ class PtSessionEntity {
 
   int get durationMinutes => endTime.difference(startTime).inMinutes;
 
+  /// True when this entry represents a gym class session (not a PT session).
+  /// Backend sends class sessions with a negative ptSessionId (= -classSessionId).
+  bool get isClass => ptSessionId < 0;
+
   bool get isRequested => status == 'REQUESTED';
   bool get isScheduled => status == 'SCHEDULED';
   bool get isCompleted => status == 'COMPLETED';

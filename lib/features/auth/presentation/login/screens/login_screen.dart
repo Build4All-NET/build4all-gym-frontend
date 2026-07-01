@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'package:build4allgym/app/app_router.dart';
 import 'package:build4allgym/core/config/app_config.dart';
@@ -27,14 +28,17 @@ class UserLoginScreen extends StatefulWidget {
 class _UserLoginScreenState extends State<UserLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _identifierCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
 
   bool _usePhone = false;
   bool _obscurePass = true;
+  String _fullPhoneNumber = '';
 
   @override
   void dispose() {
     _identifierCtrl.dispose();
+    _phoneCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
   }
@@ -45,16 +49,15 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
 
-    final value = _identifierCtrl.text.trim();
     final pass = _passwordCtrl.text;
 
     if (_usePhone) {
       context.read<AuthBloc>().add(
-        AuthPhoneLoginSubmitted(phone: value, password: pass),
+        AuthPhoneLoginSubmitted(phone: _fullPhoneNumber, password: pass),
       );
     } else {
       context.read<AuthBloc>().add(
-        AuthLoginSubmitted(email: value, password: pass),
+        AuthLoginSubmitted(email: _identifierCtrl.text.trim(), password: pass),
       );
     }
   }
@@ -233,6 +236,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                       onChanged: (val) => setState(() {
                                         _usePhone = val;
                                         _identifierCtrl.clear();
+                                        _phoneCtrl.clear();
+                                        _fullPhoneNumber = '';
                                       }),
                                     ),
                                     SizedBox(height: sp.md),
@@ -249,81 +254,86 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                     SizedBox(height: sp.xs),
 
                                     // ── Identifier field ──
-                                    TextFormField(
-                                      controller: _identifierCtrl,
-                                      keyboardType: _usePhone
-                                          ? TextInputType.phone
-                                          : TextInputType.emailAddress,
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        color: c.label,
-                                        fontSize: 15,
+                                    if (_usePhone)
+                                      IntlPhoneField(
+                                        controller: _phoneCtrl,
+                                        initialCountryCode: 'LB',
+                                        keyboardType: TextInputType.phone,
+                                        style: TextStyle(color: c.label, fontSize: 15),
+                                        decoration: InputDecoration(
+                                          hintText: l.auth_phoneHint,
+                                          hintStyle: TextStyle(color: hintColor, fontSize: 14),
+                                          filled: true,
+                                          fillColor: inputFillColor,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: inputBorderColor, width: 1),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: inputBorderColor, width: 1),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: c.primary, width: 1.5),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: c.error, width: 1),
+                                          ),
+                                          contentPadding: const EdgeInsetsDirectional.symmetric(
+                                            horizontal: 16,
+                                            vertical: 16,
+                                          ),
+                                        ),
+                                        onChanged: (phone) =>
+                                            setState(() => _fullPhoneNumber = phone.completeNumber),
+                                        validator: (phone) {
+                                          if (phone == null || phone.number.trim().isEmpty) {
+                                            return l.validation_phoneRequired;
+                                          }
+                                          return null;
+                                        },
+                                      )
+                                    else
+                                      TextFormField(
+                                        controller: _identifierCtrl,
+                                        keyboardType: TextInputType.emailAddress,
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(color: c.label, fontSize: 15),
+                                        decoration: InputDecoration(
+                                          hintText: l.auth_emailHint,
+                                          hintStyle: TextStyle(color: hintColor, fontSize: 14),
+                                          filled: true,
+                                          fillColor: inputFillColor,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: inputBorderColor, width: 1),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: inputBorderColor, width: 1),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: c.primary, width: 1.5),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(btn.radius),
+                                            borderSide: BorderSide(color: c.error, width: 1),
+                                          ),
+                                          suffixIcon: Icon(Icons.email_outlined, color: hintColor, size: 20),
+                                          contentPadding: const EdgeInsetsDirectional.symmetric(
+                                            horizontal: 16,
+                                            vertical: 16,
+                                          ),
+                                        ),
+                                        validator: (v) {
+                                          if (v == null || v.trim().isEmpty) return l.validation_emailRequired;
+                                          if (!v.contains('@')) return l.validation_emailInvalid;
+                                          return null;
+                                        },
                                       ),
-                                      decoration: InputDecoration(
-                                        hintText: _usePhone
-                                            ? l.auth_phoneHint
-                                            : l.auth_emailHint,
-                                        hintStyle: TextStyle(
-                                          color: hintColor,
-                                          fontSize: 14,
-                                        ),
-                                        filled: true,
-                                        fillColor: inputFillColor,
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(btn.radius),
-                                          borderSide: BorderSide(
-                                            color: inputBorderColor,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(btn.radius),
-                                          borderSide: BorderSide(
-                                            color: inputBorderColor,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(btn.radius),
-                                          borderSide: BorderSide(
-                                            color: c.primary,
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                        errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(btn.radius),
-                                          borderSide: BorderSide(
-                                            color: c.error,
-                                            width: 1,
-                                          ),
-                                        ),
-                                        suffixIcon: Icon(
-                                          _usePhone
-                                              ? Icons.phone_outlined
-                                              : Icons.email_outlined,
-                                          color: hintColor,
-                                          size: 20,
-                                        ),
-                                        contentPadding: const EdgeInsetsDirectional.symmetric(
-                                          horizontal: 16,
-                                          vertical: 16,
-                                        ),
-                                      ),
-                                      validator: (v) {
-                                        if (v == null || v.trim().isEmpty) {
-                                          return _usePhone
-                                              ? l.validation_phoneRequired
-                                              : l.validation_emailRequired;
-                                        }
-                                        if (!_usePhone && !v.contains('@')) {
-                                          return l.validation_emailInvalid;
-                                        }
-                                        if (_usePhone && v.trim().length < 7) {
-                                          return l.validation_phoneRequired;
-                                        }
-                                        return null;
-                                      },
-                                    ),
                                     SizedBox(height: sp.md),
 
                                     // ── Password label ──
