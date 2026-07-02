@@ -11110,6 +11110,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending Approval'**
   String get planPendingApproval;
+
+  /// No description provided for @sessionDetailPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending confirmation'**
+  String get sessionDetailPending;
+
+  /// No description provided for @sessionDetailCancelRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation requested'**
+  String get sessionDetailCancelRequested;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

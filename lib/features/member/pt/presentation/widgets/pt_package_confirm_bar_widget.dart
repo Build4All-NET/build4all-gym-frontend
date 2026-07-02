@@ -53,7 +53,39 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
+        final selectedPackage = state.selectedPackage;
+
         final isSubmitting = state is PtPackageBookingSubmitting;
+
+        /*
+         * Booking status belongs to the selected package only.
+         *
+         * Package A may be PENDING while Package B remains NONE.
+         */
+        final isPending = selectedPackage?.isPending ?? false;
+        final isActive = selectedPackage?.isActive ?? false;
+        final isCancelRequested =
+            selectedPackage?.isCancelRequested ?? false;
+
+        final isPackageBlocked =
+            isPending || isActive || isCancelRequested;
+
+        final canSubmit =
+            state.canConfirm &&
+                !isSubmitting &&
+                !isPackageBlocked;
+
+        String buttonText;
+
+        if (isPending) {
+          buttonText = 'Pending confirmation';
+        } else if (isActive) {
+          buttonText = 'Package active';
+        } else if (isCancelRequested) {
+          buttonText = 'Cancellation requested';
+        } else {
+          buttonText = l10n.ptPackageConfirmBooking;
+        }
 
         return SafeArea(
           top: false,
@@ -73,8 +105,11 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
               width: double.infinity,
               height: tokens.button.height,
               child: ElevatedButton(
-                onPressed: state.canConfirm && !isSubmitting
-                    ? () => _openPaymentSheet(context, state)
+                onPressed: canSubmit
+                    ? () => _openPaymentSheet(
+                  context,
+                  state,
+                )
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: tokens.colors.primary,
@@ -83,25 +118,29 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
                   disabledForegroundColor: tokens.colors.muted,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(tokens.button.radius),
+                    borderRadius: BorderRadius.circular(
+                      tokens.button.radius,
+                    ),
                   ),
                 ),
                 child: isSubmitting
                     ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: tokens.colors.onPrimary,
-                        ),
-                      )
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: tokens.colors.onPrimary,
+                  ),
+                )
                     : Text(
-                        l10n.ptPackageConfirmBooking,
-                        style: tokens.typography.bodyMedium.copyWith(
-                          color: tokens.colors.onPrimary,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                  buttonText,
+                  style: tokens.typography.bodyMedium.copyWith(
+                    color: canSubmit
+                        ? tokens.colors.onPrimary
+                        : tokens.colors.muted,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ),
             ),
           ),
@@ -110,9 +149,20 @@ class PtPackageConfirmBarWidget extends StatelessWidget {
     );
   }
 
-  void _openPaymentSheet(BuildContext context, PtPackageBookingLoaded state) {
+  void _openPaymentSheet(
+      BuildContext context,
+      PtPackageBookingLoaded state,
+      ) {
     final package = state.selectedPackage;
+
     if (package == null) return;
+
+    /*
+     * Extra protection.
+     * Even if the UI state becomes inconsistent, do not reopen
+     * payment for a package already pending or active.
+     */
+    if (package.isBookingDisabled) return;
 
     PtPackagePaymentSheet.show(
       context,

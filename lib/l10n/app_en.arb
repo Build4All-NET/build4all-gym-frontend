@@ -2199,5 +2199,7 @@
     "memberMembershipBillingMonthly": "Monthly",
     "memberMembershipBillingYearly": "Yearly",
     "memberMembershipBillingOneTime": "One Time",
-    "planPendingApproval": "Pending Approval"
+    "planPendingApproval": "Pending Approval",
+    "sessionDetailPending": "Pending confirmation",
+    "sessionDetailCancelRequested": "Cancellation requested"
 }
