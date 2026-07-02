@@ -7,8 +7,6 @@ class ActivePromotionModel {
   final String discountType;
   final double discountValue;
 
-  /// Values calculated by backend.
-  /// Flutter should display them only.
   final double originalPrice;
   final double discountAmount;
   final double finalPrice;
@@ -34,12 +32,9 @@ class ActivePromotionModel {
       description: json['description'] as String?,
       discountType: json['discountType'] as String? ?? '',
       discountValue: (json['discountValue'] as num?)?.toDouble() ?? 0.0,
-
-      /// New backend fields.
       originalPrice: (json['originalPrice'] as num?)?.toDouble() ?? 0.0,
       discountAmount: (json['discountAmount'] as num?)?.toDouble() ?? 0.0,
       finalPrice: (json['finalPrice'] as num?)?.toDouble() ?? 0.0,
-
       startDate: json['startDate'] as String?,
       endDate: json['endDate'] as String?,
     );
@@ -69,7 +64,10 @@ class PlanListItemModel {
   final int durationDays;
   final bool isFeatured;
   final List<String> features;
+
   final bool isBooked;
+  final String bookingStatus;
+
   final ActivePromotionModel? activePromotion;
   final String? iconName;
 
@@ -83,21 +81,24 @@ class PlanListItemModel {
     required this.isFeatured,
     required this.features,
     required this.isBooked,
+    required this.bookingStatus,
     this.activePromotion,
     this.iconName,
   });
 
   factory PlanListItemModel.fromJson(Map<String, dynamic> json) {
     return PlanListItemModel(
-      planId: json['planId'] as int,
+      planId: (json['planId'] as num).toInt(),
       name: json['name'] as String? ?? '',
       planType: json['planType'] as String? ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       billingCycle: json['billingCycle'] as String? ?? '',
-      durationDays: json['durationDays'] as int? ?? 0,
+      durationDays: (json['durationDays'] as num?)?.toInt() ?? 0,
       isFeatured: json['isFeatured'] == true,
-      features: List<String>.from(json['features'] ?? []),
+      features: List<String>.from(json['features'] ?? const []),
       isBooked: json['isBooked'] == true,
+      bookingStatus:
+      (json['bookingStatus'] as String? ?? 'NONE').toUpperCase(),
       activePromotion: json['activePromotion'] != null
           ? ActivePromotionModel.fromJson(
         json['activePromotion'] as Map<String, dynamic>,
@@ -118,6 +119,7 @@ class PlanListItemModel {
       isFeatured: isFeatured,
       features: features,
       isBooked: isBooked,
+      bookingStatus: bookingStatus,
       activePromotion: activePromotion?.toEntity(),
       iconName: iconName,
     );

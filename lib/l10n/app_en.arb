@@ -2198,5 +2198,6 @@
     "memberMembershipBillingWeekly": "Weekly",
     "memberMembershipBillingMonthly": "Monthly",
     "memberMembershipBillingYearly": "Yearly",
-    "memberMembershipBillingOneTime": "One Time"
+    "memberMembershipBillingOneTime": "One Time",
+    "planPendingApproval": "Pending Approval"
 }

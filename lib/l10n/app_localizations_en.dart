@@ -5708,4 +5708,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberMembershipBillingOneTime => 'One Time';
+
+  @override
+  String get planPendingApproval => 'Pending Approval';
 }
