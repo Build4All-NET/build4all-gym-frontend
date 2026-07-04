@@ -5711,4 +5711,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planPendingApproval => 'Pending Approval';
+
+  @override
+  String get sessionDetailPending => 'Pending confirmation';
+
+  @override
+  String get sessionDetailCancelRequested => 'Cancellation requested';
 }

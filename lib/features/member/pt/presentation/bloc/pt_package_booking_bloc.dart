@@ -26,8 +26,10 @@ class PtPackageBookingBloc
     required RequestBookingUseCase requestBookingUseCase,
   })  : _createPackageBookingUseCase = createPackageBookingUseCase,
         _confirmPackagePaymentUseCase = confirmPackagePaymentUseCase,
-        _checkPackagePaymentStatusUseCase = checkPackagePaymentStatusUseCase,
-        _getWeeklyAvailableSlotsUseCase = getWeeklyAvailableSlotsUseCase,
+        _checkPackagePaymentStatusUseCase =
+            checkPackagePaymentStatusUseCase,
+        _getWeeklyAvailableSlotsUseCase =
+            getWeeklyAvailableSlotsUseCase,
         _requestBookingUseCase = requestBookingUseCase,
         super(const PtPackageBookingInitial()) {
     on<PtPackageBookingStarted>(_onStarted);
@@ -49,7 +51,8 @@ class PtPackageBookingBloc
       PtPackageBookingLoaded(
         trainerId: event.trainerId,
         packages: event.packages,
-        selectedPackage: event.packages.isNotEmpty ? event.packages.first : null,
+        selectedPackage:
+        event.packages.isNotEmpty ? event.packages.first : null,
         availableDays: event.availableDays,
         weeklySchedule: const [],
         weeklySlotsByDay: const {},
@@ -64,6 +67,7 @@ class PtPackageBookingBloc
       Emitter<PtPackageBookingState> emit,
       ) {
     final current = state;
+
     if (current is! PtPackageBookingLoaded) return;
 
     emit(
@@ -82,27 +86,37 @@ class PtPackageBookingBloc
       Emitter<PtPackageBookingState> emit,
       ) {
     final current = state;
+
     if (current is! PtPackageBookingLoaded) return;
 
     final selectedPackage = current.selectedPackage;
+
     if (selectedPackage == null) return;
 
     final day = event.day.trim().toUpperCase();
+
     if (!_isValidWeekday(day)) return;
 
     final updatedSchedule = List<Map<String, dynamic>>.from(
-      current.weeklySchedule.map((item) => Map<String, dynamic>.from(item)),
+      current.weeklySchedule.map(
+            (item) => Map<String, dynamic>.from(item),
+      ),
     );
 
-    final updatedSlotsByDay = Map<String, List<TimeSlotEntity>>.from(
+    final updatedSlotsByDay =
+    Map<String, List<TimeSlotEntity>>.from(
       current.weeklySlotsByDay,
     );
 
-    final updatedLoadingDays = Set<String>.from(current.loadingSlotDays);
-    final updatedErrorsByDay = Map<String, String>.from(current.slotErrorsByDay);
+    final updatedLoadingDays =
+    Set<String>.from(current.loadingSlotDays);
+
+    final updatedErrorsByDay =
+    Map<String, String>.from(current.slotErrorsByDay);
 
     final existingIndex = updatedSchedule.indexWhere(
-          (item) => item['day']?.toString().toUpperCase() == day,
+          (item) =>
+      item['day']?.toString().toUpperCase() == day,
     );
 
     if (existingIndex != -1) {
@@ -123,9 +137,15 @@ class PtPackageBookingBloc
       return;
     }
 
-    if (updatedSchedule.length >= selectedPackage.maxDaysPerWeek) return;
+    if (updatedSchedule.length >=
+        selectedPackage.maxDaysPerWeek) {
+      return;
+    }
 
-    updatedSchedule.add({'day': day, 'time': ''});
+    updatedSchedule.add({
+      'day': day,
+      'time': '',
+    });
 
     emit(
       current.copyWith(
@@ -134,7 +154,9 @@ class PtPackageBookingBloc
       ),
     );
 
-    add(PtPackageWeeklySlotsRequested(day: day));
+    add(
+      PtPackageWeeklySlotsRequested(day: day),
+    );
   }
 
   Future<void> _onWeeklySlotsRequested(
@@ -142,17 +164,27 @@ class PtPackageBookingBloc
       Emitter<PtPackageBookingState> emit,
       ) async {
     final current = state;
+
     if (current is! PtPackageBookingLoaded) return;
 
     final day = event.day.trim().toUpperCase();
+
     if (!_isValidWeekday(day)) return;
     if (!current.isDaySelected(day)) return;
 
-    final loadingDays = Set<String>.from(current.loadingSlotDays)..add(day);
-    final errorsByDay = Map<String, String>.from(current.slotErrorsByDay)
+    final loadingDays =
+    Set<String>.from(current.loadingSlotDays)..add(day);
+
+    final errorsByDay =
+    Map<String, String>.from(current.slotErrorsByDay)
       ..remove(day);
 
-    emit(current.copyWith(loadingSlotDays: loadingDays, slotErrorsByDay: errorsByDay));
+    emit(
+      current.copyWith(
+        loadingSlotDays: loadingDays,
+        slotErrorsByDay: errorsByDay,
+      ),
+    );
 
     final result = await _getWeeklyAvailableSlotsUseCase(
       trainerId: current.trainerId,
@@ -161,15 +193,25 @@ class PtPackageBookingBloc
     );
 
     final latest = state;
+
     if (latest is! PtPackageBookingLoaded) return;
     if (!latest.isDaySelected(day)) return;
 
-    final nextLoadingDays = Set<String>.from(latest.loadingSlotDays)..remove(day);
-    final nextErrorsByDay = Map<String, String>.from(latest.slotErrorsByDay);
-    final nextSlotsByDay = Map<String, List<TimeSlotEntity>>.from(latest.weeklySlotsByDay);
+    final nextLoadingDays =
+    Set<String>.from(latest.loadingSlotDays)..remove(day);
+
+    final nextErrorsByDay =
+    Map<String, String>.from(latest.slotErrorsByDay);
+
+    final nextSlotsByDay =
+    Map<String, List<TimeSlotEntity>>.from(
+      latest.weeklySlotsByDay,
+    );
 
     if (result.failure != null || result.data == null) {
-      nextErrorsByDay[day] = result.failure?.message ?? 'ptWeeklySlotsFailed';
+      nextErrorsByDay[day] =
+          result.failure?.message ?? 'ptWeeklySlotsFailed';
+
       nextSlotsByDay[day] = const [];
 
       emit(
@@ -179,6 +221,7 @@ class PtPackageBookingBloc
           slotErrorsByDay: nextErrorsByDay,
         ),
       );
+
       return;
     }
 
@@ -199,6 +242,7 @@ class PtPackageBookingBloc
       Emitter<PtPackageBookingState> emit,
       ) {
     final current = state;
+
     if (current is! PtPackageBookingLoaded) return;
 
     final day = event.day.trim().toUpperCase();
@@ -210,19 +254,28 @@ class PtPackageBookingBloc
     final slotsForDay = current.availableSlotsForDay(day);
 
     final selectedSlot = slotsForDay
-        .where((slot) => _formatSlotTime(slot) == time)
+        .where(
+          (slot) => _formatSlotTime(slot) == time,
+    )
         .cast<TimeSlotEntity?>()
-        .firstWhere((slot) => slot != null, orElse: () => null);
+        .firstWhere(
+          (slot) => slot != null,
+      orElse: () => null,
+    );
 
     if (selectedSlot == null) return;
     if (!selectedSlot.available || selectedSlot.full) return;
 
-    final updatedSchedule = List<Map<String, dynamic>>.from(
-      current.weeklySchedule.map((item) => Map<String, dynamic>.from(item)),
+    final updatedSchedule =
+    List<Map<String, dynamic>>.from(
+      current.weeklySchedule.map(
+            (item) => Map<String, dynamic>.from(item),
+      ),
     );
 
     final existingIndex = updatedSchedule.indexWhere(
-          (item) => item['day']?.toString().toUpperCase() == day,
+          (item) =>
+      item['day']?.toString().toUpperCase() == day,
     );
 
     if (existingIndex == -1) return;
@@ -233,31 +286,46 @@ class PtPackageBookingBloc
       'time': time,
     };
 
-    emit(current.copyWith(weeklySchedule: updatedSchedule));
+    emit(
+      current.copyWith(
+        weeklySchedule: updatedSchedule,
+      ),
+    );
   }
 
-  /// User tapped confirm — this event is now just a signal for the UI to
-  /// open the payment sheet. The bloc doesn't create the booking here.
   void _onConfirmRequested(
       PtPackageBookingConfirmRequested event,
       Emitter<PtPackageBookingState> emit,
       ) {
-    // No-op in bloc — the confirm bar widget opens the payment sheet directly.
-    // The sheet dispatches PtPackagePaymentConfirmRequested with the chosen method.
+    /*
+     * No operation here.
+     *
+     * The confirmation bar opens the payment sheet directly.
+     * The payment sheet dispatches PtPackagePaymentConfirmRequested.
+     */
   }
 
-  /// Called by the payment sheet with a chosen payment method.
-  ///
-  /// Creates the booking with paymentMethod → emits PtPackageBookingPaymentReady
-  /// (Stripe/redirect) or PtPackageBookingSuccess (cash).
   Future<void> _onPaymentConfirmRequested(
       PtPackagePaymentConfirmRequested event,
       Emitter<PtPackageBookingState> emit,
       ) async {
     final current = state;
-    if (current is! PtPackageBookingLoaded || !current.canConfirm) return;
+
+    if (current is! PtPackageBookingLoaded ||
+        !current.canConfirm) {
+      return;
+    }
 
     final selectedPackage = current.selectedPackage!;
+
+    /*
+     * Extra protection.
+     * Do not create another booking for a package that is already
+     * pending, active, booked or awaiting cancellation.
+     */
+    if (selectedPackage.isBookingDisabled) {
+      return;
+    }
 
     emit(
       PtPackageBookingSubmitting(
@@ -289,22 +357,46 @@ class PtPackageBookingBloc
           weeklySlotsByDay: current.weeklySlotsByDay,
           loadingSlotDays: current.loadingSlotDays,
           slotErrorsByDay: current.slotErrorsByDay,
-          message: result.failure?.message ?? 'ptPackageBookingFailed',
+          message:
+          result.failure?.message ??
+              'ptPackageBookingFailed',
         ),
       );
+
       return;
     }
 
     final booking = result.data!;
 
-    // Cash → backend creates PENDING booking; admin confirms later.
-    // Active → rare: already activated on backend side.
+    /*
+     * Cash booking:
+     *
+     * The backend creates the booking as PENDING.
+     * Update only the selected package locally.
+     *
+     * Other packages stay unchanged and can still be booked
+     * unless the backend business rules prevent it.
+     */
     if (!booking.isStripe && !booking.isRedirect) {
+      final updatedSelectedPackage =
+      selectedPackage.copyWith(
+        bookingStatus: 'PENDING',
+      );
+
+      final updatedPackages =
+      current.packages.map((package) {
+        if (package.id == selectedPackage.id) {
+          return updatedSelectedPackage;
+        }
+
+        return package;
+      }).toList();
+
       emit(
         PtPackageBookingSuccess(
           trainerId: current.trainerId,
-          packages: current.packages,
-          selectedPackage: current.selectedPackage,
+          packages: updatedPackages,
+          selectedPackage: updatedSelectedPackage,
           availableDays: current.availableDays,
           weeklySchedule: current.weeklySchedule,
           weeklySlotsByDay: current.weeklySlotsByDay,
@@ -313,10 +405,14 @@ class PtPackageBookingBloc
           booking: booking,
         ),
       );
+
       return;
     }
 
-    // Stripe or redirect → let the payment sheet handle the rest.
+    /*
+     * Stripe or redirect payment.
+     * The payment sheet completes the external payment flow.
+     */
     emit(
       PtPackageBookingPaymentReady(
         trainerId: current.trainerId,
@@ -332,22 +428,24 @@ class PtPackageBookingBloc
     );
   }
 
-  /// Called by the payment sheet after Stripe or redirect payment completes.
-  ///
-  /// Calls confirm-payment endpoint to activate the booking and generate sessions.
   Future<void> _onPaymentActivated(
       PtPackagePaymentActivated event,
       Emitter<PtPackageBookingState> emit,
       ) async {
     final current = state;
+
     if (current is! PtPackageBookingPaymentReady) return;
 
     final bookingId = current.booking.id;
-
     final isRedirect = current.booking.isRedirect;
+
     final result = isRedirect
-        ? await _checkPackagePaymentStatusUseCase(bookingId)
-        : await _confirmPackagePaymentUseCase(bookingId);
+        ? await _checkPackagePaymentStatusUseCase(
+      bookingId,
+    )
+        : await _confirmPackagePaymentUseCase(
+      bookingId,
+    );
 
     if (result.failure != null || result.data == null) {
       emit(
@@ -360,17 +458,41 @@ class PtPackageBookingBloc
           weeklySlotsByDay: current.weeklySlotsByDay,
           loadingSlotDays: current.loadingSlotDays,
           slotErrorsByDay: current.slotErrorsByDay,
-          message: result.failure?.message ?? 'ptPackageBookingFailed',
+          message:
+          result.failure?.message ??
+              'ptPackageBookingFailed',
         ),
       );
+
       return;
     }
+
+    final selectedPackage = current.selectedPackage;
+
+    /*
+     * Online payment completed successfully.
+     * Update the selected package locally to ACTIVE.
+     */
+    final updatedSelectedPackage =
+    selectedPackage?.copyWith(
+      bookingStatus: 'ACTIVE',
+    );
+
+    final updatedPackages =
+    current.packages.map((package) {
+      if (updatedSelectedPackage != null &&
+          package.id == updatedSelectedPackage.id) {
+        return updatedSelectedPackage;
+      }
+
+      return package;
+    }).toList();
 
     emit(
       PtPackageBookingSuccess(
         trainerId: current.trainerId,
-        packages: current.packages,
-        selectedPackage: current.selectedPackage,
+        packages: updatedPackages,
+        selectedPackage: updatedSelectedPackage,
         availableDays: current.availableDays,
         weeklySchedule: current.weeklySchedule,
         weeklySlotsByDay: current.weeklySlotsByDay,
@@ -386,21 +508,36 @@ class PtPackageBookingBloc
       Emitter<PtPackageBookingState> emit,
       ) async {
     final current = state;
+
     if (current is! PtPackageBookingLoaded) return;
 
     final day = event.day.trim().toUpperCase();
+
     if (!_isValidWeekday(day)) return;
 
-    emit(current.copyWith(requestingDay: day));
+    emit(
+      current.copyWith(
+        requestingDay: day,
+      ),
+    );
 
     final date = _nextOccurrenceOf(day);
+
     final startDt = DateTime(
-      date.year, date.month, date.day,
-      event.hour, event.minute,
+      date.year,
+      date.month,
+      date.day,
+      event.hour,
+      event.minute,
     );
+
     final durationMinutes =
-        current.selectedPackage?.sessionDurationMinutes ?? 60;
-    final endDt = startDt.add(Duration(minutes: durationMinutes));
+        current.selectedPackage?.sessionDurationMinutes ??
+            60;
+
+    final endDt = startDt.add(
+      Duration(minutes: durationMinutes),
+    );
 
     final result = await _requestBookingUseCase(
       trainerId: current.trainerId,
@@ -409,6 +546,7 @@ class PtPackageBookingBloc
     );
 
     final latest = state;
+
     if (latest is! PtPackageBookingLoaded) return;
 
     if (result.failure != null || result.data == null) {
@@ -422,9 +560,12 @@ class PtPackageBookingBloc
           weeklySlotsByDay: latest.weeklySlotsByDay,
           loadingSlotDays: latest.loadingSlotDays,
           slotErrorsByDay: latest.slotErrorsByDay,
-          message: result.failure?.message ?? 'ptRequestTimeFailed',
+          message:
+          result.failure?.message ??
+              'ptRequestTimeFailed',
         ),
       );
+
       return;
     }
 
@@ -445,14 +586,27 @@ class PtPackageBookingBloc
 
   DateTime _nextOccurrenceOf(String day) {
     const codes = {
-      'MONDAY': 1, 'TUESDAY': 2, 'WEDNESDAY': 3, 'THURSDAY': 4,
-      'FRIDAY': 5, 'SATURDAY': 6, 'SUNDAY': 7,
+      'MONDAY': 1,
+      'TUESDAY': 2,
+      'WEDNESDAY': 3,
+      'THURSDAY': 4,
+      'FRIDAY': 5,
+      'SATURDAY': 6,
+      'SUNDAY': 7,
     };
+
     final target = codes[day] ?? 1;
     final now = DateTime.now();
+
     var daysAhead = target - now.weekday;
-    if (daysAhead <= 0) daysAhead += 7;
-    return now.add(Duration(days: daysAhead));
+
+    if (daysAhead <= 0) {
+      daysAhead += 7;
+    }
+
+    return now.add(
+      Duration(days: daysAhead),
+    );
   }
 
   String _toIso(DateTime dt) {
@@ -465,19 +619,30 @@ class PtPackageBookingBloc
 
   String _formatSlotTime(TimeSlotEntity slot) {
     final rawStartTime = slot.startTime.toString();
+
     try {
       final parsed = DateTime.parse(rawStartTime);
-      return '${parsed.hour.toString().padLeft(2, '0')}:${parsed.minute.toString().padLeft(2, '0')}';
+
+      return '${parsed.hour.toString().padLeft(2, '0')}:'
+          '${parsed.minute.toString().padLeft(2, '0')}';
     } catch (_) {
-      if (rawStartTime.length >= 5) return rawStartTime.substring(0, 5);
+      if (rawStartTime.length >= 5) {
+        return rawStartTime.substring(0, 5);
+      }
+
       return rawStartTime;
     }
   }
 
   bool _isValidWeekday(String day) {
     return const {
-      'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY',
-      'FRIDAY', 'SATURDAY', 'SUNDAY',
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
     }.contains(day);
   }
 }

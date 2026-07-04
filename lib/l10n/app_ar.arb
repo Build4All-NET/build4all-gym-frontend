@@ -2137,5 +2137,7 @@
     "memberMembershipBillingMonthly": "شهري",
     "memberMembershipBillingYearly": "سنوي",
     "memberMembershipBillingOneTime": "دفعة واحدة",
-    "planPendingApproval": "بانتظار الموافقة"
+    "planPendingApproval": "بانتظار الموافقة",
+    "sessionDetailPending": "بانتظار التأكيد",
+    "sessionDetailCancelRequested": "تم طلب الإلغاء"
 }
