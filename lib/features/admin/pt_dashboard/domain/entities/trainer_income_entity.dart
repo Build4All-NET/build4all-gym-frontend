@@ -36,6 +36,7 @@ class TrainerIncomeSessionEntity {
   });
 
   bool get isSalary => source == 'SALARY';
+  bool get isCommission => source == 'COMMISSION';
   bool get isClass => source == 'CLASS';
 }
 

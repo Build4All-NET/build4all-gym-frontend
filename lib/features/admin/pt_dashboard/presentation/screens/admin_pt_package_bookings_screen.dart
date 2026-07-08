@@ -9,6 +9,8 @@ import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../AppBar/presentation/branch_cubit.dart';
+import '../../../expenses/data/models/create_expense_request_model.dart';
+import '../../../expenses/data/services/admin_expenses_remote_service.dart';
 import '../../../membership_requests/domain/entities/admin_refund_request_entity.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../data/services/admin_pt_package_booking_service.dart';
@@ -24,7 +26,8 @@ class AdminPtPackageBookingsScreen extends StatefulWidget {
 class _AdminPtPackageBookingsScreenState
     extends State<AdminPtPackageBookingsScreen>
     with SingleTickerProviderStateMixin {
-  final _service = AdminPtPackageBookingService();
+  final _service        = AdminPtPackageBookingService();
+  final _expenseService = AdminExpensesRemoteDatasourceImpl();
   late final TabController _tabController;
 
   // ── Cash tab state ────────────────────────────────────────────────────────
@@ -107,7 +110,7 @@ class _AdminPtPackageBookingsScreenState
 
   // ── Cash actions ──────────────────────────────────────────────────────────
 
-  void _showConfirmCashDialog(int bookingId, double totalAmount) {
+  void _showConfirmCashDialog(int bookingId, double totalAmount, Map<String, dynamic> booking) {
     final l10n = AppLocalizations.of(context)!;
     final tokens = context.read<ThemeCubit>().state.tokens;
     final symbol = context.read<CurrencyCubit>().state.info.symbol;
@@ -165,7 +168,7 @@ class _AdminPtPackageBookingsScreenState
               if (!formKey.currentState!.validate()) return;
               final amount = double.parse(amountCtrl.text.trim());
               Navigator.pop(ctx);
-              _confirmCash(bookingId, amount);
+              _confirmCash(bookingId, amount, booking);
             },
             child: Text(l10n.trainer_confirmCashPayment),
           ),
@@ -174,10 +177,40 @@ class _AdminPtPackageBookingsScreenState
     );
   }
 
-  Future<void> _confirmCash(int bookingId, double amountPaid) async {
+  Future<void> _confirmCash(int bookingId, double amountPaid, Map<String, dynamic> booking) async {
     setState(() => _confirming.add(bookingId));
     try {
       await _service.confirmCash(bookingId, amountPaid: amountPaid);
+
+      // Auto-create a pending trainer commission expense if the package uses commission pay.
+      final commissionType = booking['commissionType'] as String?;
+      final commissionPct  = (booking['commissionPercentage'] as num?)?.toDouble();
+      final trainerId      = (booking['trainerId'] as num?)?.toInt();
+      final branchId       = (booking['branchId']  as num?)?.toInt();
+      final packageName    = booking['packageName'] as String?
+          ?? booking['ptPackageName'] as String?
+          ?? 'PT Package';
+      final totalAmount    = (booking['totalAmount'] as num?)?.toDouble() ?? amountPaid;
+
+      if (commissionType == 'COMMISSION' &&
+          commissionPct != null && commissionPct > 0 &&
+          trainerId != null && branchId != null) {
+        final commissionAmount = (totalAmount * commissionPct / 100);
+        try {
+          await _expenseService.createExpense(CreateExpenseRequestModel(
+            title: 'Commission – $packageName',
+            description: '$commissionPct% of $totalAmount',
+            amount: commissionAmount,
+            expenseDate: DateTime.now(),
+            category: 'commission',
+            branchId: branchId,
+            trainerId: trainerId,
+          ));
+        } catch (_) {
+          // Don't block the confirmation if the expense creation fails silently.
+        }
+      }
+
       if (mounted) {
         setState(() {
           _bookings.removeWhere((b) => (b['id'] as num?)?.toInt() == bookingId);
@@ -561,7 +594,7 @@ class _AdminPtPackageBookingsScreenState
         adminName: profile.adminName,
         adminEmail: profile.adminEmail,
         avatarUrl: profile.avatarUrl,
-        initialActiveId: 'pt-package-bookings',
+        initialActiveId: 'pt_package_bookings',
       ),
       body: SafeArea(
         child: Column(
@@ -665,7 +698,7 @@ class _AdminPtPackageBookingsScreenState
             isConfirming: _confirming.contains(id),
             isRejecting: _rejecting.contains(id),
             tokens: tokens,
-            onConfirm: () => _showConfirmCashDialog(id, totalAmount),
+            onConfirm: () => _showConfirmCashDialog(id, totalAmount, b),
             onReject: () => _showRejectCashDialog(id),
           );
         },

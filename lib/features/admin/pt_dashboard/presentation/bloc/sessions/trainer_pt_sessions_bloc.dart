@@ -620,8 +620,18 @@ class TrainerPtSessionsBloc
         _getRequests(branchId: _branchId, trainerId: effectiveTrainerId),
       ]);
 
-      final upcomingSessions  = extraResults[0].data ?? <PtSessionEntity>[];
-      final requestedSessions = extraResults[1].data ?? <PtSessionEntity>[];
+      bool _isPaidClass(PtSessionEntity s) =>
+          !s.isClass ||
+          s.paymentStatus == 'PAID' ||
+          s.paymentStatus == 'PARTIAL';
+
+      final upcomingSessions = (extraResults[0].data ?? <PtSessionEntity>[])
+          .where(_isPaidClass)
+          .toList();
+      final requestedSessions = (extraResults[1].data ?? <PtSessionEntity>[])
+          .where(_isPaidClass)
+          .toList();
+      sessions = sessions.where(_isPaidClass).toList();
 
       final loadedState = PtSessionsLoaded(
         sessions:          sessions,

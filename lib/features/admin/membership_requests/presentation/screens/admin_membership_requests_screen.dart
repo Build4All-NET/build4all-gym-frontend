@@ -282,6 +282,7 @@ class _AdminMembershipRequestsScreenState
                         if (!formKey.currentState!.validate()) return;
                         final amountPaid = double.parse(amountController.text.trim());
                         Navigator.pop(sheetCtx);
+                        final l10nOuter = AppLocalizations.of(context)!;
                         context.read<AdminMembershipRequestsBloc>().add(
                               ApproveMembershipRequestEvent(
                                 requestId: req.requestId,
@@ -289,6 +290,8 @@ class _AdminMembershipRequestsScreenState
                                 notes: notesController.text.trim().isEmpty
                                     ? null
                                     : notesController.text.trim(),
+                                successMessage: l10nOuter.admin_membershipRequests_approveSuccess,
+                                errorMessage: l10nOuter.error_somethingWentWrong,
                               ),
                             );
                       },
@@ -375,10 +378,13 @@ class _AdminMembershipRequestsScreenState
                         return;
                       }
                       Navigator.pop(sheetCtx);
+                      final l10nOuter = AppLocalizations.of(context)!;
                       context.read<AdminMembershipRequestsBloc>().add(
                             RejectMembershipRequestEvent(
                               requestId: req.requestId,
                               reason: reason,
+                              successMessage: l10nOuter.admin_membershipRequests_rejectSuccess,
+                              errorMessage: l10nOuter.error_somethingWentWrong,
                             ),
                           );
                     },
@@ -526,6 +532,7 @@ class _AdminMembershipRequestsScreenState
                             double.tryParse(deductionController.text.trim()) ??
                                 0.0;
                         Navigator.pop(sheetCtx);
+                        final l10nOuter = AppLocalizations.of(context)!;
                         context.read<AdminMembershipRequestsBloc>().add(
                               ApproveRefundRequestEvent(
                                 refundId: req.refundId,
@@ -534,6 +541,7 @@ class _AdminMembershipRequestsScreenState
                                 adminNote: noteController.text.trim().isEmpty
                                     ? null
                                     : noteController.text.trim(),
+                                successMessage: l10nOuter.admin_refundRequests_approveSuccess,
                               ),
                             );
                       },
@@ -620,10 +628,13 @@ class _AdminMembershipRequestsScreenState
                         return;
                       }
                       Navigator.pop(sheetCtx);
+                      final l10nOuter = AppLocalizations.of(context)!;
                       context.read<AdminMembershipRequestsBloc>().add(
                             RejectRefundRequestEvent(
                               refundId: req.refundId,
                               reason: reason,
+                              successMessage: l10nOuter.admin_refundRequests_rejectSuccess,
+                              errorMessage: l10nOuter.error_somethingWentWrong,
                             ),
                           );
                     },

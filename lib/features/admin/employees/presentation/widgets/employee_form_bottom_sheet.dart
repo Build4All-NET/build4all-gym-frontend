@@ -83,6 +83,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
   bool _useExistingStaff = false;
   int? _selectedStaffUserId;
   List<EligibleStaffEntity> _eligibleStaff = [];
+  Map<int, String> _eligibleStaffRoleLabels = {};
   bool _eligibleStaffLoading = false;
   bool _eligibleStaffLoaded = false;
 
@@ -145,8 +146,22 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
     try {
       final staff = await _eligibleStaffUseCase();
       if (!mounted) return;
+      // Deduplicate by userId; users with multiple roles (e.g. Trainer + Reception)
+      // would otherwise appear twice and crash the dropdown with duplicate values.
+      final Map<int, EligibleStaffEntity> byId = {};
+      final Map<int, String> roleLabels = {};
+      for (final s in staff) {
+        final roleLabel = formatEmployeeType(s.gymRole.toLowerCase());
+        if (byId.containsKey(s.userId)) {
+          roleLabels[s.userId] = '${roleLabels[s.userId]!} / $roleLabel';
+        } else {
+          byId[s.userId] = s;
+          roleLabels[s.userId] = roleLabel;
+        }
+      }
       setState(() {
-        _eligibleStaff = staff;
+        _eligibleStaff = byId.values.toList();
+        _eligibleStaffRoleLabels = roleLabels;
         _eligibleStaffLoading = false;
         _eligibleStaffLoaded = true;
       });
@@ -350,7 +365,7 @@ class _EmployeeFormContentState extends State<_EmployeeFormContent> {
                               items: _eligibleStaff
                                   .map((s) => DropdownMenuItem(
                                         value: s.userId,
-                                        child: Text('${s.fullName}  ·  ${formatEmployeeType(s.gymRole.toLowerCase())}'),
+                                        child: Text('${s.fullName}  ·  ${_eligibleStaffRoleLabels[s.userId] ?? formatEmployeeType(s.gymRole.toLowerCase())}'),
                                       ))
                                   .toList(),
                               onChanged: (v) => setState(() => _selectedStaffUserId = v),

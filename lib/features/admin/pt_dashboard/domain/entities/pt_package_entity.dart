@@ -26,6 +26,8 @@ class PtPackageEntity {
   final int tenantId;
   final int? ptServiceId;
   final DateTime? createdAt;
+  final String commissionType; // 'SALARY' | 'COMMISSION'
+  final double? commissionPercentage;
 
   const PtPackageEntity({
     required this.id,
@@ -47,6 +49,8 @@ class PtPackageEntity {
     required this.tenantId,
     this.ptServiceId,
     this.createdAt,
+    this.commissionType = 'SALARY',
+    this.commissionPercentage,
   });
 
   PtPackageEntity copyWith({
@@ -73,6 +77,8 @@ class PtPackageEntity {
       tenantId: tenantId,
       ptServiceId: ptServiceId,
       createdAt: createdAt,
+      commissionType: commissionType,
+      commissionPercentage: commissionPercentage,
     );
   }
 }

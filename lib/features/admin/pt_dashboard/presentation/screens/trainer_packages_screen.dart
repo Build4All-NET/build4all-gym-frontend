@@ -590,8 +590,11 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
 
   // ── Dropdown / toggle state ────────────────────────────────────────────────
   int?    _selectedTrainerId;
-  String  _packageType = _kPackageTypes.first;
-  bool    _isActive    = true;
+  String  _packageType    = _kPackageTypes.first;
+  bool    _isActive       = true;
+  String  _commissionType = 'SALARY'; // 'SALARY' | 'COMMISSION'
+  late final TextEditingController _commissionPctCtrl;
+  double? _servicePrice; // per-session price from selected service
 
   // ── PT Services (for ptServiceId dropdown) ─────────────────────────────────
   List<PtServiceModel> _allServices     = [];
@@ -640,8 +643,23 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
         : _kPackageTypes.first;
     _isActive          = p?.isActive ?? true;
     _selectedServiceId = p?.ptServiceId;
+    _commissionType    = p?.commissionType ?? 'SALARY';
+    _commissionPctCtrl = TextEditingController(
+      text: p?.commissionPercentage != null
+          ? p!.commissionPercentage!.toStringAsFixed(1)
+          : '',
+    );
 
+    _sessions.addListener(_onSessionsChanged);
     _loadServices();
+  }
+
+  void _onSessionsChanged() {
+    if (_servicePrice == null) return;
+    final n = int.tryParse(_sessions.text.trim());
+    if (n != null && n > 0) {
+      _price.text = (_servicePrice! * n).toStringAsFixed(2);
+    }
   }
 
   @override
@@ -655,6 +673,7 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
     _maxConcurrent.dispose();
     _price.dispose();
     _salePrice.dispose();
+    _commissionPctCtrl.dispose();
     super.dispose();
   }
 
@@ -691,15 +710,24 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
   void _onServiceChanged(int? serviceId) {
     setState(() {
       _selectedServiceId = serviceId;
-      if (serviceId == null) return;
+      if (serviceId == null) {
+        _servicePrice = null;
+        return;
+      }
       final service = _allServices.where((s) => s.serviceId == serviceId).firstOrNull;
       if (service == null) return;
-      // Auto-fill price and duration from the selected service.
-      _price.text    = service.price.toStringAsFixed(2);
+      _servicePrice  = service.price;
       _duration.text = '${service.durationMinutes}';
       // Default sessions to 1 if the field is empty or zero.
-      final currentSessions = int.tryParse(_sessions.text.trim()) ?? 0;
-      if (currentSessions <= 0) _sessions.text = '1';
+      final sessions = int.tryParse(_sessions.text.trim()) ?? 0;
+      final effectiveSessions = sessions > 0 ? sessions : 1;
+      if (sessions <= 0) _sessions.text = '1';
+      // Price = per-session price × number of sessions
+      _price.text = (service.price * effectiveSessions).toStringAsFixed(2);
+      // Auto-fill commission % from the service (admin can override)
+      if (service.commissionPercentage > 0) {
+        _commissionPctCtrl.text = service.commissionPercentage.toStringAsFixed(1);
+      }
     });
   }
 
@@ -855,6 +883,43 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
                     ),
             ),
 
+            // ── Trainer compensation type ────────────────────────────
+            PtSectionLabel(icon: Icons.account_balance_wallet_outlined, text: l10n.trainer_compensationTypeLabel),
+            Row(
+              children: [
+                Expanded(
+                  child: _CompensationChip(
+                    label: l10n.trainer_compensationSalary,
+                    selected: _commissionType == 'SALARY',
+                    c: c,
+                    onTap: () => setState(() => _commissionType = 'SALARY'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _CompensationChip(
+                    label: l10n.trainer_compensationCommission,
+                    selected: _commissionType == 'COMMISSION',
+                    c: c,
+                    onTap: () => setState(() => _commissionType = 'COMMISSION'),
+                  ),
+                ),
+              ],
+            ),
+            if (_commissionType == 'COMMISSION') ...[
+              const SizedBox(height: 12),
+              _field(c, _commissionPctCtrl, l10n.trainer_commissionPercentageLabel,
+                  icon: Icons.percent_rounded,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: (v) {
+                    if (_commissionType != 'COMMISSION') return null;
+                    final n = double.tryParse(v ?? '');
+                    if (n == null || n <= 0 || n > 100) return l10n.trainer_commissionPercentageHint;
+                    return null;
+                  }),
+            ],
+            const SizedBox(height: 12),
+
             // ── isActive toggle (edit mode only) ──────────────────────
             if (isEdit)
               PtSwitchCard(
@@ -933,9 +998,56 @@ class _PackageFormDialogState extends State<_PackageFormDialog> {
       if (_salePrice.text.isNotEmpty)
         'salePrice': double.parse(_salePrice.text.trim()),
       'ptServiceId': _selectedServiceId,                // ← now required
+      'commissionType': _commissionType,
+      if (_commissionType == 'COMMISSION' && _commissionPctCtrl.text.isNotEmpty)
+        'commissionPercentage': double.tryParse(_commissionPctCtrl.text.trim()),
       if (isEdit) 'isActive': _isActive,               // ← edit-only
     };
 
     widget.onSubmit(trainerId, body);
+  }
+}
+
+// ── Small toggle chip for compensation type ────────────────────────────────────
+
+class _CompensationChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final dynamic c;
+  final VoidCallback onTap;
+
+  const _CompensationChip({
+    required this.label,
+    required this.selected,
+    required this.c,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        decoration: BoxDecoration(
+          color: selected ? c.primary : c.background,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? c.primary : c.border.withOpacity(0.4),
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: selected ? c.onPrimary : c.body,
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -27,6 +27,8 @@ class PtPackageModel {
   final int tenantId;
   final int? ptServiceId;
   final DateTime? createdAt;
+  final String commissionType;
+  final double? commissionPercentage;
 
   const PtPackageModel({
     required this.id,
@@ -47,6 +49,8 @@ class PtPackageModel {
     required this.tenantId,
     this.ptServiceId,
     this.createdAt,
+    this.commissionType = 'SALARY',
+    this.commissionPercentage,
   });
 
   factory PtPackageModel.fromJson(Map<String, dynamic> json) {
@@ -74,6 +78,8 @@ class PtPackageModel {
       createdAt:  json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,
+      commissionType: json['commissionType'] as String? ?? 'SALARY',
+      commissionPercentage: (json['commissionPercentage'] as num?)?.toDouble(),
     );
   }
 
@@ -99,6 +105,8 @@ class PtPackageModel {
       tenantId:               tenantId,
       ptServiceId:            ptServiceId,
       createdAt:              createdAt,
+      commissionType:         commissionType,
+      commissionPercentage:   commissionPercentage,
     );
   }
 }

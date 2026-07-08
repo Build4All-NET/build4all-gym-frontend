@@ -88,12 +88,6 @@ class DangerZoneSectionWidget extends StatelessWidget {
                   label: l10n.admin_settings_logOut,
                   onTap: () => _confirmLogOut(ctx, c, tokens),
                 ),
-                const SizedBox(height: 10),
-                _DangerButton(
-                  icon: Icons.delete_outline_rounded,
-                  label: l10n.admin_settings_deleteAccount,
-                  onTap: () => _confirmDeleteAccount(ctx, c, tokens),
-                ),
               ],
             );
           }),

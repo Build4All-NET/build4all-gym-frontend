@@ -91,7 +91,7 @@ class TrainerBookingBloc
           trainerId: current.trainerId,
           selectedDate: selectedDate,
           selectedSlot: selectedSlot,
-          message: 'This slot is full or unavailable. Send a request instead.',
+          message: 'ptBookingFullOrUnavailable',
         ),
       );
       return;
@@ -119,7 +119,7 @@ class TrainerBookingBloc
           trainerId: current.trainerId,
           selectedDate: selectedDate,
           selectedSlot: selectedSlot,
-          message: result.failure?.message ?? 'تعذر تأكيد الحجز.',
+          message: result.failure?.message ?? 'ptBookingFailed',
         ),
       );
       return;
@@ -172,7 +172,7 @@ class TrainerBookingBloc
           trainerId: current.trainerId,
           selectedDate: selectedDate,
           selectedSlot: selectedSlot,
-          message: result.failure?.message ?? 'تعذر إرسال الطلب.',
+          message: result.failure?.message ?? 'ptBookingRequestFailed',
         ),
       );
       return;
