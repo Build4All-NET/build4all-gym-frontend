@@ -285,9 +285,11 @@ class _IncomeRow extends StatelessWidget {
                 Icon(
                   session.isSalary
                       ? Icons.payments_rounded
-                      : session.isClass
-                          ? Icons.groups_rounded
-                          : Icons.person_outline_rounded,
+                      : session.isCommission
+                          ? Icons.account_balance_wallet_rounded
+                          : session.isClass
+                              ? Icons.groups_rounded
+                              : Icons.person_outline_rounded,
                   size: 13,
                   color: c.muted,
                 ),
@@ -295,9 +297,11 @@ class _IncomeRow extends StatelessWidget {
                 Text(
                   session.isSalary
                       ? l10n.trainer_incomeSalaryPayment
-                      : session.isClass
-                          ? l10n.trainer_incomeClassSession
-                          : (session.memberName ?? l10n.trainer_memberIdLabel),
+                      : session.isCommission
+                          ? l10n.trainer_incomeCommissionPayment
+                          : session.isClass
+                              ? l10n.trainer_incomeClassSession
+                              : (session.memberName ?? l10n.trainer_memberIdLabel),
                   style: TextStyle(color: c.body, fontSize: 13),
                 ),
               ],
@@ -309,7 +313,7 @@ class _IncomeRow extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(_dateFmt.format(session.startTime),
                     style: TextStyle(color: c.muted, fontSize: 12)),
-                if (!session.isSalary && session.commissionPercentage != null) ...[
+                if (!session.isSalary && !session.isCommission && session.commissionPercentage != null) ...[
                   const SizedBox(width: 12),
                   Icon(Icons.percent_rounded, size: 13, color: c.muted),
                   const SizedBox(width: 4),

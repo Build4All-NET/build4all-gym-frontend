@@ -5303,6 +5303,18 @@ abstract class AppLocalizations {
   /// **'Please enter a rejection reason'**
   String get admin_membershipRequests_enterReason;
 
+  /// No description provided for @admin_membershipRequests_approveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership request approved'**
+  String get admin_membershipRequests_approveSuccess;
+
+  /// No description provided for @admin_membershipRequests_rejectSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership request rejected'**
+  String get admin_membershipRequests_rejectSuccess;
+
   /// No description provided for @admin_membershipRequests_tab.
   ///
   /// In en, this message translates to:
@@ -5428,6 +5440,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a valid refund amount'**
   String get admin_refundRequests_enterAmount;
+
+  /// No description provided for @admin_refundRequests_approveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund request approved'**
+  String get admin_refundRequests_approveSuccess;
+
+  /// No description provided for @admin_refundRequests_rejectSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund request rejected'**
+  String get admin_refundRequests_rejectSuccess;
 
   /// No description provided for @membershipStatusPending.
   ///
@@ -6839,6 +6863,11 @@ abstract class AppLocalizations {
   /// **'Income'**
   String get trainer_navIncome;
 
+  String get trainer_compensationTypeLabel;
+  String get trainer_compensationSalary;
+  String get trainer_compensationCommission;
+  String get trainer_commissionPercentageHint;
+
   /// No description provided for @trainer_commissionPercentageLabel.
   ///
   /// In en, this message translates to:
@@ -6910,6 +6939,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Salary payment'**
   String get trainer_incomeSalaryPayment;
+
+  /// No description provided for @trainer_incomeCommissionPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Commission payment'**
+  String get trainer_incomeCommissionPayment;
 
   /// No description provided for @trainer_incomeClassSession.
   ///

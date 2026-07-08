@@ -81,7 +81,7 @@ class AdminMembershipRequestsBloc
       emit(AdminMembershipRequestsActionSuccess(
         requests: updated,
         refundRequests: current.refundRequests,
-        message: 'تمت الموافقة على الطلب',
+        message: event.successMessage,
         invoiceId: invoiceId,
       ));
       emit(AdminMembershipRequestsLoaded(
@@ -92,7 +92,7 @@ class AdminMembershipRequestsBloc
       emit(AdminMembershipRequestsActionFailure(
         requests: current.requests,
         refundRequests: current.refundRequests,
-        message: _extractMessage(e),
+        message: _extractMessage(e, fallback: event.errorMessage),
       ));
       emit(AdminMembershipRequestsLoaded(
         requests: current.requests,
@@ -119,7 +119,7 @@ class AdminMembershipRequestsBloc
       emit(AdminMembershipRequestsActionSuccess(
         requests: updated,
         refundRequests: current.refundRequests,
-        message: 'تم رفض الطلب',
+        message: event.successMessage,
       ));
       emit(AdminMembershipRequestsLoaded(
         requests: updated,
@@ -129,7 +129,7 @@ class AdminMembershipRequestsBloc
       emit(AdminMembershipRequestsActionFailure(
         requests: current.requests,
         refundRequests: current.refundRequests,
-        message: 'حدث خطأ، حاول مجدداً',
+        message: _extractMessage(e, fallback: event.errorMessage),
       ));
       emit(AdminMembershipRequestsLoaded(
         requests: current.requests,
@@ -162,7 +162,7 @@ class AdminMembershipRequestsBloc
       emit(AdminMembershipRequestsActionSuccess(
         requests: current.requests,
         refundRequests: updated,
-        message: 'تمت الموافقة على طلب الاسترداد',
+        message: event.successMessage,
       ));
       emit(AdminMembershipRequestsLoaded(
         requests: current.requests,
@@ -200,7 +200,7 @@ class AdminMembershipRequestsBloc
       emit(AdminMembershipRequestsActionSuccess(
         requests: current.requests,
         refundRequests: updated,
-        message: 'تم رفض طلب الاسترداد',
+        message: event.successMessage,
       ));
       emit(AdminMembershipRequestsLoaded(
         requests: current.requests,
@@ -219,7 +219,7 @@ class AdminMembershipRequestsBloc
     }
   }
 
-  String _extractMessage(Object e) {
+  String _extractMessage(Object e, {String? fallback}) {
     if (e is DioException) {
       final data = e.response?.data;
       if (data is Map) {
@@ -229,9 +229,10 @@ class AdminMembershipRequestsBloc
         if (msg != null && msg.isNotEmpty) return msg;
       }
       if (data is String && data.isNotEmpty) return data;
-      return e.message ?? e.toString();
+      return fallback ?? e.message ?? e.toString();
     }
     final msg = e.toString();
+    if (fallback != null) return fallback;
     return msg.startsWith('Exception: ') ? msg.replaceFirst('Exception: ', '') : msg;
   }
 }

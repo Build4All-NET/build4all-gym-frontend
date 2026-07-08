@@ -2681,6 +2681,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin_membershipRequests_enterReason => 'Please enter a rejection reason';
 
   @override
+  String get admin_membershipRequests_approveSuccess => 'Membership request approved';
+
+  @override
+  String get admin_membershipRequests_rejectSuccess => 'Membership request rejected';
+
+  @override
   String get admin_membershipRequests_tab => 'Membership Requests';
 
   @override
@@ -2744,6 +2750,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get admin_refundRequests_enterAmount => 'Please enter a valid refund amount';
+
+  @override
+  String get admin_refundRequests_approveSuccess => 'Refund request approved';
+
+  @override
+  String get admin_refundRequests_rejectSuccess => 'Refund request rejected';
 
   @override
   String get membershipStatusPending => 'Pending';
@@ -3475,6 +3487,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_navIncome => 'Income';
 
   @override
+  String get trainer_compensationTypeLabel => 'Trainer Compensation Type';
+
+  @override
+  String get trainer_compensationSalary => 'Salary';
+
+  @override
+  String get trainer_compensationCommission => 'Commission';
+
+  @override
+  String get trainer_commissionPercentageHint => 'Enter a value between 1–100';
+
+  @override
   String get trainer_commissionPercentageLabel => 'Trainer Commission %';
 
   @override
@@ -3511,6 +3535,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainer_incomeSalaryPayment => 'Salary payment';
+
+  @override
+  String get trainer_incomeCommissionPayment => 'Commission payment';
 
   @override
   String get trainer_incomeClassSession => 'Class session';

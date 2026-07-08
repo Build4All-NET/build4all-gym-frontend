@@ -189,16 +189,6 @@ class VideoCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const Spacer(),
-                          // View count
-                          Icon(Icons.remove_red_eye_outlined,
-                              size: 13, color: theme.colorScheme.outline),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${video.viewCount}',
-                            style: theme.textTheme.labelSmall
-                                ?.copyWith(color: theme.colorScheme.outline),
-                          ),
                         ],
                       ),
                     ],

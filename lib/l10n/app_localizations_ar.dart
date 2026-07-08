@@ -2681,6 +2681,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin_membershipRequests_enterReason => 'يرجى إدخال سبب الرفض';
 
   @override
+  String get admin_membershipRequests_approveSuccess => 'تمت الموافقة على طلب الاشتراك';
+
+  @override
+  String get admin_membershipRequests_rejectSuccess => 'تم رفض طلب الاشتراك';
+
+  @override
   String get admin_membershipRequests_tab => 'طلبات الاشتراك';
 
   @override
@@ -2744,6 +2750,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get admin_refundRequests_enterAmount => 'يرجى إدخال مبلغ استرداد صحيح';
+
+  @override
+  String get admin_refundRequests_approveSuccess => 'تمت الموافقة على طلب الاسترداد';
+
+  @override
+  String get admin_refundRequests_rejectSuccess => 'تم رفض طلب الاسترداد';
 
   @override
   String get membershipStatusPending => 'قيد الانتظار';
@@ -3475,6 +3487,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_navIncome => 'الدخل';
 
   @override
+  String get trainer_compensationTypeLabel => 'نوع تعويض المدرب';
+
+  @override
+  String get trainer_compensationSalary => 'راتب';
+
+  @override
+  String get trainer_compensationCommission => 'عمولة';
+
+  @override
+  String get trainer_commissionPercentageHint => 'أدخل قيمة بين 1-100';
+
+  @override
   String get trainer_commissionPercentageLabel => 'نسبة عمولة المدرب';
 
   @override
@@ -3511,6 +3535,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_incomeSalaryPayment => 'دفعة راتب';
+
+  @override
+  String get trainer_incomeCommissionPayment => 'دفعة عمولة';
 
   @override
   String get trainer_incomeClassSession => 'حصة جماعية';

@@ -122,30 +122,12 @@ class _LoadedBody extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    label: l10n.admin_trainingVideos_totalVideos,
-                    value: '${state.stats.totalVideos}',
-                    backgroundColor:
-                    const Color(0xFFEDE7F6), // lavender/purple tint
-                    iconColor: const Color(0xFF7C3AED),
-                    icon: Icons.video_library_outlined,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _StatCard(
-                    label: l10n.admin_trainingVideos_totalViews,
-                    value: '${state.stats.totalViews}',
-                    backgroundColor:
-                    const Color(0xFFE0F2FE), // light blue tint
-                    iconColor: const Color(0xFF0284C7),
-                    icon: Icons.remove_red_eye_outlined,
-                  ),
-                ),
-              ],
+            child: _StatCard(
+              label: l10n.admin_trainingVideos_totalVideos,
+              value: '${state.stats.totalVideos}',
+              backgroundColor: const Color(0xFFEDE7F6),
+              iconColor: const Color(0xFF7C3AED),
+              icon: Icons.video_library_outlined,
             ),
           ),
         ),

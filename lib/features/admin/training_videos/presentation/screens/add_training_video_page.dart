@@ -76,32 +76,34 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
   }
 
   Future<void> _showAddCategoryDialog() async {
-    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.trainingVideos_newCategoryTitle),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(
-            hintText: l10n.trainingVideos_categoryNameHint,
-            labelText: l10n.trainingVideos_categoryNameLabel,
+      builder: (ctx) {
+        final l10n = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          title: Text(l10n.trainingVideos_newCategoryTitle),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+            decoration: InputDecoration(
+              hintText: l10n.trainingVideos_categoryNameHint,
+              labelText: l10n.trainingVideos_categoryNameLabel,
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.general_cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.trainingVideos_addCategoryAction),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.general_cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.trainingVideos_addCategoryAction),
+            ),
+          ],
+        );
+      },
     );
     if (confirmed == true && controller.text.trim().isNotEmpty && mounted) {
       context.read<TrainingVideosBloc>().add(AddNewCategory(controller.text.trim()));
@@ -305,8 +307,6 @@ class _AddTrainingVideoPageState extends State<AddTrainingVideoPage> {
         buildWhen: (_, curr) =>
             curr is VideoFormOptionsLoaded ||
             curr is CategoryCreating ||
-            curr is CategoryCreated ||
-            curr is CategoryCreateError ||
             curr is CreateVideoLoading,
         builder: (context, state) {
           if (state is VideoFormOptionsLoaded) {

@@ -277,6 +277,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
       context: context,
       isDismissible: false,
       enableDrag: false,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -327,8 +328,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.error.localizedMessage ??
-                  AppLocalizations.of(context)!.paymentSheetPaymentFailed,
+              AppLocalizations.of(context)!.paymentSheetPaymentFailed,
             ),
             backgroundColor: tokens.colors.danger,
           ),
@@ -363,6 +363,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
       context: context,
       isDismissible: false,
       enableDrag: false,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -404,7 +405,7 @@ class _WaitingForRedirectSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = tokens.colors;
     final l10n = AppLocalizations.of(context)!;
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -638,7 +639,7 @@ class _CheckoutResultSheet extends StatelessWidget {
 
     return SafeArea(
       top: false,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,

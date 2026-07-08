@@ -349,8 +349,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.error.localizedMessage ??
-                  AppLocalizations.of(context)!.paymentSheetPaymentFailed,
+              AppLocalizations.of(context)!.paymentSheetPaymentFailed,
             ),
             backgroundColor: tokens.colors.danger,
           ),
@@ -384,6 +383,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
       context: context,
       isDismissible: false,
       enableDrag: false,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -413,6 +413,7 @@ class _PtPackagePaymentSheetState extends State<PtPackagePaymentSheet> {
       context: context,
       isDismissible: false,
       enableDrag: false,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -520,7 +521,7 @@ class _ResultSheet extends StatelessWidget {
     final isPending = booking.isPending;
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -610,7 +611,7 @@ class _WaitingSheet extends StatelessWidget {
     final c = tokens.colors;
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
       child: Column(
         mainAxisSize: MainAxisSize.min,
