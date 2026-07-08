@@ -8,7 +8,10 @@ class PlanDetailEntity {
   final String billingCycle;
   final int durationDays;
   final bool isFeatured;
+
   final bool isBooked;
+  final String bookingStatus;
+
   final String? description;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
@@ -26,6 +29,7 @@ class PlanDetailEntity {
     required this.durationDays,
     required this.isFeatured,
     required this.isBooked,
+    required this.bookingStatus,
     this.description,
     this.allowedVisits,
     this.freezeDaysAllowance,
@@ -35,15 +39,10 @@ class PlanDetailEntity {
     this.activePromotion,
   });
 
-  /// Price shown in detail / checkout UI.
-  /// If backend sent an active promotion, use finalPrice.
-  /// Otherwise use normal plan price.
-  double get displayPrice {
-    return activePromotion?.finalPrice ?? price;
-  }
+  bool get isPending => bookingStatus.toUpperCase() == 'PENDING';
+  bool get isActiveBooked => bookingStatus.toUpperCase() == 'BOOKED';
+  bool get canSelect => bookingStatus.toUpperCase() == 'NONE';
 
-  /// Cleaner condition for the UI.
-  bool get hasActivePromotion {
-    return activePromotion != null;
-  }
+  double get displayPrice => activePromotion?.finalPrice ?? price;
+  bool get hasActivePromotion => activePromotion != null;
 }

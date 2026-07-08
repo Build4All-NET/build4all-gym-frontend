@@ -7,6 +7,7 @@
 /// - package name comes from backend/admin/PT and can be any language.
 /// - do not use package name or packageType for logic.
 /// - booking limits come from minDaysPerWeek and maxDaysPerWeek.
+/// - bookingStatus is specific to this exact package.
 class PtPackageEntity {
   final int id;
   final int trainerId;
@@ -51,6 +52,18 @@ class PtPackageEntity {
   /// salePrice if exists, otherwise price.
   final double finalPrice;
 
+  /// Current booking state for this exact package.
+  ///
+  /// Expected values:
+  /// NONE
+  /// PENDING
+  /// ACTIVE
+  /// BOOKED
+  /// CANCEL_REQUESTED
+  /// CANCELLED
+  /// COMPLETED
+  final String bookingStatus;
+
   const PtPackageEntity({
     required this.id,
     required this.trainerId,
@@ -65,5 +78,60 @@ class PtPackageEntity {
     required this.price,
     required this.salePrice,
     required this.finalPrice,
+    required this.bookingStatus,
   });
+
+  bool get isPending => bookingStatus.toUpperCase() == 'PENDING';
+
+  bool get isActive {
+    final status = bookingStatus.toUpperCase();
+
+    return status == 'ACTIVE' || status == 'BOOKED';
+  }
+
+  bool get isCancelRequested {
+    return bookingStatus.toUpperCase() == 'CANCEL_REQUESTED';
+  }
+
+  bool get isBookingDisabled {
+    return isPending || isActive || isCancelRequested;
+  }
+  PtPackageEntity copyWith({
+    int? id,
+    int? trainerId,
+    int? branchId,
+    String? name,
+    String? packageType,
+    int? numberOfSessions,
+    int? daysAvailable,
+    int? sessionDurationMinutes,
+    int? minDaysPerWeek,
+    int? maxDaysPerWeek,
+    double? price,
+    double? salePrice,
+    double? finalPrice,
+    String? bookingStatus,
+  }) {
+    return PtPackageEntity(
+      id: id ?? this.id,
+      trainerId: trainerId ?? this.trainerId,
+      branchId: branchId ?? this.branchId,
+      name: name ?? this.name,
+      packageType: packageType ?? this.packageType,
+      numberOfSessions:
+      numberOfSessions ?? this.numberOfSessions,
+      daysAvailable: daysAvailable ?? this.daysAvailable,
+      sessionDurationMinutes:
+      sessionDurationMinutes ?? this.sessionDurationMinutes,
+      minDaysPerWeek:
+      minDaysPerWeek ?? this.minDaysPerWeek,
+      maxDaysPerWeek:
+      maxDaysPerWeek ?? this.maxDaysPerWeek,
+      price: price ?? this.price,
+      salePrice: salePrice ?? this.salePrice,
+      finalPrice: finalPrice ?? this.finalPrice,
+      bookingStatus:
+      bookingStatus ?? this.bookingStatus,
+    );
+  }
 }

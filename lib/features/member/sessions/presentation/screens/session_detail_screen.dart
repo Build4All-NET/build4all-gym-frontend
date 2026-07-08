@@ -18,20 +18,25 @@ import '../widgets/session_info_grid_widget.dart';
 class SessionDetailScreen extends StatefulWidget {
   final int sessionId;
 
-  const SessionDetailScreen({super.key, required this.sessionId});
+  const SessionDetailScreen({
+    super.key,
+    required this.sessionId,
+  });
 
   @override
-  State<SessionDetailScreen> createState() => _SessionDetailScreenState();
+  State<SessionDetailScreen> createState() =>
+      _SessionDetailScreenState();
 }
 
 class _SessionDetailScreenState extends State<SessionDetailScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context
-          .read<SessionsBloc>()
-          .add(SessionDetailRequested(widget.sessionId));
+      context.read<SessionsBloc>().add(
+        SessionDetailRequested(widget.sessionId),
+      );
     });
   }
 
@@ -45,17 +50,24 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
         builder: (context, state) {
           if (state is SessionDetailLoading) {
             return Center(
-              child: CircularProgressIndicator(color: tokens.colors.primary),
+              child: CircularProgressIndicator(
+                color: tokens.colors.primary,
+              ),
             );
           }
+
           if (state is SessionDetailError) {
             return _ErrorView(message: state.message);
           }
+
           if (state is SessionDetailLoaded) {
             return _DetailView(session: state.session);
           }
+
           return Center(
-            child: CircularProgressIndicator(color: tokens.colors.primary),
+            child: CircularProgressIndicator(
+              color: tokens.colors.primary,
+            ),
           );
         },
       ),
@@ -66,7 +78,9 @@ class _SessionDetailScreenState extends State<SessionDetailScreen> {
 class _DetailView extends StatelessWidget {
   final SessionDetailEntity session;
 
-  const _DetailView({required this.session});
+  const _DetailView({
+    required this.session,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +92,6 @@ class _DetailView extends StatelessWidget {
       children: [
         CustomScrollView(
           slivers: [
-            // ── Hero image ─────────────────────────────────────────────
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 245,
@@ -88,7 +101,8 @@ class _DetailView extends StatelessWidget {
                   children: [
                     session.trainerProfileFileId != null
                         ? Image.network(
-                      'http://192.168.0.101:8980/api/files/${session.trainerProfileFileId}',
+                      'http://192.168.0.101:8980/api/files/'
+                          '${session.trainerProfileFileId}',
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) =>
                           _HeroPlaceholder(tokens: tokens),
@@ -138,7 +152,8 @@ class _DetailView extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             session.className,
-                            style: tokens.typography.headlineSmall.copyWith(
+                            style:
+                            tokens.typography.headlineSmall.copyWith(
                               color: tokens.colors.onPrimary,
                               fontWeight: FontWeight.w900,
                               fontSize: 24,
@@ -146,12 +161,15 @@ class _DetailView extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Row(
-                            textDirection:
-                            isRtl ? TextDirection.rtl : TextDirection.ltr,
+                            textDirection: isRtl
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
                             children: [
                               Text(
-                                session.trainerRating.toStringAsFixed(1),
-                                style: tokens.typography.bodyMedium.copyWith(
+                                session.trainerRating
+                                    .toStringAsFixed(1),
+                                style:
+                                tokens.typography.bodyMedium.copyWith(
                                   color: tokens.colors.onPrimary,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -167,17 +185,18 @@ class _DetailView extends StatelessWidget {
                                 width: 4,
                                 height: 4,
                                 decoration: BoxDecoration(
-                                  color:
-                                  tokens.colors.onPrimary.withOpacity(0.6),
+                                  color: tokens.colors.onPrimary
+                                      .withOpacity(0.6),
                                   shape: BoxShape.circle,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 session.trainerName,
-                                style: tokens.typography.bodyMedium.copyWith(
-                                  color:
-                                  tokens.colors.onPrimary.withOpacity(0.9),
+                                style:
+                                tokens.typography.bodyMedium.copyWith(
+                                  color: tokens.colors.onPrimary
+                                      .withOpacity(0.9),
                                 ),
                               ),
                             ],
@@ -190,26 +209,38 @@ class _DetailView extends StatelessWidget {
               ),
             ),
 
-            // ── Body ──────────────────────────────────────────────────
             SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: tokens.spacing.lg),
+
                   SessionInfoGridWidget(session: session),
+
                   SizedBox(height: tokens.spacing.md),
+
                   SessionAboutWidget(
                     description:
                     session.description ?? 'No description available',
                   ),
+
                   SizedBox(height: tokens.spacing.md),
-                  SessionBenefitsWidget(benefits: session.benefits),
+
+                  SessionBenefitsWidget(
+                    benefits: session.benefits,
+                  ),
+
                   SizedBox(height: tokens.spacing.md),
-                  SessionEquipmentWidget(equipment: session.equipment),
+
+                  SessionEquipmentWidget(
+                    equipment: session.equipment,
+                  ),
+
                   SafeArea(
                     top: false,
                     child: SizedBox(
-                      height: tokens.button.height + tokens.spacing.lg * 3,
+                      height:
+                      tokens.button.height + tokens.spacing.lg * 3,
                     ),
                   ),
                 ],
@@ -218,24 +249,19 @@ class _DetailView extends StatelessWidget {
           ],
         ),
 
-        // ── Sticky Book Now button ─────────────────────────────────────
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
           child: _BookNowBar(
             sessionId: session.sessionId,
-
-            /*
-             * Needed to disable booking when the session already started.
-             */
             startTime: session.startTime,
-
             memberBookingStatus: session.memberBookingStatus,
             l10n: l10n,
             session: session,
             requiresMembership: session.requiresMembership,
-            memberHasActiveMembership: session.memberHasActiveMembership,
+            memberHasActiveMembership:
+            session.memberHasActiveMembership,
           ),
         ),
       ],
@@ -245,14 +271,7 @@ class _DetailView extends StatelessWidget {
 
 class _BookNowBar extends StatelessWidget {
   final int sessionId;
-
-  /*
-   * Session start time.
-   * Used only for frontend UX.
-   * Backend already blocks old sessions.
-   */
   final DateTime startTime;
-
   final String? memberBookingStatus;
   final AppLocalizations l10n;
   final SessionDetailEntity session;
@@ -278,35 +297,64 @@ class _BookNowBar extends StatelessWidget {
         tokens.spacing.lg,
         tokens.spacing.md,
         tokens.spacing.lg,
-        tokens.spacing.lg + MediaQuery.of(context).padding.bottom,
+        tokens.spacing.lg +
+            MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
         color: tokens.colors.background,
         border: Border(
-          top: BorderSide(color: tokens.colors.border.withOpacity(0.15)),
+          top: BorderSide(
+            color: tokens.colors.border.withOpacity(0.15),
+          ),
         ),
       ),
       child: BlocBuilder<SessionsBloc, SessionsState>(
         builder: (context, state) {
+          final status = memberBookingStatus?.toUpperCase();
+
           final isLoading = state is SessionBookingLoading;
-          final isBooked = memberBookingStatus == 'BOOKED';
-          final isWaitlisted = memberBookingStatus == 'WAITLISTED';
+          final isPending = status == 'PENDING';
+          final isBooked = status == 'BOOKED';
+          final isWaitlisted = status == 'WAITLISTED';
+          final isCancelRequested =
+              status == 'CANCEL_REQUESTED';
 
-          /*
-           * Booking is closed when the session start time is now or in the past.
-           *
-           * This mirrors the backend check:
-           * if (!session.getStartTime().isAfter(LocalDateTime.now())) block.
-           */
-          final isSessionClosed = !startTime.isAfter(DateTime.now());
+          final isSessionClosed =
+          !startTime.isAfter(DateTime.now());
 
-
-          // Blocked when gym rules require membership and member has none.
           final isMembershipBlocked =
               requiresMembership && !memberHasActiveMembership;
 
           final isDisabled =
-              isLoading || isBooked || isWaitlisted || isSessionClosed || isMembershipBlocked;
+              isLoading ||
+                  isPending ||
+                  isBooked ||
+                  isWaitlisted ||
+                  isCancelRequested ||
+                  isSessionClosed ||
+                  isMembershipBlocked;
+
+          String buttonText;
+
+          if (isPending) {
+            buttonText = l10n.sessionDetailPending;
+          } else if (isBooked) {
+            buttonText = l10n.sessionDetailAlreadyBooked;
+          } else if (isWaitlisted) {
+            buttonText = l10n.sessionDetailWaitlisted;
+          } else if (isCancelRequested) {
+            buttonText =
+                l10n.sessionDetailCancelRequested;
+          } else if (isSessionClosed) {
+            buttonText =
+                l10n.sessionDetailBookingClosed;
+          } else if (isMembershipBlocked) {
+            buttonText =
+                l10n.sessionDetailMembershipRequired;
+          } else {
+            buttonText = l10n.sessionDetailBookNow;
+          }
+
           return SizedBox(
             width: double.infinity,
             height: tokens.button.height,
@@ -315,6 +363,7 @@ class _BookNowBar extends StatelessWidget {
                   ? null
                   : () async {
                 final dio = appDio ?? Dio();
+
                 await SessionBookingPaymentSheet.show(
                   context,
                   sessionId: session.sessionId,
@@ -332,7 +381,9 @@ class _BookNowBar extends StatelessWidget {
                 disabledBackgroundColor: tokens.colors.muted,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(tokens.button.radius),
+                  borderRadius: BorderRadius.circular(
+                    tokens.button.radius,
+                  ),
                 ),
               ),
               child: isLoading
@@ -345,15 +396,7 @@ class _BookNowBar extends StatelessWidget {
                 ),
               )
                   : Text(
-                isBooked
-                    ? l10n.sessionDetailAlreadyBooked
-                    : isWaitlisted
-                    ? l10n.sessionDetailWaitlisted
-                    : isSessionClosed
-                    ? l10n.sessionDetailBookingClosed
-                    : isMembershipBlocked
-                    ? l10n.sessionDetailMembershipRequired
-                    : l10n.sessionDetailBookNow,
+                buttonText,
                 style: TextStyle(
                   fontSize: tokens.button.textSize,
                   fontWeight: FontWeight.w800,
@@ -388,21 +431,27 @@ class _DifficultyBadge extends StatelessWidget {
         color = tokens.colors.success;
         label = l10n.memberSessionsDifficultyBeginner;
         break;
+
       case 'INTERMEDIATE':
         color = Colors.orange;
         label = l10n.memberSessionsDifficultyIntermediate;
         break;
+
       case 'ADVANCED':
         color = tokens.colors.danger;
         label = l10n.memberSessionsDifficultyAdvanced;
         break;
+
       default:
         color = tokens.colors.muted;
         label = level;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 5,
+      ),
       decoration: BoxDecoration(
         color: tokens.colors.label.withOpacity(0.45),
         borderRadius: BorderRadius.circular(999),
@@ -448,7 +497,11 @@ class _CircleIconButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(icon, color: tokens.colors.label, size: 18),
+        child: Icon(
+          icon,
+          color: tokens.colors.label,
+          size: 18,
+        ),
       ),
     );
   }
@@ -457,7 +510,9 @@ class _CircleIconButton extends StatelessWidget {
 class _HeroPlaceholder extends StatelessWidget {
   final dynamic tokens;
 
-  const _HeroPlaceholder({required this.tokens});
+  const _HeroPlaceholder({
+    required this.tokens,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -477,7 +532,9 @@ class _HeroPlaceholder extends StatelessWidget {
 class _ErrorView extends StatelessWidget {
   final String message;
 
-  const _ErrorView({required this.message});
+  const _ErrorView({
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -490,13 +547,18 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, color: tokens.colors.danger, size: 48),
+            Icon(
+              Icons.error_outline,
+              color: tokens.colors.danger,
+              size: 48,
+            ),
             SizedBox(height: tokens.spacing.md),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: tokens.typography.bodyMedium
-                  .copyWith(color: tokens.colors.danger),
+              style: tokens.typography.bodyMedium.copyWith(
+                color: tokens.colors.danger,
+              ),
             ),
             SizedBox(height: tokens.spacing.lg),
             ElevatedButton(

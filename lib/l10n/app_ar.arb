@@ -2090,5 +2090,63 @@
   "trainingVideos_playAction": "تشغيل",
   "trainingVideos_editAction": "تعديل",
   "trainingVideos_draftBadge": "مسودة",
-  "trainingVideos_noVideoUrl": "لا يوجد رابط فيديو متاح"
+  "trainingVideos_noVideoUrl": "لا يوجد رابط فيديو متاح",
+    "memberMembershipEmptyTitle": "لا توجد اشتراكات",
+    "memberMembershipEmptySubtitle": "ستظهر اشتراكاتك هنا بعد الاشتراك في إحدى الخطط.",
+
+    "memberMembershipLoadFailed": "تعذر تحميل الاشتراكات",
+    "memberMembershipLoadFailedSubtitle": "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.",
+
+    "memberMembershipPlanType": "نوع الخطة",
+    "memberMembershipPaymentStatus": "حالة الدفع",
+    "memberMembershipStartDate": "تاريخ البدء",
+    "memberMembershipEndDate": "تاريخ الانتهاء",
+    "memberMembershipRemainingDays": "الأيام المتبقية",
+    "memberMembershipRemainingVisits": "الزيارات المتبقية",
+    "memberMembershipDuration": "مدة الخطة",
+    "memberMembershipBillingCycle": "دورة الفوترة",
+    "memberMembershipPrice": "السعر",
+    "memberMembershipBranch": "الفرع",
+    "memberMembershipAutoRenew": "التجديد التلقائي",
+
+    "memberMembershipNotAvailable": "غير متوفر",
+    "memberMembershipEnabled": "مفعّل",
+    "memberMembershipDisabled": "غير مفعّل",
+
+    "memberMembershipDurationDays": "{days} يوم",
+    "@memberMembershipDurationDays": {
+      "description": "عرض مدة خطة الاشتراك بالأيام",
+      "placeholders": {
+        "days": {
+          "type": "int"
+        }
+      }
+    },
+
+    "memberMembershipStatusActive": "نشط",
+    "memberMembershipStatusFrozen": "مجمّد",
+    "memberMembershipStatusExpired": "منتهي",
+    "memberMembershipStatusCancelled": "ملغى",
+    "memberMembershipStatusPending": "قيد الانتظار",
+
+    "memberMembershipPaymentPaid": "مدفوع",
+    "memberMembershipPaymentPending": "قيد الانتظار",
+    "memberMembershipPaymentFailed": "فشل الدفع",
+    "memberMembershipPaymentRefunded": "تم الاسترداد",
+    "memberMembershipPaymentUnpaid": "غير مدفوع",
+
+    "memberMembershipPlanTypeGym": "نادي رياضي",
+    "memberMembershipPlanTypeClasses": "حصص",
+    "memberMembershipPlanTypeMixed": "مختلط",
+    "memberMembershipPlanTypeMonthly": "شهري",
+    "memberMembershipPlanTypeYearly": "سنوي",
+
+    "memberMembershipBillingDaily": "يومي",
+    "memberMembershipBillingWeekly": "أسبوعي",
+    "memberMembershipBillingMonthly": "شهري",
+    "memberMembershipBillingYearly": "سنوي",
+    "memberMembershipBillingOneTime": "دفعة واحدة",
+    "planPendingApproval": "بانتظار الموافقة",
+    "sessionDetailPending": "بانتظار التأكيد",
+    "sessionDetailCancelRequested": "تم طلب الإلغاء"
 }

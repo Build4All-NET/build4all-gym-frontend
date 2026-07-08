@@ -5616,4 +5616,132 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingVideos_noVideoUrl => 'No video URL available';
+
+  @override
+  String get memberMembershipEmptyTitle => 'No memberships found';
+
+  @override
+  String get memberMembershipEmptySubtitle => 'Your memberships will appear here after you subscribe to a plan.';
+
+  @override
+  String get memberMembershipLoadFailed => 'Failed to load memberships';
+
+  @override
+  String get memberMembershipLoadFailedSubtitle => 'Check your connection and try again.';
+
+  @override
+  String get memberMembershipPlanType => 'Plan Type';
+
+  @override
+  String get memberMembershipPaymentStatus => 'Payment Status';
+
+  @override
+  String get memberMembershipStartDate => 'Start Date';
+
+  @override
+  String get memberMembershipEndDate => 'End Date';
+
+  @override
+  String get memberMembershipRemainingDays => 'Remaining Days';
+
+  @override
+  String get memberMembershipRemainingVisits => 'Remaining Visits';
+
+  @override
+  String get memberMembershipDuration => 'Plan Duration';
+
+  @override
+  String get memberMembershipBillingCycle => 'Billing Cycle';
+
+  @override
+  String get memberMembershipPrice => 'Price';
+
+  @override
+  String get memberMembershipBranch => 'Branch';
+
+  @override
+  String get memberMembershipAutoRenew => 'Auto Renew';
+
+  @override
+  String get memberMembershipNotAvailable => 'Not available';
+
+  @override
+  String get memberMembershipEnabled => 'Enabled';
+
+  @override
+  String get memberMembershipDisabled => 'Disabled';
+
+  @override
+  String memberMembershipDurationDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get memberMembershipStatusActive => 'Active';
+
+  @override
+  String get memberMembershipStatusFrozen => 'Frozen';
+
+  @override
+  String get memberMembershipStatusExpired => 'Expired';
+
+  @override
+  String get memberMembershipStatusCancelled => 'Cancelled';
+
+  @override
+  String get memberMembershipStatusPending => 'Pending';
+
+  @override
+  String get memberMembershipPaymentPaid => 'Paid';
+
+  @override
+  String get memberMembershipPaymentPending => 'Pending';
+
+  @override
+  String get memberMembershipPaymentFailed => 'Failed';
+
+  @override
+  String get memberMembershipPaymentRefunded => 'Refunded';
+
+  @override
+  String get memberMembershipPaymentUnpaid => 'Unpaid';
+
+  @override
+  String get memberMembershipPlanTypeGym => 'Gym';
+
+  @override
+  String get memberMembershipPlanTypeClasses => 'Classes';
+
+  @override
+  String get memberMembershipPlanTypeMixed => 'Mixed';
+
+  @override
+  String get memberMembershipPlanTypeMonthly => 'Monthly';
+
+  @override
+  String get memberMembershipPlanTypeYearly => 'Yearly';
+
+  @override
+  String get memberMembershipBillingDaily => 'Daily';
+
+  @override
+  String get memberMembershipBillingWeekly => 'Weekly';
+
+  @override
+  String get memberMembershipBillingMonthly => 'Monthly';
+
+  @override
+  String get memberMembershipBillingYearly => 'Yearly';
+
+  @override
+  String get memberMembershipBillingOneTime => 'One Time';
+
+  @override
+  String get planPendingApproval => 'Pending Approval';
+
+  @override
+  String get sessionDetailPending => 'Pending confirmation';
+
+  @override
+  String get sessionDetailCancelRequested => 'Cancellation requested';
 }

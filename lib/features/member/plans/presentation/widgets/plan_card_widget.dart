@@ -23,7 +23,13 @@ class PlanCardWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final bool featured = plan.isFeatured;
-    final bool isBooked = plan.isBooked;
+
+    // Replaces the old single `isBooked` boolean.
+    // bookingStatus now comes from the backend as "NONE" | "PENDING" | "BOOKED".
+    final bool isPending = plan.isPending;
+    final bool isBooked = plan.isActiveBooked;
+    final bool isDisabled = isPending || isBooked;
+
     final promotion = plan.activePromotion;
 
     final bool hasPromotion =
@@ -178,31 +184,44 @@ class PlanCardWidget extends StatelessWidget {
                 SizedBox(
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: isBooked ? null : onSelectPlan,
+                    onPressed: isDisabled ? null : onSelectPlan,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isBooked
-                          ? tokens.colors.border.withOpacity(0.35)
+                      backgroundColor: isPending
+                          ? tokens.colors.primary.withOpacity(0.12)
+                          : isBooked
+                          ? tokens.colors.success.withOpacity(0.14)
                           : featured
                           ? tokens.colors.primary
                           : const Color(0xFFEAF0F8),
-                      foregroundColor: isBooked
-                          ? tokens.colors.muted
+                      foregroundColor: isPending
+                          ? tokens.colors.primary
+                          : isBooked
+                          ? tokens.colors.success
                           : featured
                           ? tokens.colors.onPrimary
                           : tokens.colors.label,
-                      disabledBackgroundColor:
-                      tokens.colors.border.withOpacity(0.35),
-                      disabledForegroundColor: tokens.colors.muted,
+                      disabledBackgroundColor: isPending
+                          ? tokens.colors.primary.withOpacity(0.12)
+                          : tokens.colors.success.withOpacity(0.14),
+                      disabledForegroundColor: isPending
+                          ? tokens.colors.primary
+                          : tokens.colors.success,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: Text(
-                      isBooked ? l10n.booked : l10n.selectThisPlan,
+                      isPending
+                          ? l10n.planPendingApproval
+                          : isBooked
+                          ? l10n.booked
+                          : l10n.selectThisPlan,
                       style: tokens.typography.bodyMedium.copyWith(
-                        color: isBooked
-                            ? tokens.colors.muted
+                        color: isPending
+                            ? tokens.colors.primary
+                            : isBooked
+                            ? tokens.colors.success
                             : featured
                             ? tokens.colors.onPrimary
                             : tokens.colors.label,

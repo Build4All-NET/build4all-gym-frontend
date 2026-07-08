@@ -9,7 +9,10 @@ class PlanDetailModel {
   final String billingCycle;
   final int durationDays;
   final bool isFeatured;
+
   final bool isBooked;
+  final String bookingStatus;
+
   final String? description;
   final int? allowedVisits;
   final int? freezeDaysAllowance;
@@ -27,6 +30,7 @@ class PlanDetailModel {
     required this.durationDays,
     required this.isFeatured,
     required this.isBooked,
+    required this.bookingStatus,
     this.description,
     this.allowedVisits,
     this.freezeDaysAllowance,
@@ -38,20 +42,23 @@ class PlanDetailModel {
 
   factory PlanDetailModel.fromJson(Map<String, dynamic> json) {
     return PlanDetailModel(
-      planId: json['planId'] as int,
+      planId: (json['planId'] as num).toInt(),
       name: json['name'] as String? ?? '',
       planType: json['planType'] as String? ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       billingCycle: json['billingCycle'] as String? ?? '',
-      durationDays: json['durationDays'] as int? ?? 0,
+      durationDays: (json['durationDays'] as num?)?.toInt() ?? 0,
       isFeatured: json['isFeatured'] == true,
       isBooked: json['isBooked'] == true,
+      bookingStatus:
+      (json['bookingStatus'] as String? ?? 'NONE').toUpperCase(),
       description: json['description'] as String?,
-      allowedVisits: json['allowedVisits'] as int?,
-      freezeDaysAllowance: json['freezeDaysAllowance'] as int?,
-      gracePeriodDays: json['gracePeriodDays'] as int?,
+      allowedVisits: (json['allowedVisits'] as num?)?.toInt(),
+      freezeDaysAllowance:
+      (json['freezeDaysAllowance'] as num?)?.toInt(),
+      gracePeriodDays: (json['gracePeriodDays'] as num?)?.toInt(),
       autoRenew: json['autoRenew'] == true,
-      features: List<String>.from(json['features'] ?? []),
+      features: List<String>.from(json['features'] ?? const []),
       activePromotion: json['activePromotion'] != null
           ? ActivePromotionModel.fromJson(
         json['activePromotion'] as Map<String, dynamic>,
@@ -70,6 +77,7 @@ class PlanDetailModel {
       durationDays: durationDays,
       isFeatured: isFeatured,
       isBooked: isBooked,
+      bookingStatus: bookingStatus,
       description: description,
       allowedVisits: allowedVisits,
       freezeDaysAllowance: freezeDaysAllowance,
