@@ -452,11 +452,16 @@ class MemberPtService {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // POST /api/pt-services
+  // POST /api/pt-sessions
   //
-  // Old single-session booking flow.
-  // Keep it for now because MemberPtRepositoryImpl still uses it.
-  // Do not use this for package booking.
+  // Direct single-session booking flow (confirmed slot -> SCHEDULED).
+  // BUG FIX: this used to POST to /api/pt-services, the PT service
+  // *catalog* endpoint (create/list a trainer's service offerings) —
+  // not a booking endpoint at all. PtBookingRequestModel/PtBookingResponseModel
+  // already match PTBookingController's /api/pt-sessions contract
+  // (PTBookingRequestDto / PTSessionResponseDto) field-for-field, confirming
+  // that was the intended endpoint. Do not use this for package booking —
+  // see createPackageBooking() for /api/member/pt-package-bookings.
   // ─────────────────────────────────────────────────────────────
 
   Future<PtBookingResponseModel> createBooking(
@@ -464,7 +469,7 @@ class MemberPtService {
       ) async {
     final headers = await _authHeaders();
 
-    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-services');
+    final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/pt-sessions');
 
     try {
       final response = await _client.post(

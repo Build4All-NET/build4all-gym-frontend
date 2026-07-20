@@ -17,6 +17,7 @@ import '../../../../../l10n/app_localizations.dart';
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
+import '../../../../admin/AppBar/presentation/branch_context_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../../../admin/trainers/data/services/admin_trainers_service.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
@@ -174,9 +175,23 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     super.dispose();
   }
 
+  // BUG FIX: this used to fall back to AdminProfileCubit.state.branchId,
+  // which was actually the tenant id (see admin_profile_cubit.dart), then to
+  // a hardcoded `1`. BranchContextCubit is the single source of truth for
+  // the selected branch across every PT screen now; if nothing has been
+  // explicitly selected yet, fall back to the first branch actually
+  // returned by the backend for this tenant (never a hardcoded literal). 0
+  // means "not ready yet" — callers in this file already guard on that
+  // (e.g. `if (newId != 0)` for trainerId) before dispatching bloc events.
   int _effectiveBranchId(BuildContext context) {
     if (_selectedBranchId != null) return _selectedBranchId!;
-    return context.read<AdminProfileCubit>().state.branchId ?? 1;
+    final contextBranchId = context.read<BranchContextCubit>().state;
+    if (contextBranchId != null) return contextBranchId;
+    final branchState = context.read<BranchCubit>().state;
+    if (branchState is BranchLoaded && branchState.branches.isNotEmpty) {
+      return branchState.branches.first.id;
+    }
+    return 0;
   }
 
   Future<void> _loadTrainersForAdmin() async {
@@ -219,6 +234,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
   void _onBranchChanged(int? branchId) {
     if (!mounted) return;
+    // Push into the shared cubit so every other PT screen (Packages,
+    // Services, Schedule, Income, Booking requests) refreshes against the
+    // same branch instead of only updating this screen's local state.
+    if (branchId != null) {
+      context.read<BranchContextCubit>().select(branchId);
+    }
     setState(() {
       _selectedBranchId = branchId;
       if (_isAdmin) {

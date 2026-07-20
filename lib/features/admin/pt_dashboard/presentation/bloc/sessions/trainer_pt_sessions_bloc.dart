@@ -38,7 +38,10 @@ class TrainerPtSessionsBloc
 
   DateTime _selectedDate = DateTime.now();
 
-  int _branchId = 1;
+  // 0 = not started yet; PtSessionsStarted always supplies the real,
+  // backend-verified branchId before any request is made. Never hardcode a
+  // literal branch id here — see trainer_main_screen._effectiveBranchId().
+  int _branchId = 0;
 
   /// 0 = admin all-trainers mode
   int _trainerId = 0;
@@ -473,62 +476,26 @@ class TrainerPtSessionsBloc
 
       if (_isAllTrainersMode) {
 
-        final trainerIds = _trainerNames.keys.toList();
-
-        final sessionResults = await Future.wait(
-          trainerIds.map(
-                (trainerId) => _getSessions(
-              branchId: _branchId,
-              trainerId: trainerId,
-              date: date,
-            ),
-          ),
+        // BUG FIX: this used to fire 2 HTTP calls per trainer (N+1) and sum
+        // the per-trainer results client-side. The backend's trainerId=null
+        // path is now null-safe (see TrainerPtSessionService on the
+        // backend), so one aggregate call each returns every trainer's
+        // sessions/stats directly — the server already resolves each
+        // session's trainerName, so the client-side enrichment loop is no
+        // longer needed either.
+        final sessionsResult = await _getSessions(
+          branchId: _branchId,
+          trainerId: null,
+          date: date,
         );
 
-        final statsResults = await Future.wait(
-          trainerIds.map(
-                (trainerId) => _getStats(
-              branchId: _branchId,
-              trainerId: trainerId,
-              date: date,
-            ),
-          ),
+        final statsResult = await _getStats(
+          branchId: _branchId,
+          trainerId: null,
+          date: date,
         );
 
-        sessions = [];
-
-        for (int i = 0; i < trainerIds.length; i++) {
-
-          final result = sessionResults[i];
-
-          if (result.failure != null) {
-            continue;
-          }
-
-          final trainerId = trainerIds[i];
-
-          final trainerName =
-              _trainerNames[trainerId] ?? '';
-
-          final fetchedSessions =
-              result.data ?? <PtSessionEntity>[];
-
-          for (final session in fetchedSessions) {
-
-            sessions.add(
-
-              session.trainerName != null &&
-                  session.trainerName!.isNotEmpty
-
-                  ? session
-
-                  : session.copyWith(
-                trainerId: trainerId,
-                trainerName: trainerName,
-              ),
-            );
-          }
-        }
+        sessions = sessionsResult.data ?? <PtSessionEntity>[];
 
         // Stable sorting
         sessions.sort((a, b) {
@@ -543,26 +510,7 @@ class TrainerPtSessionsBloc
           return aTime.compareTo(bTime);
         });
 
-        int total = 0;
-        int completed = 0;
-        int scheduled = 0;
-
-        for (final result in statsResults) {
-
-          final data = result.data;
-
-          if (data == null) continue;
-
-          total += data.total;
-          completed += data.completed;
-          scheduled += data.scheduled;
-        }
-
-        stats = PtSessionStatsEntity(
-          total: total,
-          completed: completed,
-          scheduled: scheduled,
-        );
+        stats = statsResult.data ?? PtSessionStatsEntity.empty;
       }
 
       // =========================================================================

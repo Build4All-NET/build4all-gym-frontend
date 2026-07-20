@@ -11,6 +11,7 @@ import 'package:build4allgym/core/network/globals.dart' as g;
 import 'package:build4allgym/core/realtime/realtime_cubit.dart';
 import 'package:build4allgym/core/theme/theme_cubit.dart';
 import 'package:build4allgym/features/auth/presentation/login/bloc/auth_bloc.dart';
+import 'package:build4allgym/features/admin/AppBar/presentation/branch_context_cubit.dart';
 
 import 'app_view.dart';
 
@@ -35,6 +36,10 @@ class MyApp extends StatelessWidget {
 
         BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => RealtimeCubit()),
+
+        // Single source of truth for the selected admin/trainer branch,
+        // shared across every PT screen. See branch_context_cubit.dart.
+        BlocProvider(create: (_) => BranchContextCubit()),
 
         BlocProvider(
           create: (_) {
