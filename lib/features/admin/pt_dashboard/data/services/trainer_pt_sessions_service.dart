@@ -248,6 +248,29 @@ class TrainerPtSessionsService {
     }
   }
 
+  // ── PATCH check in SCHEDULED session ─────────────────────────────────────
+
+  Future<PtSessionModel> checkIn(int sessionId) async {
+    final headers = _authHeaders();
+    final uri = Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/check-in',
+    );
+
+    try {
+      final response = await _client.patch(uri, headers: headers);
+      debugPrint('CHECK IN STATUS: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(_decodeBody(response)) as Map<String, dynamic>;
+        return PtSessionModel.fromJson(decoded['data'] as Map<String, dynamic>);
+      }
+      _handleError(response);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
+
   // ── PATCH decline REQUESTED session ──────────────────────────────────────
 
   Future<PtSessionModel> declineRequest(int sessionId) async {

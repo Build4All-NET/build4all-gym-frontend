@@ -135,6 +135,18 @@ class PtSessionAcceptRequested extends TrainerPtSessionsEvent {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Check in a SCHEDULED session (SCHEDULED → CHECKED_IN)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class PtSessionCheckInRequested extends TrainerPtSessionsEvent {
+  final int sessionId;
+  const PtSessionCheckInRequested({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Decline REQUESTED session (REQUESTED → CANCELLED)
 // ─────────────────────────────────────────────────────────────────────────────
 

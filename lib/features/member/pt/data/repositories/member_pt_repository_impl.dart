@@ -182,17 +182,21 @@ class MemberPtRepositoryImpl implements MemberPtRepository {
   // ─────────────────────────────────────────────────────────────
   // Date-based slots
   //
-  // GET /api/trainers/{trainerId}/slots?date=YYYY-MM-DD
+  // GET /api/member/pt/trainers/{trainerId}/slots?branchId=&serviceId=&date=
   // ─────────────────────────────────────────────────────────────
 
   @override
   Future<({List<TimeSlotEntity>? data, Failure? failure})> getAvailableSlots({
     required int trainerId,
+    required int branchId,
+    required int serviceId,
     required DateTime date,
   }) async {
     try {
       final models = await _service.getAvailableSlots(
         trainerId: trainerId,
+        branchId: branchId,
+        serviceId: serviceId,
         date: date,
       );
 

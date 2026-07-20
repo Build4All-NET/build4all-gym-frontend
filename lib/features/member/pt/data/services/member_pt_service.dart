@@ -292,15 +292,22 @@ class MemberPtService {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // GET /api/trainers/{trainerId}/slots?date=YYYY-MM-DD
+  // GET /api/member/pt/trainers/{trainerId}/slots?branchId=&serviceId=&date=
   //
   // Old single-session flow.
   // Keep it for now.
   // Do not use it for package weekly schedule.
+  //
+  // The backend now derives slot duration from the PT service and
+  // validates branch/tenant/membership, so branchId and serviceId are
+  // required — the old date-only call (/api/trainers/{id}/slots) no
+  // longer exists.
   // ─────────────────────────────────────────────────────────────
 
   Future<List<TimeSlotModel>> getAvailableSlots({
     required int trainerId,
+    required int branchId,
+    required int serviceId,
     required DateTime date,
   }) async {
     final headers = await _authHeaders();
@@ -308,9 +315,11 @@ class MemberPtService {
     final formattedDate = _formatDate(date);
 
     final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/trainers/$trainerId/slots',
+      '${Env.apiProjectBaseUrl}/api/member/pt/trainers/$trainerId/slots',
     ).replace(
       queryParameters: {
+        'branchId': branchId.toString(),
+        'serviceId': serviceId.toString(),
         'date': formattedDate,
       },
     );

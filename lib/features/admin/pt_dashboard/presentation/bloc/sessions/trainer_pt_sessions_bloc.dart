@@ -33,6 +33,7 @@ class TrainerPtSessionsBloc
   final UpdateSessionStatusUseCase _updateStatus;
   final MarkSessionPaidUseCase _markPaid;
   final AcceptSessionRequestUseCase _acceptRequest;
+  final CheckInSessionUseCase _checkIn;
   final DeclineSessionRequestUseCase _declineRequest;
   final DeclineCancelRequestUseCase _declineCancelRequest;
 
@@ -65,6 +66,7 @@ class TrainerPtSessionsBloc
     required UpdateSessionStatusUseCase updateStatus,
     required MarkSessionPaidUseCase markPaid,
     required AcceptSessionRequestUseCase acceptRequest,
+    required CheckInSessionUseCase checkIn,
     required DeclineSessionRequestUseCase declineRequest,
     required DeclineCancelRequestUseCase declineCancelRequest,
   })  : _getSessions = getSessions,
@@ -75,6 +77,7 @@ class TrainerPtSessionsBloc
         _updateStatus = updateStatus,
         _markPaid = markPaid,
         _acceptRequest = acceptRequest,
+        _checkIn = checkIn,
         _declineRequest = declineRequest,
         _declineCancelRequest = declineCancelRequest,
         super(const PtSessionsInitial()) {
@@ -85,6 +88,7 @@ class TrainerPtSessionsBloc
     on<PtSessionStatusUpdateRequested>(_onStatusUpdate);
     on<PtSessionMarkPaidRequested>(_onMarkPaid);
     on<PtSessionAcceptRequested>(_onAcceptRequest);
+    on<PtSessionCheckInRequested>(_onCheckIn);
     on<PtSessionDeclineRequested>(_onDeclineRequest);
     on<PtSessionCancelApproved>(_onCancelApproved);
     on<PtSessionCancelDeclined>(_onCancelDeclined);
@@ -288,6 +292,39 @@ class TrainerPtSessionsBloc
       requestedSessions: updatedRequests,
     );
     emit(PtSessionActionSuccess(actionType: 'accepted', updatedState: updatedState));
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Check in a SCHEDULED session
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onCheckIn(
+      PtSessionCheckInRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _checkIn(sessionId: event.sessionId);
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to check in session.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    final updatedSessions = current.sessions.map((s) =>
+        s.ptSessionId == event.sessionId ? result.data! : s).toList();
+    final updatedState = current.copyWith(sessions: updatedSessions);
+
+    emit(PtSessionActionSuccess(actionType: 'checked_in', updatedState: updatedState));
     emit(updatedState);
   }
 

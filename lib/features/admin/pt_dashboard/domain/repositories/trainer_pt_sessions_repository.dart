@@ -66,6 +66,11 @@ abstract class TrainerPtSessionsRepository {
     required int sessionId,
   });
 
+  /// PATCH /api/trainer/pt-sessions/{id}/check-in  (SCHEDULED → CHECKED_IN)
+  Future<({PtSessionEntity? data, Failure? failure})> checkIn({
+    required int sessionId,
+  });
+
   /// PATCH /api/trainer/pt-sessions/{id}/decline  (REQUESTED → CANCELLED)
   Future<({PtSessionEntity? data, Failure? failure})> declineRequest({
     required int sessionId,

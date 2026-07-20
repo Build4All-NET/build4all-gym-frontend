@@ -170,7 +170,13 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     try {
       final tokenStore = const AdminTokenStore();
       final tenantIdStr = await tokenStore.getTenantId();
-      final tenantId = int.tryParse(tenantIdStr ?? '') ?? 1;
+      // Never default to tenant 1 — an unresolved tenant must fail closed
+      // (caught below, spinner cleared) rather than silently fetch another
+      // gym's PT services.
+      final tenantId = int.tryParse(tenantIdStr ?? '');
+      if (tenantId == null) {
+        throw StateError('Tenant id not resolved');
+      }
 
       final services = await PtServiceService().getServices(
         trainerId: trainer.id,

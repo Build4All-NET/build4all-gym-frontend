@@ -130,6 +130,18 @@ class AcceptSessionRequestUseCase {
       _repository.acceptRequest(sessionId: sessionId);
 }
 
+// ── 8a. Check in a SCHEDULED session ────────────────────────────────────────
+
+class CheckInSessionUseCase {
+  final TrainerPtSessionsRepository _repository;
+  const CheckInSessionUseCase(this._repository);
+
+  Future<({PtSessionEntity? data, Failure? failure})> call({
+    required int sessionId,
+  }) =>
+      _repository.checkIn(sessionId: sessionId);
+}
+
 // ── 9. Decline REQUESTED session ────────────────────────────────────────────
 
 class DeclineSessionRequestUseCase {

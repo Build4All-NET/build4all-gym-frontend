@@ -64,7 +64,7 @@ class TrainerMainScreen extends StatefulWidget {
 class _TrainerMainScreenState extends State<TrainerMainScreen> {
   late int _currentIndex;
   int? _selectedBranchId;
-  int  _tenantId   = 1;
+  int  _tenantId   = 0;   // 0 = not resolved yet — never invent/assume tenant 1
   int  _trainerId  = 0;   // 0 = admin all-trainers mode
   bool _isAdmin    = true;
   bool _roleLoaded = false;
@@ -96,6 +96,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       updateStatus:         UpdateSessionStatusUseCase(repository),
       markPaid:             MarkSessionPaidUseCase(repository),
       acceptRequest:        AcceptSessionRequestUseCase(repository),
+      checkIn:              CheckInSessionUseCase(repository),
       declineRequest:       DeclineSessionRequestUseCase(repository),
       declineCancelRequest: DeclineCancelRequestUseCase(repository),
     );
@@ -124,8 +125,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     print('the role is $_token.getRole()');
 
-    final tenantIdRaw = _token.getTenantId();
-    final parsedTenantId = int.tryParse(tenantIdRaw.toString()) ?? 1;
+    // BUG FIX: getTenantId() is async — this used to call .toString() on
+    // the unawaited Future itself, which never parses as an int, so
+    // _tenantId was silently hardcoded to 1 on every single sync
+    // regardless of the admin's real tenant. Resolve it properly instead.
+    _resolveTenantId();
+
     final isAdmin     = profile.isAdminRole;
     final isTrainer   = profile.isTrainerRole;
     final isReception = profile.isReceptionRole;
@@ -141,7 +146,6 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     }
 
     setState(() {
-      _tenantId       = parsedTenantId;
       _isAdmin        = effectiveIsAdmin;
       _gymRolesLoaded = profile.gymRolesLoaded;
     });
@@ -166,6 +170,16 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     } else if (effectiveIsAdmin && _trainers.isEmpty && !_loadingTrainers) {
       // ADMIN/OWNER: load trainer list, then start bloc in all-trainers mode
       _loadTrainersForAdmin();
+    }
+  }
+
+  Future<void> _resolveTenantId() async {
+    final tenantIdRaw = await _token.getTenantId();
+    // Never default to tenant 1 — an unresolved tenant id must surface as
+    // "not resolved" (0), not silently borrow another gym's data.
+    final parsedTenantId = int.tryParse(tenantIdRaw ?? '') ?? 0;
+    if (mounted && parsedTenantId != _tenantId) {
+      setState(() => _tenantId = parsedTenantId);
     }
   }
 

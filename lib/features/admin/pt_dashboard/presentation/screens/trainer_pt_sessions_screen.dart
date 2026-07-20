@@ -96,9 +96,19 @@ class _SessionsView extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsetsDirectional.only(end: 12),
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    final tenantIdStr = tokenStore.getTenantId();
-                    final tenantId = int.tryParse(tenantIdStr.toString()) ?? 1;
+                  onPressed: () async {
+                    // BUG FIX: getTenantId() is async — calling .toString() on
+                    // the unawaited Future always failed to parse, so this
+                    // silently fell back to the hardcoded "1" on every single
+                    // click regardless of the admin's real tenant.
+                    final tenantIdStr = await tokenStore.getTenantId();
+                    final tenantId = int.tryParse(tenantIdStr ?? '');
+                    if (tenantId == null) {
+                      return;
+                    }
+                    if (!context.mounted) {
+                      return;
+                    }
                     BookSessionSheet.show(
                       context,
                       branchId:     branchId,
