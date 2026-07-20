@@ -31,19 +31,19 @@ class MemberStatsRow extends StatelessWidget {
         SizedBox(width: tokens.spacing.md),
         Expanded(
           child: _StatsCard(
-            icon: Icons.local_fire_department_outlined,
-            iconColor: tokens.colors.danger,
-            value: stats.kgLost.toStringAsFixed(1),
-            label: l10n.home_kgLost,
+            icon: Icons.fitness_center_outlined,
+            iconColor: tokens.colors.success,
+            value: stats.workoutsCount.toString(),
+            label: l10n.home_workouts,
           ),
         ),
         SizedBox(width: tokens.spacing.md),
         Expanded(
           child: _StatsCard(
-            icon: Icons.fitness_center_outlined,
-            iconColor: tokens.colors.success,
-            value: stats.workoutsCount.toString(),
-            label: l10n.home_workouts,
+            icon: Icons.event_available_outlined,
+            iconColor: tokens.colors.danger,
+            value: stats.upcomingCount.toString(),
+            label: l10n.home_upcoming,
           ),
         ),
       ],

@@ -1,13 +1,13 @@
 class MemberStats {
   final int sessionsCount;
-  final double kgLost;
   final int workoutsCount;
+  final int upcomingCount;
   final String? referralCode;
 
   const MemberStats({
     required this.sessionsCount,
-    required this.kgLost,
     required this.workoutsCount,
+    required this.upcomingCount,
     this.referralCode,
   });
 }

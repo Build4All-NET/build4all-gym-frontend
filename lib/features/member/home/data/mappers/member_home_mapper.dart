@@ -92,13 +92,13 @@ extension MemberStatsModelMapper on MemberStatsModel {
   ///
   /// Example:
   /// sessionsCount = 12
-  /// kgLost = 8.5
   /// workoutsCount = 24
+  /// upcomingCount = 3
   MemberStats toEntity() {
     return MemberStats(
       sessionsCount: sessionsCount,
-      kgLost: kgLost,
       workoutsCount: workoutsCount,
+      upcomingCount: upcomingCount,
       referralCode: referralCode,
     );
   }

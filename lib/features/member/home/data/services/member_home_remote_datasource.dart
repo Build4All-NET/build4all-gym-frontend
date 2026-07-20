@@ -41,8 +41,8 @@ import '../models/member_home_model.dart';
 //   },
 //   "stats": {
 //     "sessionsCount": 12,
-//     "kgLost": 8.5,
 //     "workoutsCount": 24,
+//     "upcomingCount": 3,
 //     "referralCode": "FIT2024"
 //   },
 //   "schedule": {
