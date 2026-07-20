@@ -59,7 +59,13 @@ class _EmployeeCheckinsScreenState extends State<EmployeeCheckinsScreen> {
   }
 
   void _onBranchChanged(int? branchId) {
-    final effective = branchId ?? context.read<AdminProfileCubit>().state.branchId ?? 1;
+    // Never default to branch 1 — if neither an explicit selection nor the
+    // admin's profile branch is known yet, leave branch unresolved rather
+    // than silently showing/mutating another branch's check-ins.
+    final effective = branchId ?? context.read<AdminProfileCubit>().state.branchId;
+    if (effective == null) {
+      return;
+    }
     setState(() {
       _selectedBranchId = effective;
       _branchResolved = true;
