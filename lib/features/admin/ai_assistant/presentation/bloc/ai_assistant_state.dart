@@ -58,10 +58,15 @@ class AiAssistantAnswered extends AiAssistantState {
   final List<AiStatCardEntity> statCards;          // metric cards from this answer
   final List<String>           suggestedFollowUps; // 2-3 follow-up chips
 
+  // Non-null when the last reply was a translated backend error message
+  // (e.g. AI_PROVIDER_DISABLED) rather than a real AI answer.
+  final String?                errorCode;
+
   const AiAssistantAnswered({
     required this.conversation,
     required this.statCards,
     required this.suggestedFollowUps,
+    this.errorCode,
   });
 }
 

@@ -38,12 +38,20 @@ class ApproveRefundRequestEvent extends AdminMembershipRequestsEvent {
   final double? deductionAmount;
   final String? adminNote;
   final String successMessage;
+
+  // Translates a stable backend errorCode (e.g. REFUND_PROVIDER_NOT_SUPPORTED)
+  // into a localized message, used when the approve call succeeds at the
+  // HTTP level but the refund itself could not be completed (no refund API
+  // available yet for that payment provider).
+  final String Function(String? errorCode) translateErrorCode;
+
   ApproveRefundRequestEvent({
     required this.refundId,
     required this.refundAmount,
     this.deductionAmount,
     this.adminNote,
     required this.successMessage,
+    required this.translateErrorCode,
   });
 }
 

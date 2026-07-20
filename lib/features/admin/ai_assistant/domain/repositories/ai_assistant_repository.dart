@@ -17,16 +17,25 @@ import '../entities/ai_stat_card_entity.dart';
 import '../entities/ai_message_entity.dart';
 import '../entities/suggested_question_entity.dart';
 
-/// The result of a successful AI query — returned to the BLoC by the use case.
+/// The result of an AI query call — returned to the BLoC by the use case.
+///
+/// A successful HTTP response does not guarantee a real AI answer: the
+/// backend always returns HTTP 200, even when the provider is disabled,
+/// misconfigured, or timed out. Callers must check [dataAvailable] before
+/// treating [answer] as genuine AI output.
 class AiQueryResult {
   final String              answer;            // the AI's natural-language answer
   final List<AiStatCardEntity> statCards;      // metric cards (may be empty)
   final List<String>        suggestedFollowUps; // follow-up chip questions (≤3)
+  final bool                dataAvailable;      // false = answer is not a real AI response
+  final String?             errorCode;          // stable code when dataAvailable is false
 
   const AiQueryResult({
     required this.answer,
     required this.statCards,
     required this.suggestedFollowUps,
+    this.dataAvailable = true,
+    this.errorCode,
   });
 }
 

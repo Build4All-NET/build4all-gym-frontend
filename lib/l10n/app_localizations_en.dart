@@ -483,7 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_sessions => 'Sessions';
 
   @override
-  String get home_kgLost => 'kg lost';
+  String get home_upcoming => 'Upcoming';
 
   @override
   String get home_workouts => 'Workouts';
@@ -1555,6 +1555,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiErrorOffline => 'Sorry, I couldn\'t process your request. Please try again.';
+
+  @override
+  String get backendErrorAiProviderDisabled => 'The AI assistant is currently unavailable. Please try again later.';
+
+  @override
+  String get backendErrorAiContextUnavailable => 'We couldn\'t load your gym\'s data right now. Please try again shortly.';
+
+  @override
+  String get backendErrorAiProviderTimeout => 'The AI assistant took too long to respond. Please try again.';
+
+  @override
+  String get backendErrorAiInvalidResponse => 'The AI assistant returned an unexpected response. Please try again.';
+
+  @override
+  String get backendErrorAiProviderError => 'The AI assistant ran into a problem. Please try again.';
+
+  @override
+  String get backendErrorRefundProviderNotSupported => 'Automatic refunds aren\'t available yet for this payment method. Our team will process it manually.';
+
+  @override
+  String get backendErrorRefundProviderIntegrationRequired => 'This refund needs manual processing. Our team will follow up shortly.';
+
+  @override
+  String get backendErrorPaymentVerificationFailed => 'We couldn\'t verify the refund with the payment provider. Please try again or contact support.';
+
+  @override
+  String get backendErrorInvalidRequestBody => 'Something in your request wasn\'t valid. Please check your input and try again.';
+
+  @override
+  String get backendErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get myInfoFitnessGoal => 'Fitness Goal';
+
+  @override
+  String get fitnessGoalMuscleGain => 'Muscle Gain';
+
+  @override
+  String get fitnessGoalWeightLoss => 'Weight Loss';
+
+  @override
+  String get fitnessGoalGeneralFitness => 'General Fitness';
+
+  @override
+  String get fitnessGoalEndurance => 'Endurance';
+
+  @override
+  String get fitnessGoalFlexibility => 'Flexibility';
+
+  @override
+  String get fitnessGoalConsistency => 'Consistency';
+
+  @override
+  String get fitnessGoalWellness => 'Wellness';
+
+  @override
+  String get myInfoFitnessGoalSaveError => 'Failed to update fitness goal. Please try again.';
 
   @override
   String get aiErrorGeneric => 'Something went wrong. Please try again.';

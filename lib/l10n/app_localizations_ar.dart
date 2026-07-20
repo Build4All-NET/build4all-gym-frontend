@@ -483,7 +483,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_sessions => 'حصة';
 
   @override
-  String get home_kgLost => 'كجم فقدان';
+  String get home_upcoming => 'القادمة';
 
   @override
   String get home_workouts => 'تمرين';
@@ -1555,6 +1555,63 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aiErrorOffline => 'تعذر الحصول على رد. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get backendErrorAiProviderDisabled => 'مساعد الذكاء الاصطناعي غير متاح حاليًا. حاول مرة أخرى لاحقًا.';
+
+  @override
+  String get backendErrorAiContextUnavailable => 'تعذر تحميل بيانات النادي الآن. حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get backendErrorAiProviderTimeout => 'استغرق مساعد الذكاء الاصطناعي وقتًا طويلاً للرد. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorAiInvalidResponse => 'أعاد مساعد الذكاء الاصطناعي ردًا غير متوقع. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorAiProviderError => 'واجه مساعد الذكاء الاصطناعي مشكلة. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorRefundProviderNotSupported => 'الاسترداد التلقائي غير متاح بعد لطريقة الدفع هذه. سيقوم فريقنا بمعالجته يدويًا.';
+
+  @override
+  String get backendErrorRefundProviderIntegrationRequired => 'يحتاج هذا الاسترداد إلى معالجة يدوية. سيتواصل فريقنا معك قريبًا.';
+
+  @override
+  String get backendErrorPaymentVerificationFailed => 'تعذر التحقق من الاسترداد مع مزود الدفع. حاول مرة أخرى أو تواصل مع الدعم.';
+
+  @override
+  String get backendErrorInvalidRequestBody => 'هناك خطأ في البيانات المُرسلة. تحقق من المدخلات وحاول مرة أخرى.';
+
+  @override
+  String get backendErrorGeneric => 'حدث خطأ ما. حاول مرة أخرى.';
+
+  @override
+  String get myInfoFitnessGoal => 'الهدف الرياضي';
+
+  @override
+  String get fitnessGoalMuscleGain => 'بناء العضلات';
+
+  @override
+  String get fitnessGoalWeightLoss => 'فقدان الوزن';
+
+  @override
+  String get fitnessGoalGeneralFitness => 'لياقة عامة';
+
+  @override
+  String get fitnessGoalEndurance => 'التحمل';
+
+  @override
+  String get fitnessGoalFlexibility => 'المرونة';
+
+  @override
+  String get fitnessGoalConsistency => 'الانتظام';
+
+  @override
+  String get fitnessGoalWellness => 'الصحة العامة';
+
+  @override
+  String get myInfoFitnessGoalSaveError => 'تعذر تحديث الهدف الرياضي. حاول مرة أخرى.';
 
   @override
   String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';

@@ -7,7 +7,7 @@ abstract class AdminMembershipRequestsRepository {
   Future<void> rejectRequest(int requestId, String reason);
 
   Future<List<AdminRefundRequestEntity>> getRefundRequests({String status = 'pending'});
-  Future<void> approveRefundRequest(int refundId, double refundAmount,
+  Future<RefundApprovalResult> approveRefundRequest(int refundId, double refundAmount,
       {double? deductionAmount, String? adminNote});
   Future<void> rejectRefundRequest(int refundId, String reason);
 }

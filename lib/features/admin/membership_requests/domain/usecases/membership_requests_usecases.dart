@@ -37,7 +37,7 @@ class ApproveRefundRequestUseCase {
   final AdminMembershipRequestsRepository _repo;
   ApproveRefundRequestUseCase(this._repo);
 
-  Future<void> call(int refundId, double refundAmount,
+  Future<RefundApprovalResult> call(int refundId, double refundAmount,
           {double? deductionAmount, String? adminNote}) =>
       _repo.approveRefundRequest(refundId, refundAmount,
           deductionAmount: deductionAmount, adminNote: adminNote);

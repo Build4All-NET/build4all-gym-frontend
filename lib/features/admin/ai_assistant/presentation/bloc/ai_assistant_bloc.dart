@@ -79,13 +79,23 @@ class AiAssistantBloc extends Bloc<AiAssistantEvent, AiAssistantState> {
         query:               event.query,
         conversationHistory: event.conversationHistory,
       );
+
+      // The HTTP call succeeded, but the backend may still report that no
+      // real AI answer was produced (provider disabled, timeout, missing
+      // context, invalid response). In that case `answer` is not a genuine
+      // AI reply — show a translated, stable message instead.
+      final replyText = result.dataAvailable
+          ? result.answer
+          : event.translateErrorCode(result.errorCode);
+
       _conversation = _conversation.withMessage(
-        AiMessageEntity(role: 'assistant', content: result.answer),
+        AiMessageEntity(role: 'assistant', content: replyText),
       );
       emit(AiAssistantAnswered(
         conversation:       _conversation,
         statCards:          result.statCards,
         suggestedFollowUps: result.suggestedFollowUps,
+        errorCode:          result.dataAvailable ? null : result.errorCode,
       ));
     } catch (e) {
       // Use the localised error string passed in from the screen
@@ -107,6 +117,7 @@ class AiAssistantBloc extends Bloc<AiAssistantEvent, AiAssistantState> {
       query:                event.question,
       conversationHistory:  [],
       errorFallbackMessage: event.errorFallbackMessage,
+      translateErrorCode:   event.translateErrorCode,
     ));
   }
 
@@ -117,6 +128,7 @@ class AiAssistantBloc extends Bloc<AiAssistantEvent, AiAssistantState> {
       query:                event.queryText,
       conversationHistory:  [],
       errorFallbackMessage: event.errorFallbackMessage,
+      translateErrorCode:   event.translateErrorCode,
     ));
   }
 

@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:build4allgym/core/error/backend_error_code_translator.dart';
 import 'package:build4allgym/l10n/app_localizations.dart';
 
 import '../../../../admin/AppBar/presentation/admin_app_bar.dart';
@@ -45,6 +46,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
         query:                query,
         conversationHistory:  history,
         errorFallbackMessage: l10n.aiErrorOffline,
+        translateErrorCode:   (code) => translateBackendErrorCode(l10n, code),
       ),
     );
   }
@@ -230,6 +232,7 @@ class _StartScreen extends StatelessWidget {
                   AiHistoryItemTapped(
                     q.queryText,
                     errorFallbackMessage: l10n.aiErrorOffline,
+                    translateErrorCode: (code) => translateBackendErrorCode(l10n, code),
                   ),
                 ),
               ),

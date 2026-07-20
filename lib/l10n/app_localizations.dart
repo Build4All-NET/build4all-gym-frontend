@@ -1031,11 +1031,11 @@ abstract class AppLocalizations {
   /// **'Sessions'**
   String get home_sessions;
 
-  /// No description provided for @home_kgLost.
+  /// No description provided for @home_upcoming.
   ///
   /// In en, this message translates to:
-  /// **'kg lost'**
-  String get home_kgLost;
+  /// **'Upcoming'**
+  String get home_upcoming;
 
   /// No description provided for @home_workouts.
   ///
@@ -3094,6 +3094,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sorry, I couldn\'t process your request. Please try again.'**
   String get aiErrorOffline;
+
+  /// No description provided for @backendErrorAiProviderDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant is currently unavailable. Please try again later.'**
+  String get backendErrorAiProviderDisabled;
+
+  /// No description provided for @backendErrorAiContextUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your gym\'s data right now. Please try again shortly.'**
+  String get backendErrorAiContextUnavailable;
+
+  /// No description provided for @backendErrorAiProviderTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant took too long to respond. Please try again.'**
+  String get backendErrorAiProviderTimeout;
+
+  /// No description provided for @backendErrorAiInvalidResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant returned an unexpected response. Please try again.'**
+  String get backendErrorAiInvalidResponse;
+
+  /// No description provided for @backendErrorAiProviderError.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant ran into a problem. Please try again.'**
+  String get backendErrorAiProviderError;
+
+  /// No description provided for @backendErrorRefundProviderNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic refunds aren\'t available yet for this payment method. Our team will process it manually.'**
+  String get backendErrorRefundProviderNotSupported;
+
+  /// No description provided for @backendErrorRefundProviderIntegrationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This refund needs manual processing. Our team will follow up shortly.'**
+  String get backendErrorRefundProviderIntegrationRequired;
+
+  /// No description provided for @backendErrorPaymentVerificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t verify the refund with the payment provider. Please try again or contact support.'**
+  String get backendErrorPaymentVerificationFailed;
+
+  /// No description provided for @backendErrorInvalidRequestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something in your request wasn\'t valid. Please check your input and try again.'**
+  String get backendErrorInvalidRequestBody;
+
+  /// No description provided for @backendErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get backendErrorGeneric;
+
+  /// No description provided for @myInfoFitnessGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness Goal'**
+  String get myInfoFitnessGoal;
+
+  /// No description provided for @fitnessGoalMuscleGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Muscle Gain'**
+  String get fitnessGoalMuscleGain;
+
+  /// No description provided for @fitnessGoalWeightLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Loss'**
+  String get fitnessGoalWeightLoss;
+
+  /// No description provided for @fitnessGoalGeneralFitness.
+  ///
+  /// In en, this message translates to:
+  /// **'General Fitness'**
+  String get fitnessGoalGeneralFitness;
+
+  /// No description provided for @fitnessGoalEndurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Endurance'**
+  String get fitnessGoalEndurance;
+
+  /// No description provided for @fitnessGoalFlexibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexibility'**
+  String get fitnessGoalFlexibility;
+
+  /// No description provided for @fitnessGoalConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency'**
+  String get fitnessGoalConsistency;
+
+  /// No description provided for @fitnessGoalWellness.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness'**
+  String get fitnessGoalWellness;
+
+  /// No description provided for @myInfoFitnessGoalSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update fitness goal. Please try again.'**
+  String get myInfoFitnessGoalSaveError;
 
   /// Generic error message shown in the error view
   ///

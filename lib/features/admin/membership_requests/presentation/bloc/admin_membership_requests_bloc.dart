@@ -150,12 +150,30 @@ class AdminMembershipRequestsBloc
       actingOnRefundId: event.refundId,
     ));
     try {
-      await _approveRefund(
+      final result = await _approveRefund(
         event.refundId,
         event.refundAmount,
         deductionAmount: event.deductionAmount,
         adminNote: event.adminNote,
       );
+
+      // The HTTP call succeeded, but the refund itself may not have — e.g.
+      // PayPal/MPGS have no refund API available yet. That is not a request
+      // failure; the request stays in the pending list (still needs manual
+      // handling), and the admin must see a clear, distinct message.
+      if (!result.succeeded) {
+        emit(AdminMembershipRequestsActionFailure(
+          requests: current.requests,
+          refundRequests: current.refundRequests,
+          message: event.translateErrorCode(result.errorCode),
+        ));
+        emit(AdminMembershipRequestsLoaded(
+          requests: current.requests,
+          refundRequests: current.refundRequests,
+        ));
+        return;
+      }
+
       final updated = current.refundRequests
           .where((r) => r.refundId != event.refundId)
           .toList();
