@@ -25,6 +25,7 @@ import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
 import '../widgets/session_card_widget.dart';
 import '../widgets/book_session_sheet_widget.dart';
+import '../../../../../core/utils/tenant_id_parser.dart';
 
 class TrainerPtSessionsScreen extends StatelessWidget {
   final int  branchId;
@@ -102,7 +103,7 @@ class _SessionsView extends StatelessWidget {
                     // silently fell back to the hardcoded "1" on every single
                     // click regardless of the admin's real tenant.
                     final tenantIdStr = await tokenStore.getTenantId();
-                    final tenantId = int.tryParse(tenantIdStr ?? '');
+                    final tenantId = TenantIdParser.parseOrNull(tenantIdStr);
                     if (tenantId == null) {
                       return;
                     }

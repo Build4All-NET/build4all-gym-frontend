@@ -16,6 +16,7 @@ import '../../../../../l10n/app_localizations.dart';
 
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/utils/tenant_id_parser.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
 import '../../../../admin/AppBar/presentation/branch_context_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
@@ -177,7 +178,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     final tenantIdRaw = await _token.getTenantId();
     // Never default to tenant 1 — an unresolved tenant id must surface as
     // "not resolved" (0), not silently borrow another gym's data.
-    final parsedTenantId = int.tryParse(tenantIdRaw ?? '') ?? 0;
+    final parsedTenantId = TenantIdParser.parseOrNull(tenantIdRaw) ?? 0;
     if (mounted && parsedTenantId != _tenantId) {
       setState(() => _tenantId = parsedTenantId);
     }

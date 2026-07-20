@@ -304,6 +304,30 @@ class MemberPtService {
   // longer exists.
   // ─────────────────────────────────────────────────────────────
 
+  // Extracted as a pure static function so the exact endpoint path and
+  // required query parameters (branchId, serviceId, date) can be asserted
+  // in a unit test without mocking the HTTP client.
+  static Uri buildAvailableSlotsUri({
+    required int trainerId,
+    required int branchId,
+    required int serviceId,
+    required DateTime date,
+  }) {
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    final formattedDate = '${date.year}-$month-$day';
+
+    return Uri.parse(
+      '${Env.apiProjectBaseUrl}/api/member/pt/trainers/$trainerId/slots',
+    ).replace(
+      queryParameters: {
+        'branchId': branchId.toString(),
+        'serviceId': serviceId.toString(),
+        'date': formattedDate,
+      },
+    );
+  }
+
   Future<List<TimeSlotModel>> getAvailableSlots({
     required int trainerId,
     required int branchId,
@@ -312,16 +336,11 @@ class MemberPtService {
   }) async {
     final headers = await _authHeaders();
 
-    final formattedDate = _formatDate(date);
-
-    final uri = Uri.parse(
-      '${Env.apiProjectBaseUrl}/api/member/pt/trainers/$trainerId/slots',
-    ).replace(
-      queryParameters: {
-        'branchId': branchId.toString(),
-        'serviceId': serviceId.toString(),
-        'date': formattedDate,
-      },
+    final uri = buildAvailableSlotsUri(
+      trainerId: trainerId,
+      branchId: branchId,
+      serviceId: serviceId,
+      date: date,
     );
 
     try {

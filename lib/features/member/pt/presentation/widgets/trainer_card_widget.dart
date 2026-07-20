@@ -251,11 +251,29 @@ class TrainerCardWidget extends StatelessWidget {
     );
   }
 
-  String _restrictionMessage(AppLocalizations l10n, String? restrictionCode) {
+  // Public + pure (no BuildContext/AppLocalizations needed) so the
+  // restriction-code -> ARB-key mapping can be unit tested without a full
+  // widget/localization test harness.
+  static const String restrictionKeyNoMembership = 'noActiveMembership';
+  static const String restrictionKeyWrongBranch = 'trainerNotAvailableAtYourBranch';
+  static const String restrictionKeyDefault = 'trainerNotBookable';
+
+  static String restrictionMessageKey(String? restrictionCode) {
     switch (restrictionCode) {
       case 'NO_ACTIVE_MEMBERSHIP':
-        return l10n.noActiveMembership;
+        return restrictionKeyNoMembership;
       case 'TRAINER_NOT_AVAILABLE_AT_MEMBERSHIP_BRANCH':
+        return restrictionKeyWrongBranch;
+      default:
+        return restrictionKeyDefault;
+    }
+  }
+
+  String _restrictionMessage(AppLocalizations l10n, String? restrictionCode) {
+    switch (restrictionMessageKey(restrictionCode)) {
+      case restrictionKeyNoMembership:
+        return l10n.noActiveMembership;
+      case restrictionKeyWrongBranch:
         return l10n.trainerNotAvailableAtYourBranch;
       default:
         return l10n.trainerNotBookable;

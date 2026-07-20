@@ -250,11 +250,22 @@ class TrainerPtSessionsService {
 
   // ── PATCH check in SCHEDULED session ─────────────────────────────────────
 
-  Future<PtSessionModel> checkIn(int sessionId) async {
-    final headers = _authHeaders();
-    final uri = Uri.parse(
+  // Extracted as a pure static function so the exact endpoint path can be
+  // asserted in a unit test without mocking the HTTP client. The HTTP
+  // method itself (PATCH, matching the backend's
+  // TrainerPtSessionController.checkIn @PatchMapping) is verified by direct
+  // code reading below, not by an executable test — this codebase has no
+  // established http.Client-mocking seam (AuthedHttpClient is constructed
+  // internally, not injected).
+  static Uri buildCheckInUri(int sessionId) {
+    return Uri.parse(
       '${Env.apiProjectBaseUrl}/api/trainer/pt-sessions/$sessionId/check-in',
     );
+  }
+
+  Future<PtSessionModel> checkIn(int sessionId) async {
+    final headers = _authHeaders();
+    final uri = buildCheckInUri(sessionId);
 
     try {
       final response = await _client.patch(uri, headers: headers);
