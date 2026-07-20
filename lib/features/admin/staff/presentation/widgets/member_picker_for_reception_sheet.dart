@@ -78,7 +78,10 @@ class _MemberPickerForReceptionSheetState
     });
     try {
       final raw = await _membersService.getMembers(
-        branchId: 1,
+        // branchId omitted (null) so every branch's members are searchable
+        // when assigning reception staff — a literal branchId is NOT
+        // ignored by the backend (it filters by it when present), so
+        // hardcoding one would have hidden every other branch's members.
         search:   _searchController.text.trim(),
         size:     30,
         page:     1,

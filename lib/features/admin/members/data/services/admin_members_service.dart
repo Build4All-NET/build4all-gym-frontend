@@ -55,7 +55,13 @@ class AdminMembersService {
   // GET /api/admin/members
   // ---------------------------------------------------------------------------
   Future<Map<String, dynamic>> getMembers({
-    required int branchId,
+    // Nullable: the backend's branchId query param is optional and, when
+    // omitted, returns members across every branch in the tenant. Passing a
+    // literal branchId here (e.g. 1) is NOT ignored — MemberListRepository
+    // filters by it when non-null — so a hardcoded value would silently
+    // hide every other branch's members from callers that want "all
+    // branches" (see the trainer/reception member-picker sheets).
+    int? branchId,
     String status = '',
     String gender = '',
     String search = '',
@@ -68,7 +74,7 @@ class AdminMembersService {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/members')
         .replace(queryParameters: {
-      'branchId': branchId.toString(),
+      if (branchId != null) 'branchId': branchId.toString(),
       'page':     (page - 1).toString(),
       'size':     size.toString(),
       'sort':     sort,
