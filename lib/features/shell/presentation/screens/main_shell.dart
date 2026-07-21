@@ -235,7 +235,7 @@ class _MainShellState extends State<MainShell> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout_rounded),
-              title: const Text('Logout'),
+              title: Text(l10n.navLogout),
               onTap: _logout,
             ),
             const SizedBox(height: 16),
@@ -375,6 +375,7 @@ class _ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthBloc>().state.user;
+    final l10n = AppLocalizations.of(context)!;
 
     return Center(
       child: Column(
@@ -387,7 +388,7 @@ class _ProfileTab extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            user?.displayName ?? 'Profile',
+            user?.displayName ?? l10n.profileFallbackLabel,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -406,7 +407,7 @@ class _ProfileTab extends StatelessWidget {
               context.read<AuthBloc>().add(const AuthLoggedOut());
             },
             icon: const Icon(Icons.logout_rounded, size: 18),
-            label: const Text('Logout'),
+            label: Text(l10n.navLogout),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
               foregroundColor: Colors.white,

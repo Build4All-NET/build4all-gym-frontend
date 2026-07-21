@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/suggested_question_entity.dart';
 import '../bloc/ai_assistant_bloc.dart';
@@ -60,7 +61,11 @@ class _SuggestionChip extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
-        context.read<AiAssistantBloc>().add(AiSuggestionTapped(question, errorFallbackMessage: l10n.aiErrorOffline));
+        context.read<AiAssistantBloc>().add(AiSuggestionTapped(
+          question,
+          errorFallbackMessage: l10n.aiErrorOffline,
+          translateErrorCode: (code) => translateBackendErrorCode(l10n, code),
+        ));
       },
       child: Container(
         width: double.infinity,

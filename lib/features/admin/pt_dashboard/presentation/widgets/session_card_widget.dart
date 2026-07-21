@@ -341,6 +341,15 @@ class SessionCardWidget extends StatelessWidget {
                           const SizedBox(width: 8),
                         ],
                         _ActionButton(
+                          label: l10n.trainer_checkInButton,
+                          icon:  Icons.how_to_reg_rounded,
+                          color: const Color(0xFF4F46E5),
+                          outlined: true,
+                          onTap: () => context.read<TrainerPtSessionsBloc>().add(
+                              PtSessionCheckInRequested(sessionId: session.ptSessionId)),
+                        ),
+                        const SizedBox(width: 8),
+                        _ActionButton(
                           label: l10n.trainer_completeButton,
                           icon:  Icons.check_circle_outline,
                           color: const Color(0xFF22C55E),
@@ -581,6 +590,10 @@ class _StatusBadge extends StatelessWidget {
         bg = const Color(0xFFFEE2E2); fg = const Color(0xFFDC2626); label = l10n.trainer_statusCancelled; break;
       case 'NO_SHOW':
         bg = const Color(0xFFFEF3C7); fg = const Color(0xFFD97706); label = l10n.trainer_statusNoShow;   break;
+      case 'DECLINED':
+        bg = const Color(0xFFFEE2E2); fg = const Color(0xFFDC2626); label = l10n.trainer_statusDeclined; break;
+      case 'CHECKED_IN':
+        bg = const Color(0xFFD1FAE5); fg = const Color(0xFF059669); label = l10n.trainer_statusCheckedIn; break;
       default:
         bg = const Color(0xFFEEF2FF); fg = const Color(0xFF4F46E5); label = l10n.trainer_statusScheduled;
     }

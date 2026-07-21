@@ -472,6 +472,9 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
 
     if (!context.mounted) return;
 
+    final paymentNotConfirmedMessage =
+        AppLocalizations.of(context)!.paymentNotYetConfirmed;
+
     showModalBottomSheet(
       context: context,
       isDismissible: false,
@@ -492,6 +495,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
               CheckRedirectPaymentEvent(
                 previousState: state.previousState,
                 pendingResult: state.result,
+                paymentNotConfirmedMessage: paymentNotConfirmedMessage,
               ),
             );
           },

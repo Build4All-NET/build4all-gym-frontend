@@ -30,6 +30,10 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
   String? _selectedGender;
   DateTime? _selectedDob;
 
+  // Defaults to GENERAL_FITNESS to match the backend's safe default for
+  // members who haven't picked a goal yet — never left null.
+  String _selectedFitnessGoal = 'GENERAL_FITNESS';
+
   bool _loading = true;
   bool _saving = false;
   String? _error;
@@ -39,6 +43,19 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
     'FEMALE',
     'OTHER',
     'PREFER_NOT_TO_SAY',
+  ];
+
+  // Must match the backend's FitnessGoal enum exactly (see
+  // com.build4all_gym.user.domain.FitnessGoal). This is a controlled list,
+  // not free text.
+  static const List<String> _fitnessGoals = [
+    'MUSCLE_GAIN',
+    'WEIGHT_LOSS',
+    'GENERAL_FITNESS',
+    'ENDURANCE',
+    'FLEXIBILITY',
+    'CONSISTENCY',
+    'WELLNESS',
   ];
 
   @override
@@ -78,6 +95,12 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
       final branches = results[1] as List<Map<String, dynamic>>;
 
       _selectedGender = profile['gender'] as String?;
+
+      final rawFitnessGoal = profile['fitnessGoal'] as String?;
+      _selectedFitnessGoal = rawFitnessGoal != null &&
+              _fitnessGoals.contains(rawFitnessGoal)
+          ? rawFitnessGoal
+          : 'GENERAL_FITNESS';
 
       final branchValue = profile['preferredBranchId'];
 
@@ -199,6 +222,21 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
             : _emergencyPhoneController.text.trim(),
       });
 
+      try {
+        await _service.updateFitnessGoal(_selectedFitnessGoal);
+      } catch (e, stack) {
+        debugPrint("FITNESS GOAL SAVE ERROR: $e");
+        debugPrint("STACK: $stack");
+
+        if (!mounted) return;
+
+        setState(() {
+          _saving = false;
+          _error = l10n.myInfoFitnessGoalSaveError;
+        });
+        return;
+      }
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -234,6 +272,27 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
         return l10n.myInfoGenderPreferNotToSay;
       default:
         return gender;
+    }
+  }
+
+  String _fitnessGoalLabel(AppLocalizations l10n, String goal) {
+    switch (goal) {
+      case 'MUSCLE_GAIN':
+        return l10n.fitnessGoalMuscleGain;
+      case 'WEIGHT_LOSS':
+        return l10n.fitnessGoalWeightLoss;
+      case 'GENERAL_FITNESS':
+        return l10n.fitnessGoalGeneralFitness;
+      case 'ENDURANCE':
+        return l10n.fitnessGoalEndurance;
+      case 'FLEXIBILITY':
+        return l10n.fitnessGoalFlexibility;
+      case 'CONSISTENCY':
+        return l10n.fitnessGoalConsistency;
+      case 'WELLNESS':
+        return l10n.fitnessGoalWellness;
+      default:
+        return goal;
     }
   }
 
@@ -290,6 +349,11 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
             _Label(text: l10n.myInfoGender),
             SizedBox(height: tokens.spacing.sm),
             _genderChips(l10n),
+            SizedBox(height: tokens.spacing.lg),
+
+            _Label(text: l10n.myInfoFitnessGoal),
+            SizedBox(height: tokens.spacing.sm),
+            _fitnessGoalChips(l10n),
             SizedBox(height: tokens.spacing.lg),
 
             _Label(text: l10n.myInfoDateOfBirth),
@@ -465,6 +529,40 @@ class _MemberMyInfoScreenState extends State<MemberMyInfoScreen> {
               : (_) {
             setState(() {
               _selectedGender = gender;
+            });
+          },
+          selectedColor: colors.primary.withOpacity(0.18),
+          backgroundColor: colors.surface,
+          side: BorderSide(
+            color: selected ? colors.primary : colors.border.withOpacity(0.35),
+          ),
+          labelStyle: TextStyle(
+            color: selected ? colors.primary : colors.label,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _fitnessGoalChips(AppLocalizations l10n) {
+    final tokens = context.read<ThemeCubit>().state.tokens;
+    final colors = tokens.colors;
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: _fitnessGoals.map((goal) {
+        final selected = _selectedFitnessGoal == goal;
+
+        return ChoiceChip(
+          label: Text(_fitnessGoalLabel(l10n, goal)),
+          selected: selected,
+          onSelected: _saving
+              ? null
+              : (_) {
+            setState(() {
+              _selectedFitnessGoal = goal;
             });
           },
           selectedColor: colors.primary.withOpacity(0.18),

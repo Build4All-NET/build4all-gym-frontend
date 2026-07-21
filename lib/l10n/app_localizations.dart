@@ -1031,11 +1031,11 @@ abstract class AppLocalizations {
   /// **'Sessions'**
   String get home_sessions;
 
-  /// No description provided for @home_kgLost.
+  /// No description provided for @home_upcoming.
   ///
   /// In en, this message translates to:
-  /// **'kg lost'**
-  String get home_kgLost;
+  /// **'Upcoming'**
+  String get home_upcoming;
 
   /// No description provided for @home_workouts.
   ///
@@ -2087,6 +2087,12 @@ abstract class AppLocalizations {
   /// **'My Membership'**
   String get accountMyMembership;
 
+  /// No description provided for @accountAskAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get accountAskAi;
+
   /// No description provided for @accountNotifications.
   ///
   /// In en, this message translates to:
@@ -2464,6 +2470,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
+
+  /// No description provided for @ptSlotsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load available times'**
+  String get ptSlotsFailed;
 
   /// No description provided for @ptRequestTimePickerHint.
   ///
@@ -3095,6 +3107,372 @@ abstract class AppLocalizations {
   /// **'Sorry, I couldn\'t process your request. Please try again.'**
   String get aiErrorOffline;
 
+  /// No description provided for @backendErrorAiProviderDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant is currently unavailable. Please try again later.'**
+  String get backendErrorAiProviderDisabled;
+
+  /// No description provided for @backendErrorAiContextUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your gym\'s data right now. Please try again shortly.'**
+  String get backendErrorAiContextUnavailable;
+
+  /// No description provided for @backendErrorAiProviderTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant took too long to respond. Please try again.'**
+  String get backendErrorAiProviderTimeout;
+
+  /// No description provided for @backendErrorAiInvalidResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant returned an unexpected response. Please try again.'**
+  String get backendErrorAiInvalidResponse;
+
+  /// No description provided for @backendErrorAiProviderError.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant ran into a problem. Please try again.'**
+  String get backendErrorAiProviderError;
+
+  /// No description provided for @backendErrorAiProviderRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant is busy right now. Please wait a moment and try again.'**
+  String get backendErrorAiProviderRateLimited;
+
+  /// No description provided for @backendErrorRefundProviderNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic refunds aren\'t available yet for this payment method. Our team will process it manually.'**
+  String get backendErrorRefundProviderNotSupported;
+
+  /// No description provided for @backendErrorRefundProviderIntegrationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This refund needs manual processing. Our team will follow up shortly.'**
+  String get backendErrorRefundProviderIntegrationRequired;
+
+  /// No description provided for @backendErrorPaymentVerificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t verify the refund with the payment provider. Please try again or contact support.'**
+  String get backendErrorPaymentVerificationFailed;
+
+  /// No description provided for @backendErrorInvalidRequestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something in your request wasn\'t valid. Please check your input and try again.'**
+  String get backendErrorInvalidRequestBody;
+
+  /// No description provided for @backendErrorInvalidFitnessGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose one of the listed fitness goals.'**
+  String get backendErrorInvalidFitnessGoal;
+
+  /// No description provided for @backendErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  /// No description provided for @backendErrorCheckinsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't load today's check-ins. Please try again.'**
+  String get backendErrorCheckinsLoadFailed;
+
+  /// No description provided for @backendErrorCheckinCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't create the check-in. Please try again.'**
+  String get backendErrorCheckinCreateFailed;
+
+  /// No description provided for @backendErrorCheckinUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't update the check-in. Please try again.'**
+  String get backendErrorCheckinUpdateFailed;
+
+  /// No description provided for @backendErrorCheckinDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't delete the check-in. Please try again.'**
+  String get backendErrorCheckinDeleteFailed;
+
+  /// No description provided for @backendErrorCheckinNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in could not be found.'**
+  String get backendErrorCheckinNotFound;
+
+  /// No description provided for @backendErrorCheckinTenantInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in doesn't belong to your gym.'**
+  String get backendErrorCheckinTenantInvalid;
+
+  /// No description provided for @backendErrorCheckinQrExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code has expired. Please generate a new one.'**
+  String get backendErrorCheckinQrExpired;
+
+  /// No description provided for @backendErrorCheckinQrAlreadyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code has already been used.'**
+  String get backendErrorCheckinQrAlreadyUsed;
+
+  /// No description provided for @backendErrorCheckinAccessWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'This member's plan doesn't allow entry at this time.'**
+  String get backendErrorCheckinAccessWindow;
+
+  /// No description provided for @backendErrorCheckinNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'This member has no active plan, class booking, or PT session today.'**
+  String get backendErrorCheckinNotEligible;
+
+  /// No description provided for @backendErrorCheckinBranchMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in belongs to a different branch.'**
+  String get backendErrorCheckinBranchMismatch;
+
+  /// No description provided for @backendErrorCheckinAlreadyCheckedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'This member is already checked out.'**
+  String get backendErrorCheckinAlreadyCheckedOut;
+
+  /// No description provided for @backendErrorMembersLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't load the members list. Please try again.'**
+  String get backendErrorMembersLoadFailed;
+
+  /// No description provided for @backendErrorMemberCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't add the member. Please try again.'**
+  String get backendErrorMemberCreateFailed;
+
+  /// No description provided for @backendErrorMemberUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't update this member. Please try again.'**
+  String get backendErrorMemberUpdateFailed;
+
+  /// No description provided for @backendErrorMemberDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't delete this member. Please try again.'**
+  String get backendErrorMemberDeleteFailed;
+
+  /// No description provided for @backendErrorMemberNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This member could not be found.'**
+  String get backendErrorMemberNotFound;
+
+  /// No description provided for @backendErrorMemberAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This member already exists.'**
+  String get backendErrorMemberAlreadyExists;
+
+  /// No description provided for @backendErrorMemberBranchInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This member doesn't belong to that branch.'**
+  String get backendErrorMemberBranchInvalid;
+
+  /// No description provided for @backendErrorMemberTenantInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This member doesn't belong to your gym.'**
+  String get backendErrorMemberTenantInvalid;
+
+  /// No description provided for @backendErrorMemberAccessForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'You don't have permission to perform this action on this member.'**
+  String get backendErrorMemberAccessForbidden;
+
+  /// No description provided for @backendErrorMemberBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'This member is blocked and cannot check in.'**
+  String get backendErrorMemberBlocked;
+
+  /// No description provided for @backendErrorMemberNoActiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'This member has no active membership.'**
+  String get backendErrorMemberNoActiveMembership;
+
+  String get backendErrorGeneric;
+
+  /// No description provided for @myInfoFitnessGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness Goal'**
+  String get myInfoFitnessGoal;
+
+  /// No description provided for @fitnessGoalMuscleGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Muscle Gain'**
+  String get fitnessGoalMuscleGain;
+
+  /// No description provided for @fitnessGoalWeightLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Loss'**
+  String get fitnessGoalWeightLoss;
+
+  /// No description provided for @fitnessGoalGeneralFitness.
+  ///
+  /// In en, this message translates to:
+  /// **'General Fitness'**
+  String get fitnessGoalGeneralFitness;
+
+  /// No description provided for @fitnessGoalEndurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Endurance'**
+  String get fitnessGoalEndurance;
+
+  /// No description provided for @fitnessGoalFlexibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexibility'**
+  String get fitnessGoalFlexibility;
+
+  /// No description provided for @fitnessGoalConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency'**
+  String get fitnessGoalConsistency;
+
+  /// No description provided for @fitnessGoalWellness.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness'**
+  String get fitnessGoalWellness;
+
+  /// No description provided for @myInfoFitnessGoalSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update fitness goal. Please try again.'**
+  String get myInfoFitnessGoalSaveError;
+
+  /// No description provided for @memberAiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask About Your Gym'**
+  String get memberAiTitle;
+
+  /// No description provided for @memberAiInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your sessions, classes, or membership...'**
+  String get memberAiInputHint;
+
+  /// No description provided for @memberAiEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask me anything about your PT sessions, classes, or membership — I\'ll check your real data first.'**
+  String get memberAiEmptyState;
+
+  /// No description provided for @memberAiSendButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get memberAiSendButton;
+
+  /// No description provided for @memberAiQuickQuestionSessionsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'How many PT sessions do I have this week?'**
+  String get memberAiQuickQuestionSessionsThisWeek;
+
+  /// No description provided for @memberAiQuickQuestionRemainingSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'How many PT package sessions do I have left?'**
+  String get memberAiQuickQuestionRemainingSessions;
+
+  /// No description provided for @memberAiQuickQuestionRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I focus on based on my goal?'**
+  String get memberAiQuickQuestionRecommendation;
+
+  /// No description provided for @routeNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found.'**
+  String get routeNotFound;
+
+  /// No description provided for @profileFallbackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileFallbackLabel;
+
+  /// No description provided for @genericHomeDataNotLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Home data is not loaded yet.'**
+  String get genericHomeDataNotLoaded;
+
+  /// No description provided for @paymentNotYetConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment not yet confirmed. Please try again in a moment.'**
+  String get paymentNotYetConfirmed;
+
+  /// No description provided for @planCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan created successfully'**
+  String get planCreatedSuccessfully;
+
+  /// No description provided for @planUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan updated successfully'**
+  String get planUpdatedSuccessfully;
+
+  /// No description provided for @classFilterBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get classFilterBookings;
+
+  /// No description provided for @classFilterReactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get classFilterReactivate;
+
+  /// No description provided for @classFilterCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get classFilterCancel;
+
+  /// No description provided for @classFilterEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get classFilterEdit;
+
   /// Generic error message shown in the error view
   ///
   /// In en, this message translates to:
@@ -3274,6 +3652,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a specific branch to scan QR codes.'**
   String get checkins_allBranchesScanBlocked;
+  /// No description provided for @checkins_allBranchesCheckoutBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a specific branch to check out members.'**
+  String get checkins_allBranchesCheckoutBlocked;
+
+  /// No description provided for @checkins_memberCheckedOutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member checked out successfully.'**
+  String get checkins_memberCheckedOutSuccess;
+
+  /// No description provided for @checkins_memberBlockedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member blocked successfully.'**
+  String get checkins_memberBlockedSuccess;
+
 
   /// No description provided for @sessionDetailBookingClosed.
   ///

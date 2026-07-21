@@ -3,6 +3,7 @@ import 'package:build4allgym/core/currency/currency_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -542,6 +543,8 @@ class _AdminMembershipRequestsScreenState
                                     ? null
                                     : noteController.text.trim(),
                                 successMessage: l10nOuter.admin_refundRequests_approveSuccess,
+                                translateErrorCode: (code) =>
+                                    translateBackendErrorCode(l10nOuter, code),
                               ),
                             );
                       },

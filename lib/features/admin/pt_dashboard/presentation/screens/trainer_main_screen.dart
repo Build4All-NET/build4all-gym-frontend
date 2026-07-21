@@ -16,7 +16,9 @@ import '../../../../../l10n/app_localizations.dart';
 
 import '../../../../../app/app_router.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/utils/tenant_id_parser.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
+import '../../../../admin/AppBar/presentation/branch_context_cubit.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../../../admin/trainers/data/services/admin_trainers_service.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
@@ -63,7 +65,7 @@ class TrainerMainScreen extends StatefulWidget {
 class _TrainerMainScreenState extends State<TrainerMainScreen> {
   late int _currentIndex;
   int? _selectedBranchId;
-  int  _tenantId   = 1;
+  int  _tenantId   = 0;   // 0 = not resolved yet — never invent/assume tenant 1
   int  _trainerId  = 0;   // 0 = admin all-trainers mode
   bool _isAdmin    = true;
   bool _roleLoaded = false;
@@ -95,6 +97,7 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
       updateStatus:         UpdateSessionStatusUseCase(repository),
       markPaid:             MarkSessionPaidUseCase(repository),
       acceptRequest:        AcceptSessionRequestUseCase(repository),
+      checkIn:              CheckInSessionUseCase(repository),
       declineRequest:       DeclineSessionRequestUseCase(repository),
       declineCancelRequest: DeclineCancelRequestUseCase(repository),
     );
@@ -123,8 +126,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
     print('the role is $_token.getRole()');
 
-    final tenantIdRaw = _token.getTenantId();
-    final parsedTenantId = int.tryParse(tenantIdRaw.toString()) ?? 1;
+    // BUG FIX: getTenantId() is async — this used to call .toString() on
+    // the unawaited Future itself, which never parses as an int, so
+    // _tenantId was silently hardcoded to 1 on every single sync
+    // regardless of the admin's real tenant. Resolve it properly instead.
+    _resolveTenantId();
+
     final isAdmin     = profile.isAdminRole;
     final isTrainer   = profile.isTrainerRole;
     final isReception = profile.isReceptionRole;
@@ -140,7 +147,6 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     }
 
     setState(() {
-      _tenantId       = parsedTenantId;
       _isAdmin        = effectiveIsAdmin;
       _gymRolesLoaded = profile.gymRolesLoaded;
     });
@@ -168,15 +174,39 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
     }
   }
 
+  Future<void> _resolveTenantId() async {
+    final tenantIdRaw = await _token.getTenantId();
+    // Never default to tenant 1 — an unresolved tenant id must surface as
+    // "not resolved" (0), not silently borrow another gym's data.
+    final parsedTenantId = TenantIdParser.parseOrNull(tenantIdRaw) ?? 0;
+    if (mounted && parsedTenantId != _tenantId) {
+      setState(() => _tenantId = parsedTenantId);
+    }
+  }
+
   @override
   void dispose() {
     _sessionsBloc.close();
     super.dispose();
   }
 
+  // BUG FIX: this used to fall back to AdminProfileCubit.state.branchId,
+  // which was actually the tenant id (see admin_profile_cubit.dart), then to
+  // a hardcoded `1`. BranchContextCubit is the single source of truth for
+  // the selected branch across every PT screen now; if nothing has been
+  // explicitly selected yet, fall back to the first branch actually
+  // returned by the backend for this tenant (never a hardcoded literal). 0
+  // means "not ready yet" — callers in this file already guard on that
+  // (e.g. `if (newId != 0)` for trainerId) before dispatching bloc events.
   int _effectiveBranchId(BuildContext context) {
     if (_selectedBranchId != null) return _selectedBranchId!;
-    return context.read<AdminProfileCubit>().state.branchId ?? 1;
+    final contextBranchId = context.read<BranchContextCubit>().state;
+    if (contextBranchId != null) return contextBranchId;
+    final branchState = context.read<BranchCubit>().state;
+    if (branchState is BranchLoaded && branchState.branches.isNotEmpty) {
+      return branchState.branches.first.id;
+    }
+    return 0;
   }
 
   Future<void> _loadTrainersForAdmin() async {
@@ -219,6 +249,12 @@ class _TrainerMainScreenState extends State<TrainerMainScreen> {
 
   void _onBranchChanged(int? branchId) {
     if (!mounted) return;
+    // Push into the shared cubit so every other PT screen (Packages,
+    // Services, Schedule, Income, Booking requests) refreshes against the
+    // same branch instead of only updating this screen's local state.
+    if (branchId != null) {
+      context.read<BranchContextCubit>().select(branchId);
+    }
     setState(() {
       _selectedBranchId = branchId;
       if (_isAdmin) {

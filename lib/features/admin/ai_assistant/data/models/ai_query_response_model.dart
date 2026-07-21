@@ -30,10 +30,19 @@ class AiQueryResponseModel {
   final List<AiStatCardModel> statCards;
   final List<String>          suggestedFollowUps;
 
+  // False when the backend could not produce a real AI answer (provider
+  // disabled, missing context, timeout, or an invalid provider response).
+  // The UI must not treat `answer` as a genuine AI answer in that case —
+  // it should show a localized message derived from `errorCode` instead.
+  final bool                  dataAvailable;
+  final String?               errorCode;
+
   const AiQueryResponseModel({
     required this.answer,
     required this.statCards,
     required this.suggestedFollowUps,
+    required this.dataAvailable,
+    this.errorCode,
   });
 
   // ── Deserialise from the backend JSON ─────────────────────────────────────
@@ -52,6 +61,8 @@ class AiQueryResponseModel {
       answer:             json['answer'] as String? ?? '',
       statCards:          statCards,
       suggestedFollowUps: followUps,
+      dataAvailable:      json['dataAvailable'] as bool? ?? true,
+      errorCode:          json['errorCode'] as String?,
     );
   }
 
@@ -63,6 +74,8 @@ class AiQueryResponseModel {
       answer:             answer,
       statCards:          statCards.map((c) => c.toEntity()).toList(),
       suggestedFollowUps: suggestedFollowUps,
+      dataAvailable:      dataAvailable,
+      errorCode:          errorCode,
     );
   }
 }

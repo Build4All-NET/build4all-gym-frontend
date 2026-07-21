@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../../core/theme/theme_cubit.dart';
+import '../../../../../core/utils/tenant_id_parser.dart';
 import '../../../../auth/data/services/admin_token_store.dart';
 import '../../../../admin/pt_dashboard/data/services/pt_service_service.dart';
 import '../../../../admin/pt_dashboard/data/models/pt_service_model.dart';
@@ -170,7 +171,13 @@ class _AddEditClassBottomSheetState extends State<AddEditClassBottomSheet> {
     try {
       final tokenStore = const AdminTokenStore();
       final tenantIdStr = await tokenStore.getTenantId();
-      final tenantId = int.tryParse(tenantIdStr ?? '') ?? 1;
+      // Never default to tenant 1 — an unresolved tenant must fail closed
+      // (caught below, spinner cleared) rather than silently fetch another
+      // gym's PT services.
+      final tenantId = TenantIdParser.parseOrNull(tenantIdStr);
+      if (tenantId == null) {
+        throw StateError('Tenant id not resolved');
+      }
 
       final services = await PtServiceService().getServices(
         trainerId: trainer.id,

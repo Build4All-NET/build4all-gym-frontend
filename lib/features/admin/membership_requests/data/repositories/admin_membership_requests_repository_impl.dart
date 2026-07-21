@@ -35,9 +35,9 @@ class AdminMembershipRequestsRepositoryImpl
   }
 
   @override
-  Future<void> approveRefundRequest(int refundId, double refundAmount,
+  Future<RefundApprovalResult> approveRefundRequest(int refundId, double refundAmount,
       {double? deductionAmount, String? adminNote}) async {
-    await _service.approveRefundRequest(refundId, refundAmount,
+    return _service.approveRefundRequest(refundId, refundAmount,
         deductionAmount: deductionAmount, adminNote: adminNote);
   }
 

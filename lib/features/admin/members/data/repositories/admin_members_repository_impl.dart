@@ -45,10 +45,16 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       return _toResultEntity(MemberListResponseModel.fromJson(json));
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception('You do not have permission to view members.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(
+        message: 'You do not have permission to view members.',
+        errorCode: e.errorCode,
+      );
     } on ServerException catch (e) {
-      throw Exception('Server error: ${e.message}');
+      throw AppFailureException(
+        message: 'Server error: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBERS_LOAD_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
     }
@@ -64,10 +70,16 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       return _toDetailEntity(model);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception('You do not have permission to view this member.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(
+        message: 'You do not have permission to view this member.',
+        errorCode: e.errorCode,
+      );
     } on ServerException catch (e) {
-      throw Exception('Server error: ${e.message}');
+      throw AppFailureException(
+        message: 'Server error: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBER_NOT_FOUND',
+      );
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
     }
@@ -91,10 +103,16 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       )).toList();
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception('You do not have permission to view attendance.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(
+        message: 'You do not have permission to view attendance.',
+        errorCode: e.errorCode,
+      );
     } on ServerException catch (e) {
-      throw Exception('Server error: ${e.message}');
+      throw AppFailureException(
+        message: 'Server error: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBERS_LOAD_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection.');
     }
@@ -109,8 +127,13 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       await service.blockMember(userId, reason);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(message: 'Failed to block member.', errorCode: e.errorCode);
     } on ServerException catch (e) {
-      throw Exception('Failed to block member: ${e.message}');
+      throw AppFailureException(
+        message: 'Failed to block member: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBER_UPDATE_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection.');
     }
@@ -125,8 +148,13 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       await service.unblockMember(userId);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(message: 'Failed to unblock member.', errorCode: e.errorCode);
     } on ServerException catch (e) {
-      throw Exception('Failed to unblock member: ${e.message}');
+      throw AppFailureException(
+        message: 'Failed to unblock member: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBER_UPDATE_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection.');
     }
@@ -141,8 +169,13 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       await service.deleteMember(userId);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(message: 'Failed to delete member.', errorCode: e.errorCode);
     } on ServerException catch (e) {
-      throw Exception('Failed to delete member: ${e.message}');
+      throw AppFailureException(
+        message: 'Failed to delete member: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBER_DELETE_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection.');
     }
@@ -157,8 +190,13 @@ class AdminMembersRepositoryImpl implements AdminMembersRepository {
       await service.bulkDeleteMembers(userIds);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(message: 'Failed to bulk delete.', errorCode: e.errorCode);
     } on ServerException catch (e) {
-      throw Exception('Failed to bulk delete: ${e.message}');
+      throw AppFailureException(
+        message: 'Failed to bulk delete: ${e.message}',
+        errorCode: e.errorCode ?? 'MEMBER_DELETE_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection.');
     }

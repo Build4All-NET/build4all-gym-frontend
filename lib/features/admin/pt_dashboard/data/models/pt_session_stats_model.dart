@@ -3,7 +3,8 @@
 // LAYER: Data
 //
 // Parses TrainerPtSessionStatsResponse JSON.
-// Backend: { "total": 5, "completed": 2, "scheduled": 3 }
+// Backend: { "total": 5, "completed": 2, "scheduled": 3, "requested": 1,
+//            "checkedIn": 0, "cancelRequested": 0, "cancelled": 1, "noShow": 0 }
 // =============================================================================
 
 import '../../domain/entities/pt_session_stats_entity.dart';
@@ -12,26 +13,46 @@ class PtSessionStatsModel {
   final int total;
   final int completed;
   final int scheduled;
+  final int requested;
+  final int checkedIn;
+  final int cancelRequested;
+  final int cancelled;
+  final int noShow;
 
   const PtSessionStatsModel({
     required this.total,
     required this.completed,
     required this.scheduled,
+    this.requested = 0,
+    this.checkedIn = 0,
+    this.cancelRequested = 0,
+    this.cancelled = 0,
+    this.noShow = 0,
   });
 
   factory PtSessionStatsModel.fromJson(Map<String, dynamic> json) {
     return PtSessionStatsModel(
-      total:     (json['total']     as num?)?.toInt() ?? 0,
-      completed: (json['completed'] as num?)?.toInt() ?? 0,
-      scheduled: (json['scheduled'] as num?)?.toInt() ?? 0,
+      total:           (json['total']           as num?)?.toInt() ?? 0,
+      completed:       (json['completed']       as num?)?.toInt() ?? 0,
+      scheduled:       (json['scheduled']       as num?)?.toInt() ?? 0,
+      requested:       (json['requested']       as num?)?.toInt() ?? 0,
+      checkedIn:       (json['checkedIn']       as num?)?.toInt() ?? 0,
+      cancelRequested: (json['cancelRequested'] as num?)?.toInt() ?? 0,
+      cancelled:       (json['cancelled']       as num?)?.toInt() ?? 0,
+      noShow:          (json['noShow']          as num?)?.toInt() ?? 0,
     );
   }
 
   PtSessionStatsEntity toEntity() {
     return PtSessionStatsEntity(
-      total:     total,
-      completed: completed,
-      scheduled: scheduled,
+      total:           total,
+      completed:       completed,
+      scheduled:       scheduled,
+      requested:       requested,
+      checkedIn:       checkedIn,
+      cancelRequested: cancelRequested,
+      cancelled:       cancelled,
+      noShow:          noShow,
     );
   }
 }

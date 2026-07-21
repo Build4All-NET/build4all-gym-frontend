@@ -33,12 +33,16 @@ class TrainerPtSessionsBloc
   final UpdateSessionStatusUseCase _updateStatus;
   final MarkSessionPaidUseCase _markPaid;
   final AcceptSessionRequestUseCase _acceptRequest;
+  final CheckInSessionUseCase _checkIn;
   final DeclineSessionRequestUseCase _declineRequest;
   final DeclineCancelRequestUseCase _declineCancelRequest;
 
   DateTime _selectedDate = DateTime.now();
 
-  int _branchId = 1;
+  // 0 = not started yet; PtSessionsStarted always supplies the real,
+  // backend-verified branchId before any request is made. Never hardcode a
+  // literal branch id here — see trainer_main_screen._effectiveBranchId().
+  int _branchId = 0;
 
   /// 0 = admin all-trainers mode
   int _trainerId = 0;
@@ -62,6 +66,7 @@ class TrainerPtSessionsBloc
     required UpdateSessionStatusUseCase updateStatus,
     required MarkSessionPaidUseCase markPaid,
     required AcceptSessionRequestUseCase acceptRequest,
+    required CheckInSessionUseCase checkIn,
     required DeclineSessionRequestUseCase declineRequest,
     required DeclineCancelRequestUseCase declineCancelRequest,
   })  : _getSessions = getSessions,
@@ -72,6 +77,7 @@ class TrainerPtSessionsBloc
         _updateStatus = updateStatus,
         _markPaid = markPaid,
         _acceptRequest = acceptRequest,
+        _checkIn = checkIn,
         _declineRequest = declineRequest,
         _declineCancelRequest = declineCancelRequest,
         super(const PtSessionsInitial()) {
@@ -82,6 +88,7 @@ class TrainerPtSessionsBloc
     on<PtSessionStatusUpdateRequested>(_onStatusUpdate);
     on<PtSessionMarkPaidRequested>(_onMarkPaid);
     on<PtSessionAcceptRequested>(_onAcceptRequest);
+    on<PtSessionCheckInRequested>(_onCheckIn);
     on<PtSessionDeclineRequested>(_onDeclineRequest);
     on<PtSessionCancelApproved>(_onCancelApproved);
     on<PtSessionCancelDeclined>(_onCancelDeclined);
@@ -289,6 +296,39 @@ class TrainerPtSessionsBloc
   }
 
   // ───────────────────────────────────────────────────────────────────────────
+  // Check in a SCHEDULED session
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Future<void> _onCheckIn(
+      PtSessionCheckInRequested event,
+      Emitter<TrainerPtSessionsState> emit,
+      ) async {
+
+    if (state is! PtSessionsLoaded) return;
+    final current = state as PtSessionsLoaded;
+
+    emit(PtSessionActionLoading(sessionId: event.sessionId, previousState: current));
+
+    final result = await _checkIn(sessionId: event.sessionId);
+
+    if (result.failure != null || result.data == null) {
+      emit(PtSessionActionError(
+        message: result.failure?.message ?? 'Failed to check in session.',
+        previousState: current,
+      ));
+      emit(current);
+      return;
+    }
+
+    final updatedSessions = current.sessions.map((s) =>
+        s.ptSessionId == event.sessionId ? result.data! : s).toList();
+    final updatedState = current.copyWith(sessions: updatedSessions);
+
+    emit(PtSessionActionSuccess(actionType: 'checked_in', updatedState: updatedState));
+    emit(updatedState);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
   // Decline REQUESTED session
   // ───────────────────────────────────────────────────────────────────────────
 
@@ -473,62 +513,26 @@ class TrainerPtSessionsBloc
 
       if (_isAllTrainersMode) {
 
-        final trainerIds = _trainerNames.keys.toList();
-
-        final sessionResults = await Future.wait(
-          trainerIds.map(
-                (trainerId) => _getSessions(
-              branchId: _branchId,
-              trainerId: trainerId,
-              date: date,
-            ),
-          ),
+        // BUG FIX: this used to fire 2 HTTP calls per trainer (N+1) and sum
+        // the per-trainer results client-side. The backend's trainerId=null
+        // path is now null-safe (see TrainerPtSessionService on the
+        // backend), so one aggregate call each returns every trainer's
+        // sessions/stats directly — the server already resolves each
+        // session's trainerName, so the client-side enrichment loop is no
+        // longer needed either.
+        final sessionsResult = await _getSessions(
+          branchId: _branchId,
+          trainerId: null,
+          date: date,
         );
 
-        final statsResults = await Future.wait(
-          trainerIds.map(
-                (trainerId) => _getStats(
-              branchId: _branchId,
-              trainerId: trainerId,
-              date: date,
-            ),
-          ),
+        final statsResult = await _getStats(
+          branchId: _branchId,
+          trainerId: null,
+          date: date,
         );
 
-        sessions = [];
-
-        for (int i = 0; i < trainerIds.length; i++) {
-
-          final result = sessionResults[i];
-
-          if (result.failure != null) {
-            continue;
-          }
-
-          final trainerId = trainerIds[i];
-
-          final trainerName =
-              _trainerNames[trainerId] ?? '';
-
-          final fetchedSessions =
-              result.data ?? <PtSessionEntity>[];
-
-          for (final session in fetchedSessions) {
-
-            sessions.add(
-
-              session.trainerName != null &&
-                  session.trainerName!.isNotEmpty
-
-                  ? session
-
-                  : session.copyWith(
-                trainerId: trainerId,
-                trainerName: trainerName,
-              ),
-            );
-          }
-        }
+        sessions = sessionsResult.data ?? <PtSessionEntity>[];
 
         // Stable sorting
         sessions.sort((a, b) {
@@ -543,26 +547,7 @@ class TrainerPtSessionsBloc
           return aTime.compareTo(bTime);
         });
 
-        int total = 0;
-        int completed = 0;
-        int scheduled = 0;
-
-        for (final result in statsResults) {
-
-          final data = result.data;
-
-          if (data == null) continue;
-
-          total += data.total;
-          completed += data.completed;
-          scheduled += data.scheduled;
-        }
-
-        stats = PtSessionStatsEntity(
-          total: total,
-          completed: completed,
-          scheduled: scheduled,
-        );
+        stats = statsResult.data ?? PtSessionStatsEntity.empty;
       }
 
       // =========================================================================

@@ -483,7 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home_sessions => 'Sessions';
 
   @override
-  String get home_kgLost => 'kg lost';
+  String get home_upcoming => 'Upcoming';
 
   @override
   String get home_workouts => 'Workouts';
@@ -1031,6 +1031,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountMyMembership => 'My Membership';
 
   @override
+  String get accountAskAi => 'Ask AI';
+
+  @override
   String get accountNotifications => 'Notifications';
 
   @override
@@ -1234,6 +1237,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'Could not load available times';
+
+  @override
+  String get ptSlotsFailed => 'Could not load available times';
 
   @override
   String get ptRequestTimePickerHint => 'Request a time from the trainer';
@@ -1557,6 +1563,189 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiErrorOffline => 'Sorry, I couldn\'t process your request. Please try again.';
 
   @override
+  String get backendErrorAiProviderDisabled => 'The AI assistant is currently unavailable. Please try again later.';
+
+  @override
+  String get backendErrorAiContextUnavailable => 'We couldn\'t load your gym\'s data right now. Please try again shortly.';
+
+  @override
+  String get backendErrorAiProviderTimeout => 'The AI assistant took too long to respond. Please try again.';
+
+  @override
+  String get backendErrorAiInvalidResponse => 'The AI assistant returned an unexpected response. Please try again.';
+
+  @override
+  String get backendErrorAiProviderError => 'The AI assistant ran into a problem. Please try again.';
+
+  @override
+  String get backendErrorAiProviderRateLimited => 'The AI assistant is busy right now. Please wait a moment and try again.';
+
+  @override
+  String get backendErrorRefundProviderNotSupported => 'Automatic refunds aren\'t available yet for this payment method. Our team will process it manually.';
+
+  @override
+  String get backendErrorRefundProviderIntegrationRequired => 'This refund needs manual processing. Our team will follow up shortly.';
+
+  @override
+  String get backendErrorPaymentVerificationFailed => 'We couldn\'t verify the refund with the payment provider. Please try again or contact support.';
+
+  @override
+  String get backendErrorInvalidRequestBody => 'Something in your request wasn\'t valid. Please check your input and try again.';
+
+  @override
+  String get backendErrorInvalidFitnessGoal => 'Please choose one of the listed fitness goals.';
+
+  @override
+  @override
+  String get backendErrorCheckinsLoadFailed => 'We couldn\'t load today\'s check-ins. Please try again.';
+
+  @override
+  String get backendErrorCheckinCreateFailed => 'We couldn\'t create the check-in. Please try again.';
+
+  @override
+  String get backendErrorCheckinUpdateFailed => 'We couldn\'t update the check-in. Please try again.';
+
+  @override
+  String get backendErrorCheckinDeleteFailed => 'We couldn\'t delete the check-in. Please try again.';
+
+  @override
+  String get backendErrorCheckinNotFound => 'This check-in could not be found.';
+
+  @override
+  String get backendErrorCheckinTenantInvalid => 'This check-in doesn\'t belong to your gym.';
+
+  @override
+  String get backendErrorCheckinQrExpired => 'This QR code has expired. Please generate a new one.';
+
+  @override
+  String get backendErrorCheckinQrAlreadyUsed => 'This QR code has already been used.';
+
+  @override
+  String get backendErrorCheckinAccessWindow => 'This member\'s plan doesn\'t allow entry at this time.';
+
+  @override
+  String get backendErrorCheckinNotEligible => 'This member has no active plan, class booking, or PT session today.';
+
+  @override
+  String get backendErrorCheckinBranchMismatch => 'This check-in belongs to a different branch.';
+
+  @override
+  String get backendErrorCheckinAlreadyCheckedOut => 'This member is already checked out.';
+
+  @override
+  String get backendErrorMembersLoadFailed => 'We couldn\'t load the members list. Please try again.';
+
+  @override
+  String get backendErrorMemberCreateFailed => 'We couldn\'t add the member. Please try again.';
+
+  @override
+  String get backendErrorMemberUpdateFailed => 'We couldn\'t update this member. Please try again.';
+
+  @override
+  String get backendErrorMemberDeleteFailed => 'We couldn\'t delete this member. Please try again.';
+
+  @override
+  String get backendErrorMemberNotFound => 'This member could not be found.';
+
+  @override
+  String get backendErrorMemberAlreadyExists => 'This member already exists.';
+
+  @override
+  String get backendErrorMemberBranchInvalid => 'This member doesn\'t belong to that branch.';
+
+  @override
+  String get backendErrorMemberTenantInvalid => 'This member doesn\'t belong to your gym.';
+
+  @override
+  String get backendErrorMemberAccessForbidden => 'You don\'t have permission to perform this action on this member.';
+
+  @override
+  String get backendErrorMemberBlocked => 'This member is blocked and cannot check in.';
+
+  @override
+  String get backendErrorMemberNoActiveMembership => 'This member has no active membership.';
+
+  String get backendErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get myInfoFitnessGoal => 'Fitness Goal';
+
+  @override
+  String get fitnessGoalMuscleGain => 'Muscle Gain';
+
+  @override
+  String get fitnessGoalWeightLoss => 'Weight Loss';
+
+  @override
+  String get fitnessGoalGeneralFitness => 'General Fitness';
+
+  @override
+  String get fitnessGoalEndurance => 'Endurance';
+
+  @override
+  String get fitnessGoalFlexibility => 'Flexibility';
+
+  @override
+  String get fitnessGoalConsistency => 'Consistency';
+
+  @override
+  String get fitnessGoalWellness => 'Wellness';
+
+  @override
+  String get myInfoFitnessGoalSaveError => 'Failed to update fitness goal. Please try again.';
+
+  @override
+  String get memberAiTitle => 'Ask About Your Gym';
+
+  @override
+  String get memberAiInputHint => 'Ask about your sessions, classes, or membership...';
+
+  @override
+  String get memberAiEmptyState => 'Ask me anything about your PT sessions, classes, or membership — I\'ll check your real data first.';
+
+  @override
+  String get memberAiSendButton => 'Send';
+
+  @override
+  String get memberAiQuickQuestionSessionsThisWeek => 'How many PT sessions do I have this week?';
+
+  @override
+  String get memberAiQuickQuestionRemainingSessions => 'How many PT package sessions do I have left?';
+
+  @override
+  String get memberAiQuickQuestionRecommendation => 'What should I focus on based on my goal?';
+
+  @override
+  String get routeNotFound => 'Page not found.';
+
+  @override
+  String get profileFallbackLabel => 'Profile';
+
+  @override
+  String get genericHomeDataNotLoaded => 'Home data is not loaded yet.';
+
+  @override
+  String get paymentNotYetConfirmed => 'Payment not yet confirmed. Please try again in a moment.';
+
+  @override
+  String get planCreatedSuccessfully => 'Plan created successfully';
+
+  @override
+  String get planUpdatedSuccessfully => 'Plan updated successfully';
+
+  @override
+  String get classFilterBookings => 'Bookings';
+
+  @override
+  String get classFilterReactivate => 'Reactivate';
+
+  @override
+  String get classFilterCancel => 'Cancel';
+
+  @override
+  String get classFilterEdit => 'Edit';
+
+  @override
   String get aiErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
@@ -1647,6 +1836,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_allBranchesScanBlocked => 'Select a specific branch to scan QR codes.';
+
+  @override
+  String get checkins_allBranchesCheckoutBlocked => 'Select a specific branch to check out members.';
+
+  @override
+  String get checkins_memberCheckedOutSuccess => 'Member checked out successfully.';
+
+  @override
+  String get checkins_memberBlockedSuccess => 'Member blocked successfully.';
+
 
   @override
   String get sessionDetailBookingClosed => 'Booking closed';

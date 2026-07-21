@@ -211,7 +211,7 @@ class MemberDangerZoneSectionWidget extends StatelessWidget {
                     obscureText: hidePassword,
                     enabled: !deleting,
                     decoration: InputDecoration(
-                      labelText: 'Current password',
+                      labelText: l10n.editProfileCurrentPassword,
                       prefixIcon: const Icon(
                         Icons.lock_outline_rounded,
                       ),

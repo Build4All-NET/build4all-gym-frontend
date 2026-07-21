@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/app_router.dart';
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../bloc/admin_members_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../widgets/member_info_section_widget.dart';
@@ -149,7 +150,9 @@ class _DetailBody extends StatelessWidget {
                         color: cs.error, size: 28),
                   ),
                   const SizedBox(height: 16),
-                  Text(state.message,
+                  Text(
+                      translateBackendErrorCode(
+                          AppLocalizations.of(context)!, state.errorCode),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: cs.onSurface, fontSize: 14)),
                   const SizedBox(height: 16),

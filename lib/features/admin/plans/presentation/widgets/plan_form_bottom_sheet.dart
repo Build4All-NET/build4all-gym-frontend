@@ -328,10 +328,13 @@ class _PlanFormContentState extends State<_PlanFormContent> {
       promoModel = const PlanPromotionModel(title: '');
     }
 
+    final l10nForSubmit = AppLocalizations.of(context)!;
+
     if (_isEditMode) {
       context.read<PlanFormBloc>().add(
             SubmitUpdatePlanEvent(
               planId: widget.existingPlan!.planId,
+              successMessage: l10nForSubmit.planUpdatedSuccessfully,
               request: UpdatePlanRequestModel(
                 name: _nameController.text.trim(),
                 planType: effectiveType,
@@ -360,6 +363,7 @@ class _PlanFormContentState extends State<_PlanFormContent> {
       context.read<PlanFormBloc>().add(
             SubmitCreatePlanEvent(
               isCustomType: _isCustomType,
+              successMessage: l10nForSubmit.planCreatedSuccessfully,
               request: CreatePlanRequestModel(
                 name: _nameController.text.trim(),
                 planType: effectiveType!,

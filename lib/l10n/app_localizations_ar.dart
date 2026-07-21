@@ -483,7 +483,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home_sessions => 'حصة';
 
   @override
-  String get home_kgLost => 'كجم فقدان';
+  String get home_upcoming => 'القادمة';
 
   @override
   String get home_workouts => 'تمرين';
@@ -1031,6 +1031,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountMyMembership => 'عضويتي';
 
   @override
+  String get accountAskAi => 'اسأل الذكاء الاصطناعي';
+
+  @override
   String get accountNotifications => 'الإشعارات';
 
   @override
@@ -1234,6 +1237,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
+
+  @override
+  String get ptSlotsFailed => 'تعذر تحميل الأوقات المتاحة';
 
   @override
   String get ptRequestTimePickerHint => 'اطلب وقتاً من المدرب';
@@ -1557,6 +1563,189 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aiErrorOffline => 'تعذر الحصول على رد. يرجى المحاولة مرة أخرى.';
 
   @override
+  String get backendErrorAiProviderDisabled => 'مساعد الذكاء الاصطناعي غير متاح حاليًا. حاول مرة أخرى لاحقًا.';
+
+  @override
+  String get backendErrorAiContextUnavailable => 'تعذر تحميل بيانات النادي الآن. حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get backendErrorAiProviderTimeout => 'استغرق مساعد الذكاء الاصطناعي وقتًا طويلاً للرد. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorAiInvalidResponse => 'أعاد مساعد الذكاء الاصطناعي ردًا غير متوقع. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorAiProviderError => 'واجه مساعد الذكاء الاصطناعي مشكلة. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorAiProviderRateLimited => 'مساعد الذكاء الاصطناعي مشغول الآن. يرجى الانتظار لحظة والمحاولة مرة أخرى.';
+
+  @override
+  String get backendErrorRefundProviderNotSupported => 'الاسترداد التلقائي غير متاح بعد لطريقة الدفع هذه. سيقوم فريقنا بمعالجته يدويًا.';
+
+  @override
+  String get backendErrorRefundProviderIntegrationRequired => 'يحتاج هذا الاسترداد إلى معالجة يدوية. سيتواصل فريقنا معك قريبًا.';
+
+  @override
+  String get backendErrorPaymentVerificationFailed => 'تعذر التحقق من الاسترداد مع مزود الدفع. حاول مرة أخرى أو تواصل مع الدعم.';
+
+  @override
+  String get backendErrorInvalidRequestBody => 'هناك خطأ في البيانات المُرسلة. تحقق من المدخلات وحاول مرة أخرى.';
+
+  @override
+  String get backendErrorInvalidFitnessGoal => 'يرجى اختيار أحد الأهداف الرياضية المتاحة.';
+
+  @override
+  @override
+  String get backendErrorCheckinsLoadFailed => 'تعذر تحميل تسجيلات الحضور اليوم. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinCreateFailed => 'تعذر إنشاء تسجيل الحضور. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinUpdateFailed => 'تعذر تحديث تسجيل الحضور. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinDeleteFailed => 'تعذر حذف تسجيل الحضور. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinNotFound => 'تعذر العثور على تسجيل الحضور هذا.';
+
+  @override
+  String get backendErrorCheckinTenantInvalid => 'تسجيل الحضور هذا لا ينتمي إلى ناديك.';
+
+  @override
+  String get backendErrorCheckinQrExpired => 'انتهت صلاحية رمز الاستجابة السريعة هذا. يرجى إنشاء رمز جديد.';
+
+  @override
+  String get backendErrorCheckinQrAlreadyUsed => 'تم استخدام رمز الاستجابة السريعة هذا بالفعل.';
+
+  @override
+  String get backendErrorCheckinAccessWindow => 'خطة هذا العضو لا تسمح بالدخول في هذا الوقت.';
+
+  @override
+  String get backendErrorCheckinNotEligible => 'لا يملك هذا العضو خطة نشطة أو حجز حصة أو جلسة تدريب شخصي اليوم.';
+
+  @override
+  String get backendErrorCheckinBranchMismatch => 'تسجيل الحضور هذا يعود لفرع مختلف.';
+
+  @override
+  String get backendErrorCheckinAlreadyCheckedOut => 'تم تسجيل خروج هذا العضو بالفعل.';
+
+  @override
+  String get backendErrorMembersLoadFailed => 'تعذر تحميل قائمة الأعضاء. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberCreateFailed => 'تعذر إضافة العضو. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberUpdateFailed => 'تعذر تحديث بيانات هذا العضو. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberDeleteFailed => 'تعذر حذف هذا العضو. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberNotFound => 'تعذر العثور على هذا العضو.';
+
+  @override
+  String get backendErrorMemberAlreadyExists => 'هذا العضو موجود بالفعل.';
+
+  @override
+  String get backendErrorMemberBranchInvalid => 'هذا العضو لا ينتمي إلى ذلك الفرع.';
+
+  @override
+  String get backendErrorMemberTenantInvalid => 'هذا العضو لا ينتمي إلى ناديك.';
+
+  @override
+  String get backendErrorMemberAccessForbidden => 'ليس لديك صلاحية لتنفيذ هذا الإجراء على هذا العضو.';
+
+  @override
+  String get backendErrorMemberBlocked => 'هذا العضو محظور ولا يمكنه تسجيل الدخول.';
+
+  @override
+  String get backendErrorMemberNoActiveMembership => 'لا يملك هذا العضو عضوية نشطة.';
+
+  String get backendErrorGeneric => 'حدث خطأ ما. حاول مرة أخرى.';
+
+  @override
+  String get myInfoFitnessGoal => 'الهدف الرياضي';
+
+  @override
+  String get fitnessGoalMuscleGain => 'بناء العضلات';
+
+  @override
+  String get fitnessGoalWeightLoss => 'فقدان الوزن';
+
+  @override
+  String get fitnessGoalGeneralFitness => 'لياقة عامة';
+
+  @override
+  String get fitnessGoalEndurance => 'التحمل';
+
+  @override
+  String get fitnessGoalFlexibility => 'المرونة';
+
+  @override
+  String get fitnessGoalConsistency => 'الانتظام';
+
+  @override
+  String get fitnessGoalWellness => 'الصحة العامة';
+
+  @override
+  String get myInfoFitnessGoalSaveError => 'تعذر تحديث الهدف الرياضي. حاول مرة أخرى.';
+
+  @override
+  String get memberAiTitle => 'اسأل عن النادي';
+
+  @override
+  String get memberAiInputHint => 'اسأل عن حصصك أو صفوفك أو عضويتك...';
+
+  @override
+  String get memberAiEmptyState => 'اسألني عن حصص التدريب الشخصي أو الصفوف أو عضويتك — سأتحقق من بياناتك الحقيقية أولاً.';
+
+  @override
+  String get memberAiSendButton => 'إرسال';
+
+  @override
+  String get memberAiQuickQuestionSessionsThisWeek => 'كم عدد حصص التدريب الشخصي لدي هذا الأسبوع؟';
+
+  @override
+  String get memberAiQuickQuestionRemainingSessions => 'كم عدد الحصص المتبقية في باقتي؟';
+
+  @override
+  String get memberAiQuickQuestionRecommendation => 'على ماذا يجب أن أركز بناءً على هدفي؟';
+
+  @override
+  String get routeNotFound => 'الصفحة غير موجودة.';
+
+  @override
+  String get profileFallbackLabel => 'الملف الشخصي';
+
+  @override
+  String get genericHomeDataNotLoaded => 'لم يتم تحميل بيانات الصفحة الرئيسية بعد.';
+
+  @override
+  String get paymentNotYetConfirmed => 'لم يتم تأكيد الدفع بعد. يرجى المحاولة مرة أخرى بعد قليل.';
+
+  @override
+  String get planCreatedSuccessfully => 'تم إنشاء الخطة بنجاح';
+
+  @override
+  String get planUpdatedSuccessfully => 'تم تحديث الخطة بنجاح';
+
+  @override
+  String get classFilterBookings => 'الحجوزات';
+
+  @override
+  String get classFilterReactivate => 'إعادة تفعيل';
+
+  @override
+  String get classFilterCancel => 'إلغاء';
+
+  @override
+  String get classFilterEdit => 'تعديل';
+
+  @override
   String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
 
   @override
@@ -1647,6 +1836,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get checkins_allBranchesScanBlocked => 'اختر فرعًا محددًا لمسح رموز QR.';
+
+  @override
+  String get checkins_allBranchesCheckoutBlocked => 'اختر فرعًا محددًا لتسجيل خروج الأعضاء.';
+
+  @override
+  String get checkins_memberCheckedOutSuccess => 'تم تسجيل خروج العضو بنجاح.';
+
+  @override
+  String get checkins_memberBlockedSuccess => 'تم حظر العضو بنجاح.';
+
 
   @override
   String get sessionDetailBookingClosed => 'انتهى وقت الحجز';

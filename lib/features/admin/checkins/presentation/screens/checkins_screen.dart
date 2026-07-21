@@ -36,6 +36,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
@@ -155,7 +156,8 @@ class _CheckinsScreenState extends State<CheckinsScreen> {
         } else if (state is CheckinsActionSuccess) {
           _showSnack(context, state.message, isError: false);
         } else if (state is CheckinsActionError) {
-          _showSnack(context, state.message, isError: true);
+          _showSnack(context, translateBackendErrorCode(l10n, state.errorCode),
+              isError: true);
         }
       },
       child: Scaffold(

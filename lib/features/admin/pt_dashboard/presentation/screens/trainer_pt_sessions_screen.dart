@@ -25,6 +25,7 @@ import '../bloc/sessions/trainer_pt_sessions_bloc.dart';
 import '../bloc/sessions/trainer_pt_sessions_event.dart';
 import '../widgets/session_card_widget.dart';
 import '../widgets/book_session_sheet_widget.dart';
+import '../../../../../core/utils/tenant_id_parser.dart';
 
 class TrainerPtSessionsScreen extends StatelessWidget {
   final int  branchId;
@@ -96,9 +97,19 @@ class _SessionsView extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsetsDirectional.only(end: 12),
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    final tenantIdStr = tokenStore.getTenantId();
-                    final tenantId = int.tryParse(tenantIdStr.toString()) ?? 1;
+                  onPressed: () async {
+                    // BUG FIX: getTenantId() is async — calling .toString() on
+                    // the unawaited Future always failed to parse, so this
+                    // silently fell back to the hardcoded "1" on every single
+                    // click regardless of the admin's real tenant.
+                    final tenantIdStr = await tokenStore.getTenantId();
+                    final tenantId = TenantIdParser.parseOrNull(tenantIdStr);
+                    if (tenantId == null) {
+                      return;
+                    }
+                    if (!context.mounted) {
+                      return;
+                    }
                     BookSessionSheet.show(
                       context,
                       branchId:     branchId,

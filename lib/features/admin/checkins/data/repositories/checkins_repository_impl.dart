@@ -57,10 +57,16 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
 
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception("You don't have permission to view check-ins.");
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(
+        message: "You don't have permission to view check-ins.",
+        errorCode: e.errorCode,
+      );
     } on ServerException catch (e) {
-      throw Exception('Server error: ${e.message}');
+      throw AppFailureException(
+        message: 'Server error: ${e.message}',
+        errorCode: e.errorCode ?? 'CHECKINS_LOAD_FAILED',
+      );
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
     }
@@ -80,11 +86,14 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
     } on ForbiddenException catch (e) {
-      final msg = e.message.isNotEmpty ? e.message : 'Member is blocked and cannot check in.';
-      throw Exception(msg);
+      throw AppFailureException(
+        message: e.message.isNotEmpty ? e.message : 'Member is blocked and cannot check in.',
+        errorCode: e.errorCode ?? 'MEMBER_BLOCKED',
+      );
     } on ServerException catch (e) {
-      // Surface specific conflict messages (token used, expired, duplicate check-in).
-      throw Exception(e.message);
+      // Conflict states (token used, expired, duplicate check-in) carry a
+      // specific errorCode from the backend — preserve it for translation.
+      throw AppFailureException(message: e.message, errorCode: e.errorCode);
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
     }
@@ -98,12 +107,14 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
     } on ForbiddenException catch (e) {
-      final msg = e.message.isNotEmpty
-          ? e.message
-          : "You don't have permission to perform this action.";
-      throw Exception(msg);
+      throw AppFailureException(
+        message: e.message.isNotEmpty
+            ? e.message
+            : "You don't have permission to perform this action.",
+        errorCode: e.errorCode,
+      );
     } on ServerException catch (e) {
-      throw Exception(e.message);
+      throw AppFailureException(message: e.message, errorCode: e.errorCode);
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
     }
@@ -116,10 +127,13 @@ class CheckinsRepositoryImpl implements CheckinsRepository {
       await dataSource.blockMember(userId: userId, reason: reason);
     } on UnauthorizedException {
       throw Exception('Session expired. Please log in again.');
-    } on ForbiddenException {
-      throw Exception("You don't have permission to block members.");
+    } on ForbiddenException catch (e) {
+      throw AppFailureException(
+        message: "You don't have permission to block members.",
+        errorCode: e.errorCode,
+      );
     } on ServerException catch (e) {
-      throw Exception(e.message);
+      throw AppFailureException(message: e.message, errorCode: e.errorCode);
     } on NetworkException {
       throw Exception('No internet connection. Please try again.');
     }

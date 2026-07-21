@@ -1,30 +1,39 @@
 // =============================================================================
-// FILE: lib/features/trainer/pt_sessions/domain/entities/pt_session_stats_entity.dart
+// FILE: lib/features/admin/pt_dashboard/domain/entities/pt_session_stats_entity.dart
 // LAYER: Domain
 //
 // Maps to TrainerPtSessionStatsResponse.
 //
 // Backend JSON:
-//   { "total": 5, "completed": 2, "scheduled": 3 }
+//   { "total": 5, "completed": 2, "scheduled": 3, "requested": 1,
+//     "checkedIn": 0, "cancelRequested": 0, "cancelled": 1, "noShow": 0 }
 //
-// Screen layout (top of Sessions screen):
-//   [ Today Sessions (blue) ] [ Completed (green) ] [ Upcoming (orange) ]
+// Every status has its own explicit count from the backend — "cancelled" is
+// never derived client-side as (total - completed - scheduled), since
+// requested/checkedIn/cancelRequested sessions are not cancelled.
 // =============================================================================
 
 class PtSessionStatsEntity {
-  /// Total services regardless of status for the selected date.
+  /// Total sessions regardless of status for the selected date.
   final int total;
 
-  /// Sessions with status = COMPLETED.
   final int completed;
-
-  /// Sessions with status = SCHEDULED (shown as "Upcoming").
   final int scheduled;
+  final int requested;
+  final int checkedIn;
+  final int cancelRequested;
+  final int cancelled;
+  final int noShow;
 
   const PtSessionStatsEntity({
     required this.total,
     required this.completed,
     required this.scheduled,
+    this.requested = 0,
+    this.checkedIn = 0,
+    this.cancelRequested = 0,
+    this.cancelled = 0,
+    this.noShow = 0,
   });
 
   static const empty = PtSessionStatsEntity(

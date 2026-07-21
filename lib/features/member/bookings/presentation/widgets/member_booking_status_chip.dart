@@ -71,12 +71,14 @@ class MemberBookingStatusChip extends StatelessWidget {
 
       case 'CANCELLED':
       case 'NO_SHOW':
+      case 'DECLINED':
         return tokens.colors.danger;
 
       case 'WAITLISTED':
       case 'PENDING':
       case 'REQUESTED':
       case 'CANCEL_REQUESTED':
+      case 'PAYMENT_PENDING':
         return tokens.colors.primary;
 
       default:

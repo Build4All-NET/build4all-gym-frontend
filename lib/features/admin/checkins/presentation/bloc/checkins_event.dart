@@ -44,16 +44,24 @@ class ScanQrCode extends CheckinsEvent {
 // ── Per-member card actions ───────────────────────────────────────────────────
 
 /// Admin presses "Out" on a member card.
+/// [successMessage] is localized by the screen (which has BuildContext) and
+/// echoed back in the success state, since the BLoC itself has no context.
 class CheckOutMember extends CheckinsEvent {
-  final int checkinId;
-  const CheckOutMember(this.checkinId);
+  final int    checkinId;
+  final String successMessage;
+  const CheckOutMember(this.checkinId, {required this.successMessage});
 }
 
 /// Admin confirms the block dialog.
 class BlockMember extends CheckinsEvent {
   final int    userId;
   final String reason;
-  const BlockMember({required this.userId, required this.reason});
+  final String successMessage;
+  const BlockMember({
+    required this.userId,
+    required this.reason,
+    required this.successMessage,
+  });
 }
 
 // ── Branch switch ──────────────────────────────────────────────────────────

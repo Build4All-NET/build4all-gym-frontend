@@ -110,4 +110,28 @@ class MemberProfileService {
       throw NetworkException();
     }
   }
+
+  // PUT /api/member/account/fitness-goal
+  //
+  // fitnessGoal must be one of the backend's controlled FitnessGoal enum
+  // values (e.g. MUSCLE_GAIN, WEIGHT_LOSS, GENERAL_FITNESS). The backend
+  // rejects anything else with INVALID_REQUEST_BODY.
+  Future<void> updateFitnessGoal(String fitnessGoal) async {
+    final headers = await _headers();
+    final uri = Uri.parse(
+        '${Env.apiProjectBaseUrl}/api/member/account/fitness-goal');
+    try {
+      final r = await _client.put(
+        uri,
+        headers: headers,
+        body: jsonEncode({'fitnessGoal': fitnessGoal}),
+      );
+      debugPrint('PUT fitness-goal: ${r.statusCode}');
+      if (r.statusCode == 200 || r.statusCode == 204) return;
+      _handleError(r);
+    } catch (e) {
+      if (e is UnauthorizedException || e is ForbiddenException || e is ServerException) rethrow;
+      throw NetworkException();
+    }
+  }
 }

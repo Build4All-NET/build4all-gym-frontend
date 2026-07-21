@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../screens/trainer_detail_screen.dart';
+import '../../../../../core/network/globals.dart' as g;
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/trainer_card_entity.dart';
@@ -90,32 +91,58 @@ class TrainerCardWidget extends StatelessWidget {
                           ),
                         ),
 
-                        if (trainer.branchName != null && trainer.branchName!.trim().isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-                            children: [
-                              Icon(
-                                Icons.location_on_rounded,
-                                size: 14,
-                                color: tokens.colors.primary,
-                              ),
-                              const SizedBox(width: 4),
-                              Flexible(
-                                child: Text(
-                                  trainer.branchName!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
-                                  style: tokens.typography.bodySmall.copyWith(
-                                    color: tokens.colors.body,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                        Builder(builder: (context) {
+                          // branches[] is the source of truth for a
+                          // multi-branch trainer; branchName is only kept
+                          // as a fallback for responses that predate it.
+                          final branchLabel = trainer.branches.isNotEmpty
+                              ? trainer.branches.map((b) => b.branchName).join('، ')
+                              : (trainer.branchName ?? '');
+
+                          if (branchLabel.trim().isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                              children: [
+                                Icon(
+                                  Icons.location_on_rounded,
+                                  size: 14,
+                                  color: tokens.colors.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    branchLabel,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                                    style: tokens.typography.bodySmall.copyWith(
+                                      color: tokens.colors.body,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          );
+                        }),
+
+                        if (!trainer.bookable) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            _restrictionMessage(l10n, trainer.restrictionCode),
+                            textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                            style: tokens.typography.bodySmall.copyWith(
+                              color: tokens.colors.error,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ],
@@ -224,6 +251,35 @@ class TrainerCardWidget extends StatelessWidget {
       },
     );
   }
+
+  // Public + pure (no BuildContext/AppLocalizations needed) so the
+  // restriction-code -> ARB-key mapping can be unit tested without a full
+  // widget/localization test harness.
+  static const String restrictionKeyNoMembership = 'noActiveMembership';
+  static const String restrictionKeyWrongBranch = 'trainerNotAvailableAtYourBranch';
+  static const String restrictionKeyDefault = 'trainerNotBookable';
+
+  static String restrictionMessageKey(String? restrictionCode) {
+    switch (restrictionCode) {
+      case 'NO_ACTIVE_MEMBERSHIP':
+        return restrictionKeyNoMembership;
+      case 'TRAINER_NOT_AVAILABLE_AT_MEMBERSHIP_BRANCH':
+        return restrictionKeyWrongBranch;
+      default:
+        return restrictionKeyDefault;
+    }
+  }
+
+  String _restrictionMessage(AppLocalizations l10n, String? restrictionCode) {
+    switch (restrictionMessageKey(restrictionCode)) {
+      case restrictionKeyNoMembership:
+        return l10n.noActiveMembership;
+      case restrictionKeyWrongBranch:
+        return l10n.trainerNotAvailableAtYourBranch;
+      default:
+        return l10n.trainerNotBookable;
+    }
+  }
 }
 
 // ── Heart Button ──────────────────────────────────────────────────────────────
@@ -282,7 +338,8 @@ class _TrainerPhoto extends StatelessWidget {
           borderRadius: BorderRadius.circular(tokens.card.radius),
           child: trainer.profileFileId != null
               ? Image.network(
-            'http://localhost:8080/api/files/${trainer.profileFileId}',
+            g.resolveUrl('/api/files/${trainer.profileFileId}'),
+            headers: g.fileRequestAuthHeaders(),
             width: 90,
             height: 90,
             fit: BoxFit.cover,

@@ -186,9 +186,12 @@ class CheckinMemberCard extends StatelessWidget {
                             icon:  Icons.logout_rounded,
                             label: l10n.checkins_out,
                             color: c.success,
-                            onTap: () => context
-                                .read<CheckinsBloc>()
-                                .add(CheckOutMember(checkin.checkinId)),
+                            onTap: () => context.read<CheckinsBloc>().add(
+                                  CheckOutMember(
+                                    checkin.checkinId,
+                                    successMessage: l10n.checkins_memberCheckedOutSuccess,
+                                  ),
+                                ),
                           ),
                           const SizedBox(width: 8),
                         ],
@@ -392,6 +395,7 @@ class _BlockDialogState extends State<_BlockDialog> {
     context.read<CheckinsBloc>().add(BlockMember(
       userId: widget.userId,
       reason: _reasonController.text.trim(),
+      successMessage: widget.l10n.checkins_memberBlockedSuccess,
     ));
     Navigator.of(context).pop();
   }

@@ -64,11 +64,17 @@ class ConfirmStripePaymentEvent extends PlanDetailEvent {
 }
 
 /// Fired when the user taps "Done" after returning from the PayPal / MPGS browser.
+///
+/// [paymentNotConfirmedMessage] is the localized message shown when the
+/// membership is still pending after the redirect — passed in from the
+/// screen so the BLoC stays context-free.
 class CheckRedirectPaymentEvent extends PlanDetailEvent {
   final PlanDetailLoaded previousState;
   final CheckoutResultEntity pendingResult;
+  final String paymentNotConfirmedMessage;
   CheckRedirectPaymentEvent({
     required this.previousState,
     required this.pendingResult,
+    required this.paymentNotConfirmedMessage,
   });
 }

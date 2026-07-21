@@ -528,6 +528,17 @@ class _AccountBody extends StatelessWidget {
                             context,
                           ),
                     ),
+                    AccountMenuItem(
+                      icon: Icons
+                          .auto_awesome_rounded,
+                      label: l10n.accountAskAi,
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(
+                          AppRouter.memberAiAssistant,
+                        );
+                      },
+                    ),
                   ],
                 ),
                 SizedBox(

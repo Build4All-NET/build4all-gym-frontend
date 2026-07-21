@@ -212,6 +212,26 @@ class TrainerPtSessionsRepositoryImpl implements TrainerPtSessionsRepository {
     }
   }
 
+  // ── Check in SCHEDULED session ──────────────────────────────────────────────
+
+  @override
+  Future<({PtSessionEntity? data, Failure? failure})> checkIn({
+    required int sessionId,
+  }) async {
+    try {
+      final model = await _service.checkIn(sessionId);
+      return (data: model.toEntity(), failure: null);
+    } on UnauthorizedException {
+      return (data: null, failure: const AuthFailure('Session expired. Please log in again.'));
+    } on ForbiddenException {
+      return (data: null, failure: const AuthFailure('Access denied.'));
+    } on ServerException catch (e) {
+      return (data: null, failure: ServerFailure(e.message));
+    } on NetworkException {
+      return (data: null, failure: const NetworkFailure('No internet connection.'));
+    }
+  }
+
   // ── Decline REQUESTED session ───────────────────────────────────────────────
 
   @override

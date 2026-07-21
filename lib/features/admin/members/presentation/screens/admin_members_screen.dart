@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/app_router.dart';
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -309,7 +310,8 @@ class _MembersBodyState extends State<_MembersBody> {
         }
 
         if (state is MembersError && _lastLoaded == null) {
-          return _buildError(context, state.message);
+          return _buildError(
+              context, translateBackendErrorCode(AppLocalizations.of(context)!, state.errorCode));
         }
 
         final loaded = _lastLoaded;

@@ -6,6 +6,7 @@ import 'package:build4allgym/features/admin/staff/presentation/screens/admin_gym
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
 import '../core/network/globals.dart';
 import '../features/admin/AppBar/presentation/branch_cubit.dart';
@@ -120,6 +121,7 @@ import '../features/shell/presentation/screens/main_shell.dart';
 import '../features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart';
 import '../features/admin/pt_dashboard/presentation/screens/admin_pt_package_bookings_screen.dart';
 
+import '../features/member/ai_assistant/presentation/screens/member_ai_assistant_screen.dart';
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
 import '../features/member/home/data/repositories/member_home_repository_impl.dart';
@@ -253,6 +255,9 @@ class AppRouter {
   static const String memberInvoices = '/member/invoices';
   static const String memberInvoiceDetail = '/member/invoices/detail';
 
+  // ─── Member: AI Assistant ───────────────────────────────────────────────────
+  static const String memberAiAssistant = '/member/ai-assistant';
+
   // ─── Logout ────────────────────────────────────────────────────────────────
   static const String logout = '/logout';
 
@@ -373,6 +378,12 @@ class AppRouter {
             ),
             child: MemberInvoiceScreen(invoiceId: invoiceId),
           ),
+        );
+// ── Member: AI Assistant ─────────────────────────────────────────────────
+
+      case memberAiAssistant:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(const MemberAiAssistantScreen()),
         );
     // ── Admin: Dashboard ───────────────────────────────────────────────────
 
@@ -856,8 +867,10 @@ class AppRouter {
 
       case adminNotifications:
         return MaterialPageRoute(
-          builder: (_) => _withProfile(
-            const _ComingSoonScreen(title: 'Notifications'),
+          builder: (context) => _withProfile(
+            _ComingSoonScreen(
+              title: AppLocalizations.of(context)!.accountNotifications,
+            ),
           ),
         );
 
@@ -1010,8 +1023,11 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-          builder: (_) =>
-          const Scaffold(body: Center(child: Text('Route not found'))),
+          builder: (context) => Scaffold(
+            body: Center(
+              child: Text(AppLocalizations.of(context)!.routeNotFound),
+            ),
+          ),
         );
     }
   }
@@ -1041,7 +1057,7 @@ class _ComingSoonScreen extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              'Coming soon',
+              AppLocalizations.of(context)!.comingSoon,
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium

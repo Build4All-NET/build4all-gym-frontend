@@ -18,6 +18,7 @@ import '../../../../../core/theme/app_theme_tokens.dart';
 import '../../../../auth/presentation/admin_profile/admin_profile_cubit.dart';
 import '../../../../admin/AppBar/presentation/admin_app_bar.dart';
 import '../../../../admin/AppBar/presentation/branch_cubit.dart';
+import '../../../../admin/AppBar/presentation/branch_context_cubit.dart';
 import '../../../../admin/navigation/presentation/widgets/admin_navigation_drawer.dart';
 import '../../../../admin/trainers/data/models/admin_trainer_card_model.dart';
 import '../../domain/entities/pt_session_entity.dart';
@@ -41,6 +42,21 @@ class TrainerDashboardScreen extends StatelessWidget {
     required this.trainerId,
   });
 
+  // BUG FIX: this used to fall back to AdminProfileCubit.state.branchId
+  // (actually the tenant id, see admin_profile_cubit.dart) or a hardcoded
+  // `1`. BranchContextCubit is the single source of truth for the selected
+  // branch now, with the first real branch from BranchCubit as a fallback
+  // only until the admin has made an explicit selection.
+  int _effectiveBranchId(BuildContext context) {
+    final contextBranchId = context.read<BranchContextCubit>().state;
+    if (contextBranchId != null) return contextBranchId;
+    final branchState = context.read<BranchCubit>().state;
+    if (branchState is BranchLoaded && branchState.branches.isNotEmpty) {
+      return branchState.branches.first.id;
+    }
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final tokens  = context.read<ThemeCubit>().state.tokens;
@@ -63,7 +79,7 @@ class TrainerDashboardScreen extends StatelessWidget {
           bottom: false,
           child: AdminAppBar(
             title: isAdmin ? AppLocalizations.of(context)!.trainer_ptDashboardAllTitle : AppLocalizations.of(context)!.trainer_ptDashboardTitle,
-            selectedBranchId: context.watch<AdminProfileCubit>().state.branchId,
+            selectedBranchId: context.watch<BranchContextCubit>().state,
             onBranchChanged:  onBranchChanged,
             notificationCount: 0,
             actions: [
@@ -122,9 +138,7 @@ class TrainerDashboardScreen extends StatelessWidget {
                         final currentState = bloc.state;
                         if (currentState is PtSessionsLoaded) {
                           bloc.add(PtSessionsStarted(
-                            branchId: currentState.selectedDate.day == DateTime.now().day
-                                ? (context.read<AdminProfileCubit>().state.branchId ?? 1)
-                                : 1,
+                            branchId: _effectiveBranchId(context),
                             trainerId: isAdmin ? 0 : trainerId,
                             trainerNames: isAdmin
                                 ? {for (final t in trainers) t.trainerId: t.fullName}
@@ -172,7 +186,7 @@ class TrainerDashboardScreen extends StatelessWidget {
   Widget _buildContent(BuildContext context, PtSessionsLoaded state, dynamic c, AppThemeTokens tokens) {
     final sessions = state.sessions;
     final stats = state.stats;
-    final effectiveBranchId = context.read<AdminProfileCubit>().state.branchId ?? 1;
+    final effectiveBranchId = _effectiveBranchId(context);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),

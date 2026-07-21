@@ -50,19 +50,29 @@ class AdminMembershipRequestsService {
     return list.map((e) => _parseRefundRequest(e as Map<String, dynamic>)).toList();
   }
 
-  Future<void> approveRefundRequest(
+  // Always returns HTTP 200. The body's `status` field is "processed" when
+  // the refund was actually returned to the member, or "failed" when the
+  // provider (e.g. PayPal/MPGS) has no refund API available yet — that
+  // case is NOT an HTTP error, so the caller must inspect the body.
+  Future<RefundApprovalResult> approveRefundRequest(
     int refundId,
     double refundAmount, {
     double? deductionAmount,
     String? adminNote,
   }) async {
-    await _dio.post(
+    final response = await _dio.post(
       _url('/api/admin/refund-requests/$refundId/approve'),
       data: {
         'refundAmount': refundAmount,
         if (deductionAmount != null) 'deductionAmount': deductionAmount,
         if (adminNote != null && adminNote.isNotEmpty) 'adminNote': adminNote,
       },
+    );
+    final data = response.data as Map<String, dynamic>?;
+    final status = data?['status'] as String?;
+    return RefundApprovalResult(
+      succeeded: status != 'failed',
+      errorCode: data?['errorCode'] as String?,
     );
   }
 

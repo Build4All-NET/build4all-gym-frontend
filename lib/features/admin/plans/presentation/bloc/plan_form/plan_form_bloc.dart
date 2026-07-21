@@ -74,7 +74,7 @@ class PlanFormBloc extends Bloc<PlanFormEvent, PlanFormState> {
         await createPlanType(event.request.planType);
       }
       await createPlan(event.request);
-      emit(PlanFormSuccess(message: 'Plan created successfully'));
+      emit(PlanFormSuccess(message: event.successMessage));
     } catch (e) {
       emit(PlanFormError(
         message: _extractMessage(e),
@@ -104,7 +104,7 @@ class PlanFormBloc extends Bloc<PlanFormEvent, PlanFormState> {
     emit(PlanFormSubmitting(types: types, branches: branches));
     try {
       await updatePlan(event.planId, event.request);
-      emit(PlanFormSuccess(message: 'Plan updated successfully'));
+      emit(PlanFormSuccess(message: event.successMessage));
     } catch (e) {
       emit(PlanFormError(
         message: _extractMessage(e),

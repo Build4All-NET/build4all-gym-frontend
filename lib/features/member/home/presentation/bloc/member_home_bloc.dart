@@ -105,7 +105,7 @@ class MemberHomeBloc extends Bloc<MemberHomeEvent, MemberHomeState> {
     final currentShowWeightCard = _currentShowWeightCard;
 
     if (currentData == null) {
-      emit(const MemberHomeError(message: 'Home data is not loaded yet.'));
+      emit(MemberHomeError(message: event.notLoadedMessage));
       return;
     }
 

@@ -394,14 +394,14 @@ class ClassCardWidget extends StatelessWidget {
                 children: [
                   _ActionButton(
                     icon: Icons.people_outline,
-                    label: 'Bookings',
+                    label: l10n.classFilterBookings,
                     color: cs.primary,
                     onTap: onBookingsTap,
                   ),
                   const SizedBox(width: 8),
                   _ActionButton(
                     icon: Icons.refresh_rounded,
-                    label: 'Reactivate',
+                    label: l10n.classFilterReactivate,
                     color: cs.tertiary != cs.surface ? cs.tertiary : const Color(0xFF4CAF50),
                     onTap: onReactivateTap ?? () {},
                   ),
@@ -412,7 +412,7 @@ class ClassCardWidget extends StatelessWidget {
                 children: [
                   _ActionButton(
                     icon: Icons.people_outline,
-                    label: 'Bookings',
+                    label: l10n.classFilterBookings,
                     color: cs.primary,
                     onTap: onBookingsTap,
                   ),
@@ -423,14 +423,14 @@ class ClassCardWidget extends StatelessWidget {
                 children: [
                   _ActionButton(
                     icon: Icons.people_outline,
-                    label: 'Bookings',
+                    label: l10n.classFilterBookings,
                     color: cs.primary,
                     onTap: onBookingsTap,
                   ),
                   const SizedBox(width: 8),
                   _ActionButton(
                     icon: Icons.edit_outlined,
-                    label: 'Edit',
+                    label: l10n.classFilterEdit,
                     color: cs.onSurface.withOpacity(0.6),
                     onTap: onEditTap,
                   ),
@@ -438,7 +438,7 @@ class ClassCardWidget extends StatelessWidget {
                   // Cancel button — error color is semantic
                   _ActionButton(
                     icon: Icons.close,
-                    label: 'Cancel',
+                    label: l10n.classFilterCancel,
                     color: cs.error,
                     onTap: onCancelTap,
                   ),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -38,8 +37,6 @@ class MemberHomeScreen extends StatefulWidget {
 class _MemberHomeScreenState extends State<MemberHomeScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Timer? _quoteRefreshTimer;
-
   String _fullName = '';
 
   bool _hideProgressTrackingCard = true;
@@ -61,27 +58,6 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     context.read<MemberHomeBloc>().add(
       const MemberHomeLoadRequested(),
     );
-
-    // TEMP TEST MODE:
-    // Quote refreshes every 2 seconds.
-    //
-    // Later, for production, change seconds: 2 to minutes: 30.
-    _quoteRefreshTimer = Timer.periodic(
-      const Duration(seconds: 4),
-          (_) {
-        if (!mounted) return;
-
-        context.read<MemberHomeBloc>().add(
-          const MemberHomeRefreshRequested(),
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _quoteRefreshTimer?.cancel();
-    super.dispose();
   }
 
   Future<void> _logoutAndGoToLogin(BuildContext context) async {
@@ -369,6 +345,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     required int notificationCount,
   }) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final l10n = AppLocalizations.of(context)!;
 
     return Center(
       child: ConstrainedBox(
@@ -451,7 +428,10 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         onDismiss: _dismissProgressTrackingCard,
                         onWeightSubmitted: (weight) {
                           context.read<MemberHomeBloc>().add(
-                            MemberHomeWeightLogged(weight: weight),
+                            MemberHomeWeightLogged(
+                              weight: weight,
+                              notLoadedMessage: l10n.genericHomeDataNotLoaded,
+                            ),
                           );
                         },
                       ),

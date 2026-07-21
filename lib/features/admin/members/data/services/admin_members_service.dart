@@ -34,10 +34,29 @@ class AdminMembersService {
   void _handleStatus(http.Response response) {
     if (response.statusCode == 200 || response.statusCode == 204) return;
     if (response.statusCode == 401) throw UnauthorizedException();
-    if (response.statusCode == 403) throw ForbiddenException();
-    throw ServerException(message: 'HTTP ${response.statusCode}: ${response.body}');
+
+    // Backend error shape: {"status": ..., "message": "...", "errorCode": "...",
+    // "timestamp": "..."}. `message` is raw backend text kept only for
+    // logging — callers must translate `errorCode` and never render `message`.
+    String msg = '';
+    String? errorCode;
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      msg = body['message'] as String? ?? '';
+      errorCode = body['errorCode'] as String?;
+    } catch (_) {}
+
+    if (response.statusCode == 403) {
+      throw ForbiddenException(message: msg, errorCode: errorCode);
+    }
+    throw ServerException(
+      message: msg.isNotEmpty ? msg : 'HTTP ${response.statusCode}',
+      errorCode: errorCode,
+    );
   }
 
+  // No errorCode here — a malformed/empty 2xx body isn't a backend-classified
+  // failure, so callers fall back to the generic translated message.
   Map<String, dynamic> _parseMap(http.Response response) {
     if (response.body.isEmpty) {
       throw ServerException(message: 'Server returned an empty response.');
@@ -55,7 +74,13 @@ class AdminMembersService {
   // GET /api/admin/members
   // ---------------------------------------------------------------------------
   Future<Map<String, dynamic>> getMembers({
-    required int branchId,
+    // Nullable: the backend's branchId query param is optional and, when
+    // omitted, returns members across every branch in the tenant. Passing a
+    // literal branchId here (e.g. 1) is NOT ignored — MemberListRepository
+    // filters by it when non-null — so a hardcoded value would silently
+    // hide every other branch's members from callers that want "all
+    // branches" (see the trainer/reception member-picker sheets).
+    int? branchId,
     String status = '',
     String gender = '',
     String search = '',
@@ -68,7 +93,7 @@ class AdminMembersService {
     final headers = await _headers();
     final uri = Uri.parse('${Env.apiProjectBaseUrl}/api/admin/members')
         .replace(queryParameters: {
-      'branchId': branchId.toString(),
+      if (branchId != null) 'branchId': branchId.toString(),
       'page':     (page - 1).toString(),
       'size':     size.toString(),
       'sort':     sort,

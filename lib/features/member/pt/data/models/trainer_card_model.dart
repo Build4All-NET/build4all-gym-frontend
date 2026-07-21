@@ -1,4 +1,5 @@
 import 'package:build4allgym/features/member/pt/domain/entities/trainer_card_entity.dart';
+import 'trainer_branch_model.dart';
 
 class TrainerCardModel {
   final int trainerId;
@@ -14,6 +15,10 @@ class TrainerCardModel {
   final bool isOnline;
   final int? branchId;
   final String? branchName;
+  final List<TrainerBranchModel> branches;
+  final bool bookable;
+  final int? bookableBranchId;
+  final String? restrictionCode;
 
   const TrainerCardModel({
     required this.trainerId,
@@ -29,6 +34,10 @@ class TrainerCardModel {
     required this.isOnline,
     this.branchId,
     this.branchName,
+    this.branches = const [],
+    this.bookable = true,
+    this.bookableBranchId,
+    this.restrictionCode,
   });
 
   factory TrainerCardModel.fromJson(Map<String, dynamic> json) {
@@ -62,6 +71,16 @@ class TrainerCardModel {
           ? null
           : (json['branchId'] as num).toInt(),
       branchName: json['branchName'] as String?,
+      branches: (json['branches'] as List<dynamic>? ?? [])
+          .map((item) => TrainerBranchModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      // Default true when the backend omits the field so older API
+      // responses (or trainers with no restriction) don't get hidden.
+      bookable: json['bookable'] as bool? ?? true,
+      bookableBranchId: json['bookableBranchId'] == null
+          ? null
+          : (json['bookableBranchId'] as num).toInt(),
+      restrictionCode: json['restrictionCode'] as String?,
     );
   }
 
@@ -80,6 +99,12 @@ class TrainerCardModel {
       'isOnline': isOnline,
       'branchId': branchId,
       'branchName': branchName,
+      'branches': branches
+          .map((b) => {'branchId': b.branchId, 'branchName': b.branchName})
+          .toList(),
+      'bookable': bookable,
+      'bookableBranchId': bookableBranchId,
+      'restrictionCode': restrictionCode,
     };
   }
 
@@ -98,7 +123,10 @@ class TrainerCardModel {
       isOnline: isOnline,
       branchId: branchId,
       branchName: branchName,
-
+      branches: branches.map((b) => b.toEntity()).toList(),
+      bookable: bookable,
+      bookableBranchId: bookableBranchId,
+      restrictionCode: restrictionCode,
     );
   }
 }

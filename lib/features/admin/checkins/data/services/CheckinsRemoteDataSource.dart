@@ -43,26 +43,31 @@ class CheckinsRemoteDataSource {
         response.statusCode == 204) return;
     if (response.statusCode == 401) throw UnauthorizedException();
 
-    // Backend error shape: {"status": 404, "message": "...", "timestamp": "..."}.
-    // Extract `message` for every error status, not just 403 — 404 (token/member
-    // not found) and 409 (expired/already-used token, duplicate check-in) carry
-    // the user-facing text here too; without this they'd show as raw JSON.
+    // Backend error shape: {"status": 404, "message": "...", "errorCode": "...",
+    // "timestamp": "..."}. `message` is raw backend text kept only for logging —
+    // callers must translate `errorCode` via translateBackendErrorCode() and
+    // never render `message` directly.
     String msg = '';
+    String? errorCode;
     try {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
       msg = body['message'] as String? ?? '';
+      errorCode = body['errorCode'] as String?;
     } catch (_) {}
 
     if (response.statusCode == 403) {
-      throw ForbiddenException(message: msg);
+      throw ForbiddenException(message: msg, errorCode: errorCode);
     }
     throw ServerException(
       message: msg.isNotEmpty
           ? msg
           : 'Something went wrong (HTTP ${response.statusCode}).',
+      errorCode: errorCode,
     );
   }
 
+  // No errorCode here — a malformed/empty 2xx body isn't a backend-classified
+  // failure, so callers fall back to the generic translated message.
   Map<String, dynamic> _parseMap(http.Response response) {
     if (response.body.isEmpty) {
       throw const ServerException(message: 'Server returned an empty response.');

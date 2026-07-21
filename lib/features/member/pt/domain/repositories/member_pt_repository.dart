@@ -30,13 +30,15 @@ abstract class MemberPtRepository {
   // Date-based slots
   //
   // Backend endpoint:
-  // GET /api/trainers/{trainerId}/slots?date=YYYY-MM-DD
+  // GET /api/member/pt/trainers/{trainerId}/slots?branchId=&serviceId=&date=
   //
   // Used by old single-session booking.
   // ─────────────────────────────────────────────────────────────
 
   Future<({List<TimeSlotEntity>? data, Failure? failure})> getAvailableSlots({
     required int trainerId,
+    required int branchId,
+    required int serviceId,
     required DateTime date,
   });
 

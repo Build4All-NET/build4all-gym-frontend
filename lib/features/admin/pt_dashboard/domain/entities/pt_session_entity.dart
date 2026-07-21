@@ -94,6 +94,8 @@ class PtSessionEntity {
   bool get isCancelled => status == 'CANCELLED';
   bool get isNoShow => status == 'NO_SHOW';
   bool get isCancelRequested => status == 'CANCEL_REQUESTED';
+  bool get isCheckedIn => status == 'CHECKED_IN';
+  bool get isDeclined => status == 'DECLINED';
 
   bool get isPaid => paymentStatus == 'PAID';
 

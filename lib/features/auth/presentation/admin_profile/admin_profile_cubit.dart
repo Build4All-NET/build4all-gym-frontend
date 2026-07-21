@@ -123,9 +123,14 @@ class AdminProfileCubit extends Cubit<AdminProfile> {
       return;
     }
 
-    final tenantIdStr = await const AdminTokenStore().getTenantId()
-        ?? await const AuthTokenStore().getTenantId();
-    final branchId = tenantIdStr != null ? int.tryParse(tenantIdStr) : null;
+    // BUG FIX: this used to read the tenant id and assign it directly to
+    // `branchId` — every screen that read AdminProfile.branchId was actually
+    // reading the tenant id, not a real branch. The JWT carries no branch
+    // claim (branch is a UI selection, not an authenticated-identity fact),
+    // so AdminProfile no longer fabricates one. Screens must use
+    // BranchContextCubit (lib/features/admin/AppBar/presentation/
+    // branch_context_cubit.dart) for the actively selected branch instead.
+    const int? branchId = null;
 
     int? userId = JwtUtils.userIdFromToken(token);
     if (userTok != null && userTok.isNotEmpty && userTok != token) {

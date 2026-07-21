@@ -29,15 +29,21 @@ class MemberHomeRefreshRequested extends MemberHomeEvent {
 ///
 /// Example:
 /// weight = 75.5
+///
+/// [notLoadedMessage] is the localized message shown in the rare case this
+/// fires before home data has loaded — passed from the screen so the BLoC
+/// stays context-free.
 class MemberHomeWeightLogged extends MemberHomeEvent {
   final double weight;
+  final String notLoadedMessage;
 
   const MemberHomeWeightLogged({
     required this.weight,
+    required this.notLoadedMessage,
   });
 
   @override
-  List<Object?> get props => [weight];
+  List<Object?> get props => [weight, notLoadedMessage];
 }
 
 /// Triggered when the user dismisses the weight tracker card.

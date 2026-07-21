@@ -101,8 +101,8 @@ class _DetailView extends StatelessWidget {
                   children: [
                     session.trainerProfileFileId != null
                         ? Image.network(
-                      'http://192.168.0.101:8980/api/files/'
-                          '${session.trainerProfileFileId}',
+                      resolveUrl('/api/files/${session.trainerProfileFileId}'),
+                      headers: fileRequestAuthHeaders(),
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) =>
                           _HeroPlaceholder(tokens: tokens),
