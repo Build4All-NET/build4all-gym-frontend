@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/member_attendance_item_entity.dart';
 import '../bloc/admin_members_bloc.dart';
@@ -106,7 +107,7 @@ class AttendanceHistoryBottomSheet extends StatelessWidget {
                       children: [
                         Icon(Icons.error_outline, color: cs.error, size: 36),
                         const SizedBox(height: 8),
-                        Text(state.message,
+                        Text(translateBackendErrorCode(l10n, state.errorCode),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: cs.error, fontSize: 13)),
                         const SizedBox(height: 12),

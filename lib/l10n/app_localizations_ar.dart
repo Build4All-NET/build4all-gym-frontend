@@ -1596,6 +1596,75 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backendErrorInvalidFitnessGoal => 'يرجى اختيار أحد الأهداف الرياضية المتاحة.';
 
   @override
+  @override
+  String get backendErrorCheckinsLoadFailed => 'تعذر تحميل تسجيلات الحضور اليوم. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinCreateFailed => 'تعذر إنشاء تسجيل الحضور. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinUpdateFailed => 'تعذر تحديث تسجيل الحضور. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinDeleteFailed => 'تعذر حذف تسجيل الحضور. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorCheckinNotFound => 'تعذر العثور على تسجيل الحضور هذا.';
+
+  @override
+  String get backendErrorCheckinTenantInvalid => 'تسجيل الحضور هذا لا ينتمي إلى ناديك.';
+
+  @override
+  String get backendErrorCheckinQrExpired => 'انتهت صلاحية رمز الاستجابة السريعة هذا. يرجى إنشاء رمز جديد.';
+
+  @override
+  String get backendErrorCheckinQrAlreadyUsed => 'تم استخدام رمز الاستجابة السريعة هذا بالفعل.';
+
+  @override
+  String get backendErrorCheckinAccessWindow => 'خطة هذا العضو لا تسمح بالدخول في هذا الوقت.';
+
+  @override
+  String get backendErrorCheckinNotEligible => 'لا يملك هذا العضو خطة نشطة أو حجز حصة أو جلسة تدريب شخصي اليوم.';
+
+  @override
+  String get backendErrorCheckinBranchMismatch => 'تسجيل الحضور هذا يعود لفرع مختلف.';
+
+  @override
+  String get backendErrorCheckinAlreadyCheckedOut => 'تم تسجيل خروج هذا العضو بالفعل.';
+
+  @override
+  String get backendErrorMembersLoadFailed => 'تعذر تحميل قائمة الأعضاء. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberCreateFailed => 'تعذر إضافة العضو. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberUpdateFailed => 'تعذر تحديث بيانات هذا العضو. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberDeleteFailed => 'تعذر حذف هذا العضو. حاول مرة أخرى.';
+
+  @override
+  String get backendErrorMemberNotFound => 'تعذر العثور على هذا العضو.';
+
+  @override
+  String get backendErrorMemberAlreadyExists => 'هذا العضو موجود بالفعل.';
+
+  @override
+  String get backendErrorMemberBranchInvalid => 'هذا العضو لا ينتمي إلى ذلك الفرع.';
+
+  @override
+  String get backendErrorMemberTenantInvalid => 'هذا العضو لا ينتمي إلى ناديك.';
+
+  @override
+  String get backendErrorMemberAccessForbidden => 'ليس لديك صلاحية لتنفيذ هذا الإجراء على هذا العضو.';
+
+  @override
+  String get backendErrorMemberBlocked => 'هذا العضو محظور ولا يمكنه تسجيل الدخول.';
+
+  @override
+  String get backendErrorMemberNoActiveMembership => 'لا يملك هذا العضو عضوية نشطة.';
+
   String get backendErrorGeneric => 'حدث خطأ ما. حاول مرة أخرى.';
 
   @override
@@ -1767,6 +1836,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get checkins_allBranchesScanBlocked => 'اختر فرعًا محددًا لمسح رموز QR.';
+
+  @override
+  String get checkins_allBranchesCheckoutBlocked => 'اختر فرعًا محددًا لتسجيل خروج الأعضاء.';
+
+  @override
+  String get checkins_memberCheckedOutSuccess => 'تم تسجيل خروج العضو بنجاح.';
+
+  @override
+  String get checkins_memberBlockedSuccess => 'تم حظر العضو بنجاح.';
+
 
   @override
   String get sessionDetailBookingClosed => 'انتهى وقت الحجز';

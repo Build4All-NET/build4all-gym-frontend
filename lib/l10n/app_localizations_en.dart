@@ -1596,6 +1596,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backendErrorInvalidFitnessGoal => 'Please choose one of the listed fitness goals.';
 
   @override
+  @override
+  String get backendErrorCheckinsLoadFailed => 'We couldn\'t load today\'s check-ins. Please try again.';
+
+  @override
+  String get backendErrorCheckinCreateFailed => 'We couldn\'t create the check-in. Please try again.';
+
+  @override
+  String get backendErrorCheckinUpdateFailed => 'We couldn\'t update the check-in. Please try again.';
+
+  @override
+  String get backendErrorCheckinDeleteFailed => 'We couldn\'t delete the check-in. Please try again.';
+
+  @override
+  String get backendErrorCheckinNotFound => 'This check-in could not be found.';
+
+  @override
+  String get backendErrorCheckinTenantInvalid => 'This check-in doesn\'t belong to your gym.';
+
+  @override
+  String get backendErrorCheckinQrExpired => 'This QR code has expired. Please generate a new one.';
+
+  @override
+  String get backendErrorCheckinQrAlreadyUsed => 'This QR code has already been used.';
+
+  @override
+  String get backendErrorCheckinAccessWindow => 'This member\'s plan doesn\'t allow entry at this time.';
+
+  @override
+  String get backendErrorCheckinNotEligible => 'This member has no active plan, class booking, or PT session today.';
+
+  @override
+  String get backendErrorCheckinBranchMismatch => 'This check-in belongs to a different branch.';
+
+  @override
+  String get backendErrorCheckinAlreadyCheckedOut => 'This member is already checked out.';
+
+  @override
+  String get backendErrorMembersLoadFailed => 'We couldn\'t load the members list. Please try again.';
+
+  @override
+  String get backendErrorMemberCreateFailed => 'We couldn\'t add the member. Please try again.';
+
+  @override
+  String get backendErrorMemberUpdateFailed => 'We couldn\'t update this member. Please try again.';
+
+  @override
+  String get backendErrorMemberDeleteFailed => 'We couldn\'t delete this member. Please try again.';
+
+  @override
+  String get backendErrorMemberNotFound => 'This member could not be found.';
+
+  @override
+  String get backendErrorMemberAlreadyExists => 'This member already exists.';
+
+  @override
+  String get backendErrorMemberBranchInvalid => 'This member doesn\'t belong to that branch.';
+
+  @override
+  String get backendErrorMemberTenantInvalid => 'This member doesn\'t belong to your gym.';
+
+  @override
+  String get backendErrorMemberAccessForbidden => 'You don\'t have permission to perform this action on this member.';
+
+  @override
+  String get backendErrorMemberBlocked => 'This member is blocked and cannot check in.';
+
+  @override
+  String get backendErrorMemberNoActiveMembership => 'This member has no active membership.';
+
   String get backendErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
@@ -1767,6 +1836,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkins_allBranchesScanBlocked => 'Select a specific branch to scan QR codes.';
+
+  @override
+  String get checkins_allBranchesCheckoutBlocked => 'Select a specific branch to check out members.';
+
+  @override
+  String get checkins_memberCheckedOutSuccess => 'Member checked out successfully.';
+
+  @override
+  String get checkins_memberBlockedSuccess => 'Member blocked successfully.';
+
 
   @override
   String get sessionDetailBookingClosed => 'Booking closed';

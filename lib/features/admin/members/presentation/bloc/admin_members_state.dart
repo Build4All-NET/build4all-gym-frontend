@@ -52,9 +52,12 @@ class MembersLoaded extends AdminMembersState {
   }
 }
 
+/// [message] is raw/dev-facing only — the UI must render via [errorCode]
+/// (translateBackendErrorCode), never [message] directly.
 class MembersError extends AdminMembersState {
-  final String message;
-  const MembersError(this.message);
+  final String  message;
+  final String? errorCode;
+  const MembersError(this.message, {this.errorCode});
 }
 
 // ── GA-270: Detail states ─────────────────────────────────────────────────────
@@ -71,9 +74,12 @@ class MemberDetailLoaded extends AdminMembersState {
 }
 
 /// Emitted when getMemberDetail fails.
+/// [message] is raw/dev-facing only — the UI must render via [errorCode]
+/// (translateBackendErrorCode), never [message] directly.
 class MemberDetailError extends AdminMembersState {
-  final String message;
-  const MemberDetailError(this.message);
+  final String  message;
+  final String? errorCode;
+  const MemberDetailError(this.message, {this.errorCode});
 }
 
 // ── Attendance states ─────────────────────────────────────────────────────────
@@ -89,9 +95,12 @@ class MemberAttendanceLoaded extends AdminMembersState {
   const MemberAttendanceLoaded(this.userId, this.items);
 }
 
+/// [message] is raw/dev-facing only — the UI must render via [errorCode]
+/// (translateBackendErrorCode), never [message] directly.
 class MemberAttendanceError extends AdminMembersState {
-  final String message;
-  const MemberAttendanceError(this.message);
+  final String  message;
+  final String? errorCode;
+  const MemberAttendanceError(this.message, {this.errorCode});
 }
 
 // ── Per-card action states ────────────────────────────────────────────────────
@@ -107,10 +116,13 @@ class MemberActionSuccess extends AdminMembersState {
   const MemberActionSuccess({required this.userId, required this.actionType});
 }
 
+/// [message] is raw/dev-facing only — the UI must render via [errorCode]
+/// (translateBackendErrorCode), never [message] directly.
 class MemberActionError extends AdminMembersState {
-  final int    userId;
-  final String message;
-  const MemberActionError({required this.userId, required this.message});
+  final int     userId;
+  final String  message;
+  final String? errorCode;
+  const MemberActionError({required this.userId, required this.message, this.errorCode});
 }
 
 // ── Filter value object ───────────────────────────────────────────────────────

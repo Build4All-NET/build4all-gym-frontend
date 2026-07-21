@@ -31,9 +31,12 @@ class CheckinsLoaded extends CheckinsState {
 }
 
 /// An unrecoverable list error (network down, server 500, etc.).
+/// [message] is raw/dev-facing only — the UI must render via [errorCode]
+/// (translateBackendErrorCode), never [message] directly.
 class CheckinsError extends CheckinsState {
-  final String message;
-  const CheckinsError(this.message);
+  final String  message;
+  final String? errorCode;
+  const CheckinsError(this.message, {this.errorCode});
 }
 
 // ── QR scan result ─────────────────────────────────────────────────────────────
@@ -57,7 +60,10 @@ class CheckinsActionSuccess extends CheckinsState {
 }
 
 /// A card action failed — shown in a red snackbar.
+/// [message] is raw/dev-facing only — the UI must render via [errorCode]
+/// (translateBackendErrorCode), never [message] directly.
 class CheckinsActionError extends CheckinsState {
-  final String message;
-  const CheckinsActionError(this.message);
+  final String  message;
+  final String? errorCode;
+  const CheckinsActionError(this.message, {this.errorCode});
 }

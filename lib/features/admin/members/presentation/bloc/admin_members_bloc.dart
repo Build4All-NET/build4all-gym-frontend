@@ -6,6 +6,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/exceptions.dart';
 import '../../domain/entities/member_attendance_item_entity.dart';
 import '../../domain/entities/member_card_entity.dart';
 import '../../domain/entities/member_detail_entity.dart';
@@ -55,6 +56,16 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
     on<MembersBulkDeleteRequested>(_onBulkDeleteRequested);
   }
 
+  // Extracts the stable backend errorCode from a caught exception, when one
+  // is present. UI code must translate this via translateBackendErrorCode()
+  // rather than ever displaying the exception's raw message.
+  String? _errorCodeOf(Object e) {
+    if (e is AppFailureException) return e.errorCode;
+    if (e is ServerException) return e.errorCode;
+    if (e is ForbiddenException) return e.errorCode;
+    return null;
+  }
+
   // ---------------------------------------------------------------------------
   // List handlers (unchanged)
   // ---------------------------------------------------------------------------
@@ -83,7 +94,7 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
         activeFilters: _activeFilters,
       ));
     } catch (e) {
-      emit(MembersError(e.toString()));
+      emit(MembersError(e.toString(), errorCode: _errorCodeOf(e) ?? 'MEMBERS_LOAD_FAILED'));
     }
   }
 
@@ -133,7 +144,7 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
         activeFilters: _activeFilters,
       ));
     } catch (e) {
-      emit(MembersError(e.toString()));
+      emit(MembersError(e.toString(), errorCode: _errorCodeOf(e) ?? 'MEMBERS_LOAD_FAILED'));
     }
   }
 
@@ -150,7 +161,7 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
       final member = await getMemberDetailUseCase(event.userId);
       emit(MemberDetailLoaded(member));
     } catch (e) {
-      emit(MemberDetailError(e.toString()));
+      emit(MemberDetailError(e.toString(), errorCode: _errorCodeOf(e) ?? 'MEMBER_NOT_FOUND'));
     }
   }
 
@@ -161,7 +172,7 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
       final items = await getMemberAttendanceUseCase(event.userId);
       emit(MemberAttendanceLoaded(event.userId, items));
     } catch (e) {
-      emit(MemberAttendanceError(e.toString()));
+      emit(MemberAttendanceError(e.toString(), errorCode: _errorCodeOf(e) ?? 'MEMBERS_LOAD_FAILED'));
     }
   }
 
@@ -177,7 +188,10 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
       _patchMemberStatus(event.userId, 'blocked', emit);
       emit(MemberActionSuccess(userId: event.userId, actionType: 'blocked'));
     } catch (e) {
-      emit(MemberActionError(userId: event.userId, message: e.toString()));
+      emit(MemberActionError(
+          userId: event.userId,
+          message: e.toString(),
+          errorCode: _errorCodeOf(e) ?? 'MEMBER_UPDATE_FAILED'));
     }
   }
 
@@ -189,7 +203,10 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
       _patchMemberStatus(event.userId, 'active', emit);
       emit(MemberActionSuccess(userId: event.userId, actionType: 'unblocked'));
     } catch (e) {
-      emit(MemberActionError(userId: event.userId, message: e.toString()));
+      emit(MemberActionError(
+          userId: event.userId,
+          message: e.toString(),
+          errorCode: _errorCodeOf(e) ?? 'MEMBER_UPDATE_FAILED'));
     }
   }
 
@@ -207,7 +224,10 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
       }
       emit(MemberActionSuccess(userId: event.userId, actionType: 'deleted'));
     } catch (e) {
-      emit(MemberActionError(userId: event.userId, message: e.toString()));
+      emit(MemberActionError(
+          userId: event.userId,
+          message: e.toString(),
+          errorCode: _errorCodeOf(e) ?? 'MEMBER_DELETE_FAILED'));
     }
   }
 
@@ -224,7 +244,7 @@ class AdminMembersBloc extends Bloc<AdminMembersEvent, AdminMembersState> {
         ));
       }
     } catch (e) {
-      emit(MembersError(e.toString()));
+      emit(MembersError(e.toString(), errorCode: _errorCodeOf(e) ?? 'MEMBER_DELETE_FAILED'));
     }
   }
 

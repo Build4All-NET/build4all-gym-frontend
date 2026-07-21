@@ -3177,6 +3177,144 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
+  /// No description provided for @backendErrorCheckinsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't load today's check-ins. Please try again.'**
+  String get backendErrorCheckinsLoadFailed;
+
+  /// No description provided for @backendErrorCheckinCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't create the check-in. Please try again.'**
+  String get backendErrorCheckinCreateFailed;
+
+  /// No description provided for @backendErrorCheckinUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't update the check-in. Please try again.'**
+  String get backendErrorCheckinUpdateFailed;
+
+  /// No description provided for @backendErrorCheckinDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't delete the check-in. Please try again.'**
+  String get backendErrorCheckinDeleteFailed;
+
+  /// No description provided for @backendErrorCheckinNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in could not be found.'**
+  String get backendErrorCheckinNotFound;
+
+  /// No description provided for @backendErrorCheckinTenantInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in doesn't belong to your gym.'**
+  String get backendErrorCheckinTenantInvalid;
+
+  /// No description provided for @backendErrorCheckinQrExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code has expired. Please generate a new one.'**
+  String get backendErrorCheckinQrExpired;
+
+  /// No description provided for @backendErrorCheckinQrAlreadyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code has already been used.'**
+  String get backendErrorCheckinQrAlreadyUsed;
+
+  /// No description provided for @backendErrorCheckinAccessWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'This member's plan doesn't allow entry at this time.'**
+  String get backendErrorCheckinAccessWindow;
+
+  /// No description provided for @backendErrorCheckinNotEligible.
+  ///
+  /// In en, this message translates to:
+  /// **'This member has no active plan, class booking, or PT session today.'**
+  String get backendErrorCheckinNotEligible;
+
+  /// No description provided for @backendErrorCheckinBranchMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in belongs to a different branch.'**
+  String get backendErrorCheckinBranchMismatch;
+
+  /// No description provided for @backendErrorCheckinAlreadyCheckedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'This member is already checked out.'**
+  String get backendErrorCheckinAlreadyCheckedOut;
+
+  /// No description provided for @backendErrorMembersLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't load the members list. Please try again.'**
+  String get backendErrorMembersLoadFailed;
+
+  /// No description provided for @backendErrorMemberCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't add the member. Please try again.'**
+  String get backendErrorMemberCreateFailed;
+
+  /// No description provided for @backendErrorMemberUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't update this member. Please try again.'**
+  String get backendErrorMemberUpdateFailed;
+
+  /// No description provided for @backendErrorMemberDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn't delete this member. Please try again.'**
+  String get backendErrorMemberDeleteFailed;
+
+  /// No description provided for @backendErrorMemberNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This member could not be found.'**
+  String get backendErrorMemberNotFound;
+
+  /// No description provided for @backendErrorMemberAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This member already exists.'**
+  String get backendErrorMemberAlreadyExists;
+
+  /// No description provided for @backendErrorMemberBranchInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This member doesn't belong to that branch.'**
+  String get backendErrorMemberBranchInvalid;
+
+  /// No description provided for @backendErrorMemberTenantInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This member doesn't belong to your gym.'**
+  String get backendErrorMemberTenantInvalid;
+
+  /// No description provided for @backendErrorMemberAccessForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'You don't have permission to perform this action on this member.'**
+  String get backendErrorMemberAccessForbidden;
+
+  /// No description provided for @backendErrorMemberBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'This member is blocked and cannot check in.'**
+  String get backendErrorMemberBlocked;
+
+  /// No description provided for @backendErrorMemberNoActiveMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'This member has no active membership.'**
+  String get backendErrorMemberNoActiveMembership;
+
   String get backendErrorGeneric;
 
   /// No description provided for @myInfoFitnessGoal.
@@ -3514,6 +3652,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a specific branch to scan QR codes.'**
   String get checkins_allBranchesScanBlocked;
+  /// No description provided for @checkins_allBranchesCheckoutBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a specific branch to check out members.'**
+  String get checkins_allBranchesCheckoutBlocked;
+
+  /// No description provided for @checkins_memberCheckedOutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member checked out successfully.'**
+  String get checkins_memberCheckedOutSuccess;
+
+  /// No description provided for @checkins_memberBlockedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member blocked successfully.'**
+  String get checkins_memberBlockedSuccess;
+
 
   /// No description provided for @sessionDetailBookingClosed.
   ///

@@ -34,10 +34,29 @@ class AdminMembersService {
   void _handleStatus(http.Response response) {
     if (response.statusCode == 200 || response.statusCode == 204) return;
     if (response.statusCode == 401) throw UnauthorizedException();
-    if (response.statusCode == 403) throw ForbiddenException();
-    throw ServerException(message: 'HTTP ${response.statusCode}: ${response.body}');
+
+    // Backend error shape: {"status": ..., "message": "...", "errorCode": "...",
+    // "timestamp": "..."}. `message` is raw backend text kept only for
+    // logging — callers must translate `errorCode` and never render `message`.
+    String msg = '';
+    String? errorCode;
+    try {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      msg = body['message'] as String? ?? '';
+      errorCode = body['errorCode'] as String?;
+    } catch (_) {}
+
+    if (response.statusCode == 403) {
+      throw ForbiddenException(message: msg, errorCode: errorCode);
+    }
+    throw ServerException(
+      message: msg.isNotEmpty ? msg : 'HTTP ${response.statusCode}',
+      errorCode: errorCode,
+    );
   }
 
+  // No errorCode here — a malformed/empty 2xx body isn't a backend-classified
+  // failure, so callers fall back to the generic translated message.
   Map<String, dynamic> _parseMap(http.Response response) {
     if (response.body.isEmpty) {
       throw ServerException(message: 'Server returned an empty response.');

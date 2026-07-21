@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/backend_error_code_translator.dart';
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../bloc/checkins_bloc.dart';
@@ -54,7 +55,9 @@ class CheckinsList extends StatelessWidget {
             if (state is CheckinsLoading || state is CheckinsInitial)
               _Skeleton()
             else if (state is CheckinsError)
-              _ErrorView(message: state.message, colors: c)
+              _ErrorView(
+                  message: translateBackendErrorCode(l10n, state.errorCode),
+                  colors: c)
             else if (state is CheckinsLoaded && state.checkins.isEmpty)
                 _EmptyView(label: l10n.checkins_noCheckins, colors: c)
               else if (state is CheckinsLoaded)

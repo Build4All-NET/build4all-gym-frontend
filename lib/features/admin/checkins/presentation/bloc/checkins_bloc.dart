@@ -11,6 +11,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/error/exceptions.dart';
 import '../../domain/entities/checkin.dart';
 import '../../domain/entities/checkin_stats.dart';
 import '../../domain/usecases/checkins_usecases.dart';
@@ -52,6 +53,16 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     on<FilterByDate>(_onFilterByDate);
   }
 
+  // Extracts the stable backend errorCode from a caught exception, when one
+  // is present. UI code must translate this via translateBackendErrorCode()
+  // rather than ever displaying the exception's raw message.
+  String? _errorCodeOf(Object e) {
+    if (e is AppFailureException) return e.errorCode;
+    if (e is ServerException) return e.errorCode;
+    if (e is ForbiddenException) return e.errorCode;
+    return null;
+  }
+
   // ── LoadTodayCheckins ──────────────────────────────────────────────────────
   Future<void> _onLoad(
       LoadTodayCheckins event, Emitter<CheckinsState> emit) async {
@@ -69,7 +80,9 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     } catch (e) {
       // A silent background poll fails quietly — keep showing the last good
       // list rather than blanking it out over one missed tick.
-      if (!event.silent) emit(CheckinsError(e.toString()));
+      if (!event.silent) {
+        emit(CheckinsError(e.toString(), errorCode: _errorCodeOf(e) ?? 'CHECKINS_LOAD_FAILED'));
+      }
     }
   }
 
@@ -85,7 +98,7 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
           date:     selectedDate);
       emit(CheckinsLoaded(stats: result.stats, checkins: result.checkins));
     } catch (e) {
-      emit(CheckinsError(e.toString()));
+      emit(CheckinsError(e.toString(), errorCode: _errorCodeOf(e) ?? 'CHECKINS_LOAD_FAILED'));
     }
   }
 
@@ -95,7 +108,8 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     final currentBranchId = branchId;
     if (currentBranchId == null) {
       emit(const CheckinsActionError(
-          'Select a specific branch to scan QR codes.'));
+          'Select a specific branch to scan QR codes.',
+          errorCode: 'CHECKIN_NO_BRANCH_SCAN'));
       return;
     }
     try {
@@ -107,7 +121,7 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
       // result with stale data (flutter_bloc 8+ default is concurrent).
       await _onLoad(const LoadTodayCheckins(), emit);
     } catch (e) {
-      emit(CheckinsActionError(e.toString()));
+      emit(CheckinsActionError(e.toString(), errorCode: _errorCodeOf(e)));
     }
   }
 
@@ -117,15 +131,16 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
     final currentBranchId = branchId;
     if (currentBranchId == null) {
       emit(const CheckinsActionError(
-          'Select a specific branch to check out members.'));
+          'Select a specific branch to check out members.',
+          errorCode: 'CHECKIN_NO_BRANCH_CHECKOUT'));
       return;
     }
     try {
       await checkOutMember(checkinId: event.checkinId, branchId: currentBranchId);
-      emit(const CheckinsActionSuccess('Member checked out successfully.'));
+      emit(CheckinsActionSuccess(event.successMessage));
       await _onLoad(const LoadTodayCheckins(), emit);
     } catch (e) {
-      emit(CheckinsActionError(e.toString()));
+      emit(CheckinsActionError(e.toString(), errorCode: _errorCodeOf(e)));
     }
   }
 
@@ -134,10 +149,10 @@ class CheckinsBloc extends Bloc<CheckinsEvent, CheckinsState> {
       BlockMember event, Emitter<CheckinsState> emit) async {
     try {
       await blockMember(userId: event.userId, reason: event.reason);
-      emit(const CheckinsActionSuccess('Member blocked successfully.'));
+      emit(CheckinsActionSuccess(event.successMessage));
       await _onLoad(const LoadTodayCheckins(), emit);
     } catch (e) {
-      emit(CheckinsActionError(e.toString()));
+      emit(CheckinsActionError(e.toString(), errorCode: _errorCodeOf(e)));
     }
   }
 
