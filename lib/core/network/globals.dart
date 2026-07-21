@@ -100,6 +100,15 @@ String resolveUrl(String maybeRelative) {
 
 String get appLogoUrlResolved => resolveUrl(appLogoUrl);
 
+/// Auth header for a raw `Image.network`/similar call against a backend
+/// file-serving endpoint like `/api/files/{id}` — those endpoints require a
+/// valid JWT (they are tenant-scoped, never publicly exposed), unlike the
+/// legacy `/uploads/**` static files.
+Map<String, String> fileRequestAuthHeaders() {
+  final token = readAuthToken().trim();
+  return token.isEmpty ? const {} : {'Authorization': token};
+}
+
 Dio dio() {
   return appDio ??= Dio(
     BaseOptions(

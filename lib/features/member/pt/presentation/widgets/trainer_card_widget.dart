@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../screens/trainer_detail_screen.dart';
+import '../../../../../core/network/globals.dart' as g;
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/trainer_card_entity.dart';
@@ -337,7 +338,8 @@ class _TrainerPhoto extends StatelessWidget {
           borderRadius: BorderRadius.circular(tokens.card.radius),
           child: trainer.profileFileId != null
               ? Image.network(
-            'http://localhost:8080/api/files/${trainer.profileFileId}',
+            g.resolveUrl('/api/files/${trainer.profileFileId}'),
+            headers: g.fileRequestAuthHeaders(),
             width: 90,
             height: 90,
             fit: BoxFit.cover,

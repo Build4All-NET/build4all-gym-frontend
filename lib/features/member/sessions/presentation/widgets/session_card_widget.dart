@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/network/globals.dart' as g;
 import '../../../../../core/theme/theme_cubit.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../domain/entities/session_card_entity.dart';
@@ -29,7 +30,8 @@ class SessionCardWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(tokens.card.radius),
       child: session.imageFileId != null
           ? Image.network(
-        'http://localhost:8080/api/files/${session.imageFileId}',
+        g.resolveUrl('/api/files/${session.imageFileId}'),
+        headers: g.fileRequestAuthHeaders(),
         width: 96,
         height: 96,
         fit: BoxFit.cover,
