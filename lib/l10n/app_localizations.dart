@@ -3689,6 +3689,18 @@ abstract class AppLocalizations {
   /// **'No active membership'**
   String get noActiveMembership;
 
+  /// No description provided for @trainerNotAvailableAtYourBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'This trainer is not available at your membership branch'**
+  String get trainerNotAvailableAtYourBranch;
+
+  /// No description provided for @trainerNotBookable.
+  ///
+  /// In en, this message translates to:
+  /// **'This trainer is not available for booking right now'**
+  String get trainerNotBookable;
+
   /// No description provided for @membershipStatusCancelled.
   ///
   /// In en, this message translates to:
@@ -7378,6 +7390,12 @@ abstract class AppLocalizations {
   /// **'Complete'**
   String get trainer_completeButton;
 
+  /// No description provided for @trainer_checkInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get trainer_checkInButton;
+
   /// No description provided for @trainer_cancelSessionButton.
   ///
   /// In en, this message translates to:
@@ -7455,6 +7473,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'cancel requested'**
   String get trainer_statusCancelRequested;
+
+  /// No description provided for @trainer_statusDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'declined'**
+  String get trainer_statusDeclined;
+
+  /// No description provided for @trainer_statusCheckedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'checked in'**
+  String get trainer_statusCheckedIn;
 
   /// No description provided for @trainer_approveCancelButton.
   ///

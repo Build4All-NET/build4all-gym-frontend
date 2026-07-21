@@ -1857,6 +1857,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noActiveMembership => 'No active membership';
 
   @override
+  String get trainerNotAvailableAtYourBranch =>
+      'This trainer is not available at your membership branch';
+
+  @override
+  String get trainerNotBookable =>
+      'This trainer is not available for booking right now';
+
+  @override
   String get membershipStatusCancelled => 'cancelled';
 
   @override
@@ -3759,6 +3767,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trainer_completeButton => 'Complete';
 
   @override
+  String get trainer_checkInButton => 'Check in';
+
+  @override
   String get trainer_cancelSessionButton => 'Cancel';
 
   @override
@@ -3796,6 +3807,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainer_statusCancelRequested => 'cancel requested';
+
+  @override
+  String get trainer_statusDeclined => 'declined';
+
+  @override
+  String get trainer_statusCheckedIn => 'checked in';
 
   @override
   String get trainer_approveCancelButton => 'Approve';
