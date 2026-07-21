@@ -1857,6 +1857,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noActiveMembership => 'لا توجد عضوية نشطة';
 
   @override
+  String get trainerNotAvailableAtYourBranch => 'هذا المدرب غير متاح في فرع عضويتك';
+
+  @override
+  String get trainerNotBookable => 'هذا المدرب غير متاح للحجز حاليًا';
+
+  @override
   String get membershipStatusCancelled => 'الغاء';
 
   @override
@@ -3759,6 +3765,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainer_completeButton => 'إكمال';
 
   @override
+  String get trainer_checkInButton => 'تسجيل الحضور';
+
+  @override
   String get trainer_cancelSessionButton => 'إلغاء';
 
   @override
@@ -3796,6 +3805,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trainer_statusCancelRequested => 'طلب إلغاء';
+
+  @override
+  String get trainer_statusDeclined => 'مرفوض';
+
+  @override
+  String get trainer_statusCheckedIn => 'تم تسجيل الحضور';
 
   @override
   String get trainer_approveCancelButton => 'موافقة';

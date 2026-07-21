@@ -447,7 +447,11 @@ class _FollowUpChip extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => context.read<AiAssistantBloc>().add(
-        AiSuggestionTapped(question, errorFallbackMessage: l10n.aiErrorOffline),
+        AiSuggestionTapped(
+          question,
+          errorFallbackMessage: l10n.aiErrorOffline,
+          translateErrorCode: (code) => translateBackendErrorCode(l10n, code),
+        ),
       ),
       child: Container(
         width: double.infinity,
