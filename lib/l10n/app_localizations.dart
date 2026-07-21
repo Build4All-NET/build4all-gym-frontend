@@ -2471,6 +2471,12 @@ abstract class AppLocalizations {
   /// **'Could not load available times'**
   String get ptWeeklySlotsFailed;
 
+  /// No description provided for @ptSlotsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load available times'**
+  String get ptSlotsFailed;
+
   /// No description provided for @ptRequestTimePickerHint.
   ///
   /// In en, this message translates to:
@@ -3268,6 +3274,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What should I focus on based on my goal?'**
   String get memberAiQuickQuestionRecommendation;
+
+  /// No description provided for @routeNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found.'**
+  String get routeNotFound;
+
+  /// No description provided for @profileFallbackLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileFallbackLabel;
+
+  /// No description provided for @genericHomeDataNotLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Home data is not loaded yet.'**
+  String get genericHomeDataNotLoaded;
+
+  /// No description provided for @paymentNotYetConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment not yet confirmed. Please try again in a moment.'**
+  String get paymentNotYetConfirmed;
+
+  /// No description provided for @planCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan created successfully'**
+  String get planCreatedSuccessfully;
+
+  /// No description provided for @planUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan updated successfully'**
+  String get planUpdatedSuccessfully;
+
+  /// No description provided for @classFilterBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get classFilterBookings;
+
+  /// No description provided for @classFilterReactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get classFilterReactivate;
+
+  /// No description provided for @classFilterCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get classFilterCancel;
+
+  /// No description provided for @classFilterEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get classFilterEdit;
 
   /// Generic error message shown in the error view
   ///

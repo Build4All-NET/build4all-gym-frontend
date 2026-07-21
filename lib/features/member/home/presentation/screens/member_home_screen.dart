@@ -345,6 +345,7 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
     required int notificationCount,
   }) {
     final tokens = context.read<ThemeCubit>().state.tokens;
+    final l10n = AppLocalizations.of(context)!;
 
     return Center(
       child: ConstrainedBox(
@@ -427,7 +428,10 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
                         onDismiss: _dismissProgressTrackingCard,
                         onWeightSubmitted: (weight) {
                           context.read<MemberHomeBloc>().add(
-                            MemberHomeWeightLogged(weight: weight),
+                            MemberHomeWeightLogged(
+                              weight: weight,
+                              notLoadedMessage: l10n.genericHomeDataNotLoaded,
+                            ),
                           );
                         },
                       ),

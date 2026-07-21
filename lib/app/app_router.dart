@@ -6,6 +6,7 @@ import 'package:build4allgym/features/admin/staff/presentation/screens/admin_gym
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:build4allgym/core/config/app_config.dart';
+import 'package:build4allgym/l10n/app_localizations.dart';
 import 'package:build4allgym/features/auth/presentation/login/screens/login_screen.dart';
 import '../core/network/globals.dart';
 import '../features/admin/AppBar/presentation/branch_cubit.dart';
@@ -866,8 +867,10 @@ class AppRouter {
 
       case adminNotifications:
         return MaterialPageRoute(
-          builder: (_) => _withProfile(
-            const _ComingSoonScreen(title: 'Notifications'),
+          builder: (context) => _withProfile(
+            _ComingSoonScreen(
+              title: AppLocalizations.of(context)!.accountNotifications,
+            ),
           ),
         );
 
@@ -1020,8 +1023,11 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-          builder: (_) =>
-          const Scaffold(body: Center(child: Text('Route not found'))),
+          builder: (context) => Scaffold(
+            body: Center(
+              child: Text(AppLocalizations.of(context)!.routeNotFound),
+            ),
+          ),
         );
     }
   }
@@ -1051,7 +1057,7 @@ class _ComingSoonScreen extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
-              'Coming soon',
+              AppLocalizations.of(context)!.comingSoon,
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium

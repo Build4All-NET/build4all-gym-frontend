@@ -179,7 +179,7 @@ class PlanDetailBloc extends Bloc<PlanDetailEvent, PlanDetailState> {
       } else {
         emit(PlanDetailCheckoutError(
           previousState: event.previousState.copyWith(isSubmitting: false),
-          message: 'Payment not yet confirmed. Please try again in a moment.',
+          message: event.paymentNotConfirmedMessage,
         ));
       }
     } catch (e) {

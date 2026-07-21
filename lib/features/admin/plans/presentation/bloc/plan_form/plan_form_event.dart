@@ -13,8 +13,13 @@ class SubmitCreatePlanEvent extends PlanFormEvent {
   /// The BLoC calls POST /plans/types first to persist it to class_types.
   final bool isCustomType;
 
+  /// Localized success message, passed from the screen so the BLoC stays
+  /// context-free.
+  final String successMessage;
+
   SubmitCreatePlanEvent({
     required this.request,
+    required this.successMessage,
     this.isCustomType = false,
   });
 }
@@ -23,5 +28,10 @@ class SubmitCreatePlanEvent extends PlanFormEvent {
 class SubmitUpdatePlanEvent extends PlanFormEvent {
   final int planId;
   final UpdatePlanRequestModel request;
-  SubmitUpdatePlanEvent({required this.planId, required this.request});
+  final String successMessage;
+  SubmitUpdatePlanEvent({
+    required this.planId,
+    required this.request,
+    required this.successMessage,
+  });
 }

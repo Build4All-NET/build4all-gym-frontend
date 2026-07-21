@@ -360,7 +360,11 @@ class MemberPtService {
         final decoded = jsonDecode(decodedBody);
 
         if (decoded is! List) {
-          throw ServerException(message: 'Invalid slots response.');
+          // 'ptSlotsFailed' is a sentinel error key, not raw text — see
+          // ServerFailure.message flowing into the UI layer, which
+          // resolves known sentinel keys to localized ARB strings and
+          // falls back to raw text only for truly unexpected messages.
+          throw ServerException(message: 'ptSlotsFailed');
         }
 
         return decoded
@@ -444,7 +448,13 @@ class MemberPtService {
         final decoded = jsonDecode(decodedBody);
 
         if (decoded is! List) {
-          throw ServerException(message: 'Invalid weekly slots response.');
+          // 'ptWeeklySlotsFailed' matches the sentinel key already resolved
+          // to a localized string by _resolveSlotError in
+          // pt_package_time_selector_widget.dart — using the same raw
+          // string here (instead of English prose) means this reaches the
+          // member as l10n.ptWeeklySlotsFailed like every other weekly-slot
+          // failure, not untranslated backend text.
+          throw ServerException(message: 'ptWeeklySlotsFailed');
         }
 
         return decoded

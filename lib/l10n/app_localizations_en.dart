@@ -1239,6 +1239,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ptWeeklySlotsFailed => 'Could not load available times';
 
   @override
+  String get ptSlotsFailed => 'Could not load available times';
+
+  @override
   String get ptRequestTimePickerHint => 'Request a time from the trainer';
 
   @override
@@ -1642,6 +1645,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memberAiQuickQuestionRecommendation => 'What should I focus on based on my goal?';
+
+  @override
+  String get routeNotFound => 'Page not found.';
+
+  @override
+  String get profileFallbackLabel => 'Profile';
+
+  @override
+  String get genericHomeDataNotLoaded => 'Home data is not loaded yet.';
+
+  @override
+  String get paymentNotYetConfirmed => 'Payment not yet confirmed. Please try again in a moment.';
+
+  @override
+  String get planCreatedSuccessfully => 'Plan created successfully';
+
+  @override
+  String get planUpdatedSuccessfully => 'Plan updated successfully';
+
+  @override
+  String get classFilterBookings => 'Bookings';
+
+  @override
+  String get classFilterReactivate => 'Reactivate';
+
+  @override
+  String get classFilterCancel => 'Cancel';
+
+  @override
+  String get classFilterEdit => 'Edit';
 
   @override
   String get aiErrorGeneric => 'Something went wrong. Please try again.';

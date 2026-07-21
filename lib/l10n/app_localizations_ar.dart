@@ -1239,6 +1239,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ptWeeklySlotsFailed => 'تعذر تحميل الأوقات المتاحة';
 
   @override
+  String get ptSlotsFailed => 'تعذر تحميل الأوقات المتاحة';
+
+  @override
   String get ptRequestTimePickerHint => 'اطلب وقتاً من المدرب';
 
   @override
@@ -1642,6 +1645,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get memberAiQuickQuestionRecommendation => 'على ماذا يجب أن أركز بناءً على هدفي؟';
+
+  @override
+  String get routeNotFound => 'الصفحة غير موجودة.';
+
+  @override
+  String get profileFallbackLabel => 'الملف الشخصي';
+
+  @override
+  String get genericHomeDataNotLoaded => 'لم يتم تحميل بيانات الصفحة الرئيسية بعد.';
+
+  @override
+  String get paymentNotYetConfirmed => 'لم يتم تأكيد الدفع بعد. يرجى المحاولة مرة أخرى بعد قليل.';
+
+  @override
+  String get planCreatedSuccessfully => 'تم إنشاء الخطة بنجاح';
+
+  @override
+  String get planUpdatedSuccessfully => 'تم تحديث الخطة بنجاح';
+
+  @override
+  String get classFilterBookings => 'الحجوزات';
+
+  @override
+  String get classFilterReactivate => 'إعادة تفعيل';
+
+  @override
+  String get classFilterCancel => 'إلغاء';
+
+  @override
+  String get classFilterEdit => 'تعديل';
 
   @override
   String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
