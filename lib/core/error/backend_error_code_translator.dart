@@ -20,6 +20,8 @@ String translateBackendErrorCode(AppLocalizations l10n, String? errorCode) {
       return l10n.backendErrorAiInvalidResponse;
     case 'AI_PROVIDER_ERROR':
       return l10n.backendErrorAiProviderError;
+    case 'AI_PROVIDER_RATE_LIMITED':
+      return l10n.backendErrorAiProviderRateLimited;
     case 'REFUND_PROVIDER_NOT_SUPPORTED':
       return l10n.backendErrorRefundProviderNotSupported;
     case 'REFUND_PROVIDER_INTEGRATION_REQUIRED':
@@ -28,6 +30,8 @@ String translateBackendErrorCode(AppLocalizations l10n, String? errorCode) {
       return l10n.backendErrorPaymentVerificationFailed;
     case 'INVALID_REQUEST_BODY':
       return l10n.backendErrorInvalidRequestBody;
+    case 'INVALID_FITNESS_GOAL':
+      return l10n.backendErrorInvalidFitnessGoal;
     default:
       return l10n.backendErrorGeneric;
   }

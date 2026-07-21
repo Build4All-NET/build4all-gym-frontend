@@ -1031,6 +1031,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountMyMembership => 'عضويتي';
 
   @override
+  String get accountAskAi => 'اسأل الذكاء الاصطناعي';
+
+  @override
   String get accountNotifications => 'الإشعارات';
 
   @override
@@ -1572,6 +1575,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backendErrorAiProviderError => 'واجه مساعد الذكاء الاصطناعي مشكلة. حاول مرة أخرى.';
 
   @override
+  String get backendErrorAiProviderRateLimited => 'مساعد الذكاء الاصطناعي مشغول الآن. يرجى الانتظار لحظة والمحاولة مرة أخرى.';
+
+  @override
   String get backendErrorRefundProviderNotSupported => 'الاسترداد التلقائي غير متاح بعد لطريقة الدفع هذه. سيقوم فريقنا بمعالجته يدويًا.';
 
   @override
@@ -1582,6 +1588,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backendErrorInvalidRequestBody => 'هناك خطأ في البيانات المُرسلة. تحقق من المدخلات وحاول مرة أخرى.';
+
+  @override
+  String get backendErrorInvalidFitnessGoal => 'يرجى اختيار أحد الأهداف الرياضية المتاحة.';
 
   @override
   String get backendErrorGeneric => 'حدث خطأ ما. حاول مرة أخرى.';
@@ -1612,6 +1621,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get myInfoFitnessGoalSaveError => 'تعذر تحديث الهدف الرياضي. حاول مرة أخرى.';
+
+  @override
+  String get memberAiTitle => 'اسأل عن النادي';
+
+  @override
+  String get memberAiInputHint => 'اسأل عن حصصك أو صفوفك أو عضويتك...';
+
+  @override
+  String get memberAiEmptyState => 'اسألني عن حصص التدريب الشخصي أو الصفوف أو عضويتك — سأتحقق من بياناتك الحقيقية أولاً.';
+
+  @override
+  String get memberAiSendButton => 'إرسال';
+
+  @override
+  String get memberAiQuickQuestionSessionsThisWeek => 'كم عدد حصص التدريب الشخصي لدي هذا الأسبوع؟';
+
+  @override
+  String get memberAiQuickQuestionRemainingSessions => 'كم عدد الحصص المتبقية في باقتي؟';
+
+  @override
+  String get memberAiQuickQuestionRecommendation => 'على ماذا يجب أن أركز بناءً على هدفي؟';
 
   @override
   String get aiErrorGeneric => 'حدث خطأ ما. يرجى المحاولة مرة أخرى.';

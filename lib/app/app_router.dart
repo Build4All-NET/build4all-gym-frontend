@@ -120,6 +120,7 @@ import '../features/shell/presentation/screens/main_shell.dart';
 import '../features/admin/pt_dashboard/presentation/screens/trainer_main_screen.dart';
 import '../features/admin/pt_dashboard/presentation/screens/admin_pt_package_bookings_screen.dart';
 
+import '../features/member/ai_assistant/presentation/screens/member_ai_assistant_screen.dart';
 import '../features/member/home/presentation/bloc/member_home_bloc.dart';
 import '../features/member/home/presentation/screens/member_home_screen.dart';
 import '../features/member/home/data/repositories/member_home_repository_impl.dart';
@@ -253,6 +254,9 @@ class AppRouter {
   static const String memberInvoices = '/member/invoices';
   static const String memberInvoiceDetail = '/member/invoices/detail';
 
+  // ─── Member: AI Assistant ───────────────────────────────────────────────────
+  static const String memberAiAssistant = '/member/ai-assistant';
+
   // ─── Logout ────────────────────────────────────────────────────────────────
   static const String logout = '/logout';
 
@@ -373,6 +377,12 @@ class AppRouter {
             ),
             child: MemberInvoiceScreen(invoiceId: invoiceId),
           ),
+        );
+// ── Member: AI Assistant ─────────────────────────────────────────────────
+
+      case memberAiAssistant:
+        return MaterialPageRoute(
+          builder: (_) => _withProfile(const MemberAiAssistantScreen()),
         );
     // ── Admin: Dashboard ───────────────────────────────────────────────────
 

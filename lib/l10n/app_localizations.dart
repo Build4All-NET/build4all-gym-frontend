@@ -2087,6 +2087,12 @@ abstract class AppLocalizations {
   /// **'My Membership'**
   String get accountMyMembership;
 
+  /// No description provided for @accountAskAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get accountAskAi;
+
   /// No description provided for @accountNotifications.
   ///
   /// In en, this message translates to:
@@ -3125,6 +3131,12 @@ abstract class AppLocalizations {
   /// **'The AI assistant ran into a problem. Please try again.'**
   String get backendErrorAiProviderError;
 
+  /// No description provided for @backendErrorAiProviderRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI assistant is busy right now. Please wait a moment and try again.'**
+  String get backendErrorAiProviderRateLimited;
+
   /// No description provided for @backendErrorRefundProviderNotSupported.
   ///
   /// In en, this message translates to:
@@ -3148,6 +3160,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something in your request wasn\'t valid. Please check your input and try again.'**
   String get backendErrorInvalidRequestBody;
+
+  /// No description provided for @backendErrorInvalidFitnessGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose one of the listed fitness goals.'**
+  String get backendErrorInvalidFitnessGoal;
 
   /// No description provided for @backendErrorGeneric.
   ///
@@ -3208,6 +3226,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update fitness goal. Please try again.'**
   String get myInfoFitnessGoalSaveError;
+
+  /// No description provided for @memberAiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask About Your Gym'**
+  String get memberAiTitle;
+
+  /// No description provided for @memberAiInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your sessions, classes, or membership...'**
+  String get memberAiInputHint;
+
+  /// No description provided for @memberAiEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask me anything about your PT sessions, classes, or membership — I\'ll check your real data first.'**
+  String get memberAiEmptyState;
+
+  /// No description provided for @memberAiSendButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get memberAiSendButton;
+
+  /// No description provided for @memberAiQuickQuestionSessionsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'How many PT sessions do I have this week?'**
+  String get memberAiQuickQuestionSessionsThisWeek;
+
+  /// No description provided for @memberAiQuickQuestionRemainingSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'How many PT package sessions do I have left?'**
+  String get memberAiQuickQuestionRemainingSessions;
+
+  /// No description provided for @memberAiQuickQuestionRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I focus on based on my goal?'**
+  String get memberAiQuickQuestionRecommendation;
 
   /// Generic error message shown in the error view
   ///

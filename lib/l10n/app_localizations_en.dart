@@ -1031,6 +1031,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountMyMembership => 'My Membership';
 
   @override
+  String get accountAskAi => 'Ask AI';
+
+  @override
   String get accountNotifications => 'Notifications';
 
   @override
@@ -1572,6 +1575,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backendErrorAiProviderError => 'The AI assistant ran into a problem. Please try again.';
 
   @override
+  String get backendErrorAiProviderRateLimited => 'The AI assistant is busy right now. Please wait a moment and try again.';
+
+  @override
   String get backendErrorRefundProviderNotSupported => 'Automatic refunds aren\'t available yet for this payment method. Our team will process it manually.';
 
   @override
@@ -1582,6 +1588,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backendErrorInvalidRequestBody => 'Something in your request wasn\'t valid. Please check your input and try again.';
+
+  @override
+  String get backendErrorInvalidFitnessGoal => 'Please choose one of the listed fitness goals.';
 
   @override
   String get backendErrorGeneric => 'Something went wrong. Please try again.';
@@ -1612,6 +1621,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myInfoFitnessGoalSaveError => 'Failed to update fitness goal. Please try again.';
+
+  @override
+  String get memberAiTitle => 'Ask About Your Gym';
+
+  @override
+  String get memberAiInputHint => 'Ask about your sessions, classes, or membership...';
+
+  @override
+  String get memberAiEmptyState => 'Ask me anything about your PT sessions, classes, or membership — I\'ll check your real data first.';
+
+  @override
+  String get memberAiSendButton => 'Send';
+
+  @override
+  String get memberAiQuickQuestionSessionsThisWeek => 'How many PT sessions do I have this week?';
+
+  @override
+  String get memberAiQuickQuestionRemainingSessions => 'How many PT package sessions do I have left?';
+
+  @override
+  String get memberAiQuickQuestionRecommendation => 'What should I focus on based on my goal?';
 
   @override
   String get aiErrorGeneric => 'Something went wrong. Please try again.';
